@@ -95,4 +95,4 @@ Implementar primero una muestra deliberadamente diversa:
 - C33 Spatial Grid simplificado.
 - C35 trade-off de costos.
 
-Esto prueba ocho tipos de razonamiento sin necesitar ocho años de contenido definitivo.
+Esto prueba ocho tipos de razonamiento sin necesitar contenido definitivo para todas las etapas.

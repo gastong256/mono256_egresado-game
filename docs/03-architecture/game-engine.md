@@ -99,7 +99,7 @@ initialState(config)
 -> finalState
 ```
 
-Debe obtener el mismo `result_hash` que el cliente para una implementación/version compatibles.
+Si cliente y servidor producen `result_hash`, debe coincidir para una implementación/version compatibles.
 
 ## Hash de resultado
 

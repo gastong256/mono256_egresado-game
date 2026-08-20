@@ -46,6 +46,12 @@
 07-reference/glossary.md
 07-reference/open-questions.md
 07-reference/research-basis.md
+08-engineering/agent-setup.md
+08-engineering/ai-development-workflow.md
+08-engineering/context-map.md
+08-engineering/dependency-and-decision-policy.md
+08-engineering/mcp-strategy.md
+AGENTS.md
 DOCUMENTATION-CHECKLIST.md
 EGRESADO-MASTER-SPEC.md
 MANIFEST.txt

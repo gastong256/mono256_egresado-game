@@ -21,6 +21,7 @@ Este directorio define la referencia funcional, lúdica, pedagógica y técnica 
 - `product-vision.md`: visión, problema, propuesta de valor y objetivos.
 - `scope-and-roadmap.md`: alcance MVP, versiones y límites.
 - `personas-and-contexts.md`: jugadores, docentes, organizadores y contexto de feria.
+- `risks-and-assumptions.md`: supuestos, riesgos y mitigaciones.
 - `success-metrics.md`: métricas de producto, aprendizaje y operación.
 
 ### 01-game-design
@@ -28,6 +29,7 @@ Este directorio define la referencia funcional, lúdica, pedagógica y técnica 
 - `rules-scoring-and-progression.md`: reglas, estados, scoring y progresión.
 - `narrative-system.md`: carrera escolar, storylets, eventos y perfiles finales.
 - `challenge-system.md`: taxonomía de minijuegos y desafíos matemáticos.
+- `challenge-catalog.md`: backlog semilla de escenarios, no compromiso de alcance.
 - `math-design-framework.md`: marco matemático por edad, dificultad y validación.
 - `content-authoring-guide.md`: cómo escribir, parametrizar y revisar contenido.
 - `ux-interaction-design.md`: patrones de interacción, feedback y responsive.
@@ -49,6 +51,7 @@ Este directorio define la referencia funcional, lúdica, pedagógica y técnica 
 - `adr/`: decisiones arquitectónicas formales.
 
 ### 04-quality
+- `content-validation.md`: pipeline de schema, matemática, generación, UI y playtest.
 - `testing-strategy.md`: unit, property-based, integration, E2E y pruebas de contenido.
 - `non-functional-requirements.md`: performance, resiliencia, accesibilidad y compatibilidad.
 - `threat-model.md`: amenazas y mitigaciones.
@@ -70,6 +73,15 @@ Este directorio define la referencia funcional, lúdica, pedagógica y técnica 
 - `decision-register.md`: índice de decisiones y ADRs.
 - `content-schema.example.json`: ejemplo de definición de desafío.
 
+### 08-engineering
+- `context-map.md`: qué fuentes leer para cada tipo de tarea.
+- `ai-development-workflow.md`: ciclo de trabajo asistido, evidencia y criterio de ADR.
+- `dependency-and-decision-policy.md`: selección de dependencias y clasificación de decisiones.
+- `mcp-strategy.md`: integraciones justificadas, trust y diferimientos.
+- `agent-setup.md`: arquitectura del workspace, discovery, skills y fuentes oficiales.
+
+`EGRESADO-MASTER-SPEC.md` consolida la baseline de producto (`00-` a `07-`, checklist y este README). La infraestructura de ingeniería de `08-engineering/` se mantiene por separado para no mezclar reglas operativas del agente con la especificación del producto.
+
 ## Autoridad documental
 
 En caso de contradicción:
@@ -79,5 +91,7 @@ En caso de contradicción:
 3. `game-design-document.md` y documentos de reglas para comportamiento lúdico.
 4. `math-design-framework.md` para intención pedagógica y dificultad.
 5. Backlog e historias de usuario para orden de implementación.
+
+Los documentos especializados gobiernan su área mientras no contradigan una fuente de mayor autoridad. Si dos documentos del mismo nivel siguen en conflicto o la lista no define precedencia entre ellos, la discrepancia se mantiene explícita en `07-reference/open-questions.md` hasta que exista evidencia o una decisión autorizada.
 
 Los documentos describen la **baseline de producto** al 20 de agosto de 2026. Las dependencias tecnológicas deben mantenerse en versiones estables soportadas; los números de versión concretos se fijarán en el repositorio mediante lockfile y ADR de actualización si cambian decisiones relevantes.

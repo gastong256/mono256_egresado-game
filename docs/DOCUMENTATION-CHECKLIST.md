@@ -60,7 +60,14 @@
 - [x] Glosario.
 - [x] Decisiones.
 - [x] Preguntas abiertas.
-- [x] Schema de contenido.
+- [x] Ejemplo de schema de contenido; schema ejecutable diferido a P0.
+
+## Ingeniería asistida
+- [x] Instrucciones raíz y scoped para documentación.
+- [x] Mapa de contexto y workflow de desarrollo.
+- [x] Política de dependencias/decisiones y estrategia MCP.
+- [x] Skills de proyecto acotadas y validables.
+- [x] Checks de links, manifest y sincronización del master.
 
 ## Gaps intencionales que requieren evidencia del proyecto
 
@@ -74,4 +81,4 @@ No son omisiones documentales; son decisiones que no deben fijarse sin playtest 
 - diseño visual definitivo;
 - proveedor final de analytics/error tracking.
 
-Estas preguntas están registradas y deben cerrarse mediante ADR/requisito cuando exista evidencia.
+Estas preguntas están registradas y deben cerrarse en la fuente autoritativa correspondiente cuando exista evidencia, actualizando trazabilidad y ADR cuando aplique.
