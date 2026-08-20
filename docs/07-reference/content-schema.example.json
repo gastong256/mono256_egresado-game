@@ -1,0 +1,45 @@
+{
+  "$schema": "egresado.challenge.v1",
+  "id": "mural-basic-v1",
+  "status": "draft",
+  "interaction": "decision-card",
+  "category": ["space-and-shape", "quantity"],
+  "stages": ["grade-7", "year-1"],
+  "difficulty": {
+    "base": 2,
+    "factors": ["decimal-multiplication", "coverage"]
+  },
+  "narrative": {
+    "title": "El mural",
+    "setup": "El curso prepara un mural para la feria y necesita comprar pintura.",
+    "goal": "Elegí el envase que alcance sin comprar de más innecesariamente."
+  },
+  "generator": {
+    "type": "area-coverage-purchase",
+    "params": {
+      "wallWidth": {"min": 4, "max": 8, "step": 0.5},
+      "wallHeight": {"min": 2, "max": 3, "step": 0.2},
+      "coveragePerLiter": {"values": [6, 8, 10]},
+      "packages": [1, 2, 4]
+    }
+  },
+  "evaluation": {
+    "objective": "minimum-cost-valid-coverage",
+    "qualities": ["invalid", "functional", "efficient", "optimal"],
+    "rounding": "ceil-purchase-units"
+  },
+  "tools": ["calculator"],
+  "effects": {
+    "optimal": {"knowledge": 2, "initiative": 1},
+    "functional": {"knowledge": 1},
+    "invalid": {"energy": -1}
+  },
+  "feedback": {
+    "showArea": true,
+    "showCoverage": true,
+    "showDifference": true
+  },
+  "analytics": {
+    "tags": ["geometry", "purchase", "fair-project"]
+  }
+}
