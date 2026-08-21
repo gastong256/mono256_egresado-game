@@ -52,15 +52,3 @@ export interface ScoringPolicy {
   readonly production: boolean
   scoreEvent(input: ScoreEventInput): ScoreBreakdown
 }
-
-export function emptyBreakdown(): ScoreBreakdown {
-  return {
-    basePoints: 0,
-    qualityFactor: '0.00',
-    difficultyFactor: '0.00',
-    components: [],
-    bonusPoints: 0,
-    penaltyPoints: 0,
-    totalPoints: 0,
-  }
-}

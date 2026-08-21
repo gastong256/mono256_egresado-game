@@ -32,7 +32,7 @@ export interface NarrativeSlice {
 }
 
 /** Applies one effect, returning new immutable values. */
-export function applyEffect(
+function applyEffect(
   slice: NarrativeSlice,
   effect: StoryletEffect,
 ): NarrativeSlice {

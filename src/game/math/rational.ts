@@ -58,7 +58,6 @@ export function rational(numerator: bigint, denominator: bigint): Rational {
 }
 
 export const ZERO: Rational = { n: 0n, d: 1n }
-export const ONE: Rational = { n: 1n, d: 1n }
 
 export function fromInteger(value: number | bigint): Rational {
   if (typeof value === 'number') {
@@ -192,14 +191,40 @@ export function sum(values: readonly Rational[]): Rational {
   return values.reduce<Rational>((total, value) => add(total, value), ZERO)
 }
 
+/** Fixed precision used to recover a ratio whose terms exceed the double range. */
+const FRACTION_SCALE = 10n ** 15n
+
 /**
  * Converts to a JavaScript number.
  *
  * Only for presentation and for coarse telemetry. Never use the result to make
  * an authoritative comparison; compare rationals instead.
+ *
+ * The direct conversion is kept wherever it is well defined, because it is what
+ * the engine has always produced and changing it would move deterministic
+ * output. It breaks down in exactly one case: when numerator *and* denominator
+ * both exceed the double range, `Number()` turns both into `Infinity` and the
+ * ratio comes out as `NaN`. A non-finite metric is treated as a broken
+ * invariant further up, so that case would surface as an engine crash rather
+ * than a number. The fallback recovers the ratio by dividing on bigints.
  */
 export function toNumber(value: Rational): number {
-  return Number(value.n) / Number(value.d)
+  const direct = Number(value.n) / Number(value.d)
+
+  if (!Number.isNaN(direct)) {
+    return direct
+  }
+
+  const negative = value.n < 0n
+  const numerator = negative ? -value.n : value.n
+  const whole = numerator / value.d
+  const remainder = numerator - whole * value.d
+  const fraction =
+    Number((remainder * FRACTION_SCALE) / value.d) / Number(FRACTION_SCALE)
+  // A genuinely enormous quotient still saturates, which is the honest answer.
+  const magnitude = Number(whole) + fraction
+
+  return negative ? -magnitude : magnitude
 }
 
 /** True when the value denotes a whole number. */

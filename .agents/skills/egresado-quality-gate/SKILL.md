@@ -26,7 +26,8 @@ git diff --check
 
 Suma segun el cambio:
 
-- engine/scoring/RNG: `pnpm test`, `pnpm game:simulate -- --runs=2000 --verify=10` y los golden replays de `tests/unit/engine-golden.test.ts`. Un cambio de salida determinista exige subir `ENGINE_VERSION`, version de ruleset o de contenido segun la tabla de [game engine](../../../docs/03-architecture/game-engine.md#compatibilidad-y-versionado); regenerar goldens sin ese bump es un fallo, no un ajuste;
+- engine/scoring/RNG: `pnpm test`, `pnpm game:simulate -- --runs=2000 --verify=10`, los golden replays de `tests/unit/engine-golden.test.ts` y los fingerprints de `tests/unit/engine-fingerprint.test.ts`. Un cambio de salida determinista exige subir `ENGINE_VERSION`, version de ruleset o de contenido segun la tabla de [game engine](../../../docs/03-architecture/game-engine.md#compatibilidad-y-versionado); regenerar goldens o fingerprints sin ese bump es un fallo, no un ajuste;
+- replay autoritativo: `tests/integration/server-run-validation.test.ts` cubre la frontera server-only de ADR-004. Un cambio que permita al cliente influir en score o perfil es un bloqueo;
 - contenido procedural: `pnpm game:validate-content -- --seeds=300 --stats`, invariantes del generador, distribucion de opciones y revision UI;
 - API/DB: `pnpm db:start`, `pnpm db:reset`, `pnpm db:lint`, `pnpm db:types`, integration, idempotencia, migracion, indices y permisos/RLS; termina con `pnpm db:stop`;
 - UI: viewport mobile/desktop, teclado, focus, reduced motion y errores de red;

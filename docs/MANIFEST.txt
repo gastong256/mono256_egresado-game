@@ -62,3 +62,7 @@ DOCUMENTATION-CHECKLIST.md
 EGRESADO-MASTER-SPEC.md
 MANIFEST.txt
 README.md
+audits/game-engine-2026-08-21/baseline.md
+audits/game-engine-2026-08-21/final-audit.md
+audits/game-engine-2026-08-21/findings.md
+audits/game-engine-2026-08-21/remediation-plan.md

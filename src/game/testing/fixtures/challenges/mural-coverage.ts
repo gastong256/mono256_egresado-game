@@ -32,7 +32,6 @@ import {
   greaterThan,
   greaterThanOrEqual,
   multiply,
-  rational,
   subtract,
   type Rational,
 } from '../../../math/rational'
@@ -283,15 +282,3 @@ export const muralCoverage: ChallengeDefinition = defineChallenge<MuralModel>({
     })
   },
 })
-
-/** Exposed for property tests that need the objective without re-deriving it. */
-export function requiredLitresFor(
-  width: string,
-  height: string,
-  coveragePerLitre: number,
-): Rational {
-  return divide(
-    multiply(fromDecimalString(width), fromDecimalString(height)),
-    rational(BigInt(coveragePerLitre), 1n),
-  )
-}

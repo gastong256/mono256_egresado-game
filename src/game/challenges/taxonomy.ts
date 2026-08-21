@@ -23,8 +23,6 @@ export type MathCategory = (typeof MATH_CATEGORIES)[number]
 /** Intrinsic difficulty of a challenge template, 1 (simplest) to 5. */
 export type DifficultyLevel = 1 | 2 | 3 | 4 | 5
 
-export const DIFFICULTY_LEVELS: readonly DifficultyLevel[] = [1, 2, 3, 4, 5]
-
 export function isDifficultyLevel(value: number): value is DifficultyLevel {
   return value === 1 || value === 2 || value === 3 || value === 4 || value === 5
 }

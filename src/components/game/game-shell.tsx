@@ -122,7 +122,7 @@ export function GameShell({
       </header>
 
       <main className="flex flex-col gap-4">
-        {run.complete ? (
+        {run.complete && state.run.completion !== undefined ? (
           <section
             aria-labelledby="run-complete"
             className="flex flex-col gap-3 rounded-lg border border-slate-300 p-4 dark:border-slate-600"
@@ -131,14 +131,16 @@ export function GameShell({
             <h2 id="run-complete" className="text-xl font-semibold">
               Carrera terminada
             </h2>
+            {/* The engine guarantees a completed run carries its result, and
+                the snapshot codec refuses a state that claims otherwise, so
+                these values are never substituted with a placeholder. */}
             <p className="tabular-nums">
-              Score estimado:{' '}
-              <strong>{state.run.completion?.totalScore ?? 0}</strong>
+              Score estimado: <strong>{state.run.completion.totalScore}</strong>
             </p>
             <p>
               Perfil de egreso:{' '}
               <strong data-testid="profile">
-                {state.run.completion?.profile.profileId ?? 'sin perfil'}
+                {state.run.completion.profile.profileId}
               </strong>
             </p>
             <p className="text-sm text-slate-600 dark:text-slate-400">

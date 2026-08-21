@@ -14,6 +14,8 @@
 import { z } from 'zod'
 
 import {
+  IDENTIFIER_PATTERN,
+  OPAQUE_ID_PATTERN,
   toChallengeId,
   toChallengeInstanceId,
   toRunId,
@@ -30,6 +32,7 @@ import { STAGE_ORDER } from '../progression/stages'
 import { SOLUTION_QUALITIES } from '../challenges/taxonomy'
 import type { ChallengeFeedback } from '../challenges/contracts'
 import { PROFILE_IDS } from '../profiles/policy'
+import { runStateIssues } from './invariants'
 import type { RunState } from './state'
 
 /**
@@ -91,15 +94,15 @@ const scoreSchema = z.object({
 })
 
 const challengeRefSchema = z.object({
-  instanceId: z.string().min(1),
-  definitionId: z.string().min(1),
+  instanceId: z.string().regex(OPAQUE_ID_PATTERN),
+  definitionId: z.string().regex(IDENTIFIER_PATTERN),
   stageId: stageSchema,
   eventIndex: z.number().int().min(0),
   difficulty: difficultySchema,
 })
 
 const activeEventSchema = z.object({
-  storyletId: z.string().min(1),
+  storyletId: z.string().regex(IDENTIFIER_PATTERN),
   title: z.string(),
   text: z.string(),
   challenge: challengeRefSchema.nullable(),
@@ -113,9 +116,9 @@ const resolvedEventSchema = z.object({
   sequence: z.number().int().min(0),
   stage: stageSchema,
   eventIndex: z.number().int().min(0),
-  storyletId: z.string().min(1),
-  challengeId: z.string().nullable(),
-  instanceId: z.string().nullable(),
+  storyletId: z.string().regex(IDENTIFIER_PATTERN),
+  challengeId: z.string().regex(IDENTIFIER_PATTERN).nullable(),
+  instanceId: z.string().regex(OPAQUE_ID_PATTERN).nullable(),
   difficulty: difficultySchema,
   quality: qualitySchema.nullable(),
   metrics: metricsSchema.nullable(),
@@ -125,8 +128,8 @@ const resolvedEventSchema = z.object({
 
 const stateSchema = z.object({
   descriptor: z.object({
-    runId: z.string().min(1),
-    seed: z.string().min(1),
+    runId: z.string().regex(OPAQUE_ID_PATTERN),
+    seed: z.string().regex(OPAQUE_ID_PATTERN),
     mode: z.enum(['standard', 'fair', 'practice']),
     difficulty: z.enum(['adaptive', 'fixed']),
     gameVersion: z.string().min(1),
@@ -147,12 +150,12 @@ const stateSchema = z.object({
   selection: z.object({
     lastSeenAt: z.record(z.string(), z.number().int().min(0)),
   }),
-  seenStorylets: z.array(z.string()).max(256),
+  seenStorylets: z.array(z.string().regex(IDENTIFIER_PATTERN)).max(256),
   qualityHistory: z.array(qualitySchema).max(256),
   activeEvent: activeEventSchema.nullable(),
   pendingFeedback: z
     .object({
-      instanceId: z.string().min(1),
+      instanceId: z.string().regex(OPAQUE_ID_PATTERN),
       quality: qualitySchema,
       feedback: feedbackSchema,
       score: scoreSchema,
@@ -417,6 +420,18 @@ export function restoreSnapshot(
             stats: raw.completion.stats,
             eventsPlayed: raw.completion.eventsPlayed,
           },
+  }
+
+  // Field-level validation cannot see whether the fields agree with each other.
+  // A snapshot that satisfies the schema while contradicting itself restores
+  // into a run that cannot progress, so it is refused here rather than handed
+  // back as a playable state.
+  const issues = runStateIssues(state)
+  if (issues.length > 0) {
+    return err({
+      kind: 'corrupted-snapshot',
+      detail: issues.join('; '),
+    })
   }
 
   return ok(state)

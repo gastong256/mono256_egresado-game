@@ -12,7 +12,7 @@
 
 import { z } from 'zod'
 
-import { toRunId, toRunSeed } from '../core/branded'
+import { OPAQUE_ID_PATTERN, toRunId, toRunSeed } from '../core/branded'
 import { err, ok, type Result } from '../core/result'
 import type { EngineRejection } from '../core/errors'
 import { gameCommandSchema, parseCommand, type GameCommand } from './commands'
@@ -34,8 +34,12 @@ export interface RunActionLog {
 }
 
 const descriptorSchema = z.object({
-  runId: z.string().min(1).max(128),
-  seed: z.string().min(1).max(128),
+  // The charset is enforced here rather than trusted: the RNG address encoding
+  // separates a seed from its path with control characters, so a seed able to
+  // contain one could make two different substreams resolve to the same
+  // address. See `core/branded`.
+  runId: z.string().regex(OPAQUE_ID_PATTERN),
+  seed: z.string().regex(OPAQUE_ID_PATTERN),
   mode: z.enum(['standard', 'fair', 'practice']),
   difficulty: z.enum(['adaptive', 'fixed']),
   gameVersion: z.string().min(1).max(32),

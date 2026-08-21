@@ -18,7 +18,6 @@ import {
   fromDecimalString,
   fromInteger,
   multiply,
-  toNumber,
   type Rational,
 } from '../math/rational'
 import { formatDecimal, roundTo } from '../math/rounding'
@@ -147,9 +146,4 @@ export const developmentScoringPolicy: ScoringPolicy = {
       totalPoints,
     }
   },
-}
-
-/** Exposed for tests that assert the documented factor table. */
-export function developmentQualityFactor(quality: SolutionQuality): number {
-  return toNumber(qualityFactor(quality))
 }

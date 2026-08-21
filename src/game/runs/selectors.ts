@@ -24,7 +24,7 @@ export function currentStage(
 }
 
 /** Zero-based index of the current stage within the ruleset. */
-export function currentStageIndex(state: RunState, ruleset: Ruleset): number {
+function currentStageIndex(state: RunState, ruleset: Ruleset): number {
   return ruleset.stages.findIndex((stage) => stage.id === state.stage)
 }
 

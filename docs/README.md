@@ -82,6 +82,12 @@ Este directorio define la referencia funcional, lúdica, pedagógica y técnica 
 - `development-environment.md`: quickstart nativo/Docker, Supabase local, gates y troubleshooting.
 - `game-engine-development.md`: comandos, harness, invariantes y cómo extender el motor.
 
+### audits
+
+Auditorías de ingeniería ejecutadas sobre el código real. Documentan hallazgos con evidencia, el plan de remediación y su verificación; no reemplazan a la documentación canónica, que describe el estado actual.
+
+- `game-engine-2026-08-21/`: auditoría completa del motor y sus fronteras de integración.
+
 `EGRESADO-MASTER-SPEC.md` consolida la baseline de producto (`00-` a `07-`, checklist y este README). La infraestructura de ingeniería de `08-engineering/` se mantiene por separado para no mezclar reglas operativas del agente con la especificación del producto.
 
 ## Autoridad documental

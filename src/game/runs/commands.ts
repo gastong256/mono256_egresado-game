@@ -12,7 +12,7 @@
 
 import { z } from 'zod'
 
-import { toChallengeInstanceId } from '../core/branded'
+import { OPAQUE_ID_PATTERN, toChallengeInstanceId } from '../core/branded'
 import { err, ok, type Result } from '../core/result'
 import type { EngineRejection } from '../core/errors'
 import type { ChallengeInstanceId } from '../core/branded'
@@ -83,17 +83,17 @@ const toolSchema = z.enum(['calculator', 'notepad', 'table', 'ruler'])
 export const gameCommandSchema = z.discriminatedUnion('type', [
   z.object({
     type: z.literal('ANSWER'),
-    instanceId: z.string().min(1).max(128),
+    instanceId: z.string().regex(OPAQUE_ID_PATTERN),
     answer: interactionAnswerSchema,
   }),
   z.object({
     type: z.literal('REQUEST_INFO'),
-    instanceId: z.string().min(1).max(128),
+    instanceId: z.string().regex(OPAQUE_ID_PATTERN),
     key: z.string().min(1).max(64),
   }),
   z.object({
     type: z.literal('USE_TOOL'),
-    instanceId: z.string().min(1).max(128),
+    instanceId: z.string().regex(OPAQUE_ID_PATTERN),
     tool: toolSchema,
   }),
   z.object({ type: z.literal('CONTINUE') }),

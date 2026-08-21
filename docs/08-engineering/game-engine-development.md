@@ -70,6 +70,12 @@ Estas reglas se verifican con lint de fronteras, un proyecto TypeScript sin DOM/
 
 Un ruleset **oficial** exige políticas marcadas `production`. Hoy ninguna lo está —las preguntas abiertas 5 y 24 siguen abiertas—, así que pedir `official: true` falla a propósito. Eso es lo que impide que un placeholder de desarrollo puntúe un ranking real.
 
+## Cuando falla el test de fingerprint
+
+`tests/unit/engine-fingerprint.test.ts` liga el comportamiento determinista a la versión que lo declara. Si falla, **no pegues el valor nuevo**: decidí primero a qué versión pertenece el cambio, subila, regenerá los golden replays y recién entonces actualizá el fingerprint.
+
+El fingerprint cubre identidad y configuración de políticas, no el cuerpo de cada función. Cambiar una constante dentro de una política sin cambiar su `id` no lo mueve —pero sí rompe los golden replays—. La regla operativa es simple: **un cambio de comportamiento cambia el `id` de la política**, y eso sí queda registrado.
+
 ## Cambios que afectan replay
 
 Antes de mergear un cambio que altere salida determinista, decidir explícitamente qué versión sube:
@@ -92,9 +98,16 @@ Los umbrales de Vitest (85 % statements/lines/functions, 75 % branches) aplican 
 
 El agente sintético responde **desde la vista pública**, sin ver el modelo ni el evaluador, así que es un proxy honesto de un cliente. Como responde al azar, la distribución de calidades y de perfiles que reporta describe juego aleatorio, no juego humano: sirve para detectar defectos estructurales, no para balancear todavía.
 
+## Validación autoritativa desde servidor
+
+`src/server/game/validate-run.ts` es la frontera de ADR-004. Recibe una submission no confiable, la parsea, verifica versiones, la reproduce y devuelve score y perfil **recalculados**. Nada que el cliente afirme sobre el resultado se lee.
+
+Es el caso de uso, no un endpoint: sesión, rate limiting y persistencia son trabajo aparte. Si agregás un endpoint, montalo sobre esta función y no reimplementes el replay.
+
 ## Deuda conocida
 
 - Las familias `spatial-grid`, `sequence/trend` y `special minigame` no están contratadas.
 - No hay persistencia de checkpoint: el motor pide el snapshot, el controller expone el sink y nadie lo escribe todavía.
 - No hay endpoints de runs ni ranking; el motor ya expone lo que un caso de uso server-side necesitaría.
 - Las políticas de scoring, dificultad y perfil son de desarrollo y están marcadas como tales.
+- `phase` no es una unión discriminada: los estados incoherentes se rechazan por validación en la frontera de restauración en lugar de ser irrepresentables. Ver [auditoría 2026-08-21](../audits/game-engine-2026-08-21/final-audit.md).

@@ -130,6 +130,49 @@ test('is reproducible: the same seed replays the same run', async ({
   expect(first).toContain('e2e-alpha')
 })
 
+/**
+ * Cross-runtime determinism.
+ *
+ * The engine claims to produce identical results in Node and in the browser.
+ * Asserting the harness against itself only proves the browser is
+ * self-consistent, so these values are the ones Node computes for the same
+ * seed. If the two runtimes ever diverge — a numeric representation, a hash, a
+ * locale-sensitive comparison — this is what catches it.
+ *
+ * Regenerate with `pnpm game:simulate` semantics only when the engine version
+ * or the content version changes deliberately.
+ */
+test('reproduces the run Node computes for the same seed', async ({ page }) => {
+  await page.goto(HARNESS)
+
+  // Event 0: the opening narrative beat.
+  await expect(page.getByTestId('stage-label')).toHaveText('7.º grado')
+  await expect(page.getByRole('heading', { name: 'Primer día' })).toBeVisible()
+
+  // Event 1: a second narrative beat, not a challenge.
+  await page.getByTestId('continue').click()
+  await expect(page.getByTestId('narrative-card')).toBeVisible()
+  await expect(
+    page.getByRole('heading', { name: 'La foto del curso' }),
+  ).toBeVisible()
+
+  // Event 2: the first challenge, with the exact instance Node derives.
+  await page.getByTestId('continue').click()
+  await expect(page.getByTestId('submit-answer')).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'La notebook' })).toBeVisible()
+
+  await page.getByRole('button', { name: 'Mostrar diagnóstico' }).click()
+  const panel = page.getByLabel('Diagnóstico de desarrollo')
+  await expect(panel).toContainText('dev.notebook-discount')
+  await expect(panel).toContainText('year-1:2:dev.notebook-discount')
+
+  // The generated parameters themselves must match, not just the identity.
+  await expect(page.getByRole('radio').first()).toBeVisible()
+  await expect(
+    page.getByText('20 % de descuento', { exact: false }).first(),
+  ).toBeVisible()
+})
+
 test('exposes the run identity needed to reproduce a bug', async ({ page }) => {
   await page.goto(HARNESS)
   await page.getByRole('button', { name: 'Mostrar diagnóstico' }).click()

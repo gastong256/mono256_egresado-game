@@ -111,9 +111,10 @@ describe('identifier parsing', () => {
 
     expect(isSeed('Feria-2026_x')).toBe(true)
     expect(isSeed('')).toBe(false)
-    // The RNG path encoder joins segments with a space and prefixes numeric
-    // segments with '#'. Both characters are excluded from seeds and
-    // identifiers, which is what makes a path collision impossible.
+    // The RNG path encoder separates the seed from its path with U+0001 and
+    // segments from each other with U+0000, and prefixes numeric segments with
+    // '#'. None of those may appear in a seed or identifier, which is what
+    // makes a path collision impossible. See tests/unit/rng-addressing.test.ts.
     expect(isSeed('Feria 2026')).toBe(false)
     expect(isSeed('Feria#2026')).toBe(false)
     expect(isIdentifier('has space')).toBe(false)

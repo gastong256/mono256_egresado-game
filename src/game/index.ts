@@ -34,7 +34,7 @@ export {
 } from './core/versioning'
 
 // Result and error handling
-export { isErr, isOk, type Result } from './core/result'
+export { err, isErr, isOk, ok, type Result } from './core/result'
 export { describeRejection, type EngineRejection } from './core/errors'
 export { EngineInvariantError } from './core/invariant'
 /** Exhaustiveness helper, exported so consumers can keep their own switches complete. */
@@ -151,6 +151,12 @@ export {
   type VisibleStat,
   VISIBLE_STATS,
 } from './progression/stats'
+export {
+  contentFingerprint,
+  engineFingerprint,
+  rulesetFingerprint,
+} from './ruleset/fingerprint'
+export { runStateIssues } from './runs/invariants'
 export {
   createRuleset,
   type NarrativePacing,
