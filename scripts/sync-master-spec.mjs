@@ -5,7 +5,10 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { transformMarkdownLinkTargets } from './markdown-links.mjs'
 
-const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
+const repoRoot = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  '..',
+)
 const docsRoot = path.join(repoRoot, 'docs')
 const masterPath = path.join(docsRoot, 'EGRESADO-MASTER-SPEC.md')
 const mode = process.argv[2] ?? '--check'
@@ -50,7 +53,8 @@ function rebaseLinkTarget(rawTarget, sourcePath) {
   }
 
   const absoluteTarget = path.resolve(path.dirname(sourcePath), decodedPath)
-  const relativeTarget = path.relative(docsRoot, absoluteTarget).split(path.sep).join('/') || '.'
+  const relativeTarget =
+    path.relative(docsRoot, absoluteTarget).split(path.sep).join('/') || '.'
   const encodedTarget = relativeTarget
     .split('/')
     .map((segment) => encodeURIComponent(segment))
@@ -78,7 +82,10 @@ sources.push(
 
 const blocks = []
 for (const sourcePath of sources) {
-  const relativePath = path.relative(docsRoot, sourcePath).split(path.sep).join('/')
+  const relativePath = path
+    .relative(docsRoot, sourcePath)
+    .split(path.sep)
+    .join('/')
   const content = transformMarkdownLinkTargets(
     (await fs.readFile(sourcePath, 'utf8')).replace(/\r\n/g, '\n').trimEnd(),
     (target) => rebaseLinkTarget(target, sourcePath),
@@ -113,9 +120,14 @@ if (mode === '--write') {
   } else {
     const temporaryPath = `${masterPath}.tmp-${process.pid}`
     try {
-      await fs.writeFile(temporaryPath, expected, { encoding: 'utf8', mode: masterMode })
+      await fs.writeFile(temporaryPath, expected, {
+        encoding: 'utf8',
+        mode: masterMode,
+      })
       await fs.rename(temporaryPath, masterPath)
-      console.log(`Synchronized ${path.relative(repoRoot, masterPath)} from ${sources.length} sources.`)
+      console.log(
+        `Synchronized ${path.relative(repoRoot, masterPath)} from ${sources.length} sources.`,
+      )
     } finally {
       await fs.unlink(temporaryPath).catch((error) => {
         if (error.code !== 'ENOENT') throw error
@@ -123,8 +135,12 @@ if (mode === '--write') {
     }
   }
 } else if (actual !== expected) {
-  console.error('Master specification is stale. Run: node scripts/sync-master-spec.mjs --write')
+  console.error(
+    'Master specification is stale. Run: node scripts/sync-master-spec.mjs --write',
+  )
   process.exit(1)
 } else {
-  console.log(`Master specification matches ${sources.length} authoritative sources.`)
+  console.log(
+    `Master specification matches ${sources.length} authoritative sources.`,
+  )
 }

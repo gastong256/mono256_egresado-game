@@ -4,7 +4,11 @@ function isProtected(index, ranges) {
 
 function isEscaped(line, index) {
   let backslashes = 0
-  for (let cursor = index - 1; cursor >= 0 && line[cursor] === '\\'; cursor -= 1) {
+  for (
+    let cursor = index - 1;
+    cursor >= 0 && line[cursor] === '\\';
+    cursor -= 1
+  ) {
     backslashes += 1
   }
   return backslashes % 2 === 1
@@ -99,20 +103,24 @@ function normalizeReferenceLabel(label) {
 }
 
 function markdownTokens(line, state) {
-  const openingFence = !state.fence && !state.inComment
-    ? line.match(/^\s{0,3}(`{3,}|~{3,})/)
-    : null
+  const openingFence =
+    !state.fence && !state.inComment
+      ? line.match(/^\s{0,3}(`{3,}|~{3,})/)
+      : null
   if (openingFence) {
-    state.fence = { character: openingFence[1][0], length: openingFence[1].length }
+    state.fence = {
+      character: openingFence[1][0],
+      length: openingFence[1].length,
+    }
     return { spans: [], definitions: [], uses: [] }
   }
 
   if (state.fence) {
     const closingFence = line.match(/^\s{0,3}(`+|~+)\s*$/)
     if (
-      closingFence
-      && closingFence[1][0] === state.fence.character
-      && closingFence[1].length >= state.fence.length
+      closingFence &&
+      closingFence[1][0] === state.fence.character &&
+      closingFence[1].length >= state.fence.length
     ) {
       state.fence = null
     }
@@ -144,9 +152,9 @@ function markdownTokens(line, state) {
 
     const labelStart = line.lastIndexOf('[', opening)
     if (
-      labelStart === -1
-      || isProtected(labelStart, protectedContent)
-      || isEscaped(line, labelStart)
+      labelStart === -1 ||
+      isProtected(labelStart, protectedContent) ||
+      isEscaped(line, labelStart)
     ) {
       cursor = opening + 2
       continue
@@ -159,7 +167,10 @@ function markdownTokens(line, state) {
     }
 
     const hasClosingParenthesis = line.indexOf(')', span.end) !== -1
-    if (hasClosingParenthesis && !spans.some((existing) => existing.start === span.start)) {
+    if (
+      hasClosingParenthesis &&
+      !spans.some((existing) => existing.start === span.start)
+    ) {
       spans.push(span)
     }
     cursor = Math.max(span.end, opening + 2)
@@ -168,9 +179,9 @@ function markdownTokens(line, state) {
   for (const match of line.matchAll(/!?\[([^\]]+)\]\[([^\]]*)\]/g)) {
     const labelStart = line.indexOf('[', match.index)
     if (
-      match[1].startsWith('^')
-      || isProtected(labelStart, protectedContent)
-      || isEscaped(line, labelStart)
+      match[1].startsWith('^') ||
+      isProtected(labelStart, protectedContent) ||
+      isEscaped(line, labelStart)
     ) {
       continue
     }
@@ -217,7 +228,9 @@ export function collectMarkdownReferences(content) {
 
   content.split('\n').forEach((line, lineIndex) => {
     const tokens = markdownTokens(line, state)
-    definitions.push(...tokens.definitions.map((label) => ({ label, line: lineIndex + 1 })))
+    definitions.push(
+      ...tokens.definitions.map((label) => ({ label, line: lineIndex + 1 })),
+    )
     uses.push(...tokens.uses.map((label) => ({ label, line: lineIndex + 1 })))
   })
 

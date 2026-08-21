@@ -7,31 +7,36 @@ description: Verificar un cambio terminado de codigo, contenido, documentacion o
 
 1. Inspecciona `git status`, el diff y el tipo de cambio. Preserva fallos preexistentes y separalos de regresiones nuevas con evidencia.
 2. Lee la [Definition of Done](../../../docs/06-delivery/definition-of-done.md), [testing strategy](../../../docs/04-quality/testing-strategy.md) y la fuente de la feature.
-3. Descubre el package manager desde el lockfile y los comandos desde scripts/config del repositorio. No inventes `npm`, `pnpm` o nombres de scripts.
+3. Confirma el runtime/package manager fijados con `pnpm toolchain:check` y un install congelado desde `pnpm-lock.yaml`. Usa los scripts de `package.json`; no inventes comandos ni sustituyas el package manager.
 4. Ejecuta el conjunto minimo que cubre el riesgo y amplia ante fallos o cambios transversales.
 
-## Gates disponibles antes del scaffold
+## Gate canonico
 
 Desde la raiz:
 
 ```bash
-node scripts/validate-agent-workspace.mjs
-node scripts/sync-master-spec.mjs --check
+pnpm install --frozen-lockfile
+pnpm verify
 git diff --check
 ```
 
-Valida ademas JSON u otros artefactos tocados con el parser real disponible.
+`pnpm verify` cubre infraestructura agentica y master, formato, lint/fronteras, TypeScript, coverage, build y smoke E2E. No reemplaza gates que requieren Supabase/Docker ni validaciones especializadas de contenido o gameplay.
 
-## Gates despues del scaffold
+## Gates selectivos
 
-Usa los scripts canonicos que materialicen install locked, lint, typecheck, unit/property, content validation, build y E2E relevante. Suma segun el cambio:
+Suma segun el cambio:
 
 - engine/scoring/RNG: property tests, replay y golden seeds;
 - contenido procedural: schema, solver/invariantes, simulacion de seeds y revision UI;
-- API/DB: integration, idempotencia, migracion, indices y permisos/RLS;
+- API/DB: `pnpm db:start`, `pnpm db:reset`, `pnpm db:lint`, `pnpm db:types`, integration, idempotencia, migracion, indices y permisos/RLS; termina con `pnpm db:stop`;
 - UI: viewport mobile/desktop, teclado, focus, reduced motion y errores de red;
+- contenedores/deploy: `pnpm docker:build`, health check del runner no-root, `pnpm docker:up`, conectividad app→Supabase y `pnpm docker:down`;
 - feria: E2E, carga, pending sync, fallback, runbook y version freeze;
-- seguridad/privacidad: threat cases, secret/dependency scan y logs sin PII.
+- seguridad/privacidad: `pnpm secrets:check`, `pnpm security:audit`, threat cases y logs sin PII;
+- release publico: `pnpm release:check`; si falla, la conclusion de release es `fail` aunque los checks de desarrollo pasen;
+- skills: valida cada `SKILL.md` cambiado con el `quick_validate.py` oficial disponible en el entorno.
+
+Para un cambio pequeno podes ejecutar primero `pnpm format:check`, `pnpm lint`, `pnpm typecheck` o el archivo de test relevante, pero el reporte debe distinguir esa evidencia del gate completo. Valida JSON/YAML/TOML u otros artefactos tocados con su parser real cuando este disponible.
 
 No instales tooling solo para hacer pasar un gate salvo que la tarea lo autorice. No corrijas problemas fuera de scope sin distinguirlos.
 

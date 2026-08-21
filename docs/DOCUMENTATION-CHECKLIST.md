@@ -37,6 +37,8 @@
 - [x] Analytics/observabilidad.
 - [x] Ambientes/deploy.
 - [x] ADRs.
+- [x] Fronteras del monolito modular y dirección de dependencias ejecutable.
+- [x] Toolchain reproducible con gate de consistencia e imagen standalone sin cambiar la topología Vercel.
 
 ## Calidad
 - [x] Unit/integration/E2E.
@@ -44,6 +46,7 @@
 - [x] Validación de contenido.
 - [x] NFR.
 - [x] Threat model.
+- [x] Gates reales de la base, cobertura acotada y checks contextuales de DB/Docker.
 
 ## Operación
 - [x] Runbook de feria.
@@ -54,6 +57,7 @@
 - [x] Backlog priorizado.
 - [x] Definition of Done.
 - [x] Convenciones de repo.
+- [x] CI reproducible, Dependabot y bloqueo de release por dependencia.
 
 ## Referencia
 - [x] Investigación y fuentes.
@@ -68,6 +72,12 @@
 - [x] Política de dependencias/decisiones y estrategia MCP.
 - [x] Skills de proyecto acotadas y validables.
 - [x] Checks de links, manifest y sincronización del master.
+- [x] Entorno de desarrollo nativo/contenedorizado y operación local de Supabase.
+
+## Bloqueo técnico temporal
+
+- [x] Next.js `16.3.1` identificado como base exclusivamente local.
+- [ ] Release público habilitado: requiere Next.js `>=16.3.2`, lockfile regenerado, `pnpm release:check` y `pnpm verify` verdes.
 
 ## Gaps intencionales que requieren evidencia del proyecto
 

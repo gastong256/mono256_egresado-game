@@ -1930,6 +1930,54 @@ El ranking oficial se particiona por `game_event`/ruleset relevante. Una feria f
 
 ---
 
+# FILE: 03-architecture/adr/ADR-010-reproducible-node-pnpm-container-toolchain.md
+
+# ADR-010 — Toolchain reproducible y artefacto contenedorizado portable
+
+- Estado: Aceptado
+- Fecha: 2026-08-20
+
+## Contexto
+
+La aplicacion web vive en el mismo repositorio que la documentacion y necesita un entorno reproducible para desarrollo local, CI y builds de produccion. La eleccion de runtime, package manager, ubicacion de la aplicacion y estrategia de imagen afecta scripts, lockfile, cache, pipelines, onboarding y despliegue.
+
+ADR-001 fija Next.js/TypeScript como plataforma y ADR-002 fija un monolito modular con BFF. La topologia de produccion aceptada sigue siendo Next.js desplegado en Vercel, con PostgreSQL gestionado por Supabase.
+
+## Decision
+
+- Usar Node.js 24 LTS como major de runtime. El repositorio fija una version 24.x soportada y segura mediante sus archivos de toolchain; una actualizacion compatible de patch no requiere modificar este ADR.
+- Usar pnpm como unico package manager y declarar su version en `package.json`. `pnpm-lock.yaml` es la fuente reproducible de resolucion de dependencias.
+- Mantener una unica aplicacion Next.js en la raiz del repositorio. No introducir workspaces, monorepo, Turborepo ni una aplicacion anidada sin una decision posterior.
+- Usar instalaciones con lockfile congelado en CI y en builds contenedorizados.
+- Producir una imagen multi-stage basada en la salida standalone de Next.js como artefacto portable y verificable.
+- Usar Compose para el workflow local contenedorizado y la paridad de entorno. El desarrollo nativo con pnpm sigue siendo el camino rapido local.
+- Mantener Vercel como topologia canonica de despliegue. La imagen Docker no selecciona por si sola un proveedor alternativo ni reemplaza Vercel; cambiar esa topologia requiere una decision arquitectonica posterior.
+
+## Consecuencias
+
+### Positivas
+
+- instalaciones y builds repetibles entre maquinas, CI y contenedores;
+- una superficie de comandos unica para humanos y agentes;
+- menor complejidad que un workspace o monorepo prematuro;
+- artefacto portable para pruebas de paridad y una eventual alternativa de hosting;
+- separacion explicita entre empaquetado contenedorizado y proveedor de produccion.
+
+### Negativas
+
+- Node.js y pnpm deben mantenerse coordinados en metadata, CI, Docker y documentacion;
+- el workflow contenedorizado agrega tiempo de build y mantenimiento adicional al camino nativo;
+- la salida standalone debe verificarse despues de upgrades relevantes de Next.js;
+- cambiar package manager, major de runtime o topologia canonica exige una migracion transversal.
+
+## Alternativas descartadas
+
+- Crear una aplicacion o workspace anidado: agrega rutas, tooling y limites de paquete sin necesidad para un unico producto.
+- Mantener instalaciones no congeladas: permite drift entre desarrollo, CI e imagen.
+- Tratar Docker como reemplazo implicito de Vercel: cambiaría la topologia aceptada sin evaluar operacion, observabilidad ni migracion.
+
+---
+
 # FILE: 03-architecture/analytics-observability.md
 
 # Analytics y observabilidad
@@ -2135,27 +2183,25 @@ Cambios incompatibles usan `/v2` o negociación explícita. Cambios de reglas de
 
 # Arquitectura general
 
-## Estilo
+## Estado y estilo
 
-**Modular monolith web + Backend for Frontend**, con motor de juego compartido como paquete TypeScript puro.
+Egresado adopta un **monolito modular web + Backend for Frontend (BFF)** en una única aplicación Next.js ubicada en la raíz del repositorio. El motor de juego es una frontera de TypeScript puro dentro de esa aplicación, no un paquete publicable ni un servicio separado.
 
-## Stack baseline
+La base técnica actual implementa el shell, los límites de módulos, la validación de entorno, los adaptadores iniciales de Supabase y los gates de calidad. Todavía no implementa reglas de juego, autenticación, tablas de producto ni contratos online de runs. Esas capacidades deben respetar las decisiones y preguntas abiertas existentes cuando se incorporen.
 
-- Next.js 16.x / App Router.
-- React.
-- TypeScript estricto.
-- Tailwind CSS.
-- Zustand para estado interactivo local.
-- Zod para schemas/validación en límites.
-- PostgreSQL gestionado por Supabase.
-- Vercel para web y Route Handlers/Functions.
-- Vitest para unidad/property tests.
-- Playwright para E2E.
-- Sentry u observabilidad equivalente cuando el MVP público lo justifique.
+## Stack baseline implementado
 
-La versión exacta se fija por lockfile. Las actualizaciones de seguridad no requieren ADR salvo que cambien comportamiento/arquitectura.
+- Node.js 24 LTS y pnpm como toolchain reproducible según [ADR-010](03-architecture/adr/ADR-010-reproducible-node-pnpm-container-toolchain.md).
+- Next.js 16 / App Router, React y TypeScript estricto.
+- Tailwind CSS para estilos.
+- Zod para validación de configuración y, cuando corresponda, límites de entrada.
+- PostgreSQL gestionado por Supabase como persistencia aceptada; la integración es opcional en la base actual.
+- Vercel como topología canónica de producción.
+- Vitest, Testing Library, fast-check y Playwright para la base automatizada.
 
-## Context diagram
+Las versiones exactas están fijadas en `package.json` y `pnpm-lock.yaml`. No se incorpora Zustand ni una plataforma de observabilidad hasta que una necesidad implementada lo justifique. El release público permanece bloqueado mientras Next.js sea `16.3.1`: `pnpm release:check` exige `>=16.3.2` antes de publicar.
+
+## Diagrama de contexto objetivo
 
 ```mermaid
 flowchart LR
@@ -2164,79 +2210,88 @@ flowchart LR
     P[Pantalla pública] --> W
     W --> API[Next.js BFF / Route Handlers]
     API --> DB[(PostgreSQL / Supabase)]
-    API --> OBS[Logs / Error tracking]
+    API -. proveedor por decidir .-> OBS[Logs / Error tracking]
     DB -. opcional .-> RT[Supabase Realtime]
-    RT -. leaderboard .-> P
+    RT -. leaderboard futuro .-> P
 ```
 
-## Container view
+El diagrama conserva la topología aceptada, pero no implica que observabilidad externa, Realtime, ranking o persistencia de runs estén implementados en la base técnica.
+
+## Contenedores y ejecución objetivo
 
 ```mermaid
 flowchart TD
-    subgraph Browser
+    subgraph Browser[Browser no confiable]
       UI[React UI]
-      STORE[Zustand / Session]
-      ENGINE[Game Engine TS]
-      CACHE[Checkpoint local]
+      ENGINE[Game core TypeScript]
+      STATE[Estado/checkpoint local futuro]
       UI --> ENGINE
-      ENGINE --> STORE
-      STORE --> CACHE
+      ENGINE --> STATE
     end
 
-    subgraph Vercel
-      WEB[Next.js]
-      ROUTES[Route Handlers]
-      VERIFY[Run verifier / scoring]
-      WEB --> ROUTES
-      ROUTES --> VERIFY
+    subgraph Runtime[Next.js en Vercel]
+      APP[App Router]
+      ROUTES[Route Handlers / BFF]
+      USECASES[Casos de uso autoritativos]
+      APP --> ROUTES
+      ROUTES --> USECASES
     end
 
     DB[(Supabase Postgres)]
-    Browser --> WEB
-    ROUTES --> DB
-    VERIFY --> DB
+    Browser --> APP
+    USECASES --> DB
 ```
 
-## Principio de ejecución
+El juego activo se ejecutará localmente para minimizar latencia y dependencia de red. Para runs oficiales, el servidor deberá crear la configuración, validar la finalización, reproducir acciones con el motor versionado, calcular el resultado oficial y persistirlo. El browser sólo previsualiza; no es autoridad de score ni de estado final.
 
-El juego activo se ejecuta localmente para minimizar latencia y dependencia de red. El servidor:
-- crea runs oficiales;
-- proporciona configuración/seed;
-- valida finalización;
-- reproduce score;
-- persiste resultados;
-- sirve ranking.
+## Fronteras de módulos
 
-## Fronteras
+La dirección de dependencias implementada se controla con ESLint y un `tsconfig` separado para el core:
 
-### `game-core`
-Sin React, DOM, fetch ni DB.
+```mermaid
+flowchart LR
+    APP[src/app] --> COMPONENTS[src/components]
+    APP --> GAME[src/game]
+    APP --> SERVER[src/server]
+    APP --> LIB[src/lib]
+    APP --> CONFIG[src/config]
+    COMPONENTS --> GAME
+    COMPONENTS --> LIB
+    SERVER --> GAME
+    SERVER --> CONTENT[src/content, reservada]
+    SERVER --> LIB
+    SERVER --> CONFIG
+    CONTENT --> GAME
+    CONTENT --> LIB
+    LIB --> CONFIG
+```
 
-### `game-content`
-Definiciones de templates, pools y versiones.
+- `src/app`: composición, layouts, páginas y entrada HTTP. Puede invocar casos de uso de servidor, pero no importar persistencia directamente.
+- `src/components`: UI. Puede consumir `game` y utilidades de `lib`; no accede a servidor, configuración secreta ni Supabase directamente.
+- `src/game`: core TypeScript puro y determinista. En dependencias internas sólo puede importar `game`; no usa React, Next.js, DOM, red, DB, almacenamiento del browser, hora global ni `Math.random()`.
+- `src/content`: frontera reservada para contenido como datos sobre interacciones existentes. Se crea cuando exista contenido ejecutable aceptado; no contiene componentes ad hoc.
+- `src/server`: casos de uso autoritativos y adaptadores de persistencia. El subárbol `persistence` no es una API para `app`.
+- `src/lib`: adaptadores y utilidades transversales sin reglas de producto; el acceso público a Supabase vive aquí detrás de un adaptador aprobado.
+- `src/config`: schemas y lectura de configuración pública/server-only; no depende de capas superiores.
+- `supabase/`: configuración local, migraciones SQL y seed. La migración inicial es deliberadamente neutra y no decide un schema de juego.
 
-### `game-ui`
-Componentes y adapters de interacción.
-
-### `server`
-Casos de uso autoritativos y persistencia.
+Los imports directos de `@supabase/supabase-js` están permitidos sólo en los adaptadores aprobados. Las dependencias externas no autorizan saltarse las fronteras internas.
 
 ## Topología de despliegue
 
-- CDN/edge para assets estáticos.
-- Next.js/Vercel Functions para endpoints.
-- Región de funciones cercana al Postgres cuando se configure producción.
-- Postgres como source of truth de runs oficiales.
+- Vercel sirve la aplicación Next.js y sus Route Handlers/Functions; CDN/edge puede servir assets estáticos.
+- Supabase aloja PostgreSQL cuando el entorno tiene persistencia configurada.
+- La región de funciones debe quedar cercana a Postgres al configurar producción.
+- La imagen Docker standalone es un artefacto portable y un gate de paridad; no reemplaza a Vercel ni selecciona otro proveedor.
+- Postgres será la fuente de verdad de runs oficiales. La base actual no crea esas tablas ni vuelve obligatorio a Supabase para levantar el shell.
+
+Los detalles operativos están en [despliegue y ambientes](03-architecture/deployment-and-environments.md).
 
 ## Escalabilidad
 
-Para feria escolar, esta arquitectura tiene margen amplio. No introducir microservicios, colas o Kubernetes sin evidencia de necesidad.
+Para una feria escolar, el monolito modular ofrece margen suficiente. No introducir microservicios, colas, Kubernetes, workspaces o un monorepo sin evidencia y una revisión arquitectónica.
 
-Posibles extracciones futuras:
-- servicio de generación/análisis matemático intensivo;
-- worker de analytics;
-- content service/editor;
-- leaderboard especializado si escala masivamente.
+Posibles extracciones futuras —no decisiones actuales— incluyen procesamiento matemático intensivo, analytics, edición de contenido o un leaderboard especializado. Los triggers de [ADR-002](03-architecture/adr/ADR-002-modular-monolith-bff.md) gobiernan cualquier reevaluación.
 
 ---
 
@@ -2347,60 +2402,119 @@ Preferir query/view/materialized view según escala real.
 
 # Despliegue y ambientes
 
+## Topología aceptada
+
+Vercel es el destino canónico para la aplicación Next.js y sus Route Handlers; Supabase gestiona PostgreSQL cuando la persistencia está habilitada. La imagen Docker standalone definida por [ADR-010](03-architecture/adr/ADR-010-reproducible-node-pnpm-container-toolchain.md) es un artefacto portable para paridad y verificación, no un cambio de proveedor de producción.
+
+La base actual es local y no contiene gameplay, autenticación ni tablas de producto. No debe desplegarse públicamente con Next.js `16.3.1`: el gate `pnpm release:check` exige actualizar a `>=16.3.2`, regenerar el lockfile y volver a ejecutar la verificación completa.
+
 ## Ambientes
 
-### Local
-Desarrollo, DB local o proyecto dev.
+| Ambiente | Propósito | Datos y persistencia |
+|---|---|---|
+| Local nativo | Camino rápido con `pnpm dev`; Supabase local es opcional. | `.env.local` ignorado por Git; DB local o proyecto de desarrollo aislado. |
+| Local Compose | Paridad del runtime Linux y prueba del desarrollo contenedorizado. | El browser usa la URL pública del host y el proceso server usa la URL interna del contenedor. |
+| Preview | Cada PR/despliegue de Vercel cuando se habilite. | Recursos aislados; nunca datos reales de producción. |
+| Staging | Configuración cercana a feria para E2E, migraciones, carga y rehearsal. | Proyecto Supabase separado de producción. |
+| Production | Evento real y juego público, después de cerrar todos los gates de release. | Secretos gestionados por el proveedor y datos bajo la política legal/retención que aún debe cerrarse. |
 
-### Preview
-Cada PR/despliegue de Vercel. Nunca usar datos reales de producción.
+La política legal y de retención, los SLO operativos y los requisitos exactos de rehearsal permanecen abiertos en [preguntas 30 y 31](07-reference/open-questions.md#operación-seguridad-y-privacidad).
 
-### Staging
-Configuración cercana a feria para pruebas E2E/carga.
+## Configuración y URLs de Supabase
 
-### Production
-Evento real y juego público.
+La configuración se valida al iniciar y puede quedar completamente ausente para ejecutar el shell:
 
-## CI
+- `NEXT_PUBLIC_APP_URL`: origen público de la aplicación; localmente tiene default `http://localhost:3000`.
+- `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`: par público obligatorio en conjunto. La publishable key no es un secreto y sólo es segura junto con grants/RLS mínimos.
+- `SUPABASE_INTERNAL_URL`: URL server-only opcional. En Compose usa por defecto `http://kong:8000`, alias interno del gateway en la red Docker local compartida.
+- `SUPABASE_SECRET_KEY`: credencial privilegiada server-only, sin default y nunca prefijada con `NEXT_PUBLIC_`.
 
-Pipeline mínimo:
-1. install locked dependencies;
-2. lint;
-3. typecheck;
-4. unit/property tests;
-5. content validation;
-6. build;
-7. E2E smoke para cambios relevantes.
+En desarrollo nativo, el server puede reutilizar `NEXT_PUBLIC_SUPABASE_URL`. En Compose, el browser conserva `http://127.0.0.1:54321` mientras el proceso server usa la red `egresado-supabase-local` y el alias interno `http://kong:8000`. La red compartida resuelve conectividad contenedor a contenedor, pero no garantiza por sí sola que los puertos publicados queden aislados de la LAN.
+
+### Exposición de puertos en Docker Desktop
+
+El wrapper solicita el binding oficial `com.docker.network.bridge.host_binding_ipv4=127.0.0.1` al crear la red. Esa opción expresa la intención de loopback, pero Docker Desktop puede conservarla en la red y aun publicar un contenedor con `HostIp` real `0.0.0.0` o `::`. Por eso la opción de red no se trata como evidencia suficiente.
+
+Después de iniciar Supabase, el wrapper inspecciona los bindings efectivos de todos sus contenedores y sólo considera loopback a `127.0.0.1` o `::1`. `pnpm db:start` es fail-closed: ante cualquier otro `HostIp` —incluidos `0.0.0.0` y `::`— intenta detener el stack y falla. `pnpm db:reset` y `pnpm docker:up` también rechazan por defecto un stack existente que no sea loopback-only. `pnpm db:status` reporta `loopbackOnly` y emite una advertencia si detecta exposición.
+
+Sólo para uso local en una red de confianza, con firewall del host verificado, los wrappers aceptan el flag explícito `--allow-non-loopback` o `EGRESADO_ALLOW_NON_LOOPBACK_SUPABASE=true` para automatización local. La excepción imprime una advertencia visible y no convierte el stack en apto para una red compartida, CI, staging ni producción. No crear un script alternativo ni persistir este override como default de proyecto.
+
+`pnpm db:env` genera `.env.local` desde Supabase local sin imprimir valores secretos. El archivo no entra en la imagen final ni en Git. Los adaptadores server-only prefieren la URL interna y la configuración pública nunca incluye `SUPABASE_SECRET_KEY`.
+
+## Caminos locales
+
+El camino nativo es el ciclo rápido:
+
+```bash
+pnpm install --frozen-lockfile
+pnpm dev
+```
+
+Supabase se inicia por separado sólo si la tarea necesita persistencia:
+
+```bash
+pnpm db:start
+pnpm db:env
+pnpm db:reset
+pnpm db:types
+```
+
+Si Docker Desktop no respeta el binding solicitado, `pnpm db:start` falla e intenta dejar el stack detenido. Corregir la configuración de Docker/firewall es la opción preferida; la excepción `pnpm db:start --allow-non-loopback` queda limitada al escenario local de confianza descrito arriba. Como el permiso no persiste, repetir explícitamente `pnpm db:reset --allow-non-loopback` o `pnpm docker:up --allow-non-loopback` si ese workflow necesita continuar con el stack ya inspeccionado; la variable de opt-in ofrece el mismo comportamiento para automatización local.
+
+El camino contenedorizado levanta la etapa `development` con bind mount del repositorio y volúmenes separados para `node_modules` y `.next`:
+
+```bash
+pnpm docker:up
+pnpm docker:down
+```
+
+La guía completa de prerrequisitos, troubleshooting y limpieza está en [entorno de desarrollo](08-engineering/development-environment.md).
+
+## Imagen de producción portable
+
+El `Dockerfile` multi-stage:
+
+1. fija Node.js 24.19.0 por tag y digest e instala pnpm 11.22.0;
+2. instala con `pnpm install --frozen-lockfile`;
+3. activa `NEXT_STANDALONE=true` sólo en la etapa `builder`;
+4. copia la salida standalone y assets al runtime mínimo;
+5. ejecuta como usuario no root `node` e incluye un health check sobre `/api/health`.
+
+El build normal de Vercel no activa salida standalone. Esta condición evita cambiar el contrato de despliegue canónico mientras permite verificar el artefacto Docker con `pnpm docker:build`.
+
+Las variables `NEXT_PUBLIC_*` quedan congeladas por Next.js durante el build. El `Dockerfile` acepta sólo esos valores públicos como `--build-arg`; una imagen configurada para otro origen debe reconstruirse. `SUPABASE_SECRET_KEY` y `SUPABASE_INTERNAL_URL` no son build args: se inyectan al runtime server desde el ambiente/secret manager. Nunca reutilizar una imagen con configuración pública de un ambiente distinto sin reconstruirla.
+
+## CI y gates de release
+
+GitHub Actions usa Node desde `.node-version`, pnpm desde `packageManager` y dependencias congeladas. `pnpm toolchain:check` exige que `.node-version`, `.nvmrc`, `engines`, `packageManager` y el `Dockerfile` permanezcan alineados. Las actions están fijadas por SHA y los permisos del workflow son sólo de lectura.
+
+El job `Quality and build` ejecuta coherencia del toolchain, validación documental/agentic, scanner de secretos, auditoría del árbol completo de dependencias, formato, lint/fronteras arquitectónicas, typecheck, cobertura y build. El job `Browser smoke tests` instala Chromium, construye la aplicación, ejecuta Playwright en desktop/mobile y conserva el reporte. El job `Production container smoke` prueba el runner standalone no-root y su health. Dependabot revisa semanalmente dependencias npm, GitHub Actions y Docker.
+
+Antes de un release público también deben pasar:
+
+- `pnpm release:check`; hoy falla de forma deliberada hasta instalar Next.js `>=16.3.2`;
+- `pnpm security:audit` y revisión de advisories/transitivas;
+- migraciones, RLS/permisos y pruebas de integración cuando exista schema de producto;
+- golden replays, validación de contenido, rehearsal y fallback cuando exista gameplay/release de feria.
+
+Un CI verde de la base técnica no reemplaza esos gates contextuales.
 
 ## Migraciones
 
-- SQL/migration files versionados.
-- Aplicación controlada a staging antes de prod.
-- No editar schema productivo manualmente sin registrar migración.
+- Los cambios viven como SQL versionado en `supabase/migrations/`.
+- `pnpm db:reset` demuestra que el historial reconstruye la DB local; `pnpm db:lint` revisa el schema y `pnpm db:types` regenera los tipos consumidos por TypeScript.
+- Toda migración de producto necesita revisión de índices y RLS/permisos, y se aplica a staging antes de producción.
+- No editar el schema productivo manualmente sin registrar una migración.
+- La migración inicial sólo valida el pipeline; no decide el modelo de runs, eventos o acciones.
 
-## Región
+## Región, rollback y PWA
 
-Configurar funciones cerca de la región de base de datos para minimizar latencia.
+- Configurar funciones cerca de la región de la base de datos antes de producción.
+- Mantener disponible el deploy anterior y preferir migraciones backward-compatible.
+- `game_version`, `ruleset_version` y `content_version` evitan reinterpretar runs incompatibles; el mecanismo de conservación histórica sigue abierto.
+- La base incluye manifest responsive. Un service worker avanzado se difiere hasta estabilizar caching y versionado para no servir assets o reglas incompatibles.
 
-## Feature flags
-
-Usar configuración simple para:
-- realtime leaderboard;
-- challenge types experimentales;
-- herramientas;
-- perfiles nuevos.
-
-No crear plataforma de flags propia en MVP.
-
-## Rollback
-
-- deploy anterior disponible;
-- migrations backward-compatible cuando sea posible;
-- ruleset/content version evita reinterpretar runs viejas.
-
-## PWA
-
-Primera versión incluye manifest/responsive. Service worker avanzado se incorpora cuando el caching esté estabilizado para evitar clientes con assets/reglas incompatibles durante iteración rápida.
+Los feature flags futuros deben limitarse a necesidades verificadas; no crear una plataforma propia de flags para el MVP.
 
 ---
 
@@ -2532,87 +2646,99 @@ Una run sólo puede reanudarse/reproducirse con el engine compatible con sus ver
 - Minimizar datos de menores.
 - Reducir superficie de abuso.
 - Mantener secretos sólo server-side.
+- Detectar configuración inválida y dependencias vulnerables antes de publicar.
 
 ## Privacidad por diseño
 
-MVP no necesita:
-- email;
-- contraseña;
-- apellido;
-- edad exacta;
-- escuela;
-- ubicación precisa;
-- redes sociales.
+El MVP no necesita email, contraseña, apellido, edad exacta, escuela, ubicación precisa ni redes sociales. El nickname es un pseudónimo público y debe tratarse como contenido moderable.
 
-Nickname es pseudónimo público y debe tratarse como contenido moderable.
+La base técnica no implementa Auth ni crea tablas de participantes, runs o ranking. Incorporarlas requiere respetar el [modelo de datos](03-architecture/data-model.md), [ADR-008](03-architecture/adr/ADR-008-anonymous-identity.md), el threat model y las preguntas abiertas de contratos y retención; no se infiere identidad a partir de los defaults de Supabase local.
 
 ## Trust boundaries
 
-El browser es no confiable.
+El browser es no confiable. No confiar en score, elapsed time sin límites/validación, challenge result, flags, stage final ni versión declarada arbitrariamente.
 
-No confiar en:
-- score;
-- elapsed time sin límites/validación;
-- challenge result;
-- flags;
-- stage final;
-- versión declarada arbitrariamente.
+Cuando se implementen runs oficiales, el BFF debe reconstruir el score desde una configuración emitida y una secuencia de acciones válidas. El cliente sólo puede previsualizar. Una run oficial debe asociarse a una sesión/cookie segura o un token firmado de corta vida; `runId` no es un secreto suficiente.
 
-## Scoring autoritativo
+Las rutas de `src/app` invocan casos de uso del server y no importan adaptadores de persistencia. La UI no accede a Supabase directamente. El game core no recibe red, DB, browser globals ni tiempo/aleatoriedad global.
 
-Servidor reconstruye score desde configuración emitida y secuencia de acciones.
+## Configuración y secretos
 
-## Token de run
+- Variables `NEXT_PUBLIC_*` se incorporan al bundle y nunca contienen secretos.
+- En el build Docker sólo se admiten esas variables públicas como argumentos. Se consideran visibles en el artefacto/cache y cambiar su valor requiere reconstruir; ninguna credencial server-only se pasa al builder.
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` es pública por diseño; su seguridad depende de grants/RLS mínimos, no de ocultarla.
+- `SUPABASE_SECRET_KEY` es privilegiada, server-only, sin default y sólo se consume desde el adaptador protegido con `server-only`.
+- `SUPABASE_INTERNAL_URL` es server-only para conectividad; no es una credencial y permite separar la ruta de red del server de la URL que usa el browser.
+- Los pares de URL/key pública se validan juntos durante build y arranque. Las URLs HTTP(S) rechazan credenciales embebidas y fragmentos; los mensajes de error identifican campos, no valores.
+- `.env.local` está ignorado por Git y no se copia al runtime Docker. El generador aplica `0600` en POSIX; en Windows se exige un checkout de usuario no compartido y una ACL del host equivalente cuando corresponda.
 
-Una run oficial debe estar asociada a sesión/cookie segura o token firmado de corta vida. No usar `runId` como único secreto.
+No imprimir, registrar, copiar a issues ni versionar el output completo de herramientas que incluyan credenciales locales. Usar `pnpm db:env` para generar el entorno local y comandos sanitizados de estado cuando estén disponibles.
 
-## Rate limits
+## Supabase y autorización
 
-Aplicar a:
-- creación de runs;
-- finish;
-- validación de nickname;
-- endpoints administrativos.
+Si una tabla queda expuesta por Data API, debe habilitar RLS y permisos mínimos antes de almacenar datos reales. Las operaciones autoritativas o privilegiadas quedan detrás del BFF y usan el adaptador server-only.
 
-## Supabase
+La migración inicial y el seed son neutrales: validan el pipeline sin abrir tablas de juego. Antes de una migración de producto se requieren revisión de RLS/grants, integración y regeneración de `src/lib/supabase/database.types.ts`.
 
-Si tablas quedan expuestas por Data API, habilitar RLS y permisos mínimos. Alternativamente mantener tablas críticas accesibles sólo desde server/BFF.
+El stack local conserva Postgres, PostgREST, Kong y el servicio Auth que Supabase CLI `2.115.0` necesita activo para informar las publishable/secret keys modernas. Data API expone sólo `public`; GraphQL queda fuera de la superficie local. Los signups generales y por email permanecen deshabilitados, y la aplicación no implementa sesiones, adapters Auth ni UI de login; este detalle del tooling local no constituye una decisión de identidad. Realtime, Storage, Studio, SMTP, Edge Runtime y analytics siguen deshabilitados.
 
-Nunca exponer secret/service role key al cliente.
+La red Docker solicita binding en `127.0.0.1`, pero esa opción no garantiza aislamiento efectivo en Docker Desktop. El wrapper inspecciona el `HostIp` publicado por cada contenedor después del arranque y sólo acepta `127.0.0.1` o `::1`. Ante cualquier otro binding —incluidos `0.0.0.0` y `::`— `db:start` intenta detener el stack y falla; `db:reset` y `docker:up` rechazan por defecto operar sobre él. El status sanitizado expone `loopbackOnly` sin revelar keys.
 
-## Moderación
+El flag explícito `--allow-non-loopback` o `EGRESADO_ALLOW_NON_LOOPBACK_SUPABASE=true` permiten continuar sólo para desarrollo local en una red de confianza, con firewall del host verificado, y siempre imprimen una advertencia. La variable existe para automatización local, no para persistir la excepción como default ni usarla en CI. Ningún opt-in mitiga una red no confiable: la CLI local carece de TLS y controles de producción. Nunca exponer deliberadamente sus puertos a Internet o a una LAN no confiable.
 
-- longitud acotada;
-- normalización Unicode;
-- lista de bloqueo básica;
-- revisión manual rápida;
-- capacidad de ocultar entrada.
+## Headers HTTP
 
-No intentar construir un filtro perfecto; mantener controles operacionales.
+Next.js aplica globalmente una baseline pequeña y verificable:
 
-## Logging
+- `X-Content-Type-Options: nosniff`;
+- `Referrer-Policy: strict-origin-when-cross-origin`;
+- `Permissions-Policy: camera=(), geolocation=(), microphone=()`;
+- `Content-Security-Policy: frame-ancestors 'none'`;
+- `X-Frame-Options: DENY` como defensa anti-framing compatible.
 
-No registrar payloads innecesarios con información personal. Redactar tokens y secretos.
+El smoke E2E comprueba estos valores sobre una respuesta real. La CSP completa de orígenes para scripts, estilos, imágenes y conexiones se difiere hasta conocer los assets y requisitos de runtime del producto; no inventar hoy una allowlist que se vuelva insegura o bloquee el framework. Este diferimiento no autoriza relajar `frame-ancestors`, y los headers no reemplazan HTTPS en producción, validación server-side ni encoding seguro de datos.
 
-## Dependencias
+## Dependencias y supply chain
 
-- lockfile versionado;
-- actualizaciones de seguridad regulares;
-- secret scanning;
-- headers seguros;
-- HTTPS obligatorio en producción.
+- `package.json` fija versiones exactas y `pnpm-lock.yaml` gobierna la resolución.
+- Desarrollo, CI y Docker instalan con lockfile congelado; `.npmrc` exige engines y peers compatibles.
+- `pnpm toolchain:check` detecta drift entre Node/pnpm fijados en metadata, proceso actual y Docker.
+- Los scripts de instalación permitidos se reducen a la dependencia nativa declarada en `pnpm-workspace.yaml`; ampliar esa lista exige revisar el paquete y su superficie de ejecución.
+- GitHub Actions usa referencias inmutables por SHA y permisos mínimos.
+- Dependabot revisa npm, Actions y la imagen base de Docker semanalmente.
+- `pnpm secrets:check` detecta formatos de credenciales de alta señal en archivos versionables sin imprimir valores; antes de publicar también se debe habilitar Secret Scanning y push protection en GitHub para cubrir historial y patrones administrados.
+- `pnpm security:audit` incluye dependencias de producción, desarrollo y tooling agentivo, y bloquea advisories de severidad alta o crítica; cualquier hallazgo requiere triage, no una excepción silenciosa.
+- La imagen portable fija Node por digest, usa un runtime mínimo, ejecuta como usuario no root e incorpora health check.
+
+### Bloqueo vigente de Next.js
+
+La base fija temporalmente Next.js `16.3.1`, pero el release público está bloqueado hasta `>=16.3.2` por el parche anunciado para el 26 de agosto de 2026. `pnpm release:check` expresa este gate y debe pasar, junto con el lockfile actualizado y `pnpm verify`, antes de cualquier despliegue público. No se presume que un build o CI verde mitigue esa condición.
+
+## Rate limits y moderación
+
+Cuando existan los endpoints correspondientes, aplicar rate limits a creación y finalización de runs, validación de nickname y operaciones administrativas.
+
+Los nicknames requieren longitud acotada, normalización Unicode, lista de bloqueo básica, revisión manual rápida y capacidad de ocultar una entrada. El mecanismo mínimo y el reset operativo para la feria siguen abiertos; no implementar un filtro o panel completo por inferencia.
+
+## Logging y health checks
+
+- No registrar payloads innecesarios con información personal, tokens, keys ni variables de entorno.
+- Redactar secretos y usar identificadores técnicos mínimos cuando se agregue trazabilidad.
+- `/api/health` es una sonda de liveness deliberadamente fija: no revela configuración, keys ni detalles de la DB.
+- El proveedor de analytics/error tracking, los datos enviados y su retención permanecen sin decidir.
 
 ## Amenazas de ranking
 
-Mitigaciones:
-- score server-side;
-- limits de tiempo/plausibilidad;
-- acción sequence válida;
-- run one-time completion;
-- detección de outliers;
-- ability to invalidate run.
+Mitigaciones objetivo:
 
-No prometer anti-cheat absoluto: el objetivo es impedir manipulación trivial y preservar integridad razonable en una feria escolar.
+- score server-side por replay;
+- límites de tiempo/plausibilidad;
+- secuencia de acciones válida;
+- finalización one-time;
+- detección de outliers;
+- capacidad operativa de invalidar una run.
+
+No prometer anti-cheat absoluto: el objetivo es impedir manipulación trivial y preservar integridad razonable en una feria escolar. La fórmula de score, las señales temporales y el contrato de replay siguen en [preguntas abiertas](07-reference/open-questions.md#engine-y-scoring).
 
 ---
 
@@ -2758,70 +2884,103 @@ Un nuevo desafío sobre interaction existente no debería exigir modificar routi
 
 # Estrategia de testing
 
-## Pirámide adaptada
+## Gates ejecutables de la base técnica
+
+La suite actual demuestra la infraestructura, no el comportamiento futuro del juego:
+
+- `tests/unit/`: schemas de entorno y frontera pura inicial de `game`.
+- `tests/component/`: render y semántica del shell de la base.
+- `tests/integration/`: contrato de liveness de `/api/health` sin depender de una DB.
+- `tests/property/`: combinaciones generadas de configuración pública/server-only.
+- `tests/e2e/`: smoke del shell y health en Chromium desktop y viewport Pixel 7, incluida ausencia de errores de consola.
+
+Vitest mide sólo los archivos de la base enumerados en `vitest.config.ts`, con thresholds de 85 % para statements, lines y functions, y 75 % para branches. Alcanzar esos umbrales no representa cobertura de gameplay todavía inexistente.
+
+## Verificación local
+
+`pnpm verify` es el gate integrado y exige la versión exacta de Node.js fijada en `.node-version` (`24.19.0` en esta baseline). Ejecuta en orden:
+
+1. coherencia de Node/pnpm entre metadata, proceso y Docker;
+2. validación del workspace agentic;
+3. sincronización del master documental;
+4. formato;
+5. lint, incluidas fronteras de arquitectura;
+6. TypeScript general y core sin DOM/Node;
+7. unit, component, integration y property tests con cobertura;
+8. build de producción;
+9. smoke E2E sobre el build.
+
+Comandos más estrechos para iteración:
+
+| Alcance | Comando |
+|---|---|
+| Coherencia del toolchain fijado | `pnpm toolchain:check` |
+| Unit/component/integration/property una vez | `pnpm test` |
+| Watch de Vitest | `pnpm test:watch` |
+| Cobertura y thresholds | `pnpm test:coverage` |
+| Build + Playwright | `pnpm test:e2e` |
+| Playwright sobre un build preparado | `pnpm test:e2e:only` |
+| Tipos de app + frontera de core | `pnpm typecheck` |
+| Lint + imports/límites prohibidos | `pnpm lint` |
+
+`pnpm release:check` es un gate adicional de seguridad: falla deliberadamente con Next.js `16.3.1` y debe pasar con `>=16.3.2` antes de publicar. No forma parte de `pnpm verify` porque hoy representa un bloqueo explícito, no una prueba verde de la base local.
+
+## CI
+
+GitHub Actions separa tres jobs:
+
+- `Quality and build`: instalación congelada, toolchain, documentación/workspace, formato, lint/fronteras, typecheck, cobertura y build.
+- `Browser smoke tests`: instalación congelada, Chromium con dependencias, build, E2E desktop/mobile y artefacto del reporte.
+- `Production container smoke`: build del target standalone, ejecución no-root y smoke de `/` y `/api/health` con publicación sólo en loopback del runner.
+
+CI no inicia Supabase ni el workflow Compose de desarrollo. Cuando un cambio toque esas superficies, ejecutar y reportar los gates manuales aplicables:
+
+- DB: `pnpm db:start`, `pnpm db:reset`, `pnpm db:lint` y `pnpm db:types`;
+- Docker desarrollo: `pnpm docker:up` y health check;
+- Docker portable: además del job CI, `pnpm docker:build` y smoke local de `/api/health` cuando cambie el runtime;
+- supply chain: `pnpm security:audit` y `pnpm release:check`.
+
+Agregar gates de DB/Compose a CI cuando exista una señal útil y estable que justifique su costo; no declarar cobertura CI si sólo se verificó localmente.
+
+## Pirámide objetivo para producto
 
 ### Unit tests
+
 - evaluadores matemáticos;
-- scoring;
-- perfiles;
-- reducers;
+- scoring y perfiles;
+- reducers y transiciones;
 - RNG helpers;
-- schemas.
+- schemas y reglas versionadas.
 
 ### Property-based / generative tests
-Críticos para contenido procedural.
 
-Propiedades:
-- todo challenge generado es válido;
-- existe solución cuando el template lo promete;
-- soluciones óptimas son realmente óptimas;
-- no hay divisiones por cero;
-- unidades consistentes;
-- valores visibles dentro de rangos;
-- replay produce mismo estado.
+Son críticos para contenido procedural. Deben demostrar que cada challenge generado es válido y solucionable cuando se promete, que las soluciones óptimas lo son, que no hay divisiones por cero, que unidades/rangos visibles son consistentes y que un replay reproduce el mismo estado.
 
 ### Integration tests
+
+Cuando existan contratos y schema ejecutables:
+
 - create run → persist;
 - finish → replay → score;
 - idempotencia;
-- leaderboard sólo completed/valid;
-- moderación.
+- leaderboard sólo con runs completed/valid;
+- RLS/grants y moderación.
 
 ### E2E Playwright
-- primera run;
-- desafío de cada interaction type;
-- refresh/reanudar;
-- finish online;
-- ranking;
-- viewport mobile y desktop;
-- keyboard accessibility básica.
 
-## Golden seeds
+Expandir la suite al implementar producto: primera run, cada interaction type, refresh/reanudación, finish online, ranking, viewport mobile/desktop y accesibilidad básica por teclado.
 
-Mantener una colección de seeds conocidas con resultados esperados. Sirven como regression suite del engine.
+## Golden seeds y simulaciones
 
-## Simulation tests
+Mantener golden seeds con resultados esperados después de decidir algoritmo PRNG, contrato de consumo y ruleset. Antes de un release de contenido, ejecutar simulaciones suficientes para detectar dificultad extrema, eventos imposibles/repetidos y distribuciones anómalas de perfiles.
 
-Antes de release de contenido:
-- ejecutar miles de runs automáticas;
-- detectar distribución extrema de dificultad;
-- encontrar eventos imposibles/repetidos;
-- medir frecuencia de profiles.
+No crear goldens que congelen decisiones todavía abiertas. Las preguntas 24–27 definen los gates previos para score, PRNG, compatibilidad histórica y señales temporales.
 
-## Visual regression
+## Visual regression y playtesting humano
 
-Recomendado para componentes de challenge, especialmente gráficos y layouts móviles.
+La regresión visual es recomendable cuando existan componentes de challenges, especialmente gráficos y layouts móviles. No se agrega una herramienta antes de tener una superficie visual estable que lo justifique.
 
-## Playtesting humano
-
-Automatización no valida diversión ni claridad. Cada batch relevante debe probarse con usuarios reales del rango objetivo cuando sea posible.
-
-Registrar:
-- dónde preguntan “¿qué tengo que hacer?”;
-- dónde leen dos veces;
-- dónde adivinan;
-- qué consecuencias comentan;
-- qué problemas quieren repetir.
+La automatización no valida diversión ni claridad. Cada batch relevante debe probarse con usuarios reales del rango objetivo cuando sea posible, registrando dónde preguntan qué hacer, releen, adivinan, comentan consecuencias o quieren repetir.
 
 ---
 
@@ -3175,67 +3334,118 @@ No mostrar datos que permitan identificar inequívocamente a un menor.
 
 # Convenciones de repositorio
 
-## Estructura propuesta
+## Estructura actual
+
+La aplicación Next.js vive en la raíz. `pnpm-workspace.yaml` existe para declarar scripts de instalación permitidos; no convierte el proyecto en monorepo ni define paquetes adicionales.
 
 ```text
-src/
-  app/
-    api/
-    play/
-    event/
-    leaderboard/
-  components/
-    game/
-    interactions/
-    ui/
-  game/
-    core/
-    rng/
-    scoring/
-    profiles/
-    challenges/
-    narrative/
-  content/
-    challenges/
-    storylets/
-    rulesets/
-  server/
-    runs/
-    events/
-    leaderboard/
-    moderation/
-  db/
-    migrations/
-  lib/
-tests/
-  unit/
-  property/
-  integration/
-  e2e/
-docs/
+.
+├── .codex/                 # MCPs de proyecto
+├── .github/                # CI y Dependabot
+├── .vscode/                # recomendaciones reproducibles del editor
+├── docs/                   # fuentes autoritativas y master generado
+├── Dockerfile              # imagen standalone multi-stage
+├── compose.yaml            # desarrollo contenedorizado
+├── package.json            # scripts y versiones directas exactas
+├── pnpm-lock.yaml          # resolución reproducible
+├── public/                 # assets públicos
+├── scripts/                # gates, DB env/types y automatización
+├── src/
+│   ├── app/                # App Router y Route Handlers/BFF
+│   ├── components/         # UI sin acceso directo a server/DB
+│   ├── config/             # entorno público y server-only validado
+│   ├── game/               # core TypeScript puro
+│   ├── lib/                # adapters/utilidades transversales
+│   ├── server/             # casos de uso y persistencia server-only
+│   └── instrumentation.ts  # validación de entorno al iniciar server
+├── supabase/
+│   ├── migrations/         # SQL versionado
+│   └── seed.sql
+└── tests/
+    ├── component/
+    ├── e2e/
+    ├── integration/
+    ├── property/
+    └── unit/
 ```
+
+`src/content/` se crea cuando exista contenido ejecutable aceptado. Las áreas de juego todavía no implementadas se agregan dentro de estas fronteras —por ejemplo RNG, scoring, profiles o challenges— sin adelantar una jerarquía vacía ni introducir packages/workspaces.
 
 ## Reglas de dependencia
 
-- `game/core` no importa `components`, `app`, DB ni navegador.
-- `content` puede importar tipos/schema, no UI.
-- `components` consume modelos del engine mediante adapters.
-- `server` puede ejecutar engine.
+- Dentro del repositorio, `src/game` sólo importa `src/game`; no depende de React, Next.js, Supabase, DOM, red, almacenamiento, hora global ni `Math.random()`.
+- `src/content` puede consumir tipos puros de `game` y utilidades sin infraestructura; representa data, no UI.
+- `src/components` consume modelos del engine mediante adapters y no importa `server`, variables server-only ni Supabase.
+- `src/app` compone UI y puede invocar casos de uso de `server`, pero no importa `src/server/persistence` directamente.
+- `src/server` puede ejecutar `game`, leer `content` y acceder a persistencia mediante adapters.
+- `src/lib` contiene adapters/utilidades, no reglas autoritativas de producto.
+- `src/config` es la capa inferior de configuración validada.
+- `@supabase/supabase-js` sólo se importa desde adaptadores explícitamente autorizados.
 
-## IDs
+`eslint.config.mjs` hace ejecutables estas direcciones. `tsconfig.game.json` compila el core sin tipos de DOM o Node. Toda excepción requiere una razón arquitectónica; un disable local no reemplaza un ADR cuando se cruza una frontera estructural.
 
-Challenge instance id debe distinguir template de instancia, por ejemplo:
-`mural:v2:7f31...`.
+## Toolchain y dependencias
 
-## Commits/PR
+- Usar Node.js 24.19.0 mediante `.node-version`/`.nvmrc` y pnpm 11.22.0 mediante `packageManager`.
+- Usar sólo pnpm; no agregar lockfiles de npm, Yarn o Bun.
+- Instalar con `pnpm install --frozen-lockfile` en CI, Docker y verificaciones reproducibles.
+- Mantener versiones exactas y tratar `pnpm-lock.yaml` como resolución autoritativa.
+- No ampliar `allowBuilds` sin revisar el paquete que ejecutará código durante instalación.
+- No agregar dependencias especulativas, toolchains duplicados, workspaces ni Turborepo.
+- Una actualización compatible de seguridad no requiere ADR, pero sí lockfile, changelog/advisory y gates. Un cambio de runtime, package manager, despliegue o arquitectura sí activa la política de decisiones.
 
-Cambios que alteran ruleset deben indicarlo explícitamente y actualizar versión correspondiente.
+El release público está bloqueado mientras `pnpm release:check` detecte Next.js `<16.3.2`; la versión local actual `16.3.1` es sólo una base transitoria.
 
-## Documentación
+## Comandos mantenidos
 
-ADRs nuevos en `docs/03-architecture/adr/ADR-NNN-*`.
+| Trabajo | Comando |
+|---|---|
+| Desarrollo nativo | `pnpm dev` |
+| Build / runtime local de producción | `pnpm build` / `pnpm start` |
+| Gate integrado | `pnpm verify` |
+| Coherencia Node/pnpm/Docker | `pnpm toolchain:check` |
+| Formato, lint y tipos | `pnpm format:check`, `pnpm lint`, `pnpm typecheck` |
+| Tests con cobertura | `pnpm test:coverage` |
+| E2E con build | `pnpm test:e2e` |
+| Supabase local | `pnpm db:start`, `pnpm db:env`, `pnpm db:reset`, `pnpm db:lint`, `pnpm db:types`, `pnpm db:stop` |
+| Docker desarrollo | `pnpm docker:up` / `pnpm docker:down` |
+| Imagen standalone | `pnpm docker:build` |
+| Supply chain / release | `pnpm security:audit`, `pnpm release:check` |
 
-Cambios de feature deben actualizar requisitos y, si corresponde, matriz de trazabilidad.
+Los detalles y prerrequisitos están en [entorno de desarrollo](08-engineering/development-environment.md). Un comando ejecutado se reporta con su resultado; no declarar gates omitidos como verdes.
+
+## Variables y persistencia
+
+- `.env.example` documenta sólo nombres/defaults no secretos; `.env.local` nunca se versiona.
+- Toda variable pública usa `NEXT_PUBLIC_`; `SUPABASE_SECRET_KEY` permanece server-only.
+- En Compose, distinguir la URL pública alcanzable por el browser de `SUPABASE_INTERNAL_URL` alcanzable por el proceso server.
+- Las migraciones viven en `supabase/migrations/`, se prueban con reset local y se aplican a staging antes de producción.
+- Regenerar `src/lib/supabase/database.types.ts` después de cambios de schema.
+- No crear tablas de producto ni políticas por conveniencia mientras sus contratos estén abiertos.
+
+## Tests
+
+- Ubicar suites por nivel en `tests/unit`, `component`, `integration`, `property` o `e2e`.
+- Todo comportamiento nuevo incluye el test más estrecho que demuestre su contrato.
+- Cambios al core agregan determinismo/property/golden tests según corresponda.
+- Cambios de DB revisan migración, RLS/grants, tipos e integración.
+- Cambios de UI cubren semántica y los viewports relevantes; Playwright prueba el build de producción.
+- Los thresholds actuales cubren sólo la base listada en `vitest.config.ts`, no gameplay inexistente.
+
+## IDs y compatibilidad
+
+Un challenge instance id debe distinguir template de instancia, por ejemplo `mural:v2:7f31...`. Los artefactos de run dependen de `game_version`, `ruleset_version` y `content_version`.
+
+Cambios que alteran resultados deben indicarlo explícitamente y actualizar la versión correspondiente. El algoritmo PRNG, la fórmula final de score y la conservación de artefactos históricos siguen abiertos; no fijarlos dentro de una convención local.
+
+## Commits, PRs y documentación
+
+- Mantener cambios cohesivos y no mezclar formateo o refactors ajenos.
+- Revisar `git status`, `git diff --check` y el diff completo antes de finalizar.
+- Los ADR nuevos viven en `docs/03-architecture/adr/ADR-NNN-*` y se registran en el decision register.
+- Un cambio visible actualiza especificación funcional; gameplay actualiza GDD/reglas; contenido actualiza sus fuentes y validación; todos actualizan trazabilidad cuando corresponde.
+- Editar primero las fuentes individuales. Regenerar `docs/EGRESADO-MASTER-SPEC.md` con el script mantenido y conservar mapa, checklist y manifest en sincronía.
+- Conservar el bloque administrado por Next.js al final de `AGENTS.md`; las reglas humanas del repositorio quedan fuera de sus marcadores.
 
 ---
 
@@ -3254,6 +3464,7 @@ Cambios de feature deben actualizar requisitos y, si corresponde, matriz de traz
 | ADR-007 | Content-as-data | Aceptado |
 | ADR-008 | Identidad anónima/pseudónima | Aceptado |
 | ADR-009 | Leaderboards por evento | Aceptado |
+| ADR-010 | Toolchain Node.js/pnpm y artefacto Docker portable | Aceptado |
 
 ## Regla para ADR nuevo
 
@@ -3528,6 +3739,8 @@ La investigación no dicta arquitectura automáticamente. Las decisiones formale
 - [x] Analytics/observabilidad.
 - [x] Ambientes/deploy.
 - [x] ADRs.
+- [x] Fronteras del monolito modular y dirección de dependencias ejecutable.
+- [x] Toolchain reproducible con gate de consistencia e imagen standalone sin cambiar la topología Vercel.
 
 ## Calidad
 - [x] Unit/integration/E2E.
@@ -3535,6 +3748,7 @@ La investigación no dicta arquitectura automáticamente. Las decisiones formale
 - [x] Validación de contenido.
 - [x] NFR.
 - [x] Threat model.
+- [x] Gates reales de la base, cobertura acotada y checks contextuales de DB/Docker.
 
 ## Operación
 - [x] Runbook de feria.
@@ -3545,6 +3759,7 @@ La investigación no dicta arquitectura automáticamente. Las decisiones formale
 - [x] Backlog priorizado.
 - [x] Definition of Done.
 - [x] Convenciones de repo.
+- [x] CI reproducible, Dependabot y bloqueo de release por dependencia.
 
 ## Referencia
 - [x] Investigación y fuentes.
@@ -3559,6 +3774,12 @@ La investigación no dicta arquitectura automáticamente. Las decisiones formale
 - [x] Política de dependencias/decisiones y estrategia MCP.
 - [x] Skills de proyecto acotadas y validables.
 - [x] Checks de links, manifest y sincronización del master.
+- [x] Entorno de desarrollo nativo/contenedorizado y operación local de Supabase.
+
+## Bloqueo técnico temporal
+
+- [x] Next.js `16.3.1` identificado como base exclusivamente local.
+- [ ] Release público habilitado: requiere Next.js `>=16.3.2`, lockfile regenerado, `pnpm release:check` y `pnpm verify` verdes.
 
 ## Gaps intencionales que requieren evidencia del proyecto
 
@@ -3628,7 +3849,7 @@ Este directorio define la referencia funcional, lúdica, pedagógica y técnica 
 - `security-privacy.md`: seguridad, privacidad y anti-cheat.
 - `analytics-observability.md`: eventos, métricas y observabilidad.
 - `deployment-and-environments.md`: ambientes, CI/CD y despliegue.
-- `adr/`: decisiones arquitectónicas formales.
+- `adr/`: decisiones arquitectónicas formales, incluido el toolchain reproducible y el artefacto Docker portable.
 
 ### 04-quality
 - `content-validation.md`: pipeline de schema, matemática, generación, UI y playtest.
@@ -3644,7 +3865,7 @@ Este directorio define la referencia funcional, lúdica, pedagógica y técnica 
 ### 06-delivery
 - `mvp-backlog.md`: backlog priorizado.
 - `definition-of-done.md`: DoD global y por tipo de cambio.
-- `repository-conventions.md`: organización recomendada del repositorio.
+- `repository-conventions.md`: estructura implementada, fronteras, comandos y reglas de dependencia.
 
 ### 07-reference
 - `research-basis.md`: teoría, referencias y decisiones derivadas.
@@ -3659,6 +3880,7 @@ Este directorio define la referencia funcional, lúdica, pedagógica y técnica 
 - `dependency-and-decision-policy.md`: selección de dependencias y clasificación de decisiones.
 - `mcp-strategy.md`: integraciones justificadas, trust y diferimientos.
 - `agent-setup.md`: arquitectura del workspace, discovery, skills y fuentes oficiales.
+- `development-environment.md`: quickstart nativo/Docker, Supabase local, gates y troubleshooting.
 
 `EGRESADO-MASTER-SPEC.md` consolida la baseline de producto (`00-` a `07-`, checklist y este README). La infraestructura de ingeniería de `08-engineering/` se mantiene por separado para no mezclar reglas operativas del agente con la especificación del producto.
 
@@ -3674,4 +3896,6 @@ En caso de contradicción:
 
 Los documentos especializados gobiernan su área mientras no contradigan una fuente de mayor autoridad. Si dos documentos del mismo nivel siguen en conflicto o la lista no define precedencia entre ellos, la discrepancia se mantiene explícita en `07-reference/open-questions.md` hasta que exista evidencia o una decisión autorizada.
 
-Los documentos describen la **baseline de producto** al 20 de agosto de 2026. Las dependencias tecnológicas deben mantenerse en versiones estables soportadas; los números de versión concretos se fijarán en el repositorio mediante lockfile y ADR de actualización si cambian decisiones relevantes.
+Los documentos describen la **baseline de producto** al 20 de agosto de 2026. La base técnica implementada incluye el shell Next.js, toolchain reproducible, fronteras de módulos, Supabase opcional, Docker y gates de calidad; todavía no incluye gameplay, Auth, schema de producto ni un despliegue público.
+
+Las versiones exactas están fijadas en `package.json` y `pnpm-lock.yaml` bajo [ADR-010](03-architecture/adr/ADR-010-reproducible-node-pnpm-container-toolchain.md). Next.js `16.3.1` se conserva sólo como base local transitoria: `pnpm release:check` bloquea cualquier release público hasta actualizar a `>=16.3.2`, regenerar el lockfile y verificar el cambio completo.

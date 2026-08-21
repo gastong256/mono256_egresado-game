@@ -1,0 +1,43 @@
+name: egresado
+
+services:
+  web:
+    build:
+      context: .
+      target: development
+    ports:
+      - '127.0.0.1:3000:3000'
+    env_file:
+      - path: .env.local
+        required: false
+    environment:
+      NEXT_TELEMETRY_DISABLED: '1'
+      SUPABASE_INTERNAL_URL: ${SUPABASE_INTERNAL_URL_DOCKER:-http://kong:8000}
+      WATCHPACK_POLLING: 'true'
+    networks:
+      - default
+      - supabase_local
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - egresado_next:/app/.next
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - fetch('http://127.0.0.1:3000/api/health').then((response)=>{if(!response.ok)process.exit(1)}).catch(()=>process.exit(1))
+      interval: 10s
+      timeout: 5s
+      start_period: 20s
+      retries: 5
+    init: true
+    stop_grace_period: 10s
+
+volumes:
+  egresado_next:
+
+networks:
+  supabase_local:
+    name: egresado-supabase-local
+    external: true

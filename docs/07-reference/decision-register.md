@@ -11,6 +11,7 @@
 | ADR-007 | Content-as-data | Aceptado |
 | ADR-008 | Identidad anónima/pseudónima | Aceptado |
 | ADR-009 | Leaderboards por evento | Aceptado |
+| ADR-010 | Toolchain Node.js/pnpm y artefacto Docker portable | Aceptado |
 
 ## Regla para ADR nuevo
 

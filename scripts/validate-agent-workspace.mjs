@@ -9,7 +9,10 @@ import {
   transformMarkdownLinkTargets,
 } from './markdown-links.mjs'
 
-const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
+const repoRoot = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  '..',
+)
 const docsRoot = path.join(repoRoot, 'docs')
 const expectedSkills = [
   'egresado-architecture-review',
@@ -47,16 +50,18 @@ const expectedParserTargets = [
   'docs/collapsed.md',
   'docs/after-code.md',
 ]
-const parserTargets = collectMarkdownLinkTargets(markdownParserFixture).map(({ target }) => target)
+const parserTargets = collectMarkdownLinkTargets(markdownParserFixture).map(
+  ({ target }) => target,
+)
 if (JSON.stringify(parserTargets) !== JSON.stringify(expectedParserTargets)) {
   errors.push('Internal Markdown link parser regression.')
 }
 const parserReferences = collectMarkdownReferences(markdownParserFixture)
 if (
-  JSON.stringify(parserReferences.definitions.map(({ label }) => label))
-    !== JSON.stringify(['reference', 'collapsed'])
-  || JSON.stringify(parserReferences.uses.map(({ label }) => label))
-    !== JSON.stringify(['reference', 'collapsed'])
+  JSON.stringify(parserReferences.definitions.map(({ label }) => label)) !==
+    JSON.stringify(['reference', 'collapsed']) ||
+  JSON.stringify(parserReferences.uses.map(({ label }) => label)) !==
+    JSON.stringify(['reference', 'collapsed'])
 ) {
   errors.push('Internal Markdown reference parser regression.')
 }
@@ -65,9 +70,9 @@ const transformedFixture = transformMarkdownLinkTargets(
   (target) => `checked:${target}`,
 )
 if (
-  !transformedFixture.includes('checked:docs/file.md')
-  || !transformedFixture.includes('`[inline code](ignored.md)`')
-  || !transformedFixture.includes('[fence](ignored.md)')
+  !transformedFixture.includes('checked:docs/file.md') ||
+  !transformedFixture.includes('`[inline code](ignored.md)`') ||
+  !transformedFixture.includes('[fence](ignored.md)')
 ) {
   errors.push('Internal Markdown link transformer regression.')
 }
@@ -107,7 +112,11 @@ function normalizeLf(content) {
 
 function outsideRepository(target) {
   const relative = path.relative(repoRoot, target)
-  return relative === '..' || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)
+  return (
+    relative === '..' ||
+    relative.startsWith(`..${path.sep}`) ||
+    path.isAbsolute(relative)
+  )
 }
 
 const requiredFiles = [
@@ -119,6 +128,7 @@ const requiredFiles = [
   'docs/08-engineering/dependency-and-decision-policy.md',
   'docs/08-engineering/mcp-strategy.md',
   'docs/08-engineering/agent-setup.md',
+  'scripts/check-secrets.mjs',
   'scripts/markdown-links.mjs',
   'scripts/sync-master-spec.mjs',
   'scripts/validate-agent-workspace.mjs',
@@ -130,7 +140,9 @@ for (const relativePath of requiredFiles) {
   }
 }
 
-const docsFiles = (await filesUnder(docsRoot)).map((file) => repoRelative(file).slice('docs/'.length)).sort()
+const docsFiles = (await filesUnder(docsRoot))
+  .map((file) => repoRelative(file).slice('docs/'.length))
+  .sort()
 const manifestPath = path.join(docsRoot, 'MANIFEST.txt')
 const manifestEntries = (await fs.readFile(manifestPath, 'utf8'))
   .split(/\r?\n/)
@@ -139,12 +151,17 @@ const manifestEntries = (await fs.readFile(manifestPath, 'utf8'))
 if (JSON.stringify(manifestEntries) !== JSON.stringify(docsFiles)) {
   const missing = docsFiles.filter((file) => !manifestEntries.includes(file))
   const stale = manifestEntries.filter((file) => !docsFiles.includes(file))
-  if (missing.length) errors.push(`MANIFEST.txt is missing: ${missing.join(', ')}`)
-  if (stale.length) errors.push(`MANIFEST.txt has stale entries: ${stale.join(', ')}`)
-  if (!missing.length && !stale.length) errors.push('MANIFEST.txt entries are not sorted.')
+  if (missing.length)
+    errors.push(`MANIFEST.txt is missing: ${missing.join(', ')}`)
+  if (stale.length)
+    errors.push(`MANIFEST.txt has stale entries: ${stale.join(', ')}`)
+  if (!missing.length && !stale.length)
+    errors.push('MANIFEST.txt entries are not sorted.')
 }
 
-const documentationMap = normalizeLf(await fs.readFile(path.join(docsRoot, 'README.md'), 'utf8'))
+const documentationMap = normalizeLf(
+  await fs.readFile(path.join(docsRoot, 'README.md'), 'utf8'),
+)
 for (const category of [
   '00-product',
   '01-game-design',
@@ -162,19 +179,28 @@ for (const category of [
     continue
   }
   const afterHeading = sectionStart + `### ${category}\n`.length
-  const nextHeadingOffset = documentationMap.slice(afterHeading).search(/\n##(?: |# )/)
-  const nextSection = nextHeadingOffset === -1 ? -1 : afterHeading + nextHeadingOffset
+  const nextHeadingOffset = documentationMap
+    .slice(afterHeading)
+    .search(/\n##(?: |# )/)
+  const nextSection =
+    nextHeadingOffset === -1 ? -1 : afterHeading + nextHeadingOffset
   const section = documentationMap.slice(
     sectionStart,
     nextSection === -1 ? documentationMap.length : nextSection,
   )
-  const mappedEntries = [...section.matchAll(/^- `([^`]+)`:/gm)].map((match) => match[1]).sort()
-  const categoryFiles = docsFiles.filter((file) => file.startsWith(`${category}/`))
+  const mappedEntries = [...section.matchAll(/^- `([^`]+)`:/gm)]
+    .map((match) => match[1])
+    .sort()
+  const categoryFiles = docsFiles.filter((file) =>
+    file.startsWith(`${category}/`),
+  )
   const expectedEntries = [
     ...new Set(
       categoryFiles.map((file) => {
         const nestedPath = file.slice(category.length + 1)
-        return nestedPath.startsWith('adr/') ? 'adr/' : path.posix.basename(nestedPath)
+        return nestedPath.startsWith('adr/')
+          ? 'adr/'
+          : path.posix.basename(nestedPath)
       }),
     ),
   ].sort()
@@ -205,7 +231,9 @@ for (const heading of [
   }
 }
 
-for (const jsonPath of (await filesUnder(docsRoot)).filter((file) => file.endsWith('.json'))) {
+for (const jsonPath of (await filesUnder(docsRoot)).filter((file) =>
+  file.endsWith('.json'),
+)) {
   try {
     JSON.parse(await fs.readFile(jsonPath, 'utf8'))
   } catch (error) {
@@ -241,7 +269,9 @@ for (const skillName of expectedSkills) {
   for (const line of frontmatter[1].split('\n')) {
     const field = line.match(/^([a-z][a-z0-9_-]*):\s*(.*)$/)
     if (!field || fields.has(field[1])) {
-      errors.push(`Invalid or duplicate skill frontmatter field in ${repoRelative(skillPath)}: ${line}`)
+      errors.push(
+        `Invalid or duplicate skill frontmatter field in ${repoRelative(skillPath)}: ${line}`,
+      )
       continue
     }
     fields.set(field[1], field[2].trim())
@@ -249,29 +279,37 @@ for (const skillName of expectedSkills) {
 
   const fieldNames = [...fields.keys()].sort()
   if (JSON.stringify(fieldNames) !== JSON.stringify(['description', 'name'])) {
-    errors.push(`Skill frontmatter must contain only name and description: ${repoRelative(skillPath)}`)
+    errors.push(
+      `Skill frontmatter must contain only name and description: ${repoRelative(skillPath)}`,
+    )
   }
 
   const declaredName = fields.get('name')
   const description = fields.get('description')
-  if (declaredName !== skillName) errors.push(`Skill name mismatch in ${repoRelative(skillPath)}`)
-  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(declaredName ?? '') || declaredName.length > 64) {
+  if (declaredName !== skillName)
+    errors.push(`Skill name mismatch in ${repoRelative(skillPath)}`)
+  if (
+    !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(declaredName ?? '') ||
+    declaredName.length > 64
+  ) {
     errors.push(`Invalid skill name in ${repoRelative(skillPath)}`)
   }
   if (!description || description.length > 1024) {
-    errors.push(`Missing or oversized skill description in ${repoRelative(skillPath)}`)
+    errors.push(
+      `Missing or oversized skill description in ${repoRelative(skillPath)}`,
+    )
   }
   if (
-    description
-    && (
-      !/^\p{L}/u.test(description)
-      || /(?:^|\s)#/.test(description)
-      || /:\s/.test(description)
-      || /[<>]/.test(description)
-      || /^(?:null|true|false)$/i.test(description)
-    )
+    description &&
+    (!/^\p{L}/u.test(description) ||
+      /(?:^|\s)#/.test(description) ||
+      /:\s/.test(description) ||
+      /[<>]/.test(description) ||
+      /^(?:null|true|false)$/i.test(description))
   ) {
-    errors.push(`Skill description must use the supported plain YAML scalar form: ${repoRelative(skillPath)}`)
+    errors.push(
+      `Skill description must use the supported plain YAML scalar form: ${repoRelative(skillPath)}`,
+    )
   }
 }
 
@@ -285,36 +323,48 @@ const markdownFiles = [
 for (const markdownPath of markdownFiles) {
   const markdownContent = normalizeLf(await fs.readFile(markdownPath, 'utf8'))
 
-  for (const { target: extractedTarget, line } of collectMarkdownLinkTargets(markdownContent)) {
+  for (const { target: extractedTarget, line } of collectMarkdownLinkTargets(
+    markdownContent,
+  )) {
     const rawTarget = extractedTarget.trim().replace(/^<|>$/g, '')
     if (/^[a-z]:[\\/]/i.test(rawTarget)) {
-      errors.push(`${repoRelative(markdownPath)}:${line} has an absolute local link: ${rawTarget}`)
+      errors.push(
+        `${repoRelative(markdownPath)}:${line} has an absolute local link: ${rawTarget}`,
+      )
       continue
     }
     if (/^[a-z][a-z\d+.-]*:/i.test(rawTarget)) {
       if (/^file:/i.test(rawTarget)) {
-        errors.push(`${repoRelative(markdownPath)}:${line} has a local file URI: ${rawTarget}`)
+        errors.push(
+          `${repoRelative(markdownPath)}:${line} has a local file URI: ${rawTarget}`,
+        )
       }
       continue
     }
 
     const hashIndex = rawTarget.indexOf('#')
     const fragment = hashIndex === -1 ? '' : rawTarget.slice(hashIndex + 1)
-    const beforeFragment = hashIndex === -1 ? rawTarget : rawTarget.slice(0, hashIndex)
+    const beforeFragment =
+      hashIndex === -1 ? rawTarget : rawTarget.slice(0, hashIndex)
     const queryIndex = beforeFragment.indexOf('?')
-    const pathPart = queryIndex === -1 ? beforeFragment : beforeFragment.slice(0, queryIndex)
+    const pathPart =
+      queryIndex === -1 ? beforeFragment : beforeFragment.slice(0, queryIndex)
     let decodedPath
     try {
       decodedPath = decodeURIComponent(
         pathPart.replace(/\\([!"#$%&'()*+,\-./:;<=>?@[\]^_`{|}~])/g, '$1'),
       )
     } catch {
-      errors.push(`${repoRelative(markdownPath)}:${line} has invalid URL encoding: ${rawTarget}`)
+      errors.push(
+        `${repoRelative(markdownPath)}:${line} has invalid URL encoding: ${rawTarget}`,
+      )
       continue
     }
 
     if (path.isAbsolute(decodedPath) || path.win32.isAbsolute(decodedPath)) {
-      errors.push(`${repoRelative(markdownPath)}:${line} has an absolute local link: ${rawTarget}`)
+      errors.push(
+        `${repoRelative(markdownPath)}:${line} has an absolute local link: ${rawTarget}`,
+      )
       continue
     }
 
@@ -322,28 +372,40 @@ for (const markdownPath of markdownFiles) {
       ? path.resolve(path.dirname(markdownPath), decodedPath)
       : markdownPath
     if (outsideRepository(resolvedPath)) {
-      errors.push(`${repoRelative(markdownPath)}:${line} links outside the repository: ${rawTarget}`)
+      errors.push(
+        `${repoRelative(markdownPath)}:${line} links outside the repository: ${rawTarget}`,
+      )
       continue
     }
 
     if (!(await exists(resolvedPath))) {
-      errors.push(`${repoRelative(markdownPath)}:${line} has broken link: ${rawTarget}`)
+      errors.push(
+        `${repoRelative(markdownPath)}:${line} has broken link: ${rawTarget}`,
+      )
       continue
     }
 
     const realTarget = await fs.realpath(resolvedPath)
     if (outsideRepository(realTarget)) {
-      errors.push(`${repoRelative(markdownPath)}:${line} resolves outside the repository: ${rawTarget}`)
+      errors.push(
+        `${repoRelative(markdownPath)}:${line} resolves outside the repository: ${rawTarget}`,
+      )
       continue
     }
 
-    if (fragment && (await fs.stat(resolvedPath)).isFile() && resolvedPath.endsWith('.md')) {
+    if (
+      fragment &&
+      (await fs.stat(resolvedPath)).isFile() &&
+      resolvedPath.endsWith('.md')
+    ) {
       const targetContent = await fs.readFile(resolvedPath, 'utf8')
       let normalizedFragment
       try {
         normalizedFragment = decodeURIComponent(fragment).toLowerCase()
       } catch {
-        errors.push(`${repoRelative(markdownPath)}:${line} has invalid anchor encoding: ${rawTarget}`)
+        errors.push(
+          `${repoRelative(markdownPath)}:${line} has invalid anchor encoding: ${rawTarget}`,
+        )
         continue
       }
       const headings = targetContent
@@ -359,13 +421,17 @@ for (const markdownPath of markdownFiles) {
             .replace(/\s+/g, '-'),
         )
       if (!headings.includes(normalizedFragment)) {
-        errors.push(`${repoRelative(markdownPath)}:${line} has unknown anchor: ${rawTarget}`)
+        errors.push(
+          `${repoRelative(markdownPath)}:${line} has unknown anchor: ${rawTarget}`,
+        )
       }
     }
   }
 
   const references = collectMarkdownReferences(markdownContent)
-  const definedLabels = new Set(references.definitions.map(({ label }) => label))
+  const definedLabels = new Set(
+    references.definitions.map(({ label }) => label),
+  )
   for (const reference of references.uses) {
     if (!definedLabels.has(reference.label)) {
       errors.push(
@@ -379,12 +445,24 @@ const portableFiles = [
   path.join(repoRoot, '.gitattributes'),
   path.join(repoRoot, 'AGENTS.md'),
   path.join(repoRoot, 'README.md'),
-  ...(await filesUnder(docsRoot)).filter((file) => /\.(?:md|json|txt)$/.test(file)),
+  ...(await filesUnder(docsRoot)).filter((file) =>
+    /\.(?:md|json|txt)$/.test(file),
+  ),
   ...(await filesUnder(skillsRoot)),
-  ...(await filesUnder(path.join(repoRoot, 'scripts'))).filter((file) => file.endsWith('.mjs')),
+  ...(await filesUnder(path.join(repoRoot, 'scripts'))).filter((file) =>
+    file.endsWith('.mjs'),
+  ),
 ]
 
-const unixMachineRoots = ['home', 'Users', 'tmp', 'private', 'Volumes', 'mnt', 'opt'].join('|')
+const unixMachineRoots = [
+  'home',
+  'Users',
+  'tmp',
+  'private',
+  'Volumes',
+  'mnt',
+  'opt',
+].join('|')
 const machinePathPatterns = [
   new RegExp(`/(?:${unixMachineRoots})/[^/\\s]+`),
   new RegExp('\\b[A-Za-z]:[\\\\/][^\\s]+'),
@@ -393,7 +471,9 @@ const machinePathPatterns = [
 for (const portablePath of portableFiles) {
   const content = await fs.readFile(portablePath, 'utf8')
   if (machinePathPatterns.some((pattern) => pattern.test(content))) {
-    errors.push(`Machine-specific absolute path in ${repoRelative(portablePath)}`)
+    errors.push(
+      `Machine-specific absolute path in ${repoRelative(portablePath)}`,
+    )
   }
 }
 
@@ -402,4 +482,6 @@ if (errors.length) {
   process.exit(1)
 }
 
-console.log(`Agent workspace valid: ${expectedSkills.length} skills, ${docsFiles.length} documented files, links and JSON OK.`)
+console.log(
+  `Agent workspace valid: ${expectedSkills.length} skills, ${docsFiles.length} documented files, links and JSON OK.`,
+)

@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "incremental": false,
+    "lib": ["ES2022"],
+    "types": []
+  },
+  "include": ["src/game/**/*.ts", "src/game/**/*.tsx", "src/game/**/*.mts"],
+  "exclude": ["node_modules"]
+}

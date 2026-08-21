@@ -1,0 +1,7 @@
+allowBuilds:
+  # Native resolver used by eslint-config-next and the architecture boundary plugin.
+  unrs-resolver: true
+
+overrides:
+  # Remove after next-devtools-mcp adopts the patched MCP SDK and passes its runtime smoke.
+  '@modelcontextprotocol/sdk': 1.26.0

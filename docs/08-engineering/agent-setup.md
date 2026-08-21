@@ -1,123 +1,144 @@
-# Arquitectura del workspace agentico
+# Arquitectura del workspace agentivo
 
-Fecha de investigacion y configuracion: **20 de agosto de 2026**.
+Fecha de baseline: **20 de agosto de 2026**.
 
 ## Resultado
 
-El setup separa contexto permanente, routing y workflows repetibles:
+El workspace combina reglas durables, contexto progresivo, workflows repetibles y evidencia del runtime real:
 
 ```text
-.gitattributes                     finales LF estables para docs, skills y scripts
-AGENTS.md                         reglas durables para todo el repo
+AGENTS.md                         reglas de repositorio + bloque administrado por Next.js
 docs/AGENTS.md                    reglas exclusivas de mantenimiento documental
 docs/08-engineering/
   context-map.md                  router hacia fuentes autoritativas
-  ai-development-workflow.md      ciclo de trabajo y criterio de ADR
+  ai-development-workflow.md      ciclo de trabajo y quality gates
   dependency-and-decision-policy.md
-  mcp-strategy.md
-  agent-setup.md                  esta explicacion y evidencia
+  development-environment.md      toolchain y operación local ejecutable
+  mcp-strategy.md                 Next DevTools MCP, trust y troubleshooting
+  agent-setup.md                  esta explicación
 .agents/skills/
   egresado-context/
   egresado-implementation/
   egresado-architecture-review/
   egresado-quality-gate/
   egresado-challenge-authoring/
+.codex/config.toml                MCP project-scoped, fijado por lockfile
+.github/
+  workflows/quality.yml           CI de toolchain, docs, calidad, build y E2E
+  dependabot.yml                  updates semanales de npm, Actions y Docker
 scripts/
-  markdown-links.mjs              parser compartido de links Markdown para ambos gates
+  check-secrets.mjs               scanner de patrones de credenciales de alta señal
+  check-toolchain.mjs             alinea Node/pnpm entre metadata y Docker
+  local-docker-network.mjs        red loopback compartida por Supabase/Compose
+  local-supabase-status.mjs       status local sin exponer credenciales
+  reset-local-database.mjs        reset local sobre la red fijada
+  run-pnpm.mjs                    subprocess pnpm portable sin depender de .cmd
+  start-compose.mjs               desarrollo Docker sobre la red local
+  start-local-supabase.mjs        arranque mínimo con credenciales redactadas
+  write-local-env.mjs             genera .env.local con valores redactados
+  markdown-links.mjs
   sync-master-spec.mjs
   validate-agent-workspace.mjs
+  verify.mjs                      gate ejecutable de la aplicación
 ```
 
-No se creo aplicacion, schema productivo, UI, game state, challenge logic, ranking ni infraestructura externa.
+La base de aplicación ya existe. Incluye shell Next.js, tests, Docker y Supabase local opcional, pero no contiene gameplay, Auth, schema de juego, ranking ni infraestructura externa desplegada.
 
-## Que carga Codex y cuando
+## Qué carga Codex y cuándo
 
-| Capa | Carga | Funcion |
+| Capa | Carga | Función |
 |---|---|---|
-| `AGENTS.md` de raiz | Automaticamente al iniciar en el repo | Autoridad, protocolo previo, invariantes, politica de decisiones y gates |
-| `docs/AGENTS.md` | Automaticamente si la sesion inicia con CWD bajo `docs/`; desde la raiz, el protocolo previo exige leerlo antes de modificar ese subtree | Jerarquia, ADRs, trazabilidad, master derivado y checklist |
-| Nombre/descripcion de skills | En discovery, con presupuesto acotado de contexto | Permite seleccionar un workflow por intencion |
-| Cuerpo de `SKILL.md` | Solo cuando la skill se invoca o coincide con la tarea | Routing, implementacion, review, calidad o autoria concreta |
-| Documentos fuente | Bajo demanda mediante el context map | Reglas completas sin duplicarlas en prompts permanentes |
-| Docs Next.js instaladas | Bajo demanda para tareas Next.js | API y convenciones de la version real del lockfile |
+| `AGENTS.md` de raíz | al iniciar en el repo | autoridad, protocolo previo, invariantes y gates |
+| `docs/AGENTS.md` | al trabajar bajo `docs/` o cuando el protocolo exige leerlo | jerarquía, ADRs, trazabilidad, master y checklist |
+| nombre/descripción de skills | durante discovery | selección de workflow por intención |
+| cuerpo de `SKILL.md` | cuando la skill se invoca o coincide | routing, implementación, review, calidad o autoría |
+| fuentes de `docs/` | bajo demanda mediante el context map | reglas completas sin inflar el prompt permanente |
+| docs en `node_modules/next/dist/docs/` | antes de una tarea Next.js | API y convenciones exactas de Next.js `16.3.1` |
+| `.codex/config.toml` | al iniciar una sesión confiable | registra `next-devtools` mediante el pnpm fijado |
+| runtime MCP | con `pnpm dev` activo | rutas, metadata y errores reales del dev server |
 
-Esta division evita un `AGENTS.md` gigante y evita que resumenes generados compitan con las fuentes autoritativas.
+Esta separación evita que resúmenes generados compitan con fuentes autoritativas. MCP agrega observación; no reemplaza documentación, tipos, tests ni ADRs.
 
-## Skills creadas
+## Instrucciones y bloque de Next.js
 
-- `egresado-context`: clasifica una tarea y carga el conjunto minimo de documentacion antes de planificar.
-- `egresado-implementation`: aplica el ciclo contexto → plan → cambio → tests → docs → review para una implementacion acotada.
-- `egresado-architecture-review`: revisa fronteras, datos, dependencias, NFR y ADRs; diferencia detalle local de decision arquitectonica.
-- `egresado-quality-gate`: elige y ejecuta gates por tipo de cambio, diagnostica fallos y reporta evidencia exacta.
-- `egresado-challenge-authoring`: usa el workflow ya estable de contenido-as-data, matematica, invariantes y estados editoriales; no habilita inventar nuevas mecanicas.
+Las reglas propias de Egresado viven fuera de los marcadores administrados al final de `AGENTS.md`. Next.js `16.3.1` agrega o repara ese bloque al ejecutar `next dev`; conservarlo evita un diff recurrente y obliga a consultar las docs instaladas antes de escribir código Next.js.
 
-Las skills viven en `.agents/skills`, la ubicacion repository-scoped documentada actualmente por Codex. No necesitan referencias copiadas: enlazan documentos mantenidos del proyecto.
+`docs/AGENTS.md` está justificado porque sincronización del master, registro de ADRs, trazabilidad y estados de decisión sólo aplican al subtree documental.
 
-Cada `SKILL.md` fue validado con `quick_validate.py` provisto por la skill oficial `skill-creator`, ademas del checker portable del repositorio. El checker local admite deliberadamente solo el frontmatter compartido de dos escalares YAML simples (`name` y `description`); la validacion oficial sigue siendo el gate para sintaxis o metadata futura mas amplia.
+## Skills del repositorio
 
-`.gitattributes` fija LF para Markdown, scripts y datos textuales. Esto mantiene reproducibles el frontmatter de skills y el master generado aun cuando el checkout use otra configuracion local de line endings.
+- `egresado-context`: clasifica una tarea y carga el conjunto mínimo de documentación.
+- `egresado-implementation`: aplica contexto → plan → cambio → tests → docs → review a una feature acotada.
+- `egresado-architecture-review`: revisa fronteras, datos, dependencias, NFR y necesidad de ADR.
+- `egresado-quality-gate`: selecciona y ejecuta gates reales, diagnostica fallos y reporta evidencia.
+- `egresado-challenge-authoring`: enruta contenido-as-data, matemática, invariantes procedurales y estados editoriales sin habilitar mecánicas nuevas.
 
-## Decisiones de setup
+Las skills viven en `.agents/skills/` y enlazan fuentes mantenidas del proyecto. Su frontmatter se valida tanto con el checker portable del repositorio como con `quick_validate.py` de la skill oficial `skill-creator` cuando se crean o modifican.
 
-### `docs/AGENTS.md` si esta justificado
+## Next DevTools MCP
 
-La documentacion tiene reglas locales que no deben ocupar contexto en una tarea de codigo: sincronizacion del master derivado, registro de ADRs, trazabilidad, estados de decision y checklist. Por eso existe una capa anidada solo para `docs/`.
+`.codex/config.toml` registra `next-devtools-mcp` `0.4.0` mediante:
 
-### Sin `.codex/config.toml` por ahora
+```toml
+[mcp_servers.next-devtools]
+command = "pnpm"
+args = ["exec", "next-devtools-mcp"]
+startup_timeout_sec = 20
+tool_timeout_sec = 60
+enabled = true
+required = false
 
-No hay un setting seguro necesario que mejore el repo hoy:
+[mcp_servers.next-devtools.env]
+NEXT_TELEMETRY_DISABLED = "1"
+```
 
-- no se fija modelo ni reasoning del usuario;
-- no se cambia sandbox ni approvals;
-- multi-agent es estable y ya esta habilitado por defecto;
-- las skills tienen discovery propio;
-- no existe todavia un MCP de runtime util.
+La dependencia está fijada en `package.json`/`pnpm-lock.yaml`; no usa `@latest`. `required = false` permite trabajar en documentación o código puro si el dev server no está disponible. El entorno versionado también desactiva la telemetría del MCP para conservar la minimización de datos del proyecto.
 
-Agregar un archivo vacio o flags redundantes aumentaria superficie de mantenimiento. La configuracion se creara en la fase de aplicacion solo si contiene un MCP u otro comportamiento project-scoped real y validable.
+Cada desarrollador debe confiar el checkout y abrir una sesión nueva después de instalar o cambiar la configuración. El procedimiento verificable y el caveat observado del argumento `args` están en [mcp-strategy.md](mcp-strategy.md).
 
-### Sin roles custom de subagente
+No hay tokens, URLs de servicios externos ni paths absolutos versionados en `.codex/config.toml`. El trust es una decisión local de cada máquina.
 
-Los subagentes actuales son estables y utiles para exploracion, tests y reviews independientes. No se fijan roles/modelos en config porque las cinco skills ya definen los criterios especializados, y un modelo de equipo impuesto duplicaria instrucciones y preferencias personales. Una tarea puede delegar revisiones acotadas usando el contexto de esas skills.
+## Calidad y mantenimiento
 
-### Sin MCP instalado
+El gate canónico de aplicación es:
 
-El unico candidato justificado es Next.js DevTools MCP, pero necesita Next.js 16+, un dev server y una dependencia/command fijados. Se difiere segun [mcp-strategy.md](mcp-strategy.md).
+```bash
+pnpm verify
+```
 
-### Challenge authoring incluido
+Valida alineación de Node/pnpm/Docker, infraestructura agentiva, master documental, formato, fronteras, tipos, cobertura, build y E2E. El check focalizado es `pnpm toolchain:check`; los workflows de DB, Docker y release se documentan en [development-environment.md](development-environment.md).
 
-La skill se crea ahora porque el repositorio ya define plantilla, patrones de interaccion, progresion matematica, invariantes procedurales, estados editoriales, validacion y un schema ilustrativo. La skill enruta a esas fuentes; no congela el schema ilustrativo como contrato ejecutable.
+GitHub Actions ejecuta además `pnpm toolchain:check`, `node scripts/validate-agent-workspace.mjs` y `node scripts/sync-master-spec.mjs --check` antes de los gates de aplicación. Así CI valida la documentación/infraestructura agentiva y no sólo el bundle.
 
-## Investigacion oficial
+Mantenimiento esperado:
 
-Se uso el manual oficial actualizado de Codex y se contrasto con el CLI instalado (`codex-cli 0.148.0-alpha.21`). Solo se adoptaron superficies marcadas estables o documentadas:
+- mantener `AGENTS.md` compacto y mover detalle condicional a docs o skills;
+- actualizar una skill por fallos observados, no por escenarios especulativos;
+- conservar sincronizados Node/pnpm en metadata, CI, Docker y documentación;
+- revisar docs bundladas y MCP después de cada upgrade de Next.js;
+- regenerar el master sólo desde sus fuentes individuales;
+- no fijar modelos, permisos o preferencias personales en configuración compartida;
+- no agregar MCPs ni roles custom sin un loop repetido, ownership y verificación concreta.
 
-- [AGENTS.md](https://learn.chatgpt.com/docs/agent-configuration/agents-md): discovery desde raiz a CWD, precedencia de instrucciones mas cercanas y limite de contexto; justifica raiz compacta + capa `docs/`.
-- [Build skills](https://learn.chatgpt.com/docs/build-skills): `.agents/skills`, metadata `name`/`description`, activacion explicita/implicita y progressive disclosure.
-- [Config basics](https://learn.chatgpt.com/docs/config-file/config-basic): `.codex/config.toml` project-scoped solo para proyectos confiables y precedencia sobre config de usuario.
-- [Permissions](https://learn.chatgpt.com/docs/permission-modes): sandbox y approvals son limites distintos; este setup no los reduce ni fija permisos en el repositorio.
-- [Subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents): multi-agent estable por defecto y recomendado para trabajo paralelo independiente, especialmente lectura/review.
-- [MCP](https://learn.chatgpt.com/docs/extend/mcp): configuracion por proyecto en `.codex/config.toml`, servidores stdio/HTTP y trust requerido.
-- [Best practices](https://learn.chatgpt.com/guides/best-practices): contexto acotado, instrucciones durables, tests/review y automatizacion de workflows estables.
-- [Next.js AI coding agents](https://nextjs.org/docs/app/guides/ai-agents): la version 16.3.1 documentada incluye docs versionadas en `node_modules/next/dist/docs/` y un bloque administrado de `AGENTS.md` que preserva contenido externo.
-- [Next.js MCP](https://nextjs.org/docs/app/guides/mcp): Next.js 16+ expone estado del dev server mediante `next-devtools-mcp`.
+## Decisiones explícitamente diferidas
 
-Tambien se verifico localmente que `multi_agent` figura estable/activo, que el CLI puede renderizar el prompt efectivo y que no existe scaffold/package manager en este repo. La version futura instalada de Next.js, no esta captura de investigacion, gobernara el codigo.
+- Auth y adopción de `@supabase/ssr`;
+- schema ejecutable de juego/contenido y datos reales;
+- service worker y caching PWA avanzado;
+- providers de observabilidad/analytics;
+- browser MCP adicional o integraciones SaaS;
+- roles custom de subagente;
+- deploy público, bloqueado además por `pnpm release:check` hasta Next.js `16.3.2+`.
 
-## Mantenimiento
+Estas ausencias son límites de alcance, no placeholders que una tarea técnica pueda completar sin decisiones de producto, seguridad o arquitectura.
 
-- Mantener la raiz corta; mover detalle condicional a context map, workflow o una skill.
-- Mejorar una skill por fallos observados, no por escenarios especulativos.
-- Al agregar/mover docs, actualizar README, manifest y checklist; sincronizar el master si la fuente pertenece a `00-07` o es README/checklist.
-- Al crear tooling real, reemplazar gates provisionales por scripts canonicos en el package manager y actualizar `egresado-quality-gate`.
-- Al instalar Next.js, conservar el bloque administrado, verificar docs bundladas y revisar la estrategia MCP.
-- Al cerrar una pregunta abierta, actualizar la fuente autoritativa, trazabilidad y ADR si corresponde; no dejar solo una nota de implementacion.
+## Fuentes oficiales de la configuración agentiva
 
-## Diferido intencionalmente a la fase de aplicacion
+- [Codex: AGENTS.md](https://learn.chatgpt.com/docs/agent-configuration/agents-md)
+- [Codex: Skills](https://learn.chatgpt.com/docs/build-skills)
+- [Codex: configuración](https://learn.chatgpt.com/docs/config-file/config-basic)
+- [Codex: Model Context Protocol](https://learn.chatgpt.com/docs/extend/mcp)
+- [Next.js: AI coding agents](https://nextjs.org/docs/app/guides/ai-agents)
+- [Next.js: MCP server](https://nextjs.org/docs/app/guides/mcp)
 
-- scaffold y lockfile;
-- bloque `AGENTS.md` administrado por la version instalada de Next.js;
-- comandos lint/typecheck/test/build/E2E reales;
-- Next.js DevTools MCP y cualquier browser MCP;
-- configuracion `.codex/config.toml` y trust local asociado;
-- schemas ejecutables y pipeline de validacion de contenido;
-- roles custom de subagente, salvo que un workflow repetido demuestre su valor.
+Las rutas oficiales pueden evolucionar; para comportamiento de Codex prevalece el manual actual, y para APIs Next.js prevalecen las docs incluidas por la versión instalada.

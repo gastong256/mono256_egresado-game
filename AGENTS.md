@@ -37,10 +37,22 @@ No implementes producto o gameplay sin una tarea explicitamente acotada.
 ## Next.js y evidencia
 
 - Para cualquier tarea Next.js, si existe `node_modules/next/dist/docs/`, lee primero la guia relevante de esa version; si la version instalada no incluye esa ruta, usa la documentacion upstream que corresponda a esa version.
-- Si `next dev` agrega un bloque entre `<!-- BEGIN:nextjs-agent-rules -->` y `<!-- END:nextjs-agent-rules -->`, conserva ese bloque y manten estas reglas fuera de sus marcadores.
+- Conserva el bloque administrado por `next dev` que figura al final de este archivo y mantene las reglas de Egresado fuera de sus marcadores.
 
 ## Verificacion
 
 - Implementa el cambio coherente mas pequeno, agrega o actualiza tests y ejecuta los gates aplicables definidos por el repositorio y la Definition of Done.
-- Para infraestructura documental/agentica ejecuta `node scripts/validate-agent-workspace.mjs` y `node scripts/sync-master-spec.mjs --check`.
+- Usa Node y pnpm declarados por `.node-version` y `packageManager`; confirma alineación con `pnpm toolchain:check`. No sustituyas el package manager ni ignores `pnpm-lock.yaml`.
+- `pnpm verify` es el gate transversal canonico: valida infraestructura agentica/master, formato, lint y fronteras, TypeScript, coverage, build y Playwright. Para cambios acotados podes ejecutar primero el subset pertinente, pero no lo presentes como gate completo.
+- Los cambios de DB agregan `pnpm db:reset`, `pnpm db:lint` y `pnpm db:types`; los de contenedores agregan los comandos `docker:*`. `pnpm release:check` gobierna despliegues publicos y no debe omitirse ni neutralizarse.
 - Antes de finalizar, revisa `git diff --check`, el diff completo y `git status`. Reporta comandos ejecutados, resultados y checks omitidos; no declares validacion que no corriste.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->

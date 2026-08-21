@@ -48,7 +48,7 @@ Este directorio define la referencia funcional, lúdica, pedagógica y técnica 
 - `security-privacy.md`: seguridad, privacidad y anti-cheat.
 - `analytics-observability.md`: eventos, métricas y observabilidad.
 - `deployment-and-environments.md`: ambientes, CI/CD y despliegue.
-- `adr/`: decisiones arquitectónicas formales.
+- `adr/`: decisiones arquitectónicas formales, incluido el toolchain reproducible y el artefacto Docker portable.
 
 ### 04-quality
 - `content-validation.md`: pipeline de schema, matemática, generación, UI y playtest.
@@ -64,7 +64,7 @@ Este directorio define la referencia funcional, lúdica, pedagógica y técnica 
 ### 06-delivery
 - `mvp-backlog.md`: backlog priorizado.
 - `definition-of-done.md`: DoD global y por tipo de cambio.
-- `repository-conventions.md`: organización recomendada del repositorio.
+- `repository-conventions.md`: estructura implementada, fronteras, comandos y reglas de dependencia.
 
 ### 07-reference
 - `research-basis.md`: teoría, referencias y decisiones derivadas.
@@ -79,6 +79,7 @@ Este directorio define la referencia funcional, lúdica, pedagógica y técnica 
 - `dependency-and-decision-policy.md`: selección de dependencias y clasificación de decisiones.
 - `mcp-strategy.md`: integraciones justificadas, trust y diferimientos.
 - `agent-setup.md`: arquitectura del workspace, discovery, skills y fuentes oficiales.
+- `development-environment.md`: quickstart nativo/Docker, Supabase local, gates y troubleshooting.
 
 `EGRESADO-MASTER-SPEC.md` consolida la baseline de producto (`00-` a `07-`, checklist y este README). La infraestructura de ingeniería de `08-engineering/` se mantiene por separado para no mezclar reglas operativas del agente con la especificación del producto.
 
@@ -94,4 +95,6 @@ En caso de contradicción:
 
 Los documentos especializados gobiernan su área mientras no contradigan una fuente de mayor autoridad. Si dos documentos del mismo nivel siguen en conflicto o la lista no define precedencia entre ellos, la discrepancia se mantiene explícita en `07-reference/open-questions.md` hasta que exista evidencia o una decisión autorizada.
 
-Los documentos describen la **baseline de producto** al 20 de agosto de 2026. Las dependencias tecnológicas deben mantenerse en versiones estables soportadas; los números de versión concretos se fijarán en el repositorio mediante lockfile y ADR de actualización si cambian decisiones relevantes.
+Los documentos describen la **baseline de producto** al 20 de agosto de 2026. La base técnica implementada incluye el shell Next.js, toolchain reproducible, fronteras de módulos, Supabase opcional, Docker y gates de calidad; todavía no incluye gameplay, Auth, schema de producto ni un despliegue público.
+
+Las versiones exactas están fijadas en `package.json` y `pnpm-lock.yaml` bajo [ADR-010](03-architecture/adr/ADR-010-reproducible-node-pnpm-container-toolchain.md). Next.js `16.3.1` se conserva sólo como base local transitoria: `pnpm release:check` bloquea cualquier release público hasta actualizar a `>=16.3.2`, regenerar el lockfile y verificar el cambio completo.
