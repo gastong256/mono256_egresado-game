@@ -11,5 +11,6 @@ export function getServerEnvironment() {
       process.env['NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY'],
     SUPABASE_INTERNAL_URL: process.env['SUPABASE_INTERNAL_URL'],
     SUPABASE_SECRET_KEY: process.env['SUPABASE_SECRET_KEY'],
+    EGRESADO_DEV_HARNESS: process.env['EGRESADO_DEV_HARNESS'],
   })
 }

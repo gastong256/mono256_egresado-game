@@ -43,5 +43,14 @@ runPnpm('Formatting', ['format:check'])
 runPnpm('Lint and architecture boundaries', ['lint'])
 runPnpm('TypeScript', ['typecheck'])
 runPnpm('Unit, component, integration and property tests', ['test:coverage'])
+// Content and simulation gates run after the tests: they exercise the same
+// engine, so a failure here points at content or scale rather than at a unit.
+runPnpm('Content validation', ['game:validate-content', '--', '--seeds=60'])
+runPnpm('Deterministic run simulation', [
+  'game:simulate',
+  '--',
+  '--runs=200',
+  '--verify=10',
+])
 runPnpm('Production build', ['build'])
 runPnpm('Browser smoke tests', ['test:e2e:only'])

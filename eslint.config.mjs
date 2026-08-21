@@ -114,6 +114,29 @@ export default defineConfig([
               from: { element: { type: 'game' } },
               allow: { to: { element: { type: 'game' } } },
             },
+            // The deterministic core stays framework and environment
+            // independent, but may use pure, portable libraries. The allowlist
+            // is explicit so a heavier dependency cannot slip into replay-
+            // critical code: `zod` parses trust boundaries and `pure-rand`
+            // provides the seeded generator fixed by ADR-011.
+            {
+              from: { element: { type: 'game' } },
+              allow: {
+                to: { module: { origin: 'external', source: 'zod' } },
+              },
+            },
+            {
+              from: { element: { type: 'game' } },
+              allow: {
+                to: { module: { origin: 'external', source: 'pure-rand' } },
+              },
+            },
+            {
+              from: { element: { type: 'game' } },
+              allow: {
+                to: { module: { origin: 'external', source: 'pure-rand/*' } },
+              },
+            },
             {
               from: { element: { type: 'content' } },
               allow: {

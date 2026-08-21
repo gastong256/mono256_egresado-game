@@ -38,6 +38,10 @@ Quedan fuera deliberadamente gameplay, Auth, schema de dominio, datos de partici
 | Supabase CLI | `2.115.0` | stack, migraciones, lint y tipos locales |
 | Supabase JS | `2.112.3` | adapters tipados, todavía sin uso de dominio |
 | Next DevTools MCP | `0.4.0` | introspección local del dev server |
+| pure-rand | `8.4.2` | PRNG seeded del motor ([ADR-012](../03-architecture/adr/ADR-012-seeded-prng-and-substreams.md)) |
+| fast-check | `4.9.0` | property tests de determinismo, replay y matemática |
+| vite-node | `6.0.0` | ejecuta las CLI TypeScript del motor sin duplicar un build |
+| Testing Library user-event | `14.6.5` | interacción real en tests de componentes |
 
 Las dependencias están fijadas de forma exacta; no reemplazar pnpm por npm/yarn ni instalar con un lockfile mutable.
 
@@ -45,7 +49,10 @@ Las dependencias están fijadas de forma exacta; no reemplazar pnpm por npm/yarn
 
 - TypeScript 7 no se adoptó: la versión evaluada no exponía el compiler API JavaScript requerido por el tooling y quedaba fuera del rango peer del stack typescript-eslint instalado. TypeScript `6.0.2` es la línea estable compatible.
 - ESLint 10 no se adoptó: dependencias transitivas de la configuración Next.js aún declaran compatibilidad con ESLint 9. `9.39.5` es una excepción de tooling, no una preferencia permanente; el registry la reporta fuera de mantenimiento. Dependabot y las revisiones de actualización deben retirarla apenas el grafo peer permita ESLint 10.
-- No se agregó Zustand: no existe todavía estado interactivo que justifique esa dependencia.
+- No se agregó Zustand: el estado de sesión del motor es un único árbol inmutable actualizado por `transition`, y la suscripción por selector la da `useSyncExternalStore`. Una librería de estado duplicaría eso sin agregar capacidad.
+- No se agregó `fraction.js` ni `decimal.js`: [ADR-013](../03-architecture/adr/ADR-013-exact-rational-arithmetic.md) usa racionales exactos propios sobre `bigint`. Reevaluar si aparece un dominio irracional.
+- No se agregó una librería de drag & drop: la vía accesible por teclado/tap es obligatoria de todos modos y resuelve la interacción de asignación por sí sola.
+- No se adoptó XState: ver [ADR-011](../03-architecture/adr/ADR-011-functional-core-transition-engine.md).
 - No se adoptó `@supabase/ssr`: Auth no forma parte de esta base y el paquete continúa marcado Beta.
 - React Compiler permanece desactivado: es opt-in y no hay UI de producto sobre la cual demostrar beneficio frente a su costo de build.
 

@@ -1978,6 +1978,132 @@ ADR-001 fija Next.js/TypeScript como plataforma y ADR-002 fija un monolito modul
 
 ---
 
+# FILE: 03-architecture/adr/ADR-011-functional-core-transition-engine.md
+
+# ADR-011 — Núcleo funcional con función de transición explícita
+
+- Estado: Aceptado
+- Fecha: 2026-08-21
+
+## Contexto
+
+ADR-003 exige un motor determinista y ADR-004 exige que el servidor reproduzca una run para calcular el score oficial. Faltaba decidir cómo se organiza la ejecución: un reducer explícito en TypeScript o una librería de máquinas de estado.
+
+Se evaluaron dos opciones.
+
+**A. Reducer explícito.** Uniones discriminadas, `switch` exhaustivos, funciones de transición puras y comandos/eventos explícitos.
+
+**B. XState estable.** Máquina declarativa con actores, guards y servicios.
+
+Criterios: replay determinista, serialización, peso de bundle, independencia de React, testabilidad, estabilidad de versión y capacidad de entender el comportamiento leyendo el repositorio.
+
+## Decisión
+
+Se adopta la opción A: `transition(state, command, dependencies) -> Result<TransitionResult, EngineRejection>` es el único lugar donde cambia el estado de una run.
+
+- El núcleo es una función pura sin I/O, reloj ni RNG ambiente.
+- Los comandos son una unión cerrada; `parseCommand` es la única frontera de confianza.
+- Las transiciones emiten **eventos de dominio** (hechos) y **effect requests** (instrucciones para el shell imperativo). El motor describe efectos, nunca los ejecuta.
+- Los rechazos esperados son valores `Result`; las excepciones quedan para violaciones de invariante.
+
+XState se descarta por ahora: el modelo real tiene cuatro fases (`narrative`, `challenge`, `feedback`, `completed`) y no requiere actores ni comunicación entre máquinas. Una librería agregaría una representación intermedia que habría que serializar y versionar junto con el replay, sin resolver ningún problema que el reducer no resuelva. La decisión se reevalúa si aparecen procesos concurrentes de larga vida dentro de una run.
+
+## Consecuencias
+
+- El comportamiento se lee directamente en el repositorio, sin capa intermedia.
+- Agregar un comando o un evento rompe la compilación en cada `switch` que lo ignore.
+- No hay dependencia de runtime para orquestación; el núcleo corre igual en browser y en Node.
+- La disciplina de pureza queda a cargo de fronteras de lint y de tests, no de una librería.
+
+---
+
+# FILE: 03-architecture/adr/ADR-012-seeded-prng-and-substreams.md
+
+# ADR-012 — PRNG seeded, substreams y contrato de consumo
+
+- Estado: Aceptado
+- Fecha: 2026-08-21
+
+## Contexto
+
+ADR-003 fija que toda aleatoriedad usa un PRNG seeded, pero dejaba abierto el algoritmo y el contrato de consumo. Esta es la pregunta abierta 25, cuyo gate era exactamente “implementar RNG seeded y golden replays P0 mediante ADR”.
+
+Un stream lineal único es frágil: agregar una tirada en cualquier punto desplaza todas las posteriores e invalida en silencio los replays guardados.
+
+## Decisión
+
+**Algoritmo.** `pure-rand` 8.4.2, generador `xoroshiro128plus`, fijado a versión exacta. Es MIT, sin dependencias transitivas, escrito en TypeScript y mantenido. Queda envuelto detrás de la interfaz propia `Rng`; el tipo de la librería no sale de `src/game/random/rng.ts`.
+
+**Substreams.** La aleatoriedad no se consume de un stream global. Cada consumidor deriva su propio generador desde una dirección de namespace:
+
+```text
+seed
+└── stage:year-2
+    ├── event:4 storylet
+    ├── event:4 challenge-pick
+    └── event:4 challenge:dev.trip-budget difficulty:4
+```
+
+La derivación es `mix32(fnv1a(seed + path))`, aritmética entera pura, portable entre browser y servidor. No es criptografía y no protege ningún secreto: sólo tiene que ser estable y bien distribuida.
+
+**Garantía de estabilidad.** Agregar un consumidor nuevo bajo una ruta nueva no altera ninguna ruta existente. Los separadores (espacio y `#`) están excluidos del charset de seeds e identificadores, así que dos rutas distintas no pueden colisionar.
+
+**Estado.** El generador de `pure-rand` v8 es mutable, por eso se crea siempre local a partir de una dirección derivada y nunca entra en el estado persistido. El determinismo viene de la dirección del substream, no de arrastrar un cursor.
+
+**Reintentos de generación.** Un challenge puede rechazar parámetros degenerados; el reintento usa `attempt` como segmento de ruta, así que también es determinista.
+
+## Consecuencias
+
+- Cambiar el algoritmo, la derivación o el orden de consumo cambia la semántica de replay y obliga a subir `ENGINE_VERSION`.
+- Los golden replays en `tests/unit/engine-golden.test.ts` detectan cualquier cambio accidental.
+- Se acepta la dependencia `pure-rand` dentro de `src/game`; la lista blanca de fronteras la declara explícitamente junto a `zod`.
+
+---
+
+# FILE: 03-architecture/adr/ADR-013-exact-rational-arithmetic.md
+
+# ADR-013 — Aritmética racional exacta para evaluación matemática
+
+- Estado: Aceptado
+- Fecha: 2026-08-21
+
+## Contexto
+
+Egresado evalúa matemática escolar. El marco matemático prohíbe comparar floats de forma exacta y exige que cada desafío declare precisión interna, regla de redondeo de display, tolerancia de input y unidad esperada.
+
+Un evaluador que calcule con `number` puede marcar incorrecta una respuesta correcta: `0.1 + 0.2 !== 0.3` en punto flotante binario, y los dominios documentados —dinero, porcentajes, proporciones, tasas, áreas— producen exactamente esas fracciones.
+
+Se evaluaron `fraction.js` 5.3.4, `decimal.js` 10.6.0, `big.js` 7.0.1 y una implementación propia.
+
+## Decisión
+
+Se implementa un tipo `Rational` propio sobre `bigint`, en `src/game/math/rational.ts`.
+
+Razones:
+
+- **Exactitud suficiente y total.** Toda la matemática documentada es un cociente de enteros. Un racional exacto cubre dinero, porcentajes, proporciones, tasas y áreas sin error de representación; un decimal de precisión fija no cubre `1/3`.
+- **Frontera serializable explícita.** `bigint` no es JSON. El límite debe existir de todos modos, y hacerlo propio permite definir la forma canónica `"n/d"` que el estado persistido usa.
+- **Sin objeto de librería en el dominio.** Cualquiera de las librerías habría necesitado igualmente un envoltorio para no filtrar su clase al estado persistido ni al replay, que es la mayor parte del trabajo.
+- **Primitiva crítica para replay.** El comportamiento numérico es parte del contrato de replay a varios años. Una implementación propia, congelada y cubierta por property tests elimina el riesgo de que una actualización de dependencia cambie un redondeo.
+
+Política numérica asociada:
+
+- **Dinero**: enteros en unidades menores (centavos). Ningún valor monetario usa decimales.
+- **Tiempo**: enteros en minutos.
+- **Porcentajes y proporciones**: racionales exactos.
+- **Redondeo**: explícito por operación, con modos `half-up`, `half-even`, `ceil`, `floor` y `truncate`. El redondeo de display nunca decide una comparación autoritativa.
+- **Compra por unidades**: `roundUpToMultiple` / `unitsRequired` modelan que no se compran 1,8 latas de pintura.
+- **Tolerancia de respuesta**: declarada por desafío como `exact`, `absolute`, `relative-percent` o `range`. Nunca una comparación aproximada implícita.
+- **`toNumber`**: sólo para presentación y métricas blandas; jamás para una comparación que decida calidad.
+
+## Consecuencias
+
+- Las leyes de campo, el redondeo y la tolerancia están cubiertos por property tests.
+- No se agregan `fraction.js` ni `decimal.js`; si aparece un dominio irracional (por ejemplo trigonometría real), esta decisión debe reevaluarse.
+- `Rational` es tipo interno de cálculo: el estado persistido guarda la cadena canónica, no el objeto.
+
+---
+
 # FILE: 03-architecture/analytics-observability.md
 
 # Analytics y observabilidad
@@ -2267,8 +2393,8 @@ flowchart LR
 ```
 
 - `src/app`: composición, layouts, páginas y entrada HTTP. Puede invocar casos de uso de servidor, pero no importar persistencia directamente.
-- `src/components`: UI. Puede consumir `game` y utilidades de `lib`; no accede a servidor, configuración secreta ni Supabase directamente.
-- `src/game`: core TypeScript puro y determinista. En dependencias internas sólo puede importar `game`; no usa React, Next.js, DOM, red, DB, almacenamiento del browser, hora global ni `Math.random()`.
+- `src/components`: UI. Puede consumir `game` y utilidades de `lib`; no accede a servidor, configuración secreta ni Supabase directamente. `components/game/` aporta el adaptador entre React y el motor: un store observable framework-free más un binding con `useSyncExternalStore`. No se incorporó Zustand: el estado de sesión es un único árbol inmutable actualizado por el reducer del motor, y la suscripción por selector ya la da React.
+- `src/game`: core TypeScript puro y determinista. En dependencias internas sólo puede importar `game`; no usa React, Next.js, DOM, red, DB, almacenamiento del browser, hora global, `process` ni `Math.random()`. Admite dos dependencias externas puras declaradas en una lista blanca de fronteras: `zod` para parsear fronteras de confianza y `pure-rand` para el generador seeded de [ADR-012](03-architecture/adr/ADR-012-seeded-prng-and-substreams.md). Contiene el núcleo funcional (`core`, `math`, `random`, `challenges`, `narrative`, `progression`, `difficulty`, `scoring`, `profiles`, `ruleset`, `runs`, `content`) y, bajo `testing/`, fixtures de desarrollo aisladas de la API pública. Ver [game engine](03-architecture/game-engine.md).
 - `src/content`: frontera reservada para contenido como datos sobre interacciones existentes. Se crea cuando exista contenido ejecutable aceptado; no contiene componentes ad hoc.
 - `src/server`: casos de uso autoritativos y adaptadores de persistencia. El subárbol `persistence` no es una API para `app`.
 - `src/lib`: adaptadores y utilidades transversales sin reglas de producto; el acceso público a Supabase vive aquí detrás de un adaptador aprobado.
@@ -2522,117 +2648,211 @@ Los feature flags futuros deben limitarse a necesidades verificadas; no crear un
 
 # Game engine
 
-## Objetivo
+Motor TypeScript determinista, puro y reproducible. Este documento describe el motor **implementado** en `src/game`. Las decisiones durables que lo gobiernan están en [ADR-003](03-architecture/adr/ADR-003-deterministic-seeded-engine.md), [ADR-004](03-architecture/adr/ADR-004-server-authoritative-scoring.md), [ADR-007](03-architecture/adr/ADR-007-content-as-data.md), [ADR-011](03-architecture/adr/ADR-011-functional-core-transition-engine.md), [ADR-012](03-architecture/adr/ADR-012-seeded-prng-and-substreams.md) y [ADR-013](03-architecture/adr/ADR-013-exact-rational-arithmetic.md).
 
-Motor TypeScript determinista, puro y reproducible.
+Para comandos y flujo de trabajo, ver [desarrollo del motor](08-engineering/game-engine-development.md).
 
 ## Restricciones
 
-El core no puede depender de:
-- React;
-- `window`/DOM;
-- almacenamiento local;
-- DB;
-- red;
-- fecha/hora global no inyectada;
-- `Math.random()` directo.
+`src/game` no puede depender de React, Next.js, `window`/DOM, almacenamiento local, DB, red, hora global no inyectada ni `Math.random()`. Las fronteras se aplican con ESLint (`no-restricted-globals`, `no-restricted-imports`, `boundaries/dependencies`) y con un proyecto TypeScript separado, `tsconfig.game.json`, que compila el core sin tipos de DOM ni de Node.
+
+Únicas dependencias externas admitidas dentro del core, declaradas en una lista blanca explícita de fronteras: `zod` (parseo de fronteras de confianza) y `pure-rand` (generador seeded de ADR-012).
+
+## Arquitectura
+
+Functional core / imperative shell.
+
+```mermaid
+flowchart TD
+    UI[src/components/game] --> CTRL[GameController]
+    CTRL --> T["transition(state, command, deps)"]
+    T --> ST[RunState inmutable]
+    T --> EV[Domain events]
+    T --> FX[Effect requests]
+    FX --> CTRL
+    CTRL -.->|sinks| PERS[Persistencia / analytics futuros]
+```
+
+El motor devuelve estado, eventos y **descripciones** de efecto. Nunca ejecuta un efecto: no hay red, storage ni SDK dentro de `src/game`.
+
+## Módulos
+
+| Módulo | Responsabilidad |
+|---|---|
+| `core/` | identidades branded, `Result`, taxonomía de errores, exhaustividad, versionado |
+| `math/` | racionales exactos, redondeo, cantidades/unidades, tolerancias |
+| `random/` | interfaz `Rng`, adaptador `pure-rand`, derivación de seeds por namespace |
+| `challenges/` | contratos, taxonomía, interacciones, registry, helpers de evaluación |
+| `narrative/` | storylets, condiciones, efectos, selección determinista |
+| `progression/` | etapas canónicas y stats visibles |
+| `difficulty/`, `scoring/`, `profiles/` | contratos de política + implementaciones de desarrollo |
+| `ruleset/` | ensamblado y validación del ruleset versionado |
+| `runs/` | estado, comandos, eventos, transición, action log, replay, snapshots, selectores |
+| `content/` | pipeline de validación de contenido |
+| `testing/` | fixtures de desarrollo, agente sintético y simulación masiva |
 
 ## Entradas
 
 ```typescript
-interface RunConfig {
-  seed: string
-  mode: GameMode
-  difficulty: Difficulty
+interface RunDescriptor {
+  runId: RunId
+  seed: RunSeed
+  mode: 'standard' | 'fair' | 'practice'
+  difficulty: 'adaptive' | 'fixed'
   gameVersion: string
   rulesetVersion: string
   contentVersion: string
 }
 ```
 
+`EngineDependencies` aporta `ruleset`, `challenges` (registry) y `storylets`. El ruleset **no** forma parte del estado: contiene funciones y se inyecta; la run sólo guarda su versión.
+
 ## Estado
 
+`RunState` es JSON-compatible: no contiene `Date`, `Map`, `Set`, instancias de clase ni funciones. Guarda descriptor, fase, etapa, índices de evento, stats, flags, dificultad, estado de selección, historial, `scorePreview`, racha y completion.
+
+El desafío activo se guarda como **dirección**, no como modelo:
+
 ```typescript
-interface GameState {
-  stage: SchoolStage
-  eventIndex: number
-  stats: PlayerStats
-  flags: Record<string, boolean | number | string>
-  history: ResolvedEvent[]
-  rngState: RngState
-  scorePreview: number
-  status: 'active' | 'completed'
+interface ChallengeInstanceRef {
+  instanceId, definitionId, stageId, eventIndex, difficulty
 }
 ```
 
-## Acciones
+Como la generación es función pura de esa dirección, el modelo se recalcula cuando hace falta. Nada no serializable entra al estado, los snapshots quedan chicos y el replay no puede desincronizarse del estado que lo referencia.
 
-```typescript
-type GameAction =
-  | { type: 'ANSWER'; challengeId: string; payload: unknown }
-  | { type: 'REQUEST_INFO'; challengeId: string; key: string }
-  | { type: 'USE_TOOL'; challengeId: string; tool: ToolId }
-  | { type: 'CONTINUE' }
+## Ciclo de vida
+
+```mermaid
+stateDiagram-v2
+    [*] --> narrative: createRun
+    narrative --> challenge: CONTINUE
+    narrative --> narrative: CONTINUE
+    challenge --> feedback: ANSWER
+    challenge --> challenge: REQUEST_INFO / USE_TOOL
+    feedback --> challenge: CONTINUE
+    feedback --> narrative: CONTINUE
+    feedback --> completed: CONTINUE (última etapa)
+    challenge --> completed: ABANDON
+    completed --> [*]
 ```
 
-Las acciones deben tener schema Zod en frontera externa.
+Un storylet sin pool de desafíos es un evento puramente narrativo y se resuelve con `CONTINUE`.
 
-## Reducer
+## Comandos
 
-`transition(state, action, dependencies) -> TransitionResult`
+```typescript
+type GameCommand =
+  | { type: 'ANSWER'; instanceId; answer: InteractionAnswer }
+  | { type: 'REQUEST_INFO'; instanceId; key }
+  | { type: 'USE_TOOL'; instanceId; tool }
+  | { type: 'CONTINUE' }
+  | { type: 'ABANDON' }
+```
 
-Debe ser puro respecto de inputs. Si existe RNG, se consume mediante objeto seeded incluido en estado/dependencias.
+`parseCommand` es la única frontera de confianza; usa schemas Zod. Dentro del motor los comandos ya están tipados.
+
+Las respuestas numéricas viajan como literal decimal en `string`, nunca como `number`, para que ningún valor pase por punto flotante binario antes de ser evaluado.
+
+## Transiciones inválidas
+
+`transition` devuelve `Result`. Se rechazan explícitamente, entre otros: responder fuera de fase, responder dos veces, responder a una instancia obsoleta, enviar una respuesta de otra interacción, pedir un dato inexistente, usar una herramienta no habilitada, continuar sin feedback y operar sobre una run terminada. Cada rechazo es un valor tipado de `EngineRejection`, no una excepción.
+
+Las excepciones (`EngineInvariantError`) quedan reservadas para estados que las reglas del motor deberían haber impedido; nunca las puede provocar el jugador.
+
+## Eventos de dominio y efectos
+
+Son cosas distintas.
+
+- **Evento de dominio**: un hecho ocurrido en el modelo determinista (`challenge.evaluated`, `stage.completed`, `run.completed`). Estable, apto para mapear a analytics más adelante, pero el vocabulario no lo decide analytics.
+- **Effect request**: una instrucción para el shell (`persist-snapshot`, `track`). El motor la describe; el `GameController` la ejecuta a través de sinks inyectados.
 
 ## RNG
 
-- Elegir un PRNG estable cuya implementación/version quede controlada.
-- No cambiar algoritmo sin `ruleset_version` o ADR si afecta runs.
-- Toda selección de storylet y generación procedural consume el RNG en orden documentado.
+Ver [ADR-012](03-architecture/adr/ADR-012-seeded-prng-and-substreams.md). Cada consumidor deriva su substream por dirección de namespace, de modo que agregar una tirada nueva no desplaza ninguna existente. `RunState` no guarda un cursor de RNG: el determinismo viene de la dirección, no del arrastre de estado.
 
-## Evaluadores
+Capacidades: `nextInt`, `nextFloat`, `chance`, `pick`, `shuffle`, `weightedPick`, `derive`. La selección ponderada usa pesos enteros y comparación entera; nunca puede elegir un peso cero.
 
-Cada challenge type implementa:
+## Precisión numérica
 
-```typescript
-interface ChallengeEvaluator<I, M> {
-  validateInput(input: unknown): I
-  evaluate(model: M, input: I): ChallengeResult
-}
-```
+Ver [ADR-013](03-architecture/adr/ADR-013-exact-rational-arithmetic.md). Dinero en unidades menores enteras, tiempo en minutos enteros, proporciones y porcentajes como racionales exactos, redondeo explícito por operación y tolerancia de respuesta declarada por desafío (`exact`, `absolute`, `relative-percent`, `range`). `toNumber` es sólo para presentación.
 
-## Generadores
+## Desafíos
 
-```typescript
-interface ChallengeGenerator<P, M> {
-  generate(params: P, rng: SeededRng): M
-  verify(model: M): VerificationResult
-}
-```
+Un desafío declara cuatro responsabilidades separables:
+
+1. `generate(context)` — parámetros desde el RNG seeded;
+2. `verify(model)` — invariantes propias del desafío;
+3. `present(model, revealed)` — vista pública, sin la solución;
+4. `evaluate(model, answer, revealed)` — resultado estructurado.
+
+`defineChallenge` borra el tipo del modelo sin ningún cast: el modelo queda capturado en el closure y sólo se exponen las operaciones permitidas. La generación reintenta en un substream propio hasta cumplir las invariantes; el índice de intento forma parte de la dirección, así que el reintento también es determinista. Un generador que necesita reintentos sistemáticamente está mal construido y la validación de contenido lo reporta.
+
+### Vista pública
+
+`PublicChallengeView` contiene narrativa, interacción y herramientas. No expone el modelo interno ni la solución. Un juego servido al browser no puede garantizar secreto absoluto, pero la arquitectura no entrega la respuesta a los componentes de presentación.
+
+## Interacciones
+
+La categoría matemática y la interacción son ejes independientes (ADR-007). Familias contratadas en este build:
+
+`decision-card`, `numeric-input`, `budget-builder`, `timeline`, `chart-interpretation`, `assignment-board`, `information-request`.
+
+Las familias documentadas todavía **no** contratadas son `spatial-grid`, `sequence/trend` y `special minigame`. Ver [cómo agregar una interacción](08-engineering/game-engine-development.md#agregar-un-interaction-type).
+
+## Narrativa
+
+Storylets con condiciones declarativas. Las condiciones y los efectos son **datos**, nunca callbacks: eso permite validarlos antes de ejecutar, serializarlos, editarlos fuera del código y reproducirlos en el servidor sin evaluar código arbitrario.
+
+Selección: filtrar por etapa → descartar cooldown/repetición → evaluar condición → quedarse con el tier de prioridad más alto → sorteo ponderado seeded. Un pool vacío devuelve un resultado tipado, no una excepción.
+
+## Progresión y ruleset
+
+Las siete etapas canónicas son configuración del ruleset, no `if (year === 3)` repartidos por el motor. El ruleset reúne etapas, política de scoring, de dificultad, de perfil y pacing narrativo, y se valida al construirse.
+
+Un ruleset **oficial** exige que las tres políticas estén marcadas `production`. Como las preguntas abiertas 5 y 24 siguen sin cerrarse, hoy no existe ninguna política de producción y `createRuleset({ official: true })` falla a propósito.
+
+## Scoring y perfil
+
+`score_evento = base × calidad × dificultad + bonus - penalizaciones`, calculado sobre racionales y redondeado una sola vez al final. El resultado incluye un desglose explicable.
+
+El tiempo **no** participa: la pregunta abierta 27 no definió qué señal temporal puede considerar autoritativa el servidor, y las reglas advierten que un score dominado por velocidad perjudica accesibilidad.
+
+El perfil se calcula sobre dimensiones ocultas normalizadas, con desempate documentado y total: puntaje ponderado → dimensión dominante del perfil → orden canónico.
 
 ## Replay
 
-El servidor reconstruye:
-
 ```text
-initialState(config)
--> action[0]
--> action[1]
--> ...
--> finalState
+createRun(descriptor) -> action[0] -> action[1] -> ... -> finalState
 ```
 
-Si cliente y servidor producen `result_hash`, debe coincidir para una implementación/version compatibles.
+El action log versionado es el artefacto de validación más fuerte: se puede volver a ejecutar. Las secuencias deben empezar en cero y avanzar de a uno; un salto se rechaza en vez de repararse. Un comando que las reglas no habrían permitido invalida el log completo.
+
+La comparación usa una forma JSON canónica con claves ordenadas, así que el orden de inserción no puede producir un falso negativo.
+
+## Snapshots
+
+Los snapshots son una **optimización para reanudar** (FR-009/FR-010), no un artefacto autoritativo. El codec valida agresivamente y rechaza lo que no reconoce; una versión incompatible produce un error explícito, nunca una migración silenciosa. No existe un registro de migraciones porque no existe una segunda versión; el campo de versión y el codec son el lugar donde se agregaría.
+
+## Compatibilidad y versionado
+
+Una run sólo puede reanudarse o revalidarse con un motor que declare el mismo triple `gameVersion` / `rulesetVersion` / `contentVersion`.
+
+| Cambió | Subir |
+|---|---|
+| transición, orden de consumo de RNG, derivación de seed, formato de action log, codec de snapshot, generación de un desafío existente | `ENGINE_VERSION` |
+| política de scoring, dificultad, progresión o perfil | versión de ruleset |
+| datos de desafíos o storylets | versión de contenido |
+
+Los golden tests de `tests/unit/engine-golden.test.ts` fallan ante cualquier cambio accidental de salida determinista. Regenerarlos sin subir la versión correspondiente invalida en silencio los replays guardados.
+
+## Frontera con servidor
+
+El motor corre igual en browser y en Node. Un caso de uso server-side futuro recibe `RunDescriptor` + action log y obtiene estado final, score y perfil validados sin confiar en nada que haya afirmado el cliente. Esta fase no implementa endpoints de runs ni ranking.
 
 ## Hash de resultado
 
-Opcional pero recomendado:
-- canonicalizar state relevante;
-- hash SHA-256 server-side/client-side;
-- útil para detectar divergencias, no como mecanismo de seguridad por sí mismo.
-
-## Compatibilidad
-
-Una run sólo puede reanudarse/reproducirse con el engine compatible con sus versiones. No intentar migrar silenciosamente runs activas entre rulesets incompatibles.
+Opcional. `canonicalize(state)` produce la forma estable sobre la que se puede calcular un hash para detectar divergencias entre cliente y servidor. Es una señal de diagnóstico, no un mecanismo de seguridad por sí mismo.
 
 ---
 
@@ -2894,7 +3114,13 @@ La suite actual demuestra la infraestructura, no el comportamiento futuro del ju
 - `tests/property/`: combinaciones generadas de configuración pública/server-only.
 - `tests/e2e/`: smoke del shell y health en Chromium desktop y viewport Pixel 7, incluida ausencia de errores de consola.
 
-Vitest mide sólo los archivos de la base enumerados en `vitest.config.ts`, con thresholds de 85 % para statements, lines y functions, y 75 % para branches. Alcanzar esos umbrales no representa cobertura de gameplay todavía inexistente.
+Vitest mide los archivos enumerados en `vitest.config.ts`, que incluyen todo `src/game`, con thresholds de 85 % para statements, lines y functions, y 75 % para branches. El porcentaje no es el objetivo: la prioridad de cobertura es transiciones, replay, generadores, evaluadores, matemática, scoring, selección de storylets y serialización.
+
+El motor suma tres capas que no son unit tests convencionales:
+
+- **property tests** (`tests/property/`): determinismo por seed, equivalencia entre run y replay, round-trip de serialización, rangos del RNG, selección ponderada que nunca elige peso cero, stats acotadas, score finito y no negativo, instancias generadas que cumplen sus invariantes, y estabilidad de evaluación;
+- **golden replays** (`tests/unit/engine-golden.test.ts`): fijan la salida determinista exacta de seeds conocidas. Detectan un cambio accidental de protocolo; regenerarlos exige el bump de versión correspondiente;
+- **simulación masiva** (`pnpm game:simulate`): miles de runs deterministas que buscan callejones sin salida, scores inválidos, divergencia de replay y deriva de snapshot. `pnpm verify` corre 200 runs; la simulación profunda queda local.
 
 ## Verificación local
 
@@ -2907,8 +3133,10 @@ Vitest mide sólo los archivos de la base enumerados en `vitest.config.ts`, con 
 5. lint, incluidas fronteras de arquitectura;
 6. TypeScript general y core sin DOM/Node;
 7. unit, component, integration y property tests con cobertura;
-8. build de producción;
-9. smoke E2E sobre el build.
+8. validación de contenido (`pnpm game:validate-content`);
+9. simulación determinista de 200 runs con verificación de replay y snapshot;
+10. build de producción;
+11. smoke E2E sobre el build, incluido el harness del motor.
 
 Comandos más estrechos para iteración:
 
@@ -2920,6 +3148,9 @@ Comandos más estrechos para iteración:
 | Cobertura y thresholds | `pnpm test:coverage` |
 | Build + Playwright | `pnpm test:e2e` |
 | Playwright sobre un build preparado | `pnpm test:e2e:only` |
+| Validación de contenido | `pnpm game:validate-content` |
+| Simulación determinista | `pnpm game:simulate` |
+| Simulación profunda de balance | `pnpm game:simulate:deep` |
 | Tipos de app + frontera de core | `pnpm typecheck` |
 | Lint + imports/límites prohibidos | `pnpm lint` |
 
@@ -3465,6 +3696,9 @@ Cambios que alteran resultados deben indicarlo explícitamente y actualizar la v
 | ADR-008 | Identidad anónima/pseudónima | Aceptado |
 | ADR-009 | Leaderboards por evento | Aceptado |
 | ADR-010 | Toolchain Node.js/pnpm y artefacto Docker portable | Aceptado |
+| ADR-011 | Núcleo funcional con función de transición explícita | Aceptado |
+| ADR-012 | PRNG seeded, substreams y contrato de consumo | Aceptado |
+| ADR-013 | Aritmética racional exacta para evaluación matemática | Aceptado |
 
 ## Regla para ADR nuevo
 
@@ -3570,7 +3804,7 @@ Estas decisiones requieren evidencia de prototipo, playtest, implementación u o
 ## Engine y scoring
 
 24. ¿Cuál es la fórmula y política de redondeo final del score oficial, incluidos calidad, dificultad, velocidad, rachas y penalizaciones? *Gate: congelar el ruleset de score oficial.*
-25. ¿Qué algoritmo PRNG y contrato de consumo/versionado se adopta para la primera implementación? *Gate: implementar RNG seeded y golden replays P0 mediante ADR.*
+25. ~~¿Qué algoritmo PRNG y contrato de consumo/versionado se adopta para la primera implementación?~~ **Cerrada por [ADR-012](03-architecture/adr/ADR-012-seeded-prng-and-substreams.md)**: `pure-rand` `xoroshiro128plus` fijado, substreams derivados por namespace y golden replays en `tests/unit/engine-golden.test.ts`.
 26. ¿Durante cuánto tiempo y mediante qué artefactos se conservan engines, rulesets y contenido compatibles para reanudar o reproducir runs históricas? *Gate: prometer compatibilidad de resume/replay entre releases.*
 27. Si el tiempo participa del score o desempate, ¿qué señales y límites autoritativos usa el servidor sin confiar en `client_elapsed_ms`? *Gate: usar velocidad en score o ranking oficial.*
 
@@ -3881,6 +4115,7 @@ Este directorio define la referencia funcional, lúdica, pedagógica y técnica 
 - `mcp-strategy.md`: integraciones justificadas, trust y diferimientos.
 - `agent-setup.md`: arquitectura del workspace, discovery, skills y fuentes oficiales.
 - `development-environment.md`: quickstart nativo/Docker, Supabase local, gates y troubleshooting.
+- `game-engine-development.md`: comandos, harness, invariantes y cómo extender el motor.
 
 `EGRESADO-MASTER-SPEC.md` consolida la baseline de producto (`00-` a `07-`, checklist y este README). La infraestructura de ingeniería de `08-engineering/` se mantiene por separado para no mezclar reglas operativas del agente con la especificación del producto.
 

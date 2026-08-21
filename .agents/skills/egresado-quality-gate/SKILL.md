@@ -20,14 +20,14 @@ pnpm verify
 git diff --check
 ```
 
-`pnpm verify` cubre infraestructura agentica y master, formato, lint/fronteras, TypeScript, coverage, build y smoke E2E. No reemplaza gates que requieren Supabase/Docker ni validaciones especializadas de contenido o gameplay.
+`pnpm verify` cubre infraestructura agentica y master, formato, lint/fronteras, TypeScript, coverage, validacion de contenido, simulacion determinista de 200 runs, build y smoke E2E. No reemplaza gates que requieren Supabase/Docker ni una simulacion profunda de balance.
 
 ## Gates selectivos
 
 Suma segun el cambio:
 
-- engine/scoring/RNG: property tests, replay y golden seeds;
-- contenido procedural: schema, solver/invariantes, simulacion de seeds y revision UI;
+- engine/scoring/RNG: `pnpm test`, `pnpm game:simulate -- --runs=2000 --verify=10` y los golden replays de `tests/unit/engine-golden.test.ts`. Un cambio de salida determinista exige subir `ENGINE_VERSION`, version de ruleset o de contenido segun la tabla de [game engine](../../../docs/03-architecture/game-engine.md#compatibilidad-y-versionado); regenerar goldens sin ese bump es un fallo, no un ajuste;
+- contenido procedural: `pnpm game:validate-content -- --seeds=300 --stats`, invariantes del generador, distribucion de opciones y revision UI;
 - API/DB: `pnpm db:start`, `pnpm db:reset`, `pnpm db:lint`, `pnpm db:types`, integration, idempotencia, migracion, indices y permisos/RLS; termina con `pnpm db:stop`;
 - UI: viewport mobile/desktop, teclado, focus, reduced motion y errores de red;
 - contenedores/deploy: `pnpm docker:build`, health check del runner no-root, `pnpm docker:up`, conectividad app→Supabase y `pnpm docker:down`;

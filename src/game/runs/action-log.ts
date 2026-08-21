@@ -1,0 +1,146 @@
+/**
+ * Canonical run action log.
+ *
+ * ADR-004 makes the server authoritative: the client submits what the player
+ * did, and the server replays it. The action log is that submission, and it is
+ * the strongest validation artefact the system has — stronger than a snapshot,
+ * because it can be re-executed rather than merely trusted.
+ *
+ * The format is versioned separately from the engine so a transport change and
+ * a rules change stay distinguishable.
+ */
+
+import { z } from 'zod'
+
+import { toRunId, toRunSeed } from '../core/branded'
+import { err, ok, type Result } from '../core/result'
+import type { EngineRejection } from '../core/errors'
+import { gameCommandSchema, parseCommand, type GameCommand } from './commands'
+import type { RunDescriptor } from './state'
+
+/** Bumped when the envelope shape changes, not when game rules change. */
+export const ACTION_LOG_VERSION = 1
+
+export interface RunActionEnvelope {
+  /** Strictly increasing, starting at zero. */
+  readonly sequence: number
+  readonly command: GameCommand
+}
+
+export interface RunActionLog {
+  readonly version: number
+  readonly descriptor: RunDescriptor
+  readonly actions: readonly RunActionEnvelope[]
+}
+
+const descriptorSchema = z.object({
+  runId: z.string().min(1).max(128),
+  seed: z.string().min(1).max(128),
+  mode: z.enum(['standard', 'fair', 'practice']),
+  difficulty: z.enum(['adaptive', 'fixed']),
+  gameVersion: z.string().min(1).max(32),
+  rulesetVersion: z.string().min(1).max(32),
+  contentVersion: z.string().min(1).max(32),
+})
+
+const envelopeSchema = z.object({
+  sequence: z.number().int().min(0),
+  command: gameCommandSchema,
+})
+
+export const actionLogSchema = z.object({
+  version: z.number().int().min(1),
+  descriptor: descriptorSchema,
+  // The cap bounds the replay work a single submission can ask the server to
+  // do, as required by the API limits section.
+  actions: z.array(envelopeSchema).max(512),
+})
+
+export function appendAction(
+  log: RunActionLog,
+  command: GameCommand,
+): RunActionLog {
+  return {
+    ...log,
+    actions: [...log.actions, { sequence: log.actions.length, command }],
+  }
+}
+
+export function emptyActionLog(descriptor: RunDescriptor): RunActionLog {
+  return { version: ACTION_LOG_VERSION, descriptor, actions: [] }
+}
+
+/**
+ * Parses and validates an untrusted action log.
+ *
+ * Sequence numbers must start at zero and increase by exactly one. A gap means
+ * actions were dropped or reordered, which would silently change the run, so it
+ * is refused rather than repaired.
+ */
+export function parseActionLog(
+  input: unknown,
+): Result<RunActionLog, EngineRejection> {
+  const parsed = actionLogSchema.safeParse(input)
+
+  if (!parsed.success) {
+    const detail = parsed.error.issues
+      .map(
+        (issue) => `${issue.path.join('.') || 'actionLog'}: ${issue.message}`,
+      )
+      .join('; ')
+    return err({ kind: 'invalid-command', detail })
+  }
+
+  if (parsed.data.version !== ACTION_LOG_VERSION) {
+    return err({
+      kind: 'unsupported-version',
+      field: 'actionLogVersion',
+      expected: String(ACTION_LOG_VERSION),
+      received: String(parsed.data.version),
+    })
+  }
+
+  const actions: RunActionEnvelope[] = []
+
+  for (const [index, envelope] of parsed.data.actions.entries()) {
+    if (envelope.sequence !== index) {
+      return err({
+        kind: 'action-log-sequence-gap',
+        expected: index,
+        received: envelope.sequence,
+      })
+    }
+
+    const command = parseCommand(envelope.command)
+    if (!command.ok) {
+      return command
+    }
+
+    actions.push({ sequence: index, command: command.value })
+  }
+
+  const raw = parsed.data.descriptor
+  const descriptor: RunDescriptor = {
+    runId: toRunId(raw.runId),
+    seed: toRunSeed(raw.seed),
+    mode: raw.mode,
+    difficulty: raw.difficulty,
+    gameVersion: raw.gameVersion,
+    rulesetVersion: raw.rulesetVersion,
+    contentVersion: raw.contentVersion,
+  }
+
+  return ok({ version: parsed.data.version, descriptor, actions })
+}
+
+/** JSON-ready form. The log is already plain data, so this is a structural copy. */
+export function serializeActionLog(log: RunActionLog): unknown {
+  return {
+    version: log.version,
+    descriptor: { ...log.descriptor },
+    actions: log.actions.map((envelope) => ({
+      sequence: envelope.sequence,
+      command: envelope.command,
+    })),
+  }
+}

@@ -63,6 +63,14 @@ jobs:
       - name: Run covered tests
         run: pnpm test:coverage
 
+      - name: Validate game content
+        run: pnpm game:validate-content -- --seeds=120
+
+      # A deterministic sweep, so CI stays reproducible. The deeper sweep used
+      # for balance work is a local command.
+      - name: Simulate deterministic runs
+        run: pnpm game:simulate -- --runs=400 --verify=10
+
       - name: Build production application
         run: pnpm build
 

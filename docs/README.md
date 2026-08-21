@@ -80,6 +80,7 @@ Este directorio define la referencia funcional, lúdica, pedagógica y técnica 
 - `mcp-strategy.md`: integraciones justificadas, trust y diferimientos.
 - `agent-setup.md`: arquitectura del workspace, discovery, skills y fuentes oficiales.
 - `development-environment.md`: quickstart nativo/Docker, Supabase local, gates y troubleshooting.
+- `game-engine-development.md`: comandos, harness, invariantes y cómo extender el motor.
 
 `EGRESADO-MASTER-SPEC.md` consolida la baseline de producto (`00-` a `07-`, checklist y este README). La infraestructura de ingeniería de `08-engineering/` se mantiene por separado para no mezclar reglas operativas del agente con la especificación del producto.
 

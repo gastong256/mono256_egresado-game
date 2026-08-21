@@ -26,6 +26,9 @@
     "test:e2e": "node scripts/run-e2e.mjs",
     "test:e2e:only": "playwright test",
     "test:e2e:ui": "playwright test --ui",
+    "game:validate-content": "vite-node scripts/game/validate-content.ts",
+    "game:simulate": "vite-node scripts/game/simulate.ts",
+    "game:simulate:deep": "vite-node scripts/game/simulate.ts -- --runs=5000 --verify=5",
     "db:start": "node scripts/start-local-supabase.mjs",
     "db:stop": "supabase stop",
     "db:status": "node scripts/local-supabase-status.mjs",
@@ -45,6 +48,7 @@
   "dependencies": {
     "@supabase/supabase-js": "2.112.3",
     "next": "16.3.1",
+    "pure-rand": "8.4.2",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "server-only": "0.0.1",
@@ -56,6 +60,7 @@
     "@testing-library/dom": "10.4.1",
     "@testing-library/jest-dom": "7.0.1",
     "@testing-library/react": "16.3.2",
+    "@testing-library/user-event": "14.6.5",
     "@types/node": "24.13.3",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.4",
@@ -72,6 +77,7 @@
     "supabase": "2.115.0",
     "tailwindcss": "4.3.3",
     "typescript": "6.0.2",
+    "vite-node": "6.0.0",
     "vitest": "4.1.11"
   }
 }

@@ -1,8 +1,10 @@
 # Egresado
 
-Videojuego web de decisiones y desafíos matemáticos contextualizados en la vida escolar. Este repositorio ya contiene la base técnica reproducible de la aplicación: Next.js, TypeScript estricto, tests, Supabase local opcional, Docker, CI y configuración agentiva.
+Videojuego web de decisiones y desafíos matemáticos contextualizados en la vida escolar. Este repositorio contiene la base técnica reproducible —Next.js, TypeScript estricto, tests, Supabase local opcional, Docker, CI y configuración agentiva— y el **motor de juego determinista**.
 
-La pantalla actual es sólo un shell técnico. Todavía no implementa gameplay, Auth, datos de juego ni ranking.
+El motor ejecuta una run completa de punta a punta: progresión por etapas, selección de storylets, generación procedural de desafíos, evaluación exacta, feedback estructurado, scoring, perfil de egreso, snapshots y replay. Lo hace con **contenido de desarrollo** explícitamente marcado como tal.
+
+Todavía no hay contenido de juego definitivo, Auth, persistencia de runs ni ranking. Las políticas de scoring, dificultad y perfil son de desarrollo: `createRuleset({ official: true })` falla a propósito mientras existan.
 
 > **Release público bloqueado:** el repositorio fija Next.js `16.3.1`, anterior al parche de seguridad anunciado para `16.3.2`. `pnpm release:check` falla deliberadamente hasta actualizar Next.js y su lockfile, y volver a ejecutar todos los gates. No desplegar esta revisión públicamente.
 
@@ -36,19 +38,21 @@ pnpm db:stop
 
 ## Comandos principales
 
-| Objetivo                                              | Comando                |
-| ----------------------------------------------------- | ---------------------- |
-| Desarrollo nativo                                     | `pnpm dev`             |
-| Desarrollo en contenedor                              | `pnpm docker:up`       |
-| Detener y retirar Compose                             | `pnpm docker:down`     |
-| Alineación Node/pnpm/Docker                           | `pnpm toolchain:check` |
-| Tests unitarios/integración/property/componentes      | `pnpm test`            |
-| Cobertura                                             | `pnpm test:coverage`   |
-| E2E con build previa                                  | `pnpm test:e2e`        |
-| Gate completo local                                   | `pnpm verify`          |
-| Patrones de secretos en archivos versionables         | `pnpm secrets:check`   |
-| Auditoría de dependencias ejecutables y de desarrollo | `pnpm security:audit`  |
-| Gate explícito de release                             | `pnpm release:check`   |
+| Objetivo                                              | Comando                      |
+| ----------------------------------------------------- | ---------------------------- |
+| Desarrollo nativo                                     | `pnpm dev`                   |
+| Desarrollo en contenedor                              | `pnpm docker:up`             |
+| Detener y retirar Compose                             | `pnpm docker:down`           |
+| Alineación Node/pnpm/Docker                           | `pnpm toolchain:check`       |
+| Tests unitarios/integración/property/componentes      | `pnpm test`                  |
+| Cobertura                                             | `pnpm test:coverage`         |
+| E2E con build previa                                  | `pnpm test:e2e`              |
+| Validación de contenido del juego                     | `pnpm game:validate-content` |
+| Simulación determinista de runs                       | `pnpm game:simulate`         |
+| Gate completo local                                   | `pnpm verify`                |
+| Patrones de secretos en archivos versionables         | `pnpm secrets:check`         |
+| Auditoría de dependencias ejecutables y de desarrollo | `pnpm security:audit`        |
+| Gate explícito de release                             | `pnpm release:check`         |
 
 Antes del primer E2E local, instalar el navegador fijado por Playwright:
 
@@ -60,8 +64,9 @@ pnpm exec playwright install chromium
 
 - `src/app`: composición Next.js, rutas y BFF; no accede a internals de persistencia.
 - `src/components`: UI; no importa servidor ni Supabase directamente.
-- `src/game`: futuro motor TypeScript puro, determinista y sin React, DOM, red, DB, hora global ni `Math.random()`.
-- `src/content`: frontera reservada para contenido como datos; se creará cuando exista contenido ejecutable autorizado.
+- `src/game`: motor TypeScript puro, determinista y sin React, DOM, red, DB, `process`, hora global ni `Math.random()`. Sólo admite `zod` y `pure-rand`, declarados en una lista blanca de fronteras. Ver [game engine](docs/03-architecture/game-engine.md).
+- `src/components/game`: adaptador entre React y el motor. Recoge respuestas y despacha comandos; nunca evalúa una respuesta.
+- `src/content`: frontera reservada para contenido como datos; se creará cuando exista contenido ejecutable autorizado. Las fixtures de desarrollo viven aisladas en `src/game/testing`.
 - `src/server`: casos de uso autoritativos y adapters de persistencia.
 - `src/lib`: utilidades y adapters compartidos explícitamente aprobados.
 - `src/config`: validación tipada de ambiente público y server-only.
@@ -73,11 +78,16 @@ ESLint y un `tsconfig` aislado del game core hacen cumplir estas fronteras. El n
 ## Documentación
 
 - [Entorno de desarrollo y operaciones locales](docs/08-engineering/development-environment.md)
+- [Arquitectura del motor de juego](docs/03-architecture/game-engine.md)
+- [Desarrollo sobre el motor: comandos, harness y extensión](docs/08-engineering/game-engine-development.md)
 - [Índice y autoridad documental](docs/README.md)
 - [Mapa de contexto para tareas](docs/08-engineering/context-map.md)
 - [Flujo de desarrollo asistido](docs/08-engineering/ai-development-workflow.md)
 - [Setup de agentes](docs/08-engineering/agent-setup.md)
 - [Estrategia MCP](docs/08-engineering/mcp-strategy.md)
 - [ADR-010: toolchain reproducible y Docker portable](docs/03-architecture/adr/ADR-010-reproducible-node-pnpm-container-toolchain.md)
+- [ADR-011: núcleo funcional con función de transición](docs/03-architecture/adr/ADR-011-functional-core-transition-engine.md)
+- [ADR-012: PRNG seeded y substreams](docs/03-architecture/adr/ADR-012-seeded-prng-and-substreams.md)
+- [ADR-013: aritmética racional exacta](docs/03-architecture/adr/ADR-013-exact-rational-arithmetic.md)
 
 Vercel continúa siendo la topología canónica prevista para producción; la imagen Docker es un artefacto portable y de paridad, no una decisión de proveedor alternativa. Ningún despliegue público está habilitado en esta base.

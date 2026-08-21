@@ -10,7 +10,13 @@ La suite actual demuestra la infraestructura, no el comportamiento futuro del ju
 - `tests/property/`: combinaciones generadas de configuración pública/server-only.
 - `tests/e2e/`: smoke del shell y health en Chromium desktop y viewport Pixel 7, incluida ausencia de errores de consola.
 
-Vitest mide sólo los archivos de la base enumerados en `vitest.config.ts`, con thresholds de 85 % para statements, lines y functions, y 75 % para branches. Alcanzar esos umbrales no representa cobertura de gameplay todavía inexistente.
+Vitest mide los archivos enumerados en `vitest.config.ts`, que incluyen todo `src/game`, con thresholds de 85 % para statements, lines y functions, y 75 % para branches. El porcentaje no es el objetivo: la prioridad de cobertura es transiciones, replay, generadores, evaluadores, matemática, scoring, selección de storylets y serialización.
+
+El motor suma tres capas que no son unit tests convencionales:
+
+- **property tests** (`tests/property/`): determinismo por seed, equivalencia entre run y replay, round-trip de serialización, rangos del RNG, selección ponderada que nunca elige peso cero, stats acotadas, score finito y no negativo, instancias generadas que cumplen sus invariantes, y estabilidad de evaluación;
+- **golden replays** (`tests/unit/engine-golden.test.ts`): fijan la salida determinista exacta de seeds conocidas. Detectan un cambio accidental de protocolo; regenerarlos exige el bump de versión correspondiente;
+- **simulación masiva** (`pnpm game:simulate`): miles de runs deterministas que buscan callejones sin salida, scores inválidos, divergencia de replay y deriva de snapshot. `pnpm verify` corre 200 runs; la simulación profunda queda local.
 
 ## Verificación local
 
@@ -23,8 +29,10 @@ Vitest mide sólo los archivos de la base enumerados en `vitest.config.ts`, con 
 5. lint, incluidas fronteras de arquitectura;
 6. TypeScript general y core sin DOM/Node;
 7. unit, component, integration y property tests con cobertura;
-8. build de producción;
-9. smoke E2E sobre el build.
+8. validación de contenido (`pnpm game:validate-content`);
+9. simulación determinista de 200 runs con verificación de replay y snapshot;
+10. build de producción;
+11. smoke E2E sobre el build, incluido el harness del motor.
 
 Comandos más estrechos para iteración:
 
@@ -36,6 +44,9 @@ Comandos más estrechos para iteración:
 | Cobertura y thresholds | `pnpm test:coverage` |
 | Build + Playwright | `pnpm test:e2e` |
 | Playwright sobre un build preparado | `pnpm test:e2e:only` |
+| Validación de contenido | `pnpm game:validate-content` |
+| Simulación determinista | `pnpm game:simulate` |
+| Simulación profunda de balance | `pnpm game:simulate:deep` |
 | Tipos de app + frontera de core | `pnpm typecheck` |
 | Lint + imports/límites prohibidos | `pnpm lint` |
 

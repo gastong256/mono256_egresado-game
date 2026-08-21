@@ -77,6 +77,17 @@ export const serverEnvironmentSchema = z
       .default('development'),
     SUPABASE_INTERNAL_URL: optionalUrl,
     SUPABASE_SECRET_KEY: optionalSecretKey,
+    /**
+     * Enables the development engine harness route.
+     *
+     * Server-only and opt-in, so the harness can be exercised against a
+     * production build during end-to-end tests without ever being reachable on
+     * a real deployment. It is deliberately not a NEXT_PUBLIC_ value.
+     */
+    EGRESADO_DEV_HARNESS: z.preprocess(
+      emptyStringToUndefined,
+      z.enum(['true', 'false']).optional(),
+    ),
   })
   .superRefine((values, context) => {
     requirePair(

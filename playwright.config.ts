@@ -33,5 +33,9 @@ export default defineConfig({
     url: `${baseURL}/api/health`,
     reuseExistingServer,
     timeout: 120_000,
+    // The development engine harness is absent from a production build unless
+    // this server-only opt-in is set, so the suite enables it explicitly rather
+    // than the route being reachable by default.
+    env: { EGRESADO_DEV_HARNESS: 'true' },
   },
 })

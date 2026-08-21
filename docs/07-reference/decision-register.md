@@ -12,6 +12,9 @@
 | ADR-008 | Identidad anónima/pseudónima | Aceptado |
 | ADR-009 | Leaderboards por evento | Aceptado |
 | ADR-010 | Toolchain Node.js/pnpm y artefacto Docker portable | Aceptado |
+| ADR-011 | Núcleo funcional con función de transición explícita | Aceptado |
+| ADR-012 | PRNG seeded, substreams y contrato de consumo | Aceptado |
+| ADR-013 | Aritmética racional exacta para evaluación matemática | Aceptado |
 
 ## Regla para ADR nuevo
 
