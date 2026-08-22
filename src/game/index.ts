@@ -103,6 +103,56 @@ export {
   type RunProgress,
 } from './runs/selectors'
 
+// Numeric primitives and evaluation helpers for content authors.
+// Content computes with exact rationals, never with binary floats (ADR-013).
+export {
+  absolute,
+  add,
+  compare,
+  divide,
+  equals,
+  fromDecimalString,
+  fromInteger,
+  greaterThan,
+  greaterThanOrEqual,
+  lessThan,
+  lessThanOrEqual,
+  multiply,
+  rational,
+  subtract,
+  sum,
+  toNumber,
+  ZERO,
+  type Rational,
+} from './math/rational'
+export {
+  applyPercent,
+  formatDecimal,
+  percentOf,
+  roundTo,
+  roundUpToMultiple,
+  unitsRequired,
+  type RoundingMode,
+} from './math/rounding'
+export {
+  formatMoney,
+  formatQuantity,
+  money,
+  quantity,
+  rectangleArea,
+  type Quantity,
+  type Unit,
+} from './math/quantity'
+export { withinTolerance, type Tolerance } from './math/tolerance'
+export {
+  clamp01,
+  efficiencyFromUsage,
+  informationUseRatio,
+  metrics,
+  precisionFromDistance,
+  qualityRank,
+} from './challenges/evaluation'
+
 // Challenge and interaction contracts
 export type {
   ChallengeDefinition,
@@ -111,6 +161,7 @@ export type {
   ChallengeInstanceRef,
   ChallengeNarrative,
   FeedbackFact,
+  MaterializedChallenge,
   PublicChallengeView,
   ReasoningMetrics,
 } from './challenges/contracts'

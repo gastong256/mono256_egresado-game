@@ -23,17 +23,8 @@ import { ChallengeFrame } from './challenge-frame'
 import type { GameController } from './controller'
 import { DebugPanel } from './debug-panel'
 import { FeedbackPanel } from './feedback-panel'
+import { stageLabel } from './stage-label'
 import { useGameRun } from './use-game-run'
-
-const STAGE_LABEL: Readonly<Record<string, string>> = {
-  'grade-7': '7.º grado',
-  'year-1': '1.º año',
-  'year-2': '2.º año',
-  'year-3': '3.º año',
-  'year-4': '4.º año',
-  'year-5': '5.º año',
-  graduation: 'Egreso',
-}
 
 export interface GameShellProps {
   readonly controller: GameController
@@ -41,6 +32,8 @@ export interface GameShellProps {
   /** Shows the developer diagnostics panel. Never enabled in production. */
   readonly showDebug?: boolean
   readonly onRestart?: () => RunDescriptor
+  /** Shown in the header so the run feels like the player's own. */
+  readonly playerName?: string
 }
 
 export function GameShell({
@@ -48,6 +41,7 @@ export function GameShell({
   dependencies,
   showDebug = false,
   onRestart,
+  playerName,
 }: GameShellProps) {
   const run = useGameRun(controller, dependencies)
   const [debugOpen, setDebugOpen] = useState(false)
@@ -85,7 +79,12 @@ export function GameShell({
       <header className="flex flex-col gap-3">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <h1 className="text-lg font-semibold" data-testid="stage-label">
-            {STAGE_LABEL[state.run.stage] ?? state.run.stage}
+            {stageLabel(state.run.stage)}
+            {playerName === undefined ? null : (
+              <span className="ml-2 text-sm font-normal text-slate-600 dark:text-slate-400">
+                {playerName}
+              </span>
+            )}
           </h1>
           <p className="text-sm tabular-nums" data-testid="score-preview">
             Score estimado: <strong>{run.score}</strong>
@@ -121,7 +120,7 @@ export function GameShell({
         </dl>
       </header>
 
-      <main className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4">
         {run.complete && state.run.completion !== undefined ? (
           <section
             aria-labelledby="run-complete"
@@ -199,7 +198,7 @@ export function GameShell({
             El motor rechazó la acción: {state.lastRejection.kind}
           </p>
         )}
-      </main>
+      </div>
 
       {showDebug ? (
         <footer>

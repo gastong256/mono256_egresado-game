@@ -1,0 +1,298 @@
+/**
+ * 7.º grado — el colectivo demorado.
+ *
+ * Situación: el 60 viene con demora y hay que decidir en qué horario salir.
+ *
+ * La matemática es tiempo con un porcentaje simple aplicado a una duración. No
+ * se le pregunta al jugador cuánto es el 25 % de 28: se le pregunta en qué
+ * colectivo se sube, y para responder eso necesita el cálculo.
+ *
+ * Función objetivo: llegar antes de la entrada con el margen más chico que
+ * siga siendo seguro. Salir demasiado temprano funciona, pero es tiempo
+ * perdido; salir sobre la hora llega, pero sin ningún colchón.
+ */
+
+import {
+  defineChallenge,
+  err,
+  metrics,
+  ok,
+  toChallengeId,
+  type ChallengeDefinition,
+  type ChallengeEvaluation,
+  type EngineRejection,
+  type InteractionAnswer,
+  type PresentedOption,
+  type Rational,
+  type Result,
+  add,
+  formatDecimal,
+  fromInteger,
+  percentOf,
+  roundTo,
+} from '@/game'
+
+interface Departure {
+  readonly id: string
+  /** Minutes past midnight. */
+  readonly minutesOfDay: number
+}
+
+interface BusModel {
+  readonly scheduledMinutes: number
+  readonly delayPercent: number
+  readonly travelMinutes: number
+  readonly entryMinutesOfDay: number
+  readonly departures: readonly Departure[]
+}
+
+/** Margen mínimo, en minutos, para considerar que la llegada es segura. */
+const SAFE_MARGIN = 5
+
+/**
+ * Dos variantes autoradas. El seed elige una; las dos están verificadas por
+ * tests y las dos ofrecen exactamente una salida óptima y al menos una que
+ * llega tarde.
+ */
+const VARIANTS = [
+  { delayPercent: 25, departures: [405, 420, 430, 440] },
+  { delayPercent: 50, departures: [405, 420, 430, 440] },
+] as const
+
+const SCHEDULED_MINUTES = 28
+const ENTRY_MINUTES_OF_DAY = 7 * 60 + 45
+
+function formatClock(minutesOfDay: number): string {
+  const hours = Math.floor(minutesOfDay / 60)
+  const minutes = minutesOfDay % 60
+  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`
+}
+
+/** Duración real del viaje: la programada más el porcentaje de demora. */
+function travelWithDelay(scheduled: number, delayPercent: number): Rational {
+  const base = fromInteger(scheduled)
+  return roundTo(add(base, percentOf(base, fromInteger(delayPercent))), 0)
+}
+
+function arrivalOf(model: BusModel, departure: Departure): number {
+  return departure.minutesOfDay + model.travelMinutes
+}
+
+function marginOf(model: BusModel, departure: Departure): number {
+  return model.entryMinutesOfDay - arrivalOf(model, departure)
+}
+
+/** El margen seguro más chico. Es la referencia de la decisión. */
+function bestMargin(model: BusModel): number | undefined {
+  const safe = model.departures
+    .map((departure) => marginOf(model, departure))
+    .filter((margin) => margin >= SAFE_MARGIN)
+    .sort((left, right) => left - right)
+  return safe[0]
+}
+
+export const busTiming: ChallengeDefinition = defineChallenge<BusModel>({
+  id: toChallengeId('g7.bus-timing'),
+  interaction: 'timeline',
+  categories: ['time-and-rates', 'proportions-and-percentages'],
+  stages: ['grade-7'],
+  baseDifficulty: 2,
+  tools: ['calculator'],
+
+  generate({ rng }) {
+    const variant = rng.pick(VARIANTS)
+    const travel = travelWithDelay(SCHEDULED_MINUTES, variant.delayPercent)
+
+    return {
+      scheduledMinutes: SCHEDULED_MINUTES,
+      delayPercent: variant.delayPercent,
+      travelMinutes: Number(travel.n),
+      entryMinutesOfDay: ENTRY_MINUTES_OF_DAY,
+      departures: variant.departures.map((minutesOfDay) => ({
+        id: `salida-${String(minutesOfDay)}`,
+        minutesOfDay,
+      })),
+    }
+  },
+
+  verify(model) {
+    const issues: string[] = []
+    const margins = model.departures.map((departure) =>
+      marginOf(model, departure),
+    )
+
+    if (!margins.some((margin) => margin < 0)) {
+      issues.push(
+        'ninguna salida llega tarde, así que la decisión no arriesga nada',
+      )
+    }
+    if (!margins.some((margin) => margin >= SAFE_MARGIN)) {
+      issues.push('ninguna salida llega con margen seguro')
+    }
+    if (model.travelMinutes <= model.scheduledMinutes) {
+      issues.push('la demora no aumenta la duración del viaje')
+    }
+    if (new Set(margins).size !== margins.length) {
+      issues.push('dos salidas llegan exactamente igual')
+    }
+
+    return issues
+  },
+
+  narrate() {
+    return {
+      title: 'El colectivo de siempre',
+      setup:
+        'El 60 viene con demora otra vez. En el grupo del curso ya avisaron y todos están calculando a qué hora salir.',
+      goal: 'Elegí en qué colectivo te subís para llegar a horario.',
+    }
+  },
+
+  present(model) {
+    const options: PresentedOption[] = model.departures.map((departure) => ({
+      id: departure.id,
+      label: `Salir ${formatClock(departure.minutesOfDay)}`,
+    }))
+
+    return {
+      kind: 'timeline',
+      data: [
+        {
+          label: 'Viaje sin demora',
+          value: `${String(model.scheduledMinutes)} min`,
+        },
+        { label: 'Demora de hoy', value: `${String(model.delayPercent)} %` },
+        { label: 'Entrada', value: formatClock(model.entryMinutesOfDay) },
+      ],
+      unitLabel: 'minutos',
+      options,
+    }
+  },
+
+  evaluate(
+    model,
+    answer: InteractionAnswer,
+  ): Result<ChallengeEvaluation, EngineRejection> {
+    if (answer.kind !== 'timeline') {
+      return err({
+        kind: 'invalid-answer',
+        detail: `se esperaba timeline y llegó ${answer.kind}`,
+      })
+    }
+
+    const chosen = model.departures.find(
+      (departure) => departure.id === answer.optionId,
+    )
+    if (chosen === undefined) {
+      return err({
+        kind: 'invalid-answer',
+        detail: `salida desconocida ${answer.optionId}`,
+      })
+    }
+
+    const arrival = arrivalOf(model, chosen)
+    const margin = marginOf(model, chosen)
+    const extra = model.travelMinutes - model.scheduledMinutes
+
+    const facts = [
+      { label: 'Viaje normal', value: `${String(model.scheduledMinutes)} min` },
+      { label: 'Demora', value: `${String(extra)} min` },
+      { label: 'Viaje de hoy', value: `${String(model.travelMinutes)} min` },
+      { label: 'Salís', value: formatClock(chosen.minutesOfDay) },
+      { label: 'Llegás', value: formatClock(arrival) },
+    ]
+
+    if (margin < 0) {
+      return ok({
+        quality: 'invalid',
+        feedback: {
+          outcomeKey: 'bus.late',
+          facts: [
+            ...facts,
+            { label: 'Tarde por', value: `${String(-margin)} min` },
+          ],
+          violatedConstraint: 'hora de entrada',
+        },
+        metrics: metrics({ efficiency: 0, precision: 0, risk: 0.9 }),
+        statEffects: [{ stat: 'energy', delta: -3 }],
+        flagEffects: [{ flag: 'g7.llegoTarde', value: true }],
+      })
+    }
+
+    const best = bestMargin(model)
+    const marginFact = { label: 'Margen', value: `${String(margin)} min` }
+
+    if (margin < SAFE_MARGIN) {
+      return ok({
+        quality: 'functional',
+        feedback: {
+          outcomeKey: 'bus.tight',
+          facts: [...facts, marginFact],
+          optimalComparison:
+            'Llegaste, pero sin ningún colchón: cualquier demora extra te dejaba afuera.',
+        },
+        metrics: metrics({ efficiency: 0.5, precision: 0.6, risk: 0.7 }),
+        statEffects: [{ stat: 'knowledge', delta: 2 }],
+        flagEffects: [{ flag: 'g7.llegoJusto', value: true }],
+      })
+    }
+
+    if (best !== undefined && margin === best) {
+      return ok({
+        quality: 'optimal',
+        feedback: {
+          outcomeKey: 'bus.optimal',
+          facts: [...facts, marginFact],
+          optimalComparison:
+            'Llegaste con tiempo suficiente sin madrugar de más.',
+        },
+        metrics: metrics({ efficiency: 1, precision: 1, risk: 0.2 }),
+        statEffects: [
+          { stat: 'knowledge', delta: 4 },
+          { stat: 'initiative', delta: 2 },
+        ],
+        flagEffects: [{ flag: 'g7.llegoComodo', value: true }],
+      })
+    }
+
+    const wasted = best === undefined ? 0 : margin - best
+    return ok({
+      quality: 'efficient',
+      feedback: {
+        outcomeKey: 'bus.early',
+        facts: [
+          ...facts,
+          marginFact,
+          { label: 'Esperando', value: `${String(wasted)} min de más` },
+        ],
+        ...(best === undefined
+          ? {}
+          : {
+              optimalComparison: `Con ${String(best)} min de margen alcanzaba igual.`,
+            }),
+      },
+      metrics: metrics({
+        efficiency: Math.max(0, 1 - wasted / 40),
+        precision: 1,
+        risk: 0.1,
+      }),
+      statEffects: [
+        { stat: 'knowledge', delta: 3 },
+        { stat: 'energy', delta: -1 },
+      ],
+      flagEffects: [{ flag: 'g7.llegoComodo', value: true }],
+    })
+  },
+})
+
+/** Expuesto para los tests de contenido, que verifican la matemática autorada. */
+export const busTimingReference = {
+  scheduledMinutes: SCHEDULED_MINUTES,
+  entryMinutesOfDay: ENTRY_MINUTES_OF_DAY,
+  safeMargin: SAFE_MARGIN,
+  variants: VARIANTS,
+  travelWithDelay: (delayPercent: number): number =>
+    Number(travelWithDelay(SCHEDULED_MINUTES, delayPercent).n),
+  formatClock,
+  formatMinutes: (value: Rational): string => formatDecimal(value, 0),
+}

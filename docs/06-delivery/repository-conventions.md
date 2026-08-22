@@ -20,6 +20,7 @@ La aplicación Next.js vive en la raíz. `pnpm-workspace.yaml` existe para decla
 │   ├── app/                # App Router y Route Handlers/BFF
 │   ├── components/         # UI sin acceso directo a server/DB
 │   ├── config/             # entorno público y server-only validado
+│   ├── content/            # contenido de producto por etapa, como data
 │   ├── game/               # core TypeScript puro
 │   ├── lib/                # adapters/utilidades transversales
 │   ├── server/             # casos de uso y persistencia server-only
@@ -35,13 +36,13 @@ La aplicación Next.js vive en la raíz. `pnpm-workspace.yaml` existe para decla
     └── unit/
 ```
 
-`src/content/` se crea cuando exista contenido ejecutable aceptado. Las áreas de juego todavía no implementadas se agregan dentro de estas fronteras —por ejemplo RNG, scoring, profiles o challenges— sin adelantar una jerarquía vacía ni introducir packages/workspaces.
+`src/content/` existe desde el primer slice jugable y se organiza por etapa (`src/content/grade-7/`). Las áreas de juego todavía no implementadas se agregan dentro de estas fronteras —por ejemplo RNG, scoring, profiles o challenges— sin adelantar una jerarquía vacía ni introducir packages/workspaces.
 
 ## Reglas de dependencia
 
 - Dentro del repositorio, `src/game` sólo importa `src/game`; no depende de React, Next.js, Supabase, DOM, red, almacenamiento, hora global ni `Math.random()`.
 - `src/content` puede consumir tipos puros de `game` y utilidades sin infraestructura; representa data, no UI.
-- `src/components` consume modelos del engine mediante adapters y no importa `server`, variables server-only ni Supabase.
+- `src/components` consume modelos del engine mediante adapters y no importa `server`, variables server-only ni Supabase. Puede importar `content`: el gameplay es local-first ([ADR-006](../03-architecture/adr/ADR-006-local-first-gameplay.md)), así que el set de contenido tiene que llegar al browser ([ADR-014](../03-architecture/adr/ADR-014-product-content-package.md)).
 - `src/app` compone UI y puede invocar casos de uso de `server`, pero no importa `src/server/persistence` directamente.
 - `src/server` puede ejecutar `game`, leer `content` y acceder a persistencia mediante adapters.
 - `src/lib` contiene adapters/utilidades, no reglas autoritativas de producto.

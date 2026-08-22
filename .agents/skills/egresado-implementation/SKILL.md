@@ -14,8 +14,8 @@ Segui [el workflow de desarrollo](../../../docs/08-engineering/ai-development-wo
 5. Expone cualquier decision faltante. No fijes scoring, seed strategy, identidad/retencion, contrato persistente o frontera arquitectonica dentro del feature.
 6. Planifica e implementa el cambio coherente mas pequeno respetando las fronteras ejecutables:
    - `src/game/**` es TypeScript puro, determinista y sin DOM, red, reloj global, RNG global, `process`, React, Next ni Supabase. Solo admite `zod` y `pure-rand`, declarados en la lista blanca de fronteras. Las reglas viven en `transition`; el estado persistido es JSON-compatible y el contenido es data, nunca callbacks. Antes de tocar el motor lee [game engine](../../../docs/03-architecture/game-engine.md) y [desarrollo del motor](../../../docs/08-engineering/game-engine-development.md). Los identificadores no confiables se parsean en la frontera, el estado restaurado se valida contra sus invariantes estructurales y el score oficial se recalcula por replay en `src/server/game/validate-run.ts`;
-   - `src/content/**` consume tipos del juego y no decide UI o persistencia;
-   - `src/components/**` no accede a servidor o Supabase;
+   - `src/content/**` es contenido de producto organizado por etapa (`src/content/<etapa>/`): consume tipos del juego, declara su propia `contentVersion` y no decide UI, ruteo ni persistencia. Los fixtures de desarrollo se quedan en `src/game/testing`;
+   - `src/components/**` no accede a servidor o Supabase, y puede importar `src/content/**` porque el gameplay es local-first;
    - `src/app/**` orquesta UI/BFF pero no importa adaptadores de persistencia;
    - `src/server/**` contiene casos de uso y persistencia autoritativa;
    - Supabase solo entra por los adaptadores aprobados y los secretos solo por modulos `server-only`.

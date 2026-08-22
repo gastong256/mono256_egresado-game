@@ -16,10 +16,14 @@
 import { toRunSeed, type ChallengeId, type StoryletId } from '../core/branded'
 import type { ChallengeRegistry } from '../challenges/registry'
 import type { DifficultyLevel } from '../challenges/taxonomy'
-import { validateCondition } from '../narrative/conditions'
+import {
+  validateCondition,
+  type StoryletCondition,
+} from '../narrative/conditions'
 import { validateEffect } from '../narrative/effects'
 import type { Storylet } from '../narrative/storylet'
 import { createRng } from '../random/rng'
+import type { StageConfig, StageId } from '../progression/stages'
 import type { Ruleset } from '../ruleset/ruleset'
 import { toChallengeInstanceId } from '../core/branded'
 
@@ -200,10 +204,6 @@ function validateStageCoverage(
   const issues: ValidationIssue[] = []
   const stages = input.ruleset.stages
 
-  const guaranteed = input.storylets.filter(
-    (storylet) => storylet.requires.kind === 'always',
-  )
-
   for (const stage of stages) {
     const inStage = input.storylets.filter((storylet) =>
       storylet.stages.includes(stage.id),
@@ -240,10 +240,6 @@ function validateStageCoverage(
     const availableAll = input.storylets.filter((storylet) =>
       storylet.stages.some((stage) => subsetIds.has(stage)),
     ).length
-    const availableGuaranteed = guaranteed.filter((storylet) =>
-      storylet.stages.some((stage) => subsetIds.has(stage)),
-    ).length
-
     const label = subset.map((stage) => stage.id).join('+')
 
     if (availableAll < required) {
@@ -256,44 +252,180 @@ function validateStageCoverage(
       )
       continue
     }
-
-    if (availableGuaranteed < required) {
-      // A conditional storylet may never become eligible, so relying on one to
-      // fill a slot is a real dead-end risk rather than a style problem.
-      issues.push(
-        error(
-          'stage.unguaranteed-coverage',
-          label,
-          `stages ${label} need ${String(required)} events but only ${String(availableGuaranteed)} unconditional storylets can cover them`,
-        ),
-      )
-    }
   }
 
   // Hall's condition proves a valid assignment *exists*. Selection, however, is
-  // greedy: it picks one eligible storylet per event with no lookahead, so an
-  // early stage can still consume the only content a later stage had. The
-  // guarantee that no seed dead-ends therefore needs a stronger, sufficient
-  // criterion: every stage must be able to fill its budget from storylets that
-  // no earlier stage could possibly have taken.
-  for (const [index, stage] of stages.entries()) {
-    const earlier = new Set(
-      stages.slice(0, index).map((previous) => previous.id),
-    )
-    const exclusive = guaranteed.filter(
-      (storylet) =>
-        storylet.stages.includes(stage.id) &&
-        !storylet.stages.some((candidate) => earlier.has(candidate)),
-    )
+  // greedy: it picks one eligible storylet per event with no lookahead. Whether
+  // that can dead-end is answered by walking the stage forward.
+  issues.push(...walkStageReachability(input, stages))
 
-    if (exclusive.length < stage.eventCount) {
-      issues.push(
-        error(
-          'stage.greedy-unreachable',
-          stage.id,
-          `stage plays ${String(stage.eventCount)} events but only ${String(exclusive.length)} unconditional storylets are unreachable by earlier stages, so a run can exhaust the pool`,
-        ),
-      )
+  return issues
+}
+
+/**
+ * Three-valued condition evaluation.
+ *
+ * Content validation knows the stage and which storylets have been seen, but
+ * not the stats, flags or answer qualities a particular playthrough will
+ * produce. A condition that depends on those is genuinely undecidable here, and
+ * saying so is more useful than guessing.
+ */
+type Decision = true | false | 'unknown'
+
+function decide(
+  condition: StoryletCondition,
+  stage: StageId,
+  seen: ReadonlySet<string>,
+): Decision {
+  switch (condition.kind) {
+    case 'always':
+      return true
+    case 'stage-in':
+      return condition.stages.includes(stage)
+    case 'storylet-seen':
+      return seen.has(condition.storyletId)
+    case 'storylet-not-seen':
+      return !seen.has(condition.storyletId)
+    case 'all': {
+      let result: Decision = true
+      for (const child of condition.conditions) {
+        const value = decide(child, stage, seen)
+        if (value === false) {
+          return false
+        }
+        if (value === 'unknown') {
+          result = 'unknown'
+        }
+      }
+      return result
+    }
+    case 'any': {
+      let result: Decision = false
+      for (const child of condition.conditions) {
+        const value = decide(child, stage, seen)
+        if (value === true) {
+          return true
+        }
+        if (value === 'unknown') {
+          result = 'unknown'
+        }
+      }
+      return result
+    }
+    case 'not': {
+      const value = decide(condition.condition, stage, seen)
+      return value === 'unknown' ? 'unknown' : !value
+    }
+    default:
+      // Stats, flags and recent quality depend on how the run was played.
+      return 'unknown'
+  }
+}
+
+/** Caps the branch search so a large content set cannot make validation blow up. */
+const MAX_REACHABILITY_BRANCHES = 64
+
+/**
+ * Walks each stage forward and proves it can always serve another event.
+ *
+ * The safety requirement is that at every step at least one storylet is
+ * *decidably* eligible — eligible no matter how the run has gone so far. A
+ * storylet whose condition depends on performance may or may not fire, so it can
+ * never be the thing that guarantees the stage keeps going.
+ *
+ * Where such a storylet *might* fire, the walk follows both outcomes: taking it
+ * and not taking it lead to different seen-sets, and both have to stay safe.
+ * That is what lets an authored arc branch on how well the player did while
+ * still being provably dead-end free.
+ */
+function walkStageReachability(
+  input: ContentValidationInput,
+  stages: readonly StageConfig[],
+): readonly ValidationIssue[] {
+  const issues: ValidationIssue[] = []
+  const { allowRepeats, cooldownEvents } = input.ruleset.narrative
+
+  for (const [stageIndex, stage] of stages.entries()) {
+    // Worst case, every storylet an earlier stage could have used is gone.
+    const earlier = new Set(
+      stages.slice(0, stageIndex).map((previous) => previous.id),
+    )
+    const consumedByEarlierStages = allowRepeats
+      ? []
+      : input.storylets
+          .filter((storylet) =>
+            storylet.stages.some((candidate) => earlier.has(candidate)),
+          )
+          .map((storylet) => storylet.id)
+
+    let frontier: ReadonlySet<string>[] = [
+      new Set<string>(consumedByEarlierStages),
+    ]
+
+    for (let event = 0; event < stage.eventCount; event += 1) {
+      const next: ReadonlySet<string>[] = []
+
+      for (const seen of frontier) {
+        const available = input.storylets.filter(
+          (storylet) =>
+            storylet.stages.includes(stage.id) &&
+            storylet.weight > 0 &&
+            (allowRepeats ? cooldownEvents <= event : !seen.has(storylet.id)),
+        )
+
+        const decisions = available.map((storylet) => ({
+          storylet,
+          decision: decide(storylet.requires, stage.id, seen),
+        }))
+        const guaranteed = decisions.filter((entry) => entry.decision === true)
+
+        if (guaranteed.length === 0) {
+          issues.push(
+            error(
+              'stage.greedy-unreachable',
+              stage.id,
+              `at event ${String(event)} no storylet is eligible regardless of how the run was played, so a run can exhaust the pool`,
+            ),
+          )
+          frontier = []
+          break
+        }
+
+        // The engine takes the highest priority tier among everything eligible,
+        // so a conditional storylet above the guaranteed one is a real branch.
+        const guaranteedTop = Math.max(
+          ...guaranteed.map((entry) => entry.storylet.priority),
+        )
+        const candidates = decisions.filter(
+          (entry) =>
+            entry.decision !== false &&
+            entry.storylet.priority >= guaranteedTop,
+        )
+
+        for (const candidate of candidates) {
+          const advanced = new Set(seen)
+          advanced.add(candidate.storylet.id)
+          next.push(advanced)
+        }
+      }
+
+      if (frontier.length === 0) {
+        break
+      }
+
+      if (next.length > MAX_REACHABILITY_BRANCHES) {
+        issues.push(
+          warning(
+            'stage.reachability-truncated',
+            stage.id,
+            `the branch search exceeded ${String(MAX_REACHABILITY_BRANCHES)} states at event ${String(event)}; reachability was only checked up to that point`,
+          ),
+        )
+        frontier = next.slice(0, MAX_REACHABILITY_BRANCHES)
+        continue
+      }
+
+      frontier = next
     }
   }
 
@@ -370,12 +502,16 @@ function runGeneration(input: ContentValidationInput): {
       }
     }
 
-    if (checked > 0 && presentations.size < Math.max(2, checked / 20)) {
+    // Authored content legitimately offers a small set of hand-verified
+    // variants, so a low count is a design choice rather than a defect. What is
+    // always wrong is a challenge that ignores the seed completely: it has no
+    // replay value and the seed cannot distinguish two runs of it.
+    if (checked > 1 && presentations.size < 2) {
       issues.push(
         warning(
-          'challenge.low-variety',
+          'challenge.no-variety',
           definition.id,
-          `only ${String(presentations.size)} distinct presentations across ${String(checked)} seeds`,
+          `every seed produces the same instance across ${String(checked)} generations`,
         ),
       )
     }

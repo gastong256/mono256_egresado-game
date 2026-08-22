@@ -106,7 +106,13 @@ export default defineConfig([
               from: { element: { type: 'components' } },
               allow: {
                 to: {
-                  element: { types: { anyOf: ['components', 'game', 'lib'] } },
+                  element: {
+                    // Gameplay is local-first (ADR-006), so the authored content
+                    // set has to reach the browser. Content is data over
+                    // existing interactions (ADR-007) and decides no UI or
+                    // persistence, so the client composition root may import it.
+                    types: { anyOf: ['components', 'content', 'game', 'lib'] },
+                  },
                 },
               },
             },

@@ -98,18 +98,20 @@ export function DevelopmentHarness({
         </form>
       </div>
 
-      <GameShell
-        controller={controller}
-        dependencies={dependencies}
-        showDebug
-        onRestart={() =>
-          descriptorFor(
-            seed,
-            dependencies.ruleset.version,
-            dependencies.ruleset.contentVersion,
-          )
-        }
-      />
+      <main>
+        <GameShell
+          controller={controller}
+          dependencies={dependencies}
+          showDebug
+          onRestart={() =>
+            descriptorFor(
+              seed,
+              dependencies.ruleset.version,
+              dependencies.ruleset.contentVersion,
+            )
+          }
+        />
+      </main>
     </div>
   )
 }

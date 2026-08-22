@@ -65,6 +65,7 @@ Este directorio define la referencia funcional, lúdica, pedagógica y técnica 
 - `mvp-backlog.md`: backlog priorizado.
 - `definition-of-done.md`: DoD global y por tipo de cambio.
 - `repository-conventions.md`: estructura implementada, fronteras, comandos y reglas de dependencia.
+- `vertical-slice-grade-7.md`: alcance, contenido y criterios del primer slice jugable (7.º grado).
 
 ### 07-reference
 - `research-basis.md`: teoría, referencias y decisiones derivadas.

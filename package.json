@@ -26,9 +26,9 @@
     "test:e2e": "node scripts/run-e2e.mjs",
     "test:e2e:only": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "game:validate-content": "vite-node scripts/game/validate-content.ts",
-    "game:simulate": "vite-node scripts/game/simulate.ts",
-    "game:simulate:deep": "vite-node scripts/game/simulate.ts -- --runs=5000 --verify=5",
+    "game:validate-content": "vite-node --config vitest.config.ts scripts/game/validate-content.ts",
+    "game:simulate": "vite-node --config vitest.config.ts scripts/game/simulate.ts",
+    "game:simulate:deep": "vite-node --config vitest.config.ts scripts/game/simulate.ts -- --runs=5000 --verify=5",
     "db:start": "node scripts/start-local-supabase.mjs",
     "db:stop": "supabase stop",
     "db:status": "node scripts/local-supabase-status.mjs",
@@ -55,6 +55,7 @@
     "zod": "4.4.3"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
     "@playwright/test": "1.62.1",
     "@tailwindcss/postcss": "4.3.3",
     "@testing-library/dom": "10.4.1",

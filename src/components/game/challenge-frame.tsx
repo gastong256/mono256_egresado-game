@@ -14,8 +14,25 @@
 
 import { useCallback, useState } from 'react'
 
-import type { InteractionAnswer, PublicChallengeView } from '@/game'
+import type { InteractionAnswer, PublicChallengeView, ToolId } from '@/game'
 import { InteractionArea, isDraftSubmittable } from './interaction-area'
+
+/**
+ * Nombre de cada herramienta en castellano.
+ *
+ * El motor las identifica con un id estable; el jugador lee una palabra. Sin
+ * esto la pantalla mostraría `calculator` en medio de un texto en castellano.
+ */
+const TOOL_LABEL: Readonly<Record<ToolId, string>> = {
+  calculator: 'calculadora',
+  notepad: 'anotador',
+  table: 'tabla',
+  ruler: 'regla',
+}
+
+function toolLabel(tool: ToolId): string {
+  return TOOL_LABEL[tool] ?? tool
+}
 
 export interface ChallengeFrameProps {
   readonly view: PublicChallengeView
@@ -82,7 +99,7 @@ export function ChallengeFrame({
 
       {view.tools.length > 0 ? (
         <p className="text-sm text-slate-600 dark:text-slate-400">
-          Herramientas disponibles: {view.tools.join(', ')}
+          Podés usar: {view.tools.map(toolLabel).join(', ')}
         </p>
       ) : null}
 

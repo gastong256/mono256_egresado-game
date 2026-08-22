@@ -96,3 +96,23 @@ Implementar primero una muestra deliberadamente diversa:
 - C35 trade-off de costos.
 
 Esto prueba ocho tipos de razonamiento sin necesitar contenido definitivo para todas las etapas.
+
+## Implementado
+
+Contenido de producto que existe en el repositorio, en `src/content/grade-7/`. Cinco desafíos y ocho storylets; el resto del catálogo sigue siendo backlog.
+
+| ID en código | Entrada del catálogo | Interacción | Matemática | Escenario implementado |
+|---|---|---|---|---|
+| `g7.bus-timing` | C02 | Timeline | porcentaje sobre una duración, suma de minutos | elegir a qué hora salir sabiendo que el viaje se demora |
+| `g7.mural-paint` | C04 | Decision Card | área y cobertura por litro, compra por envase entero | comprar la pintura del mural |
+| `g7.notebook-offer` | C08 | Decision Card | descuento porcentual contra descuento fijo | elegir la oferta que entra en el presupuesto |
+| `g7.group-tasks` | C13 | Assignment Board | asignación con horas disponibles y habilidad | repartir el trabajo grupal |
+| `g7.stand-supplies` | C09 | Budget Builder | costo unitario por pack, mínimo que alcanza | comprar insumos para el stand de la feria |
+
+Desvíos deliberados respecto del catálogo semilla:
+
+- **C08 y C13 se adelantaron a 7.º grado.** El catálogo los ubica en 1.º y 2.º año. El slice necesitaba cinco tipos de interacción distintos para probar que el motor y la UI soportan variedad real, y la matemática de ambos (porcentaje simple, asignación con restricciones) es accesible en 7.º. Cuando se implementen 1.º y 2.º año, esos escenarios se reescriben con números y contexto propios de cada etapa; no se reutiliza la instancia de 7.º.
+- **C09 cambió de escenario.** El catálogo lo describe como materiales para una maqueta; se implementó como insumos para el stand de la feria, porque cierra el arco narrativo del año. La matemática y la interacción son las declaradas.
+- **C01, C03, C05 y C06 no se implementaron.** Cinco situaciones por año es el objetivo de diseño; el resto queda como backlog para variar el año entre partidas.
+
+El detalle de variantes, calidades y consecuencias de cada uno está en [el diseño del slice](../06-delivery/vertical-slice-grade-7.md).

@@ -13,6 +13,29 @@
 
 import { validateContent } from '../../src/game/content/validation'
 import { createDevelopmentDependencies } from '../../src/game/testing/fixtures/development-ruleset'
+import { createGrade7Dependencies } from '../../src/content/grade-7'
+import type { EngineDependencies } from '../../src/game'
+
+/**
+ * Which content set to exercise.
+ *
+ * `grade-7` is the playable product content and the default. `development` is
+ * the fixture set that exists to prove the engine itself, and stays available
+ * for engine work.
+ */
+function selectDependencies(argv: readonly string[]): EngineDependencies {
+  const requested = argv
+    .find((entry) => entry.startsWith('--content='))
+    ?.slice('--content='.length)
+
+  if (requested === 'development') {
+    return createDevelopmentDependencies()
+  }
+  if (requested !== undefined && requested !== 'grade-7') {
+    throw new Error(`unknown content set: ${requested}`)
+  }
+  return createGrade7Dependencies()
+}
 
 function main(): void {
   const argv = process.argv.slice(2)
@@ -21,7 +44,7 @@ function main(): void {
   const seedsPerChallenge =
     Number.isSafeInteger(parsed) && parsed > 0 ? parsed : 200
 
-  const dependencies = createDevelopmentDependencies()
+  const dependencies = selectDependencies(argv)
   const report = validateContent({
     ruleset: dependencies.ruleset,
     challenges: dependencies.challenges,

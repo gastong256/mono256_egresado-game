@@ -28,6 +28,7 @@
 03-architecture/adr/ADR-011-functional-core-transition-engine.md
 03-architecture/adr/ADR-012-seeded-prng-and-substreams.md
 03-architecture/adr/ADR-013-exact-rational-arithmetic.md
+03-architecture/adr/ADR-014-product-content-package.md
 03-architecture/analytics-observability.md
 03-architecture/api-contracts.md
 03-architecture/architecture-overview.md
@@ -45,6 +46,7 @@
 06-delivery/definition-of-done.md
 06-delivery/mvp-backlog.md
 06-delivery/repository-conventions.md
+06-delivery/vertical-slice-grade-7.md
 07-reference/content-schema.example.json
 07-reference/decision-register.md
 07-reference/glossary.md

@@ -49,6 +49,30 @@ export function AssignmentBoard({
   return (
     <fieldset className="min-w-0 border-0 p-0" disabled={disabled}>
       <legend className="sr-only">Asigná una persona por tarea</legend>
+
+      {/*
+        Quién puede hacer qué tiene que estar a la vista. Metido sólo dentro de
+        las opciones del select, el dato queda truncado en un teléfono y la
+        decisión se vuelve adivinanza: hay que abrir cuatro desplegables y
+        recordar lo que decía cada uno.
+      */}
+      <ul
+        className="mb-3 flex list-none flex-col gap-1 p-0"
+        aria-label="Quién puede hacer qué"
+      >
+        {agents.map((agent) => (
+          <li
+            key={agent.id}
+            className="rounded-lg bg-slate-100 px-3 py-2 text-sm dark:bg-slate-800"
+          >
+            <span className="font-medium">{agent.label}</span>
+            <span className="block text-slate-600 dark:text-slate-400">
+              {agent.detail}
+            </span>
+          </li>
+        ))}
+      </ul>
+
       <ul className="flex list-none flex-col gap-2 p-0">
         {tasks.map((task) => {
           const fieldId = `${groupId}-${task.id}`
@@ -84,7 +108,7 @@ export function AssignmentBoard({
                 <option value="">Sin asignar</option>
                 {agents.map((agent) => (
                   <option key={agent.id} value={agent.id}>
-                    {agent.label} — {agent.detail}
+                    {agent.label}
                     {takenElsewhere.has(agent.id) ? ' (ya asignado)' : ''}
                   </option>
                 ))}

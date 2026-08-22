@@ -11,6 +11,7 @@
  *     --seed=<prefix>  seed prefix, so a sweep is reproducible (default "sim")
  *     --verify=<n>     run the replay/snapshot check every n runs (default 25)
  *     --verbose        print the per-run seed of every finding
+     --content=<grade-7|development>  content set (default grade-7)
  *
  * This lives outside `src/game` on purpose: the deterministic core may not read
  * `process`, argv or stdout, so the tooling that drives it stays out here where
@@ -18,7 +19,30 @@
  */
 
 import { createDevelopmentDependencies } from '../../src/game/testing/fixtures/development-ruleset'
+import { createGrade7Dependencies } from '../../src/content/grade-7'
+import type { EngineDependencies } from '../../src/game'
 import { simulateMany } from '../../src/game/testing/simulation'
+
+/**
+ * Which content set to exercise.
+ *
+ * `grade-7` is the playable product content and the default. `development` is
+ * the fixture set that exists to prove the engine itself, and stays available
+ * for engine work.
+ */
+function selectDependencies(argv: readonly string[]): EngineDependencies {
+  const requested = argv
+    .find((entry) => entry.startsWith('--content='))
+    ?.slice('--content='.length)
+
+  if (requested === 'development') {
+    return createDevelopmentDependencies()
+  }
+  if (requested !== undefined && requested !== 'grade-7') {
+    throw new Error(`unknown content set: ${requested}`)
+  }
+  return createGrade7Dependencies()
+}
 
 interface Options {
   readonly runs: number
@@ -55,8 +79,9 @@ function formatCounts(counts: Readonly<Record<string, number>>): string {
 }
 
 function main(): void {
-  const options = parseOptions(process.argv.slice(2))
-  const dependencies = createDevelopmentDependencies()
+  const argv = process.argv.slice(2)
+  const options = parseOptions(argv)
+  const dependencies = selectDependencies(argv)
 
   const startedAt = process.hrtime.bigint()
   const summary = simulateMany(dependencies, {

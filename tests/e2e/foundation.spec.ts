@@ -1,8 +1,6 @@
 import { expect, test } from '@playwright/test'
 
-test('renders the foundation shell without browser errors', async ({
-  page,
-}) => {
+test('renders the landing page without browser errors', async ({ page }) => {
   const browserErrors: string[] = []
 
   page.on('console', (message) => {
@@ -19,7 +17,7 @@ test('renders the foundation shell without browser errors', async ({
   await expect(
     page.getByRole('heading', { level: 1, name: 'Egresado' }),
   ).toBeVisible()
-  await expect(page.getByTestId('foundation-status')).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Jugar' })).toBeVisible()
   await expect(page.locator('html')).toHaveAttribute('lang', 'es')
   expect(response?.headers()['x-content-type-options']).toBe('nosniff')
   expect(response?.headers()['referrer-policy']).toBe(

@@ -15,6 +15,7 @@
 | ADR-011 | Núcleo funcional con función de transición explícita | Aceptado |
 | ADR-012 | PRNG seeded, substreams y contrato de consumo | Aceptado |
 | ADR-013 | Aritmética racional exacta para evaluación matemática | Aceptado |
+| ADR-014 | Contenido de producto como paquete propio importable desde el cliente | Aceptado |
 
 ## Regla para ADR nuevo
 

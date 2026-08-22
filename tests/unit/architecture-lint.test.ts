@@ -81,7 +81,7 @@ describe('architecture lint policy', () => {
   it('rejects an inverted internal layer dependency', async () => {
     await expect(
       ruleIds(
-        "import { FoundationStatus } from '@/components/foundation-status'; export { FoundationStatus }",
+        "import { NicknameForm } from '@/components/game/nickname-form'; export { NicknameForm }",
         'src/lib/inverted.ts',
       ),
     ).resolves.toContain('boundaries/dependencies')

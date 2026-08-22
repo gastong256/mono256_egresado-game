@@ -76,6 +76,17 @@ export interface GameController {
   restart(descriptor: RunDescriptor): EngineRejection | undefined
 }
 
+/**
+ * A session recovered from a checkpoint.
+ *
+ * The state has already been validated by the snapshot codec, so the controller
+ * adopts it as-is rather than replaying to reach it.
+ */
+export interface ResumedSession {
+  readonly state: RunState
+  readonly log: RunActionLog
+}
+
 function buildView(
   run: RunState,
   dependencies: EngineDependencies,
@@ -91,6 +102,7 @@ export function createGameController(
   descriptor: RunDescriptor,
   dependencies: EngineDependencies,
   sinks: ControllerSinks = {},
+  resumed?: ResumedSession,
 ): GameController {
   const listeners = new Set<() => void>()
   let state: ControllerState
@@ -129,7 +141,22 @@ export function createGameController(
     return undefined
   }
 
-  const initialRejection = start(descriptor)
+  if (resumed === undefined) {
+    const initialRejection = start(descriptor)
+    if (initialRejection !== undefined) {
+      throw new Error(`Could not create the run: ${initialRejection.kind}`)
+    }
+  } else {
+    state = {
+      run: resumed.state,
+      view: buildView(resumed.state, dependencies),
+      log: resumed.log,
+      lastEvents: [],
+      lastRejection: undefined,
+    }
+  }
+
+  const initialRejection = undefined as EngineRejection | undefined
   if (initialRejection !== undefined) {
     // A run that cannot be created is a configuration error, not a player
     // action, so it fails loudly at construction time.
