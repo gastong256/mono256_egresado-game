@@ -22,8 +22,9 @@ import {
   type EngineDependencies,
   type RunDescriptor,
 } from '@/game'
+import { Button, Wordmark } from '@/components/ui'
 import { createGameController, type GameController } from './controller'
-import { GameShell } from './game-shell'
+import { GameCanvas, GameShell } from './game-shell'
 import { NicknameForm } from './nickname-form'
 import { firstStageLabel } from './stage-label'
 import { useControllerSelector } from './use-game-run'
@@ -172,14 +173,15 @@ export function GameContainer() {
     // pintura muestra el encabezado real y avisa que falta un instante. El
     // título es el mismo que en la pantalla siguiente para que nada salte.
     return (
-      <main
-        className="mx-auto flex w-full max-w-xl flex-col gap-6 px-5 py-10"
-        aria-busy="true"
-      >
-        <h1 className="text-3xl font-semibold">Egresado</h1>
-        <p className="text-slate-600 dark:text-slate-400">
-          Un segundo, estamos viendo si dejaste una partida empezada…
-        </p>
+      <main aria-busy="true">
+        <GameCanvas className="justify-center">
+          <h1>
+            <Wordmark size="lg" />
+          </h1>
+          <p className="text-body text-foreground-muted">
+            Un segundo, estamos viendo si dejaste una partida empezada…
+          </p>
+        </GameCanvas>
       </main>
     )
   }
@@ -194,58 +196,68 @@ export function GameContainer() {
     const { checkpoint } = current
 
     return (
-      <main className="mx-auto flex w-full max-w-xl flex-col gap-6 px-5 py-10">
-        <h1 className="text-2xl font-semibold">Tenés una partida empezada</h1>
-        <p className="text-pretty text-slate-700 dark:text-slate-300">
-          {checkpoint.nickname}, dejaste {stage} por la mitad.
-        </p>
-        <div className="flex flex-col gap-3">
-          <button
-            type="button"
-            data-testid="resume-run"
-            onClick={() => {
-              setScreen({
-                kind: 'jugando',
-                nickname: checkpoint.nickname,
-                controller: buildController(
-                  checkpoint.nickname,
-                  checkpoint.state.descriptor,
-                  dependencies,
-                  checkpoint,
-                ),
-              })
-            }}
-            className="min-h-12 rounded-xl bg-slate-900 px-5 font-semibold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 dark:bg-slate-100 dark:text-slate-900"
-          >
-            Seguir jugando
-          </button>
-          <button
-            type="button"
-            data-testid="discard-run"
-            onClick={() => {
-              clearCheckpoint()
-              setScreen({ kind: 'nombre' })
-            }}
-            className="min-h-12 rounded-xl border border-slate-300 px-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 dark:border-slate-600 dark:focus-visible:outline-slate-100"
-          >
-            Empezar de nuevo
-          </button>
-        </div>
+      <main>
+        <GameCanvas className="min-h-dvh justify-center">
+          <Wordmark size="sm" className="text-foreground-muted" />
+          <h1 className="text-title text-balance">
+            Tenés una partida empezada
+          </h1>
+          <p className="text-body text-foreground-muted text-pretty">
+            {checkpoint.nickname}, dejaste {stage} por la mitad.
+          </p>
+          <div className="flex flex-col gap-3">
+            <Button
+              size="lg"
+              block
+              data-testid="resume-run"
+              onClick={() => {
+                setScreen({
+                  kind: 'jugando',
+                  nickname: checkpoint.nickname,
+                  controller: buildController(
+                    checkpoint.nickname,
+                    checkpoint.state.descriptor,
+                    dependencies,
+                    checkpoint,
+                  ),
+                })
+              }}
+            >
+              Seguir jugando
+            </Button>
+            <Button
+              variant="secondary"
+              size="lg"
+              block
+              data-testid="discard-run"
+              onClick={() => {
+                clearCheckpoint()
+                setScreen({ kind: 'nombre' })
+              }}
+            >
+              Empezar de nuevo
+            </Button>
+          </div>
+        </GameCanvas>
       </main>
     )
   }
 
   if (current.kind === 'nombre') {
     return (
-      <main className="mx-auto flex w-full max-w-xl flex-col gap-6 px-5 py-10">
-        <header className="flex flex-col gap-2">
-          <h1 className="text-3xl font-semibold">Egresado</h1>
-          <p className="text-pretty text-slate-700 dark:text-slate-300">
-            Seis años de secundaria en unos minutos. Empezás en {stage} y cada
-            decisión que tomás deja una marca en el año.
-          </p>
-        </header>
-        <NicknameForm onSubmit={startRun} stage={stage} />
+      <main>
+        <GameCanvas className="min-h-dvh justify-center">
+          <header className="flex flex-col gap-3">
+            <h1>
+              <Wordmark size="lg" />
+            </h1>
+            <p className="text-body text-foreground-muted text-pretty">
+              Seis años de secundaria en unos minutos. Empezás en {stage} y cada
+              decisión que tomás deja una marca en el año.
+            </p>
+          </header>
+          <NicknameForm onSubmit={startRun} stage={stage} />
+        </GameCanvas>
       </main>
     )
   }
@@ -286,13 +298,15 @@ function PlayingScreen({
 
   if (isRunComplete(run)) {
     return (
-      <main className="mx-auto w-full max-w-xl px-5 py-10">
-        <YearResult
-          state={run}
-          nickname={nickname}
-          storylets={dependencies.storylets}
-          onPlayAgain={onPlayAgain}
-        />
+      <main>
+        <GameCanvas>
+          <YearResult
+            state={run}
+            nickname={nickname}
+            storylets={dependencies.storylets}
+            onPlayAgain={onPlayAgain}
+          />
+        </GameCanvas>
       </main>
     )
   }

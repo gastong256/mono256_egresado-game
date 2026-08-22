@@ -1,37 +1,39 @@
 'use client'
 
 /**
- * Challenge frame.
+ * Marco de un desafío.
  *
- * Composes the narrative, the interaction and the submit control for one
- * challenge. It owns exactly one piece of local state — the answer draft — and
- * clears it only when the challenge instance changes, so a re-render never
- * discards what the player typed.
+ * Compone la situación, la interacción y el control de envío. Tiene exactamente
+ * un estado local —el borrador de la respuesta— y lo limpia sólo cuando cambia
+ * la instancia del desafío, así que un re-render nunca descarta lo que el
+ * jugador venía armando.
  *
- * It contains no game rules: the draft is handed to the engine and the verdict
- * comes back from there.
+ * No contiene reglas de juego: el borrador se le entrega al motor y el veredicto
+ * vuelve de ahí.
  */
 
-import { useCallback, useState } from 'react'
+import { Calculator, NotebookPen, Ruler, Table2 } from 'lucide-react'
+import { useCallback, useState, type ComponentType } from 'react'
 
+import { Button } from '@/components/ui'
 import type { InteractionAnswer, PublicChallengeView, ToolId } from '@/game'
+
 import { InteractionArea, isDraftSubmittable } from './interaction-area'
+import { SituationCard } from './situation-card'
 
 /**
- * Nombre de cada herramienta en castellano.
+ * Herramientas, en castellano y con ícono.
  *
- * El motor las identifica con un id estable; el jugador lee una palabra. Sin
- * esto la pantalla mostraría `calculator` en medio de un texto en castellano.
+ * El motor las identifica con un id estable; el jugador lee una palabra. El
+ * ícono acompaña, nunca reemplaza: el nombre siempre está escrito.
  */
-const TOOL_LABEL: Readonly<Record<ToolId, string>> = {
-  calculator: 'calculadora',
-  notepad: 'anotador',
-  table: 'tabla',
-  ruler: 'regla',
-}
-
-function toolLabel(tool: ToolId): string {
-  return TOOL_LABEL[tool] ?? tool
+const TOOL: Readonly<
+  Record<ToolId, { label: string; Icon: ComponentType<{ className?: string }> }>
+> = {
+  calculator: { label: 'calculadora', Icon: Calculator },
+  notepad: { label: 'anotador', Icon: NotebookPen },
+  table: { label: 'tabla', Icon: Table2 },
+  ruler: { label: 'regla', Icon: Ruler },
 }
 
 export interface ChallengeFrameProps {
@@ -52,8 +54,8 @@ export function ChallengeFrame({
   onRequestInformation,
 }: ChallengeFrameProps) {
   const [draft, setDraft] = useState<InteractionAnswer | undefined>(undefined)
-  // Keying the draft to the instance id resets it when — and only when — a new
-  // challenge is presented.
+  // Atar el borrador al id de la instancia lo reinicia cuando —y sólo cuando—
+  // se presenta un desafío nuevo.
   const [draftFor, setDraftFor] = useState<string>(view.ref.instanceId)
 
   if (draftFor !== view.ref.instanceId) {
@@ -67,8 +69,8 @@ export function ChallengeFrame({
     if (draft === undefined) {
       return
     }
-    // Guarding here as well as on the button prevents a double submission from
-    // a fast double-tap; the engine refuses the second one regardless.
+    // Chequear también acá, y no sólo en el botón, evita un doble envío por un
+    // doble toque rápido; el motor rechaza el segundo de todos modos.
     if (!isDraftSubmittable(view.interaction, draft)) {
       return
     }
@@ -76,18 +78,39 @@ export function ChallengeFrame({
   }, [draft, onSubmit, view.interaction])
 
   return (
-    <article className="flex flex-col gap-4" aria-labelledby="challenge-title">
-      <header className="flex flex-col gap-1">
-        <h2 id="challenge-title" className="text-xl font-semibold text-balance">
-          {view.narrative.title}
-        </h2>
-        <p className="text-sm text-slate-600 dark:text-slate-400">
-          {storyletTitle}: {storyletText}
-        </p>
-        <p className="text-pretty">{view.narrative.setup}</p>
-        <p className="font-medium text-pretty">{view.narrative.goal}</p>
-      </header>
-
+    <SituationCard
+      title={view.narrative.title}
+      context={`${storyletTitle}: ${storyletText}`}
+      setup={view.narrative.setup}
+      goal={view.narrative.goal}
+      footnote={
+        view.tools.length === 0 ? undefined : (
+          <p className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <span>Podés usar:</span>
+            {view.tools.map((tool) => {
+              const { label, Icon } = TOOL[tool]
+              return (
+                <span key={tool} className="inline-flex items-center gap-1.5">
+                  <Icon className="size-4" />
+                  {label}
+                </span>
+              )
+            })}
+          </p>
+        )
+      }
+      actions={
+        <Button
+          size="lg"
+          block
+          disabled={!submittable}
+          onClick={handleSubmit}
+          data-testid="submit-answer"
+        >
+          Confirmar
+        </Button>
+      }
+    >
       <InteractionArea
         presentation={view.interaction}
         draft={draft}
@@ -96,22 +119,6 @@ export function ChallengeFrame({
         onRequestInformation={onRequestInformation}
         instanceId={view.ref.instanceId}
       />
-
-      {view.tools.length > 0 ? (
-        <p className="text-sm text-slate-600 dark:text-slate-400">
-          Podés usar: {view.tools.map(toolLabel).join(', ')}
-        </p>
-      ) : null}
-
-      <button
-        type="button"
-        disabled={!submittable}
-        onClick={handleSubmit}
-        data-testid="submit-answer"
-        className="min-h-11 rounded-lg bg-slate-900 px-4 py-2 font-medium text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 disabled:opacity-40 dark:bg-slate-100 dark:text-slate-900 dark:focus-visible:outline-slate-100"
-      >
-        Confirmar
-      </button>
-    </article>
+    </SituationCard>
   )
 }

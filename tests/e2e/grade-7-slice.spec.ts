@@ -333,7 +333,7 @@ test('las pantallas principales no tienen violaciones de accesibilidad', async (
         pantalla: label,
         regla: violation.id,
         impacto: violation.impact,
-        nodos: violation.nodes.length,
+        nodos: violation.nodes.map((node) => node.html.slice(0, 160)),
       })),
     ).toEqual([])
   }

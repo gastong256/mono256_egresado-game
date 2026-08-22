@@ -22,6 +22,7 @@ docs/08-engineering/
   egresado-architecture-review/
   egresado-quality-gate/
   egresado-challenge-authoring/
+  egresado-design-system/
 .codex/config.toml                MCP project-scoped, fijado por lockfile
 .github/
   workflows/quality.yml           CI de toolchain, docs, calidad, build y E2E
@@ -72,6 +73,7 @@ Las reglas propias de Egresado viven fuera de los marcadores administrados al fi
 - `egresado-architecture-review`: revisa fronteras, datos, dependencias, NFR y necesidad de ADR.
 - `egresado-quality-gate`: selecciona y ejecuta gates reales, diagnostica fallos y reporta evidencia.
 - `egresado-challenge-authoring`: enruta contenido-as-data, matemática, invariantes procedurales y estados editoriales sin habilitar mecánicas nuevas.
+- `egresado-design-system`: dirige cualquier trabajo de interfaz hacia los tokens y las primitivas existentes antes de inventar un patrón visual.
 
 Las skills viven en `.agents/skills/` y enlazan fuentes mantenidas del proyecto. Su frontmatter se valida tanto con el checker portable del repositorio como con `quick_validate.py` de la skill oficial `skill-creator` cuando se crean o modifican.
 

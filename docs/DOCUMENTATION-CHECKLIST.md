@@ -74,6 +74,17 @@
 - [x] Checks de links, manifest y sincronización del master.
 - [x] Entorno de desarrollo nativo/contenedorizado y operación local de Supabase.
 
+## Sistema de diseño
+- [x] Tokens primitivos y semánticos.
+- [x] Tipografía y tratamiento de datos numéricos.
+- [x] Espaciado, layout, radio, elevación, movimiento y foco.
+- [x] Primitivas de UI documentadas.
+- [x] Primitivas de juego e interacciones documentadas.
+- [x] Reglas de accesibilidad y su automatización.
+- [x] Reglas de crecimiento del sistema.
+- [x] Migración del slice de 7.º grado.
+- [ ] Tema oscuro (diferido a una versión posterior).
+
 ## Bloqueo técnico temporal
 
 - [x] Next.js `16.3.1` identificado como base exclusivamente local.

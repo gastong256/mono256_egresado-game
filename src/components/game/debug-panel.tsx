@@ -23,7 +23,7 @@ export function DebugPanel({ state }: { readonly state: ControllerState }) {
     <section
       id="debug-panel"
       aria-label="Diagnóstico de desarrollo"
-      className="mt-3 flex flex-col gap-3 rounded-lg border border-dashed border-slate-400 p-3 text-xs dark:border-slate-500"
+      className="border-line-interactive rounded-surface text-caption mt-3 flex flex-col gap-3 border border-dashed p-3"
     >
       <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1">
         {(
@@ -47,17 +47,17 @@ export function DebugPanel({ state }: { readonly state: ControllerState }) {
           ] as const
         ).map(([label, value]) => (
           <div key={label} className="contents">
-            <dt className="text-slate-600 dark:text-slate-400">{label}</dt>
+            <dt className="text-foreground-muted">{label}</dt>
             <dd className="font-mono break-all">{value}</dd>
           </div>
         ))}
       </dl>
 
       <div>
-        <h3 className="mb-1 font-medium">Últimos eventos de dominio</h3>
+        <h3 className="text-subheading mb-1">Últimos eventos de dominio</h3>
         <ul className="flex list-none flex-col gap-0.5 p-0 font-mono">
           {state.lastEvents.length === 0 ? (
-            <li className="text-slate-600 dark:text-slate-400">—</li>
+            <li className="text-foreground-muted">—</li>
           ) : (
             state.lastEvents.map((event, index) => (
               <li key={`${event.type}-${String(index)}`}>{event.type}</li>
@@ -67,7 +67,7 @@ export function DebugPanel({ state }: { readonly state: ControllerState }) {
       </div>
 
       <div>
-        <h3 className="mb-1 font-medium">Flags</h3>
+        <h3 className="text-subheading mb-1">Flags</h3>
         <p className="font-mono break-all">
           {Object.keys(run.flags).length === 0
             ? '—'

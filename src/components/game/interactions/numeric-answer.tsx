@@ -1,18 +1,21 @@
 'use client'
 
 /**
- * Numeric answer control.
+ * Respuesta numérica.
  *
- * The value is kept as the string the player typed and submitted as a decimal
- * literal, never as a JavaScript number. Parsing happens once, inside the
- * engine, on exact rationals — so what the player wrote is what gets evaluated.
+ * El valor se guarda como la cadena que escribió el jugador y se envía como
+ * literal decimal, nunca como `number` de JavaScript. El parseo pasa una sola
+ * vez, adentro del motor y sobre racionales exactos: lo que se escribió es lo
+ * que se evalúa.
  *
- * A range input alone would fail the UX rules (fine adjustment, keyboard,
- * screen readers), so the number field is the control and the slider is an
- * optional coarse companion bound to the same value.
+ * Un slider solo no cumpliría las reglas de UX —ajuste fino, teclado, lector de
+ * pantalla—, así que el campo es el control y el slider es un acompañante grueso
+ * atado al mismo valor.
  */
 
 import { useId } from 'react'
+
+import { NumberField } from '@/components/ui'
 
 export interface NumericAnswerProps {
   readonly unitLabel: string
@@ -33,20 +36,15 @@ export function NumericAnswer({
   disabled,
   onChange,
 }: NumericAnswerProps) {
-  const fieldId = useId()
-  const sliderId = `${fieldId}-slider`
+  const sliderId = useId()
   const numericValue = Number(value)
   const sliderValue = Number.isFinite(numericValue) ? value : min
 
   return (
-    <div className="flex flex-col gap-3">
-      <label htmlFor={fieldId} className="text-sm font-medium">
-        Tu respuesta ({unitLabel})
-      </label>
-      <input
-        id={fieldId}
-        type="number"
-        inputMode="decimal"
+    <div className="flex flex-col gap-4">
+      <NumberField
+        label="Tu respuesta"
+        unit={unitLabel}
         min={min}
         max={max}
         step={step}
@@ -55,7 +53,6 @@ export function NumericAnswer({
         onChange={(event) => {
           onChange(event.target.value)
         }}
-        className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-base tabular-nums focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 dark:border-slate-600 dark:bg-slate-900 dark:focus-visible:outline-slate-100"
       />
       <label htmlFor={sliderId} className="sr-only">
         Ajuste aproximado ({unitLabel})
@@ -71,7 +68,7 @@ export function NumericAnswer({
         onChange={(event) => {
           onChange(event.target.value)
         }}
-        className="w-full accent-slate-900 dark:accent-slate-100"
+        className="accent-primary w-full"
       />
     </div>
   )

@@ -29,6 +29,7 @@
 03-architecture/adr/ADR-012-seeded-prng-and-substreams.md
 03-architecture/adr/ADR-013-exact-rational-arithmetic.md
 03-architecture/adr/ADR-014-product-content-package.md
+03-architecture/adr/ADR-015-design-system-tokens.md
 03-architecture/analytics-observability.md
 03-architecture/api-contracts.md
 03-architecture/architecture-overview.md
@@ -59,6 +60,15 @@
 08-engineering/development-environment.md
 08-engineering/game-engine-development.md
 08-engineering/mcp-strategy.md
+09-design-system/README.md
+09-design-system/accessibility.md
+09-design-system/colors.md
+09-design-system/contribution.md
+09-design-system/foundations.md
+09-design-system/game-components.md
+09-design-system/migration-7-grade.md
+09-design-system/typography.md
+09-design-system/ui-components.md
 AGENTS.md
 DOCUMENTATION-CHECKLIST.md
 EGRESADO-MASTER-SPEC.md

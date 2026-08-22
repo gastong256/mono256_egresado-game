@@ -42,6 +42,10 @@ run('Secret patterns', process.execPath, ['scripts/check-secrets.mjs'])
 runPnpm('Formatting', ['format:check'])
 runPnpm('Lint and architecture boundaries', ['lint'])
 runPnpm('TypeScript', ['typecheck'])
+// El sistema de diseño se verifica antes que los tests: si un token rompió una
+// combinación de contraste, conviene saberlo por su nombre y no por un escaneo
+// de accesibilidad al final del pipeline.
+runPnpm('Design system tokens and contrast', ['design:check'])
 runPnpm('Unit, component, integration and property tests', ['test:coverage'])
 // Content and simulation gates run after the tests: they exercise the same
 // engine, so a failure here points at content or scale rather than at a unit.

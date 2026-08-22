@@ -18,6 +18,7 @@ const expectedSkills = [
   'egresado-architecture-review',
   'egresado-challenge-authoring',
   'egresado-context',
+  'egresado-design-system',
   'egresado-implementation',
   'egresado-quality-gate',
 ]
@@ -172,6 +173,7 @@ for (const category of [
   '06-delivery',
   '07-reference',
   '08-engineering',
+  '09-design-system',
 ]) {
   const sectionStart = documentationMap.indexOf(`### ${category}\n`)
   if (sectionStart === -1) {
@@ -225,6 +227,7 @@ for (const heading of [
   '## Delivery',
   '## Referencia',
   '## Ingeniería asistida',
+  '## Sistema de diseño',
 ]) {
   if (!checklist.split('\n').includes(heading)) {
     errors.push(`DOCUMENTATION-CHECKLIST.md is missing section: ${heading}`)

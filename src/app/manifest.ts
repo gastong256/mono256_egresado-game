@@ -1,5 +1,7 @@
 import type { MetadataRoute } from 'next'
 
+import { BRAND_HEX } from '@/lib/ui/brand'
+
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'Egresado',
@@ -7,8 +9,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: 'Juego web de decisiones y desafíos matemáticos.',
     start_url: '/',
     display: 'standalone',
-    background_color: '#f4f1e9',
-    theme_color: '#132a25',
+    background_color: BRAND_HEX.canvas,
+    theme_color: BRAND_HEX.canvas,
     lang: 'es',
   }
 }

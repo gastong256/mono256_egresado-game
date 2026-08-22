@@ -1,0 +1,186 @@
+/**
+ * Egresado Design System v0.1 — tokens semánticos.
+ *
+ * Esta es la capa que consumen los componentes. Un componente pide `bg-surface`
+ * o `text-foreground-muted`, no `bg-gray-100`: así el día que cambie la paleta
+ * —o exista un tema oscuro— se cambia acá y no en sesenta archivos.
+ *
+ * Cada token existe porque hay algo que lo usa. Si un token se queda sin
+ * consumidores, se borra.
+ *
+ * v0.1 tiene un solo tema. Los valores viven en `:root` en lugar de estar
+ * incrustados en `@theme` justamente para que un segundo tema sea un bloque de
+ * redefiniciones y no una reescritura de los componentes.
+ */
+
+:root {
+  color-scheme: light;
+
+  /* Superficies. El lienzo es apenas más oscuro que las tarjetas: eso solo ya
+     hace que el contenido del juego se lea como algo apoyado encima. */
+  --canvas: var(--color-gray-50);
+  --surface: var(--color-white);
+  --surface-muted: var(--color-gray-100);
+  --surface-inverse: var(--color-gray-950);
+
+  /* Texto. */
+  --foreground: var(--color-gray-900);
+  --foreground-muted: var(--color-gray-600);
+  --foreground-subtle: var(--color-gray-500);
+  --foreground-inverse: var(--color-white);
+
+  /* Bordes y separadores. `line` es el borde estructural; `line-interactive`
+     es el de un control, y por eso llega al contraste no textual de WCAG. */
+  --line: var(--color-gray-200);
+  --line-strong: var(--color-gray-300);
+  --line-interactive: var(--color-gray-500);
+  --line-selected: var(--color-gray-900);
+
+  /* Acción primaria: el verde de marca. */
+  --primary: var(--color-green-600);
+  --primary-hover: var(--color-green-700);
+  --primary-active: var(--color-green-800);
+  --primary-foreground: var(--color-white);
+  --primary-subtle: var(--color-green-50);
+  --primary-subtle-foreground: var(--color-green-900);
+
+  /* Acento de marca: el rojo. Es tensión narrativa y énfasis, no un error. */
+  --accent: var(--color-red-600);
+  --accent-hover: var(--color-red-700);
+  --accent-active: var(--color-red-800);
+  --accent-foreground: var(--color-white);
+  --accent-subtle: var(--color-red-50);
+  --accent-subtle-foreground: var(--color-red-900);
+
+  /* Acción destructiva. Deliberadamente distinta del acento de marca: si
+     fueran el mismo token, borrar una partida y un momento narrativo intenso
+     se verían igual. */
+  --danger: var(--color-red-700);
+  --danger-hover: var(--color-red-800);
+  --danger-foreground: var(--color-white);
+
+  /* Foco. Uno solo para todo el producto, con halo blanco para que el anillo
+     se vea también sobre un botón verde o rojo. */
+  --focus: var(--color-green-700);
+  --focus-contrast: var(--color-white);
+
+  /* Selección. NUNCA verde: antes de confirmar, el jugador no puede deducir de
+     un color si eligió bien. Ver `docs/design-system/colors.md`. */
+  --selected-surface: var(--color-gray-100);
+  --selected-line: var(--color-gray-900);
+  --selected-foreground: var(--color-gray-900);
+
+  /* Deshabilitado. */
+  --disabled-surface: var(--color-gray-100);
+  --disabled-foreground: var(--color-gray-500);
+  --disabled-line: var(--color-gray-300);
+
+  /* Resultado de una decisión, en el vocabulario del motor. No hay
+     "correcto"/"incorrecto": hay óptimo, eficiente, funcionó y no alcanzó. */
+  /* Óptimo y eficiente son los dos verdes, y se distinguen por la intensidad
+     del relleno además del ícono y del nombre. El borde de los cuatro llega al
+     contraste no textual: si sirve para identificar un estado, tiene que verse.
+     Un borde verde claro sobre relleno verde claro no lo cumplía. */
+  --optimal-surface: var(--color-green-100);
+  --optimal-line: var(--color-green-600);
+  --optimal-foreground: var(--color-green-900);
+
+  --efficient-surface: var(--color-green-50);
+  --efficient-line: var(--color-green-500);
+  --efficient-foreground: var(--color-green-900);
+
+  --functional-surface: var(--color-gray-100);
+  --functional-line: var(--color-gray-500);
+  --functional-foreground: var(--color-gray-900);
+
+  --invalid-surface: var(--color-red-50);
+  --invalid-line: var(--color-red-600);
+  --invalid-foreground: var(--color-red-900);
+
+  /* Progreso. */
+  --progress-track: var(--color-gray-200);
+  --progress-fill: var(--color-green-600);
+
+  /* Datos cuantitativos: el número va más oscuro que el texto corrido, para
+     que gane la mirada sin necesidad de color. */
+  --data-foreground: var(--color-gray-950);
+  --data-label: var(--color-gray-600);
+
+  /* Movimiento. */
+  --motion-fast: 140ms;
+  --motion-standard: 200ms;
+  --motion-emphasized: 320ms;
+}
+
+/*
+  `inline` hace que las utilidades de Tailwind referencien la variable en lugar
+  de copiar su valor. Es lo que permite que un tema futuro redefina `:root` y
+  que `bg-surface` cambie sin recompilar los componentes.
+*/
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-surface-inverse: var(--surface-inverse);
+
+  --color-foreground: var(--foreground);
+  --color-foreground-muted: var(--foreground-muted);
+  --color-foreground-subtle: var(--foreground-subtle);
+  --color-foreground-inverse: var(--foreground-inverse);
+
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-line-interactive: var(--line-interactive);
+  --color-line-selected: var(--line-selected);
+
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-active: var(--primary-active);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-subtle: var(--primary-subtle);
+  --color-primary-subtle-foreground: var(--primary-subtle-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-active: var(--accent-active);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-subtle: var(--accent-subtle);
+  --color-accent-subtle-foreground: var(--accent-subtle-foreground);
+
+  --color-danger: var(--danger);
+  --color-danger-hover: var(--danger-hover);
+  --color-danger-foreground: var(--danger-foreground);
+
+  --color-focus: var(--focus);
+  --color-focus-contrast: var(--focus-contrast);
+
+  --color-selected-surface: var(--selected-surface);
+  --color-selected-line: var(--selected-line);
+  --color-selected-foreground: var(--selected-foreground);
+
+  --color-disabled-surface: var(--disabled-surface);
+  --color-disabled-foreground: var(--disabled-foreground);
+  --color-disabled-line: var(--disabled-line);
+
+  --color-optimal-surface: var(--optimal-surface);
+  --color-optimal-line: var(--optimal-line);
+  --color-optimal-foreground: var(--optimal-foreground);
+
+  --color-efficient-surface: var(--efficient-surface);
+  --color-efficient-line: var(--efficient-line);
+  --color-efficient-foreground: var(--efficient-foreground);
+
+  --color-functional-surface: var(--functional-surface);
+  --color-functional-line: var(--functional-line);
+  --color-functional-foreground: var(--functional-foreground);
+
+  --color-invalid-surface: var(--invalid-surface);
+  --color-invalid-line: var(--invalid-line);
+  --color-invalid-foreground: var(--invalid-foreground);
+
+  --color-progress-track: var(--progress-track);
+  --color-progress-fill: var(--progress-fill);
+
+  --color-data-foreground: var(--data-foreground);
+  --color-data-label: var(--data-label);
+}

@@ -18,10 +18,12 @@
 import { assertNever } from '@/game/core/exhaustive'
 import type { InteractionAnswer, InteractionPresentation } from '@/game'
 
+import { Button, Surface } from '@/components/ui'
+import { MetricGroup } from './data-metric'
 import { AssignmentBoard } from './interactions/assignment-board'
 import { BudgetBuilder } from './interactions/budget-builder'
 import { NumericAnswer } from './interactions/numeric-answer'
-import { DataList, OptionGroup } from './interactions/option-group'
+import { OptionGroup } from './interactions/option-group'
 
 export interface InteractionAreaProps {
   readonly presentation: InteractionPresentation
@@ -56,7 +58,7 @@ export function InteractionArea({
     case 'decision-card':
       return (
         <div className="flex flex-col gap-4">
-          <DataList items={presentation.data} />
+          <MetricGroup items={presentation.data} />
           <OptionGroup
             legend="Elegí una opción"
             name={`decision-${instanceId}`}
@@ -73,7 +75,7 @@ export function InteractionArea({
     case 'timeline':
       return (
         <div className="flex flex-col gap-4">
-          <DataList items={presentation.data} />
+          <MetricGroup items={presentation.data} />
           <OptionGroup
             legend={`Elegí un bloque en ${presentation.unitLabel}`}
             name={`timeline-${instanceId}`}
@@ -98,24 +100,30 @@ export function InteractionArea({
           {/* The chart is a labelled table rendered as bars: the numbers are
               always readable, so meaning never depends on the bar length or on
               colour, per the accessibility rules. */}
-          <table className="w-full text-sm">
+          <table className="text-body-sm w-full">
             <caption className="sr-only">{presentation.axisLabel}</caption>
             <tbody>
               {presentation.series.map((point) => (
                 <tr key={point.label}>
-                  <th scope="row" className="py-1 pr-3 text-left font-normal">
+                  <th
+                    scope="row"
+                    className="text-foreground-muted py-1 pr-3 text-left font-normal"
+                  >
                     {point.label}
                   </th>
                   <td className="w-full py-1">
                     <span
                       aria-hidden="true"
-                      className="block h-3 rounded-sm bg-slate-400 dark:bg-slate-500"
+                      className="bg-primary rounded-pill block h-3"
                       style={{
                         width: `${String(largest === 0 ? 0 : Math.round((point.value / largest) * 100))}%`,
                       }}
                     />
                   </td>
-                  <td className="py-1 pl-3 text-right font-medium tabular-nums">
+                  <td
+                    data-numeric
+                    className="text-data-foreground py-1 pl-3 text-right font-semibold"
+                  >
                     {point.display}
                   </td>
                 </tr>
@@ -139,29 +147,31 @@ export function InteractionArea({
     case 'information-request':
       return (
         <div className="flex flex-col gap-4">
-          <DataList items={presentation.data} />
+          <MetricGroup items={presentation.data} />
           {presentation.revealed.length > 0 ? (
-            <div className="rounded-lg border border-slate-300 bg-slate-50 p-3 dark:border-slate-600 dark:bg-slate-800">
-              <h3 className="mb-1 text-sm font-medium">Datos que pediste</h3>
-              <DataList items={presentation.revealed} />
-            </div>
+            <Surface tone="muted" padding="compact">
+              <h3 className="text-subheading mb-2">Datos que pediste</h3>
+              <MetricGroup items={presentation.revealed} />
+            </Surface>
           ) : null}
           {presentation.available.length > 0 ? (
             <div className="flex flex-col gap-2">
-              <h3 className="text-sm font-medium">Podés pedir más datos</h3>
+              <h3 className="text-subheading">Podés pedir más datos</h3>
               <ul className="flex list-none flex-col gap-2 p-0">
                 {presentation.available.map((entry) => (
                   <li key={entry.key}>
-                    <button
-                      type="button"
+                    <Button
+                      variant="secondary"
+                      size="md"
+                      block
                       disabled={disabled}
                       onClick={() => {
                         onRequestInformation(entry.key)
                       }}
-                      className="min-h-11 w-full rounded-lg border border-dashed border-slate-400 px-3 py-2 text-left text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 disabled:opacity-50 dark:border-slate-500 dark:focus-visible:outline-slate-100"
+                      className="justify-start border-dashed"
                     >
                       {entry.label}
-                    </button>
+                    </Button>
                   </li>
                 ))}
               </ul>
@@ -183,7 +193,7 @@ export function InteractionArea({
     case 'numeric-input':
       return (
         <div className="flex flex-col gap-4">
-          <DataList items={presentation.data} />
+          <MetricGroup items={presentation.data} />
           <NumericAnswer
             unitLabel={presentation.unitLabel}
             min={presentation.min}
@@ -203,7 +213,7 @@ export function InteractionArea({
     case 'budget-builder':
       return (
         <div className="flex flex-col gap-4">
-          <DataList items={presentation.data} />
+          <MetricGroup items={presentation.data} />
           <BudgetBuilder
             items={presentation.items}
             lines={draft?.kind === 'budget-builder' ? draft.lines : []}

@@ -1,39 +1,70 @@
 'use client'
 
 /**
- * Game shell.
+ * Shell de juego.
  *
- * The reusable structural layer around a run: header with stage and stats,
- * progress, the content viewport, and the actions. It is deliberately plain —
- * this is the skeleton the eventual visual identity will dress, not the visual
- * identity itself.
+ * Es la capa estructural estable alrededor de una run: ancho de la zona de
+ * juego, encabezado de etapa, progreso, el contenido y las acciones. No sabe
+ * nada de ningún desafío en particular; qué se dibuja adentro lo decide la fase
+ * que devolvió el motor.
  *
- * Layout follows the UX rules: mobile-first single column, readable at 360 px,
- * a single visible action at a time, and no meaning carried by colour alone.
+ * Sigue las reglas de UX: columna única mobile-first, legible a 360 px, una sola
+ * acción visible por vez, y nada cuyo significado dependa del color.
  */
 
 import { useCallback, useState } from 'react'
 
+import { Button, Separator, Surface } from '@/components/ui'
 import type {
   EngineDependencies,
   InteractionAnswer,
   RunDescriptor,
 } from '@/game'
+import { cn } from '@/lib/ui/cn'
+
 import { ChallengeFrame } from './challenge-frame'
 import type { GameController } from './controller'
 import { DebugPanel } from './debug-panel'
 import { FeedbackPanel } from './feedback-panel'
+import { NarrativeCard } from './narrative-card'
+import { StageHeader, StageProgress } from './stage-header'
 import { stageLabel } from './stage-label'
+import { StatRow } from './stat-indicator'
 import { useGameRun } from './use-game-run'
 
 export interface GameShellProps {
   readonly controller: GameController
   readonly dependencies: EngineDependencies
-  /** Shows the developer diagnostics panel. Never enabled in production. */
+  /** Muestra el panel de diagnóstico. Nunca se habilita en producción. */
   readonly showDebug?: boolean
   readonly onRestart?: () => RunDescriptor
-  /** Shown in the header so the run feels like the player's own. */
+  /** Se muestra en el encabezado para que la run se sienta del jugador. */
   readonly playerName?: string
+}
+
+/**
+ * Geometría de la zona de juego.
+ *
+ * Un ancho máximo acotado en desktop: la lectura de un enunciado y la
+ * comparación de cuatro opciones no mejoran por estirarse a 1200 px.
+ */
+export function GameCanvas({
+  children,
+  className,
+}: {
+  readonly children: React.ReactNode
+  readonly className?: string
+}) {
+  return (
+    <div
+      className={cn(
+        'max-w-game px-gutter pb-safe mx-auto flex w-full flex-col gap-6 py-6',
+        className,
+      )}
+    >
+      {children}
+    </div>
+  )
 }
 
 export function GameShell({
@@ -75,89 +106,80 @@ export function GameShell({
   }, [dispatch])
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 p-4">
-      <header className="flex flex-col gap-3">
-        <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <h1 className="text-lg font-semibold" data-testid="stage-label">
-            {stageLabel(state.run.stage)}
-            {playerName === undefined ? null : (
-              <span className="ml-2 text-sm font-normal text-slate-600 dark:text-slate-400">
-                {playerName}
-              </span>
-            )}
-          </h1>
-          <p className="text-sm tabular-nums" data-testid="score-preview">
-            Score estimado: <strong>{run.score}</strong>
-          </p>
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <progress
-            className="h-2 w-full"
-            max={run.progress.totalEvents}
-            value={run.progress.eventsResolved}
-            aria-label="Progreso de la carrera"
+    <GameCanvas>
+      <header className="flex flex-col gap-4">
+        <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+          <StageHeader
+            stage={stageLabel(state.run.stage)}
+            {...(playerName === undefined ? {} : { playerName })}
           />
-          <p className="text-xs text-slate-600 dark:text-slate-400">
-            Evento {run.progress.eventsResolved} de {run.progress.totalEvents}
+          <p
+            data-numeric
+            data-testid="score-preview"
+            className="text-caption text-foreground-muted"
+          >
+            Puntaje{' '}
+            <span className="text-foreground font-semibold">{run.score}</span>
           </p>
         </div>
 
-        <dl className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm sm:grid-cols-4">
-          {(
-            [
-              ['Conocimiento', state.run.stats.knowledge],
-              ['Equipo', state.run.stats.team],
-              ['Iniciativa', state.run.stats.initiative],
-              ['Energía', state.run.stats.energy],
-            ] as const
-          ).map(([label, value]) => (
-            <div key={label} className="contents">
-              <dt className="text-slate-600 dark:text-slate-400">{label}</dt>
-              <dd className="font-medium tabular-nums">{value}</dd>
-            </div>
-          ))}
-        </dl>
+        <StageProgress
+          resolved={run.progress.eventsResolved}
+          total={run.progress.totalEvents}
+        />
+
+        <Separator />
+
+        <StatRow
+          stats={[
+            { label: 'Conocimiento', value: state.run.stats.knowledge },
+            { label: 'Equipo', value: state.run.stats.team },
+            { label: 'Iniciativa', value: state.run.stats.initiative },
+            { label: 'Energía', value: state.run.stats.energy },
+          ]}
+        />
       </header>
 
       <div className="flex flex-col gap-4">
         {run.complete && state.run.completion !== undefined ? (
-          <section
+          <Surface
+            as="section"
+            tone="raised"
+            padding="roomy"
             aria-labelledby="run-complete"
-            className="flex flex-col gap-3 rounded-lg border border-slate-300 p-4 dark:border-slate-600"
+            className="flex flex-col gap-3"
             data-testid="run-complete"
           >
-            <h2 id="run-complete" className="text-xl font-semibold">
+            <h2 id="run-complete" className="text-title">
               Carrera terminada
             </h2>
-            {/* The engine guarantees a completed run carries its result, and
-                the snapshot codec refuses a state that claims otherwise, so
-                these values are never substituted with a placeholder. */}
-            <p className="tabular-nums">
-              Score estimado: <strong>{state.run.completion.totalScore}</strong>
+            {/* El motor garantiza que una run terminada trae su resultado, y el
+                códec de snapshots rechaza un estado que diga lo contrario, así
+                que estos valores nunca se sustituyen por un placeholder. */}
+            <p data-numeric className="text-body">
+              Puntaje estimado:{' '}
+              <strong>{state.run.completion.totalScore}</strong>
             </p>
-            <p>
+            <p className="text-body">
               Perfil de egreso:{' '}
               <strong data-testid="profile">
                 {state.run.completion.profile.profileId}
               </strong>
             </p>
-            <p className="text-sm text-slate-600 dark:text-slate-400">
-              El score oficial lo calcula el servidor reproduciendo la partida.
-              Este número es una estimación local.
+            <p className="text-caption text-foreground-muted">
+              El puntaje oficial lo calcula el servidor reproduciendo la
+              partida. Este número es una estimación local.
             </p>
             {onRestart === undefined ? null : (
-              <button
-                type="button"
+              <Button
                 onClick={() => {
                   controller.restart(onRestart())
                 }}
-                className="min-h-11 rounded-lg bg-slate-900 px-4 py-2 font-medium text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 dark:bg-slate-100 dark:text-slate-900"
               >
                 Jugar otra vez
-              </button>
+              </Button>
             )}
-          </section>
+          </Surface>
         ) : state.run.phase === 'feedback' && state.run.pendingFeedback ? (
           <FeedbackPanel
             feedback={state.run.pendingFeedback}
@@ -173,28 +195,24 @@ export function GameShell({
             onRequestInformation={requestInformation}
           />
         ) : active ? (
-          <section
-            aria-labelledby="narrative-title"
-            className="flex flex-col gap-3"
-            data-testid="narrative-card"
+          <NarrativeCard
+            title={active.title}
+            actions={
+              <Button size="lg" block onClick={advance} data-testid="continue">
+                Continuar
+              </Button>
+            }
           >
-            <h2 id="narrative-title" className="text-xl font-semibold">
-              {active.title}
-            </h2>
-            <p className="text-pretty">{active.text}</p>
-            <button
-              type="button"
-              onClick={advance}
-              data-testid="continue"
-              className="min-h-11 self-start rounded-lg bg-slate-900 px-4 py-2 font-medium text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 dark:bg-slate-100 dark:text-slate-900"
-            >
-              Continuar
-            </button>
-          </section>
+            {active.text}
+          </NarrativeCard>
         ) : null}
 
         {state.lastRejection === undefined ? null : (
-          <p role="status" className="text-sm" data-testid="rejection">
+          <p
+            role="status"
+            className="text-body-sm text-danger"
+            data-testid="rejection"
+          >
             El motor rechazó la acción: {state.lastRejection.kind}
           </p>
         )}
@@ -202,20 +220,20 @@ export function GameShell({
 
       {showDebug ? (
         <footer>
-          <button
-            type="button"
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={() => {
               setDebugOpen((open) => !open)
             }}
             aria-expanded={debugOpen}
             aria-controls="debug-panel"
-            className="min-h-11 rounded-lg border border-slate-300 px-3 text-sm dark:border-slate-600"
           >
             {debugOpen ? 'Ocultar' : 'Mostrar'} diagnóstico
-          </button>
+          </Button>
           {debugOpen ? <DebugPanel state={state} /> : null}
         </footer>
       ) : null}
-    </div>
+    </GameCanvas>
   )
 }

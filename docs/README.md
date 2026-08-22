@@ -83,13 +83,24 @@ Este directorio define la referencia funcional, lúdica, pedagógica y técnica 
 - `development-environment.md`: quickstart nativo/Docker, Supabase local, gates y troubleshooting.
 - `game-engine-development.md`: comandos, harness, invariantes y cómo extender el motor.
 
+### 09-design-system
+- `README.md`: qué es el sistema de diseño, su versión y por dónde entrar.
+- `colors.md`: paleta, roles del verde y del rojo, y la regla de que elegir no es acertar.
+- `typography.md`: roles tipográficos y tratamiento de los datos numéricos.
+- `foundations.md`: espaciado, layout, radio, bordes, elevación, movimiento y foco.
+- `ui-components.md`: primitivas de UI, cuándo usarlas y cuándo no.
+- `game-components.md`: primitivas de juego y renderers de interacción.
+- `accessibility.md`: cómo el sistema sostiene el objetivo WCAG 2.2 AA.
+- `contribution.md`: cuándo promover un patrón y cómo se hace cumplir.
+- `migration-7-grade.md`: mapa de la migración del slice y lo que encontró.
+
 ### audits
 
 Auditorías de ingeniería ejecutadas sobre el código real. Documentan hallazgos con evidencia, el plan de remediación y su verificación; no reemplazan a la documentación canónica, que describe el estado actual.
 
 - `game-engine-2026-08-21/`: auditoría completa del motor y sus fronteras de integración.
 
-`EGRESADO-MASTER-SPEC.md` consolida la baseline de producto (`00-` a `07-`, checklist y este README). La infraestructura de ingeniería de `08-engineering/` se mantiene por separado para no mezclar reglas operativas del agente con la especificación del producto.
+`EGRESADO-MASTER-SPEC.md` consolida la baseline de producto (`00-` a `07-`, checklist y este README). La infraestructura de ingeniería de `08-engineering/` y el sistema de diseño de `09-design-system/` se mantienen por separado: describen cómo se construye el producto, no qué es.
 
 ## Autoridad documental
 

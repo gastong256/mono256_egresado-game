@@ -1,16 +1,19 @@
 'use client'
 
 /**
- * Budget builder control.
+ * Armado de presupuesto.
  *
- * Quantities are chosen with number inputs plus explicit increment and
- * decrement buttons. The buttons exist because the UX rules require fine
- * adjustment that does not depend on typing or dragging, and because a 44 px
- * target is far easier on a phone than a spinner arrow.
+ * Cada ítem es una fila con su precio unitario y un selector de cantidad. Se
+ * parece más a un mostrador que a una planilla: el precio va como dato, no como
+ * celda, y la cantidad se toca con el pulgar.
+ *
+ * No muestra el total. Calcularlo es exactamente el desafío; mostrarlo lo
+ * convertiría en comparar dos números que sacó otro.
  */
 
 import { useId } from 'react'
 
+import { QuantityStepper } from '@/components/ui'
 import type { BudgetLine, PresentedBudgetItem } from '@/game'
 
 export interface BudgetBuilderProps {
@@ -47,7 +50,7 @@ export function BudgetBuilder({
   return (
     <fieldset className="min-w-0 border-0 p-0" disabled={disabled}>
       <legend className="sr-only">Elegí las cantidades</legend>
-      <ul className="flex list-none flex-col gap-2 p-0">
+      <ul className="flex list-none flex-col gap-2.5 p-0">
         {items.map((item) => {
           const fieldId = `${groupId}-${item.id}`
           const quantity = quantityOf(lines, item.id)
@@ -55,56 +58,32 @@ export function BudgetBuilder({
           return (
             <li
               key={item.id}
-              className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-slate-300 bg-white p-3 dark:border-slate-600 dark:bg-slate-900"
+              data-chosen={quantity > 0}
+              className="border-line bg-surface rounded-surface data-[chosen=true]:border-line-selected flex flex-wrap items-center justify-between gap-3 border-2 p-3"
             >
               <label htmlFor={fieldId} className="min-w-0 flex-1">
-                <span className="block font-medium">{item.label}</span>
-                <span className="block text-sm text-slate-600 dark:text-slate-400">
+                <span className="text-subheading text-foreground block">
+                  {item.label}
+                </span>
+                <span
+                  data-numeric
+                  className="text-body-sm text-data-foreground block font-semibold"
+                >
                   {item.unitPrice}
                 </span>
               </label>
-              <div className="flex items-center gap-1">
-                <button
-                  type="button"
-                  disabled={disabled || quantity <= 0}
-                  aria-label={`Quitar uno de ${item.label}`}
-                  onClick={() => {
-                    setQuantity(item.id, quantity - 1, item.maxQuantity)
-                  }}
-                  className="h-11 w-11 rounded-lg border border-slate-300 text-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 disabled:opacity-40 dark:border-slate-600 dark:focus-visible:outline-slate-100"
-                >
-                  −
-                </button>
-                <input
-                  id={fieldId}
-                  type="number"
-                  inputMode="numeric"
-                  min={0}
-                  max={item.maxQuantity}
-                  step={1}
-                  value={quantity}
-                  disabled={disabled}
-                  onChange={(event) => {
-                    setQuantity(
-                      item.id,
-                      Number.parseInt(event.target.value, 10),
-                      item.maxQuantity,
-                    )
-                  }}
-                  className="h-11 w-16 rounded-lg border border-slate-300 bg-white text-center tabular-nums focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 dark:border-slate-600 dark:bg-slate-900 dark:focus-visible:outline-slate-100"
-                />
-                <button
-                  type="button"
-                  disabled={disabled || quantity >= item.maxQuantity}
-                  aria-label={`Agregar uno de ${item.label}`}
-                  onClick={() => {
-                    setQuantity(item.id, quantity + 1, item.maxQuantity)
-                  }}
-                  className="h-11 w-11 rounded-lg border border-slate-300 text-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 disabled:opacity-40 dark:border-slate-600 dark:focus-visible:outline-slate-100"
-                >
-                  +
-                </button>
-              </div>
+              <QuantityStepper
+                id={fieldId}
+                value={quantity}
+                max={item.maxQuantity}
+                disabled={disabled}
+                valueLabel={`Cantidad de ${item.label}`}
+                decreaseLabel={`Quitar uno de ${item.label}`}
+                increaseLabel={`Agregar uno de ${item.label}`}
+                onChange={(next) => {
+                  setQuantity(item.id, next, item.maxQuantity)
+                }}
+              />
             </li>
           )
         })}

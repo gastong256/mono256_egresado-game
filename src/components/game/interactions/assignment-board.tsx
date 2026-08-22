@@ -1,21 +1,21 @@
 'use client'
 
 /**
- * Assignment control.
+ * Asignación de personas a tareas.
  *
- * The design documents describe this family as a drag-and-drop board, and the
- * UX rules require that dragging is never the only way to complete a task. The
- * accessible path — choosing a person per task from a native select — is
- * therefore built first and on its own: it works with keyboard, touch and screen
- * readers, and no drag-and-drop library is needed for the interaction to be
- * complete.
+ * Los documentos de diseño describen esta familia como un tablero de arrastrar y
+ * soltar, y las reglas de UX exigen que arrastrar nunca sea la única forma de
+ * completar una tarea. Por eso el camino accesible —elegir una persona por tarea
+ * desde un `select` nativo— está construido primero y solo: anda con teclado,
+ * con el dedo y con lector de pantalla, y no necesita ninguna librería.
  *
- * Pointer dragging can be layered on later as an enhancement over this same
- * state; the answer contract will not change when it is.
+ * El arrastre con puntero se puede sumar después sobre este mismo estado; el
+ * contrato de la respuesta no va a cambiar cuando pase.
  */
 
 import { useId } from 'react'
 
+import { Surface } from '@/components/ui'
 import type { AgentAssignment, PresentedAgent, PresentedTask } from '@/game'
 
 export interface AssignmentBoardProps {
@@ -47,7 +47,10 @@ export function AssignmentBoard({
   }
 
   return (
-    <fieldset className="min-w-0 border-0 p-0" disabled={disabled}>
+    <fieldset
+      className="flex min-w-0 flex-col gap-4 border-0 p-0"
+      disabled={disabled}
+    >
       <legend className="sr-only">Asigná una persona por tarea</legend>
 
       {/*
@@ -57,28 +60,29 @@ export function AssignmentBoard({
         recordar lo que decía cada uno.
       */}
       <ul
-        className="mb-3 flex list-none flex-col gap-1 p-0"
+        className="flex list-none flex-col gap-1.5 p-0"
         aria-label="Quién puede hacer qué"
       >
         {agents.map((agent) => (
-          <li
-            key={agent.id}
-            className="rounded-lg bg-slate-100 px-3 py-2 text-sm dark:bg-slate-800"
-          >
-            <span className="font-medium">{agent.label}</span>
-            <span className="block text-slate-600 dark:text-slate-400">
-              {agent.detail}
-            </span>
+          <li key={agent.id}>
+            <Surface tone="muted" padding="compact">
+              <span className="text-subheading text-foreground block">
+                {agent.label}
+              </span>
+              <span className="text-body-sm text-foreground-muted block">
+                {agent.detail}
+              </span>
+            </Surface>
           </li>
         ))}
       </ul>
 
-      <ul className="flex list-none flex-col gap-2 p-0">
+      <ul className="flex list-none flex-col gap-2.5 p-0">
         {tasks.map((task) => {
           const fieldId = `${groupId}-${task.id}`
           const selected = agentFor(task.id)
-          // A person already used elsewhere is shown but marked, so the
-          // constraint is visible before the answer is submitted.
+          // Una persona ya usada en otra tarea se muestra pero marcada, así la
+          // restricción se ve antes de confirmar.
           const takenElsewhere = new Set(
             assignments
               .filter((entry) => entry.taskId !== task.id)
@@ -88,11 +92,17 @@ export function AssignmentBoard({
           return (
             <li
               key={task.id}
-              className="rounded-lg border border-slate-300 bg-white p-3 dark:border-slate-600 dark:bg-slate-900"
+              data-chosen={selected !== ''}
+              className="border-line bg-surface rounded-surface data-[chosen=true]:border-line-selected border-2 p-3"
             >
               <label htmlFor={fieldId} className="block">
-                <span className="block font-medium">{task.label}</span>
-                <span className="block text-sm text-slate-600 dark:text-slate-400">
+                <span className="text-subheading text-foreground block">
+                  {task.label}
+                </span>
+                <span
+                  data-numeric
+                  className="text-body-sm text-data-foreground block font-semibold"
+                >
                   {task.detail}
                 </span>
               </label>
@@ -103,7 +113,7 @@ export function AssignmentBoard({
                 onChange={(event) => {
                   assign(task.id, event.target.value)
                 }}
-                className="mt-2 h-11 w-full rounded-lg border border-slate-300 bg-white px-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 dark:border-slate-600 dark:bg-slate-900 dark:focus-visible:outline-slate-100"
+                className="border-line-interactive bg-surface text-foreground rounded-control text-body mt-2 h-11 w-full px-2"
               >
                 <option value="">Sin asignar</option>
                 {agents.map((agent) => (

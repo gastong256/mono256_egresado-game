@@ -16,6 +16,7 @@ import { useMemo, useState } from 'react'
 
 import { ENGINE_VERSION, toRunId, toRunSeed, type RunDescriptor } from '@/game'
 import { createDevelopmentDependencies } from '@/game/testing'
+import { Button, Callout } from '@/components/ui'
 import { createGameController } from './controller'
 import { GameShell } from './game-shell'
 
@@ -60,15 +61,13 @@ export function DevelopmentHarness({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="mx-auto flex w-full max-w-2xl flex-col gap-2 px-4 pt-4">
-        <p
-          className="rounded-lg border border-dashed border-slate-400 p-3 text-sm dark:border-slate-500"
-          data-testid="harness-notice"
-        >
-          <strong>Herramienta de desarrollo.</strong> Contenido de prueba, no es
-          el juego Egresado. El ruleset{' '}
-          <code>{dependencies.ruleset.version}</code> no es oficial.
-        </p>
+      <div className="max-w-game px-gutter mx-auto flex w-full flex-col gap-3 pt-4">
+        <div data-testid="harness-notice">
+          <Callout tone="warning" title="Herramienta de desarrollo">
+            Contenido de prueba, no es el juego Egresado. El ruleset{' '}
+            <code>{dependencies.ruleset.version}</code> no es oficial.
+          </Callout>
+        </div>
         <form
           className="flex flex-wrap items-end gap-2"
           onSubmit={(event) => {
@@ -80,21 +79,18 @@ export function DevelopmentHarness({
             }
           }}
         >
-          <label className="flex flex-col gap-1 text-sm">
+          <label className="text-body-sm flex flex-col gap-1">
             Seed
             <input
               name="seed"
               defaultValue={seed}
               data-testid="seed-input"
-              className="h-11 rounded-lg border border-slate-300 bg-white px-3 font-mono dark:border-slate-600 dark:bg-slate-900"
+              className="border-line-interactive bg-surface rounded-control h-11 px-3 font-mono"
             />
           </label>
-          <button
-            type="submit"
-            className="min-h-11 rounded-lg border border-slate-300 px-3 dark:border-slate-600"
-          >
+          <Button type="submit" variant="secondary">
             Nueva run
-          </button>
+          </Button>
         </form>
       </div>
 

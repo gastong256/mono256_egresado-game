@@ -100,6 +100,12 @@ Recorrido completo en un browser real a 390 px, además de los gates automático
 
 Limitación conocida que queda abierta: las estrellas de habilidad (`★★`) se leen bien a la vista, pero un lector de pantalla las enuncia una por una. El enunciado explica la escala, así que la información no se pierde, pero conviene reemplazarlas por texto estructurado cuando se revise accesibilidad a fondo.
 
+## Capa visual
+
+Desde el Design System v0.1, ninguna de estas pantallas decide su propio color, tipografía, radio ni foco. Todas componen primitivas de `src/components/ui/` y primitivas de juego de `src/components/game/`. El mapa completo de qué reemplazó a qué está en [la migración](../09-design-system/migration-7-grade.md), y las reglas en [el sistema de diseño](../09-design-system/README.md).
+
+La migración no tocó matemática, evaluación, narrativa, determinismo, scoring ni replay.
+
 ## Extender a 1.º año
 
 Evaluado sobre el código que quedó implementado, no sobre la intención.

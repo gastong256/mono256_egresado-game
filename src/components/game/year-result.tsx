@@ -10,8 +10,13 @@
  * formatea; no calcula nada.
  */
 
+import { RotateCcw } from 'lucide-react'
+
+import { Button, Surface } from '@/components/ui'
 import type { RunState, SolutionQuality, Storylet } from '@/game'
 
+import { DataMetric } from './data-metric'
+import { Milestone } from './milestone'
 import { stageLabel } from './stage-label'
 
 const QUALITY_LABEL: Readonly<Record<SolutionQuality, string>> = {
@@ -72,54 +77,44 @@ export function YearResult({
       className="flex flex-col gap-6"
       data-testid="year-result"
     >
-      <header className="flex flex-col gap-1">
-        <p className="text-sm tracking-wide text-slate-600 uppercase dark:text-slate-400">
-          {nickname}
-        </p>
-        <h2 id="resultado-titulo" className="text-3xl font-semibold">
-          Tu {stageLabel(state.stage)}
-        </h2>
-        <p className="text-pretty text-slate-700 dark:text-slate-300">
+      <Milestone
+        eyebrow={`${nickname} · año terminado`}
+        title={`Tu ${stageLabel(state.stage)}`}
+      >
+        <span id="resultado-titulo">
           {closingLine(optimal, resolved, challenges.length)}
-        </p>
-      </header>
+        </span>
+      </Milestone>
 
-      <dl className="grid grid-cols-2 gap-3">
-        {(
-          [
-            [
-              'Situaciones resueltas',
-              `${String(resolved)} de ${String(challenges.length)}`,
-            ],
-            ['Decisiones redondas', String(optimal)],
-            ['Decisiones eficientes', String(efficient)],
-            ['Puntaje del año', String(state.completion?.totalScore ?? 0)],
-          ] as const
-        ).map(([label, value]) => (
-          <div
-            key={label}
-            className="rounded-xl border border-slate-300 p-3 dark:border-slate-600"
-          >
-            <dt className="text-xs text-slate-600 dark:text-slate-400">
-              {label}
-            </dt>
-            <dd className="text-xl font-semibold tabular-nums">{value}</dd>
-          </div>
-        ))}
-      </dl>
+      <div className="grid grid-cols-2 gap-2">
+        <DataMetric
+          label="Situaciones resueltas"
+          value={`${String(resolved)} de ${String(challenges.length)}`}
+          prominent
+        />
+        <DataMetric
+          label="Puntaje del año"
+          value={String(state.completion?.totalScore ?? 0)}
+          prominent
+        />
+        <DataMetric label="Decisiones redondas" value={String(optimal)} />
+        <DataMetric label="Decisiones eficientes" value={String(efficient)} />
+      </div>
 
       <section aria-labelledby="momentos" className="flex flex-col gap-2">
-        <h3 id="momentos" className="text-lg font-semibold">
+        <h3 id="momentos" className="text-heading">
           Cómo te fue
         </h3>
-        <ul className="flex list-none flex-col gap-1 p-0">
+        <ul className="flex list-none flex-col p-0">
           {challenges.map((entry) => (
             <li
               key={entry.sequence}
-              className="flex items-baseline justify-between gap-3 border-b border-slate-200 py-1 text-sm dark:border-slate-700"
+              className="border-line flex items-baseline justify-between gap-3 border-b py-2 last:border-b-0"
             >
-              <span>{titleOf(entry.storyletId)}</span>
-              <span className="font-medium">
+              <span className="text-body-sm text-foreground">
+                {titleOf(entry.storyletId)}
+              </span>
+              <span className="text-body-sm text-foreground-muted font-semibold">
                 {entry.quality === undefined
                   ? '—'
                   : QUALITY_LABEL[entry.quality]}
@@ -129,22 +124,20 @@ export function YearResult({
         </ul>
       </section>
 
-      <p className="rounded-xl border border-slate-300 p-3 text-sm text-pretty dark:border-slate-600">
-        {coordinated
-          ? 'Terminaste el año coordinando el proyecto del curso.'
-          : 'Terminaste el año con una parte concreta del proyecto a tu cargo.'}
-      </p>
+      <Surface tone="muted" padding="default">
+        <p className="text-body-sm text-foreground text-pretty">
+          {coordinated
+            ? 'Terminaste el año coordinando el proyecto del curso.'
+            : 'Terminaste el año con una parte concreta del proyecto a tu cargo.'}
+        </p>
+      </Surface>
 
       <div className="flex flex-col gap-3">
-        <button
-          type="button"
-          onClick={onPlayAgain}
-          data-testid="play-again"
-          className="min-h-12 rounded-xl bg-slate-900 px-5 text-base font-semibold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 dark:bg-slate-100 dark:text-slate-900 dark:focus-visible:outline-slate-100"
-        >
+        <Button size="lg" block onClick={onPlayAgain} data-testid="play-again">
+          <RotateCcw aria-hidden className="size-5" />
           Jugar de nuevo
-        </button>
-        <p className="text-center text-sm text-slate-600 dark:text-slate-400">
+        </Button>
+        <p className="text-caption text-foreground-muted text-center text-pretty">
           Por ahora Egresado llega hasta acá. Los años siguientes están en
           construcción.
         </p>

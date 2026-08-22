@@ -27,6 +27,14 @@ No implementes producto o gameplay sin una tarea explicitamente acotada.
 - Toda compatibilidad de replay depende de `game_version`, `ruleset_version` y `content_version`; los cambios que alteren resultados deben versionarse.
 - El MVP minimiza datos de menores: sin email, password, apellido, fecha de nacimiento, escuela, ubicacion precisa ni identidad real innecesaria. Los nicknames son contenido publico pseudonimo y moderable.
 
+## Interfaz
+
+- El sistema de diseño decide color, tipografia, espaciado, radio, elevacion, foco y presentacion de datos. Una pantalla no vuelve a decidir nada de eso: lee [docs/09-design-system/](docs/09-design-system/README.md) y usa la skill `egresado-design-system`.
+- Antes de crear una primitiva visual, revisa `/dev/design-system` y `src/components/ui/`.
+- Consumi tokens semanticos (`bg-primary`, `text-foreground-muted`); nunca la paleta cruda ni colores escritos a mano en una pantalla.
+- Ningun estado se distingue solo por color, y elegir una opcion nunca puede parecerse a acertar.
+- `pnpm design:check` es el gate del sistema y forma parte de `pnpm verify`.
+
 ## Decisiones y dependencias
 
 - Segui [docs/08-engineering/dependency-and-decision-policy.md](docs/08-engineering/dependency-and-decision-policy.md).

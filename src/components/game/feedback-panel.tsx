@@ -1,26 +1,82 @@
 'use client'
 
 /**
- * Feedback panel.
+ * Consecuencia de una decisión.
  *
- * The design rules are explicit: feedback must show the numbers that explain the
- * consequence, not a verdict. Everything rendered here comes from the engine's
- * structured feedback — the panel formats, it never computes.
+ * El vocabulario es el del motor —óptimo, eficiente, funcionó, no alcanzó— y no
+ * el de un examen. Acá no hay «correcto» ni «incorrecto»: hay una decisión y lo
+ * que pasó por haberla tomado.
  *
- * Outcome is announced to assistive technology and is never conveyed by colour
- * alone; the quality is always spelled out in text.
+ * Cada resultado se distingue por tres cosas a la vez: un nombre escrito, un
+ * ícono con forma propia y un tono de color. Nunca por el color solo. Alguien
+ * que no distingue rojo de verde lee «No alcanzó» junto a un triángulo y entiende
+ * exactamente lo mismo.
+ *
+ * Todo lo que muestra sale del feedback estructurado del motor. Formatea; no
+ * calcula.
  */
 
-import { useEffect, useRef } from 'react'
+import { cva } from 'class-variance-authority'
+import { Award, Check, CircleCheck, TriangleAlert } from 'lucide-react'
+import { useEffect, useRef, type ComponentType } from 'react'
 
+import { Button } from '@/components/ui'
 import type { PendingFeedback, SolutionQuality } from '@/game'
+import { cn } from '@/lib/ui/cn'
 
-const QUALITY_LABEL: Readonly<Record<SolutionQuality, string>> = {
-  invalid: 'No alcanzó',
-  functional: 'Funcionó',
-  efficient: 'Eficiente',
-  optimal: 'Óptimo',
+import { MetricRows } from './data-metric'
+
+interface QualityPresentation {
+  readonly label: string
+  /** Qué significa ese resultado, en una frase y sin retar a nadie. */
+  readonly meaning: string
+  readonly Icon: ComponentType<{ className?: string; 'aria-hidden'?: boolean }>
 }
+
+const QUALITY: Readonly<Record<SolutionQuality, QualityPresentation>> = {
+  optimal: {
+    label: 'Óptimo',
+    meaning: 'La mejor de las opciones que había.',
+    Icon: Award,
+  },
+  efficient: {
+    label: 'Eficiente',
+    meaning: 'Resolvió bien, con margen de sobra.',
+    Icon: CircleCheck,
+  },
+  functional: {
+    label: 'Funcionó',
+    meaning: 'Alcanzó, aunque justo.',
+    Icon: Check,
+  },
+  invalid: {
+    label: 'No alcanzó',
+    meaning: 'Esta vez no dio para lo que hacía falta.',
+    Icon: TriangleAlert,
+  },
+}
+
+const panel = cva('rounded-card border-2 p-5 flex flex-col gap-4', {
+  variants: {
+    quality: {
+      optimal: 'border-optimal-line bg-optimal-surface',
+      efficient: 'border-efficient-line bg-efficient-surface',
+      functional: 'border-functional-line bg-functional-surface',
+      invalid: 'border-invalid-line bg-invalid-surface',
+    },
+  },
+})
+
+const ink = cva('', {
+  variants: {
+    quality: {
+      optimal: 'text-optimal-foreground',
+      efficient: 'text-efficient-foreground',
+      functional: 'text-functional-foreground',
+      invalid: 'text-invalid-foreground',
+    },
+  },
+})
 
 export interface FeedbackPanelProps {
   readonly feedback: PendingFeedback
@@ -29,71 +85,81 @@ export interface FeedbackPanelProps {
 
 export function FeedbackPanel({ feedback, onContinue }: FeedbackPanelProps) {
   const headingRef = useRef<HTMLHeadingElement>(null)
+  const { label, meaning, Icon } = QUALITY[feedback.quality]
 
   useEffect(() => {
-    // Moving focus to the outcome is what makes the consequence reachable for
-    // keyboard and screen-reader users before the continue action.
+    // Mover el foco al resultado es lo que lo hace alcanzable con teclado y con
+    // lector de pantalla antes de llegar al botón de continuar.
     headingRef.current?.focus()
   }, [feedback.instanceId])
 
   return (
     <section
       aria-labelledby="feedback-title"
-      className="flex flex-col gap-4 rounded-lg border border-slate-300 bg-slate-50 p-4 dark:border-slate-600 dark:bg-slate-800"
+      className={panel({ quality: feedback.quality })}
     >
-      <h2
-        id="feedback-title"
-        ref={headingRef}
-        tabIndex={-1}
-        // `alert` announces the outcome as soon as it is rendered.
-        role="alert"
-        className="text-lg font-semibold outline-none"
-        data-quality={feedback.quality}
-        data-testid="feedback-heading"
-      >
-        {QUALITY_LABEL[feedback.quality]}
-      </h2>
+      <div className="flex items-start gap-3">
+        <Icon
+          aria-hidden
+          className={cn(
+            'mt-0.5 size-7 shrink-0',
+            ink({ quality: feedback.quality }),
+          )}
+        />
+        <div className="min-w-0">
+          <h2
+            id="feedback-title"
+            ref={headingRef}
+            tabIndex={-1}
+            // `alert` anuncia el resultado apenas se dibuja.
+            role="alert"
+            className={cn(
+              'text-title outline-none',
+              ink({ quality: feedback.quality }),
+            )}
+            data-quality={feedback.quality}
+            data-testid="feedback-heading"
+          >
+            {label}
+          </h2>
+          <p
+            className={cn(
+              'text-body-sm mt-0.5',
+              ink({ quality: feedback.quality }),
+            )}
+          >
+            {meaning}
+          </p>
+        </div>
+      </div>
 
-      <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
-        {feedback.feedback.facts.map((fact) => (
-          <div key={fact.label} className="contents">
-            <dt className="text-slate-600 dark:text-slate-400">{fact.label}</dt>
-            <dd className="font-medium tabular-nums">{fact.value}</dd>
-          </div>
-        ))}
-      </dl>
+      <MetricRows items={feedback.feedback.facts} />
 
       {feedback.feedback.violatedConstraint === undefined ? null : (
-        <p className="text-sm">
-          Restricción que no se cumplió:{' '}
-          <strong>{feedback.feedback.violatedConstraint}</strong>
+        <p className="text-body-sm text-foreground text-pretty">
+          Lo que no se cumplió:{' '}
+          <strong className="font-semibold">
+            {feedback.feedback.violatedConstraint}
+          </strong>
         </p>
       )}
 
       {feedback.feedback.optimalComparison === undefined ? null : (
-        <p className="text-sm text-pretty">
+        <p className="text-body-sm text-foreground text-pretty">
           {feedback.feedback.optimalComparison}
         </p>
       )}
 
-      <p className="text-sm text-slate-600 dark:text-slate-400">
+      <p className="text-caption text-foreground-muted" data-numeric>
         Puntos del evento:{' '}
-        <span className="font-medium tabular-nums">
+        <span className="text-foreground font-semibold">
           {feedback.score.totalPoints}
-        </span>{' '}
-        (base {feedback.score.basePoints} × calidad{' '}
-        {feedback.score.qualityFactor} × dificultad{' '}
-        {feedback.score.difficultyFactor})
+        </span>
       </p>
 
-      <button
-        type="button"
-        onClick={onContinue}
-        data-testid="continue"
-        className="min-h-11 rounded-lg bg-slate-900 px-4 py-2 font-medium text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 dark:bg-slate-100 dark:text-slate-900 dark:focus-visible:outline-slate-100"
-      >
+      <Button onClick={onContinue} data-testid="continue" size="lg" block>
         Continuar
-      </button>
+      </Button>
     </section>
   )
 }

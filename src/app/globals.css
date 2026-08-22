@@ -1,50 +1,12 @@
+/**
+ * Punto de entrada de estilos.
+ *
+ * El orden importa: Tailwind primero, después los tokens primitivos, después
+ * los semánticos y al final la base. Ver `docs/design-system/`.
+ */
+
 @import 'tailwindcss';
 
-:root {
-  --background: #f4f1e9;
-  --foreground: #132a25;
-  --surface: #fffdf7;
-  --accent: #d95435;
-  --focus-ring: #16697a;
-  color-scheme: light;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-html {
-  min-width: 360px;
-  background: var(--background);
-}
-
-body {
-  min-height: 100dvh;
-  margin: 0;
-  background:
-    radial-gradient(
-      circle at top left,
-      rgb(217 84 53 / 12%),
-      transparent 36rem
-    ),
-    var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-  text-rendering: optimizeLegibility;
-}
-
-:focus-visible {
-  outline: 3px solid var(--focus-ring);
-  outline-offset: 3px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    scroll-behavior: auto !important;
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
+@import '../styles/tokens.css';
+@import '../styles/theme.css';
+@import '../styles/base.css';
