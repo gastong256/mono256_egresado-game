@@ -1,6 +1,6 @@
 # Game engine
 
-Motor TypeScript determinista, puro y reproducible. Este documento describe el motor **implementado** en `src/game`. Las decisiones durables que lo gobiernan están en [ADR-003](adr/ADR-003-deterministic-seeded-engine.md), [ADR-004](adr/ADR-004-server-authoritative-scoring.md), [ADR-007](adr/ADR-007-content-as-data.md), [ADR-011](adr/ADR-011-functional-core-transition-engine.md), [ADR-012](adr/ADR-012-seeded-prng-and-substreams.md) y [ADR-013](adr/ADR-013-exact-rational-arithmetic.md).
+Motor TypeScript determinista, puro y reproducible. Este documento describe el motor **implementado** en `src/game`. Las decisiones durables que lo gobiernan están en [ADR-003](adr/ADR-003-deterministic-seeded-engine.md), [ADR-004](adr/ADR-004-server-authoritative-scoring.md), [ADR-007](adr/ADR-007-content-as-data.md), [ADR-011](adr/ADR-011-functional-core-transition-engine.md), [ADR-012](adr/ADR-012-seeded-prng-and-substreams.md), [ADR-013](adr/ADR-013-exact-rational-arithmetic.md), [ADR-019](adr/ADR-019-scenario-family-template-variant.md) y [ADR-020](adr/ADR-020-variant-generation-and-approved-catalog.md).
 
 Para comandos y flujo de trabajo, ver [desarrollo del motor](../08-engineering/game-engine-development.md).
 
@@ -34,13 +34,13 @@ El motor devuelve estado, eventos y **descripciones** de efecto. Nunca ejecuta u
 | `core/` | identidades branded, `Result`, taxonomía de errores, exhaustividad, versionado |
 | `math/` | racionales exactos, redondeo, cantidades/unidades, tolerancias |
 | `random/` | interfaz `Rng`, adaptador `pure-rand`, derivación de seeds por namespace |
-| `challenges/` | contratos, taxonomía, interacciones, registry, helpers de evaluación |
+| `challenges/` | contratos, modelo familia/plantilla/variante, fuentes, validadores, interacciones y registry |
 | `narrative/` | storylets, condiciones, efectos, selección determinista |
 | `progression/` | etapas canónicas y el modelo de carrera visible |
 | `difficulty/`, `scoring/`, `profiles/` | contratos de política + implementaciones de desarrollo |
 | `ruleset/` | ensamblado y validación del ruleset versionado |
 | `runs/` | estado, comandos, eventos, transición, action log, replay, snapshots, selectores |
-| `content/` | pipeline de validación de contenido |
+| `content/` | `RunPlan`, validación de contenido, pipeline, auditoría y catálogo aprobado de variantes |
 | `testing/` | fixtures de desarrollo, agente sintético y simulación masiva |
 
 ## Entradas
@@ -54,10 +54,11 @@ interface RunDescriptor {
   gameVersion: string
   rulesetVersion: string
   contentVersion: string
+  variantCatalogVersion?: string
 }
 ```
 
-`EngineDependencies` aporta `ruleset`, `challenges` (registry) y `storylets`. El ruleset **no** forma parte del estado: contiene funciones y se inyecta; la run sólo guarda su versión.
+`variantCatalogVersion` es opcional: una run que juega la lista curada de una plantilla no salió de un catálogo aprobado y no debe afirmar lo contrario. `EngineDependencies` aporta `ruleset`, catálogo de contenido y `storylets`. El ruleset **no** forma parte del estado: contiene funciones y se inyecta; la run sólo guarda su versión.
 
 ## Estado
 
@@ -67,11 +68,11 @@ El desafío activo se guarda como **dirección**, no como modelo:
 
 ```typescript
 interface ChallengeInstanceRef {
-  instanceId, definitionId, stageId, eventIndex, difficulty
+  instanceId, familyId, templateId, variantId, stageId, eventIndex, difficulty
 }
 ```
 
-Como la generación es función pura de esa dirección, el modelo se recalcula cuando hace falta. Nada no serializable entra al estado, los snapshots quedan chicos y el replay no puede desincronizarse del estado que lo referencia.
+La ubicación pertenece a la instancia, pero el contenido matemático pertenece a `familyId/templateId/variantId`: se reconstruye con el seed fijo del espacio de variantes, no con el seed de la run. Bajo el mismo contrato versionado de contenido/generador, el `runSeed` selecciona direcciones pero no cambia el problema detrás de una dirección. Nada no serializable entra al estado, los snapshots quedan chicos y el replay no puede desincronizarse del estado que lo referencia.
 
 ## Ciclo de vida
 
@@ -133,14 +134,17 @@ Ver [ADR-013](adr/ADR-013-exact-rational-arithmetic.md). Dinero en unidades meno
 
 ## Desafíos
 
-Un desafío declara cuatro responsabilidades separables:
+Una plantilla declara responsabilidades separables sobre parámetros ya resueltos por su `VariantSourceSpec`:
 
-1. `generate(context)` — parámetros desde el RNG seeded;
-2. `verify(model)` — invariantes propias del desafío;
-3. `present(model, revealed)` — vista pública, sin la solución;
-4. `evaluate(model, answer, revealed)` — resultado estructurado.
+1. fuente `authored` o `generated` — parámetros direccionados, validadores y vista canónica;
+2. `generate(context)` — modelo privado desde parámetros resueltos;
+3. `verify(model)` — invariantes propias del desafío;
+4. `present(model, revealed)` — vista pública, sin la solución;
+5. `evaluate(model, answer, revealed)` — resultado estructurado.
 
 `defineChallenge` borra el tipo del modelo sin ningún cast: el modelo queda capturado en el closure y sólo se exponen las operaciones permitidas. La generación reintenta en un substream propio hasta cumplir las invariantes; el índice de intento forma parte de la dirección, así que el reintento también es determinista. Un generador que necesita reintentos sistemáticamente está mal construido y la validación de contenido lo reporta.
+
+El pipeline de STAGE-03 recorre ambas fuentes con el mismo contrato: resolver, materializar, validar, canonizar, calcular huella, deduplicar y aprobar. `AUTHORED` no evita validación y `GENERATED` no significa azar libre en runtime.
 
 ### Vista pública
 
@@ -186,7 +190,7 @@ La comparación usa una forma JSON canónica con claves ordenadas, así que el o
 
 ## Snapshots
 
-Los snapshots son una **optimización para reanudar** (FR-009/FR-010), no un artefacto autoritativo. El codec valida agresivamente y rechaza lo que no reconoce; una versión incompatible produce un error explícito, nunca una migración silenciosa. No existe un registro de migraciones porque no existe una segunda versión; el campo de versión y el codec son el lugar donde se agregaría.
+Los snapshots son una **optimización para reanudar** (FR-009/FR-010), no un artefacto autoritativo. El codec valida agresivamente y rechaza lo que no reconoce; una versión incompatible produce un error explícito, nunca una migración silenciosa. `SNAPSHOT_SCHEMA_VERSION` es `4`; no existe un registro de migraciones porque las versiones anteriores se rechazan y la aplicación ofrece una partida nueva.
 
 ### Invariantes estructurales
 
@@ -203,7 +207,7 @@ Se evaluó convertir `phase` en unión discriminada que lleve su payload, lo que
 
 ## Compatibilidad y versionado
 
-Una run sólo puede reanudarse o revalidarse con un motor que declare el mismo triple `gameVersion` / `rulesetVersion` / `contentVersion`.
+Una run sólo puede reanudarse o revalidarse con un motor que declare el mismo triple `gameVersion` / `rulesetVersion` / `contentVersion`. `variantCatalogVersion` agrega procedencia opcional cuando la run consume un catálogo aprobado; no reemplaza esa compatibilidad ni se inventa para runs curadas.
 
 | Cambió | Subir |
 |---|---|
@@ -231,10 +235,12 @@ Opcional. `canonicalize(state)` produce la forma estable sobre la que se puede c
 
 Una instancia de desafío se direcciona por su identidad de contenido completa —familia de escenario, plantilla y variante— más dónde la ubicó la run. Una `ChallengeDefinition` **es** una plantilla; el catálogo de contenido disponible (`ContentCatalog`) está separado del plan de contenido de una run (`RunPlan`), y la elegibilidad por etapa y el rol de colocación son metadata declarativa del contenido, no conocimiento del motor.
 
-El motor no conoce ningún id de contenido: agregar una familia, una plantilla o una variante ordinarias no requiere tocarlo. Ver [ADR-019](adr/ADR-019-scenario-family-template-variant.md) y [la migración del modelo de contenido](content-model-migration.md).
+Cada plantilla declara una fuente híbrida: registros autorados y, opcionalmente, un espacio generado por restricción. Ambas pasan por validadores genéricos y matemáticos, canonización, fingerprint SHA-256 y deduplicación antes de entrar en un `ApprovedVariantCatalog`. El catálogo comprometido actual es `grade-7-dev-1`; es de desarrollo y todavía no alimenta la selección de una run.
+
+El motor no conoce ningún id de contenido: agregar una familia, una plantilla, un generador o sus validadores no requiere tocar el pipeline. Ver [ADR-019](adr/ADR-019-scenario-family-template-variant.md), [ADR-020](adr/ADR-020-variant-generation-and-approved-catalog.md) y [la migración del modelo de contenido](content-model-migration.md).
 
 ## Lo que este documento no describe
 
-Este documento describe el motor **implementado**. Las capacidades que la dirección de producto pide y todavía no existen —jerarquía de familias y plantillas, catálogo de variantes desplegado, scheduler por presupuesto de dificultad, score competitivo normalizado, `RunDescriptor` emitido por servidor, `scoreVersion`, `variantCatalogVersion` y verificación por replay— están en [arquitectura objetivo del motor](target-engine-architecture.md), con el estado real de cada una.
+Este documento describe el motor **implementado**. Las capacidades que todavía no existen —scheduler por presupuesto de dificultad, score competitivo normalizado, `RunDescriptor` oficial emitido por servidor, `scoreVersion`, vinculación autoritativa con el catálogo de feria y ranking— están en [arquitectura objetivo del motor](target-engine-architecture.md), con el estado real de cada una. La base server-only de verificación por replay ya existe; endpoints, sesión y persistencia siguen futuros.
 
 La frontera fundamental no cambia en ninguna de esas evoluciones. Si una propuesta futura la toca, es un ADR nuevo.

@@ -211,7 +211,7 @@ Estado real contra el código al 28 de agosto de 2026. Es la base de la que sale
 
 **Evidencia.** `src/game/core/versioning.ts`; `src/game/random/seed.ts` y `rng.ts`; `RunDescriptor` en `src/game/runs/state.ts`; `src/game/runs/replay.ts` y `snapshot.ts`; `tests/unit/engine-golden.test.ts`, `tests/unit/rng-addressing.test.ts`, `tests/property/engine.property.test.ts`, `tests/integration/server-run-validation.test.ts`.
 
-**Lo que no entró, y por qué.** `scoreVersion` y `variantCatalogVersion` no existen todavía. Son opcionales por diseño: agregar campos vacíos hoy sería especulativo, porque nada los puede poblar. Cada uno entra con la etapa que le da significado — `variantCatalogVersion` en [STAGE-03](#stage-03-generación-validación-y-catálogo-de-variantes) y `scoreVersion` en [STAGE-06](#stage-06-scorepolicy-competitiva) — y ambos figuran en el Scope IN de esas etapas. No es trabajo huérfano.
+**Lo que no entró, y por qué.** Al cerrar STAGE-01, `scoreVersion` y `variantCatalogVersion` todavía no existían. Eran opcionales por diseño: agregar campos vacíos habría sido especulativo, porque nada podía poblarlos. `variantCatalogVersion` entró con STAGE-03; `scoreVersion` sigue reservado para [STAGE-06](#stage-06-scorepolicy-competitiva). No es trabajo huérfano.
 
 **Riesgos.** Al agregar los dos ejes de versión faltantes hay que decidir si eso cambia la compatibilidad de replay. La regla vigente es igualdad exacta, no rangos semver.
 
@@ -225,9 +225,9 @@ Estado real contra el código al 28 de agosto de 2026. Es la base de la que sale
 
 - **Estado:** `DONE`
 - **Depende de:** STAGE-01 (`DONE`)
-- **Desbloquea:** STAGE-03 (ahora `READY`), y con ella STAGE-04
+- **Desbloquea:** STAGE-03 (ahora `DONE`) y STAGE-04 (ahora activa)
 
-**Propósito.** Permitir varias estructuras cognitivas por escenario y variantes reproducibles de primera clase. Hoy cada desafío es una definición monolítica con un array interno de parámetros: alcanza para que los números cambien, no para que cambie la pregunta.
+**Punto de partida y propósito.** Al abrir STAGE-02, cada desafío era una definición monolítica con un array interno de parámetros: alcanzaba para que cambiaran los números, no la pregunta. La etapa debía permitir varias estructuras cognitivas por escenario y variantes reproducibles de primera clase.
 
 **Scope IN.**
 
@@ -311,9 +311,9 @@ Criterios que la etapa sumó sobre el contrato original:
 
 - **Estado:** `DONE`
 - **Depende de:** STAGE-02 (`DONE`)
-- **Desbloquea:** STAGE-04 (ahora `READY`) y STAGE-05
+- **Desbloquea:** STAGE-04 (ahora activa) y STAGE-05
 
-**Punto de partida.** STAGE-02 dejó el vocabulario: una variante ya tiene dirección estable, substream propio y lugar en un catálogo y en un plan. Lo que falta es producirlas en cantidad, validarlas como población y aprobar las que entran a una competencia.
+**Punto de partida.** STAGE-02 dejó el vocabulario: una variante ya tenía dirección estable, substream propio y lugar en un catálogo y en un plan. Al abrir STAGE-03 faltaba producirlas en cantidad, validarlas como población y aprobar las que pudieran entrar a una competencia.
 
 **Propósito.** Diversidad reproducible, controlada y auditable. **Variabilidad no es aleatoriedad libre.**
 
@@ -385,6 +385,7 @@ Criterios que la etapa sumó sobre el contrato original:
 
 **Scope IN.**
 
+- Conectar el catálogo aprobado de desarrollo `grade-7-dev-1` con una selección determinista de contenido jugable de 7.º, mediante una configuración o plan explícito de demo y sin construir el Run Composer de STAGE-05.
 - Agregar plantillas sólo donde aporten una estructura de razonamiento genuinamente distinta; cambiar números u orden de opciones no alcanza.
 - Usar el pipeline de STAGE-03 en contenido jugable real, con variantes generadas y prevalidadas donde el espacio paramétrico lo justifique y conjuntos autorados donde convenga curación.
 - Comprobar que las seis familias y plantillas actuales siguen funcionando bajo la arquitectura completada, preservando su intención matemática salvo cambio deliberado y documentado.
@@ -397,11 +398,12 @@ La **Teacher Demo Candidate** puede mostrar más mecánicas que un segmento norm
 
 **Scope OUT.** Repetir la migración estructural ya completada. Decidir el inventario final o mover escenarios de año. Run Composer y balance final de dificultad. Reescribir la matemática existente. Rediseño visual. Contenido de 1.º–5.º. Score competitivo. Ranking. Recuperaciones.
 
-**Lectura requerida.** [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md) · [migración del modelo de contenido](../03-architecture/content-model-migration.md) · [Vertical slice de 7.º](vertical-slice-grade-7.md) · [catálogo de desafíos](../01-game-design/challenge-catalog.md) · [familias y variantes](../01-game-design/challenge-families-and-variants.md) · [sistema de diseño](../09-design-system/README.md) · [migración visual de 7.º](../09-design-system/migration-7-grade.md).
+**Lectura requerida.** [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md) · [ADR-020](../03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md) · [migración del modelo de contenido](../03-architecture/content-model-migration.md) · [Vertical slice de 7.º](vertical-slice-grade-7.md) · [catálogo de desafíos](../01-game-design/challenge-catalog.md) · [familias y variantes](../01-game-design/challenge-families-and-variants.md) · [sistema de diseño](../09-design-system/README.md) · [migración visual de 7.º](../09-design-system/migration-7-grade.md).
 
 **Criterios de aceptación.**
 
 - [x] Los seis desafíos actuales están migrados estructuralmente a familia/plantilla/variante, con equivalencia semántica documentada.
+- [ ] La diversidad aprobada de `grade-7-dev-1` llega al gameplay mediante una selección determinista y la run registra `variantCatalogVersion` cuando realmente consume ese catálogo.
 - [ ] La demo incorpora variación cognitiva real donde aporta; no se presenta un reordenamiento o cambio numérico como plantilla nueva.
 - [ ] El pipeline de STAGE-03 se usa en contenido real donde corresponde, sin obligar a que todo contenido curado sea procedural.
 - [ ] La selección de la Teacher Demo Candidate está documentada y distinguida del plan normal de uno a dos beats por etapa.
@@ -418,11 +420,11 @@ La **Teacher Demo Candidate** puede mostrar más mecánicas que un segmento norm
 
 **Validación requerida.** `pnpm verify` completo, incluidos `pnpm test:e2e:only` y `pnpm design:check`.
 
-**Evidencia ya disponible.** `src/content/grade-7/challenges/may-25-act.ts`; `src/game/math/classification.ts`; `tests/unit/number-classification.test.ts`; `tests/unit/grade-7-content.test.ts`; `tests/property/grade-7.property.test.ts`; `tests/integration/grade-7-run.test.ts`; seis pruebas E2E del acto, incluidas teclado, cinco viewports y Aura negativa; contenido `0.4.0-grade-7` y ruleset `0.3.0-grade-7`.
+**Evidencia ya disponible.** `src/content/grade-7/challenges/may-25-act.ts`; `src/game/math/classification.ts`; `tests/unit/number-classification.test.ts`; `tests/unit/grade-7-content.test.ts`; `tests/property/grade-7.property.test.ts`; `tests/integration/grade-7-run.test.ts`; seis pruebas E2E del acto, incluidas teclado, cinco viewports y Aura negativa; contenido `0.5.0-grade-7` y ruleset `0.3.0-grade-7`.
 
 **Riesgos.** Confundir la densidad deliberada de la demo con la longitud de una run normal; convertir las seis sondas actuales en inventario definitivo; o forzar generación procedural donde un conjunto curado es más apropiado.
 
-**Decisiones.** [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md) gobierna modelo, catálogo ≠ plan y presupuesto. `OPEN` ([preguntas 46 y 46-bis](../07-reference/open-questions.md)): profundidad e inventario final del catálogo. `OPEN` ([pregunta 42](../07-reference/open-questions.md)): si el acto del 25 de Mayo entra a producción. `LOCKED` (D-001, D-002): identidad UI-first y sistema de diseño v0.2.
+**Decisiones.** [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md) gobierna modelo, catálogo ≠ plan y presupuesto; [ADR-020](../03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md) gobierna fuentes, confianza y catálogo aprobado. `OPEN` ([preguntas 46 y 46-bis](../07-reference/open-questions.md)): profundidad e inventario final del catálogo. `OPEN` ([pregunta 42](../07-reference/open-questions.md)): si el acto del 25 de Mayo entra a producción. `LOCKED` (D-001, D-002): identidad UI-first y sistema de diseño v0.2.
 
 **Exit gate.** ¿Es 7.º una **Demo Candidate** representativa del producto final?
 

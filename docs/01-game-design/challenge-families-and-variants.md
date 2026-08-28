@@ -1,6 +1,6 @@
 # Familias de escenario, plantillas y variantes
 
-**Estado: mixto.** El seed determinista y la reproducibilidad son **LOCKED** ([ADR-003](../03-architecture/adr/ADR-003-deterministic-seeded-engine.md), [ADR-012](../03-architecture/adr/ADR-012-seeded-prng-and-substreams.md)). La jerarquía `ScenarioFamily → Template → Variant` y el catálogo prevalidado de competencia son **RECOMENDADOS**: dirección de arquitectura, no contrato cerrado. La cantidad de plantillas por año es **OPEN**.
+**Estado: implementado para STAGE-02/STAGE-03.** La jerarquía `ScenarioFamily → ChallengeTemplate → ChallengeVariant` está aceptada en [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md), y el pipeline híbrido con catálogo aprobado de desarrollo está aceptado en [ADR-020](../03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md). El determinismo sigue **LOCKED**. El inventario, la profundidad cognitiva y el catálogo oficial de feria permanecen abiertos.
 
 ## El problema
 
@@ -49,23 +49,25 @@ Stand: selección de packs; requisitos mínimos; optimización de presupuesto.
 
 ### Variante
 
-Los números y las opciones concretas, generados o seleccionados de forma determinista.
+Un caso concreto y reproducible de una plantilla, identificado por la dirección estable `familia/plantilla/variante`. Sus parámetros pueden ser autorados o generados, pero su identidad semántica nunca depende de una posición de array o del lugar donde una run lo juegue.
 
-## Seed determinista
+## Dirección y seed de contenido
 
-**LOCKED.** Toda variante tiene que poder reconstruirse desde la identidad de la run. La lógica de dominio nunca llama a un `Math.random()` ambiente; el motor ya impone esto y lo verifica con property tests.
-
-Derivación sugerida para el nivel de variante:
+**LOCKED e implementado.** [ADR-020](../03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md) separa selección de contenido y contenido semántico:
 
 ```text
-variantSeed = H(runSeed, familyId, templateId, slotIndex, contentVersion)
+seed fijo del espacio de variantes + dirección familia/plantilla/variante
+    → parámetros semánticos reproducibles
+
+runSeed
+    → selección de qué dirección recibe una run
 ```
 
-La función de derivación es propiedad del proyecto y está versionada, para que cambiar de librería de PRNG no reordene en silencio una competencia ya jugada. El contrato de substreams vigente está en [ADR-012](../03-architecture/adr/ADR-012-seeded-prng-and-substreams.md).
+El código lo implementa con `VARIANT_SPACE_SEED`, `variantRngPath(ref)` y `createVariantRng(ref)`. Bajo el mismo contrato versionado de contenido y generador, el mismo `ChallengeVariantRef` materializa el mismo problema aunque cambien la run, la etapa o el slot. `runSeed` puede elegir otra dirección; no redefine qué significa una dirección aprobada. La lógica de dominio nunca llama a `Math.random()` ambiente y reutiliza los substreams de [ADR-012](../03-architecture/adr/ADR-012-seeded-prng-and-substreams.md).
 
 ## Generación por restricción, no por sorteo
 
-**RECOMENDADO.** Generar desde la propiedad pedagógica deseada, no desde parámetros arbitrarios con la esperanza de que el resultado siga siendo válido.
+**Implementado.** Generar desde la propiedad pedagógica deseada, no desde parámetros arbitrarios con la esperanza de que el resultado siga siendo válido.
 
 Ejemplo de mural: se quiere que 1 L no alcance, 2 L sea óptimo y 4 L sea válido pero derrochador. Con cobertura de 8 m²/L, se genera primero el área requerida en `(8, 16]` y recién después se eligen dimensiones legibles que den ese área. El camino inverso —elegir dimensiones y ver qué sale— produce variantes triviales o imposibles.
 
@@ -74,36 +76,32 @@ Esto ya es el patrón vigente del motor: el generador produce parámetros, el ve
 ## Variación no es azar
 
 ```text
-Generador → N seeds candidatas → invariantes → auditoría de dificultad
-          → auditoría estadística → catálogo aprobado → selección determinista en runtime
+fuente autorada o generada → resolver/materializar → validar
+    → canonizar → fingerprint → deduplicar → catálogo aprobado versionado
 ```
 
 Un número al azar en runtime puede producir decimales feos, óptimos ambiguos, opciones duplicadas, estados imposibles, variantes triviales o dificultad desbalanceada. En una partida de práctica eso es un bug; en una competencia con premios es una injusticia que no se puede deshacer.
 
+Una fuente `generated` es un espacio finito direccionado y determinista que pasa por el pipeline offline; no es generación arbitraria en el browser. Una fuente `authored` es una lista curada, pero no evita validación, fingerprint ni deduplicación.
+
 El principio viene de STACK, que recomienda pregenerar, testear y desplegar variantes aleatorias en vez de exponer al estudiante a casos defectuosos generados en vivo. Ver [base teórica](../07-reference/research-basis.md).
 
-## Catálogo desplegado
+## Catálogo aprobado de desarrollo
 
-**RECOMENDADO / TARGET.** Para modo competitivo, un job de build genera muchas seeds candidatas, retiene sólo las validadas y publica un catálogo versionado:
+**Implementado.** `ApprovedVariantCatalog` guarda la dirección, el origen `authored`/`generated` y el fingerprint de cada variante aprobada. No guarda parámetros ni posiciones: los parámetros se reconstruyen desde la dirección y la huella comprueba que siguen siendo los mismos.
 
-```json
-{
-  "catalogVersion": "fair-2026-v1",
-  "templateId": "bus.delay.v1",
-  "variants": [{ "seed": 123, "difficulty": "STANDARD", "fingerprint": "..." }]
-}
-```
+El artefacto actual es `grade-7-dev-1`, con 133 entradas para las seis plantillas de producción. Es reproducible byte a byte y `pnpm game:variants check` verifica su integridad dentro de `pnpm verify`.
 
-El runtime elige de ese catálogo con el seed de la run. Un catálogo con cientos o miles de combinaciones válidas sigue dando variedad, sin exponer nada que nadie revisó.
+Es un **catálogo aprobado de desarrollo**, no el catálogo oficial ni justo de la feria. Además, todavía no alimenta la selección de la partida de 7.º: conectar variedad aprobada con gameplay es STAGE-04; construir planes automáticamente por dificultad es STAGE-05.
 
-Cada variante lleva un **fingerprint canónico** de sus parámetros públicos y de la semántica de su respuesta, para detectar seeds distintas que producen la misma pregunta.
+La huella es `sha256` de la vista semántica canónica declarada por la plantilla. Dos direcciones que producen el mismo problema colisionan y se deduplican intencionalmente.
 
 ## Controles anti-memorización
 
 - barajado de opciones derivado del seed cuando la semántica lo permita;
 - verificación de que la posición de la opción correcta esté balanceada;
 - evitar repetir plantilla o variante inmediatamente dentro de una run;
-- mantener presupuesto de dificultad equivalente entre runs;
+- mantener presupuesto de dificultad equivalente entre runs — futuro de STAGE-05;
 - no exponer el seed como una forma de elegir la run fácil.
 
 Los criterios de aceptación de estos controles están en [validación y auditoría de variantes](../04-quality/variant-validation-and-audit.md).
@@ -119,10 +117,12 @@ Los criterios de aceptación de estos controles están en [validación y auditor
 | Catálogo de contenido disponible, separado del plan de la run | **implementado** — `ContentCatalog` y `RunPlan` |
 | Elegibilidad por etapa declarativa, incluso no contigua | **implementada** |
 | Roles de colocación y presupuesto de beats por año | **implementados** como contrato de plan validable |
-| Generador por restricción como abstracción reutilizable | **implementada** — [ADR-020](../03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md) |
-| Catálogo desplegado y versionado de variantes competitivas | **implementado** como catálogo de desarrollo `grade-7-dev-1`; el oficial de la feria sigue sin congelar |
+| Fuentes híbridas `authored` / `generated`, ambas validadas | **implementadas** — cinco plantillas generadas y `g7.group-tasks` autorada |
+| Generador por restricción como abstracción reutilizable | **implementado** — [ADR-020](../03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md) |
+| Validación, fingerprint, deduplicación y auditoría de población | **implementados** para el catálogo de desarrollo |
+| Catálogo aprobado y versionado de variantes | **implementado** como `grade-7-dev-1`; el oficial de la feria sigue sin congelar |
 | `variantCatalogVersion` en la identidad de la run | **implementado** como campo opcional: una run que juega variantes curadas no salió de ningún catálogo y lo dice omitiéndolo |
 
-Cuidado con la palabra «catálogo»: el **catálogo de contenido** que ya existe es lo autorado y disponible; el **catálogo desplegado de variantes** que todavía no existe es el conjunto generado, validado y aprobado para competencia. Son dos cosas distintas.
+Cuidado con la palabra «catálogo»: `ContentCatalog` dice qué familias y plantillas existen; `ApprovedVariantCatalog` dice qué variantes concretas fueron aprobadas bajo una versión; `RunPlan` dice cuáles usa una run. Los tres existen como contratos distintos. Lo que todavía no existe es el catálogo **oficial y congelado de feria**, el compositor automático y la comparabilidad final por dificultad.
 
 La brecha completa y su orden están en [arquitectura objetivo del motor](../03-architecture/target-engine-architecture.md) y en [la secuencia de implementación](../06-delivery/implementation-sequence.md).

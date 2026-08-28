@@ -30,7 +30,7 @@ Ocho eventos: dos narrativos y seis desafíos. Duración objetivo histórica del
 
 ## Contenido de 7.º grado
 
-Vive en `src/content/grade-7/`, no en fixtures de desarrollo. Es contenido de producto versionado (`contentVersion` `0.4.0-grade-7`).
+Vive en `src/content/grade-7/`, no en fixtures de desarrollo. Es contenido de producto versionado (`contentVersion` `0.5.0-grade-7`).
 
 | Id | Situación | Matemática | Interacción | Razonamiento |
 |---|---|---|---|---|
@@ -41,7 +41,7 @@ Vive en `src/content/grade-7/`, no en fixtures de desarrollo. Es contenido de pr
 | `g7.group-tasks` | Repartir el trabajo grupal entre cuatro personas | asignación con restricciones | `assignment-board` | horas disponibles contra horas requeridas, más afinidad |
 | `g7.stand-supplies` | Comprar la merienda del stand sin pasarse del presupuesto | combinación y costo unitario | `budget-builder` | cubrir las porciones necesarias al menor costo |
 
-Cada desafío tiene dos variantes autoradas que el seed elige —el acto tiene tres—. Todas están verificadas por tests; ninguna es procedural libre.
+La partida actual selecciona dos ids curados por desafío —el acto tiene tres—. Eso describe el pool jugable del slice, no la estrategia completa de fuente: cinco plantillas declaran generadores por restricción y `g7.group-tasks` es autorada. Las dos estrategias pasan por validación, fingerprint y deduplicación; ninguna produce azar procedural libre en runtime. El catálogo aprobado de desarrollo `grade-7-dev-1` todavía no alimenta esta selección.
 
 ### Calidades de resolución
 
@@ -59,6 +59,7 @@ Un error nunca termina la run.
 Es el evento que **introduce Aura**, y el único del año que ocurre en público. Está documentado en detalle en [el catálogo de desafíos](../01-game-design/challenge-catalog.md#acto-del-25-de-mayo). Lo esencial para el slice:
 
 - son **tres pasos** de la coreografía, cada uno con su regla escrita —«Números pares», «Múltiplos de 3», «Números primos»— y una grilla de ocho números;
+- la narrativa, las señales y las reglas son autoradas; las grillas numéricas concretas tienen fuente `generated` y validadores matemáticos independientes;
 - se juzga con **precisión y cobertura juntas** (F1 agregado sobre los tres pasos), de modo que ni marcar una sola celda evidente ni marcar la grilla entera pasan por buenos;
 - mueve **Aura y Estilo, y nada más**: no pone nota, porque un acto escolar no es una evaluación de matemática, y no toca Equipo, porque bailás vos.
 
@@ -169,6 +170,8 @@ Tiene que probar ocho cosas:
 ### Variación: qué alcanza y qué no
 
 Los seis escenarios actuales —colectivo, mural, cuaderno, proyecto grupal, stand y acto del 25 de Mayo— ya están migrados estructuralmente a familia/plantilla/variante, sin reescribir su matemática. Lo que la demo todavía debe agregar es variación estructural real: plantillas adicionales sólo donde aporten otra pregunta o forma de razonamiento, usando el pipeline de STAGE-03 donde corresponda. Ver [la migración](../03-architecture/content-model-migration.md) y [familias, plantillas y variantes](../01-game-design/challenge-families-and-variants.md).
+
+STAGE-03 ya produjo profundidad **paramétrica** y un catálogo aprobado reproducible. STAGE-04 debe volver esa diversidad visible en gameplay y sumar profundidad **cognitiva**; una no sustituye a la otra.
 
 No se puede llamar «dinámico» a un cambio de orden de las opciones.
 

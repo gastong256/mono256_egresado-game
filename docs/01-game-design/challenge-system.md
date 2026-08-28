@@ -158,9 +158,9 @@ Cada desafío debe documentar explícitamente:
 
 El patrón de generación de arriba evita que una variante salga rota. No evita que el jugador memorice la respuesta: si el mismo escenario siempre pregunta lo mismo, cambiar `25 %` por `15 %` compra una partida más y nada más.
 
-La dirección propuesta agrega un nivel intermedio —**plantillas**: estructuras de razonamiento distintas dentro del mismo escenario— y un catálogo de variantes prevalidado para modo competitivo. Ver [familias, plantillas y variantes](challenge-families-and-variants.md) para la jerarquía, la generación por restricción y los controles anti-memorización, y [validación y auditoría de variantes](../04-quality/variant-validation-and-audit.md) para los invariantes que una variante desplegada debe cumplir.
+La arquitectura vigente agrega un nivel intermedio —**plantillas**: estructuras de razonamiento distintas dentro del mismo escenario— y un catálogo aprobado de variantes prevalidado. Ver [familias, plantillas y variantes](challenge-families-and-variants.md) para la jerarquía, la generación por restricción y los controles anti-memorización, y [validación y auditoría de variantes](../04-quality/variant-validation-and-audit.md) para los invariantes que una variante aprobada debe cumplir.
 
-Es una recomendación de arquitectura y **todavía no está implementada**: hoy cada desafío trae unas pocas variantes autoradas y verificadas.
+La jerarquía y el pipeline están **implementados** por [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md) y [ADR-020](../03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md): cinco plantillas de producción tienen fuente generada y una fuente autorada, todas validadas. El catálogo `grade-7-dev-1` prueba profundidad paramétrica; la profundidad **cognitiva** —más de una plantilla significativa dentro de una familia de producción— sigue siendo trabajo de STAGE-04.
 
 ## Bandas de dificultad
 

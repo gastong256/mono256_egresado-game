@@ -115,13 +115,13 @@ Contenido de producto que existe en el repositorio, en `src/content/grade-7/`. S
 
 `g7.may-25-act` · interacción `number-grid` · dificultad base 2 · categorías `patterns-and-relations` y `quantity`.
 
-**Estado: autorado.** Es contenido de producción, no una propuesta. Es también la respuesta a la pregunta abierta 35: es el evento que introduce Aura.
+**Estado: contenido de producción con fuente matemática `generated`.** La escena, la coreografía, las señales, las reglas y el feedback son autorados. Las grillas numéricas concretas pertenecen al generador determinista `may-25.grid.constraint-first` y pasan por el pipeline de [ADR-020](../03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md). La partida actual todavía selecciona tres registros curados; el catálogo aprobado de desarrollo agrega población generada sin volver procedural la narrativa. El evento también responde la pregunta abierta 35: introduce Aura.
 
 **Propósito narrativo.** Al jugador le toca la coreografía folklórica del acto escolar, adelante de toda la escuela. Como no se acuerda los pasos, armó una ayudamemoria: cada paso tiene una regla numérica, y de la tira de números que canta la maestra acompaña sólo los que la cumplen. Es el único momento del año que pasa en público, y ésa es exactamente la condición que Aura pide.
 
 **Interacción.** Tres pasos, uno debajo del otro, resueltos en una sola confirmación. Cada paso muestra su señal —«Pañuelo blanco», «Pañuelo celeste», «Zapateo»— y su regla **siempre escrita**, más una grilla de ocho números en cuatro columnas. Se marca celda por celda. Ninguna celda revela si estuvo bien hasta que el motor evalúa: marcado significa «elegí ésta», nunca «acerté».
 
-**Rondas.** Tres variantes autoradas que el seed elige, siempre en el mismo orden de dificultad:
+**Rondas autoradas.** Cada variante conserva tres pasos narrativos, siempre en el mismo orden de dificultad; lo que cambia de forma generada y validada son los números de cada grilla:
 
 | Paso | Señal | Regla | Objetivos por grilla |
 |---|---|---|---|
@@ -170,7 +170,7 @@ Están elegidos para que ninguna estrategia degenerada pase por buena: marcar la
 
 **Fail-forward.** No hay game over. El peor acto deja Aura negativa, evidencia de Improvisador y una consecuencia narrativa, y el año sigue.
 
-**Determinismo.** Las tres variantes se eligen con el RNG sembrado del motor. Una vez elegida su dirección `familia/plantilla/variante`, el caso concreto usa el substream semántico de [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md), independiente del año y del slot. Misma seed y mismas acciones producen el mismo acto. Al agregar el evento, el contenido subió a `0.3.0-grade-7`; la migración estructural posterior lo llevó a `0.4.0-grade-7` sin reescribir su matemática.
+**Determinismo.** El `runSeed` selecciona una dirección de la lista jugable actual, pero no define sus grillas. Una vez elegida `familia/plantilla/variante`, los parámetros salen del seed fijo del espacio de contenido y de esa dirección, independientes de la run, el año y el slot. Bajo la misma versión de contenido/generador, la misma dirección es siempre el mismo problema; ver [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md) y [ADR-020](../03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md). El contenido subió a `0.3.0-grade-7` al agregar el acto, a `0.4.0-grade-7` con la migración estructural y a `0.5.0-grade-7` con el pipeline y la estrategia de fuente; el ruleset no cambió.
 
 **Accesibilidad.** Cada celda es una casilla nativa de 56 px: se recorre con Tab y se marca con Espacio. La regla siempre está en texto y nunca es sólo un color. Los cuatro estados corregidos cambian relleno, trazo de borde y glifo a la vez, y llevan además la palabra para lector de pantalla, así que la grilla se lee entera en escala de grises.
 

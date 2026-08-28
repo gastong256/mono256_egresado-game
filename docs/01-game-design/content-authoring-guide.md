@@ -100,17 +100,42 @@ Los invariantes de una variante se escriben **antes** que el código que la gene
 
 La lista completa y sus criterios de aceptación están en [validación y auditoría de variantes](../04-quality/variant-validation-and-audit.md).
 
+## Elegir la fuente de variantes
+
+Desde [ADR-020](../03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md), cada plantilla declara un `VariantSourceSpec` con parámetros autorados, validadores, una vista canónica y, cuando corresponde, un generador determinista.
+
+Hay dos estrategias de primera clase:
+
+```text
+AUTHORED
+parámetros curados → validar → canonizar → fingerprint
+    → deduplicar → catálogo aprobado de desarrollo
+
+GENERATED
+dominio paramétrico + generador constraint-first → materializar
+    → validar con oráculo → auditoría profunda → canonizar
+    → fingerprint → deduplicar → catálogo aprobado de desarrollo
+```
+
+`AUTHORED` no significa «confiable sin validar»: cada registro pasa por los chequeos genéricos y específicos, la huella y la deduplicación. Es la estrategia deliberada para contenido cuyo valor está en nombres, entidades o escritura curada; `g7.group-tasks` es el ejemplo actual.
+
+`GENERATED` no significa producir números arbitrarios durante una partida. Bajo un contrato versionado de contenido y generador, cada candidato es una función pura de su dirección y del seed fijo del espacio de contenido; sólo una variante aprobada puede entrar al catálogo. Los cinco generadores actuales se ejecutan y auditan con tooling offline. El browser materializa una dirección conocida, no improvisa contenido sin validar.
+
+La estrategia matemática no obliga a proceduralizar la escena. Una plantilla puede mantener autorados narrativa, personajes, copy y estructura de interacción mientras genera sus parámetros concretos. El acto del 25 de Mayo conserva autoradas la coreografía y sus tres reglas; las grillas numéricas son la parte generada.
+
 ## Declarar dónde vive el contenido
 
 Desde [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md), una plantilla declara tres cosas además de su regla de juego:
 
 - **familia de escenario** — la situación reconocible en la que ocurre. Una familia puede alojar varias estructuras de razonamiento y no está atada a un año.
 - **rol de colocación** — `anchor` (el beat primario del año), `checkpoint` (una evaluación), `special` (un momento social o excepcional) o `recovery` (contenido condicional). Es semántica de agendado: no dice nada sobre la calidad del resultado ni sobre qué mueve en la carrera.
-- **variantes** — la lista ordenada de casos concretos que la plantilla puede producir, cada uno con un id estable. **El orden es parte del contrato**: la selección saca un índice de esa lista, así que reordenarla cambia qué caso produce un seed guardado.
+- **variantes jugables actuales** — la lista `variants` de ids curados que la selección actual puede elegir. Reordenarla cambia qué dirección elige un seed guardado y requiere versionado de contenido, pero **el orden no define la identidad semántica**: ésta es la dirección estable `familia/plantilla/variante`. Una fuente generada puede exponer un espacio aprobado mayor sin agregarlo automáticamente a esa lista.
 
 Y declara su **elegibilidad por etapa**, que es permiso y no selección: una plantilla elegible para 7.º no aparece en toda run de 7.º.
 
 Un año aporta **uno o dos beats ordinarios**, con exactamente un `anchor`. Un `checkpoint` o un `special` gasta uno de esos dos; no es un beat extra. La recuperación es condicional y queda afuera del presupuesto. Ver [la migración del modelo de contenido](../03-architecture/content-model-migration.md) para el procedimiento completo.
+
+No confundir los tres artefactos: `ContentCatalog` registra familias y plantillas disponibles; `ApprovedVariantCatalog` contiene direcciones concretas que pasaron el pipeline bajo una versión; `RunPlan` referencia lo que una run efectivamente juega. Aprobar una variante no la agenda.
 
 ## Ficha de autoría
 

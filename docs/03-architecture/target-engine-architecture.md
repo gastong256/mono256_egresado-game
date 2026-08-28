@@ -1,6 +1,6 @@
 # Arquitectura objetivo del motor
 
-**Este documento describe lo que todavía no existe.** [Game engine](game-engine.md) describe el motor implementado y sigue siendo la fuente autoritativa del estado actual. Acá se documenta la brecha entre ese motor y las capacidades que pide la dirección de producto del [blueprint v0.2](../07-reference/blueprint-v0.2-integration.md), con el estado real de cada una.
+**Este documento sigue la brecha hasta la arquitectura objetivo.** [Game engine](game-engine.md) describe el motor implementado y sigue siendo la fuente autoritativa del estado actual. La tabla de este documento conserva las capacidades que pide la dirección de producto del [blueprint v0.2](../07-reference/blueprint-v0.2-integration.md) y marca cuáles ya llegaron a `implementado`, cuáles son parciales y cuáles continúan como `TARGET`.
 
 Ninguna capacidad marcada TARGET debe describirse en presente en otro documento hasta que exista en el código y en los tests.
 
@@ -38,7 +38,7 @@ Esto ya es lo que hay: núcleo funcional con función de transición explícita 
 | 12 | Jerarquía `ScenarioFamily → Template → Variant` | **implementado** | [ADR-019](adr/ADR-019-scenario-family-template-variant.md), `src/game/challenges/content-model.ts` |
 | 13 | `VariantGenerator` por restricción, reutilizable entre plantillas | **implementado** | [ADR-020](adr/ADR-020-variant-generation-and-approved-catalog.md), `src/game/challenges/variant-source.ts` |
 | 14 | `VariantValidator` con invariantes de dominio ejecutables | **implementado**: genéricas más las de cada plantilla, con oráculos independientes | `src/game/challenges/variant-validation.ts` |
-| 15 | Catálogo de variantes desplegado, aprobado y versionado | **implementado** — `ApprovedVariantCatalog`, distinto del `ContentCatalog` | `src/game/content/variant-catalog.ts` |
+| 15 | Catálogo de variantes aprobado y versionado | **implementado para desarrollo** — `ApprovedVariantCatalog` y `grade-7-dev-1`, distintos del `ContentCatalog`; el catálogo oficial de feria no está congelado | `src/game/content/variant-catalog.ts`, [ADR-020](adr/ADR-020-variant-generation-and-approved-catalog.md) |
 | 16 | Bandas `CORE / STANDARD / STRETCH` como metadata de autoría | **TARGET**; hoy existe `DifficultyLevel` 1–5 | [dificultad](../01-game-design/difficulty-and-playability.md) |
 | 17 | Scheduler por presupuesto de dificultad | **TARGET** | ídem |
 | 18 | `MathPerformance` / `TeamPerformance` / `AuraPerformance` normalizados | **TARGET** | [score competitivo](../01-game-design/competitive-scoring-and-ranking.md) |
@@ -59,9 +59,11 @@ El blueprint pide una migración del modelo viejo (`knowledge`, `team`, `initiat
 
 Un agente futuro que lea el paquete original y planifique esa migración estaría replanificando trabajo hecho. Lo que sí queda pendiente del capítulo de migración es la serialización de flags como estructura determinista, ya resuelta en el codec actual, y el rastreo de impacto ante cada cambio de estado, que sigue siendo la disciplina vigente.
 
-## `RunDescriptor` — objetivo
+## `RunDescriptor` — presente y objetivo oficial
 
-Identidad inmutable de una run oficial. Forma conceptual, no contrato implementado:
+El descriptor inmutable del core ya está implementado. Desde STAGE-03 admite `variantCatalogVersion?: string`: se omite en una run que sólo juega variantes curadas y registra la versión cuando la run se respalda en un catálogo aprobado.
+
+La forma siguiente sigue siendo el **objetivo conceptual del descriptor oficial emitido por servidor**. `eventId`, `playerId`, `scoreVersion`, asignaciones y emisión autoritativa todavía no son un contrato implementado:
 
 ```ts
 interface RunDescriptor {
@@ -73,7 +75,7 @@ interface RunDescriptor {
   rulesetVersion: string
   contentVersion: string
   scoreVersion: string
-  variantCatalogVersion: string
+  variantCatalogVersion?: string
   slots: VariantAssignment[]
 }
 ```
@@ -85,6 +87,7 @@ Reglas asociadas:
 - el servidor decide versiones, seed y asignación de variantes;
 - el cliente no puede pedir un seed arbitrario ni una dificultad más fácil para modo con premios;
 - el descriptor no cambia una vez emitido.
+- una run oficial que consume catálogo debe declarar la versión congelada por el evento; una run curada que no consume catálogo puede omitirla.
 
 El contrato HTTP concreto se decide dentro de [contratos API](api-contracts.md) cuando exista; la [pregunta 22](../07-reference/open-questions.md) es su gate.
 
@@ -120,9 +123,9 @@ Ejes de versión objetivo:
 | `rulesetVersion` | scoring, dificultad, progresión o política de perfil |
 | `contentVersion` | datos de desafíos o storylets |
 | `scoreVersion` | **TARGET** — coeficientes y topes de la política competitiva |
-| `variantCatalogVersion` | **TARGET** — catálogo desplegado de variantes |
+| `variantCatalogVersion` | **implementado** como procedencia opcional del descriptor; su valor oficial de feria sigue futuro |
 
-Los tres primeros existen. Los dos últimos son el agregado que pide el modo competitivo, y su compatibilidad se decide como los otros: igualdad exacta, no rangos semver.
+Los tres primeros existen. `variantCatalogVersion` también existe como campo opcional, y la integridad del catálogo puede verificarse de forma independiente; vincular ambos en una run oficial pertenece al flujo futuro de feria. `scoreVersion` sigue `TARGET`. El conjunto oficial permitido se congelará por igualdad exacta, no por rangos semver.
 
 ## Prohibiciones que siguen vigentes
 

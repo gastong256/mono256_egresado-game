@@ -78,4 +78,6 @@ Un challenge con matemática correcta pero gameplay pobre no está listo.
 
 ## Del desafío al catálogo
 
-Este pipeline valida **un desafío**. Cuando las variantes decidan premios hace falta poder afirmar algo sobre el conjunto desplegado: invariantes transversales, fingerprint canónico, auditoría estadística por catálogo y auditoría Monte Carlo del armado de runs. Ver [validación y auditoría de variantes](variant-validation-and-audit.md).
+Este pipeline editorial valida **un desafío**. Desde STAGE-03, el pipeline de [ADR-020](../03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md) agrega sobre la población concreta invariantes transversales, chequeos matemáticos por plantilla, fingerprint canónico, deduplicación, integridad del catálogo y auditoría estadística. Eso ya se aplica al catálogo aprobado de desarrollo `grade-7-dev-1`.
+
+Todavía faltan la comparabilidad por bandas de dificultad, la auditoría Monte Carlo del armado de runs y el congelamiento del catálogo oficial de feria. Esas garantías competitivas pertenecen a STAGE-05, STAGE-06 y al freeze; no se deducen de que una población sea matemáticamente válida. Ver [validación y auditoría de variantes](variant-validation-and-audit.md).

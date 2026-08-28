@@ -40,7 +40,7 @@ Que 7.º sea una **Demo Candidate representativa del producto final**: que la se
 
 ## Criterios de aceptación
 
-- [ ] Los cinco desafíos previos conservan su intención matemática; cualquier cambio es deliberado y está escrito.
+- [ ] Los seis desafíos actuales conservan su intención matemática; cualquier cambio es deliberado y está escrito.
 - [x] El acto del 25 de Mayo está en el flujo real de la partida.
 - [x] Aura pasa de `null` a un valor significativo durante la run y no se dibuja antes.
 - [x] Clasificación y F1 probados, incluidos los tres casos de denominador cero.

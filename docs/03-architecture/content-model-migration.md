@@ -2,7 +2,7 @@
 
 Cómo se mueve el contenido existente al modelo de [ADR-019](adr/ADR-019-scenario-family-template-variant.md), qué se migró ya y qué queda deliberadamente para después.
 
-**Estado: la migración estructural está hecha.** Los seis desafíos de 7.º y las ocho plantillas de desarrollo declaran familia, rol de colocación y variantes con identidad propia. Lo que **no** se hizo, a propósito, es dividir escenarios en varias plantillas, mover contenido de año ni tocar una sola cuenta.
+**Estado: la migración estructural está hecha y STAGE-03 completó el pipeline posterior.** Los seis desafíos de 7.º y las ocho plantillas de desarrollo declaran familia, rol de colocación y variantes con identidad propia. Las plantillas de producción también declaran su `VariantSourceSpec`, validadores y canonización según [ADR-020](adr/ADR-020-variant-generation-and-approved-catalog.md). Lo que **no** se hizo, a propósito, es dividir escenarios en varias plantillas, mover contenido de año ni tocar una sola cuenta.
 
 ## Principio de la migración
 
@@ -47,6 +47,8 @@ Antes la variante se elegía **dentro** del generador, en el substream del inten
 
 Consecuencia declarada: para un mismo seed de run, una plantilla de 7.º puede caer en otra variante autorada que antes. La matemática, el conjunto de variantes alcanzables y las invariantes son las mismas. Eso es un cambio de identidad de contenido y por eso la versión de contenido de 7.º subió a `0.4.0-grade-7`.
 
+Desde ADR-020 hay una separación adicional: el `runSeed` puede seleccionar una dirección, pero sus parámetros semánticos se materializan desde `VARIANT_SPACE_SEED` y la dirección `familia/plantilla/variante`. Bajo el mismo contrato versionado de contenido/generador, cambiar de run o de slot no cambia el problema detrás de esa dirección. Esa semántica y las fuentes híbridas llevaron el contenido a `0.5.0-grade-7` sin cambiar el ruleset.
+
 Las plantillas de desarrollo declaran **una sola variante** cada una, y una lista de un elemento no gasta ningún sorteo: su generación es byte a byte la de antes, que es lo que mantiene las runs golden intactas.
 
 ## Lo que la migración NO hizo
@@ -64,9 +66,10 @@ Para quien traiga contenido al modelo más adelante:
 1. Elegir la **familia**: ¿en qué situación reconocible ocurre? Si la familia no existe, agregarla al módulo de familias del content set.
 2. Elegir el **rol**: ¿es el beat primario del año (`anchor`), una evaluación (`checkpoint`), un momento social o excepcional (`special`) o contenido condicional de recuperación (`recovery`)?
 3. Declarar la **elegibilidad**: en qué etapas *puede* aparecer. Permiso, no selección.
-4. Nombrar las **variantes** con ids estables y semánticos, en el orden que se quiera que tenga el contrato. El orden importa: la selección saca un índice de esa lista.
-5. Escribir `generate` recibiendo `variantId`. Si la plantilla tiene parámetros autorados, usar `authoredVariant`. Si genera sus números, dibujar de `variantRng` para que la variante sea la misma en cualquier año.
-6. Registrar la plantilla en el catálogo del content set. **No hace falta tocar el motor.**
+4. Nombrar las **variantes curadas jugables** con ids estables y semánticos. El orden de `variants` afecta qué dirección elige hoy un seed de run, pero no define identidad: esa identidad es el id dentro de la dirección completa.
+5. Declarar un `VariantSourceSpec`: parámetros `authored`, validadores, vista `canonical` y, si el dominio lo justifica, un `VariantGenerator` constraint-first. Tanto authored como generated pasan por el mismo pipeline.
+6. Escribir `generate` sobre los parámetros ya resueltos. No leer `runSeed` para decidir su contenido: el `variantRng` deriva del seed fijo del espacio de variantes y de la dirección semántica.
+7. Registrar la plantilla en el `ContentCatalog`; construir, auditar y verificar el `ApprovedVariantCatalog` con `pnpm game:variants build`, `audit` y `check`. Aprobarla no la agrega por sí solo a un `RunPlan`. **No hace falta tocar el motor ni el pipeline.**
 
 La ficha de autoría previa al código está en [la guía de autoría](../01-game-design/content-authoring-guide.md).
 

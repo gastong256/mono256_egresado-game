@@ -4,7 +4,7 @@
 
 Comandos: `pnpm game:variants check` reconstruye el catálogo comprometido y revalida cada entrada —forma parte de `pnpm verify`—; `pnpm game:variants audit` corre la barrida estadística grande; `pnpm game:variants build` reconstruye el artefacto.
 
-[Validación de contenido](content-validation.md) describe el pipeline vigente de un desafío. Este documento describe lo que hace falta agregar cuando las variantes decidan premios: no alcanza con que cada desafío se valide a sí mismo, hace falta poder afirmar algo sobre **el conjunto desplegado**.
+[Validación de contenido](content-validation.md) describe la revisión completa de un desafío. Este documento cubre dos niveles distintos: la confianza matemática, estructural y de reproducibilidad **ya implementada** para una población aprobada, y el hardening competitivo que todavía depende de dificultad, composición de runs y congelamiento de feria.
 
 ## Por qué
 
@@ -29,7 +29,7 @@ Toda variante desplegada tiene que satisfacer, de forma ejecutable:
 - existe metadata de dificultad;
 - existe fingerprint canónico.
 
-Los primeros ocho ya son la práctica del motor: cada desafío verifica su instancia generada y los property tests recorren miles de seeds. Los últimos cuatro son el agregado que pide el catálogo.
+Las validaciones aplicables ya se ejecutan sobre fuentes `authored` y `generated`: primero las genéricas del pipeline y después los chequeos matemáticos específicos de cada plantilla, con oráculos independientes donde es viable. Una plantilla futura no obtiene un oráculo automáticamente: debe declarar sus validadores junto con su fuente.
 
 ## Invariantes de legibilidad
 
@@ -42,24 +42,23 @@ Difíciles de automatizar por completo, imprescindibles igual:
 
 Un desafío correcto que no entra en la pantalla es un desafío roto. Ver [NFR](non-functional-requirements.md).
 
-## Auditoría estadística del catálogo
+## Auditoría estadística del catálogo de desarrollo
 
-**TARGET.** Por plantilla y por catálogo, generar un reporte legible por máquina:
+**Implementada.** `pnpm game:variants audit` reporta por plantilla candidatos intentados, rechazos por código, duplicados por huella, problemas semánticos distintos y —cuando la interacción tiene opciones— distribución de la respuesta correcta. Los umbrales tienen razón documentada y distinguen errores bloqueantes de warnings sobre espacios finitos.
 
-| Parámetro | Umbral de aceptación sugerido |
+| Control | Estado |
 |---|---|
-| variantes desplegadas inválidas | exactamente 0 |
-| opciones duplicadas | exactamente 0 |
-| fingerprints duplicados | tasa declarada y revisada |
-| distribución por banda de dificultad | coincide con el objetivo declarado |
-| posición de la opción correcta | sin sesgo severo; investigar si lo hay |
-| distribución de parámetros numéricos | sin acumulación en los bordes |
-| máximo teórico de score por plantilla | sin diferencias inesperadas entre plantillas |
-| variantes cuya aritmética se sale de la banda | rechazar o reclasificar |
+| variantes aprobadas inválidas | **implementado**: exactamente 0; `check` revalida cada entrada |
+| opciones duplicadas y parámetros no serializables | **implementado** como diagnósticos genéricos |
+| huellas duplicadas | **implementado**: se reportan y deduplican intencionalmente |
+| problemas distintos y tasa de rechazo | **implementado** por plantilla |
+| posición y diversidad de respuesta correcta | **implementado** donde la interacción permite medirlas |
+| distribución por bandas `CORE / STANDARD / STRETCH` | **TARGET** — STAGE-05 |
+| comparabilidad de dificultad y score entre runs | **TARGET** — STAGE-05/STAGE-06 |
 
-Los umbrales son **heurísticas de revisión, no constantes universales**. Su función es levantar la mano, no aprobar sola.
+La barrida profunda de cierre de STAGE-03 recorrió **50.013 direcciones**, aprobó **30.671 problemas semánticos distintos**, rechazó **0** y produjo **0 errores**. Los warnings de duplicación de Mural y Stand describen espacios finitos que el pipeline deduplica; no significan contenido inválido ni exigen que 10.000 direcciones produzcan 10.000 problemas únicos. La evidencia canónica está en el [roadmap](../06-delivery/implementation-sequence.md#stage-03-generación-validación-y-catálogo-de-variantes) y en [ADR-020](../03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md).
 
-La validación procedural vigente ya corre N seeds por template y verifica que la opción correcta no caiga siempre en la misma posición; ver [validación de contenido](content-validation.md). Lo que falta es agregarlo por catálogo y versionarlo.
+Los umbrales son **heurísticas de revisión, no constantes universales**. Su función es levantar la mano; la aprobación sigue requiriendo que cada variante pase sus validaciones y que la integridad del artefacto sea reproducible.
 
 ## Auditoría Monte Carlo del armado de runs
 
@@ -73,8 +72,10 @@ Ver [dificultad y jugabilidad universal](../01-game-design/difficulty-and-playab
 
 Con datos reales se pueden estimar tasas de éxito, resultado parcial y tiempo por plantilla. Esos datos alimentan **versiones futuras**. No redefinen un score oficial ya otorgado, salvo que exista una política de regrade declarada por el evento. Ver [modo feria y congelamiento](../05-operations/fair-mode-and-competition-freeze.md).
 
-## Golden seeds
+## Reproducibilidad y casos golden
 
-Se conservan seeds conocidas por plantilla y por banda —incluyendo casos borde— y se reproducen en CI. Los golden replays vigentes ya cumplen ese rol para el motor; el agregado es mantener golden **por variante desplegada** cuando exista catálogo.
+El catálogo ya existe y usa direcciones semánticas, no posiciones ni seeds guardados como contenido. `pnpm game:variants check` lo reconstruye, compara el artefacto byte a byte, recalcula huellas y revalida sus entradas; los tests materializan una misma dirección en runs y slots distintos. Los golden replays siguen protegiendo el protocolo completo del motor.
+
+Los casos por banda de dificultad y el catálogo oficial congelado siguen siendo futuros porque esas bandas todavía no existen.
 
 Regla que ya está escrita y sigue valiendo: no crear goldens que congelen decisiones todavía abiertas.
