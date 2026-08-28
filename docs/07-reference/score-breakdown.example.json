@@ -1,0 +1,14 @@
+{
+  "scoreVersion": "fair-score-v1",
+  "mathRaw": 5320,
+  "mathMax": 6000,
+  "mathPerformance": 8867,
+  "teamPerformance": 7200,
+  "auraPerformance": 6100,
+  "weights": {"math": 0.8, "team": 0.15, "aura": 0.05},
+  "fairScore": 8489,
+  "optimalCount": 3,
+  "accuracy": 0.91,
+  "difficultySolved": 6.4,
+  "activeTimeMs": 312400
+}

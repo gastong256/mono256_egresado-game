@@ -226,3 +226,9 @@ El determinismo entre runtimes se verifica en `tests/e2e/game-engine-harness.spe
 ## Hash de resultado
 
 Opcional. `canonicalize(state)` produce la forma estable sobre la que se puede calcular un hash para detectar divergencias entre cliente y servidor. Es una señal de diagnóstico, no un mecanismo de seguridad por sí mismo.
+
+## Lo que este documento no describe
+
+Este documento describe el motor **implementado**. Las capacidades que la dirección de producto pide y todavía no existen —jerarquía de familias y plantillas, catálogo de variantes desplegado, scheduler por presupuesto de dificultad, score competitivo normalizado, `RunDescriptor` emitido por servidor, `scoreVersion`, `variantCatalogVersion` y verificación por replay— están en [arquitectura objetivo del motor](target-engine-architecture.md), con el estado real de cada una.
+
+La frontera fundamental no cambia en ninguna de esas evoluciones. Si una propuesta futura la toca, es un ADR nuevo.

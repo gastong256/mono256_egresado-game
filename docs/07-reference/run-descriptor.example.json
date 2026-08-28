@@ -1,0 +1,19 @@
+{
+  "runId": "run_demo_001",
+  "eventId": "fair-2026",
+  "playerId": "player_pseudonymous_123",
+  "runSeed": "94612839",
+  "engineVersion": "1.0.0",
+  "rulesetVersion": "fair-2026-v1",
+  "contentVersion": "content-2026-v1",
+  "scoreVersion": "fair-score-v1",
+  "variantCatalogVersion": "variants-2026-v1",
+  "slots": [
+    {
+      "familyId": "bus",
+      "templateId": "bus.delay.v1",
+      "variantSeed": "bus-00142",
+      "difficulty": "STANDARD"
+    }
+  ]
+}

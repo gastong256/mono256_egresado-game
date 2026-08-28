@@ -50,7 +50,7 @@ Donde:
 - eficiente: 0.90.
 - óptima: 1.00.
 
-Estos valores deben tunearse con playtests.
+Estos valores son de **desarrollo** y no oficiales: el motor los expone bajo una política nombrada marcada `production: false`, y el cargador de ruleset se niega a construir un ruleset oficial desde ahí. Su calibración final es una decisión del Departamento de Matemática ([pregunta 24](../07-reference/open-questions.md) y [pregunta 39](../07-reference/open-questions.md)), no el resultado de un playtest previo que no está garantizado. Ver [ciclo de entrega real](../00-product/real-delivery-lifecycle.md).
 
 ## Velocidad
 
@@ -108,3 +108,18 @@ No usar diagnósticos psicológicos ni lenguaje clínico.
 La run termina al completar el evento final o al abandonar explícitamente.
 
 No hay repetición automática de año por bajo desempeño en el MVP. La fantasía es una carrera comprimida, no un simulador administrativo de promoción escolar.
+
+Eso no significa que el bajo desempeño no tenga consecuencia. La dirección de producto es **fail-forward**: el error cambia el camino, el contenido de recuperación y el perfil final, sin producir un estado terminal ni obligar a volver a jugar un año entero. Esa dirección todavía no tiene contenido implementado; ver [egreso, recuperación y fail-forward](graduation-and-fail-forward.md).
+
+## Este score no es el score de la competencia
+
+Lo anterior describe el **score por evento y por run**: es lo que el motor calcula hoy y lo que ve el jugador. Es una capa distinta del score competitivo de feria, que todavía no existe.
+
+| Capa | Qué responde | Estado |
+|---|---|---|
+| Resultado de desafío | ¿qué tan bien se resolvió esta situación? | implementado |
+| Score de run | ¿cuántos puntos hizo esta partida? | implementado, política de desarrollo |
+| Identidad de carrera | ¿qué recorrido escolar construí? | implementado |
+| `FairScore` competitivo | ¿qué tan fuerte fue esta run oficial bajo las reglas del evento? | **no implementado**, y sus coeficientes están abiertos |
+
+La dirección propuesta para esa cuarta capa —matemática dominante, contribución acotada de Equipo y Aura, Estilo sin puntaje directo, mejor intento y desempate lexicográfico— está en [score competitivo y ranking](competitive-scoring-and-ranking.md). **Es una recomendación sujeta a Teacher Gate, no una regla cerrada**, y quien la implemente tiene que escribirla como política versionada y no como constantes en el código.

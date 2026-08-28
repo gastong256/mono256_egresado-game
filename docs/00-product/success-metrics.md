@@ -59,3 +59,33 @@ No son contratos; sirven como hipótesis.
 - Posición individual de estudiantes identificables.
 
 El producto es lúdico y educativo; optimizar exclusivamente engagement puede llevar a patrones de diseño que contradigan el contexto escolar.
+
+## Antes y después de la feria
+
+Porque no hay playtest con estudiantes antes del lanzamiento, conviene separar dos clases de métrica que no se pueden mezclar: las que se pueden **cerrar antes** y las que sólo existen **después**. Ver [ciclo de entrega real](real-delivery-lifecycle.md).
+
+### Gates medibles antes de la release
+
+Son verificables sin jugadores reales, y por eso son gates de verdad.
+
+- 100 % de las variantes competitivas pasan la validación de invariantes;
+- 100 % de las runs oficiales son reproducibles por seed, versiones y action log;
+- 0 defectos P0/P1 conocidos de motor o de ranking;
+- 0 variantes con respuesta ambigua en el catálogo desplegado;
+- los flujos móviles representativos pasan en 360, 390 y 430 px;
+- operación completa por teclado y con movimiento reducido, verificada;
+- las simulaciones de distribución de score no muestran una plantilla ni una posición de respuesta dominando de forma inesperada;
+- el leaderboard no se puede actualizar con un score enviado por el cliente.
+
+### Indicadores del Teacher Gate 1
+
+- el contenido queda aceptado o con una lista acotada de correcciones;
+- los docentes pueden explicar el objetivo matemático de cada familia de la demo;
+- los principios de ranking se consideran apropiados para repartir premios;
+- no se pide un rediseño fundacional.
+
+### Evidencia recién disponible en la feria
+
+Telemetría agregada y pseudónima: tasa de finalización, duración activa mediana, distribución de resultados por desafío, punto de abandono, tasa de error, éxito de envío al ranking, distribución de score y mejora entre intentos repetidos.
+
+**Esta es la primera evidencia real de uso.** No puede presentarse retroactivamente como validación previa, y ninguna de las métricas de esta sección reemplaza el playtest que no ocurrió.

@@ -1,0 +1,25 @@
+{
+  "version": "fair-score-v1-candidate",
+  "status": "teacher-gate",
+  "weights": {"math": 0.80, "team": 0.15, "aura": 0.05},
+  "discreteQuality": {
+    "optimal": 1.0,
+    "resolved": 0.75,
+    "partial": 0.40,
+    "insufficient": 0.10
+  },
+  "difficultyMultiplier": {
+    "CORE": 1.0,
+    "STANDARD": 1.08,
+    "STRETCH": 1.15
+  },
+  "auraContributionCap": 10000,
+  "tieBreakOrder": [
+    "fairScore",
+    "mathPerformance",
+    "optimalCount",
+    "accuracy",
+    "difficultySolved",
+    "activeTimeMs"
+  ]
+}

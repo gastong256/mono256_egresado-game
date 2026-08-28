@@ -1,0 +1,15 @@
+{
+  "career": {
+    "grade": {"value": 9.0, "source": "mural-project"},
+    "styleEvidence": {"estratega": 2}
+  },
+  "hidden": {
+    "mastery": {"geometry": 0.03, "optimization": 0.02},
+    "flags": ["mural-efficient"]
+  },
+  "competition": {
+    "mathQuality": 1.0,
+    "teamContribution": null,
+    "auraContribution": null
+  }
+}

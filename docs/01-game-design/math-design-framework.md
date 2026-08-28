@@ -103,5 +103,27 @@ No comparar floats de forma exacta.
 Antes de marcar contenido como `production_ready`:
 - revisión matemática;
 - revisión de lenguaje;
-- prueba con al menos un usuario del rango objetivo cuando sea posible;
+- prueba con al menos un usuario del rango objetivo **cuando sea posible**, sabiendo que antes de la feria probablemente no lo sea: la validación formal previa es la del Departamento de Matemática, ver [gates docentes](../06-delivery/teacher-gates.md);
 - test procedural de invariantes.
+
+## Piso bajo, techo alto
+
+La dificultad no sube por números más grandes ni por decimales más feos: sube por cantidad de relaciones, restricciones simultáneas, información irrelevante que hay que filtrar, planificación multipaso, optimización y incertidumbre. Un desafío rico puede usar aritmética elemental.
+
+Esto no es sólo pedagogía: es un requisito de producto. En la feria juegan chicos de 7.º y adultos, y una sola «dificultad media de currículo» deja afuera a los dos extremos. El desarrollo completo —bandas `CORE / STANDARD / STRETCH`, presupuesto de dificultad y su correspondencia con `DifficultyLevel` 1–5— está en [dificultad y jugabilidad universal](difficulty-and-playability.md).
+
+### Los tres niveles de variante, en las tres escalas
+
+| Este documento | Banda de autoría | Nivel del motor |
+|---|---|---|
+| básico | CORE | 1–2 |
+| intermedio | STANDARD | 3 |
+| avanzado | STRETCH | 4–5 |
+
+Es una lectura documental para poder leer juntos los tres vocabularios. No implica ninguna migración de código.
+
+## Apoyos y barreras de acceso
+
+Si el objetivo de una tarea es modelar y decidir, la fórmula visible o la calculadora no bajan el techo: sacan una barrera que no era el objetivo. Es la distinción de UDL entre barrera de acceso y objetivo real de la tarea; ver [base teórica](../07-reference/research-basis.md).
+
+Qué desafíos ofrecen qué apoyo, y si eso cambia en modo competitivo, es una decisión docente pendiente ([preguntas 7 y 45](../07-reference/open-questions.md)).

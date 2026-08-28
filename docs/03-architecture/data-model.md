@@ -96,3 +96,18 @@ No duplicar sin necesidad:
 - best score por jugador.
 
 Preferir query/view/materialized view según escala real.
+
+## Entidades objetivo del modo feria
+
+**No implementadas.** Los nombres se adaptan a las convenciones reales al escribir la migración.
+
+- **Evento:** vigencia, estado (`draft`/`frozen`/`live`/`closed`), tupla de versiones permitida, política de intentos y ajustes de ranking público.
+- **Participante:** id pseudónimo, evento, nickname, estado de moderación.
+- **Run:** descriptor y tupla de versiones, seed y calendario de variantes, estado (`issued`/`completed`/`pending`/`verified`/`rejected`).
+- **Acciones de run:** action log canónico, ordenado e inmutable.
+- **Resultado verificado:** desglose de score, resumen de carrera, arquetipo cuando exista, tupla de desempate y metadata de verificación.
+- **Mejor del participante:** referencia a la mejor run verificada del evento, actualizada transaccionalmente.
+- **Catálogo de variantes:** versión, plantilla, seed, fingerprint, metadata de dificultad y estado de aprobación.
+- **Auditoría de moderación:** actor, participante, acción, motivo y timestamp.
+
+Ver [arquitectura objetivo del motor](target-engine-architecture.md) y [modo feria y congelamiento](../05-operations/fair-mode-and-competition-freeze.md). La retención de cada una es una decisión abierta ([preguntas 31 y 50](../07-reference/open-questions.md)).

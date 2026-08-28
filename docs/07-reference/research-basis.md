@@ -103,3 +103,73 @@ La investigación no dicta arquitectura automáticamente. Las decisiones formale
 - ADR-003 deriva de reproducibilidad, fair challenges y debugging.
 - ADR-007 deriva de la necesidad de escalar contenido.
 - El diseño matemático deriva de intrinsic integration + alfabetización matemática aplicada.
+
+---
+
+## Fuentes incorporadas desde el Project Blueprint v0.2
+
+Fecha de acceso declarada por el paquete: **agosto de 2026**. Estas fuentes informan las recomendaciones de variantes, dificultad, competencia y seguridad; ninguna prueba causalmente nada sobre Egresado, que sigue necesitando validación con la institución. Ver [la integración del blueprint](blueprint-v0.2-integration.md).
+
+### 8. STACK — variantes aleatorias sembradas y desplegadas
+
+- «Deploying»: https://docs.stack-assessment.org/en/STACK_question_admin/Deploying/
+- «Random objects»: https://docs.stack-assessment.org/en/CAS/Random/
+- «Systematic deployment»: https://docs.stack-assessment.org/en/STACK_question_admin/Deploying_systematically/
+
+Principio: las variantes pseudoaleatorias sembradas son reproducibles, y pregenerarlas, testearlas y desplegarlas reduce el riesgo de exponer casos imposibles o defectuosos.
+
+Implicación: variantes deterministas, catálogo prevalidado para la feria, golden seeds, y nada de RNG sin control durante una competencia con premios. Ver [familias, plantillas y variantes](../01-game-design/challenge-families-and-variants.md).
+
+### 9. CAST — Universal Design for Learning 3.0
+
+- https://udlguidelines.cast.org/
+- Acción y expresión: https://udlguidelines.cast.org/action-expression/
+- Representación: https://udlguidelines.cast.org/representation/
+- Compromiso: https://udlguidelines.cast.org/engagement/
+
+Principios relevantes: optimizar desafío y apoyo, clarificar notación y símbolos matemáticos, usar múltiples representaciones, variar los métodos de respuesta y navegación, relevancia auténtica y feedback orientado a la acción.
+
+Implicación: no asumir que una sola representación sirve para todos; conservar alternativas de teclado y sin arrastre; sacar barreras que no son el objetivo de la tarea; feedback que habilite acción en vez de vergüenza. Ver [dificultad y jugabilidad universal](../01-game-design/difficulty-and-playability.md).
+
+### 10. Tareas de piso bajo y techo alto
+
+- Revisión de literatura 2025: https://www.tandfonline.com/doi/full/10.1080/0020739X.2025.2457365
+- Ejemplo en Educational Designer: https://www.educationaldesigner.org/ed/volume5/issue17/article68/
+
+Principio: entrada accesible con conocimiento previo limitado, y espacio para razonamiento matemático más profundo, con más de un camino posible.
+
+Implicación: los conceptos de 7.º tienen que ser abordables por cualquiera, y el desafío para adultos tiene que venir de restricciones y optimización, no de currículo avanzado.
+
+### 11. Leaderboards repetibles y mejor puntaje
+
+- Apple GameKit, «Choosing a leaderboard for your challenges»: https://developer.apple.com/documentation/gamekit/choosing-a-leaderboard-for-your-challenges
+
+Principio: un desafío repetible conviene rankearlo por mejor puntaje y no por actividad acumulada, que favorece a quien juega más veces.
+
+Implicación: personal best en vez de suma de intentos. Ver [modo feria y congelamiento](../05-operations/fair-mode-and-competition-freeze.md).
+
+### 12. Property-based testing
+
+- fast-check, «Why Property-Based Testing?»: https://fast-check.dev/docs/introduction/why-property-based/
+
+Principio: los property tests siguen siendo reproducibles usando seeds y seeds de falla.
+
+Implicación: invariantes de generador sobre miles de seeds, persistir la seed que falla y poder reproducir la variante exacta. Ya es la práctica del repositorio; ver [estrategia de testing](../04-quality/testing-strategy.md).
+
+### 13. Accesibilidad — WCAG 2.2
+
+- https://www.w3.org/TR/wcag/
+
+Principios relevantes: nombre, rol y valor programáticos; estado determinable; mensajes de estado; operación por teclado.
+
+Implicación: controles semánticos, feedback anunciado, y ninguna semántica de resultado que dependa sólo del color. Es el objetivo declarado del [sistema de diseño](../09-design-system/accessibility.md).
+
+### 14. Seguridad de API y de juegos
+
+- OWASP API Security Top 10 2023: https://owasp.org/API-Security/editions/2023/en/0x11-t10/
+- API4 Unrestricted Resource Consumption: https://owasp.org/API-Security/editions/2023/en/0xa4-unrestricted-resource-consumption/
+- OWASP Game Security Framework: https://owasp.org/www-project-gamesec-framework/OGSF
+
+Principios relevantes: validar los datos que cruzan una frontera de confianza, mantener autoritativa la lógica sensible y aplicar límites de tasa y de recursos.
+
+Implicación: el cliente no publica un score final; el servidor valida y reproduce; se limitan creación y envío de runs y el tamaño del action log. Ver [arquitectura objetivo del motor](../03-architecture/target-engine-architecture.md) y [threat model](../04-quality/threat-model.md).

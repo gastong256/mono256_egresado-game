@@ -1,0 +1,52 @@
+schema_version: 1
+family_id: mural
+template_id: mural.coverage-packages.v1
+stage: grade7
+status: draft
+
+narrative:
+  title: El mural
+  context: La clase tiene que comprar pintura para la feria.
+
+math:
+  domains: [geometry, proportional_reasoning, optimization]
+  objective: Determine the smallest package combination that covers the required area.
+  support:
+    formula_reference: optional
+    calculator: allowed
+
+variant:
+  difficulty: STANDARD
+  generator: constraint-first
+  invariants:
+    - at_least_one_valid_solution
+    - unique_optimum
+    - readable_decimals
+    - no_duplicate_options
+
+interaction:
+  type: choice
+
+outcomes:
+  optimal:
+    meaning: Meets requirement with minimum justified resource use.
+  resolved:
+    meaning: Meets requirement but with unnecessary excess.
+  insufficient:
+    meaning: Does not meet required coverage.
+
+career_effects:
+  may_change: [promedio, estilo]
+
+competitive:
+  math_quality: evaluator_defined
+  team_contribution: none
+  aura_contribution: none
+
+hidden:
+  mastery: [geometry, optimization]
+  flags: []
+
+review:
+  math_teacher_status: pending
+  notes: ''

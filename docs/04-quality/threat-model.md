@@ -58,3 +58,39 @@ No es atacante, pero amenaza disponibilidad.
 ## Riesgo aceptado
 
 No se intenta impedir a un actor altamente motivado que automatice respuestas correctas leyendo el cliente. Para una feria escolar, el objetivo es evitar manipulación trivial del score y detectar outliers. Un anti-cheat invasivo sería desproporcionado.
+
+## Amenazas que agrega la competencia con premios
+
+Se suman a las anteriores cuando el ranking decide premios. Los controles se dimensionan al riesgo: esto es una feria escolar, no una plataforma de esports, pero el browser no puede decidir un premio.
+
+### T10 Action log modificado
+El cliente envía una secuencia de comandos que nunca ocurrió.
+
+**Mitigación:** el replay determinista valida legalidad de cada comando contra el estado; una secuencia imposible se rechaza con un código de motivo que no filtra información sensible.
+
+### T11 Descriptor de run manipulado
+El cliente altera seed, versiones o asignación de variantes para recibir una run más fácil.
+
+**Mitigación:** el descriptor lo emite y lo guarda el servidor; se valida la ligadura run–participante–evento; se rechaza cualquier asignación de variante desconocida.
+
+### T12 Mezcla de versiones en una competencia
+Un envío oficial llega con una tupla de versiones distinta de la congelada del evento.
+
+**Mitigación:** el evento habilita explícitamente una única tupla y rechaza el resto. Es T8 visto desde la integridad del premio, no sólo desde la compatibilidad.
+
+### T13 Reintento hasta recibir una run fácil
+No es una intrusión: es un uso del reglamento que rompe la comparabilidad.
+
+**Mitigación:** presupuesto de dificultad equiparado, pools de variantes emparejados y descriptor emitido por el servidor. Ver [auditoría de equidad competitiva](competition-fairness-audit.md).
+
+### T14 Consumo de recursos sin restricción
+Ráfagas de emisión de runs, envíos gigantes o action logs desmedidos.
+
+**Mitigación:** límites de tasa, tope de cantidad de comandos y de bytes del log, tamaño máximo de request y timeouts. Corresponde a OWASP API4; ver [base teórica](../07-reference/research-basis.md).
+
+### T15 Abuso de privilegio administrativo
+Las acciones de moderación pueden cambiar lo que el público ve.
+
+**Mitigación:** rol administrativo autenticado, mínimo privilegio y auditoría de actor, motivo y timestamp. **La obscuridad de una URL no es autorización.**
+
+La arquitectura de estas mitigaciones está en [arquitectura objetivo del motor](../03-architecture/target-engine-architecture.md); su operación, en [modo feria y congelamiento](../05-operations/fair-mode-and-competition-freeze.md).

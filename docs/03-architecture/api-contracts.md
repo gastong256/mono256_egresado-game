@@ -113,3 +113,11 @@ Response:
 ## Versionado
 
 Cambios incompatibles usan `/v2` o negociación explícita. Cambios de reglas del juego se manejan además con `rulesetVersion`.
+
+## Superficie objetivo del backend de feria
+
+**No implementada.** Cuando exista el modo competitivo, la superficie mínima es: crear o retomar un participante pseudónimo; emitir un `RunDescriptor` oficial; recibir un envío final con action log e idempotencia, **sin aceptar un score del cliente**; devolver leaderboard moderado y paginado; y endpoints de moderación con autorización separada.
+
+Los límites de contrato son parte del contrato: largo máximo de nickname, cantidad de comandos y bytes del action log, tamaño de request, límites de tasa, validación de la tupla de versiones y tope de paginación.
+
+El diseño de esa superficie está en [arquitectura objetivo del motor](target-engine-architecture.md); su contrato concreto sigue abierto ([pregunta 22](../07-reference/open-questions.md)).

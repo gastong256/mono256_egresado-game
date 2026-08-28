@@ -100,3 +100,30 @@ Ocultar/restaurar nicknames y scores.
 
 ### FR-A04 Exportación
 Exportar estadísticas agregadas del evento.
+
+## Requisitos objetivo del modo competitivo
+
+**No implementados.** Estos requisitos aparecen cuando exista la feria con ranking y premios. Se numeran aparte para que nadie los confunda con comportamiento actual; su arquitectura está en [arquitectura objetivo del motor](../03-architecture/target-engine-architecture.md).
+
+### FR-T01 Descriptor de run oficial
+Antes de que una run pueda ser candidata a premio, el servidor emite un descriptor inmutable con la tupla de versiones —incluidas `scoreVersion` y `variantCatalogVersion`—, el seed y la asignación de variantes. El cliente no puede pedir un seed arbitrario ni una dificultad más fácil.
+
+### FR-T02 Vista pública sin solución
+El motor expone de una variante sólo lo que el renderer necesita. Ni la respuesta ni el evaluador se filtran por la forma del contenido público.
+
+### FR-T03 Envío sin score
+El cliente envía identidad de run y action log canónico, con clave de idempotencia. Un campo `score` provisto por el cliente se ignora o se rechaza.
+
+### FR-T04 Verificación por replay
+El servidor recarga las versiones exactas, reconstruye las variantes, reproduce los comandos, rechaza logs imposibles y escribe un resultado oficial inmutable.
+
+### FR-T05 Personal best
+El verificador actualiza el mejor resultado del participante según el comparador versionado. Una run peor queda en el historial auditable pero no reemplaza al mejor público.
+
+### FR-T06 Continuar después del fracaso
+Un resultado académico insuficiente no crea un estado terminal global. Cuando el contenido lo habilite, la progresión agenda un evento de recuperación comprimido.
+
+### FR-T07 Cierre de carrera completa
+El producto completo termina en `EGRESADO`, deriva el arquetipo final y produce el resumen de run. El slice de 7.º termina en el hito de año.
+
+Estos requisitos **no cierran** las decisiones que dependen del Departamento de Matemática: los coeficientes de score, la política de intentos y la política de empate siguen en [preguntas abiertas](../07-reference/open-questions.md).

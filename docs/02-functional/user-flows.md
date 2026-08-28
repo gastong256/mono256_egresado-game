@@ -72,3 +72,50 @@ flowchart TD
 2. Validación local de formato.
 3. Backend aplica política/moderación.
 4. Si falla, devolver error neutral y permitir corregir.
+
+## Flujo objetivo de feria oficial
+
+**No implementado.** Es la forma que toma el flujo cuando existan evento, ranking y verificación en servidor.
+
+```text
+QR / URL
+→ landing del evento
+→ nickname / token de participante
+→ pedir run oficial
+→ el servidor emite el descriptor
+→ juego local-first
+→ egreso
+→ resumen final
+→ enviar action log
+→ estado pendiente de verificación si hace falta
+→ score verificado por el servidor
+→ personal best y ranking
+→ jugar de nuevo
+```
+
+Si no se pudo emitir una run autoritativa antes de empezar, la aplicación ofrece juego libre no oficial en vez de convertir en silencio una run no verificable en candidata a premio.
+
+## Interrupción de red durante una run emitida
+
+```text
+se pierde la red
+→ seguir jugando local si los datos de variante ya están disponibles
+→ terminar
+→ envío pendiente
+→ reintento idempotente
+→ verificado cuando vuelve la conectividad
+```
+
+Es el local-first de [ADR-006](../03-architecture/adr/ADR-006-local-first-gameplay.md) con la autoridad de [ADR-004](../03-architecture/adr/ADR-004-server-authoritative-scoring.md).
+
+## Flujo de recuperación
+
+```text
+resultado académico insuficiente
+→ consecuencia
+→ flag o evento de recuperación
+→ desafío o storylet de recuperación comprimido
+→ etapa siguiente
+```
+
+Sin bucle que obligue a rejugar el mismo año. Ver [egreso, recuperación y fail-forward](../01-game-design/graduation-and-fail-forward.md).

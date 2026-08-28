@@ -106,3 +106,13 @@ Cada storylet matemático debe responder:
 3. ¿Qué restricción hace que la elección importe?
 4. ¿Cómo se ve la consecuencia?
 5. ¿Qué cambia en la carrera?
+
+## Condiciones declarativas, no código en el contenido
+
+Las condiciones de un storylet se expresan como datos versionados, no como JavaScript ejecutable dentro del contenido. Eso es lo que permite validarlas, reproducirlas en el servidor durante un replay y autorarlas sin riesgo.
+
+## Callbacks de fail-forward
+
+Un mal resultado debería **crear** contenido, no quitarlo: recuperación, storylets incómodos y oportunidades alternativas hacen que equivocarse sea interesante. Cuando exista contenido de recuperación, las materias pendientes son estado narrativo oculto que habilita callbacks a lo largo de los años, no una quinta stat en el HUD. Ver [egreso, recuperación y fail-forward](graduation-and-fail-forward.md).
+
+Los branches especiales tienen que ser escasos: si se disparan todo el tiempo, dejan de tener peso narrativo.

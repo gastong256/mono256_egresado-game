@@ -148,3 +148,36 @@ Lo que sí queda como deuda conocida:
 - **El contenido viaja entero en el bundle.** Con un año es irrelevante; con seis hay que cargar cada etapa por separado. La separación por carpeta ya deja hecho el corte.
 - **Las políticas de score, dificultad y perfil siguen siendo las de desarrollo.** Ningún content set puede declararse oficial hasta cerrar las preguntas abiertas 5 y 24; `createRuleset` lo impide por diseño.
 - **La copia de la portada nombra 7.º grado a mano.** Es correcta hoy y describe lo que el juego cubre; hay que reescribirla cuando deje de ser cierto.
+
+## Qué tiene que probar la demo candidata
+
+El slice de 7.º no es un prototipo descartable: es la **candidata a demo docente** de la Fase A del [ciclo de entrega real](../00-product/real-delivery-lifecycle.md). Su trabajo es que el Departamento de Matemática pueda decidir si el proyecto se extiende a todos los años.
+
+Tiene que probar ocho cosas:
+
+1. Egresado tiene identidad visual propia.
+2. La matemática cambia decisiones en vez de funcionar como trivia.
+3. Distintos patrones de interacción son posibles.
+4. Promedio, Equipo, Aura y Estilo alcanzan como identidad de carrera.
+5. Una segunda run se siente distinta de la primera.
+6. Los resultados explican por qué una decisión funcionó.
+7. El motor genera y reproduce variantes deterministas.
+8. Las mismas fundaciones de UI y de motor escalan a los años siguientes.
+
+### Variación: qué alcanza y qué no
+
+Los cinco escenarios existentes —colectivo, mural, cuaderno, proyecto grupal y stand— tienen matemática que **no se reescribe**. Lo que la demo debería agregar es convertirlos en familias con más de una estructura de razonamiento, para que la segunda run del docente cambie valores y, en algunas familias, la pregunta. Ver [familias, plantillas y variantes](../01-game-design/challenge-families-and-variants.md).
+
+No se puede llamar «dinámico» a un cambio de orden de las opciones.
+
+### El acto del 25 de Mayo
+
+Está implementado y jugable, y demuestra matemática, situación social, Aura y una familia de interacción distinta al mismo tiempo. **Su inclusión en producción sigue siendo una decisión docente** ([pregunta 42](../07-reference/open-questions.md)).
+
+### Score en la demo
+
+No hace falta un ranking online para el Teacher Gate 1, pero conviene exponer un **prototipo de desglose de score** para que los docentes puedan evaluar la filosofía competitiva antes de que se construya. Ver [score competitivo y ranking](../01-game-design/competitive-scoring-and-ranking.md).
+
+### Explícitamente fuera del alcance de la demo
+
+Backend de ranking con premios; contenido de 1.º a 5.º; arcos completos de recuperación; sistema de cuentas; pipeline de arte de personajes; biblioteca grande de assets; y el algoritmo final de arquetipo de carrera completa.

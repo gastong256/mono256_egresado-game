@@ -6,6 +6,9 @@ Evitar que Egresado se transforme en una secuencia de multiple-choice. El conten
 
 ## Familias iniciales
 
+> **Acá «familia» significa patrón de interacción**, no dominio narrativo. La otra acepción —`ScenarioFamily`: Colectivo, Mural, Stand— está en [familias, plantillas y variantes](challenge-families-and-variants.md). Una familia de escenario puede usar varias de estas interacciones, y al revés.
+
+
 ### 1. Decision Card
 El jugador compara opciones y elige una.
 
@@ -150,3 +153,15 @@ Cada desafío debe documentar explícitamente:
 - explicación de feedback;
 - parámetros válidos;
 - edge cases.
+
+## Variación estructural, no sólo numérica
+
+El patrón de generación de arriba evita que una variante salga rota. No evita que el jugador memorice la respuesta: si el mismo escenario siempre pregunta lo mismo, cambiar `25 %` por `15 %` compra una partida más y nada más.
+
+La dirección propuesta agrega un nivel intermedio —**plantillas**: estructuras de razonamiento distintas dentro del mismo escenario— y un catálogo de variantes prevalidado para modo competitivo. Ver [familias, plantillas y variantes](challenge-families-and-variants.md) para la jerarquía, la generación por restricción y los controles anti-memorización, y [validación y auditoría de variantes](../04-quality/variant-validation-and-audit.md) para los invariantes que una variante desplegada debe cumplir.
+
+Es una recomendación de arquitectura y **todavía no está implementada**: hoy cada desafío trae unas pocas variantes autoradas y verificadas.
+
+## Bandas de dificultad
+
+Además de `DifficultyLevel` 1–5, la autoría y la competencia usan tres bandas —`CORE`, `STANDARD`, `STRETCH`— que describen estructura de razonamiento en vez de intensidad. La correspondencia entre ambas escalas y el presupuesto de dificultad están en [dificultad y jugabilidad universal](difficulty-and-playability.md).

@@ -90,6 +90,29 @@ Agrega desafíos y reglas.
 - Partida no depende de round-trips constantes al servidor.
 - El jugador puede recuperar la run tras refresh accidental cuando sea viable.
 
+## Persona P6 — Visitante adulto
+
+Familias, docentes de otras materias y visitantes que juegan una vez en la feria. Puede tener el currículo de 7.º completamente incorporado.
+
+### Necesidades
+- Que el razonamiento siga siendo interesante aunque la aritmética sea familiar.
+- Que el techo del desafío venga de interpretación y optimización, no de fórmulas avanzadas.
+- Entender la situación sin contexto escolar previo del juego.
+
+Es la persona que justifica el diseño de piso bajo y techo alto: la misma pantalla tiene que funcionar para alguien de 12 y para alguien de 45. Ver [dificultad y jugabilidad universal](01-game-design/difficulty-and-playability.md).
+
+## Persona P7 — Agente de IA que trabaja el repositorio
+
+Implementa, documenta o revisa sin haber participado de las decisiones.
+
+### Necesidades
+- Distinguir estado actual de arquitectura objetivo sin tener que leer código para saberlo.
+- Distinguir una decisión cerrada de una recomendación y de una pregunta abierta.
+- Saber qué requiere aprobación docente antes de escribirse como constante.
+- Un punto de entrada que enrute, en vez de un documento maestro que haya que leer entero.
+
+Es la persona que gobierna [ADR-018](03-architecture/adr/ADR-018-blueprint-v0-2-decision-authority.md) y el [mapa de contexto](08-engineering/context-map.md).
+
 ---
 
 # FILE: 00-product/product-vision.md
@@ -167,7 +190,7 @@ Después de una elección, el jugador debe poder relacionar decisión, cálculo 
 Una partida representa años. Cada evento debe tener peso narrativo mayor que su duración real.
 
 ### 4. Diversidad de competencia
-El juego no debe sugerir que “ser bueno en matemática” equivale a “ser mejor persona/estudiante”. El perfil final integra estrategia, eficiencia, trabajo en equipo, iniciativa y riesgo.
+El juego no debe sugerir que “ser bueno en matemática” equivale a “ser mejor persona/estudiante”. La identidad de carrera visible son Promedio, Equipo, Aura y Estilo —ver [ADR-016](03-architecture/adr/ADR-016-career-player-model.md)—, y el perfil final se deriva de métricas ocultas de eficiencia, precisión, riesgo, colaboración e iniciativa. **Ningún eje de Estilo es el malo**: un Improvisador tiene que poder egresar, y ninguna forma de jugar puede ser la objetivamente correcta.
 
 ### 5. Rejugabilidad social
 El resultado final debe ser compartible y comparable: score, título de perfil, logros y decisiones memorables.
@@ -182,6 +205,122 @@ Al terminar una run queremos escuchar frases como:
 - “Quiero jugar otra vez para sacar otro perfil.”
 
 No queremos que la reacción dominante sea “era un examen con animaciones”.
+
+## Objetivo de producto para la semana de feria
+
+Durante la feria escolar, Egresado también es una competencia repetible. Un jugador puede mejorar su mejor marca entendiendo y practicando, mientras el ranking se mantiene dominado por la matemática, reproducible y auditable.
+
+Eso agrega dos anti-objetivos a la lista de arriba. Egresado no es:
+
+- un concurso de cálculo mental veloz;
+- un sistema donde gana quien tiene más tiempo libre para acumular partidas.
+
+La arquitectura competitiva que sostiene esto es una **dirección propuesta, no una regla cerrada**: ver [score competitivo y ranking](01-game-design/competitive-scoring-and-ranking.md) y [modo feria y congelamiento](05-operations/fair-mode-and-competition-freeze.md).
+
+## Qué está descubriendo el jugador
+
+La pregunta del juego no es «¿puedo aprobar?». Es:
+
+- ¿qué decisiones tomé?
+- ¿cómo resolví los problemas?
+- ¿qué promedio construí?
+- ¿cómo trabajé con otros?
+- ¿qué momentos me dieron o me costaron Aura?
+- ¿me comporté más como Aplicado, Estratega o Improvisador?
+- ¿qué clase de egresado fui?
+
+## Cómo se valida esta visión
+
+Con docentes primero y con jugadores recién en la feria. Ver [ciclo de entrega real](00-product/real-delivery-lifecycle.md): la aprobación docente no es evidencia de que los estudiantes se enganchen, y esta documentación no la presenta como tal.
+
+---
+
+# FILE: 00-product/real-delivery-lifecycle.md
+
+# Ciclo de entrega real
+
+**Estado: LOCKED** para la secuencia de fases y la restricción externa; **TEACHER GATE** para lo que cada gate docente debe aprobar.
+
+Este documento describe cómo se entrega Egresado *de verdad*, no un ciclo de producto genérico. La diferencia importa porque el ciclo real tiene una restricción que ningún proceso de documentación puede compensar: **es probable que no haya playtest con estudiantes antes de la feria**.
+
+El [alcance y roadmap](00-product/scope-and-roadmap.md) describe qué se construye en cada capa. Este documento describe quién valida cada capa y cuándo se congela.
+
+## Secuencia
+
+```mermaid
+flowchart TD
+    A[Fase A · Demo candidata de 7.º] --> B[Fase B · Teacher Gate 1]
+    B --> C[Fase C · Correcciones y congelamiento de fundaciones]
+    C --> D[Fase D · Juego completo 1.º–5.º + ranking]
+    D --> E[Fase E · Teacher Gate 2]
+    E --> F[Fase F · Congelamiento de competencia y hardening]
+    F --> G[Fase G · Semana de feria]
+    G --> H[Fase H · Post-feria]
+```
+
+### Fase A — Demo candidata de 7.º
+
+Un slice jugable y pulido de 7.º grado, representativo de la arquitectura y la identidad visual finales. No es un prototipo descartable. Su alcance está en el [vertical slice de 7.º grado](06-delivery/vertical-slice-grade-7.md).
+
+**Audiencia:** el Departamento de Matemática.
+
+### Fase B — Teacher Gate 1
+
+Los docentes aceptan la dirección o piden cambios acotados. La lista de lo que se les pide decidir está en [los gates docentes](06-delivery/teacher-gates.md). Salida esperada: correcciones de contenido, guía de dificultad y una decisión explícita sobre la filosofía de score.
+
+### Fase C — Congelamiento de fundaciones
+
+Con las correcciones aceptadas se congela el comportamiento fundacional y el sistema visual. Después de este punto, reabrir arquitectura o identidad requiere un defecto real, no una preferencia.
+
+### Fase D — Producción del juego completo
+
+`7.º → 1.º → 2.º → 3.º → 4.º → 5.º → Egreso`, más catálogo completo de escenarios, variantes desplegadas, ranking, backend de evento, verificación autoritativa y herramientas de operación.
+
+### Fase E — Teacher Gate 2
+
+Revisión de aceptación del candidato completo. No es otra exploración de concepto: se revisan contenido final, progresión, comportamiento del score, duración, reglas de competencia y detalles de presentación.
+
+### Fase F — Congelamiento de competencia y hardening
+
+Se congelan las versiones de contenido, reglas y score. Después corren simulación, carga, red, seguridad, accesibilidad, QA móvil y ensayo operativo. Ver [modo feria y congelamiento](05-operations/fair-mode-and-competition-freeze.md).
+
+### Fase G — Semana de feria
+
+Estudiantes y visitantes juegan online y compiten. La política de intentos y el criterio de ranking los define la configuración del evento, aprobada previamente por los docentes.
+
+### Fase H — Post-feria
+
+Decidir si el juego queda online, si el ranking del evento se archiva, si se abre un modo libre o si el producto evoluciona.
+
+## La restricción externa
+
+> **No hay playtest con estudiantes del rango objetivo antes de la primera release de feria.**
+
+Esto es una restricción del contexto, no una decisión de proceso, y tiene una consecuencia que la documentación debe decir en voz alta:
+
+**Teacher Gate ≠ validación de experiencia de usuario.** La aprobación docente reduce riesgo de contenido, matemática y tono. No es evidencia de que un chico de 12 años entienda la pantalla en diez segundos, ni de que quiera jugar una segunda run.
+
+Cualquier documento que hable de “validado con jugadores” antes de la Fase G está describiendo una intención, no un hecho.
+
+## Controles compensatorios
+
+Ninguno reemplaza el playtest faltante; en conjunto reducen las clases de riesgo que sí se pueden atacar sin jugadores reales.
+
+| Control | Qué riesgo cubre | Dónde vive |
+|---|---|---|
+| Revisión heurística de UX | instrucciones, carga de texto, un primario a la vez | [UX e interacción](01-game-design/ux-interaction-design.md) |
+| Prueba proxy con adultos sin asistencia verbal | dónde se pregunta “¿qué hago?” | [los gates docentes](06-delivery/teacher-gates.md) |
+| Simulación determinista masiva | callejones sin salida, scores imposibles, deriva de replay | [estrategia de testing](04-quality/testing-strategy.md) |
+| Validación de variantes e invariantes | variantes ambiguas, imposibles o triviales | [validación y auditoría de variantes](04-quality/variant-validation-and-audit.md) |
+| Auditoría de equidad competitiva | dominancia, sesgo de velocidad, sesgo de volumen | [auditoría de equidad competitiva](04-quality/competition-fairness-audit.md) |
+| Accesibilidad automatizada y manual | barreras de interacción predecibles | [accesibilidad del sistema de diseño](09-design-system/accessibility.md) |
+| QA móvil en 360/390/430 px | layout y legibilidad reales | [NFR](04-quality/non-functional-requirements.md) |
+| Telemetría lista el día uno | la feria es la primera exposición real | [analytics y observabilidad](03-architecture/analytics-observability.md) |
+| Disciplina de congelamiento | reaccionar a una anécdota cambiando reglas en vivo | [modo feria y congelamiento](05-operations/fair-mode-and-competition-freeze.md) |
+
+## Riesgo residual declarado
+
+El proyecto acepta explícitamente que la diversión, la velocidad de comprensión y la distribución real de dificultad quedan inciertas hasta la feria. Las métricas de la Fase G son la primera evidencia real de uso y **no deben presentarse retroactivamente como validación previa**. Ver [métricas de éxito](00-product/success-metrics.md).
 
 ---
 
@@ -232,6 +371,30 @@ No queremos que la reacción dominante sea “era un examen con animaciones”.
 
 La principal defensa es mantener el sistema pequeño, determinista, versionado y testeable. Cada aumento de complejidad debe responder a evidencia de uso.
 
+## Riesgos incorporados desde el blueprint v0.2
+
+Riesgos que aparecen cuando el juego pasa a ser una competencia con premios y cuando se acepta que la primera exposición real es la feria.
+
+| Riesgo | Impacto | Mitigación |
+|---|---:|---|
+| La primera prueba con estudiantes ocurre durante la feria | Alto | gate docente como proxy, UX conservadora, simulación, telemetría, hardening; el riesgo residual se **declara**, no se disimula |
+| Una variante procedural sale ambigua o imposible | Alto | catálogo de variantes prevalidado y desplegado, invariantes ejecutables |
+| Los intentos ilimitados favorecen a quien tiene más tiempo libre | Medio | personal best en vez de suma; política de intentos configurable |
+| El jugador reintenta hasta recibir una run fácil | Medio | presupuesto de dificultad, pools emparejados, descriptor emitido por el servidor |
+| El score de ranking se puede falsificar | Alto | el servidor reproduce y calcula; nunca se confía el score final del navegador |
+| El score premia la velocidad por encima del razonamiento | Alto | la matemática domina; el tiempo sólo como desempate tardío |
+| El desempeño académico se cuenta dos veces | Medio | `MathPerformance` separado del Promedio visible |
+| Estilo se convierte en un objetivo de optimización | Medio | Estilo no puntúa directamente |
+| Matemática trivial para adultos y difícil para 12 años | Alto | piso bajo y techo alto; complejidad por restricciones y optimización |
+| El diseño visual vuelve a parecerse a los juegos de referencia | Medio | sistema de diseño v0.2 aprobado y sus gates de tokens y contraste |
+| Se cambia una regla en medio de la feria | Alto | congelamiento de versiones, control de cambios y capacidad de replay/regrade |
+
+Los detalles de cada mitigación están en [validación y auditoría de variantes](04-quality/variant-validation-and-audit.md), [auditoría de equidad competitiva](04-quality/competition-fairness-audit.md) y [modo feria y congelamiento](05-operations/fair-mode-and-competition-freeze.md).
+
+## Supuesto que cambió
+
+El supuesto de que habría playtest con estudiantes antes de la primera release pública **ya no se sostiene**. Ver [ciclo de entrega real](00-product/real-delivery-lifecycle.md). Todo criterio de aceptación que dependa de jugadores reales antes de la feria es, hasta nuevo aviso, una intención.
+
 ---
 
 # FILE: 00-product/scope-and-roadmap.md
@@ -268,9 +431,15 @@ Validar que el loop central sea comprensible y divertido.
 - Admin de contenido.
 
 ### Criterio de salida
-- 10–20 testers pueden completar una run sin explicación externa.
-- Duración media dentro del rango deseado.
-- Se detectan al menos 3 desafíos que los jugadores quieren comentar o discutir.
+
+> **Corregido por el ciclo de entrega real.** Este criterio se escribió asumiendo una tanda de testers antes de seguir. Esa tanda no está garantizada: la primera exposición a estudiantes del rango objetivo es la feria. Ver [ciclo de entrega real](00-product/real-delivery-lifecycle.md).
+
+- Un adulto que no participó del desarrollo completa una run sin explicación verbal, y se registra dónde preguntó qué hacer.
+- Duración media dentro del rango deseado, medida por simulación y por esa prueba proxy.
+- Se detectan al menos 3 desafíos que generan comentario o discusión.
+- El Departamento de Matemática acepta la dirección en el Teacher Gate 1.
+
+Los tres primeros son evidencia proxy y se declaran como tal. El cuarto es el gate real.
 
 ## MVP 1 — Producto web jugable
 
@@ -335,6 +504,48 @@ Posibles líneas:
 - Sistema de amigos.
 - Moderación social compleja.
 - IA generativa creando problemas en producción sin validación determinista.
+
+## Cómo se corresponden las capas con el ciclo real
+
+Las capas MVP describen **qué se construye**. Las fases del [ciclo de entrega real](00-product/real-delivery-lifecycle.md) describen **quién valida y cuándo se congela**. Son dos ejes, no dos planes en competencia.
+
+| Capa de alcance | Fase del ciclo real | Quién valida |
+|---|---|---|
+| MVP 0 — prototipo local | Fase A — demo candidata de 7.º | prueba proxy con adultos; **sin estudiantes** |
+| — | Fase B — Teacher Gate 1 | Departamento de Matemática |
+| — | Fase C — congelamiento de fundaciones | equipo |
+| MVP 1 — producto web jugable | Fase D — producción del juego completo | tests, simulación y auditorías |
+| — | Fase E — Teacher Gate 2 | Departamento de Matemática |
+| MVP Feria — operación real | Fase F — congelamiento y hardening | ensayo de carga, red y operación |
+| — | Fase G — semana de feria | **primera evidencia real de uso** |
+| Post-MVP | Fase H — post-feria | decisión de producto |
+
+## Alcance completo del producto
+
+La progresión completa es `7.º → 1.º → 2.º → 3.º → 4.º → 5.º → EGRESO`. Cada etapa usa la misma gramática de diseño y de motor: los años posteriores agregan complejidad de contenido, **no un sistema de UI nuevo**.
+
+El producto completo, más allá del MVP Feria, incluye: catálogo completo de escenarios y variantes deterministas, modelo de carrera Promedio · Equipo · Aura · Estilo, dominio matemático y flags ocultos, recuperación fail-forward donde corresponda, arquetipo final, score oficial de feria, ranking por evento, política de intentos configurable, reglas y contenido versionados, verificación de runs en servidor, moderación de nicknames y operación de feria.
+
+Ver [alcance objetivo del motor](03-architecture/target-engine-architecture.md) para el estado real de cada capacidad.
+
+## Escalamiento temático por año
+
+Dirección de escalada **lúdica**, no currículo oficial: la pertinencia curricular la deciden los docentes, y la progresión matemática vigente está en el [marco matemático](01-game-design/math-design-framework.md).
+
+| Etapa | Qué se agrega como desafío |
+|---|---|
+| 7.º | aprender la gramática: tiempo, porcentajes, área, presupuesto, asignación simple, divisibilidad |
+| 1.º | adaptación y organización: horarios, proporcionalidad, primeras evaluaciones fuertes, dinámica de grupo |
+| 2.º | autonomía: trade-offs de recursos, primeras probabilidades, comparación financiera |
+| 3.º | interpretación: estadística, muestras, incertidumbre, pedir información, elecciones multivariable |
+| 4.º | responsabilidad: proyectos grandes, restricciones, planificación, optimización |
+| 5.º | cierre: proyecto final, previas y recuperación, egreso, decisiones de futuro |
+
+### Producción de contenido después del Teacher Gate 1
+
+No se autoran los años en secuencia sin catálogo. Primero se arma la matriz completa de 1.º–5.º —una fila por plantilla, no por variante— y el Departamento de Matemática revisa **la matriz**, no sólo pantallas terminadas. Recién después se implementa año por año. Ver [secuencia de implementación](06-delivery/implementation-sequence.md).
+
+Un rango útil de planificación es de seis a ocho situaciones significativas por año. Es **planificación, no requisito**: la duración objetivo de una run y el throughput de la feria deciden el número final, y la pregunta sigue abierta ([pregunta 46](07-reference/open-questions.md)).
 
 ---
 
@@ -401,6 +612,36 @@ No son contratos; sirven como hipótesis.
 - Posición individual de estudiantes identificables.
 
 El producto es lúdico y educativo; optimizar exclusivamente engagement puede llevar a patrones de diseño que contradigan el contexto escolar.
+
+## Antes y después de la feria
+
+Porque no hay playtest con estudiantes antes del lanzamiento, conviene separar dos clases de métrica que no se pueden mezclar: las que se pueden **cerrar antes** y las que sólo existen **después**. Ver [ciclo de entrega real](00-product/real-delivery-lifecycle.md).
+
+### Gates medibles antes de la release
+
+Son verificables sin jugadores reales, y por eso son gates de verdad.
+
+- 100 % de las variantes competitivas pasan la validación de invariantes;
+- 100 % de las runs oficiales son reproducibles por seed, versiones y action log;
+- 0 defectos P0/P1 conocidos de motor o de ranking;
+- 0 variantes con respuesta ambigua en el catálogo desplegado;
+- los flujos móviles representativos pasan en 360, 390 y 430 px;
+- operación completa por teclado y con movimiento reducido, verificada;
+- las simulaciones de distribución de score no muestran una plantilla ni una posición de respuesta dominando de forma inesperada;
+- el leaderboard no se puede actualizar con un score enviado por el cliente.
+
+### Indicadores del Teacher Gate 1
+
+- el contenido queda aceptado o con una lista acotada de correcciones;
+- los docentes pueden explicar el objetivo matemático de cada familia de la demo;
+- los principios de ranking se consideran apropiados para repartir premios;
+- no se pide un rediseño fundacional.
+
+### Evidencia recién disponible en la feria
+
+Telemetría agregada y pseudónima: tasa de finalización, duración activa mediana, distribución de resultados por desafío, punto de abandono, tasa de error, éxito de envío al ranking, distribución de score y mejora entre intentos repetidos.
+
+**Esta es la primera evidencia real de uso.** No puede presentarse retroactivamente como validación previa, y ninguna de las métricas de esta sección reemplaza el playtest que no ocurrió.
 
 ---
 
@@ -592,6 +833,134 @@ El detalle de variantes, calidades y consecuencias de cada uno está en [el dise
 
 ---
 
+# FILE: 01-game-design/challenge-families-and-variants.md
+
+# Familias de escenario, plantillas y variantes
+
+**Estado: mixto.** El seed determinista y la reproducibilidad son **LOCKED** ([ADR-003](03-architecture/adr/ADR-003-deterministic-seeded-engine.md), [ADR-012](03-architecture/adr/ADR-012-seeded-prng-and-substreams.md)). La jerarquía `ScenarioFamily → Template → Variant` y el catálogo prevalidado de competencia son **RECOMENDADOS**: dirección de arquitectura, no contrato cerrado. La cantidad de plantillas por año es **OPEN**.
+
+## El problema
+
+Un desafío fijo se memoriza. Cambiar `25 %` por `15 %` compra una partida más: el jugador igual aprende “la segunda opción”. Lo que hace falta es **variación estructural** —que cambie el razonamiento, no sólo los números.
+
+Un docente que juega dos veces la demo tiene que ver una diferencia real. Si sólo se reordenan las opciones, no se puede llamar variación.
+
+## Cuidado con la palabra «familia»
+
+El proyecto usa «familia» en dos sentidos y conviene no confundirlos:
+
+| Término | Qué agrupa | Dónde se define |
+|---|---|---|
+| **Familia de interacción** | el patrón de UI con el que se responde: Decision Card, Timeline, Number Grid… | [sistema de desafíos](01-game-design/challenge-system.md) |
+| **Familia de escenario** (`ScenarioFamily`) | el dominio narrativo reconocible: Colectivo, Mural, Cuaderno, Proyecto grupal, Stand | este documento |
+
+Una familia de escenario puede usar varias familias de interacción, y al revés. Cuando un documento diga «familia» sin calificar, el contexto manda: en `challenge-system.md` es interacción; acá es escenario.
+
+## La jerarquía
+
+```text
+ScenarioFamily          contexto narrativo reconocible
+  └─ Template           estructura de razonamiento distinta dentro de ese contexto
+       └─ Variant       parametrización concreta y determinista de esa estructura
+```
+
+### Familia
+
+El contexto que el jugador reconoce: Colectivo, Mural, Cuaderno, Proyecto grupal, Stand de feria.
+
+### Plantilla
+
+Una estructura de razonamiento distinta dentro del mismo contexto. No es «el mismo problema con otros números»: es otra pregunta.
+
+Colectivo, por ejemplo:
+
+- **demora porcentual** — duración normal + porcentaje de demora + hora de entrada;
+- **última salida posible** — derivar el último horario seguro;
+- **comparación de rutas** — dos alternativas con duración y demora distintas;
+- **frecuencia** — próximo servicio + duración + límite de llegada.
+
+Mural: cobertura; cobertura descontando aberturas; cobertura con precios de envase y presupuesto.
+Cuaderno: porcentaje contra descuento fijo; cuotas contra efectivo disponible; descuento más costo adicional.
+Proyecto grupal: asignación por habilidad; restricción de capacidad y horas; reparto balanceado.
+Stand: selección de packs; requisitos mínimos; optimización de presupuesto.
+
+### Variante
+
+Los números y las opciones concretas, generados o seleccionados de forma determinista.
+
+## Seed determinista
+
+**LOCKED.** Toda variante tiene que poder reconstruirse desde la identidad de la run. La lógica de dominio nunca llama a un `Math.random()` ambiente; el motor ya impone esto y lo verifica con property tests.
+
+Derivación sugerida para el nivel de variante:
+
+```text
+variantSeed = H(runSeed, familyId, templateId, slotIndex, contentVersion)
+```
+
+La función de derivación es propiedad del proyecto y está versionada, para que cambiar de librería de PRNG no reordene en silencio una competencia ya jugada. El contrato de substreams vigente está en [ADR-012](03-architecture/adr/ADR-012-seeded-prng-and-substreams.md).
+
+## Generación por restricción, no por sorteo
+
+**RECOMENDADO.** Generar desde la propiedad pedagógica deseada, no desde parámetros arbitrarios con la esperanza de que el resultado siga siendo válido.
+
+Ejemplo de mural: se quiere que 1 L no alcance, 2 L sea óptimo y 4 L sea válido pero derrochador. Con cobertura de 8 m²/L, se genera primero el área requerida en `(8, 16]` y recién después se eligen dimensiones legibles que den ese área. El camino inverso —elegir dimensiones y ver qué sale— produce variantes triviales o imposibles.
+
+Esto ya es el patrón vigente del motor: el generador produce parámetros, el verificador comprueba invariantes y la presentación nunca lleva la solución. Ver [game engine](03-architecture/game-engine.md).
+
+## Variación no es azar
+
+```text
+Generador → N seeds candidatas → invariantes → auditoría de dificultad
+          → auditoría estadística → catálogo aprobado → selección determinista en runtime
+```
+
+Un número al azar en runtime puede producir decimales feos, óptimos ambiguos, opciones duplicadas, estados imposibles, variantes triviales o dificultad desbalanceada. En una partida de práctica eso es un bug; en una competencia con premios es una injusticia que no se puede deshacer.
+
+El principio viene de STACK, que recomienda pregenerar, testear y desplegar variantes aleatorias en vez de exponer al estudiante a casos defectuosos generados en vivo. Ver [base teórica](07-reference/research-basis.md).
+
+## Catálogo desplegado
+
+**RECOMENDADO / TARGET.** Para modo competitivo, un job de build genera muchas seeds candidatas, retiene sólo las validadas y publica un catálogo versionado:
+
+```json
+{
+  "catalogVersion": "fair-2026-v1",
+  "templateId": "bus.delay.v1",
+  "variants": [{ "seed": 123, "difficulty": "STANDARD", "fingerprint": "..." }]
+}
+```
+
+El runtime elige de ese catálogo con el seed de la run. Un catálogo con cientos o miles de combinaciones válidas sigue dando variedad, sin exponer nada que nadie revisó.
+
+Cada variante lleva un **fingerprint canónico** de sus parámetros públicos y de la semántica de su respuesta, para detectar seeds distintas que producen la misma pregunta.
+
+## Controles anti-memorización
+
+- barajado de opciones derivado del seed cuando la semántica lo permita;
+- verificación de que la posición de la opción correcta esté balanceada;
+- evitar repetir plantilla o variante inmediatamente dentro de una run;
+- mantener presupuesto de dificultad equivalente entre runs;
+- no exponer el seed como una forma de elegir la run fácil.
+
+Los criterios de aceptación de estos controles están en [validación y auditoría de variantes](04-quality/variant-validation-and-audit.md).
+
+## Estado de implementación
+
+| Capacidad | Estado |
+|---|---|
+| Generación seeded, verificación de invariantes y vista pública sin solución | **implementado** en `src/game/challenges/` |
+| Reproducibilidad por seed + versiones + acciones | **implementado**, con property tests y golden replays |
+| Variantes autoradas por desafío (pocas, fijas en el contenido) | **implementado** en `src/content/grade-7/challenges/` |
+| Jerarquía explícita `ScenarioFamily → Template → Variant` | **no implementada** |
+| Generador por restricción como abstracción reutilizable | **no implementada** |
+| Catálogo desplegado y versionado de variantes | **no implementado** |
+| `variantCatalogVersion` en la identidad de la run | **no implementado**; hoy la tripleta es `gameVersion`/`rulesetVersion`/`contentVersion` |
+
+La brecha completa y su orden están en [arquitectura objetivo del motor](03-architecture/target-engine-architecture.md) y en [la secuencia de implementación](06-delivery/implementation-sequence.md).
+
+---
+
 # FILE: 01-game-design/challenge-system.md
 
 # Sistema de desafíos
@@ -601,6 +970,9 @@ El detalle de variantes, calidades y consecuencias de cada uno está en [el dise
 Evitar que Egresado se transforme en una secuencia de multiple-choice. El contenido se construye sobre un conjunto limitado de **patrones de interacción reutilizables**.
 
 ## Familias iniciales
+
+> **Acá «familia» significa patrón de interacción**, no dominio narrativo. La otra acepción —`ScenarioFamily`: Colectivo, Mural, Stand— está en [familias, plantillas y variantes](01-game-design/challenge-families-and-variants.md). Una familia de escenario puede usar varias de estas interacciones, y al revés.
+
 
 ### 1. Decision Card
 El jugador compara opciones y elige una.
@@ -747,6 +1119,164 @@ Cada desafío debe documentar explícitamente:
 - parámetros válidos;
 - edge cases.
 
+## Variación estructural, no sólo numérica
+
+El patrón de generación de arriba evita que una variante salga rota. No evita que el jugador memorice la respuesta: si el mismo escenario siempre pregunta lo mismo, cambiar `25 %` por `15 %` compra una partida más y nada más.
+
+La dirección propuesta agrega un nivel intermedio —**plantillas**: estructuras de razonamiento distintas dentro del mismo escenario— y un catálogo de variantes prevalidado para modo competitivo. Ver [familias, plantillas y variantes](01-game-design/challenge-families-and-variants.md) para la jerarquía, la generación por restricción y los controles anti-memorización, y [validación y auditoría de variantes](04-quality/variant-validation-and-audit.md) para los invariantes que una variante desplegada debe cumplir.
+
+Es una recomendación de arquitectura y **todavía no está implementada**: hoy cada desafío trae unas pocas variantes autoradas y verificadas.
+
+## Bandas de dificultad
+
+Además de `DifficultyLevel` 1–5, la autoría y la competencia usan tres bandas —`CORE`, `STANDARD`, `STRETCH`— que describen estructura de razonamiento en vez de intensidad. La correspondencia entre ambas escalas y el presupuesto de dificultad están en [dificultad y jugabilidad universal](01-game-design/difficulty-and-playability.md).
+
+---
+
+# FILE: 01-game-design/competitive-scoring-and-ranking.md
+
+# Score competitivo y ranking
+
+**Estado: RECOMENDADO / TEACHER GATE.** Nada de este documento es una regla cerrada. La separación entre identidad de carrera y score competitivo es una recomendación fuerte de arquitectura; **todos los coeficientes, topes y calibraciones son candidatos** y requieren aprobación del Departamento de Matemática antes del congelamiento de competencia. Los valores exactos siguen **OPEN** ([pregunta 24](07-reference/open-questions.md)).
+
+El score por evento vigente —`base × calidad × dificultad + bonus − penalizaciones`— está en [reglas, scoring y progresión](01-game-design/rules-scoring-and-progression.md) y es lo que el motor implementa hoy. Este documento describe la capa **competitiva** que todavía no existe.
+
+## Tres capas que no son la misma cosa
+
+| Capa | Qué responde | Dónde vive |
+|---|---|---|
+| **Resultado de desafío** | ¿qué tan bien se resolvió esta situación? | `SolutionQuality` + métricas de razonamiento |
+| **Identidad de carrera** | ¿qué clase de recorrido escolar construí? | Promedio · Equipo · Aura · Estilo |
+| **Score competitivo** | ¿qué tan fuerte fue esta run oficial bajo las reglas del evento? | `FairScore`, sólo en modo feria |
+
+Están relacionadas y no son intercambiables. Un documento futuro que las trate como un solo sistema estará equivocado en las tres.
+
+## Por qué no se multiplican las stats visibles
+
+Una fórmula del tipo `Aura × 1 + Matemática × 10 + Equipo × 5` no significa lo que parece: las variables viven en escalas distintas.
+
+- dominio matemático oculto: `0–1`;
+- Promedio: `1–10`;
+- Equipo: `0–100`;
+- Aura: con signo, sin techo.
+
+Un multiplicador no expresa peso relativo hasta que cada componente está normalizado. Antes de normalizar, el «peso» es un accidente de escala.
+
+## Arquitectura de score recomendada
+
+Cada evaluador devuelve, además de sus efectos de carrera, una medida de desempeño competitivo normalizada.
+
+### Calidad matemática por evento
+
+`q_i ∈ [0,1]`
+
+Calibración discreta de partida, **candidata y sujeta a Teacher Gate**:
+
+| Calidad | `q` candidato |
+|---|---|
+| óptima | 1,00 |
+| eficiente / resuelta | 0,75 |
+| funcional / parcial | 0,40 |
+| inválida / insuficiente | 0,10 |
+
+Las interacciones continuas —por ejemplo la grilla de clasificación del acto del 25 de Mayo, que ya se juzga con F1— usan su propia métrica de calidad en vez de estas cuatro cajas. Ver [catálogo de desafíos](01-game-design/challenge-catalog.md).
+
+> Nota de terminología: el motor nombra las calidades `invalid · functional · efficient · optimal`; el blueprint las nombra `insufficient · partial · resolved · optimal`. Es la misma escala de cuatro escalones con distinta etiqueta. El [glosario](07-reference/glossary.md) fija la correspondencia.
+
+### Desempeño matemático normalizado
+
+```text
+MathRaw         = Σ (1000 × q_i × difficultyFactor_i)
+MathMax         = Σ (1000 × 1,0 × difficultyFactor_i)
+MathPerformance = 10000 × MathRaw / MathMax
+```
+
+Normalizar contra el máximo alcanzable de *esa* run es lo que permite comparar runs armadas con plantillas distintas.
+
+### Contribuciones de Equipo y Aura
+
+Si se decide que “toda la carrera cuenta”, la contribución competitiva es **una medida de evento acotada**, no el valor visible de la stat.
+
+- `TeamPerformance ∈ [0, 10000]`;
+- `AuraPerformance ∈ [0, 10000]` después de normalización y tope del evento.
+
+Aura cruda sigue siendo con signo y sin techo para uso narrativo. Aura competitiva tiene que estar topeada: un solo momento espectacular no puede ganarle a una run matemáticamente superior.
+
+### FairScore candidato
+
+**RECOMENDADO / TEACHER GATE — no es la fórmula oficial.**
+
+```text
+FairScore = round(0,80 × MathPerformance + 0,15 × TeamPerformance + 0,05 × AuraPerformance)
+```
+
+La ponderación 80/15/5 es un **candidato defendible**, no una decisión tomada. Una intuición previa de `10:5:1` normaliza a 62,5 % / 31,25 % / 6,25 %, que probablemente le da demasiado peso competitivo a la conducta de equipo en una feria de matemática individual.
+
+Quien implemente esto debe escribirlo como política versionada y configurable, nunca como constantes anónimas. Ver [ejemplo de política de score](07-reference/score-policy.example.json).
+
+## Qué no entra al score
+
+### Promedio
+
+No se suma aparte si ya está determinado por desempeño académico matemático. Sumarlo dos veces cuenta la misma habilidad dos veces.
+
+### Estilo
+
+No puntúa directamente. Darle score a Aplicado, Estratega o Improvisador implicaría que hay una personalidad objetivamente superior, y eso destruye el concepto de perfil: el juego dice explícitamente que ningún eje es el malo.
+
+### Cantidad de intentos
+
+No es desempate en ninguna dirección. Premiar más intentos premia tiempo libre; penalizarlos castiga la práctica. Queda como dato informativo salvo decisión docente explícita.
+
+## Intentos y personal best
+
+**RECOMENDADO / TEACHER GATE.** Política sugerida: intentos ilimitados o configurables, y el leaderboard guarda el **mejor intento**, no la suma.
+
+Sumar intentos convierte el ranking en una medida de tiempo disponible. El mejor intento premia la mejora sin castigar a quien llegó tarde a la feria. La guía de GameKit para desafíos repetibles apunta en la misma dirección; ver [base teórica](07-reference/research-basis.md).
+
+La decisión entre ilimitado y N intentos es del evento y sigue abierta. La operación está en [modo feria y congelamiento](05-operations/fair-mode-and-competition-freeze.md).
+
+## Desempate
+
+Sin ruido aleatorio y sin decimales inventados para forzar unicidad. Tupla lexicográfica **recomendada**:
+
+1. `FairScore` desc;
+2. `MathPerformance` / `MathRaw` desc;
+3. cantidad de resultados óptimos desc;
+4. precisión desc;
+5. dificultad resuelta desc;
+6. tiempo activo asc.
+
+La matemática decide antes que la velocidad, y la velocidad sólo aparece al final. El desempate vigente y más simple del leaderboard está en [leaderboard y moderación](05-operations/leaderboard-and-moderation.md); esta tupla lo extiende y todavía no lo reemplaza.
+
+### Empate exacto
+
+No se puede prometer que un score con significado nunca empate: garantizar unicidad exige una clave arbitraria. Para premios hace falta una **política de organizador escrita antes de la feria**: puesto compartido, premio compartido o un desempate anunciado. Un `run_id` puede dar orden de visualización estable, pero no puede decidir un premio en secreto.
+
+Esa política es **OPEN**.
+
+### Tiempo
+
+Si el tiempo activo participa del desempate, hay que definirlo con cuidado: el reloj de pared se distorsiona con pestañas en segundo plano y red intermitente. Se prefieren intervalos activos controlados por el motor o marcas verificables por el servidor. La pregunta de qué señal temporal puede confiar el servidor sigue **OPEN** ([pregunta 27](07-reference/open-questions.md)).
+
+## Transparencia
+
+Las reglas publicadas tienen que poder explicarse en tres frases: la matemática es lo que más pesa, las decisiones de juego secundarias suman poco, la velocidad sólo desempata. Si la explicación pública no cabe en un cartel, la fórmula es demasiado complicada para una feria.
+
+## Estado de implementación
+
+| Capacidad | Estado |
+|---|---|
+| Score por evento determinista, con política nombrada y versionada | **implementado**, marcado `production: false` |
+| Separación entre stats visibles y métricas ocultas de razonamiento | **implementado** |
+| `MathPerformance` / `TeamPerformance` / `AuraPerformance` normalizados | **no implementado** |
+| `FairScore` y desglose competitivo | **no implementado** |
+| Comparador lexicográfico versionado | **no implementado** |
+| Personal best transaccional en servidor | **no implementado** |
+| `scoreVersion` en la identidad de la run | **no implementado** |
+
+Ver [arquitectura objetivo del motor](03-architecture/target-engine-architecture.md).
+
 ---
 
 # FILE: 01-game-design/content-authoring-guide.md
@@ -817,8 +1347,8 @@ Un challenge procedural debe poder afirmar automáticamente:
 ## Estados de contenido
 
 - `draft`.
-- `math_reviewed`.
-- `playtest_ready`.
+- `math_reviewed` — revisado por el Departamento de Matemática.
+- `playtest_ready` — listo para prueba con jugadores. Antes de la feria eso significa **prueba proxy con adultos**, no con estudiantes del rango objetivo; ver [ciclo de entrega real](00-product/real-delivery-lifecycle.md).
 - `production_ready`.
 - `retired`.
 
@@ -830,6 +1360,139 @@ Un challenge procedural debe poder afirmar automáticamente:
 - Evitar presión financiera personal; contextualizar presupuestos como recursos del proyecto/curso.
 - No usar salud, religión, política partidaria u otros datos sensibles del jugador como personalización.
 - Humor sin humillación.
+
+## Tres preguntas que la plantilla original no hacía
+
+### Efectos de carrera: sólo los que se pueden mover
+
+¿El evento toca genuinamente Promedio, Equipo, Aura o Estilo? La mayoría de los eventos deberían tocar **una o dos** dimensiones, no las cuatro. Una clave ausente significa que el evento no puede mover esa dimensión, y por eso `Promedio +0` ni siquiera es representable. Ver [ADR-016](03-architecture/adr/ADR-016-career-player-model.md).
+
+Promedio se mueve sólo si el evento es genuinamente académico. Aura se mueve sólo si el momento es socialmente memorable: un cálculo correcto no produce Aura.
+
+### Efectos de competencia: separados de las stats visibles
+
+Cuando exista modo competitivo, cada evaluador declarará su calidad matemática normalizada y, si corresponde, una contribución acotada de Equipo o de Aura, **aparte** de los efectos de carrera visibles. Ver [score competitivo y ranking](01-game-design/competitive-scoring-and-ranking.md).
+
+### Ocultos: dominio y flags
+
+¿Qué dominios matemáticos ejercita? ¿Qué flag narrativo escribe? Ninguno de los dos se renderiza.
+
+## Invariantes antes que generador
+
+Los invariantes de una variante se escriben **antes** que el código que la genera: al menos una solución válida, sin óptimo ambiguo salvo diseño explícito, aritmética legible, contexto escolar plausible, sin opciones duplicadas, posición de la opción correcta no fija y banda de dificultad declarada.
+
+La lista completa y sus criterios de aceptación están en [validación y auditoría de variantes](04-quality/variant-validation-and-audit.md).
+
+## Ficha de autoría
+
+Una plantilla nueva se registra antes de que exista código. La forma de esa ficha —narrativa, dominios matemáticos, apoyos, banda, invariantes, interacción, resultados, efectos de carrera, contribución competitiva, ocultos y estado de revisión docente— está en [challenge-authoring.example.yaml](07-reference/challenge-authoring.example.yaml).
+
+Es un ejemplo documental: no se importa desde runtime ni reemplaza al [schema de contenido](07-reference/content-schema.example.json).
+
+---
+
+# FILE: 01-game-design/difficulty-and-playability.md
+
+# Dificultad y jugabilidad universal
+
+**Estado: mixto.** El principio de piso bajo y techo alto es **RECOMENDADO** como principio de diseño y ya gobierna el contenido existente. Las bandas `CORE / STANDARD / STRETCH`, el presupuesto de dificultad y los multiplicadores son **RECOMENDADOS y configurables**. La calibración final es **TEACHER GATE**. La elección entre dificultad manual, adaptativa o híbrida sigue **OPEN** ([pregunta 5](07-reference/open-questions.md)).
+
+Este documento explica *cómo debe subir* la dificultad. Qué matemática se usa en cada año está en el [marco matemático](01-game-design/math-design-framework.md); qué factores hacen difícil un desafío concreto está en el [sistema de desafíos](01-game-design/challenge-system.md).
+
+## El problema de audiencia
+
+En la feria juegan estudiantes de 7.º, estudiantes de 5.º, docentes, familias y visitantes adultos. Un único “nivel medio de currículo” es demasiado difícil para unos y trivial para otros, y no hay forma de preguntar la edad sin pedir datos que el producto decidió no pedir.
+
+## Piso bajo, techo alto, paredes anchas
+
+- **Piso bajo:** entender la situación no requiere conocimiento previo especial. Nadie queda afuera en la primera pantalla.
+- **Techo alto:** el razonamiento profundo aparece por restricciones, comparación y optimización, no por currículo avanzado.
+- **Paredes anchas:** más de un camino y más de una representación válida para llegar.
+
+Consecuencia práctica: **un adulto no se distingue por saber matemática universitaria, sino por encontrar la mejor solución**. Un desafío de 7.º bien construido puede seguir teniendo una decisión no obvia para alguien de 45 años.
+
+La base de la literatura de diseño de tareas está en [base teórica](07-reference/research-basis.md).
+
+## De dónde tiene que venir la dificultad
+
+Sube por:
+
+- cantidad de relaciones relevantes;
+- restricciones simultáneas;
+- necesidad de filtrar información irrelevante;
+- planificación en varios pasos;
+- optimización, no sólo factibilidad;
+- comparación entre alternativas;
+- incertidumbre e interpretación estadística.
+
+**No** sube por:
+
+- números grandes;
+- decimales feos;
+- fórmulas avanzadas;
+- presión de velocidad.
+
+Confundir «difícil» con «cuentas incómodas» produce un examen disfrazado y castiga a quien razona bien pero calcula lento.
+
+## Apoyos no son trampa
+
+Si el objetivo de una tarea es elegir la mejor alternativa, mostrar la fórmula o permitir calculadora no baja el techo: saca una barrera que no era el objetivo. Es la distinción de UDL entre barrera de acceso y objetivo real de la tarea.
+
+Qué desafíos deben ofrecer qué apoyo es **TEACHER GATE**; si se permite calculadora en el ranking de feria sigue **OPEN** ([pregunta 7](07-reference/open-questions.md)).
+
+## Bandas de dificultad
+
+**RECOMENDADO** como metadata de autoría y competencia. No se muestran al jugador.
+
+| Banda | Estructura |
+|---|---|
+| **CORE** | una relación principal, ramificación cognitiva mínima |
+| **STANDARD** | dos relaciones o restricciones, comparación o cadena corta de pasos |
+| **STRETCH** | múltiples restricciones, optimización, selección de información u objetivos en conflicto |
+
+### Relación con lo que ya existe
+
+El motor define `DifficultyLevel` de 1 a 5 por plantilla (`src/game/challenges/taxonomy.ts`) y el marco matemático habla de variantes básica, intermedia y avanzada. Las tres escalas describen lo mismo con distinta resolución:
+
+| Banda | Nivel del motor | Variante del marco matemático |
+|---|---|---|
+| CORE | 1–2 | básica |
+| STANDARD | 3 | intermedia |
+| STRETCH | 4–5 | avanzada |
+
+**Este mapeo es una lectura documental, no una migración.** Nada en el código cambia por él; existe para que un documento que dice `STRETCH` y un test que dice `difficulty: 5` se puedan leer juntos.
+
+## Presupuesto de dificultad
+
+**RECOMENDADO / TARGET.** Si las runs oficiales se arman con variantes procedurales, dos jugadores pueden recibir cargas distintas y el ranking deja de comparar habilidad. El presupuesto de dificultad ata la masa esperada de desafío de cada run.
+
+Forma discreta: por ejemplo 2 CORE, 3 STANDARD, 1 STRETCH.
+Forma numérica: `Σ difficultyCost ≈ constante`, con tolerancia declarada.
+
+Los costos de scheduling son **metadata de armado de run** y están separados del multiplicador de score. El scheduler necesita distinguir fuerte entre CORE y STRETCH para balancear; el score necesita multiplicadores chicos para que la suerte del sorteo no domine sobre la habilidad. El diseño del scheduler está en [arquitectura objetivo del motor](03-architecture/target-engine-architecture.md).
+
+### Valores candidatos
+
+Provisionales, **no oficiales**, sujetos a Teacher Gate:
+
+| Banda | Costo de scheduling | Multiplicador de score |
+|---|---|---|
+| CORE | 1,00 | 1,00 |
+| STANDARD | 1,50 | 1,08 |
+| STRETCH | 2,10 | 1,15 |
+
+Si el multiplicador de score crece mucho, el sorteo de variantes empieza a decidir el ranking. Ese es el motivo de que sean chicos, y es el criterio para discutirlos.
+
+## Dificultad adaptativa en competencia
+
+La adaptación es útil en modo libre o de práctica. En modo feria oficial, bajarle la dificultad en silencio a quien está fallando rompe la comparabilidad del ranking, salvo que el score compense formalmente esa diferencia y los docentes lo aprueben.
+
+Dirección recomendada para la feria: **runs equiparadas por presupuesto de dificultad**, con pools de variantes emparejados. La adaptación queda para un modo posterior.
+
+## Calibración
+
+Antes de datos reales: juicio docente y experto sobre rasgos estructurales de cada plantilla.
+Después de la feria: tasas empíricas de éxito y tiempo por plantilla. Esos datos alimentan **versiones futuras**; no redefinen retroactivamente un score oficial salvo que la política del evento lo permita explícitamente.
 
 ---
 
@@ -1041,6 +1704,81 @@ No introducir:
 
 ---
 
+# FILE: 01-game-design/graduation-and-fail-forward.md
+
+# Egreso, recuperación y fail-forward
+
+**Estado: PRODUCT DIRECTION.** La dirección —el error cambia el camino, no termina la partida— está decidida. La forma concreta de la recuperación, el lenguaje de las previas y qué años la ofrecen son **OPEN**, y el tono de esa recuperación es **TEACHER GATE**.
+
+## Invariante buscado
+
+> Toda run completada válida llega a `EGRESADO`.
+
+El jugador compite por calidad y construye un recorrido distinguible, pero no queda afuera del resto del juego por haberse equivocado.
+
+Esto no es indulgencia: es la consecuencia de que el producto trate el error como información. Una feria en la que el juego te expulsa a los noventa segundos no es una feria en la que alguien juegue dos veces.
+
+## Progresión separada de desempeño
+
+El desempeño cambia:
+
+- Promedio;
+- score;
+- qué contenido de recuperación aparece;
+- flags e historia;
+- arquetipo final;
+- Aura, Equipo y Estilo donde tenga sentido contextual.
+
+El desempeño **no** produce por sí solo un estado terminal de “no podés seguir”.
+
+## Qué dice hoy la documentación vigente
+
+[Reglas, scoring y progresión](01-game-design/rules-scoring-and-progression.md) declara que en el MVP no hay repetición automática de año por bajo desempeño: la fantasía es una carrera comprimida, no un simulador administrativo de promoción escolar. **Eso sigue vigente y no se contradice.**
+
+Lo que agrega esta dirección es el otro lado: no repetir el año tampoco significa que el bajo desempeño no tenga consecuencia. La consecuencia es narrativa y de score, comprimida en eventos, no en volver a jugar doce meses.
+
+## Patrón de cierre de año
+
+Estados comprimidos sugeridos, **no implementados**:
+
+- promoción directa;
+- cierre normal;
+- recuperación requerida;
+- promoción «con lo justo» con materia pendiente que vuelve después.
+
+Una recuperación también puede salir mal. El sistema converge igual, con otra consecuencia comprimida, en vez de encerrar al jugador en un bucle.
+
+## Previas
+
+Una estructura oculta de materias pendientes permite callbacks:
+
+```text
+1.º: te quedó una previa → 2.º/3.º: esa previa sigue ahí → 5.º: arco final de recuperación
+```
+
+Es estado narrativo oculto, no una quinta stat en el HUD. El modelo visible sigue siendo el de [ADR-016](03-architecture/adr/ADR-016-career-player-model.md): Promedio, Equipo, Aura y Estilo, y nada más es permanente.
+
+## Sin sistema de vidas
+
+Ni corazones, ni intentos limitados, ni tres strikes. El error genera consecuencia y contenido adicional, no menos minutos de juego.
+
+## Requisito de verificación
+
+Cuando esta dirección se implemente, la simulación y los property tests tienen que establecer que:
+
+- toda run completable llega a `EGRESADO`;
+- ningún estado de fracaso académico es terminal;
+- la recuperación no puede crear un callejón sin salida;
+- el estado sigue siendo serializable y reproducible por replay.
+
+La simulación masiva vigente (`pnpm game:simulate`) ya busca callejones sin salida y divergencia de replay; el invariante de egreso se suma a esa capa cuando exista contenido de recuperación. Ver [estrategia de testing](04-quality/testing-strategy.md).
+
+## Estado de implementación
+
+El slice de 7.º termina en un hito de año, no en el egreso. La carrera completa `7.º → 1.º → 2.º → 3.º → 4.º → 5.º → Egreso`, el arco de recuperación y el arquetipo final son **contenido futuro**; ver [la secuencia de implementación](06-delivery/implementation-sequence.md).
+
+---
+
 # FILE: 01-game-design/math-design-framework.md
 
 # Marco de diseño matemático
@@ -1148,8 +1886,30 @@ No comparar floats de forma exacta.
 Antes de marcar contenido como `production_ready`:
 - revisión matemática;
 - revisión de lenguaje;
-- prueba con al menos un usuario del rango objetivo cuando sea posible;
+- prueba con al menos un usuario del rango objetivo **cuando sea posible**, sabiendo que antes de la feria probablemente no lo sea: la validación formal previa es la del Departamento de Matemática, ver [gates docentes](06-delivery/teacher-gates.md);
 - test procedural de invariantes.
+
+## Piso bajo, techo alto
+
+La dificultad no sube por números más grandes ni por decimales más feos: sube por cantidad de relaciones, restricciones simultáneas, información irrelevante que hay que filtrar, planificación multipaso, optimización y incertidumbre. Un desafío rico puede usar aritmética elemental.
+
+Esto no es sólo pedagogía: es un requisito de producto. En la feria juegan chicos de 7.º y adultos, y una sola «dificultad media de currículo» deja afuera a los dos extremos. El desarrollo completo —bandas `CORE / STANDARD / STRETCH`, presupuesto de dificultad y su correspondencia con `DifficultyLevel` 1–5— está en [dificultad y jugabilidad universal](01-game-design/difficulty-and-playability.md).
+
+### Los tres niveles de variante, en las tres escalas
+
+| Este documento | Banda de autoría | Nivel del motor |
+|---|---|---|
+| básico | CORE | 1–2 |
+| intermedio | STANDARD | 3 |
+| avanzado | STRETCH | 4–5 |
+
+Es una lectura documental para poder leer juntos los tres vocabularios. No implica ninguna migración de código.
+
+## Apoyos y barreras de acceso
+
+Si el objetivo de una tarea es modelar y decidir, la fórmula visible o la calculadora no bajan el techo: sacan una barrera que no era el objetivo. Es la distinción de UDL entre barrera de acceso y objetivo real de la tarea; ver [base teórica](07-reference/research-basis.md).
+
+Qué desafíos ofrecen qué apoyo, y si eso cambia en modo competitivo, es una decisión docente pendiente ([preguntas 7 y 45](07-reference/open-questions.md)).
 
 ---
 
@@ -1264,6 +2024,16 @@ Cada storylet matemático debe responder:
 4. ¿Cómo se ve la consecuencia?
 5. ¿Qué cambia en la carrera?
 
+## Condiciones declarativas, no código en el contenido
+
+Las condiciones de un storylet se expresan como datos versionados, no como JavaScript ejecutable dentro del contenido. Eso es lo que permite validarlas, reproducirlas en el servidor durante un replay y autorarlas sin riesgo.
+
+## Callbacks de fail-forward
+
+Un mal resultado debería **crear** contenido, no quitarlo: recuperación, storylets incómodos y oportunidades alternativas hacen que equivocarse sea interesante. Cuando exista contenido de recuperación, las materias pendientes son estado narrativo oculto que habilita callbacks a lo largo de los años, no una quinta stat en el HUD. Ver [egreso, recuperación y fail-forward](01-game-design/graduation-and-fail-forward.md).
+
+Los branches especiales tienen que ser escasos: si se disparan todo el tiempo, dejan de tener peso narrativo.
+
 ---
 
 # FILE: 01-game-design/rules-scoring-and-progression.md
@@ -1320,7 +2090,7 @@ Donde:
 - eficiente: 0.90.
 - óptima: 1.00.
 
-Estos valores deben tunearse con playtests.
+Estos valores son de **desarrollo** y no oficiales: el motor los expone bajo una política nombrada marcada `production: false`, y el cargador de ruleset se niega a construir un ruleset oficial desde ahí. Su calibración final es una decisión del Departamento de Matemática ([pregunta 24](07-reference/open-questions.md) y [pregunta 39](07-reference/open-questions.md)), no el resultado de un playtest previo que no está garantizado. Ver [ciclo de entrega real](00-product/real-delivery-lifecycle.md).
 
 ## Velocidad
 
@@ -1378,6 +2148,21 @@ No usar diagnósticos psicológicos ni lenguaje clínico.
 La run termina al completar el evento final o al abandonar explícitamente.
 
 No hay repetición automática de año por bajo desempeño en el MVP. La fantasía es una carrera comprimida, no un simulador administrativo de promoción escolar.
+
+Eso no significa que el bajo desempeño no tenga consecuencia. La dirección de producto es **fail-forward**: el error cambia el camino, el contenido de recuperación y el perfil final, sin producir un estado terminal ni obligar a volver a jugar un año entero. Esa dirección todavía no tiene contenido implementado; ver [egreso, recuperación y fail-forward](01-game-design/graduation-and-fail-forward.md).
+
+## Este score no es el score de la competencia
+
+Lo anterior describe el **score por evento y por run**: es lo que el motor calcula hoy y lo que ve el jugador. Es una capa distinta del score competitivo de feria, que todavía no existe.
+
+| Capa | Qué responde | Estado |
+|---|---|---|
+| Resultado de desafío | ¿qué tan bien se resolvió esta situación? | implementado |
+| Score de run | ¿cuántos puntos hizo esta partida? | implementado, política de desarrollo |
+| Identidad de carrera | ¿qué recorrido escolar construí? | implementado |
+| `FairScore` competitivo | ¿qué tan fuerte fue esta run oficial bajo las reglas del evento? | **no implementado**, y sus coeficientes están abiertos |
+
+La dirección propuesta para esa cuarta capa —matemática dominante, contribución acotada de Equipo y Aura, Estilo sin puntaje directo, mejor intento y desempate lexicográfico— está en [score competitivo y ranking](01-game-design/competitive-scoring-and-ranking.md). **Es una recomendación sujeta a Teacher Gate, no una regla cerrada**, y quien la implemente tiene que escribirla como política versionada y no como constantes en el código.
 
 ---
 
@@ -1584,6 +2369,33 @@ Ocultar/restaurar nicknames y scores.
 ### FR-A04 Exportación
 Exportar estadísticas agregadas del evento.
 
+## Requisitos objetivo del modo competitivo
+
+**No implementados.** Estos requisitos aparecen cuando exista la feria con ranking y premios. Se numeran aparte para que nadie los confunda con comportamiento actual; su arquitectura está en [arquitectura objetivo del motor](03-architecture/target-engine-architecture.md).
+
+### FR-T01 Descriptor de run oficial
+Antes de que una run pueda ser candidata a premio, el servidor emite un descriptor inmutable con la tupla de versiones —incluidas `scoreVersion` y `variantCatalogVersion`—, el seed y la asignación de variantes. El cliente no puede pedir un seed arbitrario ni una dificultad más fácil.
+
+### FR-T02 Vista pública sin solución
+El motor expone de una variante sólo lo que el renderer necesita. Ni la respuesta ni el evaluador se filtran por la forma del contenido público.
+
+### FR-T03 Envío sin score
+El cliente envía identidad de run y action log canónico, con clave de idempotencia. Un campo `score` provisto por el cliente se ignora o se rechaza.
+
+### FR-T04 Verificación por replay
+El servidor recarga las versiones exactas, reconstruye las variantes, reproduce los comandos, rechaza logs imposibles y escribe un resultado oficial inmutable.
+
+### FR-T05 Personal best
+El verificador actualiza el mejor resultado del participante según el comparador versionado. Una run peor queda en el historial auditable pero no reemplaza al mejor público.
+
+### FR-T06 Continuar después del fracaso
+Un resultado académico insuficiente no crea un estado terminal global. Cuando el contenido lo habilite, la progresión agenda un evento de recuperación comprimido.
+
+### FR-T07 Cierre de carrera completa
+El producto completo termina en `EGRESADO`, deriva el arquetipo final y produce el resumen de run. El slice de 7.º termina en el hito de año.
+
+Estos requisitos **no cierran** las decisiones que dependen del Departamento de Matemática: los coeficientes de score, la política de intentos y la política de empate siguen en [preguntas abiertas](07-reference/open-questions.md).
+
 ---
 
 # FILE: 02-functional/traceability-matrix.md
@@ -1611,6 +2423,23 @@ Toda feature nueva debe:
 3. tener historia o tarea técnica;
 4. crear ADR si cambia una decisión arquitectónica significativa;
 5. actualizar tests/NFR si aplica.
+
+## Dirección del blueprint v0.2 hasta el código
+
+De requisito de producto a capacidad de motor y a estado real. Esta tabla cubre lo que **todavía no** está cubierto por los FR de arriba, y su columna de estado es una lectura del 28 de agosto de 2026: se verifica contra el código antes de planificar. El mapa completo está en [la integración del blueprint](07-reference/blueprint-v0.2-integration.md).
+
+| Requisito de producto | Regla de game design | Capacidad de motor | Estado | Fase |
+|---|---|---|---|---|
+| Escenarios que no se memorizan | [familias y variantes](01-game-design/challenge-families-and-variants.md) | `ScenarioFamily`/`Template`/`Variant` | variantes autoradas y seeded por desafío | paso 2 |
+| Competencia sin variantes defectuosas | [validación de variantes](04-quality/variant-validation-and-audit.md) | validador transversal + catálogo desplegado | invariantes por desafío, sin catálogo | pasos 2 y 9 |
+| Runs comparables entre sí | [dificultad](01-game-design/difficulty-and-playability.md) | bandas + scheduler por presupuesto | `DifficultyLevel` 1–5 | paso 2 |
+| Ranking dominado por matemática | [score competitivo](01-game-design/competitive-scoring-and-ranking.md) | `ScorePolicy` competitiva versionada | score por evento de desarrollo | paso 3 |
+| Premiar mejora y no volumen de intentos | [modo feria](05-operations/fair-mode-and-competition-freeze.md) | comparador versionado + personal best | no implementado | paso 8 |
+| El error no expulsa al jugador | [fail-forward](01-game-design/graduation-and-fail-forward.md) | invariante de egreso + recuperación | sin contenido de recuperación | pasos 6 y 7 |
+| Identidad de carrera legible | [ADR-016](03-architecture/adr/ADR-016-career-player-model.md) | `CareerState` v0.2 | **implementado** | — |
+| Auditoría de una run oficial | [ADR-003](03-architecture/adr/ADR-003-deterministic-seeded-engine.md) | seed + versiones + action log | **implementado**; faltan `scoreVersion` y `variantCatalogVersion` | paso 8 |
+
+Las fases son las de [la secuencia de implementación](06-delivery/implementation-sequence.md).
 
 ---
 
@@ -1690,6 +2519,53 @@ flowchart TD
 2. Validación local de formato.
 3. Backend aplica política/moderación.
 4. Si falla, devolver error neutral y permitir corregir.
+
+## Flujo objetivo de feria oficial
+
+**No implementado.** Es la forma que toma el flujo cuando existan evento, ranking y verificación en servidor.
+
+```text
+QR / URL
+→ landing del evento
+→ nickname / token de participante
+→ pedir run oficial
+→ el servidor emite el descriptor
+→ juego local-first
+→ egreso
+→ resumen final
+→ enviar action log
+→ estado pendiente de verificación si hace falta
+→ score verificado por el servidor
+→ personal best y ranking
+→ jugar de nuevo
+```
+
+Si no se pudo emitir una run autoritativa antes de empezar, la aplicación ofrece juego libre no oficial en vez de convertir en silencio una run no verificable en candidata a premio.
+
+## Interrupción de red durante una run emitida
+
+```text
+se pierde la red
+→ seguir jugando local si los datos de variante ya están disponibles
+→ terminar
+→ envío pendiente
+→ reintento idempotente
+→ verificado cuando vuelve la conectividad
+```
+
+Es el local-first de [ADR-006](03-architecture/adr/ADR-006-local-first-gameplay.md) con la autoridad de [ADR-004](03-architecture/adr/ADR-004-server-authoritative-scoring.md).
+
+## Flujo de recuperación
+
+```text
+resultado académico insuficiente
+→ consecuencia
+→ flag o evento de recuperación
+→ desafío o storylet de recuperación comprimido
+→ etapa siguiente
+```
+
+Sin bucle que obligue a rejugar el mismo año. Ver [egreso, recuperación y fail-forward](01-game-design/graduation-and-fail-forward.md).
 
 ---
 
@@ -1830,6 +2706,35 @@ Como desarrollador quiero reconstruir una run por seed para depurar problemas.
 
 **Aceptación**
 - Seed + versiones + actions son suficientes para replay.
+
+## Historias de la dirección competitiva
+
+**No implementadas.** Corresponden al modo feria con ranking; ver [score competitivo](01-game-design/competitive-scoring-and-ranking.md) y [modo feria](05-operations/fair-mode-and-competition-freeze.md).
+
+### Jugador
+
+- Como jugador, al volver a jugar recibo situaciones y valores distintos, en vez de poder memorizar una respuesta.
+- Como jugador, puedo mejorar mi mejor marca sin que la cantidad de intentos sea el puntaje.
+- Como jugador, veo sólo las dimensiones de carrera que ya adquirieron significado.
+- Como jugador, entiendo por qué un resultado fue óptimo, eficiente, funcional o inválido.
+
+### Docente
+
+- Como docente, identifico el concepto matemático y el razonamiento buscado de cada plantilla.
+- Como docente, inspecciono variantes representativas y de borde con su justificación.
+- Como docente, entiendo y decido la filosofía de score antes de la feria.
+
+### Organizador
+
+- Como organizador, veo el ranking oficial y modero nicknames inapropiados sin borrar la evidencia auditada.
+- Como organizador, identifico qué run y qué versiones produjeron un score.
+- Como organizador, me recupero de fallas transitorias de envío sin otorgar entradas duplicadas.
+
+### Autor de contenido y desarrollo
+
+- Como autor, defino una plantilla una vez y genero muchas variantes válidas y deterministas.
+- Como desarrollador, reproduzco un bug reportado a partir de id de run, seed y versiones.
+- Como ingeniero, agrego contenido de 1.º sin inventar botones, cards, colores ni una arquitectura de scoring nueva.
 
 ---
 
@@ -2511,6 +3416,92 @@ Salen `geist` —la familia que reemplazan— y `lucide-react`. El pack de picto
 
 ---
 
+# FILE: 03-architecture/adr/ADR-018-blueprint-v0-2-decision-authority.md
+
+# ADR-018 — Autoridad y madurez de las decisiones del Project Blueprint v0.2
+
+- Estado: Aceptado
+- Fecha: 2026-08-28
+
+## Contexto
+
+El 28 de agosto de 2026 entró al repositorio el paquete **EGRESADO Project Blueprint & Technical Handoff v0.2.0**: 79 archivos que consolidan producto, game design, pedagogía, motor objetivo, calidad, operación de feria y entrega, posteriores al rediseño visual de 7.º y a las discusiones sobre competencia con premios.
+
+El paquete no es un documento más. Trae tres cosas que la documentación existente no tenía y que, integradas mal, harían daño:
+
+**Trae decisiones con distinto grado de madurez.** El propio paquete distingue seis niveles —`LOCKED`, `PRODUCT DIRECTION`, `RECOMMENDED`, `TEACHER GATE`, `OPEN`, `DEFERRED`— y varias de sus propuestas más concretas (la ponderación 80/15/5 del score competitivo, la política de intentos ilimitados, la calibración de calidades) son candidatas que requieren aprobación del Departamento de Matemática. Aplanarlas a «requisitos» convertiría un borrador defendible en un contrato que nadie firmó.
+
+**Describe un ciclo de entrega real distinto del roadmap escrito.** El roadmap del repositorio valida por capas con testers; el ciclo real valida con docentes y **es probable que no haya playtest con estudiantes antes de la feria**. Documentos que asumen playtest previo describen un proceso que no va a ocurrir.
+
+**Describe como pendiente trabajo que ya está hecho.** El capítulo de migración de estado de carrera pide reemplazar `knowledge/team/initiative/energy` por Promedio · Equipo · Aura · Estilo. Esa migración ya ocurrió: es [ADR-016](03-architecture/adr/ADR-016-career-player-model.md) y `ENGINE_VERSION` `2.0.0`. Integrar el paquete tal cual haría que un agente futuro replanifique trabajo terminado.
+
+Al mismo tiempo hay una restricción que no se puede pisar: el sistema de diseño **Claude Design v0.2** se está implementando ahora mismo y es la autoridad visual. El paquete resume decisiones visuales; ese resumen no es permiso para redecidirlas.
+
+## Decisión
+
+### 1. El paquete se congela como fuente, y la documentación canónica lo absorbe
+
+El paquete queda verbatim en [`docs/sources/egresado-project-blueprint-v0.2.0/`](sources/README.md), con su `MANIFEST.json` intacto y verificable. No se edita.
+
+El contenido vigente se integró en la taxonomía existente (`00-product` a `09-design-system`), en castellano rioplatense y con la terminología del proyecto. **La documentación canónica es la de `docs/`; el paquete es procedencia.** El mapa de qué documento absorbió qué, y por qué, está en [la integración del blueprint](07-reference/blueprint-v0.2-integration.md).
+
+Dentro del paquete, `EGRESADO-MASTER-BLUEPRINT.md` es una vista consolidada generada de los modulares, igual que `EGRESADO-MASTER-SPEC.md` en este repositorio. Ninguno de los dos es fuente mantenible fuera de su propio paquete.
+
+### 2. La madurez de una decisión se conserva y se escribe
+
+Toda decisión integrada declara su nivel, y el nivel es parte de la decisión:
+
+| Nivel | Qué significa para quien implementa |
+|---|---|
+| **LOCKED** | fundación aceptada; se implementa salvo que una autoridad más nueva la supere |
+| **PRODUCT DIRECTION** | dirección fuerte; la arquitectura debe poder sostenerla aunque hoy no exista |
+| **RECOMMENDED** | propuesta senior; se implementa **configurable**, nunca como constante inmutable |
+| **TEACHER GATE** | requiere validación del Departamento de Matemática antes del congelamiento |
+| **OPEN** | deliberadamente sin resolver; no se cierra dentro del código |
+| **DEFERRED** | fuera de alcance a propósito; no es deuda técnica ni backlog urgente |
+
+Regla operativa: **una constante marcada `RECOMMENDED` o `TEACHER GATE` no se escribe como número mágico.** Se escribe como política versionada con su versión declarada, igual que ya hace `src/game/scoring/` con `production: false`.
+
+El registro único de decisiones es [`07-reference/decision-register.md`](07-reference/decision-register.md), que ahora contiene tanto los ADR como las decisiones del blueprint con su nivel. Las que siguen abiertas viven en [`07-reference/open-questions.md`](07-reference/open-questions.md). No se crea un segundo registro.
+
+### 3. Jerarquía de fuentes de verdad
+
+Ante contradicción, y por dominio:
+
+| Dominio | Autoridad |
+|---|---|
+| Comportamiento de juego, matemática, transiciones | documentos de `docs/` + motor + tests |
+| Identidad visual, tokens, presentación de Game UI | [Claude Design v0.2 y el sistema de diseño implementado](09-design-system/README.md) |
+| Decisiones de producto de este refinamiento y su madurez | [registro de decisiones](07-reference/decision-register.md) |
+| Estado real actual | el código |
+| Configuración oficial de la competencia | configuración de evento versionada, después de la aprobación docente |
+
+Con cuatro reglas de conflicto:
+
+1. una captura de pantalla no cambia una regla matemática;
+2. un estilo heredado del frontend no supera el handoff de diseño aprobado;
+3. documentación vieja no supera una decisión de producto más nueva sin dejar el conflicto escrito;
+4. una regla `TEACHER GATE` u `OPEN` se implementa detrás de política versionada, nunca como supuesto irreversible.
+
+### 4. Presente y objetivo se escriben separados
+
+Un documento no describe en presente una capacidad que no existe. La arquitectura futura vive en [arquitectura objetivo del motor](03-architecture/target-engine-architecture.md), con el estado real de cada capacidad; [game engine](03-architecture/game-engine.md) sigue describiendo lo implementado.
+
+### 5. El blueprint no reabre el sistema de diseño
+
+El paquete aporta contexto durable de producto —economía artística UI-first, arte selectivo, seleccionar no es acertar, ningún estado sólo por color, por qué Egresado se alejó de la gramática visual de Copero y El Ídolo— y **nada más**. Valores de token, tipografía, paleta, geometría, componentes y arte los define el sistema de diseño implementado. Los documentos de producto enlazan; no repiten valores.
+
+## Consecuencias
+
+- Existe un único registro de decisiones y una única lista de preguntas abiertas; el nivel de madurez es una columna, no un documento aparte.
+- Los documentos de producto que asumían playtest previo a la feria quedan corregidos hacia el ciclo real, con la limitación declarada en vez de disimulada. Ver [ciclo de entrega real](00-product/real-delivery-lifecycle.md).
+- Aparecen documentos nuevos de dirección competitiva —score, ranking, variantes, dificultad, fail-forward— todos marcados como recomendación o dirección, ninguno como regla cerrada.
+- Un agente de implementación futuro puede distinguir, sin leer código, qué es actual, qué es objetivo, qué está bloqueado por una decisión docente y qué no debe decidir solo.
+- El paquete original queda auditable: si mañana alguien discute qué decía la fuente, hay hash.
+- **Esta integración no cambió comportamiento de producto.** Ninguna capacidad nueva se implementó al integrarla; la secuencia de trabajo está en [la secuencia de implementación](06-delivery/implementation-sequence.md).
+
+---
+
 # FILE: 03-architecture/analytics-observability.md
 
 # Analytics y observabilidad
@@ -2589,6 +3580,18 @@ Campos recomendados:
 - tiempo por challenge;
 - distribución de resultados;
 - perfiles finales.
+
+## Telemetría de feria
+
+Porque la feria es la primera exposición real a jugadores del rango objetivo, la instrumentación tiene que estar lista el día uno y no después. Ver [ciclo de entrega real](00-product/real-delivery-lifecycle.md).
+
+Eventos mínimos útiles: `run_issued`, `run_started`, `challenge_started`, `challenge_completed`, `challenge_outcome`, `run_completed`, `submission_pending`, `submission_verified`, `submission_rejected` con código de motivo, y `technical_error`.
+
+Qué **no** se manda: payloads completos de respuesta cuando no hacen falta, nombres o correos, perfilado sensible, y volumen excesivo de eventos.
+
+Tableros operativos durante el evento: tasa de actividad y de error, éxito y latencia de envíos, salud de base de datos y API, fallas de actualización de ranking y actividad anómala de límite de tasa.
+
+Análisis posterior a la feria: puntos de abandono, tiempo por desafío, distribución de resultados, mejora entre intentos repetidos y variantes con dificultad atípica. Esa evidencia alimenta versiones futuras; **no redefine** un score ya otorgado salvo política de regrade declarada.
 
 ---
 
@@ -2709,6 +3712,14 @@ Response:
 ## Versionado
 
 Cambios incompatibles usan `/v2` o negociación explícita. Cambios de reglas del juego se manejan además con `rulesetVersion`.
+
+## Superficie objetivo del backend de feria
+
+**No implementada.** Cuando exista el modo competitivo, la superficie mínima es: crear o retomar un participante pseudónimo; emitir un `RunDescriptor` oficial; recibir un envío final con action log e idempotencia, **sin aceptar un score del cliente**; devolver leaderboard moderado y paginado; y endpoints de moderación con autorización separada.
+
+Los límites de contrato son parte del contrato: largo máximo de nickname, cantidad de comandos y bytes del action log, tamaño de request, límites de tasa, validación de la tupla de versiones y tope de paginación.
+
+El diseño de esa superficie está en [arquitectura objetivo del motor](03-architecture/target-engine-architecture.md); su contrato concreto sigue abierto ([pregunta 22](07-reference/open-questions.md)).
 
 ---
 
@@ -2929,6 +3940,21 @@ No duplicar sin necesidad:
 
 Preferir query/view/materialized view según escala real.
 
+## Entidades objetivo del modo feria
+
+**No implementadas.** Los nombres se adaptan a las convenciones reales al escribir la migración.
+
+- **Evento:** vigencia, estado (`draft`/`frozen`/`live`/`closed`), tupla de versiones permitida, política de intentos y ajustes de ranking público.
+- **Participante:** id pseudónimo, evento, nickname, estado de moderación.
+- **Run:** descriptor y tupla de versiones, seed y calendario de variantes, estado (`issued`/`completed`/`pending`/`verified`/`rejected`).
+- **Acciones de run:** action log canónico, ordenado e inmutable.
+- **Resultado verificado:** desglose de score, resumen de carrera, arquetipo cuando exista, tupla de desempate y metadata de verificación.
+- **Mejor del participante:** referencia a la mejor run verificada del evento, actualizada transaccionalmente.
+- **Catálogo de variantes:** versión, plantilla, seed, fingerprint, metadata de dificultad y estado de aprobación.
+- **Auditoría de moderación:** actor, participante, acción, motivo y timestamp.
+
+Ver [arquitectura objetivo del motor](03-architecture/target-engine-architecture.md) y [modo feria y congelamiento](05-operations/fair-mode-and-competition-freeze.md). La retención de cada una es una decisión abierta ([preguntas 31 y 50](07-reference/open-questions.md)).
+
 ---
 
 # FILE: 03-architecture/deployment-and-environments.md
@@ -3048,6 +4074,12 @@ Un CI verde de la base técnica no reemplaza esos gates contextuales.
 - La base incluye manifest responsive. Un service worker avanzado se difiere hasta estabilizar caching y versionado para no servir assets o reglas incompatibles.
 
 Los feature flags futuros deben limitarse a necesidades verificadas; no crear una plataforma propia de flags para el MVP.
+
+## Aislamiento de configuración competitiva
+
+Cuando exista el modo feria, cuatro ambientes con propósitos distintos: local con generadores sin restricción y herramientas de debug; demo docente con contenido estable de 7.º y pool determinista; staging o ensayo de feria con la misma forma de infraestructura y configuración que producción, participantes sintéticos y pruebas de carga y ranking; y producción de feria con configuración de evento congelada, catálogo oficial de variantes, verificación autoritativa, monitoreo y moderación.
+
+Regla dura: **una versión de desarrollo de score o de contenido no puede convertirse en versión oficial por accidente.** El registro del evento habilita explícitamente sólo la tupla congelada, y el flag `production` del ruleset ya se niega a construir un ruleset oficial desde una política de desarrollo. Ver [modo feria y congelamiento](05-operations/fair-mode-and-competition-freeze.md).
 
 ---
 
@@ -3282,6 +4314,12 @@ El determinismo entre runtimes se verifica en `tests/e2e/game-engine-harness.spe
 
 Opcional. `canonicalize(state)` produce la forma estable sobre la que se puede calcular un hash para detectar divergencias entre cliente y servidor. Es una señal de diagnóstico, no un mecanismo de seguridad por sí mismo.
 
+## Lo que este documento no describe
+
+Este documento describe el motor **implementado**. Las capacidades que la dirección de producto pide y todavía no existen —jerarquía de familias y plantillas, catálogo de variantes desplegado, scheduler por presupuesto de dificultad, score competitivo normalizado, `RunDescriptor` emitido por servidor, `scoreVersion`, `variantCatalogVersion` y verificación por replay— están en [arquitectura objetivo del motor](03-architecture/target-engine-architecture.md), con el estado real de cada una.
+
+La frontera fundamental no cambia en ninguna de esas evoluciones. Si una propuesta futura la toca, es un ADR nuevo.
+
 ---
 
 # FILE: 03-architecture/security-privacy.md
@@ -3388,6 +4426,202 @@ Mitigaciones objetivo:
 
 No prometer anti-cheat absoluto: el objetivo es impedir manipulación trivial y preservar integridad razonable en una feria escolar. La fórmula de score, las señales temporales y el contrato de replay siguen en [preguntas abiertas](07-reference/open-questions.md#engine-y-scoring).
 
+## Minimización de datos en la competencia
+
+El ranking no necesita una cuenta escolar: alcanza con nickname, identificador pseudónimo de participante, los datos de run necesarios para verificar, el desglose de score y el estado de moderación.
+
+Se evita, salvo que la institución lo requiera y lo gobierne: nombre completo, correo, teléfono, edad o fecha de nacimiento exactas y perfil personal innecesario. Si hace falta identidad real para entregar un premio, se prefiere un mapeo externo controlado por el organizador o un código de evento, en vez de publicar identidad dentro del juego.
+
+La retención —cuánto viven los action logs, cuánto queda público el leaderboard, qué se archiva o se anonimiza después de la feria— se define antes del lanzamiento y sigue abierta ([preguntas 31 y 50](07-reference/open-questions.md)). Esto es guía de producto: la política legal aplicable la define la institución anfitriona.
+
+Las amenazas específicas de la competencia con premios están en el [threat model](04-quality/threat-model.md), y su operación en [modo feria y congelamiento](05-operations/fair-mode-and-competition-freeze.md).
+
+---
+
+# FILE: 03-architecture/target-engine-architecture.md
+
+# Arquitectura objetivo del motor
+
+**Este documento describe lo que todavía no existe.** [Game engine](03-architecture/game-engine.md) describe el motor implementado y sigue siendo la fuente autoritativa del estado actual. Acá se documenta la brecha entre ese motor y las capacidades que pide la dirección de producto del [blueprint v0.2](07-reference/blueprint-v0.2-integration.md), con el estado real de cada una.
+
+Ninguna capacidad marcada TARGET debe describirse en presente en otro documento hasta que exista en el código y en los tests.
+
+## Frontera fundamental — sin cambios
+
+```text
+Browser / React
+    ↓ comandos
+Controlador de aplicación
+    ↓
+Motor determinista puro
+    ↓
+Estado + eventos de dominio + descriptores de efecto
+    ↓
+Adapters · persistencia · verificación en servidor
+```
+
+Esto ya es lo que hay: núcleo funcional con función de transición explícita ([ADR-011](03-architecture/adr/ADR-011-functional-core-transition-engine.md)), sin React, DOM, almacenamiento, red ni tiempo ambiente adentro del dominio, y con aritmética racional exacta ([ADR-013](03-architecture/adr/ADR-013-exact-rational-arithmetic.md)). La evolución que sigue **no toca esta frontera**; si una propuesta futura la toca, es un ADR nuevo, no una tarea de contenido.
+
+## Estado por capacidad
+
+| # | Capacidad | Estado | Dónde |
+|---|---|---|---|
+| 1 | `CareerState` v0.2: Promedio derivado de notas, Equipo, Aura, Estilo | **implementado** | `src/game/progression/career.ts`, [ADR-016](03-architecture/adr/ADR-016-career-player-model.md) |
+| 2 | Libro de notas para Promedio en vez de deltas arbitrarios | **implementado** | `grades: readonly number[]` |
+| 3 | Estilo como evidencia acumulada con normalización derivada | **implementado** | `estilo` + `estiloEvidence` |
+| 4 | Dominio matemático oculto por categoría | **implementado**, nunca renderizado | `mastery` |
+| 5 | Flags e historia narrativa ocultos | **implementado** | `src/game/narrative/` |
+| 6 | Generación seeded, verificación e vista pública sin solución | **implementado** | `src/game/challenges/contracts.ts` |
+| 7 | Derivación de seed estable y substreams versionados | **implementado** | [ADR-012](03-architecture/adr/ADR-012-seeded-prng-and-substreams.md) |
+| 8 | Action log canónico y replay | **implementado** | `src/game/runs/` |
+| 9 | Codec de snapshot versionado con rechazo explícito de versiones viejas | **implementado** | `src/game/runs/snapshot.ts` |
+| 10 | Política de score nombrada, versionada y no oficial por defecto | **implementado** | `src/game/scoring/`, `production: false` |
+| 11 | Tripleta de versiones en toda run | **implementado**: `gameVersion`, `rulesetVersion`, `contentVersion` | `src/game/core/versioning.ts` |
+| 12 | Jerarquía `ScenarioFamily → Template → Variant` | **TARGET** | [familias y variantes](01-game-design/challenge-families-and-variants.md) |
+| 13 | `VariantGenerator` por restricción, reutilizable entre plantillas | **TARGET** | ídem |
+| 14 | `VariantValidator` con invariantes de dominio ejecutables | **parcial**: cada desafío verifica los suyos; no hay contrato transversal | [validación de variantes](04-quality/variant-validation-and-audit.md) |
+| 15 | Catálogo de variantes desplegado, aprobado y versionado | **TARGET** | ídem |
+| 16 | Bandas `CORE / STANDARD / STRETCH` como metadata de autoría | **TARGET**; hoy existe `DifficultyLevel` 1–5 | [dificultad](01-game-design/difficulty-and-playability.md) |
+| 17 | Scheduler por presupuesto de dificultad | **TARGET** | ídem |
+| 18 | `MathPerformance` / `TeamPerformance` / `AuraPerformance` normalizados | **TARGET** | [score competitivo](01-game-design/competitive-scoring-and-ranking.md) |
+| 19 | `ScorePolicy` competitiva con pesos, topes y orden de desempate | **TARGET** | ídem |
+| 20 | `RunDescriptor` emitido por servidor | **TARGET** | este documento |
+| 21 | `scoreVersion` y `variantCatalogVersion` | **TARGET** | este documento |
+| 22 | Verificación autoritativa por replay en servidor | **TARGET**; hoy existe `src/server/game/validate-run.ts` como base | [ADR-004](03-architecture/adr/ADR-004-server-authoritative-scoring.md) |
+| 23 | Ranking con personal best transaccional | **TARGET** | [modo feria](05-operations/fair-mode-and-competition-freeze.md) |
+| 24 | Invariante de egreso y recuperación fail-forward | **TARGET** | [egreso y fail-forward](01-game-design/graduation-and-fail-forward.md) |
+
+## Lo que la migración de carrera ya cerró
+
+El blueprint pide una migración del modelo viejo (`knowledge`, `team`, `initiative`, `energy`) al modelo de carrera. **Esa migración ya ocurrió.** `ENGINE_VERSION` es `2.0.0` exactamente por eso, y un action log `1.x` no reproduce su resultado original bajo este motor —que es lo que la tripleta de versiones existe para decir en voz alta.
+
+Un agente futuro que lea el paquete original y planifique esa migración estaría replanificando trabajo hecho. Lo que sí queda pendiente del capítulo de migración es la serialización de flags como estructura determinista, ya resuelta en el codec actual, y el rastreo de impacto ante cada cambio de estado, que sigue siendo la disciplina vigente.
+
+## `RunDescriptor` — objetivo
+
+Identidad inmutable de una run oficial. Forma conceptual, no contrato implementado:
+
+```ts
+interface RunDescriptor {
+  runId: string
+  eventId: string
+  playerId: string // pseudónimo
+  runSeed: string | number
+  engineVersion: string
+  rulesetVersion: string
+  contentVersion: string
+  scoreVersion: string
+  variantCatalogVersion: string
+  slots: VariantAssignment[]
+}
+```
+
+Ver [ejemplo](07-reference/run-descriptor.example.json). El ejemplo es documentación: no se importa desde runtime ni define configuración de producción.
+
+Reglas asociadas:
+
+- el servidor decide versiones, seed y asignación de variantes;
+- el cliente no puede pedir un seed arbitrario ni una dificultad más fácil para modo con premios;
+- el descriptor no cambia una vez emitido.
+
+El contrato HTTP concreto se decide dentro de [contratos API](03-architecture/api-contracts.md) cuando exista; la [pregunta 22](07-reference/open-questions.md) es su gate.
+
+## Verificación autoritativa — objetivo
+
+El navegador no es confiable para un valor que decide un premio. Secuencia objetivo:
+
+1. el servidor emite y registra el `RunDescriptor`;
+2. el browser juega localmente con el motor determinista;
+3. el browser persiste el action log durante la run;
+4. al terminar, el cliente envía **action log e identidad de run, no un score**;
+5. el servidor recarga las versiones exactas, reconstruye variantes, reproduce comandos y calcula el score oficial;
+6. si no hay red, el envío queda pendiente y reintenta de forma idempotente;
+7. el servidor escribe un resultado oficial inmutable y actualiza el personal best transaccionalmente.
+
+Esto no agrega round trips dentro del loop de juego: es exactamente el local-first de [ADR-006](03-architecture/adr/ADR-006-local-first-gameplay.md) con la autoridad de [ADR-004](03-architecture/adr/ADR-004-server-authoritative-scoring.md).
+
+### Controles de abuso
+
+Límite de tasa en emisión y envío de runs; tope de tamaño y de cantidad de comandos del action log; validación de todos los ids y versiones; rechazo de asignaciones de variante desconocidas; autorización fuerte en endpoints de administración; monitoreo de volumen o de tiempos imposibles. Detalle en [threat model](04-quality/threat-model.md) y [seguridad y privacidad](03-architecture/security-privacy.md).
+
+Proporcionalidad: esto es una feria escolar, no una plataforma de esports. Los controles se dimensionan al riesgo, pero el browser no decide el premio.
+
+## Versionado separado
+
+Un arreglo visual no debe cambiar un score. Un cambio de fórmula no debe alterar runs viejas en silencio. Un cambio de generador no debe hacer que un seed viejo reconstruya otra cosa.
+
+Ejes de versión objetivo:
+
+| Eje | Cambia cuando |
+|---|---|
+| `engineVersion` / `gameVersion` | transición, consumo de RNG, derivación de seed, formato de action log o codec de snapshot |
+| `rulesetVersion` | scoring, dificultad, progresión o política de perfil |
+| `contentVersion` | datos de desafíos o storylets |
+| `scoreVersion` | **TARGET** — coeficientes y topes de la política competitiva |
+| `variantCatalogVersion` | **TARGET** — catálogo desplegado de variantes |
+
+Los tres primeros existen. Los dos últimos son el agregado que pide el modo competitivo, y su compatibilidad se decide como los otros: igualdad exacta, no rangos semver.
+
+## Prohibiciones que siguen vigentes
+
+- nada de `Math.random()`, `Date.now()`, `new Date()` ni `performance.now()` dentro de la transición o la evaluación autoritativas;
+- la evaluación matemática no se muda a React;
+- el dominio devuelve descripciones y efectos; el shell hace persistencia, analytics y UI;
+- una constante de scoring recomendada no se escribe como número mágico: se escribe como política versionada.
+
+---
+
+# FILE: 04-quality/competition-fairness-audit.md
+
+# Auditoría de equidad competitiva
+
+**Estado: RECOMENDADO / TEACHER GATE.** Es un procedimiento de revisión, no un gate ejecutable todavía. Se corre antes del Teacher Gate 1 en su forma reducida y antes del congelamiento de competencia en su forma completa.
+
+Un ranking con premios es una afirmación sobre personas. Esta auditoría existe para poder defender esa afirmación con evidencia, no con intención.
+
+Lo que se audita está definido en [score competitivo y ranking](01-game-design/competitive-scoring-and-ranking.md); acá están las preguntas que hay que poder contestar.
+
+## Comparabilidad
+
+- ¿Las runs tienen presupuesto de dificultad equivalente?
+- ¿Alguna plantilla otorga sistemáticamente más puntos que otra para la misma habilidad?
+- ¿Se puede reintentar hasta recibir un calendario más fácil?
+
+Si la respuesta a la tercera es sí, el descriptor de run tiene que emitirlo el servidor y el equiparado tiene que ser real, no nominal.
+
+## Dominancia
+
+- ¿`MathPerformance` domina efectivamente el score final?
+- ¿Aura o Equipo pueden superar a una run matemáticamente mejor?
+- ¿Promedio se está contando dos veces?
+- ¿Algún eje de Estilo queda premiado indirectamente por el diseño del score?
+
+La última es la más fácil de romper sin darse cuenta: si el bonus por eficiencia empuja siempre hacia Estratega, Estilo dejó de ser identidad y pasó a ser una build óptima.
+
+## Sesgo de velocidad
+
+- ¿Un jugador más lento y más preciso pierde contra uno mucho más rápido y menos preciso?
+- ¿El tiempo activo participa sólo como desempate tardío?
+
+El producto ya declara que el score no debe estar dominado por la velocidad, por accesibilidad y porque premia el cálculo mental sobre el razonamiento. Ver [reglas, scoring y progresión](01-game-design/rules-scoring-and-progression.md).
+
+## Sesgo de volumen de intentos
+
+- ¿El leaderboard usa el mejor intento y no la suma?
+- ¿Los intentos ilimitados son una política deliberada de aprendizaje o un descuido?
+
+## Análisis de empates
+
+Simular el comparador y estimar la tasa de empate. **No se agrega ruido aleatorio al score para forzar unicidad**: un score con decimales inventados deja de poder explicarse. Si quedan empates, la política de premio la decide el organizador, por escrito y antes de la feria.
+
+## Transparencia
+
+La regla publicada tiene que poder decirse en tres frases y coincidir con lo que hace el código. Si la explicación pública y la fórmula no coinciden, la que está mal es la fórmula.
+
+## Entregable
+
+La auditoría produce una tabla de respuestas con evidencia —salidas de simulación, distribuciones, tasas— y una lista explícita de lo que quedó sin resolver. Un «se ve bien» no cierra ningún punto.
+
 ---
 
 # FILE: 04-quality/content-validation.md
@@ -3459,6 +4693,8 @@ Evitar que la opción correcta caiga sistemáticamente en la misma posición.
 
 ## Playtest
 
+> **Antes de la feria, esta etapa es prueba proxy.** La primera exposición a estudiantes del rango objetivo es la feria misma; la validación formal previa es la del Departamento de Matemática. Ver [ciclo de entrega real](00-product/real-delivery-lifecycle.md) y [gates docentes](06-delivery/teacher-gates.md). Las preguntas siguen sirviendo con un adulto que juegue sin asistencia verbal; lo que no se puede es llamar validado a lo que se observó así.
+
 Preguntas al observador:
 - ¿el jugador supo qué debía hacer?
 - ¿qué cálculo/modelo usó?
@@ -3467,6 +4703,10 @@ Preguntas al observador:
 - ¿pareció un ejercicio escolar tradicional?
 
 Un challenge con matemática correcta pero gameplay pobre no está listo.
+
+## Del desafío al catálogo
+
+Este pipeline valida **un desafío**. Cuando las variantes decidan premios hace falta poder afirmar algo sobre el conjunto desplegado: invariantes transversales, fingerprint canónico, auditoría estadística por catálogo y auditoría Monte Carlo del armado de runs. Ver [validación y auditoría de variantes](04-quality/variant-validation-and-audit.md).
 
 ---
 
@@ -3660,6 +4900,32 @@ La regresión visual es recomendable cuando existan componentes de challenges, e
 
 La automatización no valida diversión ni claridad. Cada batch relevante debe probarse con usuarios reales del rango objetivo cuando sea posible, registrando dónde preguntan qué hacer, releen, adivinan, comentan consecuencias o quieren repetir.
 
+## Simulación de competencia
+
+**No implementada.** Cuando exista score competitivo, la simulación masiva deja de alcanzar con jugadores aleatorios: hace falta generar perfiles sintéticos con estrategia, no clicks al azar.
+
+Perfiles mínimos: alta precisión matemática, precisión media, precisión baja, optimizador, rápido y con errores, lento y preciso, orientado a decisiones de Equipo y orientado a Aura.
+
+La pregunta que la simulación tiene que contestar: **¿el ranking ordena por lo que dijimos que iba a ordenar?** Si un perfil orientado a Aura le gana a uno de alta precisión matemática, la ponderación está mal, no el jugador.
+
+Antes de la feria, el volumen sube de miles a decenas de miles de runs si el tiempo de ejecución lo permite, mirando distribución de score, resultados inalcanzables, estrategias dominantes, empates, repetición de variantes, distribución de dificultad, extremos de estado de carrera y alcanzabilidad del egreso.
+
+La simulación captura lógica y equidad. **No captura diversión**, y un resultado sintético favorable no es validación con usuarios. Ver [ciclo de entrega real](00-product/real-delivery-lifecycle.md).
+
+## Matriz de QA manual
+
+La automatización no reemplaza abrir la aplicación en un teléfono. Antes de una revisión docente o de una feria, se recorre a mano:
+
+**Viewports:** 360, 390 y 430 px; tablet en vertical; desktop centrado contra la hoja.
+
+**Estados de juego:** tira de carrera vacía; primera aparición de Promedio; primera aparición de Equipo; Aura positiva y negativa; Estilo compacto y expandido; los cuatro resultados; opción elegida y todavía sin confirmar; hito de año; y —cuando existan— camino de recuperación, envío pendiente, personal best verificado y run completada que no supera la mejor.
+
+**Condiciones adversas:** refresh en medio de la run; sin red antes y después de terminar; doble click en confirmar; respuesta lenta del leaderboard; nickname inválido o bloqueado; movimiento reducido; sólo teclado; zoom del navegador al 200 %.
+
+## Variantes desplegadas
+
+Los invariantes que una variante competitiva debe cumplir y la auditoría estadística del catálogo están en [validación y auditoría de variantes](04-quality/variant-validation-and-audit.md). Las preguntas de equidad del ranking, en [auditoría de equidad competitiva](04-quality/competition-fairness-audit.md).
+
 ---
 
 # FILE: 04-quality/threat-model.md
@@ -3725,6 +4991,237 @@ No es atacante, pero amenaza disponibilidad.
 
 No se intenta impedir a un actor altamente motivado que automatice respuestas correctas leyendo el cliente. Para una feria escolar, el objetivo es evitar manipulación trivial del score y detectar outliers. Un anti-cheat invasivo sería desproporcionado.
 
+## Amenazas que agrega la competencia con premios
+
+Se suman a las anteriores cuando el ranking decide premios. Los controles se dimensionan al riesgo: esto es una feria escolar, no una plataforma de esports, pero el browser no puede decidir un premio.
+
+### T10 Action log modificado
+El cliente envía una secuencia de comandos que nunca ocurrió.
+
+**Mitigación:** el replay determinista valida legalidad de cada comando contra el estado; una secuencia imposible se rechaza con un código de motivo que no filtra información sensible.
+
+### T11 Descriptor de run manipulado
+El cliente altera seed, versiones o asignación de variantes para recibir una run más fácil.
+
+**Mitigación:** el descriptor lo emite y lo guarda el servidor; se valida la ligadura run–participante–evento; se rechaza cualquier asignación de variante desconocida.
+
+### T12 Mezcla de versiones en una competencia
+Un envío oficial llega con una tupla de versiones distinta de la congelada del evento.
+
+**Mitigación:** el evento habilita explícitamente una única tupla y rechaza el resto. Es T8 visto desde la integridad del premio, no sólo desde la compatibilidad.
+
+### T13 Reintento hasta recibir una run fácil
+No es una intrusión: es un uso del reglamento que rompe la comparabilidad.
+
+**Mitigación:** presupuesto de dificultad equiparado, pools de variantes emparejados y descriptor emitido por el servidor. Ver [auditoría de equidad competitiva](04-quality/competition-fairness-audit.md).
+
+### T14 Consumo de recursos sin restricción
+Ráfagas de emisión de runs, envíos gigantes o action logs desmedidos.
+
+**Mitigación:** límites de tasa, tope de cantidad de comandos y de bytes del log, tamaño máximo de request y timeouts. Corresponde a OWASP API4; ver [base teórica](07-reference/research-basis.md).
+
+### T15 Abuso de privilegio administrativo
+Las acciones de moderación pueden cambiar lo que el público ve.
+
+**Mitigación:** rol administrativo autenticado, mínimo privilegio y auditoría de actor, motivo y timestamp. **La obscuridad de una URL no es autorización.**
+
+La arquitectura de estas mitigaciones está en [arquitectura objetivo del motor](03-architecture/target-engine-architecture.md); su operación, en [modo feria y congelamiento](05-operations/fair-mode-and-competition-freeze.md).
+
+---
+
+# FILE: 04-quality/variant-validation-and-audit.md
+
+# Validación y auditoría de variantes
+
+**Estado: mixto.** Los invariantes por desafío son **implementados y vigentes**. El contrato transversal de validador, el catálogo desplegado y la auditoría estadística agregada son **TARGET / RECOMENDADOS**.
+
+[Validación de contenido](04-quality/content-validation.md) describe el pipeline vigente de un desafío. Este documento describe lo que hace falta agregar cuando las variantes decidan premios: no alcanza con que cada desafío se valide a sí mismo, hace falta poder afirmar algo sobre **el conjunto desplegado**.
+
+## Por qué
+
+Una variante generada en vivo puede salir ambigua, imposible, trivial o con decimales impresentables. En modo práctica eso es un bug que se arregla mañana. En una competencia con premios, el jugador que la recibió ya perdió.
+
+De ahí la regla: **en modo oficial no se juega una variante que nadie validó.**
+
+## Invariantes genéricos
+
+Toda variante desplegada tiene que satisfacer, de forma ejecutable:
+
+- la generación termina;
+- todos los valores son finitos y están en rango;
+- existe al menos una respuesta o camino válido;
+- no hay opciones duplicadas por accidente;
+- el óptimo declarado existe;
+- no hay empate no intencional en el óptimo, salvo que el diseño declare múltiples óptimos;
+- todas las ramas de resultado son alcanzables como se pretendía;
+- el cálculo del feedback coincide con el del evaluador;
+- el enunciado público contiene toda la información necesaria;
+- moneda, tiempo y unidades tienen formato válido;
+- existe metadata de dificultad;
+- existe fingerprint canónico.
+
+Los primeros ocho ya son la práctica del motor: cada desafío verifica su instancia generada y los property tests recorren miles de seeds. Los últimos cuatro son el agregado que pide el catálogo.
+
+## Invariantes de legibilidad
+
+Difíciles de automatizar por completo, imprescindibles igual:
+
+- sin complejidad decimal accidental fuera de la banda buscada;
+- sin valores absurdos para un contexto escolar;
+- texto de opción dentro del límite práctico de 360 px;
+- notación matemática representable de forma accesible.
+
+Un desafío correcto que no entra en la pantalla es un desafío roto. Ver [NFR](04-quality/non-functional-requirements.md).
+
+## Auditoría estadística del catálogo
+
+**TARGET.** Por plantilla y por catálogo, generar un reporte legible por máquina:
+
+| Parámetro | Umbral de aceptación sugerido |
+|---|---|
+| variantes desplegadas inválidas | exactamente 0 |
+| opciones duplicadas | exactamente 0 |
+| fingerprints duplicados | tasa declarada y revisada |
+| distribución por banda de dificultad | coincide con el objetivo declarado |
+| posición de la opción correcta | sin sesgo severo; investigar si lo hay |
+| distribución de parámetros numéricos | sin acumulación en los bordes |
+| máximo teórico de score por plantilla | sin diferencias inesperadas entre plantillas |
+| variantes cuya aritmética se sale de la banda | rechazar o reclasificar |
+
+Los umbrales son **heurísticas de revisión, no constantes universales**. Su función es levantar la mano, no aprobar sola.
+
+La validación procedural vigente ya corre N seeds por template y verifica que la opción correcta no caiga siempre en la misma posición; ver [validación de contenido](04-quality/content-validation.md). Lo que falta es agregarlo por catálogo y versionarlo.
+
+## Auditoría Monte Carlo del armado de runs
+
+**TARGET.** Simular muchos calendarios de run contra perfiles de jugador sintéticos y comparar el score esperado por calendario.
+
+Pregunta que la auditoría tiene que poder responder: **¿cuánta varianza del score explica el sorteo de variantes, y no la habilidad?** Si el calendario explica una porción material, el equiparado por presupuesto de dificultad es débil y hay que corregirlo antes de la feria, no después.
+
+Ver [dificultad y jugabilidad universal](01-game-design/difficulty-and-playability.md) y [auditoría de equidad competitiva](04-quality/competition-fairness-audit.md).
+
+## Calibración posterior a la feria
+
+Con datos reales se pueden estimar tasas de éxito, resultado parcial y tiempo por plantilla. Esos datos alimentan **versiones futuras**. No redefinen un score oficial ya otorgado, salvo que exista una política de regrade declarada por el evento. Ver [modo feria y congelamiento](05-operations/fair-mode-and-competition-freeze.md).
+
+## Golden seeds
+
+Se conservan seeds conocidas por plantilla y por banda —incluyendo casos borde— y se reproducen en CI. Los golden replays vigentes ya cumplen ese rol para el motor; el agregado es mantener golden **por variante desplegada** cuando exista catálogo.
+
+Regla que ya está escrita y sigue valiendo: no crear goldens que congelen decisiones todavía abiertas.
+
+---
+
+# FILE: 05-operations/fair-mode-and-competition-freeze.md
+
+# Modo feria, congelamiento y control de cambios
+
+**Estado: mixto.** El congelamiento de versiones antes de una feria ya es política vigente ([runbook](05-operations/fair-runbook.md), [Definition of Done](06-delivery/definition-of-done.md)). La política de intentos, el comparador extendido y la política de empate exacto son **RECOMENDADOS / TEACHER GATE / OPEN**. Nada de esto está implementado.
+
+Este documento cubre la operación de la competencia. Las reglas del score están en [score competitivo y ranking](01-game-design/competitive-scoring-and-ranking.md); la presentación y moderación del ranking, en [leaderboard y moderación](05-operations/leaderboard-and-moderation.md).
+
+## Intentos
+
+**Recomendación por defecto: intentos ilimitados, cuenta el mejor.** La configuración del evento tiene que poder cambiarlo a 1 o N intentos si los docentes lo deciden.
+
+Acumular scores entre intentos convierte el ranking en una medida de tiempo disponible en la feria. El personal best premia la mejora y deja una sola run comparable por participante en el tablero.
+
+La decisión final es **TEACHER GATE**.
+
+## Configuración de evento
+
+Un evento oficial declara, antes de abrir:
+
+- período de vigencia y horario de cierre del servidor;
+- tupla de versiones permitida;
+- política de intentos;
+- comparador de ranking y su versión;
+- política de empate exacto;
+- cantidad de premios;
+- reglas de nickname y moderación;
+- si se muestran métricas secundarias en público.
+
+El ejemplo documental de esa forma está en [event-config.example.json](07-reference/event-config.example.json). Es un ejemplo: no es configuración de producción ni se importa desde runtime.
+
+## Congelamiento antes del inicio oficial
+
+Se congelan:
+
+- `rulesetVersion`;
+- `contentVersion`;
+- `variantCatalogVersion` cuando exista;
+- `scoreVersion` cuando exista;
+- el comparador del leaderboard;
+- la política de intentos.
+
+El registro del evento debe permitir **sólo** la tupla congelada. Una versión de desarrollo no puede convertirse en versión oficial por accidente; hoy eso ya está sostenido por el flag `production` del ruleset, que se niega a construir un ruleset oficial desde una política de desarrollo.
+
+## Durante la competencia oficial
+
+Permitido sin cambiar la versión de score:
+
+- arreglo visual que no altere información ni forma de responder;
+- arreglo de crash que preserve la semántica;
+- escalado de infraestructura;
+- acción de moderación.
+
+Alto riesgo, **no se toca en vivo**:
+
+- datos de desafíos;
+- lógica de evaluación;
+- coeficientes de score;
+- factores de dificultad;
+- opciones de respuesta;
+- aleatorización.
+
+Si un defecto de corrección obliga igual, se crea una versión nueva y se decide explícitamente si las runs previas se pueden reproducir y recalcular de forma consistente. **No se mezclan scores de versiones no comparables sin recomputación declarada.**
+
+Corolario de disciplina: no se cambia una regla de score porque en la primera hora alguien dijo que estaba difícil. Eso se anota para la próxima versión. Ver [ciclo de entrega real](00-product/real-delivery-lifecycle.md).
+
+## Cierre y premios
+
+- El cierre es un timestamp del servidor, no del cliente.
+- Hay que decidir antes si una run emitida antes del cierre puede enviarse después, y con cuánta tolerancia.
+- El premio se resuelve **sólo sobre runs verificadas y sobre el mejor intento**.
+- Se exporta una lista auditable de candidatos con: id interno de participante, nickname, id de la mejor run, desglose de score, tupla de versiones, estado de verificación y métricas de desempate.
+
+Esa exportación existe para que el organizador confirme ganadores sin depender de la pantalla pública.
+
+## Empate exacto
+
+**OPEN.** Opciones razonables: puesto y premio compartidos, un desafío de desempate presencial, u otro criterio anunciado de antemano. Lo que no es opción es que un identificador interno decida un premio en silencio.
+
+## Privacidad de menores en competencia
+
+El ranking no necesita una cuenta escolar. Se prefiere nickname más identificador pseudónimo de participante, y sólo los datos de run necesarios para verificar.
+
+Se evita, salvo que la institución lo requiera y lo gobierne: nombre completo, correo, teléfono, edad o fecha de nacimiento exactas y perfil personal innecesario.
+
+Si hace falta identidad real para entregar un premio, se prefiere un mapeo externo controlado por el organizador o un código de evento, no publicar identidad dentro del juego.
+
+Retención —cuánto viven los action logs, cuánto queda público el leaderboard, qué se archiva o anonimiza después de la feria— se define antes del lanzamiento y es **OPEN** ([pregunta 31](07-reference/open-questions.md)). Esto es guía de producto; la política legal aplicable la define la institución. Ver [seguridad y privacidad](03-architecture/security-privacy.md).
+
+## Ensayo de carga y red
+
+Una feria genera llegadas en ráfaga, Wi-Fi compartido y refrescos de ranking simultáneos. Escenarios a ensayar:
+
+- ráfaga de emisión de runs;
+- envíos finales concurrentes;
+- polling del leaderboard mientras se verifican envíos;
+- envíos duplicados o reintentados;
+- latencia alta;
+- caída transitoria de red durante una run;
+- reinicio o degradación de base de datos y API;
+- moderación bajo carga.
+
+Propiedades que tienen que sostenerse: ningún resultado oficial duplicado; personal best correcto bajo concurrencia; las lecturas del ranking no bloquean la verificación; el cliente conserva su envío pendiente; el límite de tasa rechaza abuso sin frenar la ráfaga esperada.
+
+Los números de concurrencia salen de la asistencia estimada por un factor de seguridad; no se inventa escala de nube sin una estimación del evento. La [pregunta 15](07-reference/open-questions.md) sigue abierta.
+
+## Refresco del ranking
+
+Tiempo real es opcional. Un polling cada pocos segundos suele ser más simple y más robusto a escala de feria. Se elige por carga real, no por novedad.
+
 ---
 
 # FILE: 05-operations/fair-runbook.md
@@ -3786,6 +5283,17 @@ Activar procedimiento de `fallback-and-incident-plan.md`.
 - tomar backup/snapshot según plan;
 - registrar incidentes y observaciones de playtest.
 
+## Qué agrega una feria con premios
+
+Cuando el ranking reparta premios, este runbook se ejecuta junto con [modo feria y congelamiento](05-operations/fair-mode-and-competition-freeze.md), que cubre política de intentos, congelamiento de versiones, control de cambios en vivo, cierre, empates, privacidad de menores y ensayo de carga y red.
+
+Dos reglas que conviene tener a mano durante el evento:
+
+- **No se cambia una regla de score en vivo.** Un arreglo visual o de crash que preserve la semántica se puede desplegar; datos de desafío, lógica de evaluación, coeficientes, factores de dificultad, opciones y aleatorización no. Si un defecto de corrección obliga igual, se crea una versión nueva y se decide explícitamente si las runs previas se recalculan.
+- **Una anécdota de la primera hora no es evidencia.** Se anota para la próxima versión.
+
+En «Cierre», la exportación agregada incluye además la lista auditable de candidatos a premio descripta en [leaderboard y moderación](05-operations/leaderboard-and-moderation.md).
+
 ---
 
 # FILE: 05-operations/fallback-and-incident-plan.md
@@ -3836,6 +5344,33 @@ Mensajes cortos:
 
 Evitar errores técnicos al usuario.
 
+## Incidentes de integridad del ranking
+
+Cuando el ranking reparta premios, se agrega una severidad por encima de las cuatro anteriores.
+
+### P0 — Integridad del ranking comprometida
+
+Por ejemplo: se aceptó un score arbitrario enviado por un cliente, se usó una versión de score equivocada o apareció un error sistemático de evaluación.
+
+1. detener las escrituras al leaderboard oficial si hace falta;
+2. preservar logs, descriptores de run y action logs **antes** de tocar nada;
+3. mantener el juego disponible sólo en estado no oficial, y decirlo con claridad;
+4. arreglar y versionar;
+5. reproducir y recalcular las runs afectadas si es posible;
+6. comunicar la decisión del organizador.
+
+### P1 — Los envíos fallan pero el juego funciona
+
+Encolar y reintentar de forma idempotente. **No pedirle al jugador que rejuegue de inmediato**: su run está guardada y el reintento no puede crear una entrada duplicada.
+
+### P2 — Nickname inapropiado
+
+Ocultar de la pantalla pública preservando la referencia interna de participante y de run, que es lo que después permite resolver el premio.
+
+### Regla
+
+No se cambia score ni contenido en medio del evento como arreglo improvisado. Se usa el procedimiento versionado de [modo feria y congelamiento](05-operations/fair-mode-and-competition-freeze.md).
+
 ---
 
 # FILE: 05-operations/leaderboard-and-moderation.md
@@ -3883,6 +5418,38 @@ Mostrar:
 - actualización reciente.
 
 No mostrar datos que permitan identificar inequívocamente a un menor.
+
+## Dirección propuesta para el ranking de feria
+
+**RECOMENDADA / TEACHER GATE.** Extiende —no reemplaza todavía— la regla de ranking de arriba. Las reglas de score están en [score competitivo y ranking](01-game-design/competitive-scoring-and-ranking.md); la operación y el congelamiento, en [modo feria y congelamiento](05-operations/fair-mode-and-competition-freeze.md).
+
+### Mejor intento, no suma
+
+El leaderboard guarda el **personal best verificado** de cada participante. Acumular intentos convertiría el ranking en una medida de tiempo disponible en la feria. La regla de «mejor run por player/session» de arriba ya apunta en esa dirección; lo que agrega la recomendación es que el mejor intento sea la definición explícita del score del participante, y que la política de intentos sea configuración del evento.
+
+### Comparador extendido
+
+Comparación lexicográfica versionada, guardando el desglose completo para auditoría:
+
+`FairScore` → desempeño matemático → cantidad de óptimos → precisión → dificultad resuelta → tiempo activo.
+
+La matemática decide antes que la velocidad. El desempate vigente —óptimos, precisión, tiempo— es el mismo criterio con menos escalones.
+
+### Empate exacto
+
+**OPEN.** No se agrega ruido aleatorio al score para forzar unicidad. La política —puesto compartido, premio compartido o desempate anunciado— la decide el organizador por escrito antes de la feria. Un identificador interno puede dar orden de visualización estable, pero no puede decidir un premio en silencio.
+
+### Determinación de ganadores
+
+El premio se resuelve **sólo sobre runs verificadas y sobre el mejor intento**. Antes de la feria, el organizador aprueba: cantidad de ganadores, política de intentos, comparador, política de empate, horario de cierre, tratamiento de envíos pendientes tardíos y reglas de nickname.
+
+### Exportación auditable
+
+Al cierre se exporta la lista de candidatos con id interno de participante, nickname, id de la mejor run, desglose de score, tupla de versiones, estado de verificación y métricas de desempate. Existe para que el organizador confirme ganadores sin depender de la pantalla pública.
+
+### Qué no se publica
+
+Ni dominio matemático oculto, ni métricas de razonamiento, ni identificadores personales. Las métricas secundarias en público sólo si los docentes las aprueban.
 
 ---
 
@@ -3941,6 +5508,131 @@ No mostrar datos que permitan identificar inequívocamente a un menor.
 - fallback probado;
 - content/ruleset version congelados.
 
+## Candidata a demo docente de 7.º
+
+Cierra la Fase A del [ciclo de entrega real](00-product/real-delivery-lifecycle.md), antes del Teacher Gate 1.
+
+- sistema de diseño aprobado aplicado al slice real;
+- modelo de carrera migrado, sin rastros de las stats visibles viejas;
+- variación determinista suficiente para que una segunda run se note;
+- ninguna variante inválida en el pool de la demo;
+- el recorrido completo de 7.º termina;
+- el resumen de año funciona;
+- la propuesta de score se puede demostrar;
+- móvil, teclado y accesibilidad en verde;
+- material de revisión docente listo, con la lista explícita de decisiones abiertas.
+
+## Candidata a feria
+
+Cierra la Fase F, antes del release público.
+
+- todos los años completos;
+- catálogo oficial de variantes versionado y validado;
+- score de competencia aprobado y congelado;
+- el servidor calcula el resultado oficial;
+- leaderboard con personal best transaccionalmente correcto;
+- el replay verifica los envíos oficiales;
+- límites de tasa y herramientas de moderación existentes;
+- hardening de carga, red y móvil aprobado;
+- runbook y plan de fallback ensayados;
+- versiones de contenido, reglas y score congeladas.
+
+---
+
+# FILE: 06-delivery/implementation-sequence.md
+
+# Secuencia de implementación
+
+**Estado: PRODUCT DIRECTION.** El orden es la dirección acordada; el alcance exacto de cada etapa se acota al aceptar la tarea correspondiente.
+
+Este documento responde una pregunta: **después de integrar el blueprint v0.2, ¿en qué orden se construye lo que falta?** El backlog por features está en [backlog MVP](06-delivery/mvp-backlog.md); las fases de validación y sus gates, en [ciclo de entrega real](00-product/real-delivery-lifecycle.md).
+
+> La integración documental del blueprint **no implementó ninguna de estas etapas**. Todas siguen pendientes.
+
+## Orden
+
+```mermaid
+flowchart TD
+    D0[0 · Integración documental del blueprint] --> D1[1 · Análisis de brechas contra el código]
+    D1 --> D2[2 · Arquitectura de familias y variantes]
+    D2 --> D3[3 · Esqueleto de score competitivo]
+    D3 --> D4[4 · Refinamiento de la demo de 7.º]
+    D4 --> G1[Teacher Gate 1]
+    G1 --> D5[5 · Correcciones y congelamiento de fundaciones]
+    D5 --> D6[6 · Matriz de contenido 1.º–5.º]
+    D6 --> D7[7 · Implementación año por año]
+    D7 --> D8[8 · Backend oficial de feria]
+    D8 --> G2[Teacher Gate 2]
+    G2 --> D9[9 · Congelamiento de competencia y hardening]
+    D9 --> D10[10 · Release de feria]
+```
+
+## 0 · Integración documental — hecho
+
+Este paquete de documentación. Su alcance y sus límites están en [la integración del blueprint](07-reference/blueprint-v0.2-integration.md).
+
+## 1 · Análisis de brechas contra el código
+
+Antes de tocar nada: recorrer [arquitectura objetivo del motor](03-architecture/target-engine-architecture.md) capacidad por capacidad y confirmar el estado real contra el código y los tests. La tabla de esa página es una lectura del 28 de agosto de 2026, no una verdad permanente.
+
+Salida esperada: la lista acotada de lo que realmente falta, y qué de eso está bloqueado por una decisión docente.
+
+## 2 · Arquitectura de familias y variantes
+
+Convertir los desafíos autorados en estructura compatible con `ScenarioFamily → Template → Variant`, conservando la matemática existente. Agregar invariantes de variante como contrato transversal y demostrar variación entre runs con tests.
+
+**No** se rehace la matemática de los desafíos de 7.º. Ver [familias, plantillas y variantes](01-game-design/challenge-families-and-variants.md).
+
+## 3 · Esqueleto de score competitivo
+
+Desempeño normalizado por evento, desglose de score, ponderación configurable, métricas de desempate y visualización local. Sin leaderboard de producción todavía.
+
+Todo coeficiente entra como política versionada con su versión declarada. Ver [score competitivo y ranking](01-game-design/competitive-scoring-and-ranking.md).
+
+## 4 · Refinamiento de la demo de 7.º
+
+QA visual y funcional, materiales de revisión docente y la lista explícita de decisiones abiertas. Alcance en [vertical slice de 7.º grado](06-delivery/vertical-slice-grade-7.md).
+
+## Teacher Gate 1
+
+[Checklist y forma de la sesión](06-delivery/teacher-gates.md). Cada ítem cerrado se anota en el [registro de decisiones](07-reference/decision-register.md); cada ítem que queda abierto, en [preguntas abiertas](07-reference/open-questions.md).
+
+## 5 · Correcciones y congelamiento de fundaciones
+
+## 6 · Matriz de contenido 1.º–5.º
+
+Una fila por plantilla, no por variante: etapa, familia, plantilla, propósito narrativo, dominios matemáticos, interacción, banda de dificultad, qué dimensiones de carrera toca, aporte al score, flags, assets, invariantes y estado de revisión docente.
+
+El Departamento de Matemática revisa **la matriz**, no sólo pantallas terminadas.
+
+## 7 · Implementación año por año
+
+Para cada año: plantillas de contenido, generadores y variantes validadas, property tests, storylets y hito de etapa. Mismo sistema de diseño, mismas abstracciones de motor. Un año nuevo debería ser contenido, no reinvención.
+
+## 8 · Backend oficial de feria
+
+Emisión de runs, verificación por replay, servicio de score, leaderboard con personal best transaccional, moderación y persistencia. Ver [arquitectura objetivo del motor](03-architecture/target-engine-architecture.md).
+
+## Teacher Gate 2
+
+## 9 · Congelamiento y hardening
+
+Simulación, carga, red, seguridad, accesibilidad, QA móvil y ensayo operativo. Ver [modo feria y congelamiento](05-operations/fair-mode-and-competition-freeze.md).
+
+## 10 · Release de feria
+
+## Reglas que atraviesan toda la secuencia
+
+- Una constante `RECOMENDADO` o `TEACHER GATE` no se escribe como número mágico: se escribe como política versionada.
+- No se cierra una pregunta abierta desde el código.
+- No se mueve la evaluación matemática a React.
+- No se confía en el score final del navegador.
+- No se expone `mastery` como una stat visible.
+- Estilo no puntúa directamente.
+- No se generan variantes de competencia sin validar.
+- Después del congelamiento, una regla de competencia sólo cambia con versión nueva.
+- La revisión docente no es evidencia de que los estudiantes se enganchen.
+
 ---
 
 # FILE: 06-delivery/mvp-backlog.md
@@ -3963,7 +5655,7 @@ No mostrar datos que permitan identificar inequívocamente a un menor.
 12. Perfil final simple.
 13. Checkpoint local.
 14. Tests unit/property.
-15. Playtest.
+15. Prueba proxy con adultos y revisión del Departamento de Matemática. El playtest con estudiantes del rango objetivo **no está garantizado antes de la feria**; ver [ciclo de entrega real](00-product/real-delivery-lifecycle.md).
 
 ## P1 — Carrera completa
 
@@ -4005,6 +5697,10 @@ No mostrar datos que permitan identificar inequívocamente a un menor.
 - Reactor 42.
 - Daily challenge.
 - authoring tools.
+
+## Orden de trabajo posterior a la integración del blueprint
+
+Este backlog prioriza por features. El orden de las etapas que quedan después de integrar el blueprint v0.2 —análisis de brechas, arquitectura de variantes, esqueleto de score competitivo, gates docentes, contenido año por año, backend de feria y hardening— está en [la secuencia de implementación](06-delivery/implementation-sequence.md). Los dos ejes son complementarios: acá está el qué, allá el en qué orden y contra qué gate.
 
 ---
 
@@ -4125,6 +5821,137 @@ Cambios que alteran resultados deben indicarlo explícitamente y actualizar la v
 - Un cambio visible actualiza especificación funcional; gameplay actualiza GDD/reglas; contenido actualiza sus fuentes y validación; todos actualizan trazabilidad cuando corresponde.
 - Editar primero las fuentes individuales. Regenerar `docs/EGRESADO-MASTER-SPEC.md` con el script mantenido y conservar mapa, checklist y manifest en sincronía.
 - Conservar el bloque administrado por Next.js al final de `AGENTS.md`; las reglas humanas del repositorio quedan fuera de sus marcadores.
+
+---
+
+# FILE: 06-delivery/teacher-gates.md
+
+# Gates docentes
+
+**Estado: TEACHER GATE.** Este documento define qué se le pide decidir al Departamento de Matemática y cuándo. **No decide nada por ellos.** Cada ítem cerrado en una de estas sesiones se anota en el [registro de decisiones](07-reference/decision-register.md); cada ítem que queda abierto, en [preguntas abiertas](07-reference/open-questions.md).
+
+Ubicación en el ciclo: [ciclo de entrega real](00-product/real-delivery-lifecycle.md).
+
+## Qué valida y qué no valida un gate docente
+
+Valida: nivel matemático, terminología, corrección, ambigüedad, credibilidad del contexto, semántica de los resultados, plausibilidad de la dificultad relativa y aceptabilidad de la filosofía de competencia.
+
+**No valida:** que un estudiante de 12 años entienda la pantalla sin ayuda, ni que quiera jugar de nuevo. Eso sigue sin evidencia hasta la feria, y no se puede presentar de otra manera.
+
+## Marco de revisión por plantilla
+
+Cada familia o plantilla se revisa contra ocho preguntas:
+
+1. **Pertinencia curricular** — ¿la matemática es razonable para la etapa?
+2. **Corrección** — ¿todos los caminos de solución y el feedback son válidos?
+3. **Ambigüedad** — ¿hay dos interpretaciones razonables que cambien la respuesta?
+4. **Contexto** — ¿la situación escolar es creíble y respetuosa?
+5. **Objetivo cognitivo** — ¿la dificultad viene del razonamiento buscado o de aritmética accidental?
+6. **Apoyos** — ¿debería haber fórmula, calculadora o referencia disponible?
+7. **Semántica de resultado** — ¿tienen sentido las cuatro calidades para este desafío?
+8. **Equidad competitiva** — ¿la banda de dificultad es plausible frente a las otras plantillas?
+
+Con invariantes robustos, los docentes no necesitan inspeccionar cada variante desplegada, pero sí variantes representativas y de borde por plantilla y banda.
+
+---
+
+## Teacher Gate 1 — revisión de la demo de 7.º
+
+### Qué se demuestra
+
+- el recorrido completo de 7.º;
+- al menos dos runs que muestren variación real, no reordenamiento de opciones;
+- varios patrones de interacción;
+- Promedio, Equipo, Aura y Estilo apareciendo cuando adquieren significado;
+- el cierre de año;
+- el desglose propuesto de score competitivo;
+- cómo funcionan bandas y variantes.
+
+### Forma de la sesión
+
+1. El docente juega una primera run **sin explicación previa**. Se anota dónde pregunta qué hacer.
+2. Vuelve a jugar y observa la variación.
+3. Recién ahí se explican el modelo de carrera y la arquitectura de variantes.
+4. Se muestra la propuesta de score: matemática dominante, mejor intento, velocidad sólo como desempate.
+5. Se recorre la lista de decisiones abiertas y se pide decisión explícita.
+
+No se usa la reunión para elegir tipografías, espaciados ni tokens: eso ya está cerrado por el sistema de diseño.
+
+### Decisiones pedidas
+
+**Matemática**
+- ¿Los conceptos son apropiados para la etapa?
+- ¿La terminología es correcta?
+- ¿Los contextos son creíbles?
+- ¿Qué desafíos necesitan fórmula, calculadora o referencia?
+
+**Dificultad**
+- ¿Las bandas CORE / STANDARD / STRETCH son razonables?
+- ¿El mismo contenido elemental sigue ofreciendo desafío a un adulto?
+
+**Competencia**
+- ¿Se acepta un score dominado por la matemática?
+- ¿Se acepta una contribución secundaria y acotada de Equipo y Aura?
+- ¿Intentos ilimitados con mejor intento, o límite?
+- ¿Orden de desempate?
+
+**Producto**
+- ¿Es aceptable que toda run completada llegue al egreso, con recuperación en vez de game over?
+- ¿El tono y el humor son apropiados?
+- ¿Cuál es la duración objetivo de una run?
+- ¿El acto del 25 de Mayo entra a producción o queda como ejemplar de diseño?
+
+### Preguntas a registrar del docente
+
+- ¿Qué se sintió demasiado fácil o demasiado difícil?
+- ¿Qué apoyo matemático debería estar visible?
+- ¿Las palabras y los contextos suenan naturales para estudiantes?
+- ¿Algún resultado se siente injusto?
+- ¿La filosofía de score es apropiada para repartir premios?
+- ¿Qué situaciones de 7.º se mantienen, se sacan o se agregan?
+
+### Salida
+
+Una lista acotada de correcciones y una decisión por cada ítem anterior. **No se acepta un «se ve bien» libre como cierre de un ítem.**
+
+---
+
+## Checklist de congelamiento de fundaciones
+
+Después de las correcciones del Gate 1, se congela si todo esto es cierto:
+
+- sistema de diseño aceptado;
+- modelo de carrera aceptado;
+- gramática de desafío y de resultado aceptada;
+- arquitectura de variantes aceptada;
+- filosofía de score aceptada, o sus parámetros documentados como pendientes;
+- reglas de autoría de contenido aprobadas por los docentes;
+- ningún bloqueante arquitectónico abierto para 1.º–5.º;
+- tests deterministas y de replay de 7.º en verde.
+
+Después del congelamiento, los años siguientes pueden agregar contenido e incluso interacciones genuinamente nuevas, pero no reabren la arquitectura de card, botón, stat o scoring sin evidencia de defecto.
+
+---
+
+## Teacher Gate 2 — aceptación del juego completo
+
+Ocurre cuando existen 1.º–5.º y el ranking. Es aceptación y último detalle, no otra exploración de concepto.
+
+Se revisa:
+
+- contenido y catálogo de todas las etapas;
+- variantes de borde representativas;
+- duración de la carrera completa;
+- comportamiento de recuperación y egreso;
+- arquetipos finales;
+- fórmula exacta de score y su explicación pública;
+- interfaz del ranking;
+- política de intentos;
+- política exacta de empate y de premios;
+- reglas de nickname;
+- instrucciones del evento.
+
+Después de la aprobación se congelan contenido, reglas y score; sólo quedan hardening y arreglos no semánticos antes de la feria. Ver [modo feria y congelamiento](05-operations/fair-mode-and-competition-freeze.md).
 
 ---
 
@@ -4281,6 +6108,261 @@ Lo que sí queda como deuda conocida:
 - **Las políticas de score, dificultad y perfil siguen siendo las de desarrollo.** Ningún content set puede declararse oficial hasta cerrar las preguntas abiertas 5 y 24; `createRuleset` lo impide por diseño.
 - **La copia de la portada nombra 7.º grado a mano.** Es correcta hoy y describe lo que el juego cubre; hay que reescribirla cuando deje de ser cierto.
 
+## Qué tiene que probar la demo candidata
+
+El slice de 7.º no es un prototipo descartable: es la **candidata a demo docente** de la Fase A del [ciclo de entrega real](00-product/real-delivery-lifecycle.md). Su trabajo es que el Departamento de Matemática pueda decidir si el proyecto se extiende a todos los años.
+
+Tiene que probar ocho cosas:
+
+1. Egresado tiene identidad visual propia.
+2. La matemática cambia decisiones en vez de funcionar como trivia.
+3. Distintos patrones de interacción son posibles.
+4. Promedio, Equipo, Aura y Estilo alcanzan como identidad de carrera.
+5. Una segunda run se siente distinta de la primera.
+6. Los resultados explican por qué una decisión funcionó.
+7. El motor genera y reproduce variantes deterministas.
+8. Las mismas fundaciones de UI y de motor escalan a los años siguientes.
+
+### Variación: qué alcanza y qué no
+
+Los cinco escenarios existentes —colectivo, mural, cuaderno, proyecto grupal y stand— tienen matemática que **no se reescribe**. Lo que la demo debería agregar es convertirlos en familias con más de una estructura de razonamiento, para que la segunda run del docente cambie valores y, en algunas familias, la pregunta. Ver [familias, plantillas y variantes](01-game-design/challenge-families-and-variants.md).
+
+No se puede llamar «dinámico» a un cambio de orden de las opciones.
+
+### El acto del 25 de Mayo
+
+Está implementado y jugable, y demuestra matemática, situación social, Aura y una familia de interacción distinta al mismo tiempo. **Su inclusión en producción sigue siendo una decisión docente** ([pregunta 42](07-reference/open-questions.md)).
+
+### Score en la demo
+
+No hace falta un ranking online para el Teacher Gate 1, pero conviene exponer un **prototipo de desglose de score** para que los docentes puedan evaluar la filosofía competitiva antes de que se construya. Ver [score competitivo y ranking](01-game-design/competitive-scoring-and-ranking.md).
+
+### Explícitamente fuera del alcance de la demo
+
+Backend de ranking con premios; contenido de 1.º a 5.º; arcos completos de recuperación; sistema de cuentas; pipeline de arte de personajes; biblioteca grande de assets; y el algoritmo final de arquetipo de carrera completa.
+
+---
+
+# FILE: 07-reference/blueprint-v0.2-integration.md
+
+# Integración del Project Blueprint v0.2.0
+
+Qué entró, dónde quedó, qué se descartó y qué conflictos hubo. Este documento existe para que dentro de seis meses nadie tenga que adivinar por qué un documento dice lo que dice.
+
+- **Paquete:** EGRESADO Project Blueprint & Technical Handoff v0.2.0 — 79 archivos, verificados contra su `MANIFEST.json`.
+- **Fuente congelada:** [`docs/sources/egresado-project-blueprint-v0.2.0/`](sources/README.md).
+- **Fecha de integración:** 28 de agosto de 2026.
+- **Decisión de gobernanza:** [ADR-018](03-architecture/adr/ADR-018-blueprint-v0-2-decision-authority.md).
+- **Alcance de la integración:** documentación únicamente. No se modificó comportamiento de producto, motor, frontend, sistema de diseño, tokens, contenido ejecutable, persistencia ni configuración de runtime.
+
+## Cómo leer las acciones
+
+| Acción | Significado |
+|---|---|
+| **NUEVO** | no existía documento equivalente; se creó uno canónico |
+| **FUSIÓN** | el contenido se incorporó a un documento existente |
+| **REFERENCIA** | el repositorio ya lo cubría; se dejó enlace, no copia |
+| **SUPERADO POR EL REPO** | el repositorio tiene una versión más nueva o ya implementada; el paquete queda como historia |
+| **DEFIERE A DISEÑO** | es material visual; manda el sistema de diseño implementado |
+
+## Mapa por documento del paquete
+
+### 00-governance
+
+| Origen | Acción | Destino |
+|---|---|---|
+| `decision-register.md` | FUSIÓN | [registro de decisiones](07-reference/decision-register.md) |
+| `decision-status.md` | FUSIÓN | [registro de decisiones](07-reference/decision-register.md) y [ADR-018](03-architecture/adr/ADR-018-blueprint-v0-2-decision-authority.md) |
+| `glossary.md` | FUSIÓN | [glosario](07-reference/glossary.md) |
+| `source-of-truth.md` | FUSIÓN | [ADR-018](03-architecture/adr/ADR-018-blueprint-v0-2-decision-authority.md) y el README de `docs/` |
+
+### 01-product
+
+| Origen | Acción | Destino |
+|---|---|---|
+| `real-delivery-lifecycle.md` | NUEVO | [ciclo de entrega real](00-product/real-delivery-lifecycle.md) |
+| `product-vision.md` | FUSIÓN | [visión de producto](00-product/product-vision.md) |
+| `full-project-scope.md` | FUSIÓN | [alcance y roadmap](00-product/scope-and-roadmap.md) |
+| `scope-demo-7mo.md` | FUSIÓN | [vertical slice de 7.º](06-delivery/vertical-slice-grade-7.md) |
+| `personas-and-contexts.md` | FUSIÓN | [personas y contextos](00-product/personas-and-contexts.md) |
+| `risks-and-assumptions.md` | FUSIÓN | [riesgos y supuestos](00-product/risks-and-assumptions.md) |
+| `success-metrics.md` | FUSIÓN | [métricas de éxito](00-product/success-metrics.md) |
+
+### 02-functional
+
+| Origen | Acción | Destino |
+|---|---|---|
+| `functional-specification.md` | REFERENCIA | [especificación funcional](02-functional/functional-specification.md); F-001…F-013 mapean a FR-001…FR-020 |
+| `traceability-matrix.md` | FUSIÓN | [matriz de trazabilidad](02-functional/traceability-matrix.md) |
+| `user-flows.md` | FUSIÓN | [flujos](02-functional/user-flows.md) |
+| `user-stories.md` | FUSIÓN | [historias de usuario](02-functional/user-stories.md) |
+
+### 02-game-design
+
+| Origen | Acción | Destino |
+|---|---|---|
+| `challenge-families-and-variants.md` | NUEVO | [familias, plantillas y variantes](01-game-design/challenge-families-and-variants.md) |
+| `difficulty-and-universal-playability.md` | NUEVO | [dificultad y jugabilidad universal](01-game-design/difficulty-and-playability.md) |
+| `competitive-scoring-and-ranking.md` | NUEVO | [score competitivo y ranking](01-game-design/competitive-scoring-and-ranking.md) |
+| `graduation-and-fail-forward.md` | NUEVO | [egreso y fail-forward](01-game-design/graduation-and-fail-forward.md) |
+| `content-authoring-guide.md` | FUSIÓN | [guía de autoría](01-game-design/content-authoring-guide.md) |
+| `narrative-and-storylets.md` | FUSIÓN | [sistema narrativo](01-game-design/narrative-system.md) |
+| `full-content-roadmap.md` | FUSIÓN | [alcance y roadmap](00-product/scope-and-roadmap.md) |
+| `core-loop-and-progression.md` | REFERENCIA | [GDD](01-game-design/game-design-document.md) |
+| `grade7-challenge-catalog.md` | REFERENCIA | [catálogo de desafíos](01-game-design/challenge-catalog.md) |
+| `player-career-model.md` | SUPERADO POR EL REPO | [ADR-016](03-architecture/adr/ADR-016-career-player-model.md), ya implementado |
+| `grid-classification-scoring.md` | SUPERADO POR EL REPO | [catálogo de desafíos](01-game-design/challenge-catalog.md), ya implementado con F1 |
+
+### 03-pedagogy
+
+| Origen | Acción | Destino |
+|---|---|---|
+| `math-design-framework.md` | FUSIÓN | [marco matemático](01-game-design/math-design-framework.md) |
+| `teacher-review-framework.md` | FUSIÓN | [gates docentes](06-delivery/teacher-gates.md) |
+| `theory-basis.md` | FUSIÓN | [base teórica](07-reference/research-basis.md) |
+
+### 04-design
+
+Los tres documentos son **DEFIERE A DISEÑO**. El sistema de diseño implementado y el handoff de Claude Design v0.2 son la autoridad visual; el paquete sólo aportó contexto de producto, y ese contexto se cita sin repetir valores.
+
+| Origen | Dónde manda de verdad |
+|---|---|
+| `ui-art-foundation.md` | [sistema de diseño](09-design-system/README.md), [colores](09-design-system/colors.md), [tipografía](09-design-system/typography.md), [fundamentos](09-design-system/foundations.md), [ADR-017](03-architecture/adr/ADR-017-paper-visual-identity.md) |
+| `accessibility-and-interaction.md` | [accesibilidad del sistema de diseño](09-design-system/accessibility.md), [UX e interacción](01-game-design/ux-interaction-design.md) |
+| `assets-motion-audio.md` | [assets](09-design-system/assets.md), [fundamentos](09-design-system/foundations.md) |
+
+### 05-engine
+
+| Origen | Acción | Destino |
+|---|---|---|
+| `target-engine-architecture.md` | NUEVO | [arquitectura objetivo del motor](03-architecture/target-engine-architecture.md) |
+| `variant-generation-engine.md` | FUSIÓN | [familias y variantes](01-game-design/challenge-families-and-variants.md) y arquitectura objetivo |
+| `difficulty-budget-scheduler.md` | FUSIÓN | [dificultad](01-game-design/difficulty-and-playability.md) y arquitectura objetivo |
+| `scoring-replay-and-ranking.md` | FUSIÓN | [arquitectura objetivo del motor](03-architecture/target-engine-architecture.md) |
+| `server-authoritative-fair-mode.md` | FUSIÓN | arquitectura objetivo; [ADR-004](03-architecture/adr/ADR-004-server-authoritative-scoring.md) y [ADR-006](03-architecture/adr/ADR-006-local-first-gameplay.md) ya lo decidían |
+| `score-policy-configuration.md` | FUSIÓN | [score competitivo](01-game-design/competitive-scoring-and-ranking.md) y [score-policy.example.json](07-reference/score-policy.example.json) |
+| `content-and-rules-versioning.md` | FUSIÓN | arquitectura objetivo, eje por eje |
+| `api-contracts.md` | REFERENCIA | [contratos API](03-architecture/api-contracts.md); su contrato concreto sigue abierto |
+| `data-model.md` | REFERENCIA | [modelo de datos](03-architecture/data-model.md) |
+| `run-state-machine.md` | REFERENCIA | [game engine](03-architecture/game-engine.md) |
+| `persistence-and-resume.md` | REFERENCIA | [game engine](03-architecture/game-engine.md) |
+| `career-state-migration.md` | SUPERADO POR EL REPO | migración ya hecha: [ADR-016](03-architecture/adr/ADR-016-career-player-model.md), `ENGINE_VERSION 2.0.0` |
+
+### 06-quality
+
+| Origen | Acción | Destino |
+|---|---|---|
+| `variant-validation-invariants.md` | NUEVO | [validación y auditoría de variantes](04-quality/variant-validation-and-audit.md) |
+| `statistical-variant-audit.md` | NUEVO | ídem |
+| `scoring-fairness-audit.md` | NUEVO | [auditoría de equidad competitiva](04-quality/competition-fairness-audit.md) |
+| `teacherless-preflight-risk-compensation.md` | FUSIÓN | [ciclo de entrega real](00-product/real-delivery-lifecycle.md) |
+| `testing-and-simulation.md` | FUSIÓN | [estrategia de testing](04-quality/testing-strategy.md) |
+| `manual-qa-matrix.md` | FUSIÓN | [estrategia de testing](04-quality/testing-strategy.md) |
+| `security-threat-model.md` | FUSIÓN | [threat model](04-quality/threat-model.md) |
+| `non-functional-requirements.md` | REFERENCIA | [NFR](04-quality/non-functional-requirements.md) |
+
+### 07-operations
+
+| Origen | Acción | Destino |
+|---|---|---|
+| `fair-mode-and-ranking.md` | NUEVO | [modo feria y congelamiento](05-operations/fair-mode-and-competition-freeze.md) |
+| `competition-freeze-and-change-control.md` | NUEVO | ídem |
+| `load-and-network-test-plan.md` | FUSIÓN | ídem |
+| `privacy-and-minors.md` | FUSIÓN | ídem y [seguridad y privacidad](03-architecture/security-privacy.md) |
+| `ranking-moderation-and-prizes.md` | FUSIÓN | [leaderboard y moderación](05-operations/leaderboard-and-moderation.md) |
+| `incident-runbook.md` | FUSIÓN | [fallback e incidentes](05-operations/fallback-and-incident-plan.md) |
+| `telemetry-and-observability.md` | FUSIÓN | [analytics y observabilidad](03-architecture/analytics-observability.md) |
+| `deployment-and-environments.md` | FUSIÓN | [deploy y ambientes](03-architecture/deployment-and-environments.md) |
+
+### 08-delivery
+
+| Origen | Acción | Destino |
+|---|---|---|
+| `implementation-sequence.md` | NUEVO | [secuencia de implementación](06-delivery/implementation-sequence.md) |
+| `teacher-gate-1-checklist.md` | NUEVO | [gates docentes](06-delivery/teacher-gates.md) |
+| `teacher-gate-2-checklist.md` | NUEVO | ídem |
+| `product-freeze-checklist.md` | FUSIÓN | ídem |
+| `demo-presentation-guide.md` | FUSIÓN | ídem |
+| `content-matrix-template.md` | FUSIÓN | [secuencia de implementación](06-delivery/implementation-sequence.md) |
+| `agent-handoff.md` | FUSIÓN | secuencia de implementación y `AGENTS.md` |
+| `definition-of-done.md` | FUSIÓN | [Definition of Done](06-delivery/definition-of-done.md) |
+| `open-decisions.md` | FUSIÓN | [preguntas abiertas](07-reference/open-questions.md) |
+
+### 09-reference
+
+| Origen | Acción | Destino |
+|---|---|---|
+| `formulas-and-algorithms.md` | NUEVO | [fórmulas y algoritmos](07-reference/formulas-and-algorithms.md) |
+| `research-basis.md` | FUSIÓN | [base teórica](07-reference/research-basis.md) |
+| `examples/*` | COPIA | los `*.example.*` de este directorio |
+
+## Conflictos y cómo se resolvieron
+
+Cinco discrepancias reales entre el paquete y el repositorio. Ninguna se resolvió en silencio.
+
+### 1 · Migración del modelo de jugador
+
+- **Paquete:** pide migrar `knowledge/team/initiative/energy` a Promedio · Equipo · Aura · Estilo.
+- **Repositorio:** ya migrado en `src/game/progression/career.ts`, `ENGINE_VERSION 2.0.0`.
+- **Autoridad:** el código y [ADR-016](03-architecture/adr/ADR-016-career-player-model.md) son más nuevos.
+- **Resolución:** el capítulo de migración queda como historia. La arquitectura objetivo lo marca **implementado** para que nadie replanifique trabajo hecho.
+
+### 2 · Scoring de la grilla de clasificación
+
+- **Paquete:** propone `0,6 × precisión + 0,4 × cobertura`, y sugiere F1 como generalización.
+- **Repositorio:** el acto del 25 de Mayo ya usa F1 micro-agregado sobre las tres rondas, con los tres casos de denominador cero decididos y umbrales calibrados.
+- **Autoridad:** el repositorio, que es más nuevo y está implementado y testeado.
+- **Resolución:** superado. El razonamiento del paquete se conservó en [fórmulas y algoritmos](07-reference/formulas-and-algorithms.md) porque explica *por qué* F1 y no un promedio ponderado.
+
+### 3 · Playtest con estudiantes antes de la feria
+
+- **Paquete:** declara que probablemente no habrá playtest con estudiantes antes de la release de feria; es una restricción externa.
+- **Repositorio:** varios documentos asumían testers y playtest como criterio de salida.
+- **Autoridad:** el paquete, que describe el contexto real y es posterior.
+- **Resolución:** los documentos prospectivos se corrigieron hacia el ciclo real y la limitación quedó declarada. Los criterios de playtest que sí se pueden ejecutar —prueba proxy con adultos, revisión heurística— se conservaron como tales, sin llamarlos validación con jugadores. Ver [ciclo de entrega real](00-product/real-delivery-lifecycle.md).
+
+### 4 · La palabra «familia»
+
+- **Paquete:** `ScenarioFamily` es un dominio narrativo: Colectivo, Mural, Stand.
+- **Repositorio:** el [sistema de desafíos](01-game-design/challenge-system.md) llama «familias» a los patrones de interacción: Decision Card, Timeline, Number Grid.
+- **Resolución:** ambos términos se conservan y se desambiguan explícitamente. Ninguno se renombró: renombrar habría tocado código y contenido, que están fuera del alcance de esta integración. La correspondencia está en [familias, plantillas y variantes](01-game-design/challenge-families-and-variants.md) y en el [glosario](07-reference/glossary.md).
+
+### 5 · Nombres de las calidades de resolución
+
+- **Paquete:** `optimal / resolved / partial / insufficient`.
+- **Repositorio:** `optimal / efficient / functional / invalid`, implementado como `SolutionQuality`.
+- **Resolución:** manda el repositorio. La correspondencia está en el [glosario](07-reference/glossary.md), y el score competitivo la usa explícitamente para que la calibración candidata `1,00 / 0,75 / 0,40 / 0,10` se lea contra las etiquetas correctas.
+
+### Y una que **no** se resolvió
+
+El paquete resume decisiones visuales —paleta, tipografías, geometría, isla de Aura— que ya están implementadas por el sistema de diseño. Cualquier diferencia entre ese resumen y lo implementado **se resuelve a favor de Claude Design v0.2 y del sistema implementado**, y no se reconcilia editando lo visual. Los documentos de producto enlazan al sistema de diseño; no repiten valores de token.
+
+## Trazabilidad
+
+De requisito de producto a estado de implementación. La columna de estado es una lectura del 28 de agosto de 2026 y se verifica contra el código antes de planificar.
+
+| Requisito de producto | Regla de game design | Capacidad de motor | Estado actual | Fase futura |
+|---|---|---|---|---|
+| Escenarios que no se memorizan | [familias, plantillas y variantes](01-game-design/challenge-families-and-variants.md) | `ScenarioFamily`/`Template`/`Variant`, generador por restricción | variantes autoradas por desafío, seeded y verificadas | paso 2 de la [secuencia](06-delivery/implementation-sequence.md) |
+| Competencia sin variantes defectuosas | [validación y auditoría de variantes](04-quality/variant-validation-and-audit.md) | validador transversal + catálogo desplegado | invariantes por desafío; sin catálogo | pasos 2 y 9 |
+| Identidad de carrera legible | [ADR-016](03-architecture/adr/ADR-016-career-player-model.md) | `CareerState` v0.2 | **implementado** | — |
+| Runs comparables entre sí | [dificultad](01-game-design/difficulty-and-playability.md) | bandas + scheduler por presupuesto | `DifficultyLevel` 1–5, sin presupuesto | paso 2 |
+| Ranking dominado por matemática | [score competitivo](01-game-design/competitive-scoring-and-ranking.md) | `ScorePolicy` + `ScoringEngine` competitivo | score por evento de desarrollo | paso 3, tras Teacher Gate 1 |
+| Premiar mejora y no volumen | [modo feria](05-operations/fair-mode-and-competition-freeze.md) | comparador versionado + personal best | no implementado | paso 8 |
+| El navegador no decide el premio | [ADR-004](03-architecture/adr/ADR-004-server-authoritative-scoring.md) | verificación por replay en servidor | base en `src/server/game/validate-run.ts` | paso 8 |
+| Reproducibilidad y auditoría de una run | [ADR-003](03-architecture/adr/ADR-003-deterministic-seeded-engine.md) | seed + tripleta de versiones + action log | **implementado** | `scoreVersion` y `variantCatalogVersion` en paso 8 |
+| El error no expulsa al jugador | [egreso y fail-forward](01-game-design/graduation-and-fail-forward.md) | invariante de egreso + recuperación comprimida | sin contenido de recuperación | pasos 6 y 7 |
+| Datos mínimos de menores | [ADR-008](03-architecture/adr/ADR-008-anonymous-identity.md) | identidad pseudónima | **implementado** en la base | retención abierta, paso 9 |
+
+## Qué NO hizo esta integración
+
+- No implementó ninguna capacidad marcada TARGET.
+- No cerró ninguna pregunta abierta ni ninguna decisión de Teacher Gate.
+- No promovió una recomendación a regla: la ponderación 80/15/5, la política de intentos y la calibración de calidades siguen siendo candidatas.
+- No tocó el sistema de diseño, sus tokens, su CSS, sus componentes ni sus capturas.
+- No modificó código, contenido ejecutable, esquemas de estado, persistencia, snapshots, replay ni configuración de runtime.
+- No agregó ni actualizó dependencias.
+
 ---
 
 # FILE: 07-reference/decision-register.md
@@ -4315,6 +6397,158 @@ Crear ADR cuando una decisión:
 - cambia una propiedad no funcional significativa;
 - cambia proveedor/plataforma principal;
 - altera compatibilidad de runs o seguridad.
+
+## Decisiones del Project Blueprint v0.2
+
+Estas decisiones vienen del [Project Blueprint v0.2.0](07-reference/blueprint-v0.2-integration.md) y **conservan su nivel de madurez**, que es parte de la decisión. [ADR-018](03-architecture/adr/ADR-018-blueprint-v0-2-decision-authority.md) fija cómo se interpreta cada nivel.
+
+| Nivel | Qué significa para quien implementa |
+|---|---|
+| **LOCKED** | fundación aceptada; se implementa salvo que una autoridad más nueva la supere |
+| **PRODUCT DIRECTION** | dirección fuerte; la arquitectura debe poder sostenerla aunque hoy no exista |
+| **RECOMENDADA** | propuesta senior; se implementa configurable, nunca como constante inmutable |
+| **TEACHER GATE** | requiere validación del Departamento de Matemática antes del congelamiento |
+| **OPEN** | deliberadamente sin resolver; no se cierra dentro del código |
+| **DEFERRED** | fuera de alcance a propósito; no es deuda ni backlog urgente |
+
+| ID | Decisión | Nivel | Estado de implementación |
+|---|---|---|---|
+| D-001 | Identidad visual UI-first: la identidad sale del sistema, no de cientos de assets | LOCKED | implementado ([sistema de diseño](09-design-system/README.md)) |
+| D-002 | Identidad papel v0.2 de Claude Design en lugar de la estética de carrera deportiva | LOCKED | implementado ([ADR-017](03-architecture/adr/ADR-017-paper-visual-identity.md)) |
+| D-003 | Sólo Promedio, Equipo, Aura y Estilo como dimensiones visibles | LOCKED | implementado ([ADR-016](03-architecture/adr/ADR-016-career-player-model.md)) |
+| D-004 | Dominio matemático oculto, nunca una barra de «Conocimiento» | LOCKED | implementado |
+| D-005 | Sin game over global: el error cambia el camino, no termina la partida | PRODUCT DIRECTION | parcial; falta contenido de recuperación ([fail-forward](01-game-design/graduation-and-fail-forward.md)) |
+| D-006 | Jerarquía `ScenarioFamily → Template → Variant` | RECOMENDADA | no implementada ([familias y variantes](01-game-design/challenge-families-and-variants.md)) |
+| D-007 | Variantes deterministas por seed | LOCKED como dirección de arquitectura | implementado ([ADR-003](03-architecture/adr/ADR-003-deterministic-seeded-engine.md), [ADR-012](03-architecture/adr/ADR-012-seeded-prng-and-substreams.md)) |
+| D-008 | Catálogo de variantes prevalidado y desplegado para competencia | RECOMENDADA | no implementado |
+| D-009 | Intentos ilimitados con personal best en el ranking | RECOMENDADA · TEACHER GATE | no implementado ([modo feria](05-operations/fair-mode-and-competition-freeze.md)) |
+| D-010 | `FairScore` separado de las stats de carrera | RECOMENDADA | no implementado ([score competitivo](01-game-design/competitive-scoring-and-ranking.md)) |
+| D-011 | La matemática domina el `FairScore` | RECOMENDADA · TEACHER GATE | no implementado |
+| D-012 | Estilo no puntúa directamente | RECOMENDADA | vigente como regla de diseño |
+| D-013 | Desempate lexicográfico determinista y profundo | RECOMENDADA · TEACHER GATE | no implementado |
+| D-014 | Presupuesto de dificultad por run competitiva | RECOMENDADA | no implementado ([dificultad](01-game-design/difficulty-and-playability.md)) |
+| D-015 | Diseño de tareas de piso bajo y techo alto | RECOMENDADA como principio | vigente en el contenido de 7.º |
+| D-016 | No hay playtest real con estudiantes antes de la feria | RESTRICCIÓN EXTERNA | declarada ([ciclo de entrega real](00-product/real-delivery-lifecycle.md)) |
+| D-017 | Congelamiento de reglas y score durante el evento oficial | RECOMENDADA como regla de operación | política escrita, sin evento oficial todavía |
+
+Los valores exactos de D-009, D-011 y D-013 —coeficientes, topes, política de intentos y de empate— siguen en [preguntas abiertas](07-reference/open-questions.md). Cerrar uno de esos ítems en una sesión docente actualiza **esta tabla**, no un registro nuevo.
+
+---
+
+# FILE: 07-reference/formulas-and-algorithms.md
+
+# Fórmulas y algoritmos
+
+Referencia de las fórmulas que el proyecto usa o propone, **con su estado declarado en cada una**. Una fórmula ilustrativa no es una política.
+
+| Etiqueta | Significado |
+|---|---|
+| **NORMATIVA** | implementada y verificada por tests; cambiarla es un cambio de versión |
+| **CANDIDATA** | propuesta con forma decidida y constantes abiertas; requiere Teacher Gate |
+| **ILUSTRATIVA** | ejemplo para explicar una idea; no define comportamiento |
+
+---
+
+## 1 · Promedio — NORMATIVA
+
+Promedio es la media de las notas reales, redondeada a un decimal. El estado guarda el libro de notas, no un acumulador.
+
+```text
+Promedio = Σ notas / cantidad de notas
+```
+
+Sin notas, Promedio es `null` y no se dibuja. `null` no es 0. Ver [ADR-016](03-architecture/adr/ADR-016-career-player-model.md).
+
+Extensión **CANDIDATA** para años con evaluaciones de distinto peso:
+
+```text
+Promedio = Σ (peso_j × nota_j) / Σ peso_j
+```
+
+Con pesos iguales colapsa a la forma actual, así que adoptarla no cambiaría ningún resultado existente.
+
+## 2 · Normalización de Estilo — NORMATIVA
+
+Dado un vector de evidencia no negativa `(A, E, I)` con `S = A + E + I`:
+
+- si `S = 0`, Estilo todavía no tiene significado y no se muestra;
+- si no, `%A = 100A/S`, `%E = 100E/S`, `%I = 100I/S`.
+
+El redondeo usa **resto mayor** con desempate sobre el orden canónico de los ejes, de modo que los tres enteros suman exactamente 100 en cualquier motor y en cualquier dispositivo. Redondear cada porcentaje por separado rompería esa suma, y eso sería no determinismo, no un detalle de presentación.
+
+## 3 · Clasificación por precisión y cobertura — NORMATIVA
+
+Usada por la grilla del acto del 25 de Mayo.
+
+```text
+precisión = TP / (TP + FP)
+cobertura = TP / (TP + FN)
+F1        = 2·TP / (2·TP + FP + FN)
+```
+
+Se juzga con las dos juntas porque cada una miente sola: marcar una celda evidente da 100 % de precisión sin haber hecho la tarea, y marcar la grilla entera da 100 % de cobertura. Los casos de denominador cero están decididos explícitamente, y los umbrales por calidad están en el [catálogo de desafíos](01-game-design/challenge-catalog.md).
+
+Una propuesta previa —`0,6 × precisión + 0,4 × cobertura`— también funciona, pero F1 se anula si cualquiera de las dos colapsa, que es exactamente la propiedad que hacía falta. Si algún día un contenido necesita penalizar más un lado que el otro, se usa `Fβ` con la β documentada, no un peso sin explicar.
+
+## 4 · Score por evento — NORMATIVA en forma, ABIERTA en constantes
+
+```text
+score_evento = base × calidad × dificultad + bonus − penalizaciones
+```
+
+La forma está fijada por [reglas, scoring y progresión](01-game-design/rules-scoring-and-progression.md) y el motor la implementa con aritmética racional exacta, redondeando una sola vez al final. Las constantes vigentes son de **desarrollo**, marcadas `production: false`, y la [pregunta 24](07-reference/open-questions.md) es su gate.
+
+## 5 · Desempeño matemático competitivo — CANDIDATA
+
+```text
+MathRaw         = Σ (1000 × q_i × d_i)
+MathMax         = Σ (1000 × d_i)
+MathPerformance = 10000 × MathRaw / MathMax
+```
+
+Con `q_i ∈ [0,1]` la calidad matemática del evento y `d_i` el multiplicador de su banda de dificultad. Normalizar contra el máximo alcanzable de esa run es lo que permite comparar runs armadas con plantillas distintas.
+
+## 6 · FairScore — CANDIDATA / TEACHER GATE
+
+```text
+FairScore = round(wM × M + wT × T + wA × A)      con wM + wT + wA = 1
+```
+
+Ponderación candidata: `0,80 / 0,15 / 0,05`. **No es la fórmula oficial.** Ver [score competitivo y ranking](01-game-design/competitive-scoring-and-ranking.md) y el [ejemplo de política](07-reference/score-policy.example.json).
+
+## 7 · Comparador de ranking — CANDIDATA
+
+Comparación lexicográfica, gana la tupla mayor:
+
+```text
+(FairScore, MathPerformance, OptimalCount, Accuracy, DifficultySolved, −ActiveTimeMs)
+```
+
+El empate exacto requiere política explícita del organizador; no se resuelve con ruido aleatorio.
+
+## 8 · Generación inversa — ILUSTRATIVA
+
+Ejemplo de mural. Cobertura `c = 8 m²/L`, envases de `1`, `2` y `4 L`. Para garantizar que 2 L sea el envase mínimo suficiente, se elige el área requerida `R` tal que:
+
+```text
+8 < R ≤ 16
+```
+
+y recién después se eligen dimensiones legibles cuyo producto —menos aberturas si las hay— dé `R`. El camino inverso, elegir dimensiones y ver qué sale, produce variantes triviales o imposibles. Ver [familias, plantillas y variantes](01-game-design/challenge-families-and-variants.md).
+
+## Ejemplos de contrato
+
+Los archivos siguientes son **documentación**: muestran la forma de un contrato, no configuran nada. No se importan desde runtime, sus valores no son configuración de producción y una migración no se justifica sólo en ellos.
+
+| Archivo | Qué ilustra |
+|---|---|
+| [run-descriptor.example.json](07-reference/run-descriptor.example.json) | identidad inmutable de una run oficial |
+| [score-policy.example.json](07-reference/score-policy.example.json) | política de score versionada, marcada `teacher-gate` |
+| [score-breakdown.example.json](07-reference/score-breakdown.example.json) | desglose de score guardado por run verificada |
+| [event-config.example.json](07-reference/event-config.example.json) | configuración de un evento de feria |
+| [event-effects.example.json](07-reference/event-effects.example.json) | efectos de un evento: carrera, ocultos y competencia, por separado |
+| [challenge-authoring.example.yaml](07-reference/challenge-authoring.example.yaml) | ficha de autoría de una plantilla antes de que exista código |
+| [content-schema.example.json](07-reference/content-schema.example.json) | ejemplo de definición de desafío |
 
 ---
 
@@ -4355,6 +6589,57 @@ Crear ADR cuando una decisión:
 **Seed:** valor que inicializa aleatoriedad determinista.
 
 **Storylet:** fragmento narrativo elegible según estado/condiciones.
+
+## Vocabulario de carrera y competencia
+
+**Promedio:** media de las notas reales de la run, `1,0–10,0` con un decimal. `null` mientras no haya nota. No es un acumulador de aciertos.
+
+**Equipo:** conducta hacia el grupo, `0–100`. No es moral ni barra de vida.
+
+**Aura:** capital narrativo con signo y sin techo. La mueve lo memorable, no lo correcto.
+
+**Estilo:** perfil ternario Aplicado · Estratega · Improvisador, que siempre suma 100. Ningún eje es el malo.
+
+**Dominio matemático / mastery:** estado latente por categoría matemática. Sistema oculto: alimenta dificultad y analítica, **nunca se renderiza**.
+
+**Scenario Family:** dominio narrativo reconocible —Colectivo, Mural, Stand—. No confundir con las «familias de interacción» del [sistema de desafíos](01-game-design/challenge-system.md), que son patrones de UI.
+
+**Template:** estructura de razonamiento distinta dentro de una misma familia de escenario.
+
+**Variant:** parametrización concreta y determinista de una plantilla.
+
+**Deployed variant:** variante generada, validada y aprobada antes de que exista una run competitiva. Objetivo, no implementado.
+
+**Difficulty budget:** masa de dificultad esperada asignada a una run para que distintas runs sigan siendo comparables.
+
+**Banda de dificultad:** `CORE`, `STANDARD` o `STRETCH`, metadata de autoría y competencia. Corresponde aproximadamente a `DifficultyLevel` 1–2 / 3 / 4–5 del motor.
+
+**MathPerformance:** medida normalizada de desempeño matemático orientada a competencia. No es una stat visible de carrera.
+
+**FairScore:** score compuesto oficial usado para el ranking. Objetivo, no implementado, y sus coeficientes están abiertos.
+
+**Personal best:** mejor run verificada de un participante en un evento. Es lo que el ranking compara, en vez de la suma de intentos.
+
+**Run descriptor:** identidad y configuración inmutables de una run oficial: versiones, seed, variantes asignadas y metadata del evento.
+
+**Fail forward:** el error cambia las consecuencias y el contenido siguiente en vez de terminar la partida.
+
+**Golden seed:** seed conocida que se conserva para tests deterministas de regresión.
+
+**Teacher Gate:** revisión formal del Departamento de Matemática que cierra decisiones de contenido, dificultad y competencia. Ver [gates docentes](06-delivery/teacher-gates.md).
+
+## Correspondencia de calidades de resolución
+
+El motor y el blueprint nombran distinto la misma escala de cuatro escalones.
+
+| Motor (`SolutionQuality`) | Blueprint | Significado |
+|---|---|---|
+| `optimal` | optimal / óptimo | mejor solución bajo la función objetivo declarada |
+| `efficient` | resolved / resuelto | válida y con buen uso de recursos, sin ser la mejor |
+| `functional` | partial / parcial | cumple lo mínimo o avanza sin completar |
+| `invalid` | insufficient / insuficiente | rompe una restricción esencial; la run continúa igual |
+
+Manda el vocabulario del motor. La escala del blueprint aparece en documentos de score competitivo y se lee contra esta tabla.
 
 ---
 
@@ -4433,6 +6718,40 @@ Estas decisiones requieren evidencia de prototipo, playtest, implementación u o
 35. ¿Qué evento de 7.º introduce Aura? **Respondida**: el **acto del 25 de Mayo**, autorado como `g7.may-25-act` y tercer evento del año. Es el único momento del arco que ocurre en público, que es la condición que Aura pide: la mueve lo memorable, no lo correcto. El acto entrega entre `+1000` y `−300` según cómo salga la coreografía, así que la dimensión se establece —en positivo o en negativo— en toda partida normal. Ver [la especificación del evento](01-game-design/challenge-catalog.md) y el [slice de 7.º](06-delivery/vertical-slice-grade-7.md).
 36. ¿Los arquetipos de cierre son los ocho perfiles del GDD o los que nombra el handoff de diseño? La pantalla usa los ocho del GDD —fuente autoritativa de game design—; el handoff nombra al pasar «El Rey del Último Minuto», «El Vago Eficiente» y «La Leyenda del Colegio», que no están en esa lista. Adoptarlos sería un cambio de game design, no de presentación. *Gate: congelar el set de perfiles de egreso.*
 37. ¿Cuánto tiempo se sostiene el rechazo de snapshots v1 antes de poder borrar el camino? Hoy un checkpoint del modelo de estadísticas viejo se descarta y se ofrece partida nueva. *Gate: prometer compatibilidad de resume entre releases; se cruza con la pregunta 26.*
+
+## Teacher Gate — decisiones del Departamento de Matemática
+
+Incorporadas desde el [Project Blueprint v0.2](07-reference/blueprint-v0.2-integration.md). **Ninguna se cierra desde el código.** Su gate es una sesión con los docentes; la forma de esa sesión está en [gates docentes](06-delivery/teacher-gates.md), y lo que se cierre se anota en el [registro de decisiones](07-reference/decision-register.md).
+
+38. ¿Cuáles son los coeficientes y topes exactos del score competitivo? La ponderación candidata es `0,80` matemática / `0,15` equipo / `0,05` Aura, y **es un candidato, no una decisión**. *Gate: Teacher Gate 1; se cruza con la pregunta 24, que cubre el score por evento.*
+39. ¿Qué valor de calidad matemática corresponde a cada resultado? La calibración candidata es `1,00 / 0,75 / 0,40 / 0,10` sobre `optimal / efficient / functional / invalid`. *Gate: Teacher Gate 1.*
+40. ¿Los intentos en la feria son ilimitados o limitados a N? La recomendación es ilimitados con personal best; la decisión es del evento. *Gate: Teacher Gate 1; configuración del evento antes del congelamiento.* Se cruza con la pregunta 11.
+41. ¿Qué pasa ante un empate exacto en el ranking: puesto compartido, premio compartido o desempate anunciado? Un identificador interno **no** puede decidir un premio en silencio. *Gate: aprobación del organizador antes de repartir premios.* Se cruza con la pregunta 13.
+42. ¿El acto del 25 de Mayo entra a producción como desafío de 7.º o queda como ejemplar de diseño? Está implementado y jugable; lo que falta es la aprobación de contenido. *Gate: Teacher Gate 1.*
+43. ¿Cuál es la duración objetivo real de una run completa, y de la demo de 7.º? *Gate: Teacher Gate 1.* Se cruza con la pregunta 1.
+44. ¿Cómo se calibran las bandas `CORE / STANDARD / STRETCH` y sus costos de scheduling frente a los multiplicadores de score? *Gate: Teacher Gate 1; auditoría de equidad antes del congelamiento.*
+45. ¿Qué desafíos deben ofrecer fórmula, calculadora o material de referencia, y esa disponibilidad cambia en modo competitivo? *Gate: Teacher Gate 1.* Se cruza con la pregunta 7.
+
+## Contenido y producto, sin gate docente inmediato
+
+46. ¿Cuántas familias de escenario y cuántas plantillas por año sostienen la variedad sin romper la duración objetivo? El rango de planificación es de seis a ocho situaciones significativas por año, y **es planificación, no requisito**. *Gate: congelar la matriz de contenido de 1.º–5.º.*
+47. ¿Cuáles son los pesos exactos con los que cada resultado empuja Estilo? Hoy son valores de desarrollo dentro del presupuesto declarado por el motor. *Gate: congelar el ruleset de perfiles.* Se cruza con la pregunta 24.
+48. ¿Qué acento visual mínimo distingue cada año? Es una decisión del sistema de diseño, prevista para v0.4 y **explícitamente diferida**. No la resuelve un documento de producto. *Gate: alcance de la v0.4 del sistema de diseño.*
+49. ¿Se produce el pack raster de ocho imágenes o el producto sale confirmando que la UI sola alcanza? Todas las pantallas corren hoy con cero imágenes. *Gate: alcance de la v0.3 del sistema de diseño.*
+50. ¿Cuánto tiempo se conservan action logs, ranking público y datos del evento después de la feria, y qué se archiva o anonimiza? *Gate: persistir datos reales de participantes.* Se cruza con la pregunta 31.
+51. ¿Qué señal de tiempo activo puede verificar el servidor si el tiempo participa del desempate? *Gate: usar tiempo en el ranking oficial.* Es la pregunta 27 vista desde el ranking competitivo.
+
+## Diferidas a propósito
+
+No son preguntas abiertas: son alcance excluido. Se listan para que nadie las reabra como deuda.
+
+- sistema de avatar y arte de personaje;
+- pipeline completo de arte de personajes;
+- tema oscuro alternativo completo;
+- arquitectura PWA/offline más allá de lo que exija la confiabilidad en la feria;
+- grafo social y cuentas complejas;
+- chat;
+- monetización.
 
 ---
 
@@ -4546,12 +6865,83 @@ La investigación no dicta arquitectura automáticamente. Las decisiones formale
 
 ---
 
+## Fuentes incorporadas desde el Project Blueprint v0.2
+
+Fecha de acceso declarada por el paquete: **agosto de 2026**. Estas fuentes informan las recomendaciones de variantes, dificultad, competencia y seguridad; ninguna prueba causalmente nada sobre Egresado, que sigue necesitando validación con la institución. Ver [la integración del blueprint](07-reference/blueprint-v0.2-integration.md).
+
+### 8. STACK — variantes aleatorias sembradas y desplegadas
+
+- «Deploying»: https://docs.stack-assessment.org/en/STACK_question_admin/Deploying/
+- «Random objects»: https://docs.stack-assessment.org/en/CAS/Random/
+- «Systematic deployment»: https://docs.stack-assessment.org/en/STACK_question_admin/Deploying_systematically/
+
+Principio: las variantes pseudoaleatorias sembradas son reproducibles, y pregenerarlas, testearlas y desplegarlas reduce el riesgo de exponer casos imposibles o defectuosos.
+
+Implicación: variantes deterministas, catálogo prevalidado para la feria, golden seeds, y nada de RNG sin control durante una competencia con premios. Ver [familias, plantillas y variantes](01-game-design/challenge-families-and-variants.md).
+
+### 9. CAST — Universal Design for Learning 3.0
+
+- https://udlguidelines.cast.org/
+- Acción y expresión: https://udlguidelines.cast.org/action-expression/
+- Representación: https://udlguidelines.cast.org/representation/
+- Compromiso: https://udlguidelines.cast.org/engagement/
+
+Principios relevantes: optimizar desafío y apoyo, clarificar notación y símbolos matemáticos, usar múltiples representaciones, variar los métodos de respuesta y navegación, relevancia auténtica y feedback orientado a la acción.
+
+Implicación: no asumir que una sola representación sirve para todos; conservar alternativas de teclado y sin arrastre; sacar barreras que no son el objetivo de la tarea; feedback que habilite acción en vez de vergüenza. Ver [dificultad y jugabilidad universal](01-game-design/difficulty-and-playability.md).
+
+### 10. Tareas de piso bajo y techo alto
+
+- Revisión de literatura 2025: https://www.tandfonline.com/doi/full/10.1080/0020739X.2025.2457365
+- Ejemplo en Educational Designer: https://www.educationaldesigner.org/ed/volume5/issue17/article68/
+
+Principio: entrada accesible con conocimiento previo limitado, y espacio para razonamiento matemático más profundo, con más de un camino posible.
+
+Implicación: los conceptos de 7.º tienen que ser abordables por cualquiera, y el desafío para adultos tiene que venir de restricciones y optimización, no de currículo avanzado.
+
+### 11. Leaderboards repetibles y mejor puntaje
+
+- Apple GameKit, «Choosing a leaderboard for your challenges»: https://developer.apple.com/documentation/gamekit/choosing-a-leaderboard-for-your-challenges
+
+Principio: un desafío repetible conviene rankearlo por mejor puntaje y no por actividad acumulada, que favorece a quien juega más veces.
+
+Implicación: personal best en vez de suma de intentos. Ver [modo feria y congelamiento](05-operations/fair-mode-and-competition-freeze.md).
+
+### 12. Property-based testing
+
+- fast-check, «Why Property-Based Testing?»: https://fast-check.dev/docs/introduction/why-property-based/
+
+Principio: los property tests siguen siendo reproducibles usando seeds y seeds de falla.
+
+Implicación: invariantes de generador sobre miles de seeds, persistir la seed que falla y poder reproducir la variante exacta. Ya es la práctica del repositorio; ver [estrategia de testing](04-quality/testing-strategy.md).
+
+### 13. Accesibilidad — WCAG 2.2
+
+- https://www.w3.org/TR/wcag/
+
+Principios relevantes: nombre, rol y valor programáticos; estado determinable; mensajes de estado; operación por teclado.
+
+Implicación: controles semánticos, feedback anunciado, y ninguna semántica de resultado que dependa sólo del color. Es el objetivo declarado del [sistema de diseño](09-design-system/accessibility.md).
+
+### 14. Seguridad de API y de juegos
+
+- OWASP API Security Top 10 2023: https://owasp.org/API-Security/editions/2023/en/0x11-t10/
+- API4 Unrestricted Resource Consumption: https://owasp.org/API-Security/editions/2023/en/0xa4-unrestricted-resource-consumption/
+- OWASP Game Security Framework: https://owasp.org/www-project-gamesec-framework/OGSF
+
+Principios relevantes: validar los datos que cruzan una frontera de confianza, mantener autoritativa la lógica sensible y aplicar límites de tasa y de recursos.
+
+Implicación: el cliente no publica un score final; el servidor valida y reproduce; se limitan creación y envío de runs y el tamaño del action log. Ver [arquitectura objetivo del motor](03-architecture/target-engine-architecture.md) y [threat model](04-quality/threat-model.md).
+
+---
+
 # FILE: DOCUMENTATION-CHECKLIST.md
 
 # Checklist de completitud documental
 
 ## Producto
 - [x] Visión y propuesta de valor.
+- [x] Ciclo de entrega real, gates docentes y ausencia de playtest previo a la feria.
 - [x] Objetivos/no objetivos.
 - [x] Personas y contextos.
 - [x] Métricas de éxito.
@@ -4570,6 +6960,10 @@ La investigación no dicta arquitectura automáticamente. Las decisiones formale
 - [x] Feedback y error.
 - [x] Guía de autoría.
 - [x] UX/interacciones.
+- [x] Familias de escenario, plantillas y variantes deterministas.
+- [x] Dificultad de piso bajo y techo alto, bandas y presupuesto.
+- [x] Dirección de score competitivo y ranking, marcada como recomendación.
+- [x] Egreso, recuperación y fail-forward.
 
 ## Funcional
 - [x] Requisitos funcionales.
@@ -4589,6 +6983,7 @@ La investigación no dicta arquitectura automáticamente. Las decisiones formale
 - [x] ADRs.
 - [x] Fronteras del monolito modular y dirección de dependencias ejecutable.
 - [x] Toolchain reproducible con gate de consistencia e imagen standalone sin cambiar la topología Vercel.
+- [x] Arquitectura objetivo del motor con el estado real de cada capacidad.
 
 ## Calidad
 - [x] Unit/integration/E2E.
@@ -4597,9 +6992,12 @@ La investigación no dicta arquitectura automáticamente. Las decisiones formale
 - [x] NFR.
 - [x] Threat model.
 - [x] Gates reales de la base, cobertura acotada y checks contextuales de DB/Docker.
+- [x] Invariantes y auditoría estadística de variantes desplegadas.
+- [x] Auditoría de equidad competitiva.
 
 ## Operación
 - [x] Runbook de feria.
+- [x] Modo feria, política de intentos, congelamiento y control de cambios.
 - [x] Ranking/moderación.
 - [x] Fallback/incidentes.
 
@@ -4608,6 +7006,8 @@ La investigación no dicta arquitectura automáticamente. Las decisiones formale
 - [x] Definition of Done.
 - [x] Convenciones de repo.
 - [x] CI reproducible, Dependabot y bloqueo de release por dependencia.
+- [x] Secuencia de implementación posterior a la integración del blueprint.
+- [x] Checklists de Teacher Gate 1 y 2 y de congelamiento de fundaciones.
 
 ## Referencia
 - [x] Investigación y fuentes.
@@ -4615,6 +7015,9 @@ La investigación no dicta arquitectura automáticamente. Las decisiones formale
 - [x] Decisiones.
 - [x] Preguntas abiertas.
 - [x] Ejemplo de schema de contenido; schema ejecutable diferido a P0.
+- [x] Fórmulas y algoritmos, etiquetados como normativos, candidatos o ilustrativos.
+- [x] Ejemplos de contrato de run, score, evento y autoría, marcados como documentación.
+- [x] Integración, procedencia y trazabilidad del Project Blueprint v0.2.
 
 ## Ingeniería asistida
 - [x] Instrucciones raíz y scoped para documentación.
@@ -4642,7 +7045,7 @@ La investigación no dicta arquitectura automáticamente. Las decisiones formale
 
 ## Gaps intencionales que requieren evidencia del proyecto
 
-No son omisiones documentales; son decisiones que no deben fijarse sin playtest o datos:
+No son omisiones documentales; son decisiones que no deben fijarse sin evidencia, y varias sólo las puede cerrar el Departamento de Matemática. El playtest con estudiantes **no está garantizado antes de la feria**; ver [ciclo de entrega real](00-product/real-delivery-lifecycle.md):
 - duración exacta de run;
 - fórmula final de scoring;
 - distribución final de eventos por año;
@@ -4652,7 +7055,18 @@ No son omisiones documentales; son decisiones que no deben fijarse sin playtest 
 - diseño visual definitivo;
 - proveedor final de analytics/error tracking.
 
-Estas preguntas están registradas y deben cerrarse en la fuente autoritativa correspondiente cuando exista evidencia, actualizando trazabilidad y ADR cuando aplique.
+Se agregan, desde la integración del Project Blueprint v0.2:
+- coeficientes y topes exactos del score competitivo;
+- calibración de calidad matemática por resultado;
+- política de intentos en la feria;
+- política de empate exacto y de premios;
+- inclusión en producción del acto del 25 de Mayo;
+- calibración de bandas de dificultad;
+- qué desafíos ofrecen fórmula o calculadora;
+- cantidad de familias y plantillas por año;
+- acento visual por año y producción del pack raster, ambos diferidos al sistema de diseño.
+
+Estas preguntas están registradas en [preguntas abiertas](07-reference/open-questions.md) y deben cerrarse en la fuente autoritativa correspondiente cuando exista evidencia o decisión docente, actualizando el [registro de decisiones](07-reference/decision-register.md), la trazabilidad y el ADR cuando aplique.
 
 ---
 
@@ -4675,10 +7089,31 @@ Este directorio define la referencia funcional, lúdica, pedagógica y técnica 
 9. **Privacidad por minimización.** El MVP no requiere email, contraseña, apellido ni fecha de nacimiento.
 10. **Escalar por evidencia.** Primero se valida diversión, comprensión y duración; luego se agrega complejidad.
 
+## Por dónde empezar
+
+Un ingeniero o un agente que llega por primera vez lee en este orden y se detiene cuando ya tiene lo que su tarea necesita.
+
+1. `AGENTS.md` en la raíz — reglas del repositorio e invariantes no negociables.
+2. Este README — mapa y autoridad documental.
+3. [mapa de contexto](08-engineering/context-map.md) — qué fuentes leer para **esta** tarea.
+4. [registro de decisiones](07-reference/decision-register.md) — qué está cerrado, qué es recomendación y qué requiere aprobación docente.
+5. [visión de producto](00-product/product-vision.md) y [ciclo de entrega real](00-product/real-delivery-lifecycle.md) — qué es el juego y cómo se entrega de verdad.
+6. [vertical slice de 7.º](06-delivery/vertical-slice-grade-7.md) — el alcance de la demo candidata.
+7. [GDD](01-game-design/game-design-document.md) — core loop y modelo de carrera.
+8. [familias y variantes](01-game-design/challenge-families-and-variants.md) y [dificultad](01-game-design/difficulty-and-playability.md) — por qué el contenido se repite sin memorizarse.
+9. [score competitivo y ranking](01-game-design/competitive-scoring-and-ranking.md) — la dirección de la competencia de feria.
+10. [game engine](03-architecture/game-engine.md) — el motor que existe.
+11. [arquitectura objetivo del motor](03-architecture/target-engine-architecture.md) — lo que falta y en qué estado está.
+12. [sistema de diseño](09-design-system/README.md) — la autoridad visual.
+13. [testing](04-quality/testing-strategy.md) y [modo feria y congelamiento](05-operations/fair-mode-and-competition-freeze.md) — calidad y operación.
+14. [preguntas abiertas](07-reference/open-questions.md) — lo que **no** se decide desde el código.
+15. [secuencia de implementación](06-delivery/implementation-sequence.md) — en qué orden se construye lo que falta.
+
 ## Mapa documental
 
 ### 00-product
 - `product-vision.md`: visión, problema, propuesta de valor y objetivos.
+- `real-delivery-lifecycle.md`: fases reales de entrega, gates docentes y la ausencia de playtest previo a la feria.
 - `scope-and-roadmap.md`: alcance MVP, versiones y límites.
 - `personas-and-contexts.md`: jugadores, docentes, organizadores y contexto de feria.
 - `risks-and-assumptions.md`: supuestos, riesgos y mitigaciones.
@@ -4686,6 +7121,10 @@ Este directorio define la referencia funcional, lúdica, pedagógica y técnica 
 
 ### 01-game-design
 - `game-design-document.md`: GDD principal.
+- `challenge-families-and-variants.md`: familias de escenario, plantillas y variantes deterministas.
+- `competitive-scoring-and-ranking.md`: dirección propuesta del score competitivo y del ranking de feria.
+- `difficulty-and-playability.md`: piso bajo y techo alto, bandas y presupuesto de dificultad.
+- `graduation-and-fail-forward.md`: egreso, recuperación y por qué el error no expulsa al jugador.
 - `rules-scoring-and-progression.md`: reglas, estados, scoring y progresión.
 - `narrative-system.md`: carrera escolar, storylets, eventos y perfiles finales.
 - `challenge-system.md`: taxonomía de minijuegos y desafíos matemáticos.
@@ -4703,6 +7142,7 @@ Este directorio define la referencia funcional, lúdica, pedagógica y técnica 
 ### 03-architecture
 - `architecture-overview.md`: arquitectura lógica y física.
 - `game-engine.md`: diseño del motor determinista.
+- `target-engine-architecture.md`: capacidades objetivo del motor y estado real de cada una.
 - `data-model.md`: modelo de datos inicial y evolución.
 - `api-contracts.md`: contratos HTTP del MVP online.
 - `security-privacy.md`: seguridad, privacidad y anti-cheat.
@@ -4712,27 +7152,40 @@ Este directorio define la referencia funcional, lúdica, pedagógica y técnica 
 
 ### 04-quality
 - `content-validation.md`: pipeline de schema, matemática, generación, UI y playtest.
+- `competition-fairness-audit.md`: preguntas de equidad que un ranking con premios debe poder contestar.
+- `variant-validation-and-audit.md`: invariantes de variante y auditoría estadística del catálogo.
 - `testing-strategy.md`: unit, property-based, integration, E2E y pruebas de contenido.
 - `non-functional-requirements.md`: performance, resiliencia, accesibilidad y compatibilidad.
 - `threat-model.md`: amenazas y mitigaciones.
 
 ### 05-operations
 - `fair-runbook.md`: operación durante la feria.
+- `fair-mode-and-competition-freeze.md`: intentos, congelamiento de versiones, control de cambios, cierre y privacidad.
 - `leaderboard-and-moderation.md`: rankings, nicknames y moderación.
 - `fallback-and-incident-plan.md`: funcionamiento degradado y recuperación.
 
 ### 06-delivery
 - `mvp-backlog.md`: backlog priorizado.
+- `implementation-sequence.md`: en qué orden se construye lo que falta y contra qué gate.
+- `teacher-gates.md`: qué decide el Departamento de Matemática en cada gate.
 - `definition-of-done.md`: DoD global y por tipo de cambio.
 - `repository-conventions.md`: estructura implementada, fronteras, comandos y reglas de dependencia.
 - `vertical-slice-grade-7.md`: alcance, contenido y criterios del primer slice jugable (7.º grado).
 
 ### 07-reference
 - `research-basis.md`: teoría, referencias y decisiones derivadas.
+- `blueprint-v0.2-integration.md`: qué entró del Project Blueprint v0.2, dónde quedó y qué conflictos hubo.
+- `formulas-and-algorithms.md`: fórmulas normativas, candidatas e ilustrativas, etiquetadas.
 - `glossary.md`: vocabulario oficial.
 - `open-questions.md`: preguntas abiertas antes de producción.
 - `decision-register.md`: índice de decisiones y ADRs.
 - `content-schema.example.json`: ejemplo de definición de desafío.
+- `challenge-authoring.example.yaml`: ficha de autoría de una plantilla antes de que exista código.
+- `event-config.example.json`: ejemplo de configuración de un evento de feria.
+- `event-effects.example.json`: ejemplo de efectos de evento: carrera, ocultos y competencia por separado.
+- `run-descriptor.example.json`: ejemplo de identidad inmutable de una run oficial.
+- `score-breakdown.example.json`: ejemplo de desglose de score de una run verificada.
+- `score-policy.example.json`: ejemplo de política de score versionada, marcada como pendiente de gate docente.
 
 ### 08-engineering
 - `context-map.md`: qué fuentes leer para cada tipo de tarea.
@@ -4768,6 +7221,12 @@ Auditorías de ingeniería ejecutadas sobre el código real. Documentan hallazgo
 
 - `game-engine-2026-08-21/`: auditoría completa del motor y sus fronteras de integración.
 
+### sources
+
+Paquetes documentales recibidos desde afuera, congelados **tal como llegaron**. No son documentación canónica: son el insumo verificable del que salió la canónica. No se editan. Ver [su README](sources/README.md).
+
+- `egresado-project-blueprint-v0.2.0/`: Project Blueprint & Technical Handoff v0.2.0, integrado el 28 de agosto de 2026. Qué entró y dónde quedó está en [la integración del blueprint](07-reference/blueprint-v0.2-integration.md).
+
 `EGRESADO-MASTER-SPEC.md` consolida la baseline de producto (`00-` a `07-`, checklist y este README). La infraestructura de ingeniería de `08-engineering/` y el sistema de diseño de `09-design-system/` se mantienen por separado: describen cómo se construye el producto, no qué es.
 
 ## Autoridad documental
@@ -4782,6 +7241,28 @@ En caso de contradicción:
 
 Los documentos especializados gobiernan su área mientras no contradigan una fuente de mayor autoridad. Si dos documentos del mismo nivel siguen en conflicto o la lista no define precedencia entre ellos, la discrepancia se mantiene explícita en `07-reference/open-questions.md` hasta que exista evidencia o una decisión autorizada.
 
-Los documentos describen la **baseline de producto** al 20 de agosto de 2026. La base técnica implementada incluye el shell Next.js, toolchain reproducible, fronteras de módulos, Supabase opcional, Docker y gates de calidad; todavía no incluye gameplay, Auth, schema de producto ni un despliegue público.
+### Autoridad por dominio
+
+La lista de arriba resuelve precedencia entre documentos. Esta tabla dice, para cada dominio, **qué artefacto manda**. Está fijada por [ADR-018](03-architecture/adr/ADR-018-blueprint-v0-2-decision-authority.md).
+
+| Dominio | Autoridad |
+|---|---|
+| Comportamiento de juego, matemática, transiciones | estos documentos + el motor + los tests |
+| Identidad visual, tokens, presentación de Game UI | [sistema de diseño](09-design-system/README.md) y el handoff de Claude Design v0.2 |
+| Decisiones de producto y su madurez | [registro de decisiones](07-reference/decision-register.md) |
+| Estado real actual | el código |
+| Configuración oficial de la competencia | configuración de evento versionada, después de la aprobación docente |
+
+Cuatro reglas de conflicto: una captura de pantalla no cambia una regla matemática; un estilo heredado del frontend no supera el handoff de diseño aprobado; documentación vieja no supera una decisión más nueva sin dejar el conflicto escrito; y una regla marcada `TEACHER GATE` u `OPEN` se implementa detrás de política versionada, nunca como supuesto irreversible.
+
+### Madurez de una decisión
+
+Una decisión integrada declara su nivel, y **el nivel es parte de la decisión**: `LOCKED`, `PRODUCT DIRECTION`, `RECOMENDADA`, `TEACHER GATE`, `OPEN` o `DEFERRED`. La tabla que los define está en el [registro de decisiones](07-reference/decision-register.md). Aplanar una recomendación a requisito es un error de documentación, no una simplificación.
+
+### Presente y objetivo
+
+Un documento no describe en presente una capacidad que no existe. Lo implementado vive en los documentos de arquitectura actuales; lo que falta, en [arquitectura objetivo del motor](03-architecture/target-engine-architecture.md), con el estado real de cada capacidad.
+
+Los documentos describen la **baseline de producto** al 28 de agosto de 2026. Lo implementado incluye el shell Next.js, toolchain reproducible, fronteras de módulos, Supabase opcional, Docker, gates de calidad, el motor determinista con replay y snapshots versionados, el modelo de carrera `Promedio · Equipo · Aura · Estilo` y el slice jugable de 7.º grado bajo el sistema de diseño v0.2. Todavía **no** incluye los años 1.º a 5.º, Auth, schema de producto, ranking, verificación de runs en servidor ni un despliegue público.
 
 Las versiones exactas están fijadas en `package.json` y `pnpm-lock.yaml` bajo [ADR-010](03-architecture/adr/ADR-010-reproducible-node-pnpm-container-toolchain.md). Next.js `16.3.1` se conserva sólo como base local transitoria: `pnpm release:check` bloquea cualquier release público hasta actualizar a `>=16.3.2`, regenerar el lockfile y verificar el cambio completo.

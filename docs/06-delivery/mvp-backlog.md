@@ -16,7 +16,7 @@
 12. Perfil final simple.
 13. Checkpoint local.
 14. Tests unit/property.
-15. Playtest.
+15. Prueba proxy con adultos y revisión del Departamento de Matemática. El playtest con estudiantes del rango objetivo **no está garantizado antes de la feria**; ver [ciclo de entrega real](../00-product/real-delivery-lifecycle.md).
 
 ## P1 — Carrera completa
 
@@ -58,3 +58,7 @@
 - Reactor 42.
 - Daily challenge.
 - authoring tools.
+
+## Orden de trabajo posterior a la integración del blueprint
+
+Este backlog prioriza por features. El orden de las etapas que quedan después de integrar el blueprint v0.2 —análisis de brechas, arquitectura de variantes, esqueleto de score competitivo, gates docentes, contenido año por año, backend de feria y hardening— está en [la secuencia de implementación](implementation-sequence.md). Los dos ejes son complementarios: acá está el qué, allá el en qué orden y contra qué gate.

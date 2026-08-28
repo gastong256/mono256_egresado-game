@@ -133,3 +133,32 @@ Como desarrollador quiero reconstruir una run por seed para depurar problemas.
 
 **Aceptación**
 - Seed + versiones + actions son suficientes para replay.
+
+## Historias de la dirección competitiva
+
+**No implementadas.** Corresponden al modo feria con ranking; ver [score competitivo](../01-game-design/competitive-scoring-and-ranking.md) y [modo feria](../05-operations/fair-mode-and-competition-freeze.md).
+
+### Jugador
+
+- Como jugador, al volver a jugar recibo situaciones y valores distintos, en vez de poder memorizar una respuesta.
+- Como jugador, puedo mejorar mi mejor marca sin que la cantidad de intentos sea el puntaje.
+- Como jugador, veo sólo las dimensiones de carrera que ya adquirieron significado.
+- Como jugador, entiendo por qué un resultado fue óptimo, eficiente, funcional o inválido.
+
+### Docente
+
+- Como docente, identifico el concepto matemático y el razonamiento buscado de cada plantilla.
+- Como docente, inspecciono variantes representativas y de borde con su justificación.
+- Como docente, entiendo y decido la filosofía de score antes de la feria.
+
+### Organizador
+
+- Como organizador, veo el ranking oficial y modero nicknames inapropiados sin borrar la evidencia auditada.
+- Como organizador, identifico qué run y qué versiones produjeron un score.
+- Como organizador, me recupero de fallas transitorias de envío sin otorgar entradas duplicadas.
+
+### Autor de contenido y desarrollo
+
+- Como autor, defino una plantilla una vez y genero muchas variantes válidas y deterministas.
+- Como desarrollador, reproduzco un bug reportado a partir de id de run, seed y versiones.
+- Como ingeniero, agrego contenido de 1.º sin inventar botones, cards, colores ni una arquitectura de scoring nueva.

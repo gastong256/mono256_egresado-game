@@ -99,3 +99,13 @@ Mitigaciones objetivo:
 - capacidad operativa de invalidar una run.
 
 No prometer anti-cheat absoluto: el objetivo es impedir manipulación trivial y preservar integridad razonable en una feria escolar. La fórmula de score, las señales temporales y el contrato de replay siguen en [preguntas abiertas](../07-reference/open-questions.md#engine-y-scoring).
+
+## Minimización de datos en la competencia
+
+El ranking no necesita una cuenta escolar: alcanza con nickname, identificador pseudónimo de participante, los datos de run necesarios para verificar, el desglose de score y el estado de moderación.
+
+Se evita, salvo que la institución lo requiera y lo gobierne: nombre completo, correo, teléfono, edad o fecha de nacimiento exactas y perfil personal innecesario. Si hace falta identidad real para entregar un premio, se prefiere un mapeo externo controlado por el organizador o un código de evento, en vez de publicar identidad dentro del juego.
+
+La retención —cuánto viven los action logs, cuánto queda público el leaderboard, qué se archiva o se anonimiza después de la feria— se define antes del lanzamiento y sigue abierta ([preguntas 31 y 50](../07-reference/open-questions.md)). Esto es guía de producto: la política legal aplicable la define la institución anfitriona.
+
+Las amenazas específicas de la competencia con premios están en el [threat model](../04-quality/threat-model.md), y su operación en [modo feria y congelamiento](../05-operations/fair-mode-and-competition-freeze.md).

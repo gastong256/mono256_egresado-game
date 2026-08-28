@@ -1,0 +1,19 @@
+{
+  "eventId": "fair-2026",
+  "status": "draft",
+  "versions": {
+    "engine": "1.0.0",
+    "ruleset": "fair-2026-v1",
+    "content": "content-2026-v1",
+    "score": "fair-score-v1",
+    "variantCatalog": "variants-2026-v1"
+  },
+  "attempts": {
+    "mode": "unlimited",
+    "leaderboardSubmission": "personal_best"
+  },
+  "ranking": {
+    "winners": 3,
+    "trueTiePolicy": "TO_BE_APPROVED"
+  }
+}

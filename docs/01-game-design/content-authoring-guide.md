@@ -64,8 +64,8 @@ Un challenge procedural debe poder afirmar automáticamente:
 ## Estados de contenido
 
 - `draft`.
-- `math_reviewed`.
-- `playtest_ready`.
+- `math_reviewed` — revisado por el Departamento de Matemática.
+- `playtest_ready` — listo para prueba con jugadores. Antes de la feria eso significa **prueba proxy con adultos**, no con estudiantes del rango objetivo; ver [ciclo de entrega real](../00-product/real-delivery-lifecycle.md).
 - `production_ready`.
 - `retired`.
 
@@ -77,3 +77,31 @@ Un challenge procedural debe poder afirmar automáticamente:
 - Evitar presión financiera personal; contextualizar presupuestos como recursos del proyecto/curso.
 - No usar salud, religión, política partidaria u otros datos sensibles del jugador como personalización.
 - Humor sin humillación.
+
+## Tres preguntas que la plantilla original no hacía
+
+### Efectos de carrera: sólo los que se pueden mover
+
+¿El evento toca genuinamente Promedio, Equipo, Aura o Estilo? La mayoría de los eventos deberían tocar **una o dos** dimensiones, no las cuatro. Una clave ausente significa que el evento no puede mover esa dimensión, y por eso `Promedio +0` ni siquiera es representable. Ver [ADR-016](../03-architecture/adr/ADR-016-career-player-model.md).
+
+Promedio se mueve sólo si el evento es genuinamente académico. Aura se mueve sólo si el momento es socialmente memorable: un cálculo correcto no produce Aura.
+
+### Efectos de competencia: separados de las stats visibles
+
+Cuando exista modo competitivo, cada evaluador declarará su calidad matemática normalizada y, si corresponde, una contribución acotada de Equipo o de Aura, **aparte** de los efectos de carrera visibles. Ver [score competitivo y ranking](competitive-scoring-and-ranking.md).
+
+### Ocultos: dominio y flags
+
+¿Qué dominios matemáticos ejercita? ¿Qué flag narrativo escribe? Ninguno de los dos se renderiza.
+
+## Invariantes antes que generador
+
+Los invariantes de una variante se escriben **antes** que el código que la genera: al menos una solución válida, sin óptimo ambiguo salvo diseño explícito, aritmética legible, contexto escolar plausible, sin opciones duplicadas, posición de la opción correcta no fija y banda de dificultad declarada.
+
+La lista completa y sus criterios de aceptación están en [validación y auditoría de variantes](../04-quality/variant-validation-and-audit.md).
+
+## Ficha de autoría
+
+Una plantilla nueva se registra antes de que exista código. La forma de esa ficha —narrativa, dominios matemáticos, apoyos, banda, invariantes, interacción, resultados, efectos de carrera, contribución competitiva, ocultos y estado de revisión docente— está en [challenge-authoring.example.yaml](../07-reference/challenge-authoring.example.yaml).
+
+Es un ejemplo documental: no se importa desde runtime ni reemplaza al [schema de contenido](../07-reference/content-schema.example.json).

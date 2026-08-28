@@ -30,9 +30,15 @@ Validar que el loop central sea comprensible y divertido.
 - Admin de contenido.
 
 ### Criterio de salida
-- 10–20 testers pueden completar una run sin explicación externa.
-- Duración media dentro del rango deseado.
-- Se detectan al menos 3 desafíos que los jugadores quieren comentar o discutir.
+
+> **Corregido por el ciclo de entrega real.** Este criterio se escribió asumiendo una tanda de testers antes de seguir. Esa tanda no está garantizada: la primera exposición a estudiantes del rango objetivo es la feria. Ver [ciclo de entrega real](real-delivery-lifecycle.md).
+
+- Un adulto que no participó del desarrollo completa una run sin explicación verbal, y se registra dónde preguntó qué hacer.
+- Duración media dentro del rango deseado, medida por simulación y por esa prueba proxy.
+- Se detectan al menos 3 desafíos que generan comentario o discusión.
+- El Departamento de Matemática acepta la dirección en el Teacher Gate 1.
+
+Los tres primeros son evidencia proxy y se declaran como tal. El cuarto es el gate real.
 
 ## MVP 1 — Producto web jugable
 
@@ -97,3 +103,45 @@ Posibles líneas:
 - Sistema de amigos.
 - Moderación social compleja.
 - IA generativa creando problemas en producción sin validación determinista.
+
+## Cómo se corresponden las capas con el ciclo real
+
+Las capas MVP describen **qué se construye**. Las fases del [ciclo de entrega real](real-delivery-lifecycle.md) describen **quién valida y cuándo se congela**. Son dos ejes, no dos planes en competencia.
+
+| Capa de alcance | Fase del ciclo real | Quién valida |
+|---|---|---|
+| MVP 0 — prototipo local | Fase A — demo candidata de 7.º | prueba proxy con adultos; **sin estudiantes** |
+| — | Fase B — Teacher Gate 1 | Departamento de Matemática |
+| — | Fase C — congelamiento de fundaciones | equipo |
+| MVP 1 — producto web jugable | Fase D — producción del juego completo | tests, simulación y auditorías |
+| — | Fase E — Teacher Gate 2 | Departamento de Matemática |
+| MVP Feria — operación real | Fase F — congelamiento y hardening | ensayo de carga, red y operación |
+| — | Fase G — semana de feria | **primera evidencia real de uso** |
+| Post-MVP | Fase H — post-feria | decisión de producto |
+
+## Alcance completo del producto
+
+La progresión completa es `7.º → 1.º → 2.º → 3.º → 4.º → 5.º → EGRESO`. Cada etapa usa la misma gramática de diseño y de motor: los años posteriores agregan complejidad de contenido, **no un sistema de UI nuevo**.
+
+El producto completo, más allá del MVP Feria, incluye: catálogo completo de escenarios y variantes deterministas, modelo de carrera Promedio · Equipo · Aura · Estilo, dominio matemático y flags ocultos, recuperación fail-forward donde corresponda, arquetipo final, score oficial de feria, ranking por evento, política de intentos configurable, reglas y contenido versionados, verificación de runs en servidor, moderación de nicknames y operación de feria.
+
+Ver [alcance objetivo del motor](../03-architecture/target-engine-architecture.md) para el estado real de cada capacidad.
+
+## Escalamiento temático por año
+
+Dirección de escalada **lúdica**, no currículo oficial: la pertinencia curricular la deciden los docentes, y la progresión matemática vigente está en el [marco matemático](../01-game-design/math-design-framework.md).
+
+| Etapa | Qué se agrega como desafío |
+|---|---|
+| 7.º | aprender la gramática: tiempo, porcentajes, área, presupuesto, asignación simple, divisibilidad |
+| 1.º | adaptación y organización: horarios, proporcionalidad, primeras evaluaciones fuertes, dinámica de grupo |
+| 2.º | autonomía: trade-offs de recursos, primeras probabilidades, comparación financiera |
+| 3.º | interpretación: estadística, muestras, incertidumbre, pedir información, elecciones multivariable |
+| 4.º | responsabilidad: proyectos grandes, restricciones, planificación, optimización |
+| 5.º | cierre: proyecto final, previas y recuperación, egreso, decisiones de futuro |
+
+### Producción de contenido después del Teacher Gate 1
+
+No se autoran los años en secuencia sin catálogo. Primero se arma la matriz completa de 1.º–5.º —una fila por plantilla, no por variante— y el Departamento de Matemática revisa **la matriz**, no sólo pantallas terminadas. Recién después se implementa año por año. Ver [secuencia de implementación](../06-delivery/implementation-sequence.md).
+
+Un rango útil de planificación es de seis a ocho situaciones significativas por año. Es **planificación, no requisito**: la duración objetivo de una run y el throughput de la feria deciden el número final, y la pregunta sigue abierta ([pregunta 46](../07-reference/open-questions.md)).

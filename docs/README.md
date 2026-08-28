@@ -15,10 +15,31 @@ Este directorio define la referencia funcional, lúdica, pedagógica y técnica 
 9. **Privacidad por minimización.** El MVP no requiere email, contraseña, apellido ni fecha de nacimiento.
 10. **Escalar por evidencia.** Primero se valida diversión, comprensión y duración; luego se agrega complejidad.
 
+## Por dónde empezar
+
+Un ingeniero o un agente que llega por primera vez lee en este orden y se detiene cuando ya tiene lo que su tarea necesita.
+
+1. `AGENTS.md` en la raíz — reglas del repositorio e invariantes no negociables.
+2. Este README — mapa y autoridad documental.
+3. [mapa de contexto](08-engineering/context-map.md) — qué fuentes leer para **esta** tarea.
+4. [registro de decisiones](07-reference/decision-register.md) — qué está cerrado, qué es recomendación y qué requiere aprobación docente.
+5. [visión de producto](00-product/product-vision.md) y [ciclo de entrega real](00-product/real-delivery-lifecycle.md) — qué es el juego y cómo se entrega de verdad.
+6. [vertical slice de 7.º](06-delivery/vertical-slice-grade-7.md) — el alcance de la demo candidata.
+7. [GDD](01-game-design/game-design-document.md) — core loop y modelo de carrera.
+8. [familias y variantes](01-game-design/challenge-families-and-variants.md) y [dificultad](01-game-design/difficulty-and-playability.md) — por qué el contenido se repite sin memorizarse.
+9. [score competitivo y ranking](01-game-design/competitive-scoring-and-ranking.md) — la dirección de la competencia de feria.
+10. [game engine](03-architecture/game-engine.md) — el motor que existe.
+11. [arquitectura objetivo del motor](03-architecture/target-engine-architecture.md) — lo que falta y en qué estado está.
+12. [sistema de diseño](09-design-system/README.md) — la autoridad visual.
+13. [testing](04-quality/testing-strategy.md) y [modo feria y congelamiento](05-operations/fair-mode-and-competition-freeze.md) — calidad y operación.
+14. [preguntas abiertas](07-reference/open-questions.md) — lo que **no** se decide desde el código.
+15. [secuencia de implementación](06-delivery/implementation-sequence.md) — en qué orden se construye lo que falta.
+
 ## Mapa documental
 
 ### 00-product
 - `product-vision.md`: visión, problema, propuesta de valor y objetivos.
+- `real-delivery-lifecycle.md`: fases reales de entrega, gates docentes y la ausencia de playtest previo a la feria.
 - `scope-and-roadmap.md`: alcance MVP, versiones y límites.
 - `personas-and-contexts.md`: jugadores, docentes, organizadores y contexto de feria.
 - `risks-and-assumptions.md`: supuestos, riesgos y mitigaciones.
@@ -26,6 +47,10 @@ Este directorio define la referencia funcional, lúdica, pedagógica y técnica 
 
 ### 01-game-design
 - `game-design-document.md`: GDD principal.
+- `challenge-families-and-variants.md`: familias de escenario, plantillas y variantes deterministas.
+- `competitive-scoring-and-ranking.md`: dirección propuesta del score competitivo y del ranking de feria.
+- `difficulty-and-playability.md`: piso bajo y techo alto, bandas y presupuesto de dificultad.
+- `graduation-and-fail-forward.md`: egreso, recuperación y por qué el error no expulsa al jugador.
 - `rules-scoring-and-progression.md`: reglas, estados, scoring y progresión.
 - `narrative-system.md`: carrera escolar, storylets, eventos y perfiles finales.
 - `challenge-system.md`: taxonomía de minijuegos y desafíos matemáticos.
@@ -43,6 +68,7 @@ Este directorio define la referencia funcional, lúdica, pedagógica y técnica 
 ### 03-architecture
 - `architecture-overview.md`: arquitectura lógica y física.
 - `game-engine.md`: diseño del motor determinista.
+- `target-engine-architecture.md`: capacidades objetivo del motor y estado real de cada una.
 - `data-model.md`: modelo de datos inicial y evolución.
 - `api-contracts.md`: contratos HTTP del MVP online.
 - `security-privacy.md`: seguridad, privacidad y anti-cheat.
@@ -52,27 +78,40 @@ Este directorio define la referencia funcional, lúdica, pedagógica y técnica 
 
 ### 04-quality
 - `content-validation.md`: pipeline de schema, matemática, generación, UI y playtest.
+- `competition-fairness-audit.md`: preguntas de equidad que un ranking con premios debe poder contestar.
+- `variant-validation-and-audit.md`: invariantes de variante y auditoría estadística del catálogo.
 - `testing-strategy.md`: unit, property-based, integration, E2E y pruebas de contenido.
 - `non-functional-requirements.md`: performance, resiliencia, accesibilidad y compatibilidad.
 - `threat-model.md`: amenazas y mitigaciones.
 
 ### 05-operations
 - `fair-runbook.md`: operación durante la feria.
+- `fair-mode-and-competition-freeze.md`: intentos, congelamiento de versiones, control de cambios, cierre y privacidad.
 - `leaderboard-and-moderation.md`: rankings, nicknames y moderación.
 - `fallback-and-incident-plan.md`: funcionamiento degradado y recuperación.
 
 ### 06-delivery
 - `mvp-backlog.md`: backlog priorizado.
+- `implementation-sequence.md`: en qué orden se construye lo que falta y contra qué gate.
+- `teacher-gates.md`: qué decide el Departamento de Matemática en cada gate.
 - `definition-of-done.md`: DoD global y por tipo de cambio.
 - `repository-conventions.md`: estructura implementada, fronteras, comandos y reglas de dependencia.
 - `vertical-slice-grade-7.md`: alcance, contenido y criterios del primer slice jugable (7.º grado).
 
 ### 07-reference
 - `research-basis.md`: teoría, referencias y decisiones derivadas.
+- `blueprint-v0.2-integration.md`: qué entró del Project Blueprint v0.2, dónde quedó y qué conflictos hubo.
+- `formulas-and-algorithms.md`: fórmulas normativas, candidatas e ilustrativas, etiquetadas.
 - `glossary.md`: vocabulario oficial.
 - `open-questions.md`: preguntas abiertas antes de producción.
 - `decision-register.md`: índice de decisiones y ADRs.
 - `content-schema.example.json`: ejemplo de definición de desafío.
+- `challenge-authoring.example.yaml`: ficha de autoría de una plantilla antes de que exista código.
+- `event-config.example.json`: ejemplo de configuración de un evento de feria.
+- `event-effects.example.json`: ejemplo de efectos de evento: carrera, ocultos y competencia por separado.
+- `run-descriptor.example.json`: ejemplo de identidad inmutable de una run oficial.
+- `score-breakdown.example.json`: ejemplo de desglose de score de una run verificada.
+- `score-policy.example.json`: ejemplo de política de score versionada, marcada como pendiente de gate docente.
 
 ### 08-engineering
 - `context-map.md`: qué fuentes leer para cada tipo de tarea.
@@ -108,6 +147,12 @@ Auditorías de ingeniería ejecutadas sobre el código real. Documentan hallazgo
 
 - `game-engine-2026-08-21/`: auditoría completa del motor y sus fronteras de integración.
 
+### sources
+
+Paquetes documentales recibidos desde afuera, congelados **tal como llegaron**. No son documentación canónica: son el insumo verificable del que salió la canónica. No se editan. Ver [su README](sources/README.md).
+
+- `egresado-project-blueprint-v0.2.0/`: Project Blueprint & Technical Handoff v0.2.0, integrado el 28 de agosto de 2026. Qué entró y dónde quedó está en [la integración del blueprint](07-reference/blueprint-v0.2-integration.md).
+
 `EGRESADO-MASTER-SPEC.md` consolida la baseline de producto (`00-` a `07-`, checklist y este README). La infraestructura de ingeniería de `08-engineering/` y el sistema de diseño de `09-design-system/` se mantienen por separado: describen cómo se construye el producto, no qué es.
 
 ## Autoridad documental
@@ -122,6 +167,28 @@ En caso de contradicción:
 
 Los documentos especializados gobiernan su área mientras no contradigan una fuente de mayor autoridad. Si dos documentos del mismo nivel siguen en conflicto o la lista no define precedencia entre ellos, la discrepancia se mantiene explícita en `07-reference/open-questions.md` hasta que exista evidencia o una decisión autorizada.
 
-Los documentos describen la **baseline de producto** al 20 de agosto de 2026. La base técnica implementada incluye el shell Next.js, toolchain reproducible, fronteras de módulos, Supabase opcional, Docker y gates de calidad; todavía no incluye gameplay, Auth, schema de producto ni un despliegue público.
+### Autoridad por dominio
+
+La lista de arriba resuelve precedencia entre documentos. Esta tabla dice, para cada dominio, **qué artefacto manda**. Está fijada por [ADR-018](03-architecture/adr/ADR-018-blueprint-v0-2-decision-authority.md).
+
+| Dominio | Autoridad |
+|---|---|
+| Comportamiento de juego, matemática, transiciones | estos documentos + el motor + los tests |
+| Identidad visual, tokens, presentación de Game UI | [sistema de diseño](09-design-system/README.md) y el handoff de Claude Design v0.2 |
+| Decisiones de producto y su madurez | [registro de decisiones](07-reference/decision-register.md) |
+| Estado real actual | el código |
+| Configuración oficial de la competencia | configuración de evento versionada, después de la aprobación docente |
+
+Cuatro reglas de conflicto: una captura de pantalla no cambia una regla matemática; un estilo heredado del frontend no supera el handoff de diseño aprobado; documentación vieja no supera una decisión más nueva sin dejar el conflicto escrito; y una regla marcada `TEACHER GATE` u `OPEN` se implementa detrás de política versionada, nunca como supuesto irreversible.
+
+### Madurez de una decisión
+
+Una decisión integrada declara su nivel, y **el nivel es parte de la decisión**: `LOCKED`, `PRODUCT DIRECTION`, `RECOMENDADA`, `TEACHER GATE`, `OPEN` o `DEFERRED`. La tabla que los define está en el [registro de decisiones](07-reference/decision-register.md). Aplanar una recomendación a requisito es un error de documentación, no una simplificación.
+
+### Presente y objetivo
+
+Un documento no describe en presente una capacidad que no existe. Lo implementado vive en los documentos de arquitectura actuales; lo que falta, en [arquitectura objetivo del motor](03-architecture/target-engine-architecture.md), con el estado real de cada capacidad.
+
+Los documentos describen la **baseline de producto** al 28 de agosto de 2026. Lo implementado incluye el shell Next.js, toolchain reproducible, fronteras de módulos, Supabase opcional, Docker, gates de calidad, el motor determinista con replay y snapshots versionados, el modelo de carrera `Promedio · Equipo · Aura · Estilo` y el slice jugable de 7.º grado bajo el sistema de diseño v0.2. Todavía **no** incluye los años 1.º a 5.º, Auth, schema de producto, ranking, verificación de runs en servidor ni un despliegue público.
 
 Las versiones exactas están fijadas en `package.json` y `pnpm-lock.yaml` bajo [ADR-010](03-architecture/adr/ADR-010-reproducible-node-pnpm-container-toolchain.md). Next.js `16.3.1` se conserva sólo como base local transitoria: `pnpm release:check` bloquea cualquier release público hasta actualizar a `>=16.3.2`, regenerar el lockfile y verificar el cambio completo.

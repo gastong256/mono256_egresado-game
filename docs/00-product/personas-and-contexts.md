@@ -80,3 +80,26 @@ Agrega desafíos y reglas.
 - Texto legible en pantallas de 360 px de ancho.
 - Partida no depende de round-trips constantes al servidor.
 - El jugador puede recuperar la run tras refresh accidental cuando sea viable.
+
+## Persona P6 — Visitante adulto
+
+Familias, docentes de otras materias y visitantes que juegan una vez en la feria. Puede tener el currículo de 7.º completamente incorporado.
+
+### Necesidades
+- Que el razonamiento siga siendo interesante aunque la aritmética sea familiar.
+- Que el techo del desafío venga de interpretación y optimización, no de fórmulas avanzadas.
+- Entender la situación sin contexto escolar previo del juego.
+
+Es la persona que justifica el diseño de piso bajo y techo alto: la misma pantalla tiene que funcionar para alguien de 12 y para alguien de 45. Ver [dificultad y jugabilidad universal](../01-game-design/difficulty-and-playability.md).
+
+## Persona P7 — Agente de IA que trabaja el repositorio
+
+Implementa, documenta o revisa sin haber participado de las decisiones.
+
+### Necesidades
+- Distinguir estado actual de arquitectura objetivo sin tener que leer código para saberlo.
+- Distinguir una decisión cerrada de una recomendación y de una pregunta abierta.
+- Saber qué requiere aprobación docente antes de escribirse como constante.
+- Un punto de entrada que enrute, en vez de un documento maestro que haya que leer entero.
+
+Es la persona que gobierna [ADR-018](../03-architecture/adr/ADR-018-blueprint-v0-2-decision-authority.md) y el [mapa de contexto](../08-engineering/context-map.md).

@@ -71,7 +71,7 @@ Después de una elección, el jugador debe poder relacionar decisión, cálculo 
 Una partida representa años. Cada evento debe tener peso narrativo mayor que su duración real.
 
 ### 4. Diversidad de competencia
-El juego no debe sugerir que “ser bueno en matemática” equivale a “ser mejor persona/estudiante”. El perfil final integra estrategia, eficiencia, trabajo en equipo, iniciativa y riesgo.
+El juego no debe sugerir que “ser bueno en matemática” equivale a “ser mejor persona/estudiante”. La identidad de carrera visible son Promedio, Equipo, Aura y Estilo —ver [ADR-016](../03-architecture/adr/ADR-016-career-player-model.md)—, y el perfil final se deriva de métricas ocultas de eficiencia, precisión, riesgo, colaboración e iniciativa. **Ningún eje de Estilo es el malo**: un Improvisador tiene que poder egresar, y ninguna forma de jugar puede ser la objetivamente correcta.
 
 ### 5. Rejugabilidad social
 El resultado final debe ser compartible y comparable: score, título de perfil, logros y decisiones memorables.
@@ -86,3 +86,30 @@ Al terminar una run queremos escuchar frases como:
 - “Quiero jugar otra vez para sacar otro perfil.”
 
 No queremos que la reacción dominante sea “era un examen con animaciones”.
+
+## Objetivo de producto para la semana de feria
+
+Durante la feria escolar, Egresado también es una competencia repetible. Un jugador puede mejorar su mejor marca entendiendo y practicando, mientras el ranking se mantiene dominado por la matemática, reproducible y auditable.
+
+Eso agrega dos anti-objetivos a la lista de arriba. Egresado no es:
+
+- un concurso de cálculo mental veloz;
+- un sistema donde gana quien tiene más tiempo libre para acumular partidas.
+
+La arquitectura competitiva que sostiene esto es una **dirección propuesta, no una regla cerrada**: ver [score competitivo y ranking](../01-game-design/competitive-scoring-and-ranking.md) y [modo feria y congelamiento](../05-operations/fair-mode-and-competition-freeze.md).
+
+## Qué está descubriendo el jugador
+
+La pregunta del juego no es «¿puedo aprobar?». Es:
+
+- ¿qué decisiones tomé?
+- ¿cómo resolví los problemas?
+- ¿qué promedio construí?
+- ¿cómo trabajé con otros?
+- ¿qué momentos me dieron o me costaron Aura?
+- ¿me comporté más como Aplicado, Estratega o Improvisador?
+- ¿qué clase de egresado fui?
+
+## Cómo se valida esta visión
+
+Con docentes primero y con jugadores recién en la feria. Ver [ciclo de entrega real](real-delivery-lifecycle.md): la aprobación docente no es evidencia de que los estudiantes se enganchen, y esta documentación no la presenta como tal.

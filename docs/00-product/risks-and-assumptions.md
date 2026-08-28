@@ -42,3 +42,27 @@
 ## Mitigación transversal
 
 La principal defensa es mantener el sistema pequeño, determinista, versionado y testeable. Cada aumento de complejidad debe responder a evidencia de uso.
+
+## Riesgos incorporados desde el blueprint v0.2
+
+Riesgos que aparecen cuando el juego pasa a ser una competencia con premios y cuando se acepta que la primera exposición real es la feria.
+
+| Riesgo | Impacto | Mitigación |
+|---|---:|---|
+| La primera prueba con estudiantes ocurre durante la feria | Alto | gate docente como proxy, UX conservadora, simulación, telemetría, hardening; el riesgo residual se **declara**, no se disimula |
+| Una variante procedural sale ambigua o imposible | Alto | catálogo de variantes prevalidado y desplegado, invariantes ejecutables |
+| Los intentos ilimitados favorecen a quien tiene más tiempo libre | Medio | personal best en vez de suma; política de intentos configurable |
+| El jugador reintenta hasta recibir una run fácil | Medio | presupuesto de dificultad, pools emparejados, descriptor emitido por el servidor |
+| El score de ranking se puede falsificar | Alto | el servidor reproduce y calcula; nunca se confía el score final del navegador |
+| El score premia la velocidad por encima del razonamiento | Alto | la matemática domina; el tiempo sólo como desempate tardío |
+| El desempeño académico se cuenta dos veces | Medio | `MathPerformance` separado del Promedio visible |
+| Estilo se convierte en un objetivo de optimización | Medio | Estilo no puntúa directamente |
+| Matemática trivial para adultos y difícil para 12 años | Alto | piso bajo y techo alto; complejidad por restricciones y optimización |
+| El diseño visual vuelve a parecerse a los juegos de referencia | Medio | sistema de diseño v0.2 aprobado y sus gates de tokens y contraste |
+| Se cambia una regla en medio de la feria | Alto | congelamiento de versiones, control de cambios y capacidad de replay/regrade |
+
+Los detalles de cada mitigación están en [validación y auditoría de variantes](../04-quality/variant-validation-and-audit.md), [auditoría de equidad competitiva](../04-quality/competition-fairness-audit.md) y [modo feria y congelamiento](../05-operations/fair-mode-and-competition-freeze.md).
+
+## Supuesto que cambió
+
+El supuesto de que habría playtest con estudiantes antes de la primera release pública **ya no se sostiene**. Ver [ciclo de entrega real](real-delivery-lifecycle.md). Todo criterio de aceptación que dependa de jugadores reales antes de la feria es, hasta nuevo aviso, una intención.
