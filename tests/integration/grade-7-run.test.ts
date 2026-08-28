@@ -14,6 +14,7 @@ import {
   replayRun,
   restoreSnapshot,
   serializeActionLog,
+  targetsFor,
   serializeSnapshot,
   toRunId,
   toRunSeed,
@@ -22,6 +23,7 @@ import {
   type EngineDependencies,
   type GameCommand,
   type InteractionAnswer,
+  type PresentedGridRound,
   type PublicChallengeView,
   type RunDescriptor,
   type RunState,
@@ -77,6 +79,34 @@ function candidateAnswers(view: PublicChallengeView): InteractionAnswer[] {
       }))
     case 'numeric-input':
       return [{ kind: 'numeric-input' as const, value: interaction.min }]
+    case 'number-grid': {
+      /*
+       * Cuatro respuestas que cubren el espectro del minijuego: la clasificación
+       * exacta, marcar todo, no marcar nada y el atajo de marcar una sola celda.
+       * Las tres últimas existen para que la estrategia «débil» tenga con qué
+       * jugar mal, y para que la comparación entre jugar bien y jugar mal sea
+       * real y no un empate.
+       *
+       * La regla viene en la vista pública porque el jugador la lee en pantalla;
+       * quién acierta lo sigue decidiendo el evaluador del motor.
+       */
+      const perRound = (
+        pick: (round: PresentedGridRound) => readonly number[],
+      ): InteractionAnswer => ({
+        kind: 'number-grid' as const,
+        rounds: interaction.rounds.map((round) => ({
+          roundId: round.id,
+          numbers: [...pick(round)],
+        })),
+      })
+
+      return [
+        perRound((round) => targetsFor(round.rule, round.numbers)),
+        perRound((round) => round.numbers),
+        perRound(() => []),
+        perRound((round) => targetsFor(round.rule, round.numbers).slice(0, 1)),
+      ]
+    }
     case 'assignment-board': {
       const permute = <T>(items: readonly T[]): T[][] =>
         items.length <= 1
@@ -164,6 +194,8 @@ interface PlayedRun {
   readonly state: RunState
   readonly log: ReturnType<typeof emptyActionLog>
   readonly commands: readonly GameCommand[]
+  /** El estado después de cada comando, para poder mirar el año por dentro. */
+  readonly states: readonly RunState[]
 }
 
 /** Juega la run entera con una estrategia dada. */
@@ -175,6 +207,7 @@ function play(seed: string, strategy: Strategy): PlayedRun {
   let state = created.value.state
   let log = emptyActionLog(descriptor)
   const commands: GameCommand[] = []
+  const states: RunState[] = []
   let answered = 0
 
   for (let step = 0; step < 40 && state.status === 'active'; step += 1) {
@@ -206,9 +239,26 @@ function play(seed: string, strategy: Strategy): PlayedRun {
     state = result.value.state
     log = appendAction(log, command)
     commands.push(command)
+    states.push(state)
   }
 
-  return { state, log, commands }
+  return { state, log, commands, states }
+}
+
+/** El estado justo antes de que se resolviera un storylet dado. */
+function beforeResolving(played: PlayedRun, storyletId: string): RunState {
+  const found = played.states.find((state) =>
+    state.history.some((entry) => entry.storyletId === storyletId),
+  )
+  if (found === undefined) {
+    throw new Error(`el año nunca llegó a ${storyletId}`)
+  }
+  const index = played.states.indexOf(found)
+  const previous = played.states[index - 1]
+  if (previous === undefined) {
+    throw new Error(`${storyletId} fue el primer evento del año`)
+  }
+  return previous
 }
 
 describe('la run de 7.º grado', () => {
@@ -217,20 +267,21 @@ describe('la run de 7.º grado', () => {
 
     expect(state.status).toBe('completed')
     expect(state.stage).toBe('grade-7')
-    // Siete eventos: cinco desafíos y dos beats narrativos.
-    expect(state.history).toHaveLength(7)
+    // Ocho eventos: seis desafíos y dos beats narrativos.
+    expect(state.history).toHaveLength(8)
     expect(
       state.history.filter((entry) => entry.challengeId !== undefined),
-    ).toHaveLength(5)
+    ).toHaveLength(6)
     expect(state.completion).toBeDefined()
   })
 
-  it('presenta las cinco situaciones en el orden autorado', () => {
+  it('presenta las seis situaciones en el orden autorado', () => {
     const { state } = play('slice-orden', 'fuerte')
 
     expect(state.history.map((entry) => entry.storyletId)).toEqual([
       grade7StoryletIds.intro,
       grade7StoryletIds.bus,
+      grade7StoryletIds.may25,
       grade7StoryletIds.mural,
       grade7StoryletIds.notebook,
       grade7StoryletIds.projectLead,
@@ -246,7 +297,7 @@ describe('la run de 7.º grado', () => {
 
       // Ninguna decisión equivocada corta la run: siempre se llega al final.
       expect(state.status).toBe('completed')
-      expect(state.history).toHaveLength(7)
+      expect(state.history).toHaveLength(8)
       expect(state.completion?.totalScore).toBeGreaterThanOrEqual(0)
     },
   )
@@ -293,6 +344,88 @@ describe('la bifurcación narrativa', () => {
     // Egresado de una lista de ejercicios independientes.
     expect(strong.state.flags['g7.coordina']).toBe(true)
     expect(weak.state.flags['g7.coordina']).toBeUndefined()
+  })
+})
+
+describe('Aura', () => {
+  /**
+   * La dimensión que este año existía y nunca aparecía.
+   *
+   * Aura es capital narrativo y sólo la mueve un momento público. El acto del 25
+   * de Mayo es ese momento, y estos tests son lo que separa «la dimensión está
+   * implementada» de «la dimensión se juega».
+   */
+
+  it('no está establecida antes del acto', () => {
+    const played = play('slice-aura-antes', 'fuerte')
+    const before = beforeResolving(played, grade7StoryletIds.may25)
+
+    // `null` no es 0: la tira de carrera no dibuja nada, en lugar de dibujar
+    // «Aura 0» sobre una dimensión que la run todavía no tocó.
+    expect(before.career.aura).toBeNull()
+    expect(
+      before.history.every(
+        (entry) => entry.storyletId !== grade7StoryletIds.may25,
+      ),
+    ).toBe(true)
+  })
+
+  it('la establece un acto que sale bien, y queda positiva', () => {
+    const played = play('slice-aura-bien', 'fuerte')
+
+    expect(played.state.career.aura).not.toBeNull()
+    expect(played.state.career.aura ?? 0).toBeGreaterThan(0)
+  })
+
+  it('la establece en negativo un acto que se cae', () => {
+    const played = play('slice-aura-mal', 'debil')
+
+    expect(played.state.career.aura).not.toBeNull()
+    expect(played.state.career.aura ?? 0).toBeLessThan(0)
+  })
+
+  it('el acto es el único evento del año que la mueve', () => {
+    const played = play('slice-aura-unico', 'fuerte')
+
+    // Antes del acto no existe; después no vuelve a cambiar, porque ninguna otra
+    // situación de 7.º es socialmente memorable.
+    const afterAct = played.states.find((state) =>
+      state.history.some(
+        (entry) => entry.storyletId === grade7StoryletIds.may25,
+      ),
+    )
+    expect(afterAct?.career.aura).toBeDefined()
+    expect(played.state.career.aura).toBe(afterAct?.career.aura)
+  })
+
+  it('el acto no pone nota ni mueve Equipo', () => {
+    const played = play('slice-aura-limites', 'fuerte')
+    const before = beforeResolving(played, grade7StoryletIds.may25)
+    const after = played.states.find((state) =>
+      state.history.some(
+        (entry) => entry.storyletId === grade7StoryletIds.may25,
+      ),
+    )
+    if (after === undefined) throw new Error('el año nunca llegó al acto')
+
+    // El legajo de notas y la conducta hacia el grupo quedan donde estaban:
+    // tener números no vuelve académico a un evento, y bailar solo no es
+    // trabajar en equipo.
+    expect(after.career.grades).toEqual(before.career.grades)
+    expect(after.career.equipo).toBe(before.career.equipo)
+  })
+
+  it('deja evidencia de Estilo sin volver superior a ningún eje', () => {
+    const strong = play('slice-aura-estilo', 'fuerte')
+    const weak = play('slice-aura-estilo', 'debil')
+
+    // Las dos partidas empujan el triángulo, en direcciones distintas: el acto
+    // impecable es Aplicado y el que se cae sigue siendo Improvisador. Ninguno
+    // de los dos gana nada por serlo; los dos siguen jugando el año.
+    expect(strong.state.career.estiloEvidence).toBeGreaterThan(0)
+    expect(weak.state.career.estiloEvidence).toBeGreaterThan(0)
+    expect(strong.state.status).toBe('completed')
+    expect(weak.state.status).toBe('completed')
   })
 })
 
@@ -408,6 +541,7 @@ describe('run de referencia', () => {
     ).toEqual([
       'g7.intro|-|-',
       'g7.bus|g7.bus-timing|optimal',
+      'g7.may-25|g7.may-25-act|optimal',
       'g7.mural|g7.mural-paint|optimal',
       'g7.notebook|g7.notebook-offer|optimal',
       'g7.project-lead|-|-',

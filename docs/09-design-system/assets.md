@@ -95,5 +95,5 @@ Las capturas del diseño aprobado viven en [`reference/`](reference/). Son la l�
 
 Dos advertencias al mirarlas:
 
-- **`grilla-25-de-mayo.png` es contenido de diseño, no de producto.** El acto del 25 de Mayo está marcado como provisional en el propio prototipo y no está autorado en el motor; es también el evento que introduce Aura. Sirve como referencia del patrón de grilla y del bloque de Aura, no como contenido a implementar. Ver la pregunta abierta 35.
+- **`grilla-25-de-mayo.png` ya es contenido de producto.** El acto del 25 de Mayo está autorado en el motor como `g7.may-25-act` y la grilla se construyó como primitiva del sistema (`NumberGrid`). La captura sigue siendo la referencia del patrón de grilla y del bloque de Aura; los números y el rótulo del pañuelo difieren porque el contenido autorado manda sobre el mockup, y la celda marcada **sin corregir** es blanca con borde de tinta y no verde, porque la captura muestra el estado ya resuelto.
 - Los detalles de contenido difieren de la implementación —títulos, cantidad de eventos, la variante de demora que salga por seed— porque el contenido autorado manda sobre el mockup. Lo que estas capturas fijan es el **sistema**: superficie, geometría, jerarquía y tratamiento del dato.

@@ -144,13 +144,33 @@ export {
   type Unit,
 } from './math/quantity'
 export { withinTolerance, type Tolerance } from './math/tolerance'
+// Clasificación de enteros. Es el único lugar del producto donde se decide si un
+// número es par, múltiplo de 3 o primo; la UI consume el veredicto, no lo repite.
 export {
+  classifyCell,
+  isEven,
+  isMultipleOfThree,
+  isNumberRule,
+  isPrime,
+  matchesRule,
+  NUMBER_RULES,
+  targetsFor,
+  type CellClassification,
+  type NumberRule,
+} from './math/classification'
+export {
+  addClassification,
   clamp01,
+  classificationScore,
+  countClassification,
   efficiencyFromUsage,
+  EMPTY_CLASSIFICATION,
   informationUseRatio,
   metrics,
   precisionFromDistance,
   qualityRank,
+  type ClassificationCounts,
+  type ClassificationScore,
 } from './challenges/evaluation'
 
 // Challenge and interaction contracts
@@ -173,6 +193,7 @@ export {
 export type {
   AgentAssignment,
   BudgetLine,
+  GridRoundSelection,
   InteractionAnswer,
   InteractionKind,
   InteractionPresentation,
@@ -180,6 +201,7 @@ export type {
   PresentedBudgetItem,
   PresentedChartPoint,
   PresentedDatum,
+  PresentedGridRound,
   PresentedOption,
   PresentedTask,
   RequestableInformation,

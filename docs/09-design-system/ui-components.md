@@ -66,6 +66,27 @@ Etiqueta visible siempre; el placeholder nunca hace de etiqueta. El error se anu
 
 Los tres controles del stepper llevan nombre accesible **obligatorio**, como props requeridas: un `input[type=number]` suelto sin etiqueta es una violación crítica, y dejar que el componente se pueda usar mal es dejar que el bug exista.
 
+## NumberGrid
+
+Una regla escrita arriba y una grilla de números abajo: el jugador marca los que la cumplen. Es la primitiva de la familia de interacción «grilla» —la juega el acto del 25 de Mayo— y no una pantalla: cualquier otra clasificación usa esta misma pieza.
+
+Sostiene la misma regla que `ChoiceCard`, y por el mismo mecanismo:
+
+> **Marcado no es correcto.** Mientras no llega una `resolution`, la celda marcada es **blanca con borde de tinta y tilde**, nunca verde. `resolution` es opcional y los colores de resultado sólo se leen dentro de esa rama, así que una grilla sin corregir no tiene forma de tomar verde ni rojo.
+
+Por dentro cada celda es un `<input type="checkbox">` dentro de su `<label>`, restilado con `appearance-none` y no escondido: la celda entera de 56 px **es** la casilla. Se recorre con Tab y se marca con Espacio, que es lo que un grupo de casillas hace de forma nativa.
+
+La consigna va arriba, en una caja de borde rojo: el rojo acá es la restricción de la pantalla —tensión, no error—, el mismo que subraya la cifra que aprieta en una caja de dato.
+
+Los cuatro estados corregidos cambian **relleno, trazo del borde y glifo** a la vez, y llevan además la palabra en texto para lector de pantalla, así que la grilla se lee entera en escala de grises:
+
+| | marcada | sin marcar |
+|---|---|---|
+| **cumplía** | `hit` — relleno verde, tilde | `missed` — borde punteado, cuadrado |
+| **no cumplía** | `extra` — borde rojo, tachado | `clear` — regla fina, sin glifo |
+
+La primitiva no clasifica: recibe el estado de cada celda ya decidido. Quién cumple la regla lo decide el dominio, en `src/game/math/classification.ts`.
+
 ## Marks
 
 `TickMark`, `SlashMark`, `PartialMark`, `MilestoneTick`. SVG inline con `currentColor`, no un icon font ni archivos. Van `aria-hidden` sin excepción: acompañan una palabra que ya dice lo mismo, y anunciarla dos veces es ruido.

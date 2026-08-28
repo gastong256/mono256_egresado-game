@@ -65,8 +65,6 @@ Cada storylet gana un `eyebrow`: el momento del año que va arriba del título. 
 
 ## Lo que no se migró, y por qué
 
-**El acto del 25 de Mayo no existe en el motor.** Es la interacción de grilla del prototipo de diseño, marcada ahí mismo como provisional, y es el evento que introduce Aura. Autorarlo como contenido de producción habría sido inventar un desafío y sus consecuencias sin ninguna fuente autoritativa que los defina.
-
-Consecuencia visible: **Aura no aparece en el slice de 7.º**, porque ninguno de los cinco eventos autorados es socialmente memorable. Las primitivas están construidas, probadas y visibles en la vitrina. La tira no la muestra porque el modelo dice que no hay nada que mostrar, que es exactamente el comportamiento correcto.
+> **Actualización.** El acto del 25 de Mayo ya está autorado en el motor y Aura sí aparece en el slice. Ver [el catálogo de desafíos](../01-game-design/challenge-catalog.md) y el [slice de 7.º](../06-delivery/vertical-slice-grade-7.md). Lo que sigue vale para el resto.
 
 **Budget y Assignment se migraron visualmente, no funcionalmente.** El handoff los marca «especificados, no construidos» y los difiere a v0.3. En particular, el total corriente del presupuesto sigue sin mostrarse: ver el registro de preguntas abiertas.

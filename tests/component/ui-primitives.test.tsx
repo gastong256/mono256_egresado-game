@@ -10,11 +10,13 @@ import {
   Callout,
   ChoiceCard,
   NumberField,
+  NumberGrid,
   QuantityStepper,
   StageProgress,
   Surface,
   TextField,
   Wordmark,
+  type NumberGridCell,
 } from '@/components/ui'
 
 /**
@@ -157,6 +159,164 @@ describe('ChoiceCard', () => {
     expect(screen.getByRole('radio')).toBeDisabled()
     await user.click(screen.getByRole('radio'))
     expect(onSelect).not.toHaveBeenCalled()
+  })
+})
+
+describe('NumberGrid', () => {
+  const cells = (
+    values: readonly number[],
+    selected: readonly number[] = [],
+  ): NumberGridCell[] =>
+    values.map((value) => ({
+      id: String(value),
+      value: String(value),
+      selected: selected.includes(value),
+    }))
+
+  it('cada celda es una casilla nativa con el número como nombre', async () => {
+    const user = userEvent.setup()
+    const onToggle = vi.fn()
+    render(
+      <NumberGrid
+        cue="Pañuelo blanco"
+        rule="Números pares"
+        cells={cells([7, 12, 15, 8])}
+        onToggle={onToggle}
+      />,
+    )
+
+    const boxes = screen.getAllByRole('checkbox')
+    expect(boxes).toHaveLength(4)
+    expect(screen.getByRole('checkbox', { name: '12' })).not.toBeChecked()
+
+    await user.click(screen.getByRole('checkbox', { name: '12' }))
+    expect(onToggle).toHaveBeenCalledWith('12')
+  })
+
+  it('la regla siempre está escrita y nombra al grupo', () => {
+    render(
+      <NumberGrid
+        cue="Pañuelo celeste"
+        rule="Múltiplos de 3"
+        cells={cells([11, 12])}
+        onToggle={vi.fn()}
+      />,
+    )
+
+    // La consigna no puede depender de un color: está en texto y además es el
+    // nombre accesible de la grilla.
+    expect(screen.getByText('Múltiplos de 3')).toBeInTheDocument()
+    expect(
+      screen.getByRole('region', { name: /Múltiplos de 3/u }),
+    ).toBeInTheDocument()
+  })
+
+  it('se marca con el teclado', async () => {
+    const user = userEvent.setup()
+    const onToggle = vi.fn()
+    render(
+      <NumberGrid
+        cue="Zapateo"
+        rule="Números primos"
+        cells={cells([2, 9])}
+        onToggle={onToggle}
+      />,
+    )
+
+    await user.tab()
+    expect(screen.getByRole('checkbox', { name: '2' })).toHaveFocus()
+    await user.keyboard(' ')
+    expect(onToggle).toHaveBeenCalledWith('2')
+
+    // Y el orden de tabulación sigue al de la grilla.
+    await user.tab()
+    expect(screen.getByRole('checkbox', { name: '9' })).toHaveFocus()
+  })
+
+  it('marcar no dice nada sobre acertar', () => {
+    const { container } = render(
+      <NumberGrid
+        cue="Pañuelo blanco"
+        rule="Números pares"
+        cells={cells([7, 12], [7, 12])}
+        onToggle={vi.fn()}
+      />,
+    )
+
+    // El 7 no es par y el 12 sí, pero sin corregir las dos celdas se ven igual:
+    // marcar significa «elegí ésta», nunca «acerté». Es la regla más importante
+    // del sistema y acá está sostenida por la estructura.
+    const marked = container.querySelectorAll('[data-selected="true"]')
+    expect(marked).toHaveLength(2)
+    for (const cell of marked) {
+      expect(cell.getAttribute('data-resolution')).toBe('pending')
+    }
+    expect(screen.getByRole('checkbox', { name: '7' })).toBeChecked()
+  })
+
+  it('corregida, cada celda dice cómo quedó sin depender del color', () => {
+    render(
+      <NumberGrid
+        cue="Pañuelo blanco"
+        rule="Números pares"
+        cells={[
+          { id: '12', value: '12', selected: true, resolution: 'hit' },
+          { id: '7', value: '7', selected: true, resolution: 'extra' },
+          { id: '8', value: '8', selected: false, resolution: 'missed' },
+          { id: '15', value: '15', selected: false, resolution: 'clear' },
+        ]}
+        onToggle={vi.fn()}
+        note="Los punteados cumplían «Números pares» y no los marcaste."
+      />,
+    )
+
+    // El estado está en palabras, así que se lee con un lector de pantalla y en
+    // escala de grises.
+    expect(
+      screen.getByRole('checkbox', { name: /12, marcado y correspondía/u }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('checkbox', { name: /7, marcado de más/u }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('checkbox', { name: /8, sin marcar y correspondía/u }),
+    ).toBeInTheDocument()
+    expect(screen.getByText(/Los punteados cumplían/u)).toBeInTheDocument()
+  })
+
+  it('corregida ya no se puede cambiar', async () => {
+    const user = userEvent.setup()
+    const onToggle = vi.fn()
+    render(
+      <NumberGrid
+        cue="Pañuelo blanco"
+        rule="Números pares"
+        cells={[{ id: '12', value: '12', selected: true, resolution: 'hit' }]}
+        onToggle={onToggle}
+      />,
+    )
+
+    const box = screen.getByRole('checkbox')
+    expect(box).toBeDisabled()
+    await user.click(box)
+    expect(onToggle).not.toHaveBeenCalled()
+  })
+
+  it('deshabilitada no responde', async () => {
+    const user = userEvent.setup()
+    const onToggle = vi.fn()
+    render(
+      <NumberGrid
+        cue="Pañuelo blanco"
+        rule="Números pares"
+        cells={cells([12])}
+        disabled
+        onToggle={onToggle}
+      />,
+    )
+
+    await user.click(screen.getByRole('checkbox'))
+    expect(onToggle).not.toHaveBeenCalled()
   })
 })
 

@@ -29,6 +29,7 @@ import { Button, type DataGridItem } from '@/components/ui'
 
 import { AssignmentBoard } from './interactions/assignment-board'
 import { BudgetBuilder } from './interactions/budget-builder'
+import { NumberGridBoard } from './interactions/number-grid'
 import { NumericAnswer } from './interactions/numeric-answer'
 import { OptionList } from './interactions/option-list'
 
@@ -65,6 +66,10 @@ export function interactionData(
       return []
     case 'assignment-board':
       return []
+    case 'number-grid':
+      // Los números de la grilla son el dato. Repetirlos arriba en cajas sería
+      // pedir que se lean dos veces.
+      return []
     default:
       return assertNever(presentation)
   }
@@ -89,6 +94,7 @@ export function usesDecisionBlock(
       return true
     case 'budget-builder':
     case 'assignment-board':
+    case 'number-grid':
       return false
     default:
       return assertNever(presentation)
@@ -206,6 +212,29 @@ export function InteractionControls({
         />
       )
 
+    case 'number-grid':
+      return (
+        <NumberGridBoard
+          rounds={presentation.rounds}
+          columns={presentation.columns}
+          selections={draft?.kind === 'number-grid' ? draft.rounds : []}
+          disabled={disabled}
+          /*
+            La corrección por celda pide dos cosas, y las dos tienen que estar.
+            `resolution` dice que el motor evaluó; el borrador dice qué marcó el
+            jugador. Al reanudar sobre una pantalla de resultado el borrador se
+            perdió —vive en la vista, no en el snapshot—, y sin él la grilla
+            afirmaría que no se marcó nada. Igual que la lista de opciones sin
+            `chosenId`, prefiere no afirmar nada: el ledger sigue explicando la
+            cuenta.
+          */
+          resolved={resolution !== undefined && draft?.kind === 'number-grid'}
+          onChange={(rounds) => {
+            onDraftChange({ kind: 'number-grid', rounds })
+          }}
+        />
+      )
+
     case 'assignment-board':
       return (
         <AssignmentBoard
@@ -309,6 +338,19 @@ export function isDraftSubmittable(
         presentation.kind === 'assignment-board' &&
         draft.assignments.length === presentation.tasks.length
       )
+    case 'number-grid':
+      // Cada paso del acto tiene que estar contestado. Una ronda vacía es una
+      // respuesta legítima para el motor, pero enviarla sin haberla mirado es
+      // casi siempre un descuido, así que la UI pide una marca por ronda y dice
+      // cuál falta.
+      return (
+        presentation.kind === 'number-grid' &&
+        presentation.rounds.every((round) =>
+          draft.rounds.some(
+            (entry) => entry.roundId === round.id && entry.numbers.length > 0,
+          ),
+        )
+      )
     default:
       return assertNever(draft)
   }
@@ -344,6 +386,20 @@ export function missingRequirement(
         draft?.kind === 'assignment-board' ? draft.assignments.length : 0
       const missing = presentation.tasks.length - assigned
       return `Falta asignar ${String(missing)} ${missing === 1 ? 'tarea' : 'tareas'}.`
+    }
+    case 'number-grid': {
+      const marked = draft?.kind === 'number-grid' ? draft.rounds : []
+      const pending = presentation.rounds.filter(
+        (round) =>
+          !marked.some(
+            (entry) => entry.roundId === round.id && entry.numbers.length > 0,
+          ),
+      )
+      const first = pending[0]
+      if (first === undefined) {
+        return undefined
+      }
+      return `Falta marcar el paso «${first.cue}» para confirmar.`
     }
     default:
       return assertNever(presentation)

@@ -33,6 +33,12 @@ export {
   TickMark,
   type MarkProps,
 } from './marks'
+export {
+  NumberGrid,
+  type NumberGridCell,
+  type NumberGridProps,
+  type NumberGridResolution,
+} from './number-grid'
 export { OUTCOME_TONES, type OutcomeTone } from './outcome-tone'
 export { StageProgress } from './progress'
 export { QuantityStepper } from './quantity-stepper'

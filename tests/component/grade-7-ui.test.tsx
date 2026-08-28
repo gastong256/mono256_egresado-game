@@ -13,6 +13,7 @@ import {
   activeChallengeView,
   createRun,
   promedio,
+  targetsFor,
   toRunId,
   toRunSeed,
   transition,
@@ -45,7 +46,13 @@ function descriptorFor(seed: string): RunDescriptor {
   }
 }
 
-/** Juega un año entero eligiendo siempre la primera opción disponible. */
+/**
+ * Juega un año entero eligiendo siempre la primera opción disponible.
+ *
+ * La única excepción es la grilla del acto del 25 de Mayo, donde el jugador
+ * aplica la regla: es el evento que establece Aura, y con una respuesta al azar
+ * el resumen del año no podría afirmar nada sobre esa dimensión.
+ */
 function completedRun(seed: string): RunState {
   const created = createRun(descriptorFor(seed), dependencies)
   if (!created.ok) throw new Error('no se pudo crear la run')
@@ -61,30 +68,38 @@ function completedRun(seed: string): RunState {
       const interaction = view.value.interaction
 
       const answer: InteractionAnswer =
-        interaction.kind === 'assignment-board'
+        interaction.kind === 'number-grid'
           ? {
-              kind: 'assignment-board',
-              assignments: interaction.tasks.flatMap((task, index) => {
-                const agent = interaction.agents[index]
-                return agent === undefined
-                  ? []
-                  : [{ agentId: agent.id, taskId: task.id }]
-              }),
+              kind: 'number-grid',
+              rounds: interaction.rounds.map((round) => ({
+                roundId: round.id,
+                numbers: [...targetsFor(round.rule, round.numbers)],
+              })),
             }
-          : interaction.kind === 'budget-builder'
+          : interaction.kind === 'assignment-board'
             ? {
-                kind: 'budget-builder',
-                lines: interaction.items.map((item) => ({
-                  itemId: item.id,
-                  quantity: 2,
-                })),
+                kind: 'assignment-board',
+                assignments: interaction.tasks.flatMap((task, index) => {
+                  const agent = interaction.agents[index]
+                  return agent === undefined
+                    ? []
+                    : [{ agentId: agent.id, taskId: task.id }]
+                }),
               }
-            : interaction.kind === 'numeric-input'
-              ? { kind: 'numeric-input', value: interaction.min }
-              : {
-                  kind: interaction.kind,
-                  optionId: interaction.options[0]?.id ?? '',
+            : interaction.kind === 'budget-builder'
+              ? {
+                  kind: 'budget-builder',
+                  lines: interaction.items.map((item) => ({
+                    itemId: item.id,
+                    quantity: 2,
+                  })),
                 }
+              : interaction.kind === 'numeric-input'
+                ? { kind: 'numeric-input', value: interaction.min }
+                : {
+                    kind: interaction.kind,
+                    optionId: interaction.options[0]?.id ?? '',
+                  }
 
       command = {
         type: 'ANSWER',
@@ -191,11 +206,26 @@ describe('el resumen del año', () => {
   it('no inventa ninguna dimensión que la run no haya establecido', () => {
     render(<YearResult state={state} onPlayAgain={vi.fn()} />)
 
+    // El acto del 25 de Mayo establece Aura durante el año, así que el cierre la
+    // muestra. Si alguna vez dejara de establecerla, el bloque negro tiene que
+    // desaparecer en lugar de dibujar un `+0`.
     if (state.career.aura === null) {
-      // Aura sólo la mueve un momento socialmente memorable, y el contenido
-      // autorado de 7.º todavía no tiene ninguno.
       expect(screen.queryByTestId('aura-block')).not.toBeInTheDocument()
+    } else {
+      expect(screen.getByTestId('aura-block')).toBeInTheDocument()
     }
+  })
+
+  it('muestra el Aura que el acto del 25 de Mayo dejó', () => {
+    // Este año se juega aplicando la regla de la grilla, así que el acto sale
+    // bien y Aura queda establecida y positiva.
+    expect(state.career.aura).not.toBeNull()
+    expect(state.career.aura ?? 0).toBeGreaterThan(0)
+
+    render(<YearResult state={state} onPlayAgain={vi.fn()} />)
+
+    // Con signo explícito: subir y bajar no dependen de distinguir verde de rojo.
+    expect(screen.getByTestId('aura-block').textContent).toContain('+')
   })
 
   it('cierra séptimo sin prometer un perfil de egresado', () => {

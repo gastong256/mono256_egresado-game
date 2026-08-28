@@ -175,30 +175,43 @@ describe('toda seed produce un año jugable', () => {
             }
             const interaction = view.value.interaction
             const answer =
-              interaction.kind === 'assignment-board'
+              interaction.kind === 'number-grid'
                 ? {
-                    kind: 'assignment-board' as const,
-                    assignments: interaction.tasks.flatMap((task, index) => {
-                      const agent = interaction.agents[index]
-                      return agent === undefined
-                        ? []
-                        : [{ agentId: agent.id, taskId: task.id }]
-                    }),
+                    kind: 'number-grid' as const,
+                    // Marca la grilla entera: es la respuesta estructuralmente
+                    // válida más extrema, y el año tiene que terminar igual.
+                    rounds: interaction.rounds.map((round) => ({
+                      roundId: round.id,
+                      numbers: [...round.numbers],
+                    })),
                   }
-                : interaction.kind === 'budget-builder'
+                : interaction.kind === 'assignment-board'
                   ? {
-                      kind: 'budget-builder' as const,
-                      lines: interaction.items.map((item) => ({
-                        itemId: item.id,
-                        quantity: 2,
-                      })),
+                      kind: 'assignment-board' as const,
+                      assignments: interaction.tasks.flatMap((task, index) => {
+                        const agent = interaction.agents[index]
+                        return agent === undefined
+                          ? []
+                          : [{ agentId: agent.id, taskId: task.id }]
+                      }),
                     }
-                  : interaction.kind === 'numeric-input'
-                    ? { kind: 'numeric-input' as const, value: interaction.min }
-                    : {
-                        kind: interaction.kind,
-                        optionId: interaction.options[0]?.id ?? '',
+                  : interaction.kind === 'budget-builder'
+                    ? {
+                        kind: 'budget-builder' as const,
+                        lines: interaction.items.map((item) => ({
+                          itemId: item.id,
+                          quantity: 2,
+                        })),
                       }
+                    : interaction.kind === 'numeric-input'
+                      ? {
+                          kind: 'numeric-input' as const,
+                          value: interaction.min,
+                        }
+                      : {
+                          kind: interaction.kind,
+                          optionId: interaction.options[0]?.id ?? '',
+                        }
 
             command = {
               type: 'ANSWER',
@@ -214,7 +227,7 @@ describe('toda seed produce un año jugable', () => {
 
         // Ninguna seed puede dejar el año sin terminar.
         expect(state.status).toBe('completed')
-        expect(state.history).toHaveLength(7)
+        expect(state.history).toHaveLength(8)
         expect(state.seenStorylets).toContain(grade7StoryletIds.fairStand)
       }),
       { numRuns: 40 },

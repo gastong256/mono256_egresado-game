@@ -1,13 +1,13 @@
 /**
  * 7.º grado — el arco narrativo.
  *
- * Siete eventos: dos beats narrativos y cinco situaciones. El orden no lo
+ * Ocho eventos: dos beats narrativos y seis situaciones. El orden no lo
  * decide la UI ni un índice: cada storylet declara qué tuvo que pasar antes,
  * y el motor narrativo elige. Encadenar por `storylet-seen` deja exactamente
  * uno elegible en cada paso, así que la secuencia es determinista sin dejar de
  * pasar por el selector.
  *
- * El evento 5 es una bifurcación real: si el jugador viene resolviendo bien, el
+ * El evento 6 es una bifurcación real: si el jugador viene resolviendo bien, el
  * grupo le ofrece coordinar; si no, le reparten una parte concreta. Las dos
  * ramas se excluyen mutuamente con `storylet-not-seen`, de modo que la que no
  * salió no reaparece más adelante.
@@ -16,6 +16,7 @@
 import { toChallengeId, toStoryletId, type Storylet } from '@/game'
 
 const busTiming = toChallengeId('g7.bus-timing')
+const may25Act = toChallengeId('g7.may-25-act')
 const muralPaint = toChallengeId('g7.mural-paint')
 const notebookOffer = toChallengeId('g7.notebook-offer')
 const groupTasks = toChallengeId('g7.group-tasks')
@@ -23,6 +24,7 @@ const standSupplies = toChallengeId('g7.stand-supplies')
 
 const intro = toStoryletId('g7.intro')
 const bus = toStoryletId('g7.bus')
+const may25 = toStoryletId('g7.may-25')
 const mural = toStoryletId('g7.mural')
 const notebook = toStoryletId('g7.notebook')
 const projectLead = toStoryletId('g7.project-lead')
@@ -59,6 +61,25 @@ export const grade7Storylets: readonly Storylet[] = [
     text: 'Todavía estás aprendiendo cuánto tarda el viaje hasta la escuela.',
     challengePool: [busTiming],
     effects: [],
+    followUps: [may25],
+  },
+  {
+    // El único momento del año que pasa en público, y por eso el que establece
+    // Aura. El acto cae en mayo, después de las primeras semanas de clase y
+    // antes de que arranque el proyecto de la feria, así que se intercala en el
+    // calendario escolar sin partir la cadena causal del proyecto.
+    id: may25,
+    kind: 'one-shot',
+    stages: ['grade-7'],
+    weight: 10,
+    priority: 75,
+    requires: { kind: 'storylet-seen', storyletId: bus },
+    tags: ['acto', 'publico', 'aura'],
+    eyebrow: 'Acto escolar',
+    title: 'El acto del 25',
+    text: 'Faltan dos días para el acto y la maestra reparte los pasos de la coreografía.',
+    challengePool: [may25Act],
+    effects: [],
     followUps: [mural],
   },
   {
@@ -67,7 +88,7 @@ export const grade7Storylets: readonly Storylet[] = [
     stages: ['grade-7'],
     weight: 10,
     priority: 70,
-    requires: { kind: 'storylet-seen', storyletId: bus },
+    requires: { kind: 'storylet-seen', storyletId: may25 },
     tags: ['feria', 'proyecto'],
     eyebrow: 'Feria escolar',
     title: 'Empieza el proyecto',
@@ -195,6 +216,7 @@ export const grade7Storylets: readonly Storylet[] = [
 export const grade7StoryletIds = {
   intro,
   bus,
+  may25,
   mural,
   notebook,
   projectLead,

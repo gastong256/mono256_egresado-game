@@ -285,6 +285,23 @@ describe('interaction renderers', () => {
         tasks: [{ id: 't0', label: 'Investigación', detail: '3 h' }],
       },
     ],
+    [
+      'number-grid',
+      {
+        kind: 'number-grid',
+        data: [],
+        columns: 4,
+        rounds: [
+          {
+            id: 'paso-1',
+            cue: 'Pañuelo blanco',
+            ruleLabel: 'Números pares',
+            rule: 'even',
+            numbers: [7, 12, 15, 8],
+          },
+        ],
+      },
+    ],
   ]
 
   it.each(cases)(
@@ -306,6 +323,7 @@ describe('interaction renderers', () => {
       // Every renderer must expose a labelled, operable control.
       const controls = [
         ...screen.queryAllByRole('radio'),
+        ...screen.queryAllByRole('checkbox'),
         ...screen.queryAllByRole('spinbutton'),
         ...screen.queryAllByRole('combobox'),
         ...screen.queryAllByRole('slider'),
@@ -320,6 +338,82 @@ describe('interaction renderers', () => {
       ).toBe(true)
     },
   )
+
+  it('no corrige la grilla cuando el borrador se perdió al reanudar', () => {
+    // El checkpoint se escribe con la pantalla de resultado a la vista, pero el
+    // borrador vive en la vista y no en el snapshot. Sin él, corregir afirmaría
+    // que no se marcó nada, que es una mentira sobre lo que el jugador hizo.
+    const { container } = render(
+      <InteractionControls
+        presentation={{
+          kind: 'number-grid',
+          data: [],
+          columns: 4,
+          rounds: [
+            {
+              id: 'paso-1',
+              cue: 'Pañuelo blanco',
+              ruleLabel: 'Números pares',
+              rule: 'even',
+              numbers: [7, 12],
+            },
+          ],
+        }}
+        draft={undefined}
+        disabled
+        resolution={{ chosenId: undefined, tone: 'optimal' }}
+        onDraftChange={vi.fn()}
+        onRequestInformation={vi.fn()}
+        instanceId="resumed"
+      />,
+    )
+
+    for (const cell of container.querySelectorAll('[data-resolution]')) {
+      expect(cell.getAttribute('data-resolution')).toBe('pending')
+    }
+    expect(screen.queryByText(/Los punteados cumplían/u)).toBeNull()
+  })
+
+  it('corrige la grilla cuando el borrador sigue en la vista', () => {
+    const { container } = render(
+      <InteractionControls
+        presentation={{
+          kind: 'number-grid',
+          data: [],
+          columns: 4,
+          rounds: [
+            {
+              id: 'paso-1',
+              cue: 'Pañuelo blanco',
+              ruleLabel: 'Números pares',
+              rule: 'even',
+              numbers: [7, 12],
+            },
+          ],
+        }}
+        draft={{
+          kind: 'number-grid',
+          rounds: [{ roundId: 'paso-1', numbers: [7] }],
+        }}
+        disabled
+        resolution={{ chosenId: undefined, tone: 'insufficient' }}
+        onDraftChange={vi.fn()}
+        onRequestInformation={vi.fn()}
+        instanceId="resolved"
+      />,
+    )
+
+    expect(
+      container
+        .querySelector('[data-value="7"]')
+        ?.getAttribute('data-resolution'),
+    ).toBe('extra')
+    expect(
+      container
+        .querySelector('[data-value="12"]')
+        ?.getAttribute('data-resolution'),
+    ).toBe('missed')
+  })
 
   it('reports a draft to the parent without evaluating it', async () => {
     const user = userEvent.setup()

@@ -86,6 +86,21 @@ export function synthesizeAnswer(
           quantity: rng.nextInt(0, Math.min(item.maxQuantity, 6)),
         })),
       }
+    case 'number-grid':
+      // Marks each cell on a coin flip. The agent answers from the public view
+      // only, so it does not apply the rule: what it exercises is that any
+      // structurally valid selection — including none and all of them — is
+      // evaluated without breaking the run.
+      return {
+        kind: 'number-grid',
+        rounds: presentation.rounds.map((round) => {
+          const roundRng = rng.derive('round', round.id)
+          return {
+            roundId: round.id,
+            numbers: round.numbers.filter(() => roundRng.chance(1, 2)),
+          }
+        }),
+      }
     case 'assignment-board': {
       // Assign distinct members to tasks so the answer is at least structurally
       // plausible; feasibility is still the engine's decision.

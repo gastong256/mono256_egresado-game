@@ -2,7 +2,7 @@
 
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import { AuraBlock, AuraCell } from '@/components/game/aura-display'
 import { CareerChips } from '@/components/game/career-chips'
@@ -18,9 +18,16 @@ import {
   MemorablePanel,
   Milestone,
 } from '@/components/game/milestone'
+import { NumberGridBoard } from '@/components/game/interactions/number-grid'
 import { NarrativeCard, SituationCard } from '@/components/game/situation-card'
 import { DataGrid, DataMetric, Ledger, StageProgress } from '@/components/ui'
-import type { CareerState, PendingFeedback, SolutionQuality } from '@/game'
+import type {
+  CareerState,
+  GridRoundSelection,
+  PendingFeedback,
+  PresentedGridRound,
+  SolutionQuality,
+} from '@/game'
 import { initialCareer, nudgeEstilo, toChallengeInstanceId } from '@/game'
 
 /**
@@ -69,6 +76,137 @@ function feedbackFor(
 function careerWith(overrides: Partial<CareerState> = {}): CareerState {
   return { ...initialCareer(), ...overrides }
 }
+
+describe('NumberGridBoard', () => {
+  const rounds: readonly PresentedGridRound[] = [
+    {
+      id: 'paso-1',
+      cue: 'Pañuelo blanco',
+      ruleLabel: 'Números pares',
+      rule: 'even',
+      numbers: [7, 12],
+    },
+    {
+      id: 'paso-2',
+      cue: 'Zapateo',
+      ruleLabel: 'Números primos',
+      rule: 'prime',
+      numbers: [1, 13],
+    },
+  ]
+
+  function board(
+    selections: readonly GridRoundSelection[],
+    resolved: boolean,
+    onChange: (next: readonly GridRoundSelection[]) => void = () => undefined,
+  ) {
+    return (
+      <NumberGridBoard
+        rounds={rounds}
+        columns={4}
+        selections={selections}
+        disabled={false}
+        resolved={resolved}
+        onChange={onChange}
+      />
+    )
+  }
+
+  it('dibuja un paso por ronda con su regla escrita', () => {
+    render(board([], false))
+
+    expect(screen.getAllByTestId('number-grid')).toHaveLength(2)
+    expect(screen.getByText('Números pares')).toBeInTheDocument()
+    expect(screen.getByText('Números primos')).toBeInTheDocument()
+  })
+
+  it('el borrador lleva siempre todas las rondas, aunque estén vacías', async () => {
+    const user = userEvent.setup()
+    const onChange = vi.fn()
+    render(board([], false, onChange))
+
+    await user.click(screen.getByRole('checkbox', { name: '12' }))
+
+    // Una ronda vacía viaja como vacía y no como ausente: es lo que le permite
+    // al evaluador distinguir «no marcó nada» de «no llegó a este paso».
+    expect(onChange).toHaveBeenCalledWith([
+      { roundId: 'paso-1', numbers: [12] },
+      { roundId: 'paso-2', numbers: [] },
+    ])
+  })
+
+  it('volver a marcar una celda la saca del borrador', async () => {
+    const user = userEvent.setup()
+    const onChange = vi.fn()
+    render(board([{ roundId: 'paso-1', numbers: [7, 12] }], false, onChange))
+
+    await user.click(screen.getByRole('checkbox', { name: '7' }))
+
+    expect(onChange).toHaveBeenCalledWith([
+      { roundId: 'paso-1', numbers: [12] },
+      { roundId: 'paso-2', numbers: [] },
+    ])
+  })
+
+  it('sin resolver, ninguna celda dice si acertó', () => {
+    const { container } = render(
+      board(
+        [
+          { roundId: 'paso-1', numbers: [7] },
+          { roundId: 'paso-2', numbers: [1] },
+        ],
+        false,
+      ),
+    )
+
+    // 7 no es par y 1 no es primo: las dos están mal y ninguna lo dice todavía.
+    for (const cell of container.querySelectorAll('[data-resolution]')) {
+      expect(cell.getAttribute('data-resolution')).toBe('pending')
+    }
+  })
+
+  it('resuelto, cada celda toma el estado que el dominio decide', () => {
+    const { container } = render(
+      board(
+        [
+          { roundId: 'paso-1', numbers: [7] },
+          { roundId: 'paso-2', numbers: [13] },
+        ],
+        true,
+      ),
+    )
+
+    const state = (value: string): string | null =>
+      container
+        .querySelector(`[data-value="${value}"]`)
+        ?.getAttribute('data-resolution') ?? null
+
+    // La clasificación la hace el motor, no la pantalla: 7 marcado sin ser par
+    // es una marca de más, 12 sin marcar era par, 13 es primo y 1 no lo es.
+    expect(state('7')).toBe('extra')
+    expect(state('12')).toBe('missed')
+    expect(state('13')).toBe('hit')
+    expect(state('1')).toBe('clear')
+  })
+
+  it('explica los punteados sólo en la ronda donde faltó algo', () => {
+    render(
+      board(
+        [
+          { roundId: 'paso-1', numbers: [] },
+          { roundId: 'paso-2', numbers: [13] },
+        ],
+        true,
+      ),
+    )
+
+    // Al primer paso le faltó el 12; el segundo salió completo y no lleva nota.
+    expect(screen.getAllByText(/Los punteados cumplían/u)).toHaveLength(1)
+    expect(
+      screen.getByText(/Los punteados cumplían «Números pares»/u),
+    ).toBeInTheDocument()
+  })
+})
 
 describe('DataMetric', () => {
   it('separa la etiqueta, el valor y la unidad', () => {

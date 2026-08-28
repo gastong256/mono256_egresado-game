@@ -49,6 +49,18 @@ const assignmentSchema = z.object({
   taskId: z.string().min(1),
 })
 
+/**
+ * Una ronda marcada de una grilla de clasificación.
+ *
+ * Los números se acotan a enteros chicos porque una grilla de 7.º los tiene, y
+ * porque acotar acá es lo que impide que un cliente hostil mande cien mil
+ * enteros de 15 dígitos para hacer trabajar al evaluador.
+ */
+const gridRoundSelectionSchema = z.object({
+  roundId: z.string().min(1).max(64),
+  numbers: z.array(z.number().int().min(0).max(9999)).max(64),
+})
+
 /** Decimal literal, so a numeric answer never arrives as a binary float. */
 const decimalLiteral = z
   .string()
@@ -75,6 +87,10 @@ export const interactionAnswerSchema = z.discriminatedUnion('kind', [
   z.object({
     kind: z.literal('information-request'),
     optionId: z.string().min(1),
+  }),
+  z.object({
+    kind: z.literal('number-grid'),
+    rounds: z.array(gridRoundSelectionSchema).max(8),
   }),
 ])
 

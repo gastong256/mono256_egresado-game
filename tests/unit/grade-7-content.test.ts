@@ -2,16 +2,21 @@ import { describe, expect, it } from 'vitest'
 
 import {
   createChallengeRegistry,
+  targetsFor,
   toChallengeInstanceId,
   toRunSeed,
+  type CareerEffects,
   type ChallengeDefinition,
+  type GridRoundSelection,
   type InteractionAnswer,
   type MaterializedChallenge,
+  type PresentedGridRound,
   type SolutionQuality,
 } from '@/game'
 import { createRng } from '@/game/random/rng'
 import { grade7Challenges, createGrade7Dependencies } from '@/content/grade-7'
 import { busTimingReference } from '@/content/grade-7/challenges/bus-timing'
+import { may25ActReference } from '@/content/grade-7/challenges/may-25-act'
 import { muralPaintReference } from '@/content/grade-7/challenges/mural-paint'
 import { notebookOfferReference } from '@/content/grade-7/challenges/notebook-offer'
 import { pesos } from '@/content/pesos'
@@ -410,10 +415,248 @@ describe('el stand · costo unitario y combinación', () => {
   })
 })
 
+describe('el acto del 25 de Mayo · clasificación y Aura', () => {
+  const definition = registry.get('g7.may-25-act' as never)
+  if (definition === undefined) throw new Error('falta el desafío')
+
+  /** Las rondas presentadas por una instancia. */
+  function roundsOf(
+    instance: MaterializedChallenge,
+  ): readonly PresentedGridRound[] {
+    const view = instance.present([])
+    if (view.kind !== 'number-grid') throw new Error('no es una grilla')
+    return view.rounds
+  }
+
+  /** Arma una respuesta aplicando `pick` a cada ronda. */
+  function answerWith(
+    instance: MaterializedChallenge,
+    pick: (round: PresentedGridRound) => readonly number[],
+  ): InteractionAnswer {
+    const rounds: GridRoundSelection[] = roundsOf(instance).map((round) => ({
+      roundId: round.id,
+      numbers: [...pick(round)],
+    }))
+    return { kind: 'number-grid', rounds }
+  }
+
+  const perfect = (instance: MaterializedChallenge): InteractionAnswer =>
+    answerWith(instance, (round) => targetsFor(round.rule, round.numbers))
+
+  function effectsOf(
+    instance: MaterializedChallenge,
+    answer: InteractionAnswer,
+  ): CareerEffects {
+    const result = instance.evaluate(answer, [])
+    if (!result.ok) throw new Error(`la evaluación falló: ${result.error.kind}`)
+    return result.value.careerEffects
+  }
+
+  it('produce las tres variantes autoradas', () => {
+    expect(instancesOf(definition)).toHaveLength(
+      may25ActReference.variants.length,
+    )
+  })
+
+  it('cada paso tiene una regla escrita y una grilla clasificable', () => {
+    for (const instance of instancesOf(definition)) {
+      const rounds = roundsOf(instance)
+      expect(rounds).toHaveLength(3)
+
+      for (const round of rounds) {
+        // La regla siempre está en texto: la consigna nunca puede depender de un
+        // color ni de una convención visual.
+        expect(round.ruleLabel.length).toBeGreaterThan(0)
+        expect(round.cue.length).toBeGreaterThan(0)
+        expect(round.numbers).toHaveLength(may25ActReference.columns * 2)
+        expect(new Set(round.numbers).size).toBe(round.numbers.length)
+
+        const targets = targetsFor(round.rule, round.numbers)
+        // Ni marcar una sola celda ni marcarlas todas puede parecerse a jugar.
+        expect(targets.length).toBeGreaterThanOrEqual(2)
+        expect(targets.length).toBeLessThanOrEqual(round.numbers.length - 2)
+      }
+
+      // Las tres reglas del año aparecen una vez cada una.
+      expect(new Set(rounds.map((round) => round.rule))).toEqual(
+        new Set(['even', 'multiple-of-three', 'prime']),
+      )
+    }
+  })
+
+  it('las variantes autoradas usan números que se clasifican de memoria', () => {
+    for (const variant of may25ActReference.variants) {
+      for (const round of variant) {
+        for (const value of round.numbers) {
+          expect(Number.isSafeInteger(value)).toBe(true)
+          expect(value).toBeGreaterThanOrEqual(0)
+          expect(value).toBeLessThanOrEqual(30)
+        }
+      }
+    }
+  })
+
+  it('la coreografía exacta es óptima y deja Aura positiva', () => {
+    for (const instance of instancesOf(definition)) {
+      const answer = perfect(instance)
+      expect(qualityOf(instance, answer)).toBe('optimal')
+
+      const effects = effectsOf(instance, answer)
+      expect(effects.aura ?? 0).toBeGreaterThan(0)
+      expect(effects.estilo?.axis).toBe('aplicado')
+    }
+  })
+
+  it('marcar la grilla entera no alcanza', () => {
+    for (const instance of instancesOf(definition)) {
+      const answer = answerWith(instance, (round) => round.numbers)
+      expect(qualityOf(instance, answer)).toBe('invalid')
+      expect(effectsOf(instance, answer).aura ?? 0).toBeLessThan(0)
+    }
+  })
+
+  it('marcar una sola celda correcta tampoco', () => {
+    for (const instance of instancesOf(definition)) {
+      const answer = answerWith(instance, (round) =>
+        targetsFor(round.rule, round.numbers).slice(0, 1),
+      )
+      expect(qualityOf(instance, answer)).toBe('invalid')
+    }
+  })
+
+  it('no marcar nada se evalúa sin romperse', () => {
+    for (const instance of instancesOf(definition)) {
+      expect(
+        qualityOf(
+          instance,
+          answerWith(instance, () => []),
+        ),
+      ).toBe('invalid')
+      // Y una respuesta sin ninguna ronda equivale a no haber marcado nada.
+      expect(qualityOf(instance, { kind: 'number-grid', rounds: [] })).toBe(
+        'invalid',
+      )
+    }
+  })
+
+  it('un solo error deja el acto en Resuelto y la Aura positiva', () => {
+    for (const instance of instancesOf(definition)) {
+      const rounds = roundsOf(instance)
+      const first = rounds[0]
+      if (first === undefined) throw new Error('sin rondas')
+
+      // Se saltea un objetivo del primer paso y nada más.
+      const answer = answerWith(instance, (round) => {
+        const targets = targetsFor(round.rule, round.numbers)
+        return round.id === first.id ? targets.slice(1) : targets
+      })
+
+      expect(qualityOf(instance, answer)).toBe('efficient')
+      const effects = effectsOf(instance, answer)
+      expect(effects.aura ?? 0).toBeGreaterThan(0)
+      expect(effects.estilo?.axis).toBe('estratega')
+    }
+  })
+
+  it('perder un paso en cada ronda todavía se puede zafar improvisando', () => {
+    for (const instance of instancesOf(definition)) {
+      // Se pierde un objetivo en cada uno de los tres pasos: 7 de 10 acertados y
+      // ninguna marca de más deja el F1 en 14/17 ≈ 0,82, dentro de Parcial.
+      const answer = answerWith(instance, (round) =>
+        targetsFor(round.rule, round.numbers).slice(1),
+      )
+
+      expect(qualityOf(instance, answer)).toBe('functional')
+      const effects = effectsOf(instance, answer)
+      expect(effects.aura ?? 0).toBeGreaterThan(0)
+      expect(effects.estilo?.axis).toBe('improvisador')
+    }
+  })
+
+  it('el ledger informa objetivos, aciertos, de más y sin marcar', () => {
+    const instance = instancesOf(definition)[0]
+    if (instance === undefined) throw new Error('sin instancia')
+
+    const rounds = roundsOf(instance)
+    const result = instance.evaluate(perfect(instance), [])
+    if (!result.ok) throw new Error('la evaluación falló')
+
+    const targetTotal = rounds.reduce(
+      (total, round) => total + targetsFor(round.rule, round.numbers).length,
+      0,
+    )
+    const facts = Object.fromEntries(
+      result.value.feedback.facts.map((fact) => [fact.label, fact.value]),
+    )
+
+    expect(facts['Pasos en la ayudamemoria']).toBe(String(targetTotal))
+    expect(facts['Acertaste']).toBe(String(targetTotal))
+    expect(facts['De más']).toBe('0')
+    expect(facts['Sin marcar']).toBe('0')
+    expect(facts['Coreografía']).toBe('100 %')
+  })
+
+  it('ningún resultado pone nota ni toca Equipo', () => {
+    for (const instance of instancesOf(definition)) {
+      const answers: InteractionAnswer[] = [
+        perfect(instance),
+        answerWith(instance, (round) => round.numbers),
+        answerWith(instance, () => []),
+        answerWith(instance, (round) =>
+          targetsFor(round.rule, round.numbers).slice(1),
+        ),
+      ]
+
+      for (const answer of answers) {
+        const effects = effectsOf(instance, answer)
+        // Un acto escolar no es una evaluación de matemática y no se baila en
+        // grupo: mueve Aura y Estilo, y nada más.
+        expect(effects.grade).toBeUndefined()
+        expect(effects.equipo).toBeUndefined()
+        expect(effects.aura).toBeDefined()
+        expect(effects.estilo).toBeDefined()
+      }
+    }
+  })
+
+  it('cualquier respuesta continúa la partida', () => {
+    for (const instance of instancesOf(definition)) {
+      for (const answer of [
+        perfect(instance),
+        answerWith(instance, (round) => round.numbers),
+        answerWith(instance, () => []),
+      ]) {
+        // Nunca hay game over: incluso el peor acto devuelve un resultado.
+        expect(instance.evaluate(answer, []).ok).toBe(true)
+      }
+    }
+  })
+
+  it('rechaza un paso que no existe en lugar de ignorarlo', () => {
+    const instance = instancesOf(definition)[0]
+    if (instance === undefined) throw new Error('sin instancia')
+
+    const result = instance.evaluate(
+      { kind: 'number-grid', rounds: [{ roundId: 'paso-99', numbers: [2] }] },
+      [],
+    )
+    expect(result.ok).toBe(false)
+  })
+
+  it('rechaza una respuesta de otra familia', () => {
+    const instance = instancesOf(definition)[0]
+    if (instance === undefined) throw new Error('sin instancia')
+
+    expect(
+      instance.evaluate({ kind: 'decision-card', optionId: 'x' }, []).ok,
+    ).toBe(false)
+  })
+})
+
 describe('el content set', () => {
-  it('declara cinco desafíos y ocho storylets', () => {
-    expect(grade7Challenges).toHaveLength(5)
-    expect(dependencies.storylets).toHaveLength(8)
+  it('declara seis desafíos y nueve storylets', () => {
+    expect(grade7Challenges).toHaveLength(6)
+    expect(dependencies.storylets).toHaveLength(9)
   })
 
   it('ejercita cinco tipos de interacción distintos', () => {
@@ -426,6 +669,7 @@ describe('el content set', () => {
         'decision-card',
         'assignment-board',
         'budget-builder',
+        'number-grid',
       ]),
     )
   })

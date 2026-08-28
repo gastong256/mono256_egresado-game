@@ -420,6 +420,7 @@ Este catálogo es backlog de contenido, no compromiso de implementar todos en MV
 | C04 | Mural simple | área y cobertura | Decision Card | comprar pintura suficiente |
 | C05 | Repartir impresiones | división | Assignment | distribuir páginas equitativamente |
 | C06 | Educación física | distancia/fracciones | Numeric Input | calcular vueltas de pista |
+| C41 | Acto del 25 de Mayo | clasificación: paridad, múltiplos, primos | Number Grid | seguir la coreografía marcando los números que cumplen cada regla |
 
 ## 1.º año
 
@@ -507,21 +508,85 @@ Esto prueba ocho tipos de razonamiento sin necesitar contenido definitivo para t
 
 ## Implementado
 
-Contenido de producto que existe en el repositorio, en `src/content/grade-7/`. Cinco desafíos y ocho storylets; el resto del catálogo sigue siendo backlog.
+Contenido de producto que existe en el repositorio, en `src/content/grade-7/`. Seis desafíos y nueve storylets; el resto del catálogo sigue siendo backlog.
 
 | ID en código | Entrada del catálogo | Interacción | Matemática | Escenario implementado |
 |---|---|---|---|---|
 | `g7.bus-timing` | C02 | Timeline | porcentaje sobre una duración, suma de minutos | elegir a qué hora salir sabiendo que el viaje se demora |
+| `g7.may-25-act` | C41 | Number Grid | paridad, múltiplos de 3 y números primos | seguir la coreografía del acto escolar con una ayudamemoria numérica |
 | `g7.mural-paint` | C04 | Decision Card | área y cobertura por litro, compra por envase entero | comprar la pintura del mural |
 | `g7.notebook-offer` | C08 | Decision Card | descuento porcentual contra descuento fijo | elegir la oferta que entra en el presupuesto |
 | `g7.group-tasks` | C13 | Assignment Board | asignación con horas disponibles y habilidad | repartir el trabajo grupal |
 | `g7.stand-supplies` | C09 | Budget Builder | costo unitario por pack, mínimo que alcanza | comprar insumos para el stand de la feria |
 
+### Acto del 25 de Mayo
+
+`g7.may-25-act` · interacción `number-grid` · dificultad base 2 · categorías `patterns-and-relations` y `quantity`.
+
+**Estado: autorado.** Es contenido de producción, no una propuesta. Es también la respuesta a la pregunta abierta 35: es el evento que introduce Aura.
+
+**Propósito narrativo.** Al jugador le toca la coreografía folklórica del acto escolar, adelante de toda la escuela. Como no se acuerda los pasos, armó una ayudamemoria: cada paso tiene una regla numérica, y de la tira de números que canta la maestra acompaña sólo los que la cumplen. Es el único momento del año que pasa en público, y ésa es exactamente la condición que Aura pide.
+
+**Interacción.** Tres pasos, uno debajo del otro, resueltos en una sola confirmación. Cada paso muestra su señal —«Pañuelo blanco», «Pañuelo celeste», «Zapateo»— y su regla **siempre escrita**, más una grilla de ocho números en cuatro columnas. Se marca celda por celda. Ninguna celda revela si estuvo bien hasta que el motor evalúa: marcado significa «elegí ésta», nunca «acerté».
+
+**Rondas.** Tres variantes autoradas que el seed elige, siempre en el mismo orden de dificultad:
+
+| Paso | Señal | Regla | Objetivos por grilla |
+|---|---|---|---|
+| 1 | Pañuelo blanco | números pares | 4 de 8 |
+| 2 | Pañuelo celeste | múltiplos de 3 | 3 de 8 |
+| 3 | Zapateo | números primos | 3 de 8 |
+
+Todos los números son enteros de 0 a 30, para que la clasificación nunca dependa de una cuenta difícil. La ronda de primos incluye el **1** a propósito: es el error clásico de la edad, y la grilla corregida lo muestra tachado sin retar a nadie.
+
+**Matemática.**
+
+- **Par**: entero divisible por 2. El cero es par.
+- **Múltiplo de 3**: entero divisible por 3.
+- **Primo**: entero mayor que 1 con exactamente dos divisores positivos. Por lo tanto **0 no es primo**, **1 no es primo** y **2 sí lo es**, el único primo par.
+
+Las tres viven en `src/game/math/classification.ts`, fuera de React y fuera del contenido: es el único lugar del producto donde se decide si un número cumple una regla.
+
+**Evaluación.** Los tres pasos se agregan sumando sus confusiones —`TP` aciertos, `FP` marcas de más, `FN` objetivos sin marcar— y se juzgan con un solo F1. Micro-agregar y no promediar tres F1 hace que cada celda pese lo mismo.
+
+```
+precisión = TP / (TP + FP)
+cobertura = TP / (TP + FN)
+F1        = 2·TP / (2·TP + FP + FN)
+```
+
+Se juzga con **las dos juntas** y no sólo con la precisión, porque cada una tiene su forma de mentir: marcar una sola celda evidente da 100 % de precisión sin haber hecho la tarea, y marcar la grilla entera da 100 % de cobertura. Los tres casos de denominador cero están decididos explícitamente: no marcar nada teniendo objetivos da precisión 0 —no marcar no es acertar—; una ronda sin objetivos y sin marcas vale 1 en las tres.
+
+**Umbrales.** Sobre el F1 agregado, comparados como racionales exactos:
+
+| F1 | Calidad | Lo que se lee |
+|---|---|---|
+| = 1 | `optimal` | Óptimo · «Impecable» |
+| ≥ 0,85 | `efficient` | Resuelto · «Salió» |
+| ≥ 0,70 | `functional` | Parcial · «Zafaste» |
+| < 0,70 | `invalid` | Insuficiente · «Se cortó» |
+
+Están elegidos para que ninguna estrategia degenerada pase por buena: marcar las 24 celdas da `F1 = 0,67` y cae en Insuficiente.
+
+**Aura.** `+1000` impecable · `+400` salió con un error · `+80` zafó improvisando · `−300` se cortó. Es la dimensión que este evento existe para establecer, y puede quedar en positivo o en negativo.
+
+**Estilo.** Aplicado cuando salió completo y con cuidado; Estratega cuando lo sostuvo leer el patrón rápido pese a un error; Improvisador cuando la coreografía se reconstruyó en vez de seguirse —tanto al zafar como al cortarse—. Ningún eje es mejor que otro.
+
+**Promedio.** No lo toca. Un acto escolar no es una evaluación de matemática, y Promedio sale del legajo de notas reales: que un desafío tenga números no lo vuelve académico.
+
+**Equipo.** No lo toca. Bailás vos; el curso mira.
+
+**Fail-forward.** No hay game over. El peor acto deja Aura negativa, evidencia de Improvisador y una consecuencia narrativa, y el año sigue.
+
+**Determinismo.** Las tres variantes se eligen con el RNG sembrado del motor, direccionado por la etapa, el índice de evento y la dificultad. Misma seed y mismas acciones producen el mismo acto. El contenido subió a `0.3.0-grade-7` porque el año cambió de siete a ocho eventos.
+
+**Accesibilidad.** Cada celda es una casilla nativa de 56 px: se recorre con Tab y se marca con Espacio. La regla siempre está en texto y nunca es sólo un color. Los cuatro estados corregidos cambian relleno, trazo de borde y glifo a la vez, y llevan además la palabra para lector de pantalla, así que la grilla se lee entera en escala de grises.
+
 Desvíos deliberados respecto del catálogo semilla:
 
 - **C08 y C13 se adelantaron a 7.º grado.** El catálogo los ubica en 1.º y 2.º año. El slice necesitaba cinco tipos de interacción distintos para probar que el motor y la UI soportan variedad real, y la matemática de ambos (porcentaje simple, asignación con restricciones) es accesible en 7.º. Cuando se implementen 1.º y 2.º año, esos escenarios se reescriben con números y contexto propios de cada etapa; no se reutiliza la instancia de 7.º.
 - **C09 cambió de escenario.** El catálogo lo describe como materiales para una maqueta; se implementó como insumos para el stand de la feria, porque cierra el arco narrativo del año. La matemática y la interacción son las declaradas.
-- **C01, C03, C05 y C06 no se implementaron.** Cinco situaciones por año es el objetivo de diseño; el resto queda como backlog para variar el año entre partidas.
+- **C01, C03, C05 y C06 no se implementaron.** El resto queda como backlog para variar el año entre partidas.
 
 El detalle de variantes, calidades y consecuencias de cada uno está en [el diseño del slice](06-delivery/vertical-slice-grade-7.md).
 
@@ -4067,7 +4132,7 @@ Cambios que alteran resultados deben indicarlo explícitamente y actualizar la v
 
 # Vertical slice — 7.º grado
 
-Primera versión jugable de Egresado. Cubre el recorrido completo de un jugador real: entrada, nickname, 7.º grado con cinco situaciones matemáticas, una consecuencia narrativa condicionada, cierre de año, resultado y volver a jugar.
+Primera versión jugable de Egresado. Cubre el recorrido completo de un jugador real: entrada, nickname, 7.º grado con seis situaciones matemáticas, una consecuencia narrativa condicionada, cierre de año, resultado y volver a jugar.
 
 Es la primera mitad de [MVP 0](00-product/scope-and-roadmap.md#mvp-0-prototipo-local). MVP 0 declara 7.º **y** 1.º año; esta entrega cierra 7.º con calidad de producto antes de sumar el segundo año, para validar el loop con un año bien hecho en lugar de dos superficiales. La arquitectura no asume que 7.º sea la única etapa.
 
@@ -4079,7 +4144,8 @@ flowchart TD
     B --> C[Crear run]
     C --> D[Intro 7.º]
     D --> E[Colectivo · tiempo]
-    E --> F[Mural · área]
+    E --> P[25 de Mayo · clasificación]
+    P --> F[Mural · área]
     F --> G[Notebook · porcentajes]
     G --> H{Rendimiento previo}
     H -- fuerte --> I[Te proponen coordinar]
@@ -4092,38 +4158,49 @@ flowchart TD
     N --> O[Jugar de nuevo]
 ```
 
-Siete eventos: dos narrativos y cinco desafíos. Duración objetivo 2–4 minutos.
+Ocho eventos: dos narrativos y seis desafíos. Duración objetivo 3–5 minutos.
 
 ## Contenido de 7.º grado
 
-Vive en `src/content/grade-7/`, no en fixtures de desarrollo. Es contenido de producto versionado (`contentVersion` `0.1.0-grade-7`).
+Vive en `src/content/grade-7/`, no en fixtures de desarrollo. Es contenido de producto versionado (`contentVersion` `0.3.0-grade-7`).
 
 | Id | Situación | Matemática | Interacción | Razonamiento |
 |---|---|---|---|---|
 | `g7.bus-timing` | El colectivo llega demorado y hay que elegir en cuál subir | tiempo + porcentaje simple | `timeline` | 28 min + 25 % = 35 min; salida + 35 min contra la hora de entrada |
+| `g7.may-25-act` | La coreografía del acto del 25 de Mayo, adelante de toda la escuela | clasificación: pares, múltiplos de 3 y primos | `number-grid` | tres grillas de ocho números; se marcan los que cumplen la regla de cada paso |
 | `g7.mural-paint` | Hay que comprar pintura para el mural de la feria | área y cobertura | `decision-card` | 6 × 2,4 = 14,4 m²; 14,4 ÷ 8 = 1,8 L ⇒ 2 L |
 | `g7.notebook-offer` | El curso compara dos ofertas para una notebook | porcentaje contra monto fijo | `decision-card` | 20 % de 800.000 = 160.000 ⇒ 640.000, contra 800.000 − 120.000 = 680.000 |
 | `g7.group-tasks` | Repartir el trabajo grupal entre cuatro personas | asignación con restricciones | `assignment-board` | horas disponibles contra horas requeridas, más afinidad |
 | `g7.stand-supplies` | Comprar la merienda del stand sin pasarse del presupuesto | combinación y costo unitario | `budget-builder` | cubrir las porciones necesarias al menor costo |
 
-Cada desafío tiene dos variantes autoradas que el seed elige. Las dos están verificadas por tests; ninguna es procedural libre.
+Cada desafío tiene dos variantes autoradas que el seed elige —el acto tiene tres—. Todas están verificadas por tests; ninguna es procedural libre.
 
 ### Calidades de resolución
 
-Ninguno de los cinco es correcto/incorrecto. Todos usan el modelo del motor:
+Ninguno de los seis es correcto/incorrecto. Todos usan el modelo del motor:
 
-- `invalid` — no resuelve el problema (llega tarde, no alcanza la pintura, no cubre las porciones, deja tareas sin asignar o excede el presupuesto);
+- `invalid` — no resuelve el problema (llega tarde, no alcanza la pintura, no cubre las porciones, deja tareas sin asignar, excede el presupuesto o pierde la coreografía);
 - `functional` — resuelve;
 - `efficient` — resuelve sin desperdiciar;
 - `optimal` — la mejor opción según la función objetivo declarada.
 
 Un error nunca termina la run.
 
+### El acto del 25 de Mayo
+
+Es el evento que **introduce Aura**, y el único del año que ocurre en público. Está documentado en detalle en [el catálogo de desafíos](01-game-design/challenge-catalog.md#acto-del-25-de-mayo). Lo esencial para el slice:
+
+- son **tres pasos** de la coreografía, cada uno con su regla escrita —«Números pares», «Múltiplos de 3», «Números primos»— y una grilla de ocho números;
+- se juzga con **precisión y cobertura juntas** (F1 agregado sobre los tres pasos), de modo que ni marcar una sola celda evidente ni marcar la grilla entera pasan por buenos;
+- mueve **Aura y Estilo, y nada más**: no pone nota, porque un acto escolar no es una evaluación de matemática, y no toca Equipo, porque bailás vos.
+
 ## Narrativa
 
-Ocho storylets en `src/content/grade-7/storylets.ts`. El orden lo fija el motor por prioridad descendente y por condiciones encadenadas (`storylet-seen`), no la UI.
+Nueve storylets en `src/content/grade-7/storylets.ts`. El orden lo fija el motor por prioridad descendente y por condiciones encadenadas (`storylet-seen`), no la UI.
 
-El evento 5 es una bifurcación real evaluada por el motor narrativo:
+El acto del 25 de Mayo entra como tercer evento, entre el colectivo y el mural: el acto cae en mayo, después de las primeras semanas de clase y antes de que arranque el proyecto de la feria, así que se intercala en el calendario escolar sin partir la cadena causal del proyecto.
+
+El evento 6 es una bifurcación real evaluada por el motor narrativo:
 
 - `g7.project-lead` — requiere dos resultados `efficient` o mejores en los últimos tres eventos;
 - `g7.project-support` — alternativa cuando esa condición no se cumple.
@@ -4134,13 +4211,15 @@ Cada uno deja un flag distinto, y el resumen final del año lo refleja. Es la pr
 
 La pantalla final muestra **el año**, no un perfil de egreso: `TU 7.º GRADO`. El perfil definitivo pertenece a la carrera completa y no se inventa acá.
 
-Cierre de etapa: numeral del año con tilde, renglones de registro (Promedio, Equipo, eventos), Estilo expandido cuando hay evidencia suficiente, lo más memorable del año y el arquetipo con su sello. El bloque de Aura aparece sólo si Aura cambió, que con el contenido autorado de 7.º todavía no pasa (pregunta abierta 35).
+Cierre de etapa: numeral del año con tilde, renglones de registro (Promedio, Equipo, eventos), Estilo expandido cuando hay evidencia suficiente, lo más memorable del año y el arquetipo con su sello. El bloque de Aura aparece sólo si Aura cambió, cosa que a partir del acto del 25 de Mayo pasa en toda partida normal.
 
 El score no se muestra: el oficial lo calcula el servidor reproduciendo la run, y el ruleset de desarrollo no es oficial (preguntas abiertas 5 y 24).
 
 ## Reanudar
 
 El checkpoint se guarda en `localStorage` después de cada evento resuelto, a través del sink de efectos del controller: el motor pide el snapshot, el adaptador lo escribe. Si al abrir existe un checkpoint compatible, la entrada ofrece continuar o empezar de nuevo (UF-03). Un checkpoint corrupto o de otra versión se descarta con un aviso claro; nunca se restaura un estado inválido.
+
+El checkpoint se escribe con la pantalla de resultado a la vista, y el borrador de la respuesta vive en la vista y no en el snapshot. Al reanudar sobre un resultado, entonces, la UI ya no sabe qué eligió el jugador: las opciones se dibujan todas sin marca y **la grilla del acto no se corrige**, en lugar de afirmar que no se marcó nada. El ledger sigue explicando la cuenta, que es lo que no se pierde.
 
 No hay backend en el loop de juego: la partida es enteramente local (ADR-006).
 
@@ -4157,6 +4236,7 @@ No hay backend en el loop de juego: la partida es enteramente local (ADR-006).
 | Componentes | Renderers de interacción y pantallas |
 | E2E | Recorrido completo en browser, camino no óptimo, mobile, teclado y accesibilidad |
 | Simulación | Miles de runs deterministas sin dead ends ni divergencias |
+| Aura | Ausente antes del acto, establecida después, positiva o negativa según cómo salga |
 
 ## Revisión manual
 
@@ -4350,7 +4430,7 @@ Estas decisiones requieren evidencia de prototipo, playtest, implementación u o
 ## Diseño y modelo de jugador
 
 34. ¿La interacción de presupuesto muestra un total corriente mientras el jugador arma la compra? El handoff de diseño lo especifica; la implementación no lo muestra porque calcular el total *es* el desafío, y mostrarlo lo convertiría en comparar dos números que sacó otro. El handoff marca la interacción como «especificada, no construida» y la difiere a v0.3, así que la diferencia es una decisión de gameplay pendiente y no una deuda de implementación. *Gate: construir BudgetInteraction de verdad.*
-35. ¿Qué evento de 7.º introduce Aura? Ninguno de los cinco autorados es socialmente memorable, así que la dimensión existe, está construida y probada, y nunca aparece en una partida. El prototipo de diseño la introduce con el acto del 25 de Mayo, que es contenido de diseño marcado como provisional y no está autorado en el motor. *Gate: cerrar el contenido jugable de 7.º o autorar el primer evento memorable.*
+35. ¿Qué evento de 7.º introduce Aura? **Respondida**: el **acto del 25 de Mayo**, autorado como `g7.may-25-act` y tercer evento del año. Es el único momento del arco que ocurre en público, que es la condición que Aura pide: la mueve lo memorable, no lo correcto. El acto entrega entre `+1000` y `−300` según cómo salga la coreografía, así que la dimensión se establece —en positivo o en negativo— en toda partida normal. Ver [la especificación del evento](01-game-design/challenge-catalog.md) y el [slice de 7.º](06-delivery/vertical-slice-grade-7.md).
 36. ¿Los arquetipos de cierre son los ocho perfiles del GDD o los que nombra el handoff de diseño? La pantalla usa los ocho del GDD —fuente autoritativa de game design—; el handoff nombra al pasar «El Rey del Último Minuto», «El Vago Eficiente» y «La Leyenda del Colegio», que no están en esa lista. Adoptarlos sería un cambio de game design, no de presentación. *Gate: congelar el set de perfiles de egreso.*
 37. ¿Cuánto tiempo se sostiene el rechazo de snapshots v1 antes de poder borrar el camino? Hoy un checkpoint del modelo de estadísticas viejo se descarta y se ofrece partida nueva. *Gate: prometer compatibilidad de resume entre releases; se cruza con la pregunta 26.*
 

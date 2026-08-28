@@ -15,9 +15,11 @@
  * consumer, including the renderer registry, until the new kind is handled.
  *
  * The families described in `docs/01-game-design/challenge-system.md` that are
- * not contracted yet — spatial grid, sequence/trend and special minigames — are
+ * not contracted yet — sequence/trend and the remaining special minigames — are
  * added by extending these unions; see the engine documentation for the steps.
  */
+
+import type { NumberRule } from '../math/classification'
 
 /** Interaction families contracted by this build. */
 export type InteractionKind =
@@ -28,6 +30,7 @@ export type InteractionKind =
   | 'chart-interpretation'
   | 'assignment-board'
   | 'information-request'
+  | 'number-grid'
 
 /** A single selectable option. `detail` carries the numbers the player compares. */
 export interface PresentedOption {
@@ -84,6 +87,31 @@ export interface RequestableInformation {
   readonly label: string
 }
 
+/**
+ * Una ronda de clasificación sobre una grilla de números.
+ *
+ * La regla viaja dos veces a propósito. `ruleLabel` es la frase que el jugador
+ * lee —«Múltiplos de 3»— y es obligatoria: la consigna nunca puede depender de
+ * un color ni de una convención visual. `rule` es la misma regla en forma
+ * legible por máquina, para que un cliente sepa qué está pidiendo sin parsear
+ * castellano.
+ *
+ * `rule` **no es la solución**. La solución de esta familia es lo que el jugador
+ * calcula con la regla y los números que ya tiene delante: los dos datos son
+ * públicos por diseño, igual que los minutos de viaje en el desafío del
+ * colectivo. Lo que nunca sale del motor es el evaluador, y ninguna capa fuera
+ * de él decide si una celda estuvo bien.
+ */
+export interface PresentedGridRound {
+  readonly id: string
+  /** El paso de la coreografía al que corresponde: «Pañuelo blanco». */
+  readonly cue: string
+  /** La regla, escrita. Siempre presente, siempre en texto. */
+  readonly ruleLabel: string
+  readonly rule: NumberRule
+  readonly numbers: readonly number[]
+}
+
 export type InteractionPresentation =
   | {
       readonly kind: 'decision-card'
@@ -128,6 +156,13 @@ export type InteractionPresentation =
       readonly revealed: readonly PresentedDatum[]
       readonly options: readonly PresentedOption[]
     }
+  | {
+      readonly kind: 'number-grid'
+      readonly data: readonly PresentedDatum[]
+      readonly rounds: readonly PresentedGridRound[]
+      /** Columnas de la grilla. Las mismas para todas las rondas. */
+      readonly columns: number
+    }
 
 export interface BudgetLine {
   readonly itemId: string
@@ -137,6 +172,19 @@ export interface BudgetLine {
 export interface AgentAssignment {
   readonly agentId: string
   readonly taskId: string
+}
+
+/**
+ * Lo que el jugador marcó en una ronda.
+ *
+ * Son los números marcados, no índices de celda: un log de acciones tiene que
+ * poder leerse sin la presentación al lado, y una ronda no repite números.
+ * Marcar nada es una respuesta válida —el motor la evalúa como cualquier otra—,
+ * así que una ronda vacía viaja igual y no se omite.
+ */
+export interface GridRoundSelection {
+  readonly roundId: string
+  readonly numbers: readonly number[]
 }
 
 export type InteractionAnswer =
@@ -151,6 +199,10 @@ export type InteractionAnswer =
       readonly assignments: readonly AgentAssignment[]
     }
   | { readonly kind: 'information-request'; readonly optionId: string }
+  | {
+      readonly kind: 'number-grid'
+      readonly rounds: readonly GridRoundSelection[]
+    }
 
 /** Tools a challenge may enable, per FR-008. */
 export type ToolId = 'calculator' | 'notepad' | 'table' | 'ruler'

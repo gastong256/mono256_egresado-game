@@ -27,17 +27,26 @@ import { developmentScoringPolicy } from '@/game/scoring/development-policy'
 
 import { busTiming } from './challenges/bus-timing'
 import { groupTasks } from './challenges/group-tasks'
+import { may25Act } from './challenges/may-25-act'
 import { muralPaint } from './challenges/mural-paint'
 import { notebookOffer } from './challenges/notebook-offer'
 import { standSupplies } from './challenges/stand-supplies'
 import { grade7Storylets } from './storylets'
 
-export const GRADE_7_RULESET_VERSION = '0.2.0-grade-7'
-export const GRADE_7_CONTENT_VERSION = '0.2.0-grade-7'
+/*
+ * Las dos versiones suben juntas a 0.3.0 por el acto del 25 de Mayo: el
+ * contenido cambió —hay un desafío y un storylet nuevos— y la configuración de
+ * la etapa también, porque el año pasó a jugar ocho eventos y habilitó una
+ * categoría matemática más. Un checkpoint 0.2.0 no reproduce este año, y ése es
+ * exactamente el trabajo del triple de versiones.
+ */
+export const GRADE_7_RULESET_VERSION = '0.3.0-grade-7'
+export const GRADE_7_CONTENT_VERSION = '0.3.0-grade-7'
 
-/** Los cinco desafíos jugables de 7.º grado. */
+/** Los seis desafíos jugables de 7.º grado. */
 export const grade7Challenges: readonly ChallengeDefinition[] = [
   busTiming,
+  may25Act,
   muralPaint,
   notebookOffer,
   groupTasks,
@@ -47,13 +56,13 @@ export const grade7Challenges: readonly ChallengeDefinition[] = [
 /**
  * Configuración de la etapa.
  *
- * Siete eventos: los cinco desafíos más la apertura y la bifurcación narrativa.
+ * Ocho eventos: los seis desafíos más la apertura y la bifurcación narrativa.
  * La dificultad objetivo es baja porque 7.º es el comienzo del rango de edad.
  */
 const GRADE_7_STAGE: StageConfig = {
   id: 'grade-7',
   labelKey: 'stage.grade7',
-  eventCount: 7,
+  eventCount: 8,
   targetDifficulty: 2,
   categories: [
     'quantity',
@@ -61,6 +70,9 @@ const GRADE_7_STAGE: StageConfig = {
     'space-and-shape',
     'proportions-and-percentages',
     'optimization-and-constraints',
+    // La agrega el acto del 25 de Mayo: clasificar por paridad, múltiplos y
+    // primos es reconocer un patrón, no medir una cantidad.
+    'patterns-and-relations',
   ],
 }
 

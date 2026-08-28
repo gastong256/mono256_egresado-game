@@ -38,6 +38,7 @@ import {
   Label,
   Ledger,
   NumberField,
+  NumberGrid,
   PartialMark,
   QuantityStepper,
   RecordRow,
@@ -89,6 +90,7 @@ const SECTION_ORDER = [
   'Cuadrícula, geometría y el device',
   'Botones',
   'ChoiceCard · todos los estados',
+  'NumberGrid · clasificación',
   'Resultados de desafío',
   'Modelo del jugador',
   'Datos y ledger',
@@ -296,6 +298,7 @@ export function DesignSystemShowcase() {
         <GeometrySection />
         <ButtonSection />
         <ChoiceCardSection />
+        <NumberGridSection />
         <OutcomeSection />
         <PlayerModelSection career={career} />
         <DataSection />
@@ -726,6 +729,87 @@ function ChoiceCardSection() {
         La decisión ocurre en oscuro; el resultado vuelve al papel. Ese cambio
         de superficie <em>es</em> la transición de estado — antes de que el
         color entre a jugar.
+      </Note>
+    </Section>
+  )
+}
+
+/* ------------------------------------------------------------ number grid */
+
+/**
+ * La grilla de clasificación, con sus dos momentos.
+ *
+ * Es la misma pieza que juega el acto del 25 de Mayo. Las dos mitades de su
+ * contrato se muestran una al lado de la otra porque es la única forma de ver lo
+ * que la separa de un formulario: a la izquierda hay celdas marcadas y ninguna
+ * dice si están bien; a la derecha aparecen los cuatro estados corregidos, cada
+ * uno con relleno, trazo y glifo propios.
+ */
+function NumberGridSection() {
+  const [marked, setMarked] = useState<readonly string[]>(['12', '21'])
+
+  const numbers = [11, 12, 15, 17, 8, 21, 22, 14]
+
+  const toggle = (id: string): void => {
+    setMarked((current) =>
+      current.includes(id)
+        ? current.filter((entry) => entry !== id)
+        : [...current, id],
+    )
+  }
+
+  return (
+    <Section title="NumberGrid · clasificación" aside="marcado no es correcto">
+      <Grid min={300}>
+        <Swatch name="sin corregir · marcar es sólo elegir">
+          <div className="eg-canvas border-rule border p-4">
+            <NumberGrid
+              cue="Pañuelo celeste"
+              rule="Múltiplos de 3"
+              cells={numbers.map((value) => ({
+                id: String(value),
+                value: String(value),
+                selected: marked.includes(String(value)),
+              }))}
+              onToggle={toggle}
+            />
+          </div>
+        </Swatch>
+        <Swatch name="corregida · los cuatro estados">
+          <div className="eg-canvas border-rule border p-4">
+            <NumberGrid
+              cue="Pañuelo celeste"
+              rule="Múltiplos de 3"
+              cells={numbers.map((value) => {
+                const target = value % 3 === 0
+                const chosen = [12, 21, 22].includes(value)
+                return {
+                  id: String(value),
+                  value: String(value),
+                  selected: chosen,
+                  resolution: target
+                    ? chosen
+                      ? ('hit' as const)
+                      : ('missed' as const)
+                    : chosen
+                      ? ('extra' as const)
+                      : ('clear' as const),
+                }
+              })}
+              onToggle={() => undefined}
+              note="Los punteados cumplían «Múltiplos de 3» y no los marcaste."
+            />
+          </div>
+        </Swatch>
+      </Grid>
+
+      <Note>
+        Mientras se decide, la celda marcada es blanca con borde de tinta y
+        tilde: nunca verde. El verde sólo existe después de corregir, igual que
+        en la ChoiceCard. Los cuatro estados corregidos cambian relleno, trazo y
+        glifo a la vez, así que la grilla se lee entera en escala de grises.
+        Cada celda es una casilla nativa de 56 px: se recorre con Tab y se marca
+        con Espacio.
       </Note>
     </Section>
   )

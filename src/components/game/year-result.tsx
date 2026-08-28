@@ -39,9 +39,10 @@ import { stageLabel } from './stage-label'
  * la misma frase, que es lo que hace que el cierre se sienta un resumen y no una
  * galleta de la fortuna.
  *
- * Con el contenido autorado de 7.º ninguna situación produce Aura todavía —el
- * acto del 25 de Mayo es contenido de diseño, no del motor—, así que la línea
- * habla de cómo se resolvió el año y no de un momento memorable inventado.
+ * La línea habla de cómo se resolvió el año y no del acto del 25 de Mayo, que es
+ * el único evento memorable de 7.º: repetir en el cierre el momento que el
+ * jugador ya vio con su propio bloque de Aura sería contarle dos veces la misma
+ * escena. El acto se lee en la cifra de Aura, no en esta frase.
  */
 function memorableLine(qualities: readonly SolutionQuality[]): string {
   const optimal = qualities.filter((quality) => quality === 'optimal').length
