@@ -234,6 +234,15 @@ export {
   type StageContentPlan,
 } from './content/run-plan'
 export {
+  demoAsStagePlan,
+  isValidStagePlan,
+  validateDemoPlan,
+  DEFAULT_DEMO_COVERAGE,
+  type DemoCoverage,
+  type DemoPlan,
+  type DemoPlanEntry,
+} from './content/demo-plan'
+export {
   hasNoErrors,
   type ValidationIssue,
   type ValidationSeverity,
@@ -248,6 +257,7 @@ export {
   sourceAcceptsVariant,
   type AuthoredParams,
   type CandidateContext,
+  type ApprovedVariantLookup,
   type ErasedVariantSource,
   type VariantGenerator,
   type VariantSourceSpec,
@@ -267,9 +277,11 @@ export {
   type VariantValidator,
 } from './challenges/variant-validation'
 export {
+  approvedVariantLookup,
   approvedVariantsFor,
   canonicalCatalog,
   findApprovedVariant,
+  parseApprovedVariantCatalog,
   serializeCatalog,
   variantFingerprint,
   verifyCatalogIntegrity,

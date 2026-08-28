@@ -20,6 +20,7 @@ import {
   type ChallengeInstanceId,
   type StoryletId,
 } from '../core/branded'
+import type { ApprovedVariantLookup } from '../challenges/variant-source'
 import {
   selectVariantId,
   variantRefOf,
@@ -67,6 +68,15 @@ export interface EngineDependencies {
   readonly ruleset: Ruleset
   readonly catalog: ContentCatalog
   readonly storylets: readonly Storylet[]
+  /**
+   * The approved variants a run may draw from.
+   *
+   * When a content set supplies one, selection happens inside the validated
+   * population and nowhere else: a candidate that failed validation can never
+   * reach a player. When it is absent — the development fixtures, a content set
+   * with no catalog yet — selection falls back to the template's curated list.
+   */
+  readonly approvedVariants?: ApprovedVariantLookup
 }
 
 /**
@@ -338,6 +348,14 @@ function beginEvent(
   // The variant is chosen on its own substream, addressed by the template
   // rather than by the slot. Which case the player sees is a content decision,
   // and it must not shift because a storylet pool grew a neighbour.
+  //
+  // The pool it draws from is the approved catalog when the content set has
+  // one. That is the whole point of validating a population: the run seed
+  // decides *which* approved problem a player gets, never what that problem
+  // contains, and never reaches an address that failed validation.
+  const approved = dependencies.approvedVariants?.variantsFor(templateId) ?? []
+  const pool = approved.length > 0 ? approved : template.variants
+
   const variantId = selectVariantId(
     createRng(state.descriptor.seed, [
       'stage',
@@ -347,7 +365,7 @@ function beginEvent(
       'variant-pick',
       templateId,
     ]),
-    template.variants,
+    pool,
   )
 
   const difficulty: DifficultyLevel =
@@ -576,6 +594,18 @@ export function createRun(
       field: 'contentVersion',
       expected: dependencies.ruleset.contentVersion,
       received: descriptor.contentVersion,
+    })
+  }
+  // A run that names an approved catalog has to be replayed against that
+  // catalog: a different approved set would select different variants from the
+  // same seed, which is exactly the silent drift the version exists to stop.
+  const catalogVersion = dependencies.approvedVariants?.catalogVersion
+  if ((descriptor.variantCatalogVersion ?? null) !== (catalogVersion ?? null)) {
+    return err({
+      kind: 'unsupported-version',
+      field: 'variantCatalogVersion',
+      expected: catalogVersion ?? '(no approved catalog)',
+      received: descriptor.variantCatalogVersion ?? '(no approved catalog)',
     })
   }
 

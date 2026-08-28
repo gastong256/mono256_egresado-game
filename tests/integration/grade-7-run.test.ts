@@ -16,10 +16,7 @@ import {
   serializeActionLog,
   targetsFor,
   serializeSnapshot,
-  toRunId,
-  toRunSeed,
   transition,
-  ENGINE_VERSION,
   type EngineDependencies,
   type GameCommand,
   type InteractionAnswer,
@@ -28,7 +25,11 @@ import {
   type RunDescriptor,
   type RunState,
 } from '@/game'
-import { createGrade7Dependencies, grade7StoryletIds } from '@/content/grade-7'
+import {
+  createGrade7Dependencies,
+  createGrade7RunDescriptor,
+  grade7StoryletIds,
+} from '@/content/grade-7'
 
 /**
  * La run completa de 7.º grado, sin React.
@@ -41,15 +42,7 @@ import { createGrade7Dependencies, grade7StoryletIds } from '@/content/grade-7'
 const dependencies = createGrade7Dependencies()
 
 function descriptorFor(seed: string): RunDescriptor {
-  return {
-    runId: toRunId(`run-${seed}`),
-    seed: toRunSeed(seed),
-    mode: 'practice',
-    difficulty: 'adaptive',
-    gameVersion: ENGINE_VERSION,
-    rulesetVersion: dependencies.ruleset.version,
-    contentVersion: dependencies.ruleset.contentVersion,
-  }
+  return createGrade7RunDescriptor(seed)
 }
 
 /** Todas las respuestas que tiene sentido probar para una interacción. */
@@ -77,8 +70,24 @@ function candidateAnswers(view: PublicChallengeView): InteractionAnswer[] {
         kind: 'information-request' as const,
         optionId: option.id,
       }))
-    case 'numeric-input':
-      return [{ kind: 'numeric-input' as const, value: interaction.min }]
+    case 'numeric-input': {
+      /*
+       * Un barrido entero del rango que la pantalla ofrece.
+       *
+       * La respuesta no está entre opciones: el jugador la produce. Para que el
+       * test pueda jugar bien y jugar mal de verdad, enumera todos los valores
+       * posibles y deja que el evaluador diga cuál es cuál — que es exactamente
+       * lo que hace con las demás interacciones.
+       */
+      const low = Math.ceil(Number(interaction.min))
+      const high = Math.floor(Number(interaction.max))
+      const step = Math.max(1, Math.round(Number(interaction.step)))
+      const values: InteractionAnswer[] = []
+      for (let value = low; value <= high; value += step) {
+        values.push({ kind: 'numeric-input' as const, value: String(value) })
+      }
+      return values
+    }
     case 'number-grid': {
       /*
        * Cuatro respuestas que cubren el espectro del minijuego: la clasificación
@@ -529,6 +538,11 @@ describe('run de referencia', () => {
    *
    * Fija el recorrido exacto de una seed conocida jugada de forma óptima. Si
    * cambia, cambió la salida determinista y hay que decidir qué versión sube.
+   *
+   * El segundo evento dice `g7.bus-latest-departure` desde que la familia
+   * colectivo tiene dos plantillas: esta seed cae en la que pregunta con cuánto
+   * tiempo salir en vez de en la que ofrece cuatro horarios. Es el cambio de
+   * contenido que la etapa buscaba, y por eso la versión de contenido subió.
    */
   it('reproduce el año de referencia', () => {
     const { state } = play('golden-g7', 'fuerte')
@@ -540,7 +554,7 @@ describe('run de referencia', () => {
       ),
     ).toEqual([
       'g7.intro|-|-',
-      'g7.bus|g7.bus-timing|optimal',
+      'g7.bus|g7.bus-latest-departure|optimal',
       'g7.may-25|g7.may-25-act|optimal',
       'g7.mural|g7.mural-paint|optimal',
       'g7.notebook|g7.notebook-offer|optimal',

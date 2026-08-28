@@ -50,7 +50,30 @@ export const MAX_CELL = 30
 
 /** Objetivos por ronda: ni tan pocos que marcar uno alcance, ni tantos que marcar todo sirva. */
 export const MIN_TARGETS = 3
-export const MAX_TARGETS = 5
+export const MAX_TARGETS = 4
+
+/**
+ * Objetivos de toda la coreografía, y de dónde sale el número.
+ *
+ * El acto promete que **marcar la grilla entera no sirve**: es cobertura
+ * perfecta con precisión de la mitad, y el F1 tiene que castigarlo. Esa promesa
+ * no es una propiedad de una ronda sino del acto completo, porque el F1 se
+ * micro-agrega sobre las tres.
+ *
+ * Marcando las 24 celdas hay `T` aciertos y `24 − T` marcas de más, así que
+ * `F1 = 2T / (T + 24)`. Para que quede debajo del umbral de «Parcial», que es
+ * 7/10:
+ *
+ *     20·T < 7·(T + 24)   ⟺   13·T < 168   ⟺   T ≤ 12
+ *
+ * De ahí salen los dos números: doce objetivos como techo del acto, y cuatro
+ * por ronda como techo constructivo que lo respeta con tres rondas.
+ *
+ * El umbral vive acá como par de enteros y no importado del desafío —eso sería
+ * un ciclo—; hay un test de contenido que comprueba que sigan siendo el mismo.
+ */
+export const MAX_TOTAL_TARGETS = 12
+export const FUNCTIONAL_THRESHOLD = { numerator: 7n, denominator: 10n } as const
 
 /** Primalidad por división por tentativa. Independiente de la del motor. */
 export function isPrimeByTrialDivision(value: number): boolean {
@@ -77,6 +100,7 @@ const ALL_CELLS = Array.from({ length: MAX_CELL }, (_, index) => index + 1)
 
 function generateRound(
   rule: ActRule,
+  targetCount: number,
   rng: {
     nextInt(min: number, max: number): number
     shuffle<T>(items: readonly T[]): T[]
@@ -85,7 +109,6 @@ function generateRound(
   const targets = ALL_CELLS.filter((value) => matchesActRule(rule, value))
   const others = ALL_CELLS.filter((value) => !matchesActRule(rule, value))
 
-  const targetCount = rng.nextInt(MIN_TARGETS, MAX_TARGETS)
   const chosenTargets = rng.shuffle(targets).slice(0, targetCount)
   const chosenOthers = rng
     .shuffle(others)
@@ -94,16 +117,48 @@ function generateRound(
   return rng.shuffle([...chosenTargets, ...chosenOthers])
 }
 
+/**
+ * Cuántos objetivos lleva cada ronda.
+ *
+ * Se construye desde el techo del acto y no al revés: tres objetivos por ronda
+ * como piso, y los que sobran hasta `MAX_TOTAL_TARGETS` se reparten de a uno
+ * entre rondas distintas. Sortear cada ronda por separado y comprobar el total
+ * después sería descartar y volver a intentar, que es exactamente lo que la
+ * generación por restricción evita.
+ */
+function targetCounts(rng: {
+  nextInt(min: number, max: number): number
+  shuffle<T>(items: readonly T[]): T[]
+}): readonly number[] {
+  const rounds = ACT_RULES.length
+  const floor = MIN_TARGETS * rounds
+  const extra = rng.nextInt(0, Math.min(MAX_TOTAL_TARGETS - floor, rounds))
+  const favoured = new Set(
+    rng.shuffle(ACT_RULES.map((_, index) => index)).slice(0, extra),
+  )
+
+  return ACT_RULES.map((_, index) =>
+    favoured.has(index) ? MIN_TARGETS + 1 : MIN_TARGETS,
+  )
+}
+
 function generateAct({ rng }: CandidateContext): May25Params {
+  const counts = targetCounts(rng.derive('target-counts'))
+
   return {
     rounds: ACT_RULES.map((rule, index) =>
-      generateRound(rule, rng.derive('round', index)),
+      generateRound(
+        rule,
+        counts[index] ?? MIN_TARGETS,
+        rng.derive('round', index),
+      ),
     ),
   }
 }
 
 const validateAct = paramsValidator<May25Params>((params, ref) => {
   const diagnostics = []
+  let totalTargets = 0
 
   if (params.rounds.length !== ACT_RULES.length) {
     diagnostics.push(
@@ -175,6 +230,30 @@ const validateAct = paramsValidator<May25Params>((params, ref) => {
         ),
       )
     }
+
+    totalTargets += targets.length
+  }
+
+  /*
+   * La estrategia degenerada, comprobada sobre el acto entero.
+   *
+   * Se recalcula el F1 de marcar las 24 celdas con aritmética entera —sin pasar
+   * por los racionales del desafío ni por su evaluador— y se exige que quede
+   * **estrictamente** debajo del umbral de «Parcial». Un acto donde marcar todo
+   * zafa contradice lo que el evento existe para enseñar.
+   */
+  const marked = CELLS_PER_ROUND * ACT_RULES.length
+  const { numerator, denominator } = FUNCTIONAL_THRESHOLD
+  const f1Numerator = BigInt(2 * totalTargets)
+  const f1Denominator = BigInt(totalTargets + marked)
+  if (f1Numerator * denominator >= numerator * f1Denominator) {
+    diagnostics.push(
+      variantDiagnostic(
+        'trivial-decision',
+        ref,
+        `${String(totalTargets)} objetivos en total: marcar las ${String(marked)} celdas alcanzaría para zafar`,
+      ),
+    )
   }
 
   return diagnostics
@@ -214,7 +293,10 @@ export const may25ActVariants: VariantSourceSpec<May25Params> = {
   authored: AUTHORED_ROUNDS,
   generator: {
     id: 'may-25.grid.constraint-first',
-    version: '1',
+    // 2: los objetivos pasaron a construirse desde el techo del acto, así que
+    // la misma dirección produce otra coreografía. Subirla es lo que dice en
+    // voz alta que `grade-7-dev-1` y `grade-7-dev-2` no comparten contenido acá.
+    version: '2',
     candidateSpace: 20_000,
     generate: generateAct,
   },

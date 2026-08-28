@@ -5,16 +5,14 @@ import {
   activeChallengeView,
   createRun,
   isOk,
-  toRunId,
-  toRunSeed,
   transition,
-  ENGINE_VERSION,
   type GameCommand,
   type RunDescriptor,
 } from '@/game'
 import { materializeEveryVariant } from '@/game/testing'
 import {
   createGrade7Dependencies,
+  createGrade7RunDescriptor,
   grade7Challenges,
   grade7StoryletIds,
 } from '@/content/grade-7'
@@ -41,15 +39,7 @@ const arbSeed = fc
   .filter((value) => value.length > 0)
 
 function descriptorFor(seed: string): RunDescriptor {
-  return {
-    runId: toRunId(`run-${seed}`),
-    seed: toRunSeed(seed),
-    mode: 'practice',
-    difficulty: 'adaptive',
-    gameVersion: ENGINE_VERSION,
-    rulesetVersion: dependencies.ruleset.version,
-    contentVersion: dependencies.ruleset.contentVersion,
-  }
+  return createGrade7RunDescriptor(seed)
 }
 
 describe('toda seed produce un año jugable', () => {

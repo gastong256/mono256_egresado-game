@@ -56,7 +56,7 @@ import {
  */
 
 const contentCatalog = createContentCatalog(grade7Families, grade7Challenges)
-const CATALOG_PATH = 'src/content/grade-7/variant-catalog.json'
+const CATALOG_PATH = `src/content/grade-7/variant-catalog.${GRADE_7_VARIANT_CATALOG_VERSION}.json`
 
 function template(id: string): ChallengeDefinition {
   const found = contentCatalog.template(toChallengeId(id))
@@ -373,6 +373,7 @@ describe('every production template participates', () => {
     )
 
     expect(strategy).toEqual({
+      'g7.bus-latest-departure': 'generated',
       'g7.bus-timing': 'generated',
       'g7.group-tasks': 'authored',
       'g7.may-25-act': 'generated',
@@ -449,7 +450,7 @@ describe('approved catalog', () => {
   })
 
   it('declares a stable version and never calls itself latest', () => {
-    expect(committed.catalogVersion).toBe('grade-7-dev-1')
+    expect(committed.catalogVersion).toBe(GRADE_7_VARIANT_CATALOG_VERSION)
     expect(committed.catalogVersion).not.toContain('latest')
     expect(committed.contentVersion).toBe(GRADE_7_CONTENT_VERSION)
   })
@@ -634,7 +635,7 @@ describe('an approved variant is playable', () => {
       ...ordinary,
       variantCatalogVersion: committed.catalogVersion,
     }
-    expect(official.variantCatalogVersion).toBe('grade-7-dev-1')
+    expect(official.variantCatalogVersion).toBe(GRADE_7_VARIANT_CATALOG_VERSION)
   })
 })
 

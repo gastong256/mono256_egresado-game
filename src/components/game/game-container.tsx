@@ -14,7 +14,10 @@
 
 import { useCallback, useMemo, useState, useSyncExternalStore } from 'react'
 
-import { createGrade7Dependencies } from '@/content/grade-7'
+import {
+  createGrade7Dependencies,
+  createGrade7RunDescriptor,
+} from '@/content/grade-7'
 import {
   ENGINE_VERSION,
   isRunComplete,
@@ -31,7 +34,6 @@ import { firstStageLabel } from './stage-label'
 import { useControllerSelector } from './use-game-run'
 import {
   clearCheckpoint,
-  createRunDescriptor,
   createSeedValue,
   readCheckpoint,
   saveCheckpoint,
@@ -155,11 +157,7 @@ export function GameContainer() {
 
   const startRun = useCallback(
     (nickname: string) => {
-      const descriptor = createRunDescriptor(
-        createSeedValue(),
-        dependencies.ruleset.version,
-        dependencies.ruleset.contentVersion,
-      )
+      const descriptor = createGrade7RunDescriptor(createSeedValue())
       setScreen({
         kind: 'jugando',
         nickname,

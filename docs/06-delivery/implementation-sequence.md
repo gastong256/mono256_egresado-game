@@ -17,7 +17,7 @@ Si el roadmap y el código difieren, **el código gana** y el roadmap se corrige
 - Fases de validación externa y congelamiento: [ciclo de entrega real](../00-product/real-delivery-lifecycle.md).
 - Qué se construye por capas de alcance: [alcance y roadmap](../00-product/scope-and-roadmap.md) y [backlog](mvp-backlog.md).
 
-**Última reconciliación contra el código:** 28 de agosto de 2026, al cerrar STAGE-03.
+**Última reconciliación contra el código:** 28 de agosto de 2026, al cerrar STAGE-04.
 
 ---
 
@@ -52,8 +52,8 @@ Tabla de navegación. Los contratos de cada etapa, más abajo, son la autoridad.
 | [STAGE-01](#stage-01-contratos-de-run-versiones-y-seeds) | Contratos de run, versiones y seeds | `DONE` | STAGE-00 | — |
 | [STAGE-02](#stage-02-scenariofamily-challengetemplate-challengevariant) | ScenarioFamily → Template → Variant | `DONE` | STAGE-01 | — |
 | [STAGE-03](#stage-03-generación-validación-y-catálogo-de-variantes) | Generación, validación y catálogo de variantes | `DONE` | STAGE-02 | — |
-| [STAGE-04](#stage-04-enriquecimiento-de-7º-y-demo-candidate) | Enriquecimiento de 7.º y Demo Candidate | **`PARTIAL`** · activa | STAGE-02, STAGE-03 | — |
-| [STAGE-05](#stage-05-modelo-de-dificultad-y-run-composer) | Modelo de dificultad y Run Composer | `NOT_STARTED` | STAGE-03 | — |
+| [STAGE-04](#stage-04-enriquecimiento-de-7º-y-demo-candidate) | Enriquecimiento de 7.º y Demo Candidate | `DONE` | STAGE-02, STAGE-03 | — |
+| [STAGE-05](#stage-05-modelo-de-dificultad-y-run-composer) | Modelo de dificultad y Run Composer | `NOT_STARTED` · activa | STAGE-03 | — |
 | [STAGE-06](#stage-06-scorepolicy-competitiva) | ScorePolicy competitiva | `NOT_STARTED` | STAGE-05 | — |
 | [GATE-TG1](#gate-tg1-teacher-gate-1) | **Teacher Gate 1** | `TEACHER_GATE` | STAGE-04, STAGE-06 | externo |
 | [STAGE-07](#stage-07-invariante-de-egreso-fail-forward-y-recuperaciones) | Egreso, fail-forward y recuperaciones | `NOT_STARTED` | GATE-TG1 | — |
@@ -92,7 +92,7 @@ flowchart TD
 
 ## Matriz de capacidades
 
-Estado real contra el código al 28 de agosto de 2026. Es la base de la que salen los estados de etapa de arriba, y lo que hay que reverificar antes de planificar.
+Estado real contra el código al 28 de agosto de 2026, tras cerrar STAGE-04. Es la base de la que salen los estados de etapa de arriba, y lo que hay que reverificar antes de planificar.
 
 | Capacidad | Estado | Evidencia | Etapa |
 |---|---|---|---|
@@ -112,14 +112,17 @@ Estado real contra el código al 28 de agosto de 2026. Es la base de la que sale
 | Snapshot versionado con rechazo explícito | `DONE` | `src/game/runs/snapshot.ts`, E2E de reanudación y de checkpoint corrupto | STAGE-01 |
 | Separación outcome ≠ carrera ≠ score | `DONE` | `challenges/contracts.ts`, `progression/career.ts`, `scoring/policy.ts` | STAGE-01 |
 | `scoreVersion` | `NOT_STARTED` | — | STAGE-06 |
-| `variantCatalogVersion` | `DONE` | campo opcional del descriptor de run | STAGE-03 |
+| `variantCatalogVersion` | `DONE` | campo opcional del descriptor; viaja en snapshot y en action log, y `createRun` rechaza una run que declare otro catálogo del que se le da | STAGE-04 |
 | `ScenarioFamily` | `DONE` | `src/game/challenges/content-model.ts`, [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md), `tests/unit/content-model.test.ts` | STAGE-02 |
 | `ChallengeTemplate` | `DONE` | una `ChallengeDefinition` declara familia, rol y variantes; dos plantillas conviven en la familia `school-data` | STAGE-02 |
 | `ChallengeVariant` | `DONE` | `ChallengeVariantRef` con dirección `familia/plantilla/variante`, round-trip y substream propio | STAGE-02 |
 | `VariantGenerator` reutilizable | `DONE` | contrato de fuente de variantes + generadores por restricción en cinco plantillas | STAGE-03 |
 | `VariantValidator` transversal | `DONE` | genéricas + por plantilla con oráculos independientes, diagnósticos tipados | STAGE-03 |
-| Catálogo de variantes aprobado y versionado | `DONE` | `ApprovedVariantCatalog`, artefacto `grade-7-dev-1` comprometido y verificado en `pnpm verify` | STAGE-03 |
-| Auditoría estadística de variantes | `DONE` | `pnpm game:variants audit`: 50.013 candidatos, 0 rechazos, 30.671 problemas distintos | STAGE-03 |
+| Catálogo de variantes aprobado y versionado | `DONE` | `ApprovedVariantCatalog`; `grade-7-dev-1` y `grade-7-dev-2` comprometidos, verificados en `pnpm verify`; las versiones publicadas son inmutables | STAGE-03 |
+| Catálogo aprobado consumido por la partida real | `DONE` | `ApprovedVariantLookup` en `EngineDependencies`, `tests/integration/grade-7-catalog-selection.test.ts` | STAGE-04 |
+| Dos plantillas de producción en una familia | `DONE` | familia `bus` con `g7.bus-timing` y `g7.bus-latest-departure`, interacciones y razonamientos distintos | STAGE-04 |
+| Plan de demo docente, distinto del plan de una run | `DONE` | `src/game/content/demo-plan.ts`, `src/content/grade-7/demo-plan.ts`, `tests/unit/demo-plan.test.ts` | STAGE-04 |
+| Auditoría estadística de variantes | `DONE` | `pnpm game:variants audit`: 36.064 candidatos, 0 rechazos, 7.954 problemas distintos con siete plantillas | STAGE-03 |
 | `DifficultyBand` (CORE/STANDARD/STRETCH) | `NOT_STARTED` | hoy sólo `DifficultyLevel` 1–5 en `challenges/taxonomy.ts` | STAGE-05 |
 | `difficultyCost` | `NOT_STARTED` | — | STAGE-05 |
 | `DifficultyBudget` | `NOT_STARTED` | — | STAGE-05 |
@@ -145,7 +148,7 @@ Estado real contra el código al 28 de agosto de 2026. Es la base de la que sale
 ### Discrepancias registradas
 
 - `STAGE_ORDER` incluye las siete etapas hasta `graduation`, pero sólo `grade-7` tiene contenido y ruleset. La estructura de progresión existe; **el egreso, no**. Documentación que hable de la carrera completa describe objetivo, no presente.
-- El presupuesto de uno a dos beats por año es un contrato de **plan**, y el slice de 7.º no usa planes: se compone por storylets y juega ocho eventos. No es una violación del contrato sino contenido anterior a él; reconciliarlo es trabajo de STAGE-04.
+- El presupuesto de uno a dos beats por año es un contrato de **plan**, y el slice de 7.º no usa planes: se compone por storylets y juega ocho eventos. No es una violación del contrato sino contenido anterior a él. STAGE-04 lo reconcilió por escrito y no por código: el año de 7.º **es** hoy la densidad de un demo, y por eso lo que se formalizó fue el `DemoPlan` —un artefacto separado, obligado a exceder el presupuesto—. Componer una run dentro del presupuesto es STAGE-05.
 - `GameMode` admite `'fair'` y `'practice'`, y `DifficultySetting` admite `'adaptive'`. Son literales que el motor acepta; ninguno tiene todavía la semántica competitiva que el roadmap describe a partir de STAGE-05.
 
 ---
@@ -362,7 +365,7 @@ Criterios que la etapa sumó sobre el contrato original:
 | Pipeline | `src/game/content/variant-pipeline.ts` |
 | Auditoría estadística y umbrales | `src/game/content/variant-audit.ts` |
 | Generadores y oráculos por plantilla | `src/content/grade-7/challenges/*.variants.ts` |
-| Artefacto versionado | `src/content/grade-7/variant-catalog.json`, `grade-7-dev-1`, 133 variantes |
+| Artefacto versionado | `grade-7-dev-1`, 133 variantes; hoy en `src/content/grade-7/variant-catalog.grade-7-dev-1.json`, renombrado al publicar la segunda versión y **sin cambios en su contenido** |
 | Tooling | `pnpm game:variants build \| check \| audit`; `check` dentro de `pnpm verify` |
 | Tests | `tests/unit/variant-pipeline.test.ts` (40), `tests/property/variant-generation.property.test.ts` (16) |
 | Barrida profunda | 50.013 candidatos, **0 rechazos**, 30.671 problemas distintos, 0 errores |
@@ -377,20 +380,22 @@ Criterios que la etapa sumó sobre el contrato original:
 
 ### STAGE-04 — Enriquecimiento de 7.º y Demo Candidate
 
-- **Estado:** **`PARTIAL`, y es la etapa activa** — Aura y el acto están `DONE`, la migración estructural también, y el pipeline de variantes ya está disponible. Queda el enriquecimiento de contenido y la preparación de la demo. Ver [etapa actual](current-stage.md).
-- **Depende de:** STAGE-02, STAGE-03
-- **Desbloquea:** GATE-TG1
+- **Estado:** `DONE`
+- **Depende de:** STAGE-02 (`DONE`), STAGE-03 (`DONE`)
+- **Desbloquea:** GATE-TG1 y, en paralelo, STAGE-05 (ahora activa)
+
+**Punto de partida.** STAGE-03 dejó un pipeline completo y un catálogo de 133 variantes verificadas **que nadie jugaba**. La partida seguía sacando contenido de las dos o tres variantes curadas de cada plantilla, y en producción cada familia tenía exactamente una plantilla, así que agrupar por familia todavía no había demostrado nada.
 
 **Propósito.** Enriquecer 7.º con variación estructural real y convertir el slice amplio existente en una Demo Candidate representativa, usando la arquitectura ya migrada y el pipeline de STAGE-03 antes de producir los demás años.
 
 **Scope IN.**
 
-- Conectar el catálogo aprobado de desarrollo `grade-7-dev-1` con una selección determinista de contenido jugable de 7.º, mediante una configuración o plan explícito de demo y sin construir el Run Composer de STAGE-05.
+- Conectar el catálogo aprobado con una selección determinista de contenido jugable de 7.º, sin construir el Run Composer de STAGE-05.
 - Agregar plantillas sólo donde aporten una estructura de razonamiento genuinamente distinta; cambiar números u orden de opciones no alcanza.
-- Usar el pipeline de STAGE-03 en contenido jugable real, con variantes generadas y prevalidadas donde el espacio paramétrico lo justifique y conjuntos autorados donde convenga curación.
-- Comprobar que las seis familias y plantillas actuales siguen funcionando bajo la arquitectura completada, preservando su intención matemática salvo cambio deliberado y documentado.
+- Usar el pipeline de STAGE-03 en contenido jugable real.
+- Comprobar que las plantillas existentes siguen funcionando, preservando su intención matemática salvo cambio deliberado y documentado.
 - Definir qué contenido integra la **Teacher Demo Candidate** y documentar esa selección sin convertirla en el plan normal de producción.
-- Reconciliar la cobertura amplia del slice histórico —seis desafíos y variedad de interacciones— con el presupuesto normal de uno a dos beats por etapa fijado por [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md).
+- Reconciliar la cobertura amplia del slice histórico con el presupuesto normal de uno a dos beats por etapa fijado por [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md).
 - Validar pacing, variedad de gameplay e interacciones, y exposición de Promedio, Equipo, Aura y Estilo para Teacher Gate 1.
 - Toda UI nueva consume el sistema de diseño v0.2.
 
@@ -398,17 +403,17 @@ La **Teacher Demo Candidate** puede mostrar más mecánicas que un segmento norm
 
 **Scope OUT.** Repetir la migración estructural ya completada. Decidir el inventario final o mover escenarios de año. Run Composer y balance final de dificultad. Reescribir la matemática existente. Rediseño visual. Contenido de 1.º–5.º. Score competitivo. Ranking. Recuperaciones.
 
-**Lectura requerida.** [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md) · [ADR-020](../03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md) · [migración del modelo de contenido](../03-architecture/content-model-migration.md) · [Vertical slice de 7.º](vertical-slice-grade-7.md) · [catálogo de desafíos](../01-game-design/challenge-catalog.md) · [familias y variantes](../01-game-design/challenge-families-and-variants.md) · [sistema de diseño](../09-design-system/README.md) · [migración visual de 7.º](../09-design-system/migration-7-grade.md).
+**Lectura requerida.** [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md) · [ADR-020](../03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md) · [ADR-021](../03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md) · [migración del modelo de contenido](../03-architecture/content-model-migration.md) · [Vertical slice de 7.º](vertical-slice-grade-7.md) · [catálogo de desafíos](../01-game-design/challenge-catalog.md) · [familias y variantes](../01-game-design/challenge-families-and-variants.md) · [sistema de diseño](../09-design-system/README.md) · [migración visual de 7.º](../09-design-system/migration-7-grade.md).
 
 **Criterios de aceptación.**
 
-- [x] Los seis desafíos actuales están migrados estructuralmente a familia/plantilla/variante, con equivalencia semántica documentada.
-- [ ] La diversidad aprobada de `grade-7-dev-1` llega al gameplay mediante una selección determinista y la run registra `variantCatalogVersion` cuando realmente consume ese catálogo.
-- [ ] La demo incorpora variación cognitiva real donde aporta; no se presenta un reordenamiento o cambio numérico como plantilla nueva.
-- [ ] El pipeline de STAGE-03 se usa en contenido real donde corresponde, sin obligar a que todo contenido curado sea procedural.
-- [ ] La selección de la Teacher Demo Candidate está documentada y distinguida del plan normal de uno a dos beats por etapa.
-- [ ] Pacing, variedad de gameplay e interacciones y exposición del Career Model están validados para Teacher Gate 1.
-- [ ] Matemática previa preservada; cualquier cambio, deliberado y escrito.
+- [x] Los desafíos existentes están migrados estructuralmente a familia/plantilla/variante, con equivalencia semántica documentada.
+- [x] La diversidad aprobada llega al gameplay mediante una selección determinista, y la run registra `variantCatalogVersion` cuando realmente consume ese catálogo.
+- [x] La demo incorpora variación cognitiva real donde aporta; no se presenta un reordenamiento o cambio numérico como plantilla nueva.
+- [x] El pipeline de STAGE-03 se usa en contenido real donde corresponde, sin obligar a que todo contenido curado sea procedural.
+- [x] La selección de la Teacher Demo Candidate está documentada y distinguida del plan normal de uno a dos beats por etapa.
+- [x] Pacing, variedad de gameplay e interacciones y exposición del Career Model están validados para Teacher Gate 1.
+- [x] Matemática previa preservada; ningún desafío existente cambió una cuenta.
 - [x] El acto del 25 de Mayo está en el flujo real de la partida.
 - [x] Aura pasa de `null` a un valor significativo durante la run.
 - [x] Aura no se dibuja antes de ser introducida.
@@ -418,23 +423,64 @@ La **Teacher Demo Candidate** puede mostrar más mecánicas que un segmento norm
 - [x] Replay, snapshot y simulación correctos.
 - [x] El cierre de año sigue funcionando.
 
+Criterios que la etapa sumó sobre el contrato original:
+
+- [x] El puerto que lleva el catálogo a la selección es angosto: `src/game/challenges` sigue sin poder importar `src/game/content`, y no se debilitó la regla de capas.
+- [x] Una versión publicada del catálogo es inmutable: `grade-7-dev-1` no se regeneró, y `grade-7-dev-2` es un superconjunto exacto con las mismas huellas.
+- [x] El demo docente **no** es un plan de run válido, y hay un test que lo corre por `validateStagePlan` y comprueba que lo rechaza.
+- [x] El presupuesto de beats de una run no se aflojó, ni se volvió configurable para el demo.
+- [x] El artefacto de catálogo se parsea en la frontera, no se castea.
+- [x] Poner el catálogo a jugar encontró un defecto de contenido real —una estrategia degenerada que pasaba por buena en algunas coreografías generadas del acto— y quedó cerrado en el generador, en el validador y en un test.
+
 **Validación requerida.** `pnpm verify` completo, incluidos `pnpm test:e2e:only` y `pnpm design:check`.
 
-**Evidencia ya disponible.** `src/content/grade-7/challenges/may-25-act.ts`; `src/game/math/classification.ts`; `tests/unit/number-classification.test.ts`; `tests/unit/grade-7-content.test.ts`; `tests/property/grade-7.property.test.ts`; `tests/integration/grade-7-run.test.ts`; seis pruebas E2E del acto, incluidas teclado, cinco viewports y Aura negativa; contenido `0.5.0-grade-7` y ruleset `0.3.0-grade-7`.
+**Evidencia de completitud.**
 
-**Riesgos.** Confundir la densidad deliberada de la demo con la longitud de una run normal; convertir las seis sondas actuales en inventario definitivo; o forzar generación procedural donde un conjunto curado es más apropiado.
+| Qué | Dónde |
+|---|---|
+| Decisión | [ADR-021](../03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md) |
+| Puerto del catálogo hacia la selección | `ApprovedVariantLookup` en `src/game/challenges/variant-source.ts`; adaptador en `src/game/content/variant-catalog.ts` |
+| Selección determinista dentro de lo aprobado | `src/game/runs/transition.ts`, substream `variant-pick` |
+| Guard de versión de catálogo | `createRun` rechaza un descriptor que declare otro catálogo |
+| `variantCatalogVersion` en el action log | `src/game/runs/action-log.ts`, `ACTION_LOG_VERSION 2` — corrige un defecto real de reproducción |
+| Segunda plantilla de la familia colectivo | `src/content/grade-7/challenges/bus-latest-departure.ts` y `.variants.ts`, interacción `numeric-input` |
+| Catálogos publicados e inmutables | `variant-catalog.grade-7-dev-1.json` (133) y `grade-7-dev-2.json` (159), indexados en `src/content/grade-7/variant-catalogs.ts` |
+| Plan de demo docente | `src/game/content/demo-plan.ts` (tipo y validación) y `src/content/grade-7/demo-plan.ts` (las siete plantillas con su propósito) |
+| Tests | `tests/integration/grade-7-catalog-selection.test.ts` (9), `tests/unit/demo-plan.test.ts` (14), tres tests de pantalla deterministas para las dos plantillas del colectivo |
+| Barrida profunda | 10.000 candidatos por plantilla generada; 36.064 en total, **0 rechazos**, 7.954 problemas distintos |
+| Defecto de contenido encontrado y cerrado | el acto admitía coreografías donde marcar la grilla entera zafaba; generador reconstruido desde el techo del acto, validador independiente y test sobre las 27 aprobadas |
+| Estabilidad del juego | golden con mismo recorrido, score, perfil y comandos; simulación sin hallazgos |
+| Versionado | `ENGINE_VERSION 4.1.0`, `ACTION_LOG_VERSION 2`, contenido `0.6.0-grade-7`; **ruleset sin cambios**, huella idéntica en `d3319440` |
 
-**Decisiones.** [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md) gobierna modelo, catálogo ≠ plan y presupuesto; [ADR-020](../03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md) gobierna fuentes, confianza y catálogo aprobado. `OPEN` ([preguntas 46 y 46-bis](../07-reference/open-questions.md)): profundidad e inventario final del catálogo. `OPEN` ([pregunta 42](../07-reference/open-questions.md)): si el acto del 25 de Mayo entra a producción. `LOCKED` (D-001, D-002): identidad UI-first y sistema de diseño v0.2.
+**Matriz de cobertura del demo docente.**
 
-**Exit gate.** ¿Es 7.º una **Demo Candidate** representativa del producto final?
+| Plantilla | Familia | Interacción | Dominio | Rol | Carrera | Fuente | Qué demuestra |
+|---|---|---|---|---|---|---|---|
+| `g7.bus-timing` | `bus` | timeline | tiempo y tasas | `anchor` | Estilo | generada | la situación del año: elegir entre salidas |
+| `g7.bus-latest-departure` | `bus` | numeric-input | tiempo y tasas · porcentajes | `anchor` | Estilo | generada | **la misma situación al revés**: producir el número |
+| `g7.may-25-act` | `may-25` | number-grid | patrones y relaciones | `special` | Aura, Estilo | generada | matemática en público; el único evento que mueve Aura |
+| `g7.mural-paint` | `mural` | decision-card | espacio y forma | `checkpoint` | Promedio, Estilo | generada | la evaluación del trimestre: área y envases enteros |
+| `g7.notebook-offer` | `notebook` | decision-card | porcentajes | `anchor` | Estilo | generada | comparar ofertas con la plata contada |
+| `g7.group-tasks` | `group-project` | assignment-board | optimización con restricciones | `anchor` | Equipo, Estilo | **autorada** | repartir trabajo; sus parámetros son contenido escrito |
+| `g7.stand-supplies` | `school-fair` | budget-builder | optimización con restricciones | `anchor` | Equipo, Estilo | generada | el cierre: packs, mínimo y presupuesto |
+
+Las siete están en el catálogo aprobado vigente y hay un test que lo comprueba. Seis interacciones, seis familias, seis dominios y las cuatro dimensiones de carrera. **Seis beats ordinarios: el triple del presupuesto de una run, a propósito.**
+
+**Lo que no entró, y por qué.** El catálogo de la feria **no** se congeló: `grade-7-dev-2` es de desarrollo. El inventario de escenarios sigue `OPEN`: que la familia colectivo tenga dos plantillas no dice cuántas tendrá ninguna otra. No se movió contenido de año, no se renombró ningún id y no se tocó una cuenta de los seis desafíos anteriores. El demo docente es un **candidato**: ningún docente lo aprobó, y eso es el Teacher Gate 1.
+
+La segunda plantilla se agregó en la familia colectivo y en ninguna otra. El mural y el cuaderno también admiten una segunda pregunta; agregarlas es trabajo de contenido y el criterio de la etapa era demostrar la capacidad, no poblar el juego.
+
+**Exit gate.** ¿Es 7.º una **Demo Candidate** representativa del producto final? — **Sí para lo que esta etapa podía decidir**: la segunda partida trae otros números y, en la familia colectivo, otra pregunta; el contenido que se juega salió del catálogo aprobado; y lo que un docente vería está definido por escrito y es demostrablemente distinto de una run. Que la demo *convenza* a un docente es el Teacher Gate 1, y es externo.
 
 ---
 
 ### STAGE-05 — Modelo de dificultad y Run Composer
 
-- **Estado:** `NOT_STARTED`
-- **Depende de:** STAGE-03
+- **Estado:** `NOT_STARTED`, **y es la etapa activa**. Ver [etapa actual](current-stage.md).
+- **Depende de:** STAGE-03 (`DONE`), STAGE-04 (`DONE`)
 - **Desbloquea:** STAGE-06
+
+**Punto de partida.** STAGE-04 dejó el contenido: siete plantillas de 7.º, un catálogo aprobado que la partida consume y un demo docente definido. Lo que no dejó es una forma de **elegir** ese contenido con criterio. Hoy elige el storylet dentro de su pool y el seed dentro de lo aprobado; nadie mira dificultad, variedad ni presupuesto. Y el año de 7.º juega seis beats ordinarios, el triple del presupuesto que [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md) fija: reconciliar eso —componiendo runs de verdad, no aflojando el techo— es el trabajo de esta etapa.
 
 **Propósito.** Producir runs distintas pero comparables. Sin esto, el sorteo de variantes decide parte del ranking.
 

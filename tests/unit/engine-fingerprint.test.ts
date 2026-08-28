@@ -31,8 +31,19 @@ import { createDevelopmentDependencies } from '@/game/testing'
 const dependencies = createDevelopmentDependencies()
 
 /*
- * Regenerados para el pipeline de variantes (`ENGINE_VERSION` 4.0.0, contenido
- * `0.4.0-dev`).
+ * Regenerados para el catálogo en el juego real (`ENGINE_VERSION` 4.1.0).
+ *
+ * Se movió **sólo el motor**, y las otras dos huellas lo confirman: la partida
+ * elige ahora dentro del catálogo aprobado, `createRun` rechaza una run cuyo
+ * catálogo declarado no sea contra el que se la reproduce, y el action log
+ * carga esa versión —que antes perdía—. Nada de eso es una regla de juego ni
+ * contenido de desarrollo: el ruleset y el contenido de fixtures quedaron
+ * idénticos.
+ *
+ * El contenido de 7.º sí subió, a `0.6.0-grade-7`, porque la familia colectivo
+ * ganó una plantilla. Estas huellas miran el content set de desarrollo.
+ *
+ * El contexto anterior, del pipeline de variantes (`ENGINE_VERSION` 4.0.0):
  *
  * Se movieron dos de las tres huellas, y la que no se movió es la que más dice:
  *
@@ -65,14 +76,14 @@ const dependencies = createDevelopmentDependencies()
  * golden quedaron **idénticos**.
  */
 const EXPECTED = {
-  engine: 'd56b1117',
+  engine: '2477ca1f',
   ruleset: 'd3319440',
   content: '8a9b29d9',
 } as const
 
 describe('version fingerprints', () => {
   it('pins the deterministic kernel to its engine version', () => {
-    expect(ENGINE_VERSION).toBe('4.0.0')
+    expect(ENGINE_VERSION).toBe('4.1.0')
     expect(engineFingerprint()).toBe(EXPECTED.engine)
   })
 

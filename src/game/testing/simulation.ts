@@ -42,12 +42,22 @@ export interface SimulationSummary {
   readonly qualityCounts: Readonly<Record<string, number>>
 }
 
-/** Builds a development run descriptor for a seed. */
+/**
+ * Builds a run descriptor for a seed, from the dependencies it will be played
+ * with.
+ *
+ * Every version the run declares is read off those dependencies, the approved
+ * catalog included. A simulator that hard-coded three of the four would reject
+ * every run of a content set that has a catalog — and it would be right to,
+ * which is precisely why the descriptor has to be derived and not assumed.
+ */
 export function developmentRunDescriptor(
   seed: string,
   dependencies: EngineDependencies,
   overrides: Partial<Pick<RunDescriptor, 'mode' | 'difficulty'>> = {},
 ): RunDescriptor {
+  const catalogVersion = dependencies.approvedVariants?.catalogVersion
+
   return {
     runId: toRunId(`dev-run-${seed}`),
     seed: toRunSeed(seed),
@@ -56,6 +66,9 @@ export function developmentRunDescriptor(
     gameVersion: ENGINE_VERSION,
     rulesetVersion: dependencies.ruleset.version,
     contentVersion: dependencies.ruleset.contentVersion,
+    ...(catalogVersion === undefined
+      ? {}
+      : { variantCatalogVersion: catalogVersion }),
   }
 }
 

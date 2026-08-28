@@ -129,11 +129,18 @@ function defaultRandomBytes(length: number): Uint8Array {
   return bytes
 }
 
-/** Arma el descriptor de una run nueva para un content set dado. */
+/**
+ * Arma el descriptor de una run nueva para un content set dado.
+ *
+ * `variantCatalogVersion` se declara sólo cuando el content set trae un
+ * catálogo aprobado: una run que juega variantes curadas no salió de ninguno, y
+ * estamparle una versión afirmaría una aprobación que nunca ocurrió.
+ */
 export function createRunDescriptor(
   seed: string,
   rulesetVersion: string,
   contentVersion: string,
+  variantCatalogVersion?: string,
 ): RunDescriptor {
   return {
     runId: toRunId(`run-${seed}`),
@@ -144,6 +151,7 @@ export function createRunDescriptor(
     gameVersion: ENGINE_VERSION,
     rulesetVersion,
     contentVersion,
+    ...(variantCatalogVersion === undefined ? {} : { variantCatalogVersion }),
   }
 }
 

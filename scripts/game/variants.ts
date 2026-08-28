@@ -24,17 +24,23 @@ import {
   verifyCatalogIntegrity,
   type ApprovedVariantCatalog,
 } from '../../src/game'
+import { createGrade7Dependencies } from '../../src/content/grade-7'
 import {
-  createGrade7Dependencies,
   GRADE_7_CONTENT_VERSION,
   GRADE_7_VARIANT_CATALOG_VERSION,
-} from '../../src/content/grade-7'
+} from '../../src/content/grade-7/versions'
 
+/**
+ * Una versión de catálogo, un archivo.
+ *
+ * El nombre lleva la versión adentro porque una versión publicada no se edita:
+ * agregar contenido produce la siguiente, y la anterior queda como estaba.
+ */
 const CATALOG_PATH = path.join(
   'src',
   'content',
   'grade-7',
-  'variant-catalog.json',
+  `variant-catalog.${GRADE_7_VARIANT_CATALOG_VERSION}.json`,
 )
 
 /** What the committed artifact is built from. Changing it changes the catalog. */

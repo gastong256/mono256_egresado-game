@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import {
   createContentCatalog,
   targetsFor,
+  toRunSeed,
   type CareerEffects,
   type ChallengeDefinition,
   type GridRoundSelection,
@@ -15,10 +16,23 @@ import {
   createGrade7Dependencies,
   grade7Challenges,
   grade7Families,
+  grade7VariantCatalog,
 } from '@/content/grade-7'
-import { materializeEveryVariant } from '@/game/testing'
+import {
+  materializeEveryVariant,
+  materializeVariant,
+  synthesizeAnswer,
+} from '@/game/testing'
+import { createRng } from '@/game/random/rng'
 import { busTimingReference } from '@/content/grade-7/challenges/bus-timing'
 import { may25ActReference } from '@/content/grade-7/challenges/may-25-act'
+import {
+  ACT_RULES,
+  CELLS_PER_ROUND,
+  FUNCTIONAL_THRESHOLD,
+  MAX_TOTAL_TARGETS,
+  matchesActRule,
+} from '@/content/grade-7/challenges/may-25-act.variants'
 import { muralPaintReference } from '@/content/grade-7/challenges/mural-paint'
 import { notebookOfferReference } from '@/content/grade-7/challenges/notebook-offer'
 import { pesos } from '@/content/pesos'
@@ -641,19 +655,98 @@ describe('el acto del 25 de Mayo · clasificación y Aura', () => {
   })
 })
 
+describe('el acto · marcar todo nunca alcanza', () => {
+  const definition = catalog.template('g7.may-25-act' as never)
+  if (definition === undefined) throw new Error('falta el desafío')
+
+  it('el umbral del validador es el mismo que el del desafío', () => {
+    // El validador de variantes no puede importar el desafío —sería un ciclo—,
+    // así que lleva el umbral escrito. Si alguien mueve uno y no el otro, el
+    // generador dejaría de proteger la propiedad que cree proteger.
+    expect(FUNCTIONAL_THRESHOLD.numerator).toBe(
+      may25ActReference.thresholds.functional.n,
+    )
+    expect(FUNCTIONAL_THRESHOLD.denominator).toBe(
+      may25ActReference.thresholds.functional.d,
+    )
+  })
+
+  /**
+   * Las variantes que el catálogo aprobó, no sólo las tres curadas.
+   *
+   * La propiedad se defiende en el pipeline, que rechaza una coreografía donde
+   * marcar todo zafe. Comprobarla acá sobre la población entera es lo que
+   * convierte esa defensa en algo verificado y no en algo declarado.
+   */
+  const approvedActs = grade7VariantCatalog.entries
+    .filter((entry) => (entry.templateId as string) === 'g7.may-25-act')
+    .map((entry) =>
+      materializeVariant(definition, {
+        seed: 'content',
+        variantId: entry.variantId,
+      }),
+    )
+
+  it('el catálogo aprobó más coreografías que las tres curadas', () => {
+    expect(approvedActs.length).toBeGreaterThan(3)
+  })
+
+  it('marcar la grilla entera cae en Insuficiente en toda variante aprobada', () => {
+    for (const instance of approvedActs) {
+      const presentation = instance.present([])
+      if (presentation.kind !== 'number-grid')
+        throw new Error('otra interacción')
+
+      const everything: InteractionAnswer = {
+        kind: 'number-grid',
+        rounds: presentation.rounds.map((round) => ({
+          roundId: round.id,
+          numbers: [...round.numbers],
+        })),
+      }
+
+      expect(qualityOf(instance, everything)).toBe('invalid')
+    }
+  })
+
+  it('ninguna coreografía pasa de doce objetivos', () => {
+    for (const instance of approvedActs) {
+      const presentation = instance.present([])
+      if (presentation.kind !== 'number-grid')
+        throw new Error('otra interacción')
+
+      const total = presentation.rounds.reduce(
+        (sum, round, index) =>
+          sum +
+          round.numbers.filter((value) =>
+            matchesActRule(ACT_RULES[index] ?? 'even', value),
+          ).length,
+        0,
+      )
+
+      expect(total).toBeLessThanOrEqual(MAX_TOTAL_TARGETS)
+      expect(presentation.rounds).toHaveLength(ACT_RULES.length)
+      for (const round of presentation.rounds) {
+        expect(round.numbers).toHaveLength(CELLS_PER_ROUND)
+      }
+    }
+  })
+})
+
 describe('el content set', () => {
-  it('declara seis desafíos y nueve storylets', () => {
-    expect(grade7Challenges).toHaveLength(6)
+  it('declara siete plantillas y nueve storylets', () => {
+    expect(grade7Challenges).toHaveLength(7)
     expect(dependencies.storylets).toHaveLength(9)
   })
 
-  it('ejercita cinco tipos de interacción distintos', () => {
+  it('ejercita seis tipos de interacción distintos', () => {
     const kinds = new Set(
       grade7Challenges.map((definition) => definition.interaction),
     )
     expect(kinds).toEqual(
       new Set([
         'timeline',
+        'numeric-input',
         'decision-card',
         'assignment-board',
         'budget-builder',
@@ -665,6 +758,48 @@ describe('el content set', () => {
   it('no puede declararse oficial mientras las políticas sean de desarrollo', () => {
     expect(dependencies.ruleset.official).toBe(false)
     expect(dependencies.ruleset.scoring.production).toBe(false)
+  })
+
+  /*
+   * El sello del feedback va rotado y no se encoge, así que a 360 px —el ancho
+   * más chico que el sistema sostiene— una palabra de más empuja la hoja fuera
+   * de la pantalla. Trece o catorce caracteres entran; diecisiete no, y eso lo
+   * descubrió un E2E que sólo fallaba cuando el seed elegía cierta plantilla.
+   *
+   * El barrido responde con el jugador sintético para llegar a las cuatro
+   * bandas de cada desafío, no sólo a la que un test eligió escribir.
+   */
+  it('ningún sello de resultado desborda la hoja de 360 px', () => {
+    const MAX_STAMP = 14
+    const stamps = new Set<string>()
+
+    for (const definition of grade7Challenges) {
+      for (const instance of instancesOf(definition)) {
+        const rng = createRng(toRunSeed('sellos'), [
+          'stamp-sweep',
+          definition.id,
+        ])
+        for (let draw = 0; draw < 200; draw += 1) {
+          const result = instance.evaluate(
+            synthesizeAnswer(instance.present([]), rng),
+            [],
+          )
+          if (result.ok && result.value.feedback.stamp !== undefined) {
+            stamps.add(result.value.feedback.stamp)
+          }
+        }
+      }
+    }
+
+    // Si el barrido dejara de alcanzar las bandas, el test pasaría sin mirar
+    // nada; el piso lo convierte en una falla.
+    expect(stamps.size).toBeGreaterThanOrEqual(14)
+    for (const stamp of stamps) {
+      expect({ stamp, length: stamp.length }).toEqual({
+        stamp,
+        length: Math.min(stamp.length, MAX_STAMP),
+      })
+    }
   })
 
   it('nunca expone la solución en la vista pública', () => {

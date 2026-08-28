@@ -32,7 +32,20 @@ import {
   type ChallengeVariantRef,
 } from '../challenges/content-model'
 import type { ContentCatalog } from '../challenges/content-catalog'
-import type { ChallengeId, ScenarioFamilyId, VariantId } from '../core/branded'
+import { z } from 'zod'
+
+import {
+  IDENTIFIER_PATTERN,
+  toChallengeId,
+  toScenarioFamilyId,
+  toVariantId,
+  type ChallengeId,
+  type ScenarioFamilyId,
+  type VariantId,
+} from '../core/branded'
+import type { EngineRejection } from '../core/errors'
+import { err, ok, type Result } from '../core/result'
+import type { ApprovedVariantLookup } from '../challenges/variant-source'
 import { contentError, type ValidationIssue } from './issues'
 import { sha256Hex } from './hash'
 
@@ -164,6 +177,95 @@ export function canonicalCatalog(
  */
 export function serializeCatalog(catalog: ApprovedVariantCatalog): string {
   return `${JSON.stringify(canonicalCatalog(catalog), null, 2)}\n`
+}
+
+const approvedVariantSchema = z.object({
+  familyId: z.string().regex(IDENTIFIER_PATTERN),
+  templateId: z.string().regex(IDENTIFIER_PATTERN),
+  variantId: z.string().regex(IDENTIFIER_PATTERN),
+  source: z.enum(['authored', 'generated']),
+  fingerprint: z.string().regex(/^[0-9a-f]{64}$/u),
+})
+
+const catalogSchema = z.object({
+  catalogVersion: z.string().min(1),
+  contentVersion: z.string().min(1),
+  generators: z.array(
+    z.object({
+      templateId: z.string().regex(IDENTIFIER_PATTERN),
+      generatorId: z.string().min(1),
+      generatorVersion: z.string().min(1),
+      candidateSpace: z.number().int().min(0),
+    }),
+  ),
+  entries: z.array(approvedVariantSchema),
+})
+
+/**
+ * Parses a catalog artifact read from disk.
+ *
+ * A committed catalog is a file, and a file is a boundary: it gets parsed like
+ * any other untrusted input rather than asserted into the right type. A corrupt
+ * artifact fails here, loudly, with the field that broke — instead of surfacing
+ * later as a variant address that resolves to nothing.
+ */
+export function parseApprovedVariantCatalog(
+  value: unknown,
+): Result<ApprovedVariantCatalog, EngineRejection> {
+  const parsed = catalogSchema.safeParse(value)
+  if (!parsed.success) {
+    return err({
+      kind: 'invalid-content',
+      issues: parsed.error.issues.map(
+        (issue) => `${issue.path.join('.')}: ${issue.message}`,
+      ),
+    })
+  }
+
+  const data = parsed.data
+  return ok({
+    catalogVersion: data.catalogVersion,
+    contentVersion: data.contentVersion,
+    generators: data.generators.map((record) => ({
+      templateId: toChallengeId(record.templateId),
+      generatorId: record.generatorId,
+      generatorVersion: record.generatorVersion,
+      candidateSpace: record.candidateSpace,
+    })),
+    entries: data.entries.map((entry) => ({
+      familyId: toScenarioFamilyId(entry.familyId),
+      templateId: toChallengeId(entry.templateId),
+      variantId: toVariantId(entry.variantId),
+      source: entry.source,
+      fingerprint: entry.fingerprint,
+    })),
+  })
+}
+
+/**
+ * The engine-facing view of an approved catalog.
+ *
+ * The adapter for the port the transition depends on: it turns a catalog
+ * artifact into the two things a run needs — which set it is, and which variants
+ * of a template were approved.
+ */
+export function approvedVariantLookup(
+  catalog: ApprovedVariantCatalog,
+): ApprovedVariantLookup {
+  const byTemplate = new Map<string, VariantId[]>()
+  for (const entry of catalog.entries) {
+    const bucket = byTemplate.get(entry.templateId)
+    if (bucket === undefined) {
+      byTemplate.set(entry.templateId, [entry.variantId])
+      continue
+    }
+    bucket.push(entry.variantId)
+  }
+
+  return {
+    catalogVersion: catalog.catalogVersion,
+    variantsFor: (templateId) => byTemplate.get(templateId) ?? [],
+  }
 }
 
 /** Approved variants of one template, in canonical order. */

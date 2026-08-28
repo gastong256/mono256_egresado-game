@@ -176,6 +176,25 @@ export function sourceAcceptsVariant<TParams>(
 }
 
 /**
+ * What the engine needs to know about an approved catalog, and nothing more.
+ *
+ * A run has to pick among **approved** variants, not among every address a
+ * generator can reach: the whole point of validating a population is that only
+ * what survived reaches a player. But the transition has no business knowing how
+ * a catalog is built, serialised or audited, so it depends on this port and the
+ * content set supplies the adapter.
+ *
+ * `variantsFor` returns canonical order — by address — so what a seed picks is
+ * decided by content identity and never by the order anything was registered in.
+ */
+export interface ApprovedVariantLookup {
+  /** Stable identity of the approved set a run is drawing from. */
+  readonly catalogVersion: string
+  /** Approved variant ids for a template, in canonical order. */
+  variantsFor(templateId: ChallengeId): readonly VariantId[]
+}
+
+/**
  * The variant source with its parameter type erased.
  *
  * Same trick as the challenge definition: the concrete type stays inside the

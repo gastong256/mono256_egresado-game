@@ -1,6 +1,8 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test, type Page } from '@playwright/test'
 
+import { answerChallenge, numericAnswerField } from './gameplay'
+
 /**
  * El slice jugable de 7.º grado, en un browser real.
  *
@@ -28,56 +30,6 @@ async function startRun(page: Page, nickname: string): Promise<void> {
   await page.getByLabel('¿Cómo te decimos?').fill(nickname)
   await page.getByRole('button', { name: 'Empezar 7.º grado' }).click()
   await expect(page.getByRole('button', { name: 'Seguir' })).toBeVisible()
-}
-
-/** Responde la situación en pantalla. `pick` elige entre las opciones. */
-async function answerChallenge(
-  page: Page,
-  pick: 'primera' | 'ultima',
-): Promise<void> {
-  const radios = page.getByRole('radio')
-  const grids = page.getByTestId('number-grid')
-  const gridCount = await grids.count()
-
-  if (gridCount > 0) {
-    // La grilla del acto: se marca una celda por paso, que es lo mínimo que el
-    // juego pide para poder confirmar. Cuál se marca es lo que separa una
-    // partida buena de una mala; que el año siga es lo que este test mira.
-    for (let index = 0; index < gridCount; index += 1) {
-      const boxes = grids.nth(index).getByRole('checkbox')
-      const count = await boxes.count()
-      await (pick === 'primera' ? boxes.first() : boxes.nth(count - 1)).check()
-    }
-  } else if ((await radios.count()) > 0) {
-    await (pick === 'primera' ? radios.first() : radios.last()).check()
-  } else {
-    const selects = page.getByRole('combobox')
-    const selectCount = await selects.count()
-    for (let index = 0; index < selectCount; index += 1) {
-      const values = (
-        await Promise.all(
-          (await selects.nth(index).locator('option').all()).map((option) =>
-            option.getAttribute('value'),
-          ),
-        )
-      ).filter((value): value is string => value !== null && value !== '')
-      const chosen =
-        pick === 'primera' ? values[index] : values[values.length - 1 - index]
-      if (chosen !== undefined) {
-        await selects.nth(index).selectOption(chosen)
-      }
-    }
-
-    const spinners = page.getByRole('spinbutton')
-    const spinnerCount = await spinners.count()
-    for (let index = 0; index < spinnerCount; index += 1) {
-      await spinners.nth(index).fill(pick === 'primera' ? '2' : '1')
-    }
-  }
-
-  const submit = page.getByRole('button', { name: 'Confirmar' })
-  await expect(submit).toBeEnabled()
-  await submit.click()
 }
 
 /** Juega el año entero y devuelve cuántas situaciones se respondieron. */
@@ -131,17 +83,42 @@ test('un estudiante juega 7.º grado de principio a fin', async ({ page }) => {
   await expect(page.getByTestId('career-strip')).toHaveCount(0)
   await page.getByRole('button', { name: 'Seguir' }).click()
 
-  // Primera situación: el colectivo. Los datos tienen que estar a la vista.
-  await expect(
-    page.getByRole('heading', { name: 'El colectivo de siempre' }),
-  ).toBeVisible()
+  /*
+   * Primera situación: el colectivo.
+   *
+   * La familia tiene dos plantillas y el seed de la partida elige cuál sale, así
+   * que el test no puede asumir la pregunta. Sí puede asumir lo que las dos
+   * comparten: los datos a la vista, el primario deshabilitado con una razón
+   * escrita, y un feedback con números. La rama es por interacción, no por
+   * apariencia, y las dos terminan en el mismo lugar.
+   */
   await expect(page.getByText('Viaje normal').first()).toBeVisible()
   await expect(page.getByText('Entrada')).toBeVisible()
-  // El deshabilitado nunca es la única explicación.
-  await expect(page.getByText('Elegí una opción para confirmar.')).toBeVisible()
   await expect(page.getByRole('button', { name: 'Confirmar' })).toBeDisabled()
 
-  await page.getByRole('radio').first().check()
+  const eligeSalida =
+    (await page
+      .getByRole('heading', { name: 'El colectivo de siempre' })
+      .count()) > 0
+
+  if (eligeSalida) {
+    // El deshabilitado nunca es la única explicación.
+    await expect(
+      page.getByText('Elegí una opción para confirmar.'),
+    ).toBeVisible()
+    await page.getByRole('radio').first().check()
+  } else {
+    await expect(
+      page.getByRole('heading', { name: 'La pregunta del grupo' }),
+    ).toBeVisible()
+    await expect(
+      page.getByText('Escribí un número para confirmar.'),
+    ).toBeVisible()
+    await expect(page.getByText('Margen que pide el grupo')).toBeVisible()
+    await numericAnswerField(page).fill('45')
+  }
+
+  await expect(page.getByRole('button', { name: 'Confirmar' })).toBeEnabled()
   await page.getByRole('button', { name: 'Confirmar' }).click()
 
   // El feedback explica la consecuencia con los números, no con un veredicto.
@@ -562,10 +539,19 @@ test('se puede jugar sólo con el teclado', async ({ page }) => {
   await expect(advance).toBeFocused()
   await page.keyboard.press('Enter')
 
-  // Elegir una opción con el teclado habilita confirmar.
-  const first = page.getByRole('radio').first()
-  await first.focus()
-  await page.keyboard.press('Space')
+  // Responder con el teclado habilita confirmar. Cuál de las dos plantillas
+  // del colectivo salió lo decidió el seed, así que el test prueba la que
+  // tenga delante: Espacio sobre la opción, o tipear el número.
+  const radios = page.getByRole('radio')
+  if ((await radios.count()) > 0) {
+    await radios.first().focus()
+    await page.keyboard.press('Space')
+  } else {
+    const field = numericAnswerField(page)
+    await field.focus()
+    await expect(field).toBeFocused()
+    await page.keyboard.type('45')
+  }
 
   const submit = page.getByRole('button', { name: 'Confirmar' })
   await expect(submit).toBeEnabled()

@@ -23,7 +23,14 @@ import { err, ok, type Result } from './result'
 /**
  * Engine/game version of this build. Also serialized as `gameVersion`.
  *
- * `4.0.0` is the variant catalog: a run descriptor can now record which
+ * `4.1.0` puts the approved catalog into real gameplay: a run selects among
+ * validated variants instead of a template's curated list, `createRun` refuses
+ * a run whose declared catalog is not the one it is being replayed against, and
+ * the action log carries that catalog version — which it silently dropped
+ * before, so a submitted log could have been replayed against a different
+ * approved set. Additive: no serialized state shape changed.
+ *
+ * `4.0.0` was the variant catalog: a run descriptor can now record which
  * approved variant catalog it drew from, which changed the snapshot codec. The
  * field is optional — a run that plays a template's curated variants drew from
  * no catalog and says so by omitting it — but the serialized shape moved, and a
@@ -45,7 +52,7 @@ import { err, ok, type Result } from './result'
  * reproduce its original result under this engine, and that is exactly what the
  * version triple exists to say out loud instead of discovering it in a replay.
  */
-export const ENGINE_VERSION = '4.0.0'
+export const ENGINE_VERSION = '4.1.0'
 
 export interface VersionTriple {
   readonly gameVersion: string

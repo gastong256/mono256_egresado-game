@@ -1,6 +1,8 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test, type Page } from '@playwright/test'
 
+import { reachOptionChallenge } from './gameplay'
+
 /**
  * El sistema de diseño, en un browser real.
  *
@@ -162,7 +164,11 @@ test('elegir una opción no revela si estaba bien', async ({ page }) => {
   await page.goto('/jugar')
   await page.getByLabel('¿Cómo te decimos?').fill('Sofi')
   await page.getByRole('button', { name: /^Empezar/ }).click()
-  await page.getByRole('button', { name: 'Seguir' }).click()
+
+  // Cuál es la primera situación con opciones depende del seed: el slot del
+  // colectivo tiene dos plantillas y una se responde escribiendo. Lo que se
+  // mide acá vale para cualquiera que se resuelva eligiendo.
+  await reachOptionChallenge(page)
 
   // Y encima se apagan las transiciones: con 8 workers en paralelo, leer un
   // color mientras todavía interpola devuelve un fotograma intermedio y la
@@ -230,8 +236,11 @@ test('nunca hay dos primarios montados a la vez', async ({ page }) => {
 
   expect(await primaries()).toBe(1)
 
-  await page.getByRole('button', { name: 'Seguir' }).click()
-  // Decidiendo: el primario vive dentro del bloque oscuro.
+  // Decidiendo: el primario vive dentro del bloque oscuro. La regla se
+  // comprueba en cada pantalla del camino, no sólo en la primera.
+  await reachOptionChallenge(page, async () => {
+    expect(await primaries()).toBe(1)
+  })
   expect(await primaries()).toBe(1)
 
   await page.getByRole('radio').first().check()

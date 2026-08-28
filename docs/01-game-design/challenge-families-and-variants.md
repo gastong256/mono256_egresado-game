@@ -1,12 +1,14 @@
 # Familias de escenario, plantillas y variantes
 
-**Estado: implementado para STAGE-02/STAGE-03.** La jerarquía `ScenarioFamily → ChallengeTemplate → ChallengeVariant` está aceptada en [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md), y el pipeline híbrido con catálogo aprobado de desarrollo está aceptado en [ADR-020](../03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md). El determinismo sigue **LOCKED**. El inventario, la profundidad cognitiva y el catálogo oficial de feria permanecen abiertos.
+**Estado: implementado para STAGE-02/STAGE-03/STAGE-04.** La jerarquía `ScenarioFamily → ChallengeTemplate → ChallengeVariant` está aceptada en [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md), el pipeline híbrido con catálogo aprobado de desarrollo en [ADR-020](../03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md), y su consumo por la partida real en [ADR-021](../03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md). La promesa de que una familia aloja varias plantillas está cumplida en contenido de producción: la familia `bus` tiene dos, con razonamientos distintos. El determinismo sigue **LOCKED**. El inventario, la profundidad cognitiva del resto de las familias y el catálogo oficial de feria permanecen abiertos.
 
 ## El problema
 
 Un desafío fijo se memoriza. Cambiar `25 %` por `15 %` compra una partida más: el jugador igual aprende “la segunda opción”. Lo que hace falta es **variación estructural** —que cambie el razonamiento, no sólo los números.
 
 Un docente que juega dos veces la demo tiene que ver una diferencia real. Si sólo se reordenan las opciones, no se puede llamar variación.
+
+En 7.º eso ya pasa: la segunda partida trae otros números en las seis situaciones, y en la del colectivo puede traer **otra pregunta** —de «¿a qué salida me subo?» a «¿con cuánto tiempo salgo?»—, que es el mismo dato recorrido al revés.
 
 ## Cuidado con la palabra «familia»
 
@@ -90,7 +92,9 @@ El principio viene de STACK, que recomienda pregenerar, testear y desplegar vari
 
 **Implementado.** `ApprovedVariantCatalog` guarda la dirección, el origen `authored`/`generated` y el fingerprint de cada variante aprobada. No guarda parámetros ni posiciones: los parámetros se reconstruyen desde la dirección y la huella comprueba que siguen siendo los mismos.
 
-El artefacto actual es `grade-7-dev-1`, con 133 entradas para las seis plantillas de producción. Es reproducible byte a byte y `pnpm game:variants check` verifica su integridad dentro de `pnpm verify`.
+El artefacto vigente es `grade-7-dev-2`, con 159 entradas para las siete plantillas de producción; `grade-7-dev-1`, con 133, sigue publicado sin cambios. **Una versión publicada no se edita**: cuando el contenido cambia se construye la siguiente y la anterior queda tal cual, porque una run que declaró `dev-1` tiene que poder resolverse contra el conjunto que realmente jugó. Los dos son reproducibles byte a byte y `pnpm game:variants check` verifica la integridad del vigente dentro de `pnpm verify`.
+
+Desde [ADR-021](../03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md) **la partida elige dentro del catálogo aprobado**: el motor recibe un `ApprovedVariantLookup` y sortea sobre lo aprobado, con lo declarado por la plantilla como respaldo para un content set que todavía no tiene catálogo. `createRun` rechaza una run cuyo `variantCatalogVersion` no sea el del catálogo contra el que se la juega o reproduce.
 
 Es un **catálogo aprobado de desarrollo**, no el catálogo oficial ni justo de la feria. Además, todavía no alimenta la selección de la partida de 7.º: conectar variedad aprobada con gameplay es STAGE-04; construir planes automáticamente por dificultad es STAGE-05.
 
@@ -120,7 +124,7 @@ Los criterios de aceptación de estos controles están en [validación y auditor
 | Fuentes híbridas `authored` / `generated`, ambas validadas | **implementadas** — cinco plantillas generadas y `g7.group-tasks` autorada |
 | Generador por restricción como abstracción reutilizable | **implementado** — [ADR-020](../03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md) |
 | Validación, fingerprint, deduplicación y auditoría de población | **implementados** para el catálogo de desarrollo |
-| Catálogo aprobado y versionado de variantes | **implementado** como `grade-7-dev-1`; el oficial de la feria sigue sin congelar |
+| Catálogo aprobado y versionado de variantes | **implementado** como `grade-7-dev-1` y `grade-7-dev-2`, consumidos por la partida real; el oficial de la feria sigue sin congelar |
 | `variantCatalogVersion` en la identidad de la run | **implementado** como campo opcional: una run que juega variantes curadas no salió de ningún catálogo y lo dice omitiéndolo |
 
 Cuidado con la palabra «catálogo»: `ContentCatalog` dice qué familias y plantillas existen; `ApprovedVariantCatalog` dice qué variantes concretas fueron aprobadas bajo una versión; `RunPlan` dice cuáles usa una run. Los tres existen como contratos distintos. Lo que todavía no existe es el catálogo **oficial y congelado de feria**, el compositor automático y la comparabilidad final por dificultad.

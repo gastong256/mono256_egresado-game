@@ -14,10 +14,14 @@ import {
   createContentCatalog,
   createRuleset,
   EngineInvariantError,
+  ENGINE_VERSION,
   toContentSetId,
   toRulesetId,
+  toRunId,
+  toRunSeed,
   type ChallengeDefinition,
   type EngineDependencies,
+  type RunDescriptor,
   type Ruleset,
   type StageConfig,
 } from '@/game'
@@ -26,6 +30,12 @@ import { developmentProfilePolicy } from '@/game/profiles/development-policy'
 import { developmentScoringPolicy } from '@/game/scoring/development-policy'
 
 import { grade7Families } from './families'
+import {
+  GRADE_7_CONTENT_VERSION,
+  GRADE_7_RULESET_VERSION,
+  GRADE_7_VARIANT_CATALOG_VERSION,
+} from './versions'
+import { busLatestDeparture } from './challenges/bus-latest-departure'
 import { busTiming } from './challenges/bus-timing'
 import { groupTasks } from './challenges/group-tasks'
 import { may25Act } from './challenges/may-25-act'
@@ -33,36 +43,11 @@ import { muralPaint } from './challenges/mural-paint'
 import { notebookOffer } from './challenges/notebook-offer'
 import { standSupplies } from './challenges/stand-supplies'
 import { grade7Storylets } from './storylets'
+import { grade7ApprovedVariants } from './variant-catalogs'
 
-/*
- * El ruleset se queda en 0.3.0 y el contenido sube a 0.4.0, y esta vez las dos
- * versiones se separan a propósito.
- *
- * El contenido cambió: cada plantilla declara ahora su familia de escenario, su
- * rol de colocación y sus variantes con identidad propia, y la variante dejó de
- * elegirse dentro del generador para elegirse por dirección. La matemática de
- * los seis desafíos no se tocó, pero un seed puede caer en otra variante
- * autorada que antes, y eso es exactamente lo que la versión de contenido
- * existe para declarar.
- *
- * El ruleset **no** cambió: las políticas de score, dificultad y perfil y la
- * configuración de la etapa son las mismas. Subirlo también habría dicho que
- * cambió algo que no cambió.
- */
-export const GRADE_7_RULESET_VERSION = '0.3.0-grade-7'
-export const GRADE_7_CONTENT_VERSION = '0.5.0-grade-7'
-
-/**
- * Versión del catálogo de variantes aprobadas.
- *
- * Identifica un conjunto estable de variantes validadas. **No es el catálogo de
- * la feria**: es el de desarrollo, y el nombre lo dice. Congelar el catálogo
- * oficial de una competencia es una decisión de evento que todavía no se tomó.
- */
-export const GRADE_7_VARIANT_CATALOG_VERSION = 'grade-7-dev-1'
-
-/** Los seis desafíos jugables de 7.º grado. */
+/** Los siete desafíos jugables de 7.º grado. */
 export const grade7Challenges: readonly ChallengeDefinition[] = [
+  busLatestDeparture,
   busTiming,
   may25Act,
   muralPaint,
@@ -74,7 +59,8 @@ export const grade7Challenges: readonly ChallengeDefinition[] = [
 /**
  * Configuración de la etapa.
  *
- * Ocho eventos: los seis desafíos más la apertura y la bifurcación narrativa.
+ * Ocho eventos: seis desafíos más la apertura y la bifurcación narrativa. Las
+ * plantillas son siete porque el slot del colectivo tiene dos y el seed elige.
  * La dificultad objetivo es baja porque 7.º es el comienzo del rango de edad.
  */
 const GRADE_7_STAGE: StageConfig = {
@@ -123,8 +109,48 @@ export function createGrade7Dependencies(): EngineDependencies {
     ruleset: createGrade7Ruleset(),
     catalog: createContentCatalog(grade7Families, grade7Challenges),
     storylets: grade7Storylets,
+    // La partida elige dentro de lo aprobado, no dentro de lo que un generador
+    // puede alcanzar. Ésa es la diferencia entre tener un pipeline y usarlo.
+    approvedVariants: grade7ApprovedVariants,
+  }
+}
+
+export {
+  GRADE_7_CONTENT_VERSION,
+  GRADE_7_RULESET_VERSION,
+  GRADE_7_VARIANT_CATALOG_VERSION,
+} from './versions'
+/**
+ * El descriptor de una run nueva de 7.º grado.
+ *
+ * Vive acá porque las versiones que una run declara son propiedad del content
+ * set: la del ruleset, la del contenido y la del catálogo aprobado del que sale
+ * lo que se va a jugar. Un llamador que las arme a mano puede olvidarse de la
+ * última, y entonces el motor rechaza la run — que es correcto, pero es un
+ * error que no debería poder cometerse.
+ */
+export function createGrade7RunDescriptor(
+  seed: string,
+  overrides: Partial<Pick<RunDescriptor, 'runId' | 'mode' | 'difficulty'>> = {},
+): RunDescriptor {
+  return {
+    runId: overrides.runId ?? toRunId(`run-${seed}`),
+    seed: toRunSeed(seed),
+    // El slice es local: no hay ranking, así que la run no es competitiva.
+    mode: overrides.mode ?? 'practice',
+    difficulty: overrides.difficulty ?? 'adaptive',
+    gameVersion: ENGINE_VERSION,
+    rulesetVersion: GRADE_7_RULESET_VERSION,
+    contentVersion: GRADE_7_CONTENT_VERSION,
+    variantCatalogVersion: GRADE_7_VARIANT_CATALOG_VERSION,
   }
 }
 
 export { grade7Storylets, grade7StoryletIds } from './storylets'
+export { grade7TeacherDemoPlan, GRADE_7_DEMO_PLAN_ID } from './demo-plan'
 export { grade7Families } from './families'
+export {
+  grade7ApprovedVariants,
+  grade7VariantCatalog,
+  grade7VariantCatalogs,
+} from './variant-catalogs'

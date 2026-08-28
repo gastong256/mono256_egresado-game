@@ -2,7 +2,7 @@
 
 Cómo se mueve el contenido existente al modelo de [ADR-019](adr/ADR-019-scenario-family-template-variant.md), qué se migró ya y qué queda deliberadamente para después.
 
-**Estado: la migración estructural está hecha y STAGE-03 completó el pipeline posterior.** Los seis desafíos de 7.º y las ocho plantillas de desarrollo declaran familia, rol de colocación y variantes con identidad propia. Las plantillas de producción también declaran su `VariantSourceSpec`, validadores y canonización según [ADR-020](adr/ADR-020-variant-generation-and-approved-catalog.md). Lo que **no** se hizo, a propósito, es dividir escenarios en varias plantillas, mover contenido de año ni tocar una sola cuenta.
+**Estado: la migración estructural está hecha, STAGE-03 completó el pipeline posterior y STAGE-04 lo puso a jugar.** Las siete plantillas de 7.º y las ocho de desarrollo declaran familia, rol de colocación y variantes con identidad propia. Las plantillas de producción también declaran su `VariantSourceSpec`, validadores y canonización según [ADR-020](adr/ADR-020-variant-generation-and-approved-catalog.md), y la partida elige dentro del catálogo aprobado según [ADR-021](adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md). Lo que **no** hizo la migración, a propósito, es mover contenido de año ni tocar una sola cuenta.
 
 ## Principio de la migración
 
@@ -30,7 +30,9 @@ Lo que la tabla prueba:
 - **Los efectos de carrera no se derivan del rol.** El acto es `special` y mueve Aura; el mural es `checkpoint` y pone nota. Son ejes independientes.
 - **La cantidad de variantes es propiedad de la plantilla**, no del modelo: el acto declara tres y las demás dos.
 
-> **Esta tabla no es el inventario final de escenarios de Egresado.** Es la matriz de sondas con la que se validó la arquitectura. La ubicación de los seis en 7.º es consecuencia del primer slice vertical.
+> **Esta tabla no es el inventario final de escenarios de Egresado.** Es la matriz de sondas con la que se validó la arquitectura, tal como estaba al migrar. La ubicación de los seis en 7.º es consecuencia del primer slice vertical.
+
+STAGE-04 sumó una séptima, `g7.bus-latest-departure`, en la familia `bus`: misma situación, otra pregunta, interacción `numeric-input`, rol `anchor`, Estilo. Es la primera vez que dos plantillas de producción comparten familia. Ver [ADR-021](adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md).
 
 ## Qué cambió en cada desafío
 
@@ -53,7 +55,7 @@ Las plantillas de desarrollo declaran **una sola variante** cada una, y una list
 
 ## Lo que la migración NO hizo
 
-No se dividió ninguna familia en varias plantillas. `bus` sigue teniendo una sola estructura cognitiva: la demora porcentual. Que pueda tener cuatro —última salida, comparación de recorridos, frecuencia— es la capacidad que este modelo habilita, y autorarlas es trabajo de contenido, no de arquitectura. La prueba de que dos plantillas conviven en una familia se hizo con contenido de desarrollo, en la familia `school-data`, para no crear gameplay de producción fuera de alcance.
+La migración no dividió ninguna familia en varias plantillas: la prueba de que dos conviven en una familia se hizo con contenido de desarrollo, en la familia `school-data`, para no crear gameplay de producción fuera de alcance. **STAGE-04 sí dividió una**: `bus` tiene desde entonces la comparación de salidas y la anticipación necesaria, y la migración quedó como lo que era, un cambio de direccionamiento. Que la familia pueda tener cuatro estructuras —comparación de recorridos, frecuencia— sigue siendo capacidad disponible y no trabajo hecho; autorarlas es contenido, no arquitectura.
 
 No se renombró ningún id de contenido. `g7.bus-timing` sigue llamándose así aunque el prefijo `g7.` sugiera una ubicación que el modelo ya no necesita. Renombrarlo es cambiar identidad de contenido y pertenece a la etapa que decida ubicaciones.
 

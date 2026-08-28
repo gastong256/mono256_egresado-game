@@ -16,6 +16,7 @@
 import { toChallengeId, toStoryletId, type Storylet } from '@/game'
 
 const busTiming = toChallengeId('g7.bus-timing')
+const busLatestDeparture = toChallengeId('g7.bus-latest-departure')
 const may25Act = toChallengeId('g7.may-25-act')
 const muralPaint = toChallengeId('g7.mural-paint')
 const notebookOffer = toChallengeId('g7.notebook-offer')
@@ -59,7 +60,10 @@ export const grade7Storylets: readonly Storylet[] = [
     eyebrow: 'Segunda semana',
     title: 'Segunda semana',
     text: 'Todavía estás aprendiendo cuánto tarda el viaje hasta la escuela.',
-    challengePool: [busTiming],
+    // Las dos plantillas de la familia colectivo. El seed elige cuál sale, y
+    // son preguntas distintas: una se resuelve eligiendo entre salidas, la otra
+    // dando el número. La misma situación, otro razonamiento.
+    challengePool: [busTiming, busLatestDeparture],
     effects: [],
     followUps: [may25],
   },

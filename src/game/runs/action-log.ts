@@ -18,8 +18,15 @@ import type { EngineRejection } from '../core/errors'
 import { gameCommandSchema, parseCommand, type GameCommand } from './commands'
 import type { RunDescriptor } from './state'
 
-/** Bumped when the envelope shape changes, not when game rules change. */
-export const ACTION_LOG_VERSION = 1
+/**
+ * Bumped when the envelope shape changes, not when game rules change.
+ *
+ * `2` carries the approved variant catalog a run drew from. Dropping it was a
+ * real defect: a log that reached a server without its catalog version would be
+ * replayed against whatever catalog that server happened to hold, and the same
+ * seed would resolve different variants without anyone noticing.
+ */
+export const ACTION_LOG_VERSION = 2
 
 export interface RunActionEnvelope {
   /** Strictly increasing, starting at zero. */
@@ -45,6 +52,9 @@ const descriptorSchema = z.object({
   gameVersion: z.string().min(1).max(32),
   rulesetVersion: z.string().min(1).max(32),
   contentVersion: z.string().min(1).max(32),
+  // Null, not absent: a log states explicitly that its run drew from no
+  // approved catalog rather than leaving a reader to assume it.
+  variantCatalogVersion: z.string().min(1).max(64).nullable(),
 })
 
 const envelopeSchema = z.object({
@@ -132,6 +142,9 @@ export function parseActionLog(
     gameVersion: raw.gameVersion,
     rulesetVersion: raw.rulesetVersion,
     contentVersion: raw.contentVersion,
+    ...(raw.variantCatalogVersion === null
+      ? {}
+      : { variantCatalogVersion: raw.variantCatalogVersion }),
   }
 
   return ok({ version: parsed.data.version, descriptor, actions })
@@ -141,7 +154,10 @@ export function parseActionLog(
 export function serializeActionLog(log: RunActionLog): unknown {
   return {
     version: log.version,
-    descriptor: { ...log.descriptor },
+    descriptor: {
+      ...log.descriptor,
+      variantCatalogVersion: log.descriptor.variantCatalogVersion ?? null,
+    },
     actions: log.actions.map((envelope) => ({
       sequence: envelope.sequence,
       command: envelope.command,

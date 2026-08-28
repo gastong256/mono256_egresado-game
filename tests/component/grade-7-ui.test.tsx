@@ -4,20 +4,22 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { createGameController } from '@/components/game/controller'
 import { GameContainer } from '@/components/game/game-container'
 import { NicknameForm } from '@/components/game/nickname-form'
+import { RunView } from '@/components/game/run-view'
 import { YearResult } from '@/components/game/year-result'
-import { createGrade7Dependencies } from '@/content/grade-7'
+import {
+  createGrade7Dependencies,
+  createGrade7RunDescriptor,
+} from '@/content/grade-7'
 import { formatPromedio } from '@/components/game/format'
 import {
   activeChallengeView,
   createRun,
   promedio,
   targetsFor,
-  toRunId,
-  toRunSeed,
   transition,
-  ENGINE_VERSION,
   type GameCommand,
   type InteractionAnswer,
   type RunDescriptor,
@@ -35,15 +37,7 @@ import {
 const dependencies = createGrade7Dependencies()
 
 function descriptorFor(seed: string): RunDescriptor {
-  return {
-    runId: toRunId(`run-${seed}`),
-    seed: toRunSeed(seed),
-    mode: 'practice',
-    difficulty: 'adaptive',
-    gameVersion: ENGINE_VERSION,
-    rulesetVersion: dependencies.ruleset.version,
-    contentVersion: dependencies.ruleset.contentVersion,
-  }
+  return createGrade7RunDescriptor(seed)
 }
 
 /**
@@ -261,13 +255,90 @@ async function resolveFirstChallenge(
 ): Promise<void> {
   await user.click(await screen.findByRole('button', { name: 'Seguir' }))
 
+  // El slot del colectivo tiene dos plantillas y el seed elige cuál sale, así
+  // que el helper no puede asumir la interacción: responde la que aparezca.
   const radios = screen.queryAllByRole('radio')
+  const numeric = screen.queryByRole('spinbutton')
   if (radios[0] !== undefined) {
     await user.click(radios[0])
+  } else if (numeric !== null) {
+    await user.type(numeric, '45')
   }
 
   await user.click(screen.getByRole('button', { name: 'Confirmar' }))
 }
+
+/**
+ * Las dos plantillas del colectivo, en pantalla.
+ *
+ * El slot de la segunda semana tiene dos plantillas y el seed elige cuál sale,
+ * así que ninguna de las dos tiene cobertura garantizada en una partida con
+ * seed aleatorio. Estos seeds están elegidos para que la tenga cada una: son
+ * los mismos que el motor resuelve en el test de selección, y lo que se prueba
+ * acá es que la interacción que le toca a cada plantilla funciona con el dedo
+ * de una persona.
+ */
+describe('la familia colectivo en pantalla', () => {
+  function renderRun(seed: string) {
+    const controller = createGameController(descriptorFor(seed), dependencies)
+    render(<RunView controller={controller} dependencies={dependencies} />)
+    return controller
+  }
+
+  it('la salida más tarde se responde escribiendo el número', async () => {
+    const user = userEvent.setup()
+    renderRun('ui-1')
+
+    await user.click(await screen.findByRole('button', { name: 'Seguir' }))
+    expect(screen.getByText('La pregunta del grupo')).toBeDefined()
+
+    const field = screen.getByRole('spinbutton')
+    // Sin respuesta no se confirma: la pantalla no manda un cero por omisión.
+    expect(
+      screen
+        .getByRole('button', { name: 'Confirmar' })
+        .hasAttribute('disabled'),
+    ).toBe(true)
+
+    await user.type(field, '45')
+    const submit = screen.getByRole('button', { name: 'Confirmar' })
+    expect(submit.hasAttribute('disabled')).toBe(false)
+    await user.click(submit)
+
+    // El resultado del motor, no un cartel de la pantalla.
+    expect(await screen.findByText(/Viaje de hoy/u)).toBeDefined()
+  })
+
+  it('los más y menos mueven la respuesta de a un minuto', async () => {
+    const user = userEvent.setup()
+    renderRun('ui-2')
+
+    await user.click(await screen.findByRole('button', { name: 'Seguir' }))
+    const field = screen.getByRole<HTMLInputElement>('spinbutton')
+
+    await user.type(field, '40')
+    await user.click(screen.getByRole('button', { name: /^Sumar 1/u }))
+    expect(field.value).toBe('41')
+    await user.click(screen.getByRole('button', { name: /^Restar 1/u }))
+    expect(field.value).toBe('40')
+  })
+
+  it('la comparación de salidas se sigue respondiendo eligiendo', async () => {
+    const user = userEvent.setup()
+    renderRun('ui-0')
+
+    await user.click(await screen.findByRole('button', { name: 'Seguir' }))
+    const options = screen.getAllByRole('radio')
+    expect(options.length).toBeGreaterThan(1)
+
+    const first = options[0]
+    if (first === undefined) throw new Error('sin opciones')
+    await user.click(first)
+    await user.click(screen.getByRole('button', { name: 'Confirmar' }))
+
+    expect(await screen.findByRole('button', { name: 'Seguir' })).toBeDefined()
+  })
+})
 
 describe('el juego completo en pantalla', () => {
   beforeEach(() => {

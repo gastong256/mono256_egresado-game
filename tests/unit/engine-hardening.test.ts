@@ -2,6 +2,7 @@ import fc from 'fast-check'
 import { describe, expect, it } from 'vitest'
 
 import {
+  ACTION_LOG_VERSION,
   createRun,
   isErr,
   isOk,
@@ -145,8 +146,12 @@ describe('ENG-SEC-001 · identifier charset enforced at trust boundaries', () =>
       expect(
         isOk(
           parseActionLog({
-            version: 1,
-            descriptor: { ...descriptor, seed },
+            version: ACTION_LOG_VERSION,
+            descriptor: {
+              ...descriptor,
+              seed,
+              variantCatalogVersion: descriptor.variantCatalogVersion ?? null,
+            },
             actions: [],
           }),
         ),
