@@ -1,6 +1,6 @@
 # Catálogo semilla de desafíos
 
-Este catálogo es backlog de contenido, no compromiso de implementar todos en MVP. Cada entrada debe pasar por la guía de autoría y validación antes de producción.
+Este catálogo es backlog de **contenido disponible**, no un `RunPlan` ni un compromiso de implementar todos sus ítems en MVP. Las filas por año son candidatas de planificación, no ubicaciones finales: su auditoría sigue **OPEN** en las [preguntas 46 y 46-bis](../07-reference/open-questions.md). Cada entrada debe pasar por la guía de autoría y validación antes de producción.
 
 ## 7.º grado
 
@@ -170,7 +170,7 @@ Están elegidos para que ninguna estrategia degenerada pase por buena: marcar la
 
 **Fail-forward.** No hay game over. El peor acto deja Aura negativa, evidencia de Improvisador y una consecuencia narrativa, y el año sigue.
 
-**Determinismo.** Las tres variantes se eligen con el RNG sembrado del motor, direccionado por la etapa, el índice de evento y la dificultad. Misma seed y mismas acciones producen el mismo acto. El contenido subió a `0.3.0-grade-7` porque el año cambió de siete a ocho eventos.
+**Determinismo.** Las tres variantes se eligen con el RNG sembrado del motor. Una vez elegida su dirección `familia/plantilla/variante`, el caso concreto usa el substream semántico de [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md), independiente del año y del slot. Misma seed y mismas acciones producen el mismo acto. Al agregar el evento, el contenido subió a `0.3.0-grade-7`; la migración estructural posterior lo llevó a `0.4.0-grade-7` sin reescribir su matemática.
 
 **Accesibilidad.** Cada celda es una casilla nativa de 56 px: se recorre con Tab y se marca con Espacio. La regla siempre está en texto y nunca es sólo un color. Los cuatro estados corregidos cambian relleno, trazo de borde y glifo a la vez, y llevan además la palabra para lector de pantalla, así que la grilla se lee entera en escala de grises.
 

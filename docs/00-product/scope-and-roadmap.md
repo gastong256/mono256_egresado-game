@@ -13,13 +13,15 @@ Validar que el loop central sea comprensible y divertido.
 - Landing mínima.
 - Nickname local opcional.
 - Carrera parcial: 7.º grado y 1.º año.
-- 8–10 desafíos.
+- 8–10 desafíos de inventario/cobertura para el prototipo (objetivo histórico; no longitud de una run normal).
 - 3–4 patrones de interacción.
 - Feedback de consecuencias.
 - Score local provisional.
 - Perfil final simplificado.
 - Juego completamente cliente-side.
 - Seed local determinista.
+
+**Objetivo histórico de MVP 0.** El conteo de 8–10 se escribió antes de [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md) como meta de contenido disponible y cobertura de demostración para 7.º + 1.º. Se conserva como antecedente; no define el presupuesto actual de una run normal, que selecciona uno o dos beats por etapa desde un catálogo que puede ser mucho más rico.
 
 ### No incluye
 - Base de datos.
@@ -44,7 +46,7 @@ Los tres primeros son evidencia proxy y se declaran como tal. El cuarto es el ga
 
 ### Incluye
 - Carrera completa: 7.º a 5.º.
-- 30–40 desafíos base o combinaciones equivalentes mediante parametrización.
+- 30–40 desafíos base o combinaciones equivalentes disponibles mediante parametrización; no todos se juegan en una run.
 - 6–8 patrones de interacción.
 - API de runs.
 - PostgreSQL/Supabase.
@@ -144,4 +146,4 @@ Dirección de escalada **lúdica**, no currículo oficial: la pertinencia curric
 
 No se autoran los años en secuencia sin catálogo. Primero se arma la matriz completa de 1.º–5.º —una fila por plantilla, no por variante— y el Departamento de Matemática revisa **la matriz**, no sólo pantallas terminadas. Recién después se implementa año por año. Ver [secuencia de implementación](../06-delivery/implementation-sequence.md).
 
-Un rango útil de planificación es de seis a ocho situaciones significativas por año. Es **planificación, no requisito**: la duración objetivo de una run y el throughput de la feria deciden el número final, y la pregunta sigue abierta ([pregunta 46](../07-reference/open-questions.md)).
+La referencia histórica de seis a ocho situaciones significativas por año describe **profundidad posible del catálogo**, no beats obligatorios en una run. No fija un requisito ni una cantidad final: cada run normal selecciona uno o dos beats por etapa, mientras el catálogo debe ofrecer más opciones para sostener la rejugabilidad. La profundidad definitiva sigue abierta ([pregunta 46](../07-reference/open-questions.md)).

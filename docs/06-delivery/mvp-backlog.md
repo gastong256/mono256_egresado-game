@@ -9,7 +9,7 @@
 5. Crear `DecisionCard`.
 6. Crear `NumericInput`.
 7. Crear `BudgetBuilder` o `Timeline`.
-8. Implementar 8–10 desafíos.
+8. Objetivo histórico: implementar 8–10 desafíos como inventario/cobertura del prototipo. Desde [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md), este conteo no define la longitud de una run normal, que selecciona uno o dos beats por etapa.
 9. Feedback de consecuencias.
 10. Progresión 7.º + 1.º.
 11. Score provisional.
@@ -25,7 +25,7 @@
 18. Assignment Board.
 19. Chart/Data Interaction.
 20. Spatial Grid.
-21. 30–40 templates/variantes suficientes.
+21. 30–40 templates/variantes suficientes en el catálogo disponible; no todos en una run.
 22. Perfil final completo.
 23. Accessibility pass.
 

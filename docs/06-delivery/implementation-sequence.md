@@ -52,7 +52,7 @@ Tabla de navegación. Los contratos de cada etapa, más abajo, son la autoridad.
 | [STAGE-01](#stage-01-contratos-de-run-versiones-y-seeds) | Contratos de run, versiones y seeds | `DONE` | STAGE-00 | — |
 | [STAGE-02](#stage-02-scenariofamily-challengetemplate-challengevariant) | ScenarioFamily → Template → Variant | `DONE` | STAGE-01 | — |
 | [STAGE-03](#stage-03-generación-validación-y-catálogo-de-variantes) | Generación, validación y catálogo de variantes | **`READY`** | STAGE-02 | — |
-| [STAGE-04](#stage-04-7º-completo-como-demo-candidate) | 7.º completo como Demo Candidate | `PARTIAL` | STAGE-02, STAGE-03 | — |
+| [STAGE-04](#stage-04-enriquecimiento-de-7º-y-demo-candidate) | Enriquecimiento de 7.º y Demo Candidate | `PARTIAL` | STAGE-02, STAGE-03 | — |
 | [STAGE-05](#stage-05-modelo-de-dificultad-y-run-composer) | Modelo de dificultad y Run Composer | `NOT_STARTED` | STAGE-03 | — |
 | [STAGE-06](#stage-06-scorepolicy-competitiva) | ScorePolicy competitiva | `NOT_STARTED` | STAGE-05 | — |
 | [GATE-TG1](#gate-tg1-teacher-gate-1) | **Teacher Gate 1** | `TEACHER_GATE` | STAGE-04, STAGE-06 | externo |
@@ -102,7 +102,7 @@ Estado real contra el código al 28 de agosto de 2026. Es la base de la que sale
 | Ledger de notas y Promedio derivado | `DONE` | `career.ts` → `grades: readonly number[]` | previa |
 | `null` ≠ 0 en dimensiones de carrera | `DONE` | `career.ts`, `tests/component/grade-7-ui.test.tsx` | previa |
 | Aura con signo, sin techo, introducida en juego | `DONE` | `career.ts`, `src/content/grade-7/challenges/may-25-act.ts`, E2E «el acto del 25 de Mayo introduce Aura» | STAGE-04 |
-| Acto del 25 de Mayo | `DONE` | `may-25-act.ts`, `src/game/math/classification.ts`, `tests/unit/number-classification.test.ts`, 6 E2E, contenido `0.3.0-grade-7` | STAGE-04 |
+| Acto del 25 de Mayo | `DONE` | `may-25-act.ts`, `src/game/math/classification.ts`, `tests/unit/number-classification.test.ts`, 6 E2E, contenido `0.4.0-grade-7` | STAGE-04 |
 | Mastery y flags ocultos | `DONE` | `career.ts` → `mastery`, `src/game/narrative/` | previa |
 | Motor determinista separado de React | `DONE` | [ADR-011](../03-architecture/adr/ADR-011-functional-core-transition-engine.md), `tests/unit/architecture-lint.test.ts`, `tests/unit/engine-modules.test.ts` | previa |
 | Tripleta de versiones de run | `DONE` | `src/game/core/versioning.ts`, `assertCompatibleVersions` | STAGE-01 |
@@ -242,7 +242,7 @@ Estado real contra el código al 28 de agosto de 2026. Es la base de la que sale
 
 - No implementar generadores por restricción reutilizables — es [STAGE-03](#stage-03-generación-validación-y-catálogo-de-variantes).
 - No construir el catálogo desplegado ni `variantCatalogVersion`.
-- No migrar todavía los cinco desafíos de 7.º — es [STAGE-04](#stage-04-7º-completo-como-demo-candidate).
+- No enriquecer todavía 7.º con nuevas estructuras cognitivas ni decidir la ubicación final de su contenido — es [STAGE-04](#stage-04-enriquecimiento-de-7º-y-demo-candidate). La migración estructural de los seis desafíos sí quedó completada al cerrar esta etapa; ver [la migración](../03-architecture/content-model-migration.md).
 - No tocar bandas de dificultad, `difficultyCost` ni presupuesto.
 - No tocar scoring, `FairScore` ni ranking.
 - No agregar contenido de 1.º–5.º.
@@ -277,9 +277,9 @@ Criterios que la etapa sumó sobre el contrato original:
 **Riesgos.**
 
 - Cambiar la dirección de instancia puede alterar el consumo de RNG y romper golden replays. Si el resultado cambia, es un bump de `ENGINE_VERSION`, no un regenerado silencioso de goldens.
-- Tentación de migrar el contenido «ya que estamos». No: eso es STAGE-04 y necesita STAGE-03 antes.
+- Confundir la migración estructural ya completada con un inventario definitivo. STAGE-04 puede enriquecer la demo, pero la ubicación y el destino final de los seis escenarios siguen abiertos.
 
-**Decisiones.** `RECOMENDADA` (D-006): la jerarquía family/template/variant es dirección de arquitectura, no contrato cerrado — se implementa de forma que se pueda ajustar. `LOCKED` (D-007): variantes deterministas por seed. `OPEN` ([pregunta 46](../07-reference/open-questions.md)): cuántas familias y plantillas por año.
+**Decisiones.** `RECOMENDADA` (D-006): la jerarquía family/template/variant es dirección de arquitectura, no contrato cerrado — se implementa de forma que se pueda ajustar. `LOCKED` (D-007): variantes deterministas por seed. `OPEN` ([pregunta 46](../07-reference/open-questions.md)): profundidad del catálogo de contenido disponible por etapa.
 
 **Evidencia de completitud.**
 
@@ -345,28 +345,37 @@ Criterios que la etapa sumó sobre el contrato original:
 
 ---
 
-### STAGE-04 — 7.º completo como Demo Candidate
+### STAGE-04 — Enriquecimiento de 7.º y Demo Candidate
 
-- **Estado:** `PARTIAL` — la mitad de Aura y del acto está `DONE`; la migración está bloqueada por STAGE-02 y STAGE-03.
+- **Estado:** `PARTIAL` — Aura y el acto están `DONE`; el enriquecimiento de contenido y la preparación de la demo dependen de STAGE-03. La migración estructural de los seis desafíos ya está terminada.
 - **Depende de:** STAGE-02, STAGE-03
 - **Desbloquea:** GATE-TG1
 
-**Propósito.** Usar 7.º como banco de prueba real de la arquitectura nueva antes de producir los demás años.
+**Propósito.** Enriquecer 7.º con variación estructural real y convertir el slice amplio existente en una Demo Candidate representativa, usando la arquitectura ya migrada y el pipeline de STAGE-03 antes de producir los demás años.
 
 **Scope IN.**
 
-- Migrar los cinco escenarios existentes —colectivo, mural, cuaderno, proyecto grupal, stand— a familia/plantilla/variante.
-- Preservar la intención matemática de cada uno, salvo cambio deliberado y documentado.
-- Al menos una segunda plantilla en las familias donde la variación estructural aporte.
+- Agregar plantillas sólo donde aporten una estructura de razonamiento genuinamente distinta; cambiar números u orden de opciones no alcanza.
+- Usar el pipeline de STAGE-03 en contenido jugable real, con variantes generadas y prevalidadas donde el espacio paramétrico lo justifique y conjuntos autorados donde convenga curación.
+- Comprobar que las seis familias y plantillas actuales siguen funcionando bajo la arquitectura completada, preservando su intención matemática salvo cambio deliberado y documentado.
+- Definir qué contenido integra la **Teacher Demo Candidate** y documentar esa selección sin convertirla en el plan normal de producción.
+- Reconciliar la cobertura amplia del slice histórico —seis desafíos y variedad de interacciones— con el presupuesto normal de uno a dos beats por etapa fijado por [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md).
+- Validar pacing, variedad de gameplay e interacciones, y exposición de Promedio, Equipo, Aura y Estilo para Teacher Gate 1.
 - Toda UI nueva consume el sistema de diseño v0.2.
 
-**Scope OUT.** Reescribir la matemática existente. Rediseño visual. Contenido de años nuevos. Score competitivo. Ranking. Recuperaciones.
+La **Teacher Demo Candidate** puede mostrar más mecánicas que un segmento normal para que los docentes evalúen el producto. El **plan normal de una run** mantiene uno o dos beats ordinarios por etapa. Son configuraciones de selección distintas sobre el mismo modelo, no motores distintos.
 
-**Lectura requerida.** [Vertical slice de 7.º](vertical-slice-grade-7.md) · [catálogo de desafíos](../01-game-design/challenge-catalog.md) · [familias y variantes](../01-game-design/challenge-families-and-variants.md) · [sistema de diseño](../09-design-system/README.md) · [migración de 7.º](../09-design-system/migration-7-grade.md).
+**Scope OUT.** Repetir la migración estructural ya completada. Decidir el inventario final o mover escenarios de año. Run Composer y balance final de dificultad. Reescribir la matemática existente. Rediseño visual. Contenido de 1.º–5.º. Score competitivo. Ranking. Recuperaciones.
+
+**Lectura requerida.** [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md) · [migración del modelo de contenido](../03-architecture/content-model-migration.md) · [Vertical slice de 7.º](vertical-slice-grade-7.md) · [catálogo de desafíos](../01-game-design/challenge-catalog.md) · [familias y variantes](../01-game-design/challenge-families-and-variants.md) · [sistema de diseño](../09-design-system/README.md) · [migración visual de 7.º](../09-design-system/migration-7-grade.md).
 
 **Criterios de aceptación.**
 
-- [ ] Los cinco desafíos previos migrados, o la transición documentada explícitamente.
+- [x] Los seis desafíos actuales están migrados estructuralmente a familia/plantilla/variante, con equivalencia semántica documentada.
+- [ ] La demo incorpora variación cognitiva real donde aporta; no se presenta un reordenamiento o cambio numérico como plantilla nueva.
+- [ ] El pipeline de STAGE-03 se usa en contenido real donde corresponde, sin obligar a que todo contenido curado sea procedural.
+- [ ] La selección de la Teacher Demo Candidate está documentada y distinguida del plan normal de uno a dos beats por etapa.
+- [ ] Pacing, variedad de gameplay e interacciones y exposición del Career Model están validados para Teacher Gate 1.
 - [ ] Matemática previa preservada; cualquier cambio, deliberado y escrito.
 - [x] El acto del 25 de Mayo está en el flujo real de la partida.
 - [x] Aura pasa de `null` a un valor significativo durante la run.
@@ -379,11 +388,11 @@ Criterios que la etapa sumó sobre el contrato original:
 
 **Validación requerida.** `pnpm verify` completo, incluidos `pnpm test:e2e:only` y `pnpm design:check`.
 
-**Evidencia ya disponible.** `src/content/grade-7/challenges/may-25-act.ts`; `src/game/math/classification.ts`; `tests/unit/number-classification.test.ts`; `tests/unit/grade-7-content.test.ts`; `tests/property/grade-7.property.test.ts`; `tests/integration/grade-7-run.test.ts`; seis pruebas E2E del acto, incluidas teclado, cinco viewports y Aura negativa; contenido y ruleset en `0.3.0-grade-7`.
+**Evidencia ya disponible.** `src/content/grade-7/challenges/may-25-act.ts`; `src/game/math/classification.ts`; `tests/unit/number-classification.test.ts`; `tests/unit/grade-7-content.test.ts`; `tests/property/grade-7.property.test.ts`; `tests/integration/grade-7-run.test.ts`; seis pruebas E2E del acto, incluidas teclado, cinco viewports y Aura negativa; contenido `0.4.0-grade-7` y ruleset `0.3.0-grade-7`.
 
-**Riesgos.** Migrar contenido y cambiar arquitectura en el mismo paso hace que un fallo de golden replay sea ambiguo. Migrar de a una familia.
+**Riesgos.** Confundir la densidad deliberada de la demo con la longitud de una run normal; convertir las seis sondas actuales en inventario definitivo; o forzar generación procedural donde un conjunto curado es más apropiado.
 
-**Decisiones.** `OPEN` ([pregunta 42](../07-reference/open-questions.md)): si el acto del 25 de Mayo entra a producción — está implementado, falta la aprobación de contenido. `LOCKED` (D-001, D-002): identidad UI-first y sistema de diseño v0.2.
+**Decisiones.** [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md) gobierna modelo, catálogo ≠ plan y presupuesto. `OPEN` ([preguntas 46 y 46-bis](../07-reference/open-questions.md)): profundidad e inventario final del catálogo. `OPEN` ([pregunta 42](../07-reference/open-questions.md)): si el acto del 25 de Mayo entra a producción. `LOCKED` (D-001, D-002): identidad UI-first y sistema de diseño v0.2.
 
 **Exit gate.** ¿Es 7.º una **Demo Candidate** representativa del producto final?
 
@@ -556,7 +565,7 @@ Aprobación externa del Departamento de Matemática sobre la Demo Candidate de 7
 
 **Validación requerida.** `pnpm verify`, `pnpm game:validate-content`, `pnpm game:simulate:deep`, `pnpm test:e2e:only`.
 
-**Decisiones.** `OPEN` ([pregunta 46](../07-reference/open-questions.md)): cantidad de familias y plantillas por año. `DEFERRED` ([pregunta 48](../07-reference/open-questions.md)): acento visual por año — es alcance del sistema de diseño v0.4, no de esta etapa.
+**Decisiones.** `OPEN` ([pregunta 46](../07-reference/open-questions.md)): profundidad del catálogo de contenido disponible por etapa, no longitud de la run. `DEFERRED` ([pregunta 48](../07-reference/open-questions.md)): acento visual por año — es alcance del sistema de diseño v0.4, no de esta etapa.
 
 **Exit gate.** ¿Una run completa recorre `7.º → 1.º → 2.º → 3.º → 4.º → 5.º → EGRESADO`?
 

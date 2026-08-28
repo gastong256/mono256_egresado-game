@@ -414,13 +414,15 @@ Validar que el loop central sea comprensible y divertido.
 - Landing mínima.
 - Nickname local opcional.
 - Carrera parcial: 7.º grado y 1.º año.
-- 8–10 desafíos.
+- 8–10 desafíos de inventario/cobertura para el prototipo (objetivo histórico; no longitud de una run normal).
 - 3–4 patrones de interacción.
 - Feedback de consecuencias.
 - Score local provisional.
 - Perfil final simplificado.
 - Juego completamente cliente-side.
 - Seed local determinista.
+
+**Objetivo histórico de MVP 0.** El conteo de 8–10 se escribió antes de [ADR-019](03-architecture/adr/ADR-019-scenario-family-template-variant.md) como meta de contenido disponible y cobertura de demostración para 7.º + 1.º. Se conserva como antecedente; no define el presupuesto actual de una run normal, que selecciona uno o dos beats por etapa desde un catálogo que puede ser mucho más rico.
 
 ### No incluye
 - Base de datos.
@@ -445,7 +447,7 @@ Los tres primeros son evidencia proxy y se declaran como tal. El cuarto es el ga
 
 ### Incluye
 - Carrera completa: 7.º a 5.º.
-- 30–40 desafíos base o combinaciones equivalentes mediante parametrización.
+- 30–40 desafíos base o combinaciones equivalentes disponibles mediante parametrización; no todos se juegan en una run.
 - 6–8 patrones de interacción.
 - API de runs.
 - PostgreSQL/Supabase.
@@ -545,7 +547,7 @@ Dirección de escalada **lúdica**, no currículo oficial: la pertinencia curric
 
 No se autoran los años en secuencia sin catálogo. Primero se arma la matriz completa de 1.º–5.º —una fila por plantilla, no por variante— y el Departamento de Matemática revisa **la matriz**, no sólo pantallas terminadas. Recién después se implementa año por año. Ver [secuencia de implementación](06-delivery/implementation-sequence.md).
 
-Un rango útil de planificación es de seis a ocho situaciones significativas por año. Es **planificación, no requisito**: la duración objetivo de una run y el throughput de la feria deciden el número final, y la pregunta sigue abierta ([pregunta 46](07-reference/open-questions.md)).
+La referencia histórica de seis a ocho situaciones significativas por año describe **profundidad posible del catálogo**, no beats obligatorios en una run. No fija un requisito ni una cantidad final: cada run normal selecciona uno o dos beats por etapa, mientras el catálogo debe ofrecer más opciones para sostener la rejugabilidad. La profundidad definitiva sigue abierta ([pregunta 46](07-reference/open-questions.md)).
 
 ---
 
@@ -649,7 +651,7 @@ Telemetría agregada y pseudónima: tasa de finalización, duración activa medi
 
 # Catálogo semilla de desafíos
 
-Este catálogo es backlog de contenido, no compromiso de implementar todos en MVP. Cada entrada debe pasar por la guía de autoría y validación antes de producción.
+Este catálogo es backlog de **contenido disponible**, no un `RunPlan` ni un compromiso de implementar todos sus ítems en MVP. Las filas por año son candidatas de planificación, no ubicaciones finales: su auditoría sigue **OPEN** en las [preguntas 46 y 46-bis](07-reference/open-questions.md). Cada entrada debe pasar por la guía de autoría y validación antes de producción.
 
 ## 7.º grado
 
@@ -819,7 +821,7 @@ Están elegidos para que ninguna estrategia degenerada pase por buena: marcar la
 
 **Fail-forward.** No hay game over. El peor acto deja Aura negativa, evidencia de Improvisador y una consecuencia narrativa, y el año sigue.
 
-**Determinismo.** Las tres variantes se eligen con el RNG sembrado del motor, direccionado por la etapa, el índice de evento y la dificultad. Misma seed y mismas acciones producen el mismo acto. El contenido subió a `0.3.0-grade-7` porque el año cambió de siete a ocho eventos.
+**Determinismo.** Las tres variantes se eligen con el RNG sembrado del motor. Una vez elegida su dirección `familia/plantilla/variante`, el caso concreto usa el substream semántico de [ADR-019](03-architecture/adr/ADR-019-scenario-family-template-variant.md), independiente del año y del slot. Misma seed y mismas acciones producen el mismo acto. Al agregar el evento, el contenido subió a `0.3.0-grade-7`; la migración estructural posterior lo llevó a `0.4.0-grade-7` sin reescribir su matemática.
 
 **Accesibilidad.** Cada celda es una casilla nativa de 56 px: se recorre con Tab y se marca con Espacio. La regla siempre está en texto y nunca es sólo un color. Los cuatro estados corregidos cambian relleno, trazo de borde y glifo a la vez, y llevan además la palabra para lector de pantalla, así que la grilla se lee entera en escala de grises.
 
@@ -1398,7 +1400,7 @@ Desde [ADR-019](03-architecture/adr/ADR-019-scenario-family-template-variant.md)
 
 Y declara su **elegibilidad por etapa**, que es permiso y no selección: una plantilla elegible para 7.º no aparece en toda run de 7.º.
 
-Un año aporta **uno o dos beats ordinarios**, con exactamente un `anchor`. Una evaluación gasta uno de esos dos; no es un beat extra. La recuperación es condicional y queda afuera del presupuesto. Ver [la migración del modelo de contenido](03-architecture/content-model-migration.md) para el procedimiento completo.
+Un año aporta **uno o dos beats ordinarios**, con exactamente un `anchor`. Un `checkpoint` o un `special` gasta uno de esos dos; no es un beat extra. La recuperación es condicional y queda afuera del presupuesto. Ver [la migración del modelo de contenido](03-architecture/content-model-migration.md) para el procedimiento completo.
 
 ## Ficha de autoría
 
@@ -5726,7 +5728,7 @@ Poder generar, validar y reproducir un conjunto grande de variantes sin depender
 
 - Bandas de dificultad, `difficultyCost`, presupuesto y compositor de runs → STAGE-05. El presupuesto ya está definido como contrato validable; **construir** planes no es de acá.
 - `FairScore`, `MathPerformance`, `ScorePolicy` competitiva, `scoreVersion` → STAGE-06.
-- Dividir familias de producción en varias plantillas, migrar los cinco desafíos restantes o mover contenido de año → STAGE-04.
+- Enriquecer 7.º con plantillas que aporten variación cognitiva real y preparar la Teacher Demo Candidate → STAGE-04. La migración estructural de los seis desafíos actuales ya está completa; mover contenido de año sigue abierto.
 - Egreso, recuperaciones, contenido de 1.º–5.º → STAGE-07 y STAGE-08.
 - Ranking, endpoints, persistencia, fair mode → STAGE-09.
 - Cerrar el inventario de escenarios: sigue **OPEN**.
@@ -5788,7 +5790,7 @@ Ninguna decisión de Teacher Gate bloquea STAGE-03. El primer gate docente llega
 
 ## Siguiente etapa
 
-Completar STAGE-03 destraba **STAGE-04 — 7.º completo como Demo Candidate**, que es donde los cinco desafíos restantes se convierten en familias con más de una estructura de razonamiento, y **STAGE-05 — dificultad y Run Composer**, que es quien empieza a *construir* planes en vez de sólo validarlos.
+Completar STAGE-03 destraba **STAGE-04 — enriquecimiento de 7.º y Demo Candidate**, que usa el pipeline de variantes en contenido real, suma estructuras cognitivas donde aporten y define la selección de la demo docente sin confundirla con una run normal. También destraba **STAGE-05 — dificultad y Run Composer**, que es quien empieza a *construir* planes en vez de sólo validarlos.
 
 El primer gate externo es **Teacher Gate 1**, después de STAGE-04 y STAGE-06.
 
@@ -5940,7 +5942,7 @@ Tabla de navegación. Los contratos de cada etapa, más abajo, son la autoridad.
 | [STAGE-01](#stage-01-contratos-de-run-versiones-y-seeds) | Contratos de run, versiones y seeds | `DONE` | STAGE-00 | — |
 | [STAGE-02](#stage-02-scenariofamily-challengetemplate-challengevariant) | ScenarioFamily → Template → Variant | `DONE` | STAGE-01 | — |
 | [STAGE-03](#stage-03-generación-validación-y-catálogo-de-variantes) | Generación, validación y catálogo de variantes | **`READY`** | STAGE-02 | — |
-| [STAGE-04](#stage-04-7º-completo-como-demo-candidate) | 7.º completo como Demo Candidate | `PARTIAL` | STAGE-02, STAGE-03 | — |
+| [STAGE-04](#stage-04-enriquecimiento-de-7º-y-demo-candidate) | Enriquecimiento de 7.º y Demo Candidate | `PARTIAL` | STAGE-02, STAGE-03 | — |
 | [STAGE-05](#stage-05-modelo-de-dificultad-y-run-composer) | Modelo de dificultad y Run Composer | `NOT_STARTED` | STAGE-03 | — |
 | [STAGE-06](#stage-06-scorepolicy-competitiva) | ScorePolicy competitiva | `NOT_STARTED` | STAGE-05 | — |
 | [GATE-TG1](#gate-tg1-teacher-gate-1) | **Teacher Gate 1** | `TEACHER_GATE` | STAGE-04, STAGE-06 | externo |
@@ -5990,7 +5992,7 @@ Estado real contra el código al 28 de agosto de 2026. Es la base de la que sale
 | Ledger de notas y Promedio derivado | `DONE` | `career.ts` → `grades: readonly number[]` | previa |
 | `null` ≠ 0 en dimensiones de carrera | `DONE` | `career.ts`, `tests/component/grade-7-ui.test.tsx` | previa |
 | Aura con signo, sin techo, introducida en juego | `DONE` | `career.ts`, `src/content/grade-7/challenges/may-25-act.ts`, E2E «el acto del 25 de Mayo introduce Aura» | STAGE-04 |
-| Acto del 25 de Mayo | `DONE` | `may-25-act.ts`, `src/game/math/classification.ts`, `tests/unit/number-classification.test.ts`, 6 E2E, contenido `0.3.0-grade-7` | STAGE-04 |
+| Acto del 25 de Mayo | `DONE` | `may-25-act.ts`, `src/game/math/classification.ts`, `tests/unit/number-classification.test.ts`, 6 E2E, contenido `0.4.0-grade-7` | STAGE-04 |
 | Mastery y flags ocultos | `DONE` | `career.ts` → `mastery`, `src/game/narrative/` | previa |
 | Motor determinista separado de React | `DONE` | [ADR-011](03-architecture/adr/ADR-011-functional-core-transition-engine.md), `tests/unit/architecture-lint.test.ts`, `tests/unit/engine-modules.test.ts` | previa |
 | Tripleta de versiones de run | `DONE` | `src/game/core/versioning.ts`, `assertCompatibleVersions` | STAGE-01 |
@@ -6130,7 +6132,7 @@ Estado real contra el código al 28 de agosto de 2026. Es la base de la que sale
 
 - No implementar generadores por restricción reutilizables — es [STAGE-03](#stage-03-generación-validación-y-catálogo-de-variantes).
 - No construir el catálogo desplegado ni `variantCatalogVersion`.
-- No migrar todavía los cinco desafíos de 7.º — es [STAGE-04](#stage-04-7º-completo-como-demo-candidate).
+- No enriquecer todavía 7.º con nuevas estructuras cognitivas ni decidir la ubicación final de su contenido — es [STAGE-04](#stage-04-enriquecimiento-de-7º-y-demo-candidate). La migración estructural de los seis desafíos sí quedó completada al cerrar esta etapa; ver [la migración](03-architecture/content-model-migration.md).
 - No tocar bandas de dificultad, `difficultyCost` ni presupuesto.
 - No tocar scoring, `FairScore` ni ranking.
 - No agregar contenido de 1.º–5.º.
@@ -6165,9 +6167,9 @@ Criterios que la etapa sumó sobre el contrato original:
 **Riesgos.**
 
 - Cambiar la dirección de instancia puede alterar el consumo de RNG y romper golden replays. Si el resultado cambia, es un bump de `ENGINE_VERSION`, no un regenerado silencioso de goldens.
-- Tentación de migrar el contenido «ya que estamos». No: eso es STAGE-04 y necesita STAGE-03 antes.
+- Confundir la migración estructural ya completada con un inventario definitivo. STAGE-04 puede enriquecer la demo, pero la ubicación y el destino final de los seis escenarios siguen abiertos.
 
-**Decisiones.** `RECOMENDADA` (D-006): la jerarquía family/template/variant es dirección de arquitectura, no contrato cerrado — se implementa de forma que se pueda ajustar. `LOCKED` (D-007): variantes deterministas por seed. `OPEN` ([pregunta 46](07-reference/open-questions.md)): cuántas familias y plantillas por año.
+**Decisiones.** `RECOMENDADA` (D-006): la jerarquía family/template/variant es dirección de arquitectura, no contrato cerrado — se implementa de forma que se pueda ajustar. `LOCKED` (D-007): variantes deterministas por seed. `OPEN` ([pregunta 46](07-reference/open-questions.md)): profundidad del catálogo de contenido disponible por etapa.
 
 **Evidencia de completitud.**
 
@@ -6233,28 +6235,37 @@ Criterios que la etapa sumó sobre el contrato original:
 
 ---
 
-### STAGE-04 — 7.º completo como Demo Candidate
+### STAGE-04 — Enriquecimiento de 7.º y Demo Candidate
 
-- **Estado:** `PARTIAL` — la mitad de Aura y del acto está `DONE`; la migración está bloqueada por STAGE-02 y STAGE-03.
+- **Estado:** `PARTIAL` — Aura y el acto están `DONE`; el enriquecimiento de contenido y la preparación de la demo dependen de STAGE-03. La migración estructural de los seis desafíos ya está terminada.
 - **Depende de:** STAGE-02, STAGE-03
 - **Desbloquea:** GATE-TG1
 
-**Propósito.** Usar 7.º como banco de prueba real de la arquitectura nueva antes de producir los demás años.
+**Propósito.** Enriquecer 7.º con variación estructural real y convertir el slice amplio existente en una Demo Candidate representativa, usando la arquitectura ya migrada y el pipeline de STAGE-03 antes de producir los demás años.
 
 **Scope IN.**
 
-- Migrar los cinco escenarios existentes —colectivo, mural, cuaderno, proyecto grupal, stand— a familia/plantilla/variante.
-- Preservar la intención matemática de cada uno, salvo cambio deliberado y documentado.
-- Al menos una segunda plantilla en las familias donde la variación estructural aporte.
+- Agregar plantillas sólo donde aporten una estructura de razonamiento genuinamente distinta; cambiar números u orden de opciones no alcanza.
+- Usar el pipeline de STAGE-03 en contenido jugable real, con variantes generadas y prevalidadas donde el espacio paramétrico lo justifique y conjuntos autorados donde convenga curación.
+- Comprobar que las seis familias y plantillas actuales siguen funcionando bajo la arquitectura completada, preservando su intención matemática salvo cambio deliberado y documentado.
+- Definir qué contenido integra la **Teacher Demo Candidate** y documentar esa selección sin convertirla en el plan normal de producción.
+- Reconciliar la cobertura amplia del slice histórico —seis desafíos y variedad de interacciones— con el presupuesto normal de uno a dos beats por etapa fijado por [ADR-019](03-architecture/adr/ADR-019-scenario-family-template-variant.md).
+- Validar pacing, variedad de gameplay e interacciones, y exposición de Promedio, Equipo, Aura y Estilo para Teacher Gate 1.
 - Toda UI nueva consume el sistema de diseño v0.2.
 
-**Scope OUT.** Reescribir la matemática existente. Rediseño visual. Contenido de años nuevos. Score competitivo. Ranking. Recuperaciones.
+La **Teacher Demo Candidate** puede mostrar más mecánicas que un segmento normal para que los docentes evalúen el producto. El **plan normal de una run** mantiene uno o dos beats ordinarios por etapa. Son configuraciones de selección distintas sobre el mismo modelo, no motores distintos.
 
-**Lectura requerida.** [Vertical slice de 7.º](06-delivery/vertical-slice-grade-7.md) · [catálogo de desafíos](01-game-design/challenge-catalog.md) · [familias y variantes](01-game-design/challenge-families-and-variants.md) · [sistema de diseño](09-design-system/README.md) · [migración de 7.º](09-design-system/migration-7-grade.md).
+**Scope OUT.** Repetir la migración estructural ya completada. Decidir el inventario final o mover escenarios de año. Run Composer y balance final de dificultad. Reescribir la matemática existente. Rediseño visual. Contenido de 1.º–5.º. Score competitivo. Ranking. Recuperaciones.
+
+**Lectura requerida.** [ADR-019](03-architecture/adr/ADR-019-scenario-family-template-variant.md) · [migración del modelo de contenido](03-architecture/content-model-migration.md) · [Vertical slice de 7.º](06-delivery/vertical-slice-grade-7.md) · [catálogo de desafíos](01-game-design/challenge-catalog.md) · [familias y variantes](01-game-design/challenge-families-and-variants.md) · [sistema de diseño](09-design-system/README.md) · [migración visual de 7.º](09-design-system/migration-7-grade.md).
 
 **Criterios de aceptación.**
 
-- [ ] Los cinco desafíos previos migrados, o la transición documentada explícitamente.
+- [x] Los seis desafíos actuales están migrados estructuralmente a familia/plantilla/variante, con equivalencia semántica documentada.
+- [ ] La demo incorpora variación cognitiva real donde aporta; no se presenta un reordenamiento o cambio numérico como plantilla nueva.
+- [ ] El pipeline de STAGE-03 se usa en contenido real donde corresponde, sin obligar a que todo contenido curado sea procedural.
+- [ ] La selección de la Teacher Demo Candidate está documentada y distinguida del plan normal de uno a dos beats por etapa.
+- [ ] Pacing, variedad de gameplay e interacciones y exposición del Career Model están validados para Teacher Gate 1.
 - [ ] Matemática previa preservada; cualquier cambio, deliberado y escrito.
 - [x] El acto del 25 de Mayo está en el flujo real de la partida.
 - [x] Aura pasa de `null` a un valor significativo durante la run.
@@ -6267,11 +6278,11 @@ Criterios que la etapa sumó sobre el contrato original:
 
 **Validación requerida.** `pnpm verify` completo, incluidos `pnpm test:e2e:only` y `pnpm design:check`.
 
-**Evidencia ya disponible.** `src/content/grade-7/challenges/may-25-act.ts`; `src/game/math/classification.ts`; `tests/unit/number-classification.test.ts`; `tests/unit/grade-7-content.test.ts`; `tests/property/grade-7.property.test.ts`; `tests/integration/grade-7-run.test.ts`; seis pruebas E2E del acto, incluidas teclado, cinco viewports y Aura negativa; contenido y ruleset en `0.3.0-grade-7`.
+**Evidencia ya disponible.** `src/content/grade-7/challenges/may-25-act.ts`; `src/game/math/classification.ts`; `tests/unit/number-classification.test.ts`; `tests/unit/grade-7-content.test.ts`; `tests/property/grade-7.property.test.ts`; `tests/integration/grade-7-run.test.ts`; seis pruebas E2E del acto, incluidas teclado, cinco viewports y Aura negativa; contenido `0.4.0-grade-7` y ruleset `0.3.0-grade-7`.
 
-**Riesgos.** Migrar contenido y cambiar arquitectura en el mismo paso hace que un fallo de golden replay sea ambiguo. Migrar de a una familia.
+**Riesgos.** Confundir la densidad deliberada de la demo con la longitud de una run normal; convertir las seis sondas actuales en inventario definitivo; o forzar generación procedural donde un conjunto curado es más apropiado.
 
-**Decisiones.** `OPEN` ([pregunta 42](07-reference/open-questions.md)): si el acto del 25 de Mayo entra a producción — está implementado, falta la aprobación de contenido. `LOCKED` (D-001, D-002): identidad UI-first y sistema de diseño v0.2.
+**Decisiones.** [ADR-019](03-architecture/adr/ADR-019-scenario-family-template-variant.md) gobierna modelo, catálogo ≠ plan y presupuesto. `OPEN` ([preguntas 46 y 46-bis](07-reference/open-questions.md)): profundidad e inventario final del catálogo. `OPEN` ([pregunta 42](07-reference/open-questions.md)): si el acto del 25 de Mayo entra a producción. `LOCKED` (D-001, D-002): identidad UI-first y sistema de diseño v0.2.
 
 **Exit gate.** ¿Es 7.º una **Demo Candidate** representativa del producto final?
 
@@ -6444,7 +6455,7 @@ Aprobación externa del Departamento de Matemática sobre la Demo Candidate de 7
 
 **Validación requerida.** `pnpm verify`, `pnpm game:validate-content`, `pnpm game:simulate:deep`, `pnpm test:e2e:only`.
 
-**Decisiones.** `OPEN` ([pregunta 46](07-reference/open-questions.md)): cantidad de familias y plantillas por año. `DEFERRED` ([pregunta 48](07-reference/open-questions.md)): acento visual por año — es alcance del sistema de diseño v0.4, no de esta etapa.
+**Decisiones.** `OPEN` ([pregunta 46](07-reference/open-questions.md)): profundidad del catálogo de contenido disponible por etapa, no longitud de la run. `DEFERRED` ([pregunta 48](07-reference/open-questions.md)): acento visual por año — es alcance del sistema de diseño v0.4, no de esta etapa.
 
 **Exit gate.** ¿Una run completa recorre `7.º → 1.º → 2.º → 3.º → 4.º → 5.º → EGRESADO`?
 
@@ -6642,7 +6653,7 @@ Aceptación externa del juego completo antes del congelamiento. Detalle en [gate
 5. Crear `DecisionCard`.
 6. Crear `NumericInput`.
 7. Crear `BudgetBuilder` o `Timeline`.
-8. Implementar 8–10 desafíos.
+8. Objetivo histórico: implementar 8–10 desafíos como inventario/cobertura del prototipo. Desde [ADR-019](03-architecture/adr/ADR-019-scenario-family-template-variant.md), este conteo no define la longitud de una run normal, que selecciona uno o dos beats por etapa.
 9. Feedback de consecuencias.
 10. Progresión 7.º + 1.º.
 11. Score provisional.
@@ -6658,7 +6669,7 @@ Aceptación externa del juego completo antes del congelamiento. Detalle en [gate
 18. Assignment Board.
 19. Chart/Data Interaction.
 20. Spatial Grid.
-21. 30–40 templates/variantes suficientes.
+21. 30–40 templates/variantes suficientes en el catálogo disponible; no todos en una run.
 22. Perfil final completo.
 23. Accessibility pass.
 
@@ -6979,11 +6990,11 @@ flowchart TD
     N --> O[Jugar de nuevo]
 ```
 
-Ocho eventos: dos narrativos y seis desafíos. Duración objetivo 3–5 minutos.
+Ocho eventos: dos narrativos y seis desafíos. Duración objetivo histórica del slice: 3–5 minutos. Esta densidad pertenece al artefacto de demostración y no fija la longitud de un segmento normal de producción.
 
 ## Contenido de 7.º grado
 
-Vive en `src/content/grade-7/`, no en fixtures de desarrollo. Es contenido de producto versionado (`contentVersion` `0.3.0-grade-7`).
+Vive en `src/content/grade-7/`, no en fixtures de desarrollo. Es contenido de producto versionado (`contentVersion` `0.4.0-grade-7`).
 
 | Id | Situación | Matemática | Interacción | Razonamiento |
 |---|---|---|---|---|
@@ -7106,6 +7117,8 @@ Lo que sí queda como deuda conocida:
 
 El slice de 7.º no es un prototipo descartable: es la **candidata a demo docente** de la Fase A del [ciclo de entrega real](00-product/real-delivery-lifecycle.md). Su trabajo es que el Departamento de Matemática pueda decidir si el proyecto se extiende a todos los años.
 
+La **Teacher Demo Candidate** puede seleccionar deliberadamente más contenido que un segmento normal para exponer matemática, patrones de interacción y las cuatro dimensiones de carrera. El **plan normal de una run**, en cambio, selecciona uno o dos beats ordinarios por etapa desde un catálogo disponible más amplio. Son dos configuraciones de selección sobre el mismo modelo; no requieren motores distintos. Ver [ADR-019](03-architecture/adr/ADR-019-scenario-family-template-variant.md).
+
 Tiene que probar ocho cosas:
 
 1. Egresado tiene identidad visual propia.
@@ -7119,7 +7132,7 @@ Tiene que probar ocho cosas:
 
 ### Variación: qué alcanza y qué no
 
-Los cinco escenarios existentes —colectivo, mural, cuaderno, proyecto grupal y stand— tienen matemática que **no se reescribe**. Lo que la demo debería agregar es convertirlos en familias con más de una estructura de razonamiento, para que la segunda run del docente cambie valores y, en algunas familias, la pregunta. Ver [familias, plantillas y variantes](01-game-design/challenge-families-and-variants.md).
+Los seis escenarios actuales —colectivo, mural, cuaderno, proyecto grupal, stand y acto del 25 de Mayo— ya están migrados estructuralmente a familia/plantilla/variante, sin reescribir su matemática. Lo que la demo todavía debe agregar es variación estructural real: plantillas adicionales sólo donde aporten otra pregunta o forma de razonamiento, usando el pipeline de STAGE-03 donde corresponda. Ver [la migración](03-architecture/content-model-migration.md) y [familias, plantillas y variantes](01-game-design/challenge-families-and-variants.md).
 
 No se puede llamar «dinámico» a un cambio de orden de las opciones.
 
@@ -7660,7 +7673,7 @@ Estas decisiones requieren evidencia de prototipo, playtest, implementación u o
 ## Producto
 
 1. ¿Run objetivo de 4, 5 o 7 minutos?
-2. ¿Cuántos eventos por año mantienen ritmo sin sentirse repetitivos?
+2. Dentro del presupuesto ya fijado de uno o dos beats normales, ¿qué combinación con storylets y recuperaciones condicionales mantiene el ritmo sin sentirse repetitiva? Esta pregunta de pacing no reabre el presupuesto ni define la profundidad del catálogo.
 3. ¿El nickname se pide antes o después de la primera run en modo libre?
 4. ¿Qué tan visible debe ser el score durante la carrera?
 
@@ -7742,7 +7755,7 @@ Incorporadas desde el [Project Blueprint v0.2](07-reference/blueprint-v0.2-integ
 
 ## Contenido y producto, sin gate docente inmediato
 
-46. ¿Cuántas familias de escenario y cuántas plantillas por año sostienen la variedad sin romper la duración objetivo? El rango de planificación es de seis a ocho situaciones significativas por año, y **es planificación, no requisito**. *Gate: congelar la matriz de contenido de 1.º–5.º.*
+46. ¿Qué profundidad de `ScenarioFamily`, `ChallengeTemplate` y `ChallengeVariant` debe ofrecer el **catálogo de contenido disponible** por etapa académica para sostener una rejugabilidad significativa, dado que una run individual normalmente selecciona sólo uno o dos beats de esa etapa? Las opciones disponibles en el catálogo **no son** la cantidad de beats jugados por año. La referencia histórica de seis a ocho situaciones era planificación de inventario, no una respuesta ni el presupuesto de una run, y la cantidad final sigue **OPEN**. *Gate: congelar la matriz de contenido de 1.º–5.º.*
 
 ### 46-bis. El inventario final de escenarios sigue ABIERTO
 
@@ -7752,7 +7765,7 @@ El modelo de contenido de [ADR-019](03-architecture/adr/ADR-019-scenario-family-
 - cuántas plantillas tiene cada familia;
 - cuántas variantes tiene cada plantilla;
 - en qué año va cada cosa;
-- si cada uno de los seis escenarios actuales se mantiene, se mueve, se rehace, se fusiona, se reemplaza o se retira.
+- si cada uno de los seis escenarios actuales se clasifica como **KEEP**, **MOVE**, **REWORK**, **MERGE**, **REPLACE** o **REMOVE**.
 
 Los seis desafíos actuales son **contenido vigente y sondas de arquitectura**, no el inventario completo del juego, y su ubicación en 7.º es consecuencia del primer slice vertical, no una decisión de producto. Las familias declaradas hoy —`bus`, `mural`, `notebook`, `group-project`, `school-fair`, `may-25`— son **CANDIDATAS**, no un catálogo cerrado.
 

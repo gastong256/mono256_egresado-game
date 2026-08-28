@@ -110,7 +110,7 @@ Desde [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.
 
 Y declara su **elegibilidad por etapa**, que es permiso y no selección: una plantilla elegible para 7.º no aparece en toda run de 7.º.
 
-Un año aporta **uno o dos beats ordinarios**, con exactamente un `anchor`. Una evaluación gasta uno de esos dos; no es un beat extra. La recuperación es condicional y queda afuera del presupuesto. Ver [la migración del modelo de contenido](../03-architecture/content-model-migration.md) para el procedimiento completo.
+Un año aporta **uno o dos beats ordinarios**, con exactamente un `anchor`. Un `checkpoint` o un `special` gasta uno de esos dos; no es un beat extra. La recuperación es condicional y queda afuera del presupuesto. Ver [la migración del modelo de contenido](../03-architecture/content-model-migration.md) para el procedimiento completo.
 
 ## Ficha de autoría
 

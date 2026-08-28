@@ -35,7 +35,7 @@ Poder generar, validar y reproducir un conjunto grande de variantes sin depender
 
 - Bandas de dificultad, `difficultyCost`, presupuesto y compositor de runs → STAGE-05. El presupuesto ya está definido como contrato validable; **construir** planes no es de acá.
 - `FairScore`, `MathPerformance`, `ScorePolicy` competitiva, `scoreVersion` → STAGE-06.
-- Dividir familias de producción en varias plantillas, migrar los cinco desafíos restantes o mover contenido de año → STAGE-04.
+- Enriquecer 7.º con plantillas que aporten variación cognitiva real y preparar la Teacher Demo Candidate → STAGE-04. La migración estructural de los seis desafíos actuales ya está completa; mover contenido de año sigue abierto.
 - Egreso, recuperaciones, contenido de 1.º–5.º → STAGE-07 y STAGE-08.
 - Ranking, endpoints, persistencia, fair mode → STAGE-09.
 - Cerrar el inventario de escenarios: sigue **OPEN**.
@@ -97,7 +97,7 @@ Ninguna decisión de Teacher Gate bloquea STAGE-03. El primer gate docente llega
 
 ## Siguiente etapa
 
-Completar STAGE-03 destraba **STAGE-04 — 7.º completo como Demo Candidate**, que es donde los cinco desafíos restantes se convierten en familias con más de una estructura de razonamiento, y **STAGE-05 — dificultad y Run Composer**, que es quien empieza a *construir* planes en vez de sólo validarlos.
+Completar STAGE-03 destraba **STAGE-04 — enriquecimiento de 7.º y Demo Candidate**, que usa el pipeline de variantes en contenido real, suma estructuras cognitivas donde aporten y define la selección de la demo docente sin confundirla con una run normal. También destraba **STAGE-05 — dificultad y Run Composer**, que es quien empieza a *construir* planes en vez de sólo validarlos.
 
 El primer gate externo es **Teacher Gate 1**, después de STAGE-04 y STAGE-06.
 

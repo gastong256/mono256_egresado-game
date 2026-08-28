@@ -5,7 +5,7 @@ Estas decisiones requieren evidencia de prototipo, playtest, implementación u o
 ## Producto
 
 1. ¿Run objetivo de 4, 5 o 7 minutos?
-2. ¿Cuántos eventos por año mantienen ritmo sin sentirse repetitivos?
+2. Dentro del presupuesto ya fijado de uno o dos beats normales, ¿qué combinación con storylets y recuperaciones condicionales mantiene el ritmo sin sentirse repetitiva? Esta pregunta de pacing no reabre el presupuesto ni define la profundidad del catálogo.
 3. ¿El nickname se pide antes o después de la primera run en modo libre?
 4. ¿Qué tan visible debe ser el score durante la carrera?
 
@@ -87,7 +87,7 @@ Incorporadas desde el [Project Blueprint v0.2](blueprint-v0.2-integration.md). *
 
 ## Contenido y producto, sin gate docente inmediato
 
-46. ¿Cuántas familias de escenario y cuántas plantillas por año sostienen la variedad sin romper la duración objetivo? El rango de planificación es de seis a ocho situaciones significativas por año, y **es planificación, no requisito**. *Gate: congelar la matriz de contenido de 1.º–5.º.*
+46. ¿Qué profundidad de `ScenarioFamily`, `ChallengeTemplate` y `ChallengeVariant` debe ofrecer el **catálogo de contenido disponible** por etapa académica para sostener una rejugabilidad significativa, dado que una run individual normalmente selecciona sólo uno o dos beats de esa etapa? Las opciones disponibles en el catálogo **no son** la cantidad de beats jugados por año. La referencia histórica de seis a ocho situaciones era planificación de inventario, no una respuesta ni el presupuesto de una run, y la cantidad final sigue **OPEN**. *Gate: congelar la matriz de contenido de 1.º–5.º.*
 
 ### 46-bis. El inventario final de escenarios sigue ABIERTO
 
@@ -97,7 +97,7 @@ El modelo de contenido de [ADR-019](../03-architecture/adr/ADR-019-scenario-fami
 - cuántas plantillas tiene cada familia;
 - cuántas variantes tiene cada plantilla;
 - en qué año va cada cosa;
-- si cada uno de los seis escenarios actuales se mantiene, se mueve, se rehace, se fusiona, se reemplaza o se retira.
+- si cada uno de los seis escenarios actuales se clasifica como **KEEP**, **MOVE**, **REWORK**, **MERGE**, **REPLACE** o **REMOVE**.
 
 Los seis desafíos actuales son **contenido vigente y sondas de arquitectura**, no el inventario completo del juego, y su ubicación en 7.º es consecuencia del primer slice vertical, no una decisión de producto. Las familias declaradas hoy —`bus`, `mural`, `notebook`, `group-project`, `school-fair`, `may-25`— son **CANDIDATAS**, no un catálogo cerrado.
 

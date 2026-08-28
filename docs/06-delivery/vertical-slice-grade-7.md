@@ -26,11 +26,11 @@ flowchart TD
     N --> O[Jugar de nuevo]
 ```
 
-Ocho eventos: dos narrativos y seis desafíos. Duración objetivo 3–5 minutos.
+Ocho eventos: dos narrativos y seis desafíos. Duración objetivo histórica del slice: 3–5 minutos. Esta densidad pertenece al artefacto de demostración y no fija la longitud de un segmento normal de producción.
 
 ## Contenido de 7.º grado
 
-Vive en `src/content/grade-7/`, no en fixtures de desarrollo. Es contenido de producto versionado (`contentVersion` `0.3.0-grade-7`).
+Vive en `src/content/grade-7/`, no en fixtures de desarrollo. Es contenido de producto versionado (`contentVersion` `0.4.0-grade-7`).
 
 | Id | Situación | Matemática | Interacción | Razonamiento |
 |---|---|---|---|---|
@@ -153,6 +153,8 @@ Lo que sí queda como deuda conocida:
 
 El slice de 7.º no es un prototipo descartable: es la **candidata a demo docente** de la Fase A del [ciclo de entrega real](../00-product/real-delivery-lifecycle.md). Su trabajo es que el Departamento de Matemática pueda decidir si el proyecto se extiende a todos los años.
 
+La **Teacher Demo Candidate** puede seleccionar deliberadamente más contenido que un segmento normal para exponer matemática, patrones de interacción y las cuatro dimensiones de carrera. El **plan normal de una run**, en cambio, selecciona uno o dos beats ordinarios por etapa desde un catálogo disponible más amplio. Son dos configuraciones de selección sobre el mismo modelo; no requieren motores distintos. Ver [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md).
+
 Tiene que probar ocho cosas:
 
 1. Egresado tiene identidad visual propia.
@@ -166,7 +168,7 @@ Tiene que probar ocho cosas:
 
 ### Variación: qué alcanza y qué no
 
-Los cinco escenarios existentes —colectivo, mural, cuaderno, proyecto grupal y stand— tienen matemática que **no se reescribe**. Lo que la demo debería agregar es convertirlos en familias con más de una estructura de razonamiento, para que la segunda run del docente cambie valores y, en algunas familias, la pregunta. Ver [familias, plantillas y variantes](../01-game-design/challenge-families-and-variants.md).
+Los seis escenarios actuales —colectivo, mural, cuaderno, proyecto grupal, stand y acto del 25 de Mayo— ya están migrados estructuralmente a familia/plantilla/variante, sin reescribir su matemática. Lo que la demo todavía debe agregar es variación estructural real: plantillas adicionales sólo donde aporten otra pregunta o forma de razonamiento, usando el pipeline de STAGE-03 donde corresponda. Ver [la migración](../03-architecture/content-model-migration.md) y [familias, plantillas y variantes](../01-game-design/challenge-families-and-variants.md).
 
 No se puede llamar «dinámico» a un cambio de orden de las opciones.
 
