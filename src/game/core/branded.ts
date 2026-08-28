@@ -15,8 +15,19 @@ type Brand<T, TBrand extends string> = T & { readonly [brand]: TBrand }
 
 export type RunId = Brand<string, 'RunId'>
 export type RunSeed = Brand<string, 'RunSeed'>
+/**
+ * Identity of a challenge template.
+ *
+ * A *challenge definition* is a **challenge template** in the content model:
+ * one cognitive structure inside a scenario family. The identifier type keeps
+ * the name it has always had because it addresses exactly the same thing.
+ */
 export type ChallengeId = Brand<string, 'ChallengeId'>
 export type ChallengeInstanceId = Brand<string, 'ChallengeInstanceId'>
+/** Identity of a scenario family: the thematic context templates belong to. */
+export type ScenarioFamilyId = Brand<string, 'ScenarioFamilyId'>
+/** Identity of one concrete parameterisation of a template. */
+export type VariantId = Brand<string, 'VariantId'>
 export type StoryletId = Brand<string, 'StoryletId'>
 export type RulesetId = Brand<string, 'RulesetId'>
 export type ContentSetId = Brand<string, 'ContentSetId'>
@@ -68,6 +79,14 @@ export function toChallengeId(value: string): ChallengeId {
 
 export function toChallengeInstanceId(value: string): ChallengeInstanceId {
   return value as ChallengeInstanceId
+}
+
+export function toScenarioFamilyId(value: string): ScenarioFamilyId {
+  return value as ScenarioFamilyId
+}
+
+export function toVariantId(value: string): VariantId {
+  return value as VariantId
 }
 
 export function toStoryletId(value: string): StoryletId {

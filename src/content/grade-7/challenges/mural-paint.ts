@@ -23,6 +23,8 @@ import {
   multiply,
   ok,
   subtract,
+  authoredVariant,
+  authoredVariantIds,
   toChallengeId,
   type ChallengeDefinition,
   type ChallengeEvaluation,
@@ -31,6 +33,7 @@ import {
   type Rational,
   type Result,
 } from '@/game'
+import { MURAL_FAMILY } from '../families'
 import { cifra, medida } from '@/content/numeros'
 
 import { pesos } from '../../pesos'
@@ -54,9 +57,12 @@ interface MuralModel {
  * Dos paredes autoradas. Las dos necesitan más de un litro y menos de cuatro,
  * así que en ambas el envase de 2 L es el que resuelve mejor.
  */
+/** Identidad estable de la plantilla. */
+const MURAL_PAINT_ID = toChallengeId('g7.mural-paint')
+
 const VARIANTS = [
-  { width: '6', height: '2.4', coverage: 8 }, // 14,4 m² -> 1,8 L
-  { width: '5', height: '2.4', coverage: 8 }, // 12,0 m² -> 1,5 L
+  { id: 'pared-6x24', width: '6', height: '2.4', coverage: 8 }, // 14,4 m² -> 1,8 L
+  { id: 'pared-5x24', width: '5', height: '2.4', coverage: 8 }, // 12,0 m² -> 1,5 L
 ] as const
 
 /** Envases reales de una pinturería, con precio por litro decreciente. */
@@ -67,15 +73,18 @@ const TINS = [
 ] as const
 
 export const muralPaint: ChallengeDefinition = defineChallenge<MuralModel>({
-  id: toChallengeId('g7.mural-paint'),
+  id: MURAL_PAINT_ID,
+  family: MURAL_FAMILY,
+  placement: 'checkpoint',
+  variants: authoredVariantIds(VARIANTS),
   interaction: 'decision-card',
   categories: ['space-and-shape', 'quantity'],
   stages: ['grade-7'],
   baseDifficulty: 2,
   tools: ['calculator'],
 
-  generate({ rng }) {
-    const variant = rng.pick(VARIANTS)
+  generate({ variantId }) {
+    const variant = authoredVariant(MURAL_PAINT_ID, VARIANTS, variantId)
     const width = fromDecimalString(variant.width)
     const height = fromDecimalString(variant.height)
     const coveragePerLitre = fromInteger(variant.coverage)

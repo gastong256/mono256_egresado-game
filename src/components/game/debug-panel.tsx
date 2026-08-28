@@ -41,7 +41,7 @@ export function DebugPanel({ state }: { readonly state: ControllerState }) {
             ['event index', String(run.eventIndex)],
             ['difficulty', String(run.difficulty.current)],
             ['storylet', run.activeEvent?.storyletId ?? '—'],
-            ['challenge', challenge?.definitionId ?? '—'],
+            ['challenge', challenge?.templateId ?? '—'],
             ['instance', challenge?.instanceId ?? '—'],
             ['actions logged', String(state.log.actions.length)],
           ] as const

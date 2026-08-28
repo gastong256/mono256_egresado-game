@@ -45,6 +45,7 @@
 - [x] Fronteras del monolito modular y dirección de dependencias ejecutable.
 - [x] Toolchain reproducible con gate de consistencia e imagen standalone sin cambiar la topología Vercel.
 - [x] Arquitectura objetivo del motor con el estado real de cada capacidad.
+- [x] Modelo de contenido: familia de escenario, plantilla y variante, con catálogo separado del plan de la run.
 
 ## Calidad
 - [x] Unit/integration/E2E.

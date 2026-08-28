@@ -69,6 +69,7 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 ### 03-architecture
 - `architecture-overview.md`: arquitectura lógica y física.
 - `game-engine.md`: diseño del motor determinista.
+- `content-model-migration.md`: cómo el contenido se mueve al modelo de familia, plantilla y variante, y la matriz de sondas.
 - `target-engine-architecture.md`: capacidades objetivo del motor y estado real de cada una.
 - `data-model.md`: modelo de datos inicial y evolución.
 - `api-contracts.md`: contratos HTTP del MVP online.

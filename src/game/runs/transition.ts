@@ -20,12 +20,15 @@ import {
   type ChallengeInstanceId,
   type StoryletId,
 } from '../core/branded'
-import type {
-  ChallengeInstanceRef,
-  MaterializedChallenge,
-  PublicChallengeView,
+import {
+  selectVariantId,
+  variantRefOf,
+  type ChallengeInstanceRef,
+  type MaterializedChallenge,
+  type PublicChallengeView,
 } from '../challenges/contracts'
-import type { ChallengeRegistry } from '../challenges/registry'
+import { variantRngPath } from '../challenges/content-model'
+import type { ContentCatalog } from '../challenges/content-catalog'
 import type { DifficultyLevel } from '../challenges/taxonomy'
 import { initialDifficultyState } from '../difficulty/policy'
 import { applyEffects } from '../narrative/effects'
@@ -62,11 +65,17 @@ import type {
 
 export interface EngineDependencies {
   readonly ruleset: Ruleset
-  readonly challenges: ChallengeRegistry
+  readonly catalog: ContentCatalog
   readonly storylets: readonly Storylet[]
 }
 
-/** Substream address of the challenge generated at a given event. */
+/**
+ * Substream address of the challenge generated at a given event.
+ *
+ * Where the run placed the beat plus which template it is. The variant is
+ * addressed separately, by content identity alone, so the two concerns cannot
+ * disturb each other.
+ */
 function challengeRngPath(
   ref: ChallengeInstanceRef,
 ): readonly (string | number)[] {
@@ -76,7 +85,7 @@ function challengeRngPath(
     'event',
     ref.eventIndex,
     'challenge',
-    ref.definitionId,
+    ref.templateId,
     'difficulty',
     ref.difficulty,
   ]
@@ -94,16 +103,26 @@ export function materializeChallenge(
   ref: ChallengeInstanceRef,
   dependencies: EngineDependencies,
 ): Result<MaterializedChallenge, EngineRejection> {
-  const definition = dependencies.challenges.get(ref.definitionId)
+  const template = dependencies.catalog.template(ref.templateId)
 
-  if (definition === undefined) {
-    return err({ kind: 'unknown-challenge', challengeId: ref.definitionId })
+  if (template === undefined) {
+    return err({ kind: 'unknown-challenge', challengeId: ref.templateId })
+  }
+
+  if (template.family !== ref.familyId) {
+    return err({ kind: 'unknown-challenge', challengeId: ref.templateId })
+  }
+
+  if (!template.variants.includes(ref.variantId)) {
+    return err({ kind: 'unknown-challenge', challengeId: ref.templateId })
   }
 
   return ok(
-    definition.materialize(ref, {
+    template.materialize(ref, {
       rng: createRng(descriptor.seed, challengeRngPath(ref)),
       difficulty: ref.difficulty,
+      variantId: ref.variantId,
+      variantRng: createRng(descriptor.seed, variantRngPath(variantRefOf(ref))),
     }),
   )
 }
@@ -299,7 +318,7 @@ function beginEvent(
     'challenge-pick',
   ])
   const eligible = storylet.challengePool.filter(
-    (id) => dependencies.challenges.get(id) !== undefined,
+    (id) => dependencies.catalog.template(id) !== undefined,
   )
 
   if (eligible.length === 0) {
@@ -308,18 +327,42 @@ function beginEvent(
     )
   }
 
-  const definitionId = pickRng.pick(eligible)
+  const templateId = pickRng.pick(eligible)
+  const template = dependencies.catalog.template(templateId)
+  if (template === undefined) {
+    throw new EngineInvariantError(
+      `challenge template ${templateId} vanished between filtering and selection`,
+    )
+  }
+
+  // The variant is chosen on its own substream, addressed by the template
+  // rather than by the slot. Which case the player sees is a content decision,
+  // and it must not shift because a storylet pool grew a neighbour.
+  const variantId = selectVariantId(
+    createRng(state.descriptor.seed, [
+      'stage',
+      state.stage,
+      'event',
+      state.eventIndex,
+      'variant-pick',
+      templateId,
+    ]),
+    template.variants,
+  )
+
   const difficulty: DifficultyLevel =
     state.descriptor.difficulty === 'fixed'
       ? stage.targetDifficulty
       : state.difficulty.current
 
   const instanceId: ChallengeInstanceId = toChallengeInstanceId(
-    `${state.stage}:${String(state.eventIndex)}:${definitionId}`,
+    `${state.stage}:${String(state.eventIndex)}:${templateId}`,
   )
   const ref: ChallengeInstanceRef = {
     instanceId,
-    definitionId,
+    familyId: template.family,
+    templateId,
+    variantId,
     stageId: state.stage,
     eventIndex: state.eventIndex,
     difficulty,
@@ -327,7 +370,7 @@ function beginEvent(
 
   events.push({
     type: 'challenge.generated',
-    challengeId: definitionId,
+    challengeId: templateId,
     instanceId,
     difficulty,
   })
@@ -631,7 +674,7 @@ function handleAnswer(
   // Mastery is the engine's job, not content's: it comes from the challenge's
   // declared categories and the quality reached, so every family contributes on
   // the same scale. It is hidden and never rendered.
-  const definition = dependencies.challenges.get(active.challenge.definitionId)
+  const definition = dependencies.catalog.template(active.challenge.templateId)
   const applied = applyCareerEffects(state.career, {
     ...result.careerEffects,
     mastery: [
@@ -696,7 +739,7 @@ function handleAnswer(
     stage: state.stage,
     eventIndex: state.eventIndex,
     storyletId: active.storyletId,
-    challengeId: active.challenge.definitionId,
+    challengeId: active.challenge.templateId,
     instanceId: active.challenge.instanceId,
     difficulty: active.challenge.difficulty,
     quality: result.quality,

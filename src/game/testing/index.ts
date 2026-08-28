@@ -8,7 +8,7 @@
  */
 
 export {
-  createDevelopmentChallengeRegistry,
+  createDevelopmentContentCatalog,
   createDevelopmentDependencies,
   createDevelopmentRuleset,
   developmentChallenges,
@@ -16,6 +16,13 @@ export {
   DEVELOPMENT_RULESET_VERSION,
 } from './fixtures/development-ruleset'
 export { developmentStorylets } from './fixtures/storylets'
+export { developmentFamilies } from './fixtures/families'
+export {
+  instanceRefFor,
+  materializeEveryVariant,
+  materializeVariant,
+  type MaterializeOptions,
+} from './materialize'
 export {
   DEFAULT_AGENT_OPTIONS,
   simulateRun,

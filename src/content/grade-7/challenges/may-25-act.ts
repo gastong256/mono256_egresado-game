@@ -49,6 +49,8 @@ import {
   ok,
   rational,
   targetsFor,
+  authoredVariant,
+  authoredVariantIds,
   toChallengeId,
   toNumber,
   type ChallengeDefinition,
@@ -61,6 +63,7 @@ import {
   type Result,
   type SolutionQuality,
 } from '@/game'
+import { MAY_25_FAMILY } from '../families'
 
 interface ActRound {
   readonly id: string
@@ -96,76 +99,91 @@ const COLUMNS = 4
  * variantes es otra tarea; la forma —lista de rondas con su regla y sus números—
  * está pensada para migrar sin reescribir el evaluador.
  */
-const VARIANTS: readonly (readonly ActRound[])[] = [
-  [
-    {
-      id: 'paso-1',
-      cue: 'Pañuelo blanco',
-      ruleLabel: 'Números pares',
-      rule: 'even',
-      numbers: [7, 12, 15, 8, 21, 30, 9, 24],
-    },
-    {
-      id: 'paso-2',
-      cue: 'Pañuelo celeste',
-      ruleLabel: 'Múltiplos de 3',
-      rule: 'multiple-of-three',
-      numbers: [11, 12, 15, 17, 8, 21, 22, 14],
-    },
-    {
-      id: 'paso-3',
-      cue: 'Zapateo',
-      ruleLabel: 'Números primos',
-      rule: 'prime',
-      numbers: [9, 2, 15, 7, 1, 13, 21, 6],
-    },
-  ],
-  [
-    {
-      id: 'paso-1',
-      cue: 'Pañuelo blanco',
-      ruleLabel: 'Números pares',
-      rule: 'even',
-      numbers: [13, 6, 9, 20, 25, 14, 11, 18],
-    },
-    {
-      id: 'paso-2',
-      cue: 'Pañuelo celeste',
-      ruleLabel: 'Múltiplos de 3',
-      rule: 'multiple-of-three',
-      numbers: [10, 9, 16, 24, 7, 13, 27, 20],
-    },
-    {
-      id: 'paso-3',
-      cue: 'Zapateo',
-      ruleLabel: 'Números primos',
-      rule: 'prime',
-      numbers: [4, 11, 9, 5, 25, 3, 12, 1],
-    },
-  ],
-  [
-    {
-      id: 'paso-1',
-      cue: 'Pañuelo blanco',
-      ruleLabel: 'Números pares',
-      rule: 'even',
-      numbers: [5, 16, 23, 10, 19, 22, 7, 4],
-    },
-    {
-      id: 'paso-2',
-      cue: 'Pañuelo celeste',
-      ruleLabel: 'Múltiplos de 3',
-      rule: 'multiple-of-three',
-      numbers: [14, 18, 5, 12, 20, 30, 11, 8],
-    },
-    {
-      id: 'paso-3',
-      cue: 'Zapateo',
-      ruleLabel: 'Números primos',
-      rule: 'prime',
-      numbers: [15, 17, 8, 23, 1, 9, 19, 21],
-    },
-  ],
+/** Identidad estable de la plantilla. */
+const MAY_25_ACT_ID = toChallengeId('g7.may-25-act')
+
+const VARIANTS: readonly {
+  readonly id: string
+  readonly rounds: readonly ActRound[]
+}[] = [
+  {
+    id: 'coreografia-a',
+    rounds: [
+      {
+        id: 'paso-1',
+        cue: 'Pañuelo blanco',
+        ruleLabel: 'Números pares',
+        rule: 'even',
+        numbers: [7, 12, 15, 8, 21, 30, 9, 24],
+      },
+      {
+        id: 'paso-2',
+        cue: 'Pañuelo celeste',
+        ruleLabel: 'Múltiplos de 3',
+        rule: 'multiple-of-three',
+        numbers: [11, 12, 15, 17, 8, 21, 22, 14],
+      },
+      {
+        id: 'paso-3',
+        cue: 'Zapateo',
+        ruleLabel: 'Números primos',
+        rule: 'prime',
+        numbers: [9, 2, 15, 7, 1, 13, 21, 6],
+      },
+    ],
+  },
+  {
+    id: 'coreografia-b',
+    rounds: [
+      {
+        id: 'paso-1',
+        cue: 'Pañuelo blanco',
+        ruleLabel: 'Números pares',
+        rule: 'even',
+        numbers: [13, 6, 9, 20, 25, 14, 11, 18],
+      },
+      {
+        id: 'paso-2',
+        cue: 'Pañuelo celeste',
+        ruleLabel: 'Múltiplos de 3',
+        rule: 'multiple-of-three',
+        numbers: [10, 9, 16, 24, 7, 13, 27, 20],
+      },
+      {
+        id: 'paso-3',
+        cue: 'Zapateo',
+        ruleLabel: 'Números primos',
+        rule: 'prime',
+        numbers: [4, 11, 9, 5, 25, 3, 12, 1],
+      },
+    ],
+  },
+  {
+    id: 'coreografia-c',
+    rounds: [
+      {
+        id: 'paso-1',
+        cue: 'Pañuelo blanco',
+        ruleLabel: 'Números pares',
+        rule: 'even',
+        numbers: [5, 16, 23, 10, 19, 22, 7, 4],
+      },
+      {
+        id: 'paso-2',
+        cue: 'Pañuelo celeste',
+        ruleLabel: 'Múltiplos de 3',
+        rule: 'multiple-of-three',
+        numbers: [14, 18, 5, 12, 20, 30, 11, 8],
+      },
+      {
+        id: 'paso-3',
+        cue: 'Zapateo',
+        ruleLabel: 'Números primos',
+        rule: 'prime',
+        numbers: [15, 17, 8, 23, 1, 9, 19, 21],
+      },
+    ],
+  },
 ]
 
 /**
@@ -205,7 +223,10 @@ function selectionFor(
 }
 
 export const may25Act: ChallengeDefinition = defineChallenge<May25Model>({
-  id: toChallengeId('g7.may-25-act'),
+  id: MAY_25_ACT_ID,
+  family: MAY_25_FAMILY,
+  placement: 'special',
+  variants: authoredVariantIds(VARIANTS),
   interaction: 'number-grid',
   categories: ['patterns-and-relations', 'quantity'],
   stages: ['grade-7'],
@@ -214,8 +235,10 @@ export const may25Act: ChallengeDefinition = defineChallenge<May25Model>({
   // guía. Una calculadora acá sería una mentira sobre la situación.
   tools: [],
 
-  generate({ rng }) {
-    return { rounds: rng.pick(VARIANTS) }
+  generate({ variantId }) {
+    return {
+      rounds: authoredVariant(MAY_25_ACT_ID, VARIANTS, variantId).rounds,
+    }
   },
 
   verify(model) {

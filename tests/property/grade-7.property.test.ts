@@ -5,7 +5,6 @@ import {
   activeChallengeView,
   createRun,
   isOk,
-  toChallengeInstanceId,
   toRunId,
   toRunSeed,
   transition,
@@ -13,7 +12,7 @@ import {
   type GameCommand,
   type RunDescriptor,
 } from '@/game'
-import { createRng } from '@/game/random/rng'
+import { materializeEveryVariant } from '@/game/testing'
 import {
   createGrade7Dependencies,
   grade7Challenges,
@@ -63,21 +62,11 @@ describe('toda seed produce un año jugable', () => {
           const definition = grade7Challenges[index]
           if (definition === undefined) return
 
-          const instance = definition.materialize(
-            {
-              instanceId: toChallengeInstanceId(`grade-7:0:${definition.id}`),
-              definitionId: definition.id,
-              stageId: 'grade-7',
-              eventIndex: 0,
-              difficulty: definition.baseDifficulty,
-            },
-            {
-              rng: createRng(toRunSeed(seed), ['property']),
-              difficulty: definition.baseDifficulty,
-            },
-          )
-
-          expect(instance.verify()).toEqual([])
+          // Cada variante autorada tiene que cumplir sus invariantes, no sólo
+          // la que un seed cualquiera elija.
+          for (const instance of materializeEveryVariant(definition, seed)) {
+            expect(instance.verify()).toEqual([])
+          }
         },
       ),
     )
@@ -91,32 +80,23 @@ describe('toda seed produce un año jugable', () => {
         )
         if (definition === undefined) return
 
-        const instance = definition.materialize(
-          {
-            instanceId: toChallengeInstanceId('grade-7:0:bus'),
-            definitionId: definition.id,
-            stageId: 'grade-7',
-            eventIndex: 0,
-            difficulty: 2,
-          },
-          { rng: createRng(toRunSeed(seed), ['bus']), difficulty: 2 },
-        )
+        for (const instance of materializeEveryVariant(definition, seed)) {
+          const view = instance.present([])
+          if (view.kind !== 'timeline') return
 
-        const view = instance.present([])
-        if (view.kind !== 'timeline') return
+          // Alguna opción tiene que resolver el problema, y alguna tiene que
+          // fallar: si no, la decisión no existiría.
+          const qualities = view.options.map((option) => {
+            const result = instance.evaluate(
+              { kind: 'timeline', optionId: option.id },
+              [],
+            )
+            return result.ok ? result.value.quality : 'invalid'
+          })
 
-        // Alguna opción tiene que resolver el problema, y alguna tiene que
-        // fallar: si no, la decisión no existiría.
-        const qualities = view.options.map((option) => {
-          const result = instance.evaluate(
-            { kind: 'timeline', optionId: option.id },
-            [],
-          )
-          return result.ok ? result.value.quality : 'invalid'
-        })
-
-        expect(qualities).toContain('optimal')
-        expect(qualities.some((quality) => quality === 'invalid')).toBe(true)
+          expect(qualities).toContain('optimal')
+          expect(qualities.some((quality) => quality === 'invalid')).toBe(true)
+        }
       }),
     )
   })
@@ -129,30 +109,21 @@ describe('toda seed produce un año jugable', () => {
         )
         if (definition === undefined) return
 
-        const instance = definition.materialize(
-          {
-            instanceId: toChallengeInstanceId('grade-7:0:mural'),
-            definitionId: definition.id,
-            stageId: 'grade-7',
-            eventIndex: 0,
-            difficulty: 2,
-          },
-          { rng: createRng(toRunSeed(seed), ['mural']), difficulty: 2 },
-        )
+        for (const instance of materializeEveryVariant(definition, seed)) {
+          const view = instance.present([])
+          if (view.kind !== 'decision-card') return
 
-        const view = instance.present([])
-        if (view.kind !== 'decision-card') return
+          const qualities = view.options.map((option) => {
+            const result = instance.evaluate(
+              { kind: 'decision-card', optionId: option.id },
+              [],
+            )
+            return result.ok ? result.value.quality : 'invalid'
+          })
 
-        const qualities = view.options.map((option) => {
-          const result = instance.evaluate(
-            { kind: 'decision-card', optionId: option.id },
-            [],
-          )
-          return result.ok ? result.value.quality : 'invalid'
-        })
-
-        expect(qualities).toContain('optimal')
-        expect(qualities).toContain('invalid')
+          expect(qualities).toContain('optimal')
+          expect(qualities).toContain('invalid')
+        }
       }),
     )
   })

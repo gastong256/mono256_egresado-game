@@ -11,7 +11,8 @@
  * problem internally before presenting it.
  */
 
-import { toChallengeId } from '../../../core/branded'
+import { toChallengeId, toVariantId } from '../../../core/branded'
+import { DEV_TRIP_FAMILY } from '../families'
 import { err, ok, type Result } from '../../../core/result'
 import type { EngineRejection } from '../../../core/errors'
 import {
@@ -78,6 +79,9 @@ function minimumCost(target: number, packs: readonly MealPack[]): number {
 export const tripBudget: ChallengeDefinition = defineChallenge<TripBudgetModel>(
   {
     id: toChallengeId('dev.trip-budget'),
+    family: DEV_TRIP_FAMILY,
+    placement: 'anchor',
+    variants: [toVariantId('base')],
     interaction: 'budget-builder',
     categories: ['optimization-and-constraints', 'quantity'],
     stages: ['year-2', 'year-3', 'year-5'],

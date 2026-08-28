@@ -8,7 +8,8 @@
  * Objective function: minimum cost among options that actually cover the wall.
  */
 
-import { toChallengeId } from '../../../core/branded'
+import { toChallengeId, toVariantId } from '../../../core/branded'
+import { DEV_MURAL_FAMILY } from '../families'
 import { err, ok, type Result } from '../../../core/result'
 import type { EngineRejection } from '../../../core/errors'
 import {
@@ -60,6 +61,9 @@ const TIN_SIZES = ['1', '2', '4', '5']
 
 export const muralCoverage: ChallengeDefinition = defineChallenge<MuralModel>({
   id: toChallengeId('dev.mural-coverage'),
+  family: DEV_MURAL_FAMILY,
+  placement: 'checkpoint',
+  variants: [toVariantId('base')],
   interaction: 'decision-card',
   categories: ['space-and-shape', 'quantity'],
   stages: ['grade-7', 'year-1'],

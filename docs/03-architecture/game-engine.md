@@ -227,6 +227,12 @@ El determinismo entre runtimes se verifica en `tests/e2e/game-engine-harness.spe
 
 Opcional. `canonicalize(state)` produce la forma estable sobre la que se puede calcular un hash para detectar divergencias entre cliente y servidor. Es una señal de diagnóstico, no un mecanismo de seguridad por sí mismo.
 
+## Modelo de contenido
+
+Una instancia de desafío se direcciona por su identidad de contenido completa —familia de escenario, plantilla y variante— más dónde la ubicó la run. Una `ChallengeDefinition` **es** una plantilla; el catálogo de contenido disponible (`ContentCatalog`) está separado del plan de contenido de una run (`RunPlan`), y la elegibilidad por etapa y el rol de colocación son metadata declarativa del contenido, no conocimiento del motor.
+
+El motor no conoce ningún id de contenido: agregar una familia, una plantilla o una variante ordinarias no requiere tocarlo. Ver [ADR-019](adr/ADR-019-scenario-family-template-variant.md) y [la migración del modelo de contenido](content-model-migration.md).
+
 ## Lo que este documento no describe
 
 Este documento describe el motor **implementado**. Las capacidades que la dirección de producto pide y todavía no existen —jerarquía de familias y plantillas, catálogo de variantes desplegado, scheduler por presupuesto de dificultad, score competitivo normalizado, `RunDescriptor` emitido por servidor, `scoreVersion`, `variantCatalogVersion` y verificación por replay— están en [arquitectura objetivo del motor](target-engine-architecture.md), con el estado real de cada una.

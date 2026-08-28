@@ -35,10 +35,10 @@ Esto ya es lo que hay: núcleo funcional con función de transición explícita 
 | 9 | Codec de snapshot versionado con rechazo explícito de versiones viejas | **implementado** | `src/game/runs/snapshot.ts` |
 | 10 | Política de score nombrada, versionada y no oficial por defecto | **implementado** | `src/game/scoring/`, `production: false` |
 | 11 | Tripleta de versiones en toda run | **implementado**: `gameVersion`, `rulesetVersion`, `contentVersion` | `src/game/core/versioning.ts` |
-| 12 | Jerarquía `ScenarioFamily → Template → Variant` | **TARGET** | [familias y variantes](../01-game-design/challenge-families-and-variants.md) |
+| 12 | Jerarquía `ScenarioFamily → Template → Variant` | **implementado** | [ADR-019](adr/ADR-019-scenario-family-template-variant.md), `src/game/challenges/content-model.ts` |
 | 13 | `VariantGenerator` por restricción, reutilizable entre plantillas | **TARGET** | ídem |
-| 14 | `VariantValidator` con invariantes de dominio ejecutables | **parcial**: cada desafío verifica los suyos; no hay contrato transversal | [validación de variantes](../04-quality/variant-validation-and-audit.md) |
-| 15 | Catálogo de variantes desplegado, aprobado y versionado | **TARGET** | ídem |
+| 14 | `VariantValidator` con invariantes de dominio ejecutables | **parcial**: cada desafío verifica los suyos y la validación de contenido recorre todas las variantes declaradas; falta el contrato transversal | [validación de variantes](../04-quality/variant-validation-and-audit.md) |
+| 15 | Catálogo de variantes desplegado, aprobado y versionado | **TARGET** — distinto del `ContentCatalog` autorado, que ya existe | ídem |
 | 16 | Bandas `CORE / STANDARD / STRETCH` como metadata de autoría | **TARGET**; hoy existe `DifficultyLevel` 1–5 | [dificultad](../01-game-design/difficulty-and-playability.md) |
 | 17 | Scheduler por presupuesto de dificultad | **TARGET** | ídem |
 | 18 | `MathPerformance` / `TeamPerformance` / `AuraPerformance` normalizados | **TARGET** | [score competitivo](../01-game-design/competitive-scoring-and-ranking.md) |
@@ -47,7 +47,10 @@ Esto ya es lo que hay: núcleo funcional con función de transición explícita 
 | 21 | `scoreVersion` y `variantCatalogVersion` | **TARGET** | este documento |
 | 22 | Verificación autoritativa por replay en servidor | **TARGET**; hoy existe `src/server/game/validate-run.ts` como base | [ADR-004](adr/ADR-004-server-authoritative-scoring.md) |
 | 23 | Ranking con personal best transaccional | **TARGET** | [modo feria](../05-operations/fair-mode-and-competition-freeze.md) |
-| 24 | Invariante de egreso y recuperación fail-forward | **TARGET** | [egreso y fail-forward](../01-game-design/graduation-and-fail-forward.md) |
+| 24 | Invariante de egreso y recuperación fail-forward | **TARGET**; el modelo de contenido ya puede declarar un beat `recovery` condicional | [egreso y fail-forward](../01-game-design/graduation-and-fail-forward.md) |
+| 25 | Catálogo de contenido disponible separado del plan de la run | **implementado** | `ContentCatalog`, `RunPlan`, [ADR-019](adr/ADR-019-scenario-family-template-variant.md) |
+| 26 | Elegibilidad por etapa y roles de colocación declarativos | **implementado** | ídem |
+| 27 | Presupuesto de beats por año validable | **implementado** como contrato; **el compositor de runs es TARGET** | [dificultad](../01-game-design/difficulty-and-playability.md) |
 
 ## Lo que la migración de carrera ya cerró
 

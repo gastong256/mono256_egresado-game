@@ -2,19 +2,19 @@ import { describe, expect, it } from 'vitest'
 
 import { validateContent, type Storylet } from '@/game'
 import {
-  createDevelopmentChallengeRegistry,
+  createDevelopmentContentCatalog,
   createDevelopmentRuleset,
   developmentStorylets,
 } from '@/game/testing'
 import { toChallengeId, toStoryletId } from '@/game'
 
 const ruleset = createDevelopmentRuleset()
-const challenges = createDevelopmentChallengeRegistry()
+const catalog = createDevelopmentContentCatalog()
 
 function validate(storylets: readonly Storylet[], seeds = 12) {
   return validateContent({
     ruleset,
-    challenges,
+    catalog,
     storylets,
     seedsPerChallenge: seeds,
   })

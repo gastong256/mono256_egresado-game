@@ -11,7 +11,8 @@
  * comparison.
  */
 
-import { toChallengeId } from '../../../core/branded'
+import { toChallengeId, toVariantId } from '../../../core/branded'
+import { DEV_BUS_FAMILY } from '../families'
 import { err, ok, type Result } from '../../../core/result'
 import type { EngineRejection } from '../../../core/errors'
 import {
@@ -51,6 +52,9 @@ function formatClock(minutesOfDay: number): string {
 
 export const busDeparture: ChallengeDefinition = defineChallenge<BusModel>({
   id: toChallengeId('dev.bus-departure'),
+  family: DEV_BUS_FAMILY,
+  placement: 'anchor',
+  variants: [toVariantId('base')],
   interaction: 'numeric-input',
   categories: ['time-and-rates', 'proportions-and-percentages'],
   stages: ['grade-7', 'year-1', 'year-2'],

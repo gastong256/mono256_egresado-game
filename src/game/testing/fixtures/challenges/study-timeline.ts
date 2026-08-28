@@ -7,7 +7,8 @@
  * sufficient window is the one that leaves the rest of the week usable.
  */
 
-import { toChallengeId } from '../../../core/branded'
+import { toChallengeId, toVariantId } from '../../../core/branded'
+import { DEV_STUDY_FAMILY } from '../families'
 import { err, ok, type Result } from '../../../core/result'
 import type { EngineRejection } from '../../../core/errors'
 import {
@@ -43,6 +44,9 @@ const SLOTS: readonly { id: string; label: string }[] = [
 export const studyTimeline: ChallengeDefinition =
   defineChallenge<StudyTimelineModel>({
     id: toChallengeId('dev.study-timeline'),
+    family: DEV_STUDY_FAMILY,
+    placement: 'special',
+    variants: [toVariantId('base')],
     interaction: 'timeline',
     categories: ['time-and-rates', 'optimization-and-constraints'],
     stages: ['year-1', 'year-2'],

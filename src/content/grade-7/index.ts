@@ -11,7 +11,7 @@
  */
 
 import {
-  createChallengeRegistry,
+  createContentCatalog,
   createRuleset,
   EngineInvariantError,
   toContentSetId,
@@ -25,6 +25,7 @@ import { developmentDifficultyPolicy } from '@/game/difficulty/development-polic
 import { developmentProfilePolicy } from '@/game/profiles/development-policy'
 import { developmentScoringPolicy } from '@/game/scoring/development-policy'
 
+import { grade7Families } from './families'
 import { busTiming } from './challenges/bus-timing'
 import { groupTasks } from './challenges/group-tasks'
 import { may25Act } from './challenges/may-25-act'
@@ -34,14 +35,22 @@ import { standSupplies } from './challenges/stand-supplies'
 import { grade7Storylets } from './storylets'
 
 /*
- * Las dos versiones suben juntas a 0.3.0 por el acto del 25 de Mayo: el
- * contenido cambió —hay un desafío y un storylet nuevos— y la configuración de
- * la etapa también, porque el año pasó a jugar ocho eventos y habilitó una
- * categoría matemática más. Un checkpoint 0.2.0 no reproduce este año, y ése es
- * exactamente el trabajo del triple de versiones.
+ * El ruleset se queda en 0.3.0 y el contenido sube a 0.4.0, y esta vez las dos
+ * versiones se separan a propósito.
+ *
+ * El contenido cambió: cada plantilla declara ahora su familia de escenario, su
+ * rol de colocación y sus variantes con identidad propia, y la variante dejó de
+ * elegirse dentro del generador para elegirse por dirección. La matemática de
+ * los seis desafíos no se tocó, pero un seed puede caer en otra variante
+ * autorada que antes, y eso es exactamente lo que la versión de contenido
+ * existe para declarar.
+ *
+ * El ruleset **no** cambió: las políticas de score, dificultad y perfil y la
+ * configuración de la etapa son las mismas. Subirlo también habría dicho que
+ * cambió algo que no cambió.
  */
 export const GRADE_7_RULESET_VERSION = '0.3.0-grade-7'
-export const GRADE_7_CONTENT_VERSION = '0.3.0-grade-7'
+export const GRADE_7_CONTENT_VERSION = '0.4.0-grade-7'
 
 /** Los seis desafíos jugables de 7.º grado. */
 export const grade7Challenges: readonly ChallengeDefinition[] = [
@@ -103,9 +112,10 @@ export function createGrade7Ruleset(): Ruleset {
 export function createGrade7Dependencies(): EngineDependencies {
   return {
     ruleset: createGrade7Ruleset(),
-    challenges: createChallengeRegistry(grade7Challenges),
+    catalog: createContentCatalog(grade7Families, grade7Challenges),
     storylets: grade7Storylets,
   }
 }
 
 export { grade7Storylets, grade7StoryletIds } from './storylets'
+export { grade7Families } from './families'

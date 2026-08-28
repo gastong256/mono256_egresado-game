@@ -15,7 +15,12 @@
  * state, snapshots stay small, and replay cannot drift from the original run.
  */
 
-import type { ChallengeId, ChallengeInstanceId } from '../core/branded'
+import type {
+  ChallengeId,
+  ChallengeInstanceId,
+  ScenarioFamilyId,
+  VariantId,
+} from '../core/branded'
 import { EngineInvariantError } from '../core/invariant'
 import type { EngineRejection } from '../core/errors'
 import type { Result } from '../core/result'
@@ -30,6 +35,10 @@ import type {
 import type { StageId } from '../progression/stages'
 import type { CareerEffects } from '../progression/career'
 import type { DifficultyLevel, MathCategory, SolutionQuality } from './taxonomy'
+import type {
+  ChallengePlacementRole,
+  ChallengeVariantRef,
+} from './content-model'
 
 export type { CareerEffects, DifficultyLevel, MathCategory, SolutionQuality }
 
@@ -112,18 +121,45 @@ export interface ChallengeNarrative {
   readonly goal: string
 }
 
-/** Address that fully determines a generated challenge instance. */
+/**
+ * Address that fully determines a generated challenge instance.
+ *
+ * It carries the full content address — family, template, variant — plus where
+ * the run placed it. `templateId` names the challenge definition: a definition
+ * *is* a template in the content model.
+ */
 export interface ChallengeInstanceRef {
   readonly instanceId: ChallengeInstanceId
-  readonly definitionId: ChallengeId
+  readonly familyId: ScenarioFamilyId
+  readonly templateId: ChallengeId
+  readonly variantId: VariantId
   readonly stageId: StageId
   readonly eventIndex: number
   readonly difficulty: DifficultyLevel
 }
 
+/** The content address of an instance, without where the run placed it. */
+export function variantRefOf(ref: ChallengeInstanceRef): ChallengeVariantRef {
+  return {
+    familyId: ref.familyId,
+    templateId: ref.templateId,
+    variantId: ref.variantId,
+  }
+}
+
 export interface GenerationContext {
   readonly rng: Rng
   readonly difficulty: DifficultyLevel
+  /** Which authored variant of this template is being materialised. */
+  readonly variantId: VariantId
+  /**
+   * Substream addressed by the variant identity alone.
+   *
+   * A template that derives its own numbers should draw from here rather than
+   * from `rng`, so the same variant produces the same case wherever a run
+   * schedules it. Templates with fully authored parameters never touch it.
+   */
+  readonly variantRng: Rng
 }
 
 /** Everything the UI may see. Deliberately excludes the solution. */
@@ -164,11 +200,30 @@ export interface MaterializedChallenge {
   verify(): readonly string[]
 }
 
-/** Author-facing specification, generic over the private model type. */
+/**
+ * Author-facing specification of a challenge template.
+ *
+ * A spec declares three things the content model needs on top of the gameplay
+ * rule: which scenario family it belongs to, how a run may place it, and which
+ * concrete variants it can produce.
+ */
 export interface ChallengeSpec<TModel> {
   readonly id: ChallengeId
+  /** Scenario family this template belongs to. */
+  readonly family: ScenarioFamilyId
+  /** How a run may schedule this template. */
+  readonly placement: ChallengePlacementRole
+  /**
+   * The variants this template can produce, in authored order.
+   *
+   * Non-empty and without repetition. The order is part of the content
+   * contract: variant selection draws an index from it, so reordering the list
+   * changes which case a stored seed produces and needs a content version bump.
+   */
+  readonly variants: readonly VariantId[]
   readonly interaction: InteractionKind
   readonly categories: readonly MathCategory[]
+  /** Stages this template may be scheduled in. Permission, not selection. */
   readonly stages: readonly StageId[]
   readonly baseDifficulty: DifficultyLevel
   readonly tools: readonly ToolId[]
@@ -184,9 +239,18 @@ export interface ChallengeSpec<TModel> {
   ): Result<ChallengeEvaluation, EngineRejection>
 }
 
-/** Type-erased definition stored in the registry. */
+/**
+ * Type-erased challenge template stored in the content catalog.
+ *
+ * The model type is gone; the content address, the placement metadata and the
+ * variant list survive, because the catalog and the plan validator reason about
+ * exactly those.
+ */
 export interface ChallengeDefinition {
   readonly id: ChallengeId
+  readonly family: ScenarioFamilyId
+  readonly placement: ChallengePlacementRole
+  readonly variants: readonly VariantId[]
   readonly interaction: InteractionKind
   readonly categories: readonly MathCategory[]
   readonly stages: readonly StageId[]
@@ -196,6 +260,26 @@ export interface ChallengeDefinition {
     ref: ChallengeInstanceRef,
     context: GenerationContext,
   ): MaterializedChallenge
+}
+
+/**
+ * Chooses which variant of a template an instance uses.
+ *
+ * A single-variant template draws nothing: there is no choice to make, and
+ * spending a draw on it would couple every template's numbers to how many
+ * variants its neighbours happen to declare.
+ */
+export function selectVariantId(
+  rng: Rng,
+  variants: readonly VariantId[],
+): VariantId {
+  const only = variants[0]
+  if (only === undefined) {
+    throw new EngineInvariantError(
+      'a template must declare at least one variant',
+    )
+  }
+  return variants.length === 1 ? only : rng.pick(variants)
 }
 
 /**
@@ -221,8 +305,22 @@ const MAX_GENERATION_ATTEMPTS = 24
 export function defineChallenge<TModel>(
   spec: ChallengeSpec<TModel>,
 ): ChallengeDefinition {
+  if (spec.variants.length === 0) {
+    throw new EngineInvariantError(
+      `challenge ${spec.id} must declare at least one variant`,
+    )
+  }
+  if (new Set(spec.variants).size !== spec.variants.length) {
+    throw new EngineInvariantError(
+      `challenge ${spec.id} declares a duplicate variant id`,
+    )
+  }
+
   return {
     id: spec.id,
+    family: spec.family,
+    placement: spec.placement,
+    variants: spec.variants,
     interaction: spec.interaction,
     categories: spec.categories,
     stages: spec.stages,
@@ -241,6 +339,8 @@ export function defineChallenge<TModel>(
         const candidate = spec.generate({
           rng: context.rng.derive('attempt', attempt),
           difficulty: context.difficulty,
+          variantId: context.variantId,
+          variantRng: context.variantRng,
         })
         lastIssues = spec.verify(candidate)
         if (lastIssues.length === 0) {
@@ -251,7 +351,7 @@ export function defineChallenge<TModel>(
 
       if (model === undefined) {
         throw new EngineInvariantError(
-          `challenge ${spec.id} could not generate a valid instance in ${String(MAX_GENERATION_ATTEMPTS)} attempts: ${lastIssues.join('; ')}`,
+          `challenge ${spec.id} variant ${context.variantId} could not generate a valid instance in ${String(MAX_GENERATION_ATTEMPTS)} attempts: ${lastIssues.join('; ')}`,
         )
       }
 

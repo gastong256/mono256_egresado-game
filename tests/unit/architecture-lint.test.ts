@@ -69,6 +69,18 @@ describe('architecture lint policy', () => {
     ).resolves.toContain('no-restricted-syntax')
   })
 
+  it('rejects the engine reaching into concrete product content', async () => {
+    // El motor entiende contratos, no ids de contenido. Si `src/game` pudiera
+    // importar `src/content`, agregar un año dejaría de ser contenido y
+    // volvería a ser una migración de motor.
+    await expect(
+      ruleIds(
+        "export { grade7Challenges } from '@/content/grade-7'",
+        'src/game/challenges/leak.ts',
+      ),
+    ).resolves.toContain('no-restricted-imports')
+  })
+
   it('rejects JSX in the portable game core', async () => {
     await expect(
       ruleIds(

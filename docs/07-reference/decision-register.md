@@ -19,6 +19,8 @@
 | ADR-015 | Sistema de diseño con tokens semánticos y paleta restringida | Aceptado (reemplazado parcialmente por ADR-017) |
 | ADR-016 | Modelo de jugador de carrera: Promedio, Equipo, Aura y Estilo | Aceptado |
 | ADR-017 | Identidad papel: la hoja cuadriculada como canvas del juego | Aceptado |
+| ADR-018 | Autoridad y madurez de las decisiones del Project Blueprint v0.2 | Aceptado |
+| ADR-019 | Modelo de contenido: familia de escenario, plantilla y variante | Aceptado |
 
 ## Regla para ADR nuevo
 
@@ -49,7 +51,7 @@ Estas decisiones vienen del [Project Blueprint v0.2.0](blueprint-v0.2-integratio
 | D-003 | Sólo Promedio, Equipo, Aura y Estilo como dimensiones visibles | LOCKED | implementado ([ADR-016](../03-architecture/adr/ADR-016-career-player-model.md)) |
 | D-004 | Dominio matemático oculto, nunca una barra de «Conocimiento» | LOCKED | implementado |
 | D-005 | Sin game over global: el error cambia el camino, no termina la partida | PRODUCT DIRECTION | parcial; falta contenido de recuperación ([fail-forward](../01-game-design/graduation-and-fail-forward.md)) |
-| D-006 | Jerarquía `ScenarioFamily → Template → Variant` | RECOMENDADA | no implementada ([familias y variantes](../01-game-design/challenge-families-and-variants.md)) |
+| D-006 | Jerarquía `ScenarioFamily → Template → Variant` | RECOMENDADA | **implementada** ([ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md)); el inventario de contenido sigue abierto |
 | D-007 | Variantes deterministas por seed | LOCKED como dirección de arquitectura | implementado ([ADR-003](../03-architecture/adr/ADR-003-deterministic-seeded-engine.md), [ADR-012](../03-architecture/adr/ADR-012-seeded-prng-and-substreams.md)) |
 | D-008 | Catálogo de variantes prevalidado y desplegado para competencia | RECOMENDADA | no implementado |
 | D-009 | Intentos ilimitados con personal best en el ranking | RECOMENDADA · TEACHER GATE | no implementado ([modo feria](../05-operations/fair-mode-and-competition-freeze.md)) |

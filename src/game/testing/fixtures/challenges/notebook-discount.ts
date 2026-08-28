@@ -10,7 +10,8 @@
  * decimal and no rounding error can decide the outcome.
  */
 
-import { toChallengeId } from '../../../core/branded'
+import { toChallengeId, toVariantId } from '../../../core/branded'
+import { DEV_NOTEBOOK_FAMILY } from '../families'
 import { err, ok, type Result } from '../../../core/result'
 import type { EngineRejection } from '../../../core/errors'
 import {
@@ -43,6 +44,9 @@ interface NotebookModel {
 export const notebookDiscount: ChallengeDefinition =
   defineChallenge<NotebookModel>({
     id: toChallengeId('dev.notebook-discount'),
+    family: DEV_NOTEBOOK_FAMILY,
+    placement: 'anchor',
+    variants: [toVariantId('base')],
     interaction: 'decision-card',
     categories: ['proportions-and-percentages', 'quantity'],
     stages: ['year-1', 'year-2'],

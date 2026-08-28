@@ -4,7 +4,7 @@ import {
   activeInstanceId,
   canContinue,
   canSubmitAnswer,
-  createChallengeRegistry,
+  createContentCatalog,
   createRuleset,
   createRun,
   currentStage,
@@ -23,7 +23,8 @@ import {
   transition,
 } from '@/game'
 import {
-  createDevelopmentChallengeRegistry,
+  createDevelopmentContentCatalog,
+  developmentFamilies,
   createDevelopmentDependencies,
   createDevelopmentRuleset,
   developmentRunDescriptor,
@@ -292,36 +293,36 @@ describe('ruleset construction', () => {
   })
 })
 
-describe('challenge registry', () => {
-  it('exposes definitions in a stable order and filters by stage', () => {
-    const registry = createDevelopmentChallengeRegistry()
-    const ids = registry.definitions.map((definition) => definition.id)
+describe('content catalog', () => {
+  it('exposes templates in a stable order and filters by stage', () => {
+    const catalog = createDevelopmentContentCatalog()
+    const ids = catalog.templates.map((template) => template.id)
 
     expect([...ids].sort()).toEqual(ids)
-    expect(registry.get('dev.mural-coverage' as never)?.interaction).toBe(
+    expect(catalog.template('dev.mural-coverage' as never)?.interaction).toBe(
       'decision-card',
     )
-    expect(registry.get('nope' as never)).toBeUndefined()
+    expect(catalog.template('nope' as never)).toBeUndefined()
 
-    const grade7 = registry.forStage('grade-7')
+    const grade7 = catalog.forStage('grade-7')
     expect(grade7.length).toBeGreaterThan(0)
-    for (const definition of grade7) {
-      expect(definition.stages).toContain('grade-7')
+    for (const template of grade7) {
+      expect(template.stages).toContain('grade-7')
     }
 
-    const filtered = registry.forStage('grade-7', ['space-and-shape'])
-    for (const definition of filtered) {
-      expect(definition.categories).toContain('space-and-shape')
+    const filtered = catalog.forStage('grade-7', ['space-and-shape'])
+    for (const template of filtered) {
+      expect(template.categories).toContain('space-and-shape')
     }
   })
 
-  it('refuses duplicate definitions', () => {
-    const definition = createDevelopmentChallengeRegistry().definitions[0]
-    if (definition === undefined) throw new Error('no definitions')
+  it('refuses duplicate templates', () => {
+    const template = createDevelopmentContentCatalog().templates[0]
+    if (template === undefined) throw new Error('no templates')
 
-    expect(() => createChallengeRegistry([definition, definition])).toThrow(
-      EngineInvariantError,
-    )
+    expect(() =>
+      createContentCatalog(developmentFamilies, [template, template]),
+    ).toThrow(EngineInvariantError)
   })
 })
 

@@ -10,7 +10,8 @@
  * than assumed.
  */
 
-import { toChallengeId } from '../../../core/branded'
+import { toChallengeId, toVariantId } from '../../../core/branded'
+import { DEV_GROUP_PROJECT_FAMILY } from '../families'
 import { err, ok, type Result } from '../../../core/result'
 import type { EngineRejection } from '../../../core/errors'
 import {
@@ -114,6 +115,9 @@ function bestPossibleScore(model: AssignmentModel): number {
 export const groupAssignment: ChallengeDefinition =
   defineChallenge<AssignmentModel>({
     id: toChallengeId('dev.group-assignment'),
+    family: DEV_GROUP_PROJECT_FAMILY,
+    placement: 'anchor',
+    variants: [toVariantId('base')],
     interaction: 'assignment-board',
     categories: ['optimization-and-constraints', 'patterns-and-relations'],
     stages: ['year-2', 'year-3'],

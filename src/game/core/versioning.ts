@@ -23,13 +23,21 @@ import { err, ok, type Result } from './result'
 /**
  * Engine/game version of this build. Also serialized as `gameVersion`.
  *
- * `2.0.0` is the career migration: the visible player model went from four
+ * `3.0.0` is the content model: a challenge instance is now addressed by its
+ * full content identity — scenario family, template and variant — instead of a
+ * bare definition id. The snapshot codec changed with it, and variant selection
+ * moved onto its own substream, so a seed that used to produce one authored
+ * variant may now produce another. The gameplay, the mathematics and the
+ * engine's deterministic protocol did not move: the golden runs reproduce
+ * exactly.
+ *
+ * `2.0.0` was the career migration: the visible player model went from four
  * bounded stats to `Promedio · Equipo · Aura · Estilo`, which changed run state,
  * the transition function and the snapshot codec. A `1.x` action log cannot
  * reproduce its original result under this engine, and that is exactly what the
  * version triple exists to say out loud instead of discovering it in a replay.
  */
-export const ENGINE_VERSION = '2.0.0'
+export const ENGINE_VERSION = '3.0.0'
 
 export interface VersionTriple {
   readonly gameVersion: string

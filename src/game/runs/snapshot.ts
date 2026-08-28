@@ -18,6 +18,8 @@ import {
   OPAQUE_ID_PATTERN,
   toChallengeId,
   toChallengeInstanceId,
+  toScenarioFamilyId,
+  toVariantId,
   toRunId,
   toRunSeed,
   toStoryletId,
@@ -57,7 +59,7 @@ import type { RunState } from './state'
  * discarding the checkpoint and offering a fresh run; that is a better outcome
  * than resuming into numbers nobody earned.
  */
-export const SNAPSHOT_SCHEMA_VERSION = 2
+export const SNAPSHOT_SCHEMA_VERSION = 3
 
 // Built from the canonical tuples, so each schema infers the exact literal
 // union. That is what lets the restore path below be cast-free.
@@ -147,7 +149,9 @@ const scoreSchema = z.object({
 
 const challengeRefSchema = z.object({
   instanceId: z.string().regex(OPAQUE_ID_PATTERN),
-  definitionId: z.string().regex(IDENTIFIER_PATTERN),
+  familyId: z.string().regex(IDENTIFIER_PATTERN),
+  templateId: z.string().regex(IDENTIFIER_PATTERN),
+  variantId: z.string().regex(IDENTIFIER_PATTERN),
   stageId: stageSchema,
   eventIndex: z.number().int().min(0),
   difficulty: difficultySchema,
@@ -487,9 +491,13 @@ export function restoreSnapshot(
                     instanceId: toChallengeInstanceId(
                       raw.activeEvent.challenge.instanceId,
                     ),
-                    definitionId: toChallengeId(
-                      raw.activeEvent.challenge.definitionId,
+                    familyId: toScenarioFamilyId(
+                      raw.activeEvent.challenge.familyId,
                     ),
+                    templateId: toChallengeId(
+                      raw.activeEvent.challenge.templateId,
+                    ),
+                    variantId: toVariantId(raw.activeEvent.challenge.variantId),
                     stageId: raw.activeEvent.challenge.stageId,
                     eventIndex: raw.activeEvent.challenge.eventIndex,
                     difficulty: raw.activeEvent.challenge.difficulty,

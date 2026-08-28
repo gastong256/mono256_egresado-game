@@ -19,6 +19,8 @@ import {
   fromInteger,
   metrics,
   ok,
+  authoredVariant,
+  authoredVariantIds,
   toChallengeId,
   type ChallengeDefinition,
   type ChallengeEvaluation,
@@ -26,6 +28,7 @@ import {
   type InteractionAnswer,
   type Result,
 } from '@/game'
+import { SCHOOL_FAIR_FAMILY } from '../families'
 
 import { pesos } from '../../pesos'
 
@@ -73,9 +76,12 @@ const PACKS: readonly Pack[] = [
 ]
 
 /** Dos variantes autoradas: las dos son resolubles y dejan margen para elegir mal. */
+/** Identidad estable de la plantilla. */
+const STAND_SUPPLIES_ID = toChallengeId('g7.stand-supplies')
+
 const VARIANTS = [
-  { servingsNeeded: 24, budgetMinor: 2_400_000 },
-  { servingsNeeded: 20, budgetMinor: 2_100_000 },
+  { id: 'porciones-24', servingsNeeded: 24, budgetMinor: 2_400_000 },
+  { id: 'porciones-20', servingsNeeded: 20, budgetMinor: 2_100_000 },
 ] as const
 
 /**
@@ -116,15 +122,18 @@ function minimumCost(target: number, packs: readonly Pack[]): number {
 }
 
 export const standSupplies: ChallengeDefinition = defineChallenge<StandModel>({
-  id: toChallengeId('g7.stand-supplies'),
+  id: STAND_SUPPLIES_ID,
+  family: SCHOOL_FAIR_FAMILY,
+  placement: 'anchor',
+  variants: authoredVariantIds(VARIANTS),
   interaction: 'budget-builder',
   categories: ['quantity', 'optimization-and-constraints'],
   stages: ['grade-7'],
   baseDifficulty: 3,
   tools: ['calculator', 'notepad'],
 
-  generate({ rng }) {
-    const variant = rng.pick(VARIANTS)
+  generate({ variantId }) {
+    const variant = authoredVariant(STAND_SUPPLIES_ID, VARIANTS, variantId)
 
     return {
       servingsNeeded: variant.servingsNeeded,

@@ -4,65 +4,69 @@ Vista corta del estado de ejecución. El detalle completo, los contratos de toda
 
 ---
 
-## STAGE-02 — ScenarioFamily → ChallengeTemplate → ChallengeVariant
+## STAGE-03 — Generación, validación y catálogo de variantes
 
 **Estado:** `READY` — dependencias satisfechas, nadie la empezó todavía.
 
 ## Por qué está activa
 
-STAGE-00 y STAGE-01 están `DONE` con evidencia: el motor ya tiene tripleta de versiones, ownership de seed con substreams, `RunDescriptor` inmutable, replay, snapshots versionados y separación entre resultado de desafío, carrera y score.
+STAGE-02 está `DONE` con evidencia: el contenido ya se direcciona por familia de escenario, plantilla y variante; una variante tiene identidad estable y substream propio; el catálogo de contenido disponible está separado del plan de la run; la elegibilidad por etapa y los roles de colocación son declarativos; y agregar contenido nuevo no requiere tocar el motor. Ver [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md).
 
-Lo que falla hoy es el nivel de contenido. Cada uno de los seis desafíos de 7.º es una definición monolítica con un array interno de parámetros: alcanza para que cambien los números, no para que cambie la pregunta. Sin familia y plantilla no se puede construir generación por restricción (STAGE-03), y sin eso no hay catálogo, ni dificultad equiparada, ni score competitivo defendible.
+Lo que falta ahora es **producción y control de variantes en cantidad**. Hoy cada plantilla trae dos o tres casos escritos a mano. Eso alcanza para probar la arquitectura y no alcanza para una feria: sin generación por restricción, catálogo prevalidado y auditoría estadística, no hay forma de afirmar que ninguna variante desplegada es ambigua, imposible o trivial.
 
 ## Objetivo
 
-Que dos plantillas de la misma familia de escenario puedan coexistir **sin duplicar la lógica completa del desafío**, y que una variante se pueda serializar y reconstruir desde su dirección determinista.
+Poder generar, validar y reproducir un conjunto grande de variantes sin depender de aleatoriedad ambiente, y desplegar sólo las aprobadas.
+
+> Variabilidad no es aleatoriedad libre.
 
 ## Scope IN
 
-- Tipos `ScenarioFamily`, `ChallengeTemplate` y `ChallengeVariant`, con identidad estable y serializable.
-- Una plantilla representa una estructura de razonamiento, no otro juego de números.
-- Extender `ChallengeInstanceRef` para direccionar familia y plantilla además de la definición.
-- Derivación determinista del seed de variante.
-- Documento de estrategia de migración del contenido existente.
-- Tests de identidad, versionado y serialización.
+- Generación por restricción, incluida generación inversa donde convenga.
+- `VariantValidator` con invariantes genéricos y por plantilla, como contrato transversal.
+- Tooling offline: `generador → N seeds candidatas → validación → análisis estadístico → catálogo aprobado`.
+- Catálogo desplegado, versionado y reproducible, **distinto** del `ContentCatalog` autorado que ya existe.
+- `variantCatalogVersion` en la identidad de la run.
+- Selección determinista de variantes aprobadas por id.
 
 ## Scope OUT
 
 **Nada de esto se implementa en esta etapa.**
 
-- Generadores por restricción reutilizables → STAGE-03.
-- Catálogo de variantes desplegado y `variantCatalogVersion` → STAGE-03.
-- Migrar los cinco desafíos de 7.º → STAGE-04.
-- Bandas de dificultad, `difficultyCost`, presupuesto, Run Composer → STAGE-05.
+- Bandas de dificultad, `difficultyCost`, presupuesto y compositor de runs → STAGE-05. El presupuesto ya está definido como contrato validable; **construir** planes no es de acá.
 - `FairScore`, `MathPerformance`, `ScorePolicy` competitiva, `scoreVersion` → STAGE-06.
+- Dividir familias de producción en varias plantillas, migrar los cinco desafíos restantes o mover contenido de año → STAGE-04.
 - Egreso, recuperaciones, contenido de 1.º–5.º → STAGE-07 y STAGE-08.
 - Ranking, endpoints, persistencia, fair mode → STAGE-09.
+- Cerrar el inventario de escenarios: sigue **OPEN**.
 - Cualquier cambio al sistema de diseño, a los tokens o a la matemática existente.
 
 ## Criterios de aceptación
 
-- [ ] `ScenarioFamily`, `ChallengeTemplate` y `ChallengeVariant` tipados y expuestos por el registro sin `any` ni casts.
-- [ ] Dos plantillas de la misma familia coexisten sin duplicar la lógica completa del desafío.
-- [ ] Una variante se serializa y se reconstruye idéntica desde su dirección.
-- [ ] La derivación de seed de variante es estable y está cubierta por property tests.
-- [ ] `tests/unit/architecture-lint.test.ts` y `engine-modules.test.ts` siguen en verde: el motor no depende de React.
-- [ ] Existe el documento de estrategia de migración del contenido legacy.
-- [ ] Los seis desafíos de 7.º se siguen jugando igual: golden replays sin cambio, o bump de versión justificado y escrito.
+- [ ] Los generadores son deterministas y no consultan ninguna fuente ambiente.
+- [ ] Los validadores rechazan efectivamente casos inválidos, con test que lo demuestre.
+- [ ] Miles de seeds por plantilla donde el espacio paramétrico lo justifique.
+- [ ] El tooling reporta fallas de forma legible por máquina.
+- [ ] **Cero variantes inválidas en el catálogo desplegado.**
+- [ ] Cero opciones duplicadas en el catálogo desplegado.
+- [ ] El catálogo es reproducible y versionado: el mismo insumo produce el mismo catálogo.
+- [ ] La auditoría estadística reporta sesgo de posición, distribución de dificultad, duplicados por fingerprint y tasa de invalidez.
+- [ ] El runtime competitivo selecciona sólo variantes aprobadas.
 
 ## Lectura requerida antes de tocar código
 
 1. `AGENTS.md` de la raíz.
-2. Este documento y el [contrato de STAGE-02](implementation-sequence.md).
-3. [Familias, plantillas y variantes](../01-game-design/challenge-families-and-variants.md).
-4. [Sistema de desafíos](../01-game-design/challenge-system.md) — cuidado con las dos acepciones de «familia».
-5. [Game engine](../03-architecture/game-engine.md) y [arquitectura objetivo del motor](../03-architecture/target-engine-architecture.md).
-6. [ADR-007](../03-architecture/adr/ADR-007-content-as-data.md) y [ADR-012](../03-architecture/adr/ADR-012-seeded-prng-and-substreams.md).
-7. El código: `src/game/challenges/`, `src/game/random/`, `src/content/grade-7/challenges/`.
+2. Este documento y el [contrato de STAGE-03](implementation-sequence.md).
+3. [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md) — el vocabulario sobre el que se construye.
+4. [Familias, plantillas y variantes](../01-game-design/challenge-families-and-variants.md).
+5. [Validación y auditoría de variantes](../04-quality/variant-validation-and-audit.md) y [validación de contenido](../04-quality/content-validation.md).
+6. [Migración del modelo de contenido](../03-architecture/content-model-migration.md) — cómo se autora una plantilla hoy.
+7. [Base teórica](../07-reference/research-basis.md) — por qué se pregeneran y se aprueban las variantes.
+8. El código: `src/game/challenges/`, `src/game/content/`, `src/content/grade-7/challenges/`.
 
 ## Validación requerida
 
-`pnpm test` · `pnpm typecheck` · `pnpm lint` · `pnpm game:validate-content` · `pnpm game:simulate -- --runs=400 --verify=10` · `pnpm verify`.
+`pnpm test` · `pnpm typecheck` · `pnpm lint` · `pnpm game:validate-content` · `pnpm game:simulate` · `pnpm verify`.
 
 Con Node `24.19.0`, la versión que `pnpm toolchain:check` exige exacta.
 
@@ -72,28 +76,31 @@ Ninguno. La etapa puede empezar.
 
 ## Decisiones abiertas o de Teacher Gate relevantes ahora
 
-- `RECOMENDADA` (D-006): la jerarquía familia/plantilla/variante es dirección de arquitectura, no contrato cerrado. Se implementa de forma ajustable.
-- `LOCKED` (D-007): variantes deterministas por seed.
-- `OPEN` ([pregunta 46](../07-reference/open-questions.md)): cuántas familias y plantillas por año. **No se cierra en esta etapa**; acá se construye el mecanismo, no el catálogo.
+- `RECOMENDADA` (D-008): catálogo prevalidado y desplegado para competencia. Es dirección de arquitectura, no contrato cerrado.
+- `LOCKED` (D-007): variantes deterministas por seed. Ya implementado; no se reabre.
+- `OPEN` ([preguntas 46 y 46-bis](../07-reference/open-questions.md)): cuántas familias, plantillas y variantes tiene Egresado, y qué pasa con los seis escenarios actuales. **No se cierra en esta etapa**: acá se construye la maquinaria de producción, no el inventario.
 
-Ninguna decisión de Teacher Gate bloquea STAGE-02. El primer gate docente llega después de STAGE-04 y STAGE-06.
+Ninguna decisión de Teacher Gate bloquea STAGE-03. El primer gate docente llega después de STAGE-04 y STAGE-06.
 
 ## Evidencia ya disponible
 
+- Modelo de contenido — [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md), `src/game/challenges/content-model.ts`, `content-catalog.ts`, `src/game/content/run-plan.ts`.
+- Direccionamiento determinista de variantes — `variantRngPath`, `deriveVariantSeed`, `tests/property/content-model.property.test.ts`.
+- Catálogo ≠ plan de run, roles, elegibilidad y presupuesto — `tests/unit/content-model.test.ts`, 34 tests.
+- Contenido nuevo sin tocar el motor — test de registro sintético en el mismo archivo.
+- Equivalencia semántica de la migración — `tests/unit/engine-golden.test.ts`: mismo recorrido, score, perfil y comandos.
+- Versionado — `ENGINE_VERSION 3.0.0`, `SNAPSHOT_SCHEMA_VERSION 3`, contenido `0.3.0-dev` y `0.4.0-grade-7`, ruleset sin cambios.
 - Sistema de diseño v0.2 — [ADR-017](../03-architecture/adr/ADR-017-paper-visual-identity.md), `pnpm design:check`, E2E de diseño.
-- Career Model v2 — [ADR-016](../03-architecture/adr/ADR-016-career-player-model.md), `src/game/progression/career.ts`, `ENGINE_VERSION 2.0.0`.
-- Acto del 25 de Mayo y Aura en juego — `src/content/grade-7/challenges/may-25-act.ts`, `src/game/math/classification.ts`, seis pruebas E2E.
-- Contratos de run, versiones y seed — `src/game/core/versioning.ts`, `src/game/random/seed.ts`, `RunDescriptor` en `src/game/runs/state.ts`.
-- Replay y snapshots — `tests/unit/engine-golden.test.ts`, E2E de reanudación.
-- Precursor de verificación autoritativa — `src/server/game/validate-run.ts`, `tests/integration/server-run-validation.test.ts`.
-- Blueprint integrado — [ADR-018](../03-architecture/adr/ADR-018-blueprint-v0-2-decision-authority.md).
+- Career Model v2 — [ADR-016](../03-architecture/adr/ADR-016-career-player-model.md).
+- Contratos de run, versiones y seed — `src/game/core/versioning.ts`, `src/game/random/seed.ts`.
+- Precursor de verificación autoritativa — `src/server/game/validate-run.ts`.
 
 ## Siguiente etapa
 
-Completar STAGE-02 pone `READY` a **STAGE-03 — generación, validación y catálogo de variantes**, y con ella se destraba la migración pendiente de STAGE-04.
+Completar STAGE-03 destraba **STAGE-04 — 7.º completo como Demo Candidate**, que es donde los cinco desafíos restantes se convierten en familias con más de una estructura de razonamiento, y **STAGE-05 — dificultad y Run Composer**, que es quien empieza a *construir* planes en vez de sólo validarlos.
 
 El primer gate externo es **Teacher Gate 1**, después de STAGE-04 y STAGE-06.
 
 ## Última reconciliación
 
-28 de agosto de 2026, contra `eb7fe8f`, con `pnpm verify` en verde.
+28 de agosto de 2026, al cerrar STAGE-02, con `pnpm verify` en verde.

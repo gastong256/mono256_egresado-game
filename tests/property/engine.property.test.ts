@@ -17,6 +17,7 @@ import {
   createDevelopmentDependencies,
   developmentRunDescriptor,
   simulateRun,
+  materializeVariant,
 } from '@/game/testing'
 import { createRng } from '@/game/random/rng'
 import { deriveSeedValue } from '@/game/random/seed'
@@ -471,25 +472,20 @@ describe('challenge generation and evaluation', () => {
     fc.assert(
       fc.property(
         arbSeed,
-        fc.nat({ max: dependencies.challenges.definitions.length - 1 }),
+        fc.nat({ max: dependencies.catalog.templates.length - 1 }),
         arbDifficulty,
         (seed, index, difficulty) => {
-          const definition = dependencies.challenges.definitions[index]
+          const definition = dependencies.catalog.templates[index]
           if (definition === undefined) return
 
           const stage = definition.stages[0]
           if (stage === undefined) return
 
-          const materialized = definition.materialize(
-            {
-              instanceId: `${stage}:0:${definition.id}` as never,
-              definitionId: definition.id,
-              stageId: stage,
-              eventIndex: 0,
-              difficulty,
-            },
-            { rng: createRng(toRunSeed(seed), ['property']), difficulty },
-          )
+          const materialized = materializeVariant(definition, {
+            seed,
+            stage,
+            difficulty,
+          })
 
           expect(materialized.verify()).toEqual([])
           expect(materialized.attempts).toBeGreaterThanOrEqual(1)

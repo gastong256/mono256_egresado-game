@@ -100,6 +100,18 @@ Los invariantes de una variante se escriben **antes** que el código que la gene
 
 La lista completa y sus criterios de aceptación están en [validación y auditoría de variantes](../04-quality/variant-validation-and-audit.md).
 
+## Declarar dónde vive el contenido
+
+Desde [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md), una plantilla declara tres cosas además de su regla de juego:
+
+- **familia de escenario** — la situación reconocible en la que ocurre. Una familia puede alojar varias estructuras de razonamiento y no está atada a un año.
+- **rol de colocación** — `anchor` (el beat primario del año), `checkpoint` (una evaluación), `special` (un momento social o excepcional) o `recovery` (contenido condicional). Es semántica de agendado: no dice nada sobre la calidad del resultado ni sobre qué mueve en la carrera.
+- **variantes** — la lista ordenada de casos concretos que la plantilla puede producir, cada uno con un id estable. **El orden es parte del contrato**: la selección saca un índice de esa lista, así que reordenarla cambia qué caso produce un seed guardado.
+
+Y declara su **elegibilidad por etapa**, que es permiso y no selección: una plantilla elegible para 7.º no aparece en toda run de 7.º.
+
+Un año aporta **uno o dos beats ordinarios**, con exactamente un `anchor`. Una evaluación gasta uno de esos dos; no es un beat extra. La recuperación es condicional y queda afuera del presupuesto. Ver [la migración del modelo de contenido](../03-architecture/content-model-migration.md) para el procedimiento completo.
+
 ## Ficha de autoría
 
 Una plantilla nueva se registra antes de que exista código. La forma de esa ficha —narrativa, dominios matemáticos, apoyos, banda, invariantes, interacción, resultados, efectos de carrera, contribución competitiva, ocultos y estado de revisión docente— está en [challenge-authoring.example.yaml](../07-reference/challenge-authoring.example.yaml).

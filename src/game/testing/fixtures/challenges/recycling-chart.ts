@@ -11,7 +11,8 @@
  * floating point noise.
  */
 
-import { toChallengeId } from '../../../core/branded'
+import { toChallengeId, toVariantId } from '../../../core/branded'
+import { DEV_SCHOOL_DATA_FAMILY } from '../families'
 import { err, ok, type Result } from '../../../core/result'
 import type { EngineRejection } from '../../../core/errors'
 import {
@@ -49,6 +50,9 @@ const COURSE_LABELS = ['2.º A', '3.º B', '4.º C', '5.º A']
 export const recyclingChart: ChallengeDefinition =
   defineChallenge<RecyclingModel>({
     id: toChallengeId('dev.recycling-chart'),
+    family: DEV_SCHOOL_DATA_FAMILY,
+    placement: 'checkpoint',
+    variants: [toVariantId('base')],
     interaction: 'chart-interpretation',
     categories: ['data-and-statistics', 'proportions-and-percentages'],
     stages: ['year-2', 'year-3', 'year-4'],

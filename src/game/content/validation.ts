@@ -14,7 +14,7 @@
  */
 
 import { toRunSeed, type ChallengeId, type StoryletId } from '../core/branded'
-import type { ChallengeRegistry } from '../challenges/registry'
+import type { ContentCatalog } from '../challenges/content-catalog'
 import type { DifficultyLevel } from '../challenges/taxonomy'
 import {
   validateCondition,
@@ -23,19 +23,17 @@ import {
 import { validateEffect } from '../narrative/effects'
 import type { Storylet } from '../narrative/storylet'
 import { createRng } from '../random/rng'
+import { variantRngPath } from '../challenges/content-model'
+import { variantRefOf } from '../challenges/contracts'
 import type { StageConfig, StageId } from '../progression/stages'
 import type { Ruleset } from '../ruleset/ruleset'
 import { toChallengeInstanceId } from '../core/branded'
-
-export type ValidationSeverity = 'error' | 'warning'
-
-export interface ValidationIssue {
-  readonly severity: ValidationSeverity
-  /** Stable machine-readable code, useful for suppressions and tooling. */
-  readonly code: string
-  readonly subject: string
-  readonly message: string
-}
+import {
+  contentError,
+  contentWarning,
+  hasNoErrors,
+  type ValidationIssue,
+} from './issues'
 
 export interface ChallengeGenerationStats {
   readonly challengeId: ChallengeId
@@ -55,27 +53,14 @@ export interface ContentValidationReport {
 
 export interface ContentValidationInput {
   readonly ruleset: Ruleset
-  readonly challenges: ChallengeRegistry
+  readonly catalog: ContentCatalog
   readonly storylets: readonly Storylet[]
   /** Seeds generated per challenge definition per difficulty. */
   readonly seedsPerChallenge?: number
 }
 
-function error(
-  code: string,
-  subject: string,
-  message: string,
-): ValidationIssue {
-  return { severity: 'error', code, subject, message }
-}
-
-function warning(
-  code: string,
-  subject: string,
-  message: string,
-): ValidationIssue {
-  return { severity: 'warning', code, subject, message }
-}
+const error = contentError
+const warning = contentWarning
 
 function validateStorylets(
   input: ContentValidationInput,
@@ -122,7 +107,7 @@ function validateStorylets(
     }
 
     for (const challengeId of storylet.challengePool) {
-      const definition = input.challenges.get(challengeId)
+      const definition = input.catalog.template(challengeId)
       if (definition === undefined) {
         issues.push(
           error(
@@ -214,6 +199,23 @@ function validateStageCoverage(
           'stage.insufficient-storylets',
           stage.id,
           `stage plays ${String(stage.eventCount)} events but only ${String(inStage.length)} storylets can appear`,
+        ),
+      )
+    }
+
+    // A stage that offers challenges but no primary beat cannot form a valid
+    // plan later. It is a warning rather than an error because a purely
+    // narrative stage legitimately offers nothing at all.
+    const eligible = input.catalog.forStage(stage.id)
+    if (
+      eligible.length > 0 &&
+      !eligible.some((template) => template.placement === 'anchor')
+    ) {
+      issues.push(
+        warning(
+          'stage.no-anchor',
+          stage.id,
+          'stage has eligible templates but none can act as its anchor beat',
         ),
       )
     }
@@ -445,67 +447,85 @@ function runGeneration(input: ContentValidationInput): {
   const issues: ValidationIssue[] = []
   const generation: ChallengeGenerationStats[] = []
 
-  for (const definition of input.challenges.definitions) {
+  for (const definition of input.catalog.templates) {
     let failures = 0
     const presentations = new Set<string>()
     const optionCounts: Record<string, number> = {}
     let checked = 0
 
     for (const stage of definition.stages) {
-      for (let index = 0; index < seeds; index += 1) {
-        const seed = toRunSeed(
-          `validate-${definition.id}-${stage}-${String(index)}`,
-        )
-        const difficulty: DifficultyLevel = definition.baseDifficulty
-        const materialized = definition.materialize(
-          {
+      for (const variantId of definition.variants) {
+        for (let index = 0; index < seeds; index += 1) {
+          const seed = toRunSeed(
+            `validate-${definition.id}-${stage}-${variantId}-${String(index)}`,
+          )
+          const difficulty: DifficultyLevel = definition.baseDifficulty
+          const ref = {
             instanceId: toChallengeInstanceId(
               `${stage}:${String(index)}:${definition.id}`,
             ),
-            definitionId: definition.id,
+            familyId: definition.family,
+            templateId: definition.id,
+            variantId,
             stageId: stage,
             eventIndex: index,
             difficulty,
-          },
-          { rng: createRng(seed, ['validate']), difficulty },
-        )
-
-        checked += 1
-        const problems = materialized.verify()
-
-        if (problems.length > 0) {
-          failures += 1
-          // Only the first few are reported: a broken generator would otherwise
-          // bury every other finding.
-          if (failures <= 3) {
-            issues.push(
-              error(
-                'challenge.invariant-violation',
-                definition.id,
-                `seed ${String(index)} in ${stage}: ${problems.join('; ')}`,
-              ),
-            )
           }
-        }
+          const materialized = definition.materialize(ref, {
+            rng: createRng(seed, ['validate']),
+            difficulty,
+            variantId,
+            variantRng: createRng(seed, variantRngPath(variantRefOf(ref))),
+          })
 
-        const presentation = materialized.present([])
-        presentations.add(presentationKey(presentation))
+          checked += 1
+          const problems = materialized.verify()
 
-        // Track which position an "obvious" answer would occupy so a content
-        // set cannot systematically put the right answer first.
-        if ('options' in presentation && presentation.options.length > 0) {
-          const first = presentation.options[0]
-          if (first !== undefined) {
-            optionCounts[first.id] = (optionCounts[first.id] ?? 0) + 1
+          if (problems.length > 0) {
+            failures += 1
+            // Only the first few are reported: a broken generator would otherwise
+            // bury every other finding.
+            if (failures <= 3) {
+              issues.push(
+                error(
+                  'challenge.invariant-violation',
+                  definition.id,
+                  `seed ${String(index)} in ${stage}: ${problems.join('; ')}`,
+                ),
+              )
+            }
+          }
+
+          const presentation = materialized.present([])
+          presentations.add(presentationKey(presentation))
+
+          // Track which position an "obvious" answer would occupy so a content
+          // set cannot systematically put the right answer first.
+          if ('options' in presentation && presentation.options.length > 0) {
+            const first = presentation.options[0]
+            if (first !== undefined) {
+              optionCounts[first.id] = (optionCounts[first.id] ?? 0) + 1
+            }
           }
         }
       }
     }
 
-    // Authored content legitimately offers a small set of hand-verified
-    // variants, so a low count is a design choice rather than a defect. What is
-    // always wrong is a challenge that ignores the seed completely: it has no
-    // replay value and the seed cannot distinguish two runs of it.
+    // A template must produce at least as many distinct instances as it
+    // declares variants. Fewer means two variants render identically, which is
+    // a defect: the address says they are different cases and the player sees
+    // the same screen. Authored content legitimately stops there; a procedural
+    // template will produce many more.
+    if (checked > 1 && presentations.size < definition.variants.length) {
+      issues.push(
+        error(
+          'challenge.variant-collision',
+          definition.id,
+          `declares ${String(definition.variants.length)} variants but produced ${String(presentations.size)} distinct instances across ${String(checked)} generations`,
+        ),
+      )
+    }
+
     if (checked > 1 && presentations.size < 2) {
       issues.push(
         warning(
@@ -542,6 +562,6 @@ export function validateContent(
   return {
     issues,
     generation: generated.generation,
-    ok: issues.every((issue) => issue.severity !== 'error'),
+    ok: hasNoErrors(issues),
   }
 }

@@ -47,7 +47,7 @@ function main(): void {
   const dependencies = selectDependencies(argv)
   const report = validateContent({
     ruleset: dependencies.ruleset,
-    challenges: dependencies.challenges,
+    catalog: dependencies.catalog,
     storylets: dependencies.storylets,
     seedsPerChallenge,
   })
@@ -60,7 +60,7 @@ function main(): void {
       'Egresado content validation',
       `  ruleset     ${dependencies.ruleset.id}@${dependencies.ruleset.version}`,
       `  content     ${dependencies.ruleset.contentVersion}`,
-      `  challenges  ${String(dependencies.challenges.definitions.length)}`,
+      `  challenges  ${String(dependencies.catalog.templates.length)}`,
       `  storylets   ${String(dependencies.storylets.length)}`,
       `  seeds each  ${String(seedsPerChallenge)}`,
       `  errors      ${String(errors.length)}`,

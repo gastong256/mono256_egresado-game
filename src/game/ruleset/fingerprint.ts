@@ -19,7 +19,7 @@
  * asking for.
  */
 
-import type { ChallengeRegistry } from '../challenges/registry'
+import type { ContentCatalog } from '../challenges/content-catalog'
 import { ENGINE_VERSION } from '../core/versioning'
 import type { Storylet } from '../narrative/storylet'
 import { RNG_ALGORITHM } from '../random/rng'
@@ -96,18 +96,27 @@ export function rulesetFingerprint(ruleset: Ruleset): string {
  * a seed produces, so it changes the content version rather than the ruleset.
  */
 export function contentFingerprint(
-  challenges: ChallengeRegistry,
+  catalog: ContentCatalog,
   storylets: readonly Storylet[],
 ): string {
-  const definitions = challenges.definitions
-    .map((definition) =>
+  const families = catalog.families
+    .map((family) => [family.id, family.labelKey].join(':'))
+    .join('|')
+
+  const definitions = catalog.templates
+    .map((template) =>
       [
-        definition.id,
-        definition.interaction,
-        String(definition.baseDifficulty),
-        [...definition.stages].sort().join(','),
-        [...definition.categories].sort().join(','),
-        [...definition.tools].sort().join(','),
+        template.id,
+        template.family,
+        template.placement,
+        // Variant order is content identity: selection draws an index from this
+        // list, so reordering it changes which case a stored seed produces.
+        template.variants.join(','),
+        template.interaction,
+        String(template.baseDifficulty),
+        [...template.stages].sort().join(','),
+        [...template.categories].sort().join(','),
+        [...template.tools].sort().join(','),
       ].join(':'),
     )
     .join('|')
@@ -132,5 +141,7 @@ export function contentFingerprint(
     )
     .join('|')
 
-  return digest(`challenges:${definitions}||storylets:${events}`)
+  return digest(
+    `families:${families}||templates:${definitions}||storylets:${events}`,
+  )
 }

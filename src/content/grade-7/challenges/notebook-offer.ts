@@ -18,6 +18,8 @@ import {
   fromInteger,
   metrics,
   ok,
+  authoredVariant,
+  authoredVariantIds,
   toChallengeId,
   type ChallengeDefinition,
   type ChallengeEvaluation,
@@ -25,6 +27,7 @@ import {
   type InteractionAnswer,
   type Result,
 } from '@/game'
+import { NOTEBOOK_FAMILY } from '../families'
 
 import { pesos } from '../../pesos'
 
@@ -47,9 +50,22 @@ interface NotebookModel {
  * Dos variantes autoradas. En las dos el porcentaje descuenta más que el monto
  * fijo, y en las dos el presupuesto alcanza sólo para la más barata.
  */
+/** Identidad estable de la plantilla. */
+const NOTEBOOK_OFFER_ID = toChallengeId('g7.notebook-offer')
+
 const VARIANTS = [
-  { listPriceMinor: 80_000_000, percentOff: 20, fixedOffMinor: 12_000_000 },
-  { listPriceMinor: 70_000_000, percentOff: 20, fixedOffMinor: 10_000_000 },
+  {
+    id: 'precio-alto',
+    listPriceMinor: 80_000_000,
+    percentOff: 20,
+    fixedOffMinor: 12_000_000,
+  },
+  {
+    id: 'precio-bajo',
+    listPriceMinor: 70_000_000,
+    percentOff: 20,
+    fixedOffMinor: 10_000_000,
+  },
 ] as const
 
 /** Porcentaje sobre centavos enteros: el resultado sigue siendo entero. */
@@ -59,15 +75,18 @@ function percentOfMinor(amountMinor: number, percent: number): number {
 
 export const notebookOffer: ChallengeDefinition =
   defineChallenge<NotebookModel>({
-    id: toChallengeId('g7.notebook-offer'),
+    id: NOTEBOOK_OFFER_ID,
+    family: NOTEBOOK_FAMILY,
+    placement: 'anchor',
+    variants: authoredVariantIds(VARIANTS),
     interaction: 'decision-card',
     categories: ['proportions-and-percentages', 'quantity'],
     stages: ['grade-7'],
     baseDifficulty: 3,
     tools: ['calculator'],
 
-    generate({ rng }) {
-      const variant = rng.pick(VARIANTS)
+    generate({ variantId }) {
+      const variant = authoredVariant(NOTEBOOK_OFFER_ID, VARIANTS, variantId)
       const percentValue = percentOfMinor(
         variant.listPriceMinor,
         variant.percentOff,

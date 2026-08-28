@@ -13,9 +13,9 @@
 import { toContentSetId, toRulesetId } from '../../core/branded'
 import { EngineInvariantError } from '../../core/invariant'
 import {
-  createChallengeRegistry,
-  type ChallengeRegistry,
-} from '../../challenges/registry'
+  createContentCatalog,
+  type ContentCatalog,
+} from '../../challenges/content-catalog'
 import { developmentDifficultyPolicy } from '../../difficulty/development-policy'
 import { developmentProfilePolicy } from '../../profiles/development-policy'
 import { developmentScoringPolicy } from '../../scoring/development-policy'
@@ -30,10 +30,11 @@ import { recyclingChart } from './challenges/recycling-chart'
 import { studyTimeline } from './challenges/study-timeline'
 import { surveyConfidence } from './challenges/survey-confidence'
 import { tripBudget } from './challenges/trip-budget'
+import { developmentFamilies } from './families'
 import { developmentStorylets } from './storylets'
 
 export const DEVELOPMENT_RULESET_VERSION = '0.2.0-dev'
-export const DEVELOPMENT_CONTENT_VERSION = '0.2.0-dev'
+export const DEVELOPMENT_CONTENT_VERSION = '0.3.0-dev'
 
 /** Every development challenge definition. */
 export const developmentChallenges = [
@@ -47,8 +48,8 @@ export const developmentChallenges = [
   tripBudget,
 ]
 
-export function createDevelopmentChallengeRegistry(): ChallengeRegistry {
-  return createChallengeRegistry(developmentChallenges)
+export function createDevelopmentContentCatalog(): ContentCatalog {
+  return createContentCatalog(developmentFamilies, developmentChallenges)
 }
 
 /**
@@ -163,7 +164,7 @@ export function createDevelopmentRuleset(): Ruleset {
 export function createDevelopmentDependencies(): EngineDependencies {
   return {
     ruleset: createDevelopmentRuleset(),
-    challenges: createDevelopmentChallengeRegistry(),
+    catalog: createDevelopmentContentCatalog(),
     storylets: developmentStorylets,
   }
 }

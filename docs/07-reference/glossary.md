@@ -48,11 +48,23 @@
 
 **Scenario Family:** dominio narrativo reconocible —Colectivo, Mural, Stand—. No confundir con las «familias de interacción» del [sistema de desafíos](../01-game-design/challenge-system.md), que son patrones de UI.
 
-**Template:** estructura de razonamiento distinta dentro de una misma familia de escenario.
+**Template / ChallengeTemplate:** estructura de razonamiento distinta dentro de una misma familia de escenario. En el código es una `ChallengeDefinition`, identificada por un `ChallengeId`: son la misma cosa con el nombre que tenía antes del modelo de contenido.
 
 **Variant:** parametrización concreta y determinista de una plantilla.
 
-**Deployed variant:** variante generada, validada y aprobada antes de que exista una run competitiva. Objetivo, no implementado.
+**Deployed variant:** variante generada, validada y aprobada antes de que exista una run competitiva. Objetivo, no implementado. **No confundir con el catálogo de contenido**, que es lo autorado y disponible.
+
+**Content catalog:** todo el contenido autorado y disponible de un content set — familias y plantillas. Responde *qué existe y dónde puede aparecer*. Implementado como `ContentCatalog`.
+
+**Run plan:** el contenido efectivamente elegido para una partida. Responde *qué juega esta run*. Implementado como `RunPlan`; **quién lo construye** es trabajo de una etapa posterior.
+
+**Rol de colocación:** `anchor`, `checkpoint`, `special` o `recovery`. Semántica de agendado, nunca de calidad ni de efecto de carrera. Ver [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md).
+
+**Beat ordinario:** un beat que gasta presupuesto del año. Son `anchor`, `checkpoint` y `special`; la recuperación es condicional y queda afuera.
+
+**Presupuesto de beats por etapa:** uno o dos beats ordinarios por año, con exactamente un `anchor`. Existe porque una run cruza seis años y tiene que poder volver a jugarse.
+
+**Dirección de variante:** `familia/plantilla/variante`. Tres identificadores semánticos estables; ni índice de array ni posición en el catálogo.
 
 **Difficulty budget:** masa de dificultad esperada asignada a una run para que distintas runs sigan siendo comparables.
 

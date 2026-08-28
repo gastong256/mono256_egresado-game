@@ -18,14 +18,18 @@ export {
   toRunId,
   toRunSeed,
   toRulesetId,
+  toScenarioFamilyId,
   toStoryletId,
+  toVariantId,
   type ChallengeId,
   type ChallengeInstanceId,
   type ContentSetId,
   type RulesetId,
   type RunId,
   type RunSeed,
+  type ScenarioFamilyId,
   type StoryletId,
+  type VariantId,
 } from './core/branded'
 export {
   assertCompatibleVersions,
@@ -185,11 +189,53 @@ export type {
   PublicChallengeView,
   ReasoningMetrics,
 } from './challenges/contracts'
-export { defineChallenge, type ChallengeSpec } from './challenges/contracts'
 export {
-  createChallengeRegistry,
-  type ChallengeRegistry,
-} from './challenges/registry'
+  defineChallenge,
+  selectVariantId,
+  variantRefOf,
+  type ChallengeSpec,
+} from './challenges/contracts'
+export {
+  createContentCatalog,
+  type ContentCatalog,
+} from './challenges/content-catalog'
+
+// Content model: scenario family, challenge template, challenge variant
+export {
+  authoredVariant,
+  authoredVariantIds,
+  deriveVariantSeed,
+  formatVariantAddress,
+  isEligibleForStage,
+  isOrdinaryBeatRole,
+  isPlacementRole,
+  parseVariantAddress,
+  sameVariantAddress,
+  variantRngPath,
+  PLACEMENT_ROLES,
+  type AuthoredVariant,
+  type ChallengePlacementRole,
+  type ChallengeVariantRef,
+  type ScenarioFamilyDefinition,
+  type StageEligibility,
+} from './challenges/content-model'
+export {
+  planEntry,
+  resolvePlanEntry,
+  validateRunPlan,
+  validateStagePlan,
+  DEFAULT_STAGE_BEAT_BUDGET,
+  type ResolvedPlanEntry,
+  type RunPlan,
+  type RunPlanEntry,
+  type StageBeatBudget,
+  type StageContentPlan,
+} from './content/run-plan'
+export {
+  hasNoErrors,
+  type ValidationIssue,
+  type ValidationSeverity,
+} from './content/issues'
 export type {
   AgentAssignment,
   BudgetLine,
@@ -280,5 +326,4 @@ export {
   validateContent,
   type ContentValidationInput,
   type ContentValidationReport,
-  type ValidationIssue,
 } from './content/validation'

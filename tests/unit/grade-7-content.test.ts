@@ -1,10 +1,8 @@
 import { describe, expect, it } from 'vitest'
 
 import {
-  createChallengeRegistry,
+  createContentCatalog,
   targetsFor,
-  toChallengeInstanceId,
-  toRunSeed,
   type CareerEffects,
   type ChallengeDefinition,
   type GridRoundSelection,
@@ -13,8 +11,12 @@ import {
   type PresentedGridRound,
   type SolutionQuality,
 } from '@/game'
-import { createRng } from '@/game/random/rng'
-import { grade7Challenges, createGrade7Dependencies } from '@/content/grade-7'
+import {
+  createGrade7Dependencies,
+  grade7Challenges,
+  grade7Families,
+} from '@/content/grade-7'
+import { materializeEveryVariant } from '@/game/testing'
 import { busTimingReference } from '@/content/grade-7/challenges/bus-timing'
 import { may25ActReference } from '@/content/grade-7/challenges/may-25-act'
 import { muralPaintReference } from '@/content/grade-7/challenges/mural-paint'
@@ -31,32 +33,18 @@ import { standSuppliesReference } from '@/content/grade-7/challenges/stand-suppl
  */
 
 const dependencies = createGrade7Dependencies()
-const registry = createChallengeRegistry(grade7Challenges)
+const catalog = createContentCatalog(grade7Families, grade7Challenges)
 
-/** Materializa todas las instancias que las variantes pueden producir. */
+/**
+ * Una instancia por variante autorada.
+ *
+ * Antes esto materializaba cuarenta seeds y esperaba que aparecieran todas las
+ * variantes. Ahora las variantes tienen dirección propia, así que se recorren
+ * de forma exhaustiva: si una variante nueva se agrega y rompe una invariante,
+ * el test la ve siempre y no cuando el seed tiene suerte.
+ */
 function instancesOf(definition: ChallengeDefinition): MaterializedChallenge[] {
-  const seen = new Map<string, MaterializedChallenge>()
-  const stage = definition.stages[0]
-  if (stage === undefined) throw new Error('sin etapa')
-
-  for (let index = 0; index < 40; index += 1) {
-    const instance = definition.materialize(
-      {
-        instanceId: toChallengeInstanceId(`${stage}:${String(index)}:x`),
-        definitionId: definition.id,
-        stageId: stage,
-        eventIndex: index,
-        difficulty: definition.baseDifficulty,
-      },
-      {
-        rng: createRng(toRunSeed(`content-${String(index)}`), ['variant']),
-        difficulty: definition.baseDifficulty,
-      },
-    )
-    seen.set(JSON.stringify(instance.present([])), instance)
-  }
-
-  return [...seen.values()]
+  return [...materializeEveryVariant(definition, 'content')]
 }
 
 function qualityOf(
@@ -71,7 +59,7 @@ function qualityOf(
 }
 
 describe('el colectivo · tiempo y porcentaje', () => {
-  const definition = registry.get('g7.bus-timing' as never)
+  const definition = catalog.template('g7.bus-timing' as never)
   if (definition === undefined) throw new Error('falta el desafío')
 
   it('aplica la demora sobre la duración programada', () => {
@@ -128,7 +116,7 @@ describe('el colectivo · tiempo y porcentaje', () => {
 })
 
 describe('el mural · área y cobertura', () => {
-  const definition = registry.get('g7.mural-paint' as never)
+  const definition = catalog.template('g7.mural-paint' as never)
   if (definition === undefined) throw new Error('falta el desafío')
 
   it.each(muralPaintReference.variants)(
@@ -177,7 +165,7 @@ describe('el mural · área y cobertura', () => {
 })
 
 describe('la notebook · porcentaje contra monto fijo', () => {
-  const definition = registry.get('g7.notebook-offer' as never)
+  const definition = catalog.template('g7.notebook-offer' as never)
   if (definition === undefined) throw new Error('falta el desafío')
 
   it.each(notebookOfferReference.variants)(
@@ -238,7 +226,7 @@ describe('la notebook · porcentaje contra monto fijo', () => {
 })
 
 describe('el trabajo grupal · asignación con restricciones', () => {
-  const definition = registry.get('g7.group-tasks' as never)
+  const definition = catalog.template('g7.group-tasks' as never)
   if (definition === undefined) throw new Error('falta el desafío')
 
   it('rechaza dejar una tarea sin asignar', () => {
@@ -327,7 +315,7 @@ describe('el trabajo grupal · asignación con restricciones', () => {
 })
 
 describe('el stand · costo unitario y combinación', () => {
-  const definition = registry.get('g7.stand-supplies' as never)
+  const definition = catalog.template('g7.stand-supplies' as never)
   if (definition === undefined) throw new Error('falta el desafío')
 
   it.each(standSuppliesReference.variants)(
@@ -416,7 +404,7 @@ describe('el stand · costo unitario y combinación', () => {
 })
 
 describe('el acto del 25 de Mayo · clasificación y Aura', () => {
-  const definition = registry.get('g7.may-25-act' as never)
+  const definition = catalog.template('g7.may-25-act' as never)
   if (definition === undefined) throw new Error('falta el desafío')
 
   /** Las rondas presentadas por una instancia. */
@@ -486,7 +474,7 @@ describe('el acto del 25 de Mayo · clasificación y Aura', () => {
 
   it('las variantes autoradas usan números que se clasifican de memoria', () => {
     for (const variant of may25ActReference.variants) {
-      for (const round of variant) {
+      for (const round of variant.rounds) {
         for (const value of round.numbers) {
           expect(Number.isSafeInteger(value)).toBe(true)
           expect(value).toBeGreaterThanOrEqual(0)

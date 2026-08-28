@@ -114,10 +114,15 @@ Los criterios de aceptación de estos controles están en [validación y auditor
 |---|---|
 | Generación seeded, verificación de invariantes y vista pública sin solución | **implementado** en `src/game/challenges/` |
 | Reproducibilidad por seed + versiones + acciones | **implementado**, con property tests y golden replays |
-| Variantes autoradas por desafío (pocas, fijas en el contenido) | **implementado** en `src/content/grade-7/challenges/` |
-| Jerarquía explícita `ScenarioFamily → Template → Variant` | **no implementada** |
+| Jerarquía explícita `ScenarioFamily → Template → Variant` | **implementada** — [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md), `src/game/challenges/content-model.ts` |
+| Variante con identidad, dirección y substream propios | **implementada**; la dirección es `familia/plantilla/variante` |
+| Catálogo de contenido disponible, separado del plan de la run | **implementado** — `ContentCatalog` y `RunPlan` |
+| Elegibilidad por etapa declarativa, incluso no contigua | **implementada** |
+| Roles de colocación y presupuesto de beats por año | **implementados** como contrato de plan validable |
 | Generador por restricción como abstracción reutilizable | **no implementada** |
-| Catálogo desplegado y versionado de variantes | **no implementado** |
+| Catálogo desplegado y versionado de variantes competitivas | **no implementado** |
 | `variantCatalogVersion` en la identidad de la run | **no implementado**; hoy la tripleta es `gameVersion`/`rulesetVersion`/`contentVersion` |
+
+Cuidado con la palabra «catálogo»: el **catálogo de contenido** que ya existe es lo autorado y disponible; el **catálogo desplegado de variantes** que todavía no existe es el conjunto generado, validado y aprobado para competencia. Son dos cosas distintas.
 
 La brecha completa y su orden están en [arquitectura objetivo del motor](../03-architecture/target-engine-architecture.md) y en [la secuencia de implementación](../06-delivery/implementation-sequence.md).

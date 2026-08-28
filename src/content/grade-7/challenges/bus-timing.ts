@@ -17,6 +17,8 @@ import {
   err,
   metrics,
   ok,
+  authoredVariant,
+  authoredVariantIds,
   toChallengeId,
   type ChallengeDefinition,
   type ChallengeEvaluation,
@@ -31,6 +33,7 @@ import {
   percentOf,
   roundTo,
 } from '@/game'
+import { BUS_FAMILY } from '../families'
 
 interface Departure {
   readonly id: string
@@ -54,9 +57,12 @@ const SAFE_MARGIN = 5
  * tests y las dos ofrecen exactamente una salida óptima y al menos una que
  * llega tarde.
  */
+/** Identidad estable de la plantilla. */
+const BUS_TIMING_ID = toChallengeId('g7.bus-timing')
+
 const VARIANTS = [
-  { delayPercent: 25, departures: [405, 420, 430, 440] },
-  { delayPercent: 50, departures: [405, 420, 430, 440] },
+  { id: 'demora-25', delayPercent: 25, departures: [405, 420, 430, 440] },
+  { id: 'demora-50', delayPercent: 50, departures: [405, 420, 430, 440] },
 ] as const
 
 const SCHEDULED_MINUTES = 28
@@ -92,15 +98,18 @@ function bestMargin(model: BusModel): number | undefined {
 }
 
 export const busTiming: ChallengeDefinition = defineChallenge<BusModel>({
-  id: toChallengeId('g7.bus-timing'),
+  id: BUS_TIMING_ID,
+  family: BUS_FAMILY,
+  placement: 'anchor',
+  variants: authoredVariantIds(VARIANTS),
   interaction: 'timeline',
   categories: ['time-and-rates', 'proportions-and-percentages'],
   stages: ['grade-7'],
   baseDifficulty: 2,
   tools: ['calculator'],
 
-  generate({ rng }) {
-    const variant = rng.pick(VARIANTS)
+  generate({ variantId }) {
+    const variant = authoredVariant(BUS_TIMING_ID, VARIANTS, variantId)
     const travel = travelWithDelay(SCHEDULED_MINUTES, variant.delayPercent)
 
     return {

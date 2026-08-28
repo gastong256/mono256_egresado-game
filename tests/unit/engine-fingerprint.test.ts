@@ -31,20 +31,33 @@ import { createDevelopmentDependencies } from '@/game/testing'
 const dependencies = createDevelopmentDependencies()
 
 /*
- * Regenerados para la migración de carrera (`ENGINE_VERSION` 2.0.0, ruleset y
- * contenido `0.2.0-dev`). El recorrido, el score y el perfil de las runs golden
- * quedaron idénticos: lo que cambió es la forma del estado persistido, que es
- * exactamente el tipo de cambio que la versión de motor existe para declarar.
+ * Regenerados para el modelo de contenido (`ENGINE_VERSION` 3.0.0, contenido
+ * `0.3.0-dev`).
+ *
+ * Dos de los tres se movieron y el tercero no, que es justamente lo que estos
+ * fingerprints existen para mostrar:
+ *
+ * - **motor**: el códec de snapshot pasó a la versión 3, porque la dirección de
+ *   una instancia lleva ahora familia, plantilla y variante en lugar de un id
+ *   de definición suelto;
+ * - **contenido**: cada plantilla declara familia, rol de colocación y sus
+ *   variantes con identidad propia, y el orden de esa lista es parte del
+ *   contrato porque la selección saca un índice de ahí;
+ * - **ruleset**: sin cambios, y se queda en `d3319440`. Las políticas de score,
+ *   dificultad y perfil y la configuración de etapas no se tocaron.
+ *
+ * El recorrido, el score, el perfil y la cantidad de comandos de las dos runs
+ * golden quedaron **idénticos**.
  */
 const EXPECTED = {
-  engine: 'b272785f',
+  engine: '48adb1a7',
   ruleset: 'd3319440',
-  content: '0689336b',
+  content: '53820929',
 } as const
 
 describe('version fingerprints', () => {
   it('pins the deterministic kernel to its engine version', () => {
-    expect(ENGINE_VERSION).toBe('2.0.0')
+    expect(ENGINE_VERSION).toBe('3.0.0')
     expect(engineFingerprint()).toBe(EXPECTED.engine)
   })
 
@@ -54,9 +67,9 @@ describe('version fingerprints', () => {
   })
 
   it('pins the playable content to the declared content version', () => {
-    expect(dependencies.ruleset.contentVersion).toBe('0.2.0-dev')
+    expect(dependencies.ruleset.contentVersion).toBe('0.3.0-dev')
     expect(
-      contentFingerprint(dependencies.challenges, dependencies.storylets),
+      contentFingerprint(dependencies.catalog, dependencies.storylets),
     ).toBe(EXPECTED.content)
   })
 
@@ -66,7 +79,7 @@ describe('version fingerprints', () => {
     const values = new Set([
       engineFingerprint(),
       rulesetFingerprint(dependencies.ruleset),
-      contentFingerprint(dependencies.challenges, dependencies.storylets),
+      contentFingerprint(dependencies.catalog, dependencies.storylets),
     ])
     expect(values.size).toBe(3)
   })
@@ -89,7 +102,7 @@ describe('version fingerprints', () => {
   it('reacts to a content change that leaves the version untouched', () => {
     const trimmed = dependencies.storylets.slice(0, -1)
 
-    expect(contentFingerprint(dependencies.challenges, trimmed)).not.toBe(
+    expect(contentFingerprint(dependencies.catalog, trimmed)).not.toBe(
       EXPECTED.content,
     )
   })
@@ -99,7 +112,7 @@ describe('version fingerprints', () => {
       rulesetFingerprint(dependencies.ruleset),
     )
     expect(
-      contentFingerprint(dependencies.challenges, dependencies.storylets),
-    ).toBe(contentFingerprint(dependencies.challenges, dependencies.storylets))
+      contentFingerprint(dependencies.catalog, dependencies.storylets),
+    ).toBe(contentFingerprint(dependencies.catalog, dependencies.storylets))
   })
 })

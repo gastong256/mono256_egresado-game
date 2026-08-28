@@ -11,7 +11,8 @@
  * gamble rather than a reasoned choice.
  */
 
-import { toChallengeId } from '../../../core/branded'
+import { toChallengeId, toVariantId } from '../../../core/branded'
+import { DEV_SCHOOL_DATA_FAMILY } from '../families'
 import { err, ok, type Result } from '../../../core/result'
 import type { EngineRejection } from '../../../core/errors'
 import {
@@ -45,6 +46,9 @@ const REQUESTABLE = [
 export const surveyConfidence: ChallengeDefinition =
   defineChallenge<SurveyModel>({
     id: toChallengeId('dev.survey-confidence'),
+    family: DEV_SCHOOL_DATA_FAMILY,
+    placement: 'anchor',
+    variants: [toVariantId('base')],
     interaction: 'information-request',
     categories: ['data-and-statistics', 'probability-and-uncertainty'],
     stages: ['year-4', 'year-5'],

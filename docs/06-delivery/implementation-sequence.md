@@ -17,7 +17,7 @@ Si el roadmap y el código difieren, **el código gana** y el roadmap se corrige
 - Fases de validación externa y congelamiento: [ciclo de entrega real](../00-product/real-delivery-lifecycle.md).
 - Qué se construye por capas de alcance: [alcance y roadmap](../00-product/scope-and-roadmap.md) y [backlog](mvp-backlog.md).
 
-**Última reconciliación contra el código:** 28 de agosto de 2026, sobre `eb7fe8f`.
+**Última reconciliación contra el código:** 28 de agosto de 2026, al cerrar STAGE-02.
 
 ---
 
@@ -50,8 +50,8 @@ Tabla de navegación. Los contratos de cada etapa, más abajo, son la autoridad.
 |---|---|---|---|---|
 | [STAGE-00](#stage-00-auditoría-funcional-ejecutable) | Auditoría funcional ejecutable | `DONE` | — | — |
 | [STAGE-01](#stage-01-contratos-de-run-versiones-y-seeds) | Contratos de run, versiones y seeds | `DONE` | STAGE-00 | — |
-| [STAGE-02](#stage-02-scenariofamily-challengetemplate-challengevariant) | ScenarioFamily → Template → Variant | **`READY`** | STAGE-01 | — |
-| [STAGE-03](#stage-03-generación-validación-y-catálogo-de-variantes) | Generación, validación y catálogo de variantes | `NOT_STARTED` | STAGE-02 | — |
+| [STAGE-02](#stage-02-scenariofamily-challengetemplate-challengevariant) | ScenarioFamily → Template → Variant | `DONE` | STAGE-01 | — |
+| [STAGE-03](#stage-03-generación-validación-y-catálogo-de-variantes) | Generación, validación y catálogo de variantes | **`READY`** | STAGE-02 | — |
 | [STAGE-04](#stage-04-7º-completo-como-demo-candidate) | 7.º completo como Demo Candidate | `PARTIAL` | STAGE-02, STAGE-03 | — |
 | [STAGE-05](#stage-05-modelo-de-dificultad-y-run-composer) | Modelo de dificultad y Run Composer | `NOT_STARTED` | STAGE-03 | — |
 | [STAGE-06](#stage-06-scorepolicy-competitiva) | ScorePolicy competitiva | `NOT_STARTED` | STAGE-05 | — |
@@ -113,17 +113,17 @@ Estado real contra el código al 28 de agosto de 2026. Es la base de la que sale
 | Separación outcome ≠ carrera ≠ score | `DONE` | `challenges/contracts.ts`, `progression/career.ts`, `scoring/policy.ts` | STAGE-01 |
 | `scoreVersion` | `NOT_STARTED` | — | STAGE-06 |
 | `variantCatalogVersion` | `NOT_STARTED` | — | STAGE-03 |
-| `ScenarioFamily` | `NOT_STARTED` | no existe `familyId` en el código | STAGE-02 |
-| `ChallengeTemplate` | `PARTIAL` | `ChallengeSpec` ya separa `generate`/`verify`/`present`/`evaluate`, pero una definición es un escenario entero, no una estructura cognitiva dentro de una familia | STAGE-02 |
-| `ChallengeVariant` | `PARTIAL` | arrays `VARIANTS` autorados por desafío y elección por seed; no hay tipo `Variant` serializable de primera clase | STAGE-02 |
+| `ScenarioFamily` | `DONE` | `src/game/challenges/content-model.ts`, [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md), `tests/unit/content-model.test.ts` | STAGE-02 |
+| `ChallengeTemplate` | `DONE` | una `ChallengeDefinition` declara familia, rol y variantes; dos plantillas conviven en la familia `school-data` | STAGE-02 |
+| `ChallengeVariant` | `DONE` | `ChallengeVariantRef` con dirección `familia/plantilla/variante`, round-trip y substream propio | STAGE-02 |
 | `VariantGenerator` reutilizable | `PARTIAL` | `generate(context)` por desafío; sin abstracción por restricción compartida | STAGE-03 |
-| `VariantValidator` transversal | `PARTIAL` | `verify(model)` por desafío + `src/game/content/validation.ts`; sin contrato de invariantes común | STAGE-03 |
+| `VariantValidator` transversal | `PARTIAL` | `verify(model)` por desafío; la validación de contenido recorre **todas** las variantes declaradas y falla si dos colisionan; sin contrato de invariantes común | STAGE-03 |
 | Catálogo de variantes desplegado | `NOT_STARTED` | — | STAGE-03 |
 | Auditoría estadística de variantes | `PARTIAL` | `ChallengeGenerationStats` ya reporta seeds, fallos, presentaciones distintas y distribución de opción correcta | STAGE-03 |
 | `DifficultyBand` (CORE/STANDARD/STRETCH) | `NOT_STARTED` | hoy sólo `DifficultyLevel` 1–5 en `challenges/taxonomy.ts` | STAGE-05 |
 | `difficultyCost` | `NOT_STARTED` | — | STAGE-05 |
 | `DifficultyBudget` | `NOT_STARTED` | — | STAGE-05 |
-| `RunComposer` equiparado por presupuesto | `PARTIAL` | `src/game/narrative/selection.ts` compone por peso y cooldown; `src/game/difficulty/policy.ts` ajusta nivel; sin equiparación de masa de dificultad | STAGE-05 |
+| `RunComposer` equiparado por presupuesto | `PARTIAL` | `RunPlan` y `validateStagePlan` definen qué plan es válido; `src/game/narrative/selection.ts` compone por peso y cooldown; **nada construye planes todavía** | STAGE-05 |
 | `ScorePolicy` versionada | `PARTIAL` | `src/game/scoring/policy.ts` y `development-policy.ts`, con `production: false` y `createRuleset` negándose a construir un ruleset oficial | STAGE-06 |
 | `MathPerformance` · `TeamPerformance` · `AuraPerformance` | `NOT_STARTED` | — | STAGE-06 |
 | `FairScore` y desglose competitivo | `NOT_STARTED` | — | STAGE-06 |
@@ -137,11 +137,15 @@ Estado real contra el código al 28 de agosto de 2026. Es la base de la que sale
 | Configuración de competencia | `NOT_STARTED` | — | FREEZE |
 | Simulación determinista masiva | `DONE` para el alcance actual | `src/game/testing/simulation.ts`, `pnpm game:simulate`, 200 runs en `pnpm verify` | transversal |
 | E2E y accesibilidad automatizada | `DONE` para el alcance actual | `tests/e2e/`, `@axe-core/playwright`, 68 tests | transversal |
+| Catálogo de contenido separado del plan de la run | `DONE` | `ContentCatalog`, `RunPlan`, `tests/unit/content-model.test.ts` | STAGE-02 |
+| Elegibilidad por etapa y roles de colocación | `DONE` | declarativos por plantilla; elegibilidad no contigua probada | STAGE-02 |
+| Presupuesto de beats por año | `DONE` como contrato validable | `DEFAULT_STAGE_BEAT_BUDGET`, `validateStagePlan` | STAGE-02 |
 | Production hardening | `NOT_STARTED` | — | STAGE-10 |
 
 ### Discrepancias registradas
 
 - `STAGE_ORDER` incluye las siete etapas hasta `graduation`, pero sólo `grade-7` tiene contenido y ruleset. La estructura de progresión existe; **el egreso, no**. Documentación que hable de la carrera completa describe objetivo, no presente.
+- El presupuesto de uno a dos beats por año es un contrato de **plan**, y el slice de 7.º no usa planes: se compone por storylets y juega ocho eventos. No es una violación del contrato sino contenido anterior a él; reconciliarlo es trabajo de STAGE-04.
 - `GameMode` admite `'fair'` y `'practice'`, y `DifficultySetting` admite `'adaptive'`. Son literales que el motor acepta; ninguno tiene todavía la semántica competitiva que el roadmap describe a partir de STAGE-05.
 
 ---
@@ -219,9 +223,9 @@ Estado real contra el código al 28 de agosto de 2026. Es la base de la que sale
 
 ### STAGE-02 — ScenarioFamily → ChallengeTemplate → ChallengeVariant
 
-- **Estado:** **`READY`** — es la etapa activa. Ver [etapa actual](current-stage.md).
+- **Estado:** `DONE`
 - **Depende de:** STAGE-01 (`DONE`)
-- **Desbloquea:** STAGE-03, y con ella STAGE-04
+- **Desbloquea:** STAGE-03 (ahora `READY`), y con ella STAGE-04
 
 **Propósito.** Permitir varias estructuras cognitivas por escenario y variantes reproducibles de primera clase. Hoy cada desafío es una definición monolítica con un array interno de parámetros: alcanza para que los números cambien, no para que cambie la pregunta.
 
@@ -251,13 +255,22 @@ Estado real contra el código al 28 de agosto de 2026. Es la base de la que sale
 
 **Criterios de aceptación.**
 
-- [ ] `ScenarioFamily`, `ChallengeTemplate` y `ChallengeVariant` están tipados y el registro los expone sin `any` ni casts.
-- [ ] Dos plantillas de la misma familia coexisten **sin duplicar la lógica completa del desafío**.
-- [ ] Una variante se serializa y se reconstruye idéntica desde su dirección determinista.
-- [ ] La derivación de seed de variante es estable y está cubierta por property tests.
-- [ ] El motor sigue sin depender de React: `tests/unit/architecture-lint.test.ts` y `engine-modules.test.ts` en verde.
-- [ ] Existe un documento de estrategia de migración del contenido legacy.
-- [ ] Los seis desafíos de 7.º siguen jugándose igual: golden replays sin cambio de resultado, o bump de versión justificado y documentado.
+- [x] `ScenarioFamily`, `ChallengeTemplate` y `ChallengeVariant` están tipados y el catálogo los expone sin `any` ni casts.
+- [x] Dos plantillas de la misma familia coexisten **sin duplicar la lógica completa del desafío** — `school-data` aloja `dev.recycling-chart` y `dev.survey-confidence`.
+- [x] Una variante se serializa y se reconstruye idéntica desde su dirección determinista.
+- [x] La derivación de seed de variante es estable y está cubierta por property tests.
+- [x] El motor sigue sin depender de React, y ahora también se prueba que no puede importar contenido concreto.
+- [x] Existe un documento de estrategia de migración del contenido legacy.
+- [x] Los seis desafíos de 7.º siguen jugándose igual: las runs golden reproducen el mismo recorrido, score, perfil y cantidad de comandos, con el bump de versión documentado.
+
+Criterios que la etapa sumó sobre el contrato original:
+
+- [x] El catálogo de contenido disponible está separado del plan de la run, y agregar contenido al catálogo no lo agrega a un plan existente.
+- [x] La elegibilidad por etapa es declarativa y admite conjuntos no contiguos; una colocación inválida se rechaza.
+- [x] Existen los cuatro roles de colocación, con un rol desconocido rechazado.
+- [x] El presupuesto por año es de uno a dos beats ordinarios con exactamente un `anchor`; el checkpoint gasta uno, el special también y la recuperación queda afuera.
+- [x] Contenido nuevo —familia, plantilla y variante— se registra y se materializa **sin tocar el motor**.
+- [x] La identidad de una variante no depende del orden del catálogo.
 
 **Validación requerida.** `pnpm test`, `pnpm typecheck`, `pnpm lint`, `pnpm game:validate-content`, `pnpm game:simulate -- --runs=400 --verify=10`, `pnpm verify`.
 
@@ -268,17 +281,39 @@ Estado real contra el código al 28 de agosto de 2026. Es la base de la que sale
 
 **Decisiones.** `RECOMENDADA` (D-006): la jerarquía family/template/variant es dirección de arquitectura, no contrato cerrado — se implementa de forma que se pueda ajustar. `LOCKED` (D-007): variantes deterministas por seed. `OPEN` ([pregunta 46](../07-reference/open-questions.md)): cuántas familias y plantillas por año.
 
-**Evidencia de completitud.** Módulos de tipos y registro; tests de identidad/serialización; salida de `pnpm verify`; documento de migración; actualización de esta etapa y de [etapa actual](current-stage.md).
+**Evidencia de completitud.**
 
-**Exit gate.** ¿Pueden existir dos variantes de la misma plantilla sin duplicar toda la lógica del desafío?
+| Qué | Dónde |
+|---|---|
+| Decisión | [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md) |
+| Modelo de contenido | `src/game/challenges/content-model.ts` |
+| Catálogo de contenido | `src/game/challenges/content-catalog.ts` |
+| Contratos de plantilla e instancia | `src/game/challenges/contracts.ts` |
+| Plan de run y su validación | `src/game/content/run-plan.ts`, `src/game/content/issues.ts` |
+| Direccionamiento en la transición | `src/game/runs/transition.ts` |
+| Códec de snapshot v3 | `src/game/runs/snapshot.ts` |
+| Contenido migrado | `src/content/grade-7/families.ts` y sus seis desafíos; `src/game/testing/fixtures/families.ts` y sus ocho plantillas |
+| Helper de materialización | `src/game/testing/materialize.ts` |
+| Tests del modelo | `tests/unit/content-model.test.ts` (34), `tests/property/content-model.property.test.ts` (8) |
+| Frontera motor/contenido | `tests/unit/architecture-lint.test.ts` |
+| Equivalencia semántica | `tests/unit/engine-golden.test.ts`: mismo recorrido, score, perfil y comandos; sólo cambió el hash |
+| Versionado | `ENGINE_VERSION 3.0.0`, `SNAPSHOT_SCHEMA_VERSION 3`, contenido `0.3.0-dev` y `0.4.0-grade-7`; ruleset **sin cambios** |
+| Migración documentada | [migración del modelo de contenido](../03-architecture/content-model-migration.md) |
+| Validación | `pnpm verify` completo; 543 tests y 68 E2E; contenido de ambos sets con 0 errores y 0 warnings; 5000 runs simuladas con 0 hallazgos |
+
+**Lo que no entró, y por qué.** No se dividió ninguna familia de producción en varias plantillas, no se renombró ningún id de contenido y no se movió contenido de año: son decisiones de ubicación, y el inventario final sigue **OPEN**. La prueba de «dos plantillas en una familia» se hizo con contenido de desarrollo para no crear gameplay de producción fuera de alcance.
+
+**Exit gate.** ¿Pueden existir dos variantes de la misma plantilla sin duplicar toda la lógica del desafío? — **Sí**, y también dos plantillas en una familia, con el catálogo separado del plan y sin que el motor conozca ningún id de contenido.
 
 ---
 
 ### STAGE-03 — Generación, validación y catálogo de variantes
 
-- **Estado:** `NOT_STARTED`
-- **Depende de:** STAGE-02
+- **Estado:** **`READY`** — es la etapa activa. Ver [etapa actual](current-stage.md).
+- **Depende de:** STAGE-02 (`DONE`)
 - **Desbloquea:** STAGE-04, STAGE-05
+
+**Punto de partida.** STAGE-02 dejó el vocabulario: una variante ya tiene dirección estable, substream propio y lugar en un catálogo y en un plan. Lo que falta es producirlas en cantidad, validarlas como población y aprobar las que entran a una competencia.
 
 **Propósito.** Diversidad reproducible, controlada y auditable. **Variabilidad no es aleatoriedad libre.**
 

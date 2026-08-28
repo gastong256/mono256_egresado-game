@@ -28,11 +28,14 @@ import {
  * Regenerating these numbers without a version bump silently invalidates every
  * stored replay, which is exactly what this file exists to prevent.
  *
- * Los valores actuales corresponden a la migración del modelo de jugador
- * (`ENGINE_VERSION` 2.0.0). Vale la pena mirar qué cambió y qué no: el trace, el
- * score, el perfil y la cantidad de comandos de las dos runs quedaron **iguales**
- * — la secuencia de juego no se movió. Lo único que cambió es el hash del estado
- * final, porque el estado ahora lleva `career` en lugar de `stats`.
+ * Los valores actuales corresponden al modelo de contenido (`ENGINE_VERSION`
+ * 3.0.0, contenido `0.3.0-dev`). Vale la pena mirar qué cambió y qué no: el
+ * trace, el score, el perfil y la cantidad de comandos de las dos runs quedaron
+ * **iguales** — la secuencia de juego no se movió, y las plantillas de
+ * desarrollo generan exactamente los mismos números porque cada una declara una
+ * sola variante y por lo tanto no gasta ningún sorteo eligiéndola. Lo único que
+ * cambió es el hash del estado final, porque una instancia se direcciona ahora
+ * por familia, plantilla y variante en lugar de por un id de definición suelto.
  */
 
 const dependencies = createDevelopmentDependencies()
@@ -69,7 +72,7 @@ const GOLDEN_RUNS: readonly Golden[] = [
       'year-5|dev.orientation|dev.survey-confidence|optimal|1630',
       'graduation|dev.graduation|-|-|0',
     ],
-    hash: 'd4c094439ce918a811b5b6a3675bc86493ce5e99f1fd252339b759d2adb01ead',
+    hash: 'f6bdf18609cd885e2181556040c821c34a1401596f84313c813581965b6664a1',
   },
   {
     seed: 'golden-beta',
@@ -92,7 +95,7 @@ const GOLDEN_RUNS: readonly Golden[] = [
       'year-5|dev.orientation|dev.survey-confidence|invalid|495',
       'graduation|dev.graduation|-|-|0',
     ],
-    hash: '2d32735fa74f72eba9c6ab8b8c38a800a73ca6bfa059120afd114a4a942a1ac4',
+    hash: 'd4f0ef469804cb53b1f3aa1b7fa070cb4a5d62fd6de5938f9dafaea5512a0e07',
   },
 ]
 
@@ -128,7 +131,7 @@ describe('golden deterministic protocol', () => {
     // A version bump must be accompanied by regenerated golden values, so the
     // two are asserted together.
     expect(dependencies.ruleset.version).toBe('0.2.0-dev')
-    expect(dependencies.ruleset.contentVersion).toBe('0.2.0-dev')
+    expect(dependencies.ruleset.contentVersion).toBe('0.3.0-dev')
     expect(dependencies.ruleset.official).toBe(false)
   })
 })
