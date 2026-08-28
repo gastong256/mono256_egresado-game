@@ -13,15 +13,17 @@ import { cn } from '@/lib/ui/cn'
  * le estaban pidiendo.
  *
  * El error se anuncia con `role="alert"` y además marca `aria-invalid`, así que
- * el estado no depende de que el borde se vea rojo.
+ * el estado nunca depende de que el borde se vea rojo. La validación es al blur,
+ * nunca por tecla: corregir a alguien mientras todavía está escribiendo el
+ * número es ruido, no ayuda.
  */
 
 const controlClasses = cn(
-  'w-full rounded-control border border-line-interactive bg-surface',
-  'text-foreground placeholder:text-foreground-subtle',
-  'motion-fast transition-[border-color]',
-  'disabled:cursor-not-allowed disabled:bg-disabled-surface disabled:text-disabled-foreground',
-  'aria-[invalid=true]:border-danger aria-[invalid=true]:border-2',
+  'w-full border-ink bg-surface border-[1.5px]',
+  'text-ink placeholder:text-ink-label',
+  'motion-select',
+  'disabled:cursor-not-allowed disabled:bg-disabled-surface disabled:text-disabled-ink',
+  'aria-[invalid=true]:border-red',
 )
 
 interface FieldShellProps {
@@ -45,13 +47,13 @@ function FieldShell({
 }: FieldShellProps) {
   return (
     <div className={cn('flex flex-col gap-2', className)}>
-      <label htmlFor={htmlFor} className="text-subheading text-foreground">
+      <label htmlFor={htmlFor} className="text-goal font-display text-ink">
         {label}
       </label>
       {children}
       {error === undefined ? (
         hint === undefined ? null : (
-          <p id={describedBy} className="text-caption text-foreground-muted">
+          <p id={describedBy} className="text-caption text-ink-secondary">
             {hint}
           </p>
         )
@@ -59,7 +61,7 @@ function FieldShell({
         <p
           id={describedBy}
           role="alert"
-          className="text-caption text-danger font-semibold"
+          className="text-caption font-display text-red"
         >
           {error}
         </p>
@@ -103,7 +105,7 @@ export function TextField({
         type="text"
         aria-invalid={error === undefined ? undefined : true}
         aria-describedby={described ? describedBy : undefined}
-        className={cn(controlClasses, 'text-heading h-12 px-4')}
+        className={cn(controlClasses, 'text-option font-display h-12 px-3')}
         {...rest}
       />
     </FieldShell>
@@ -158,14 +160,16 @@ export function NumberField({
               unit === undefined ? '' : unitId,
             ).trim() || undefined
           }
-          className={cn(controlClasses, 'text-data h-12 px-4 tabular-nums')}
+          // Tabular y alineado a la derecha: es un número, y se compara con
+          // otros números.
+          className={cn(
+            controlClasses,
+            'text-data font-display h-12 px-3 text-right tabular-nums',
+          )}
           {...rest}
         />
         {unit === undefined ? null : (
-          <span
-            id={unitId}
-            className="text-body-sm text-foreground-muted shrink-0"
-          >
+          <span id={unitId} className="text-meta text-ink-secondary shrink-0">
             {unit}
           </span>
         )}

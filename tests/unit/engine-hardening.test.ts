@@ -213,7 +213,14 @@ describe('ENG-STATE-001 · impossible states are refused on restore', () => {
         state['completion'] = {
           totalScore: 10,
           profile: { profileId: 'balanced', evidence: [], runnerUpId: null },
-          stats: { knowledge: 1, team: 1, initiative: 1, energy: 1 },
+          career: {
+            grades: [],
+            equipo: null,
+            aura: null,
+            estilo: { aplicado: 34, estratega: 33, improvisador: 33 },
+            estiloEvidence: 0,
+            mastery: {},
+          },
           eventsPlayed: 1,
         }
       },

@@ -198,10 +198,29 @@ export {
   type StageId,
 } from './progression/stages'
 export {
-  type PlayerStats,
-  type VisibleStat,
-  VISIBLE_STATS,
-} from './progression/stats'
+  applyCareerEffects,
+  AURA_DELTA_BUDGET,
+  clampEquipo,
+  clampGrade,
+  ESTILO_AXES,
+  ESTILO_EVIDENCE_THRESHOLD,
+  EQUIPO_DELTA_BUDGET,
+  estiloAxisLabel,
+  initialCareer,
+  isEstiloAxis,
+  isEstiloEstablished,
+  leadingEstiloAxis,
+  nudgeEstilo,
+  promedio,
+  validateCareerEffects,
+  type CareerChange,
+  type CareerEffects,
+  type CareerState,
+  type Estilo,
+  type EstiloAxis,
+  type EstiloNudge,
+  type MasteryGain,
+} from './progression/career'
 export {
   contentFingerprint,
   engineFingerprint,
@@ -226,10 +245,12 @@ export type {
 // Narrative authoring contracts
 export type { Storylet, StoryletKind } from './narrative/storylet'
 export type {
+  CareerDimension,
   StoryletCondition,
   FlagMap,
   FlagValue,
 } from './narrative/conditions'
+export { CAREER_DIMENSIONS } from './narrative/conditions'
 export type { StoryletEffect } from './narrative/effects'
 
 // Content validation

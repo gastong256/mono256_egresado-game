@@ -18,7 +18,10 @@ import { ENGINE_VERSION, toRunId, toRunSeed, type RunDescriptor } from '@/game'
 import { createDevelopmentDependencies } from '@/game/testing'
 import { Button, Callout } from '@/components/ui'
 import { createGameController } from './controller'
-import { GameShell } from './game-shell'
+import { DebugPanel } from './debug-panel'
+import { GameCanvas } from './game-shell'
+import { RunView } from './run-view'
+import { useControllerSelector } from './use-game-run'
 
 function descriptorFor(
   seed: string,
@@ -61,9 +64,9 @@ export function DevelopmentHarness({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="max-w-game px-gutter mx-auto flex w-full flex-col gap-3 pt-4">
+      <div className="max-w-viewport px-gutter mx-auto flex w-full flex-col gap-3 pt-4">
         <div data-testid="harness-notice">
-          <Callout tone="warning" title="Herramienta de desarrollo">
+          <Callout tone="accent" title="Herramienta de desarrollo">
             Contenido de prueba, no es el juego Egresado. El ruleset{' '}
             <code>{dependencies.ruleset.version}</code> no es oficial.
           </Callout>
@@ -79,35 +82,59 @@ export function DevelopmentHarness({
             }
           }}
         >
-          <label className="text-body-sm flex flex-col gap-1">
+          <label className="text-meta flex flex-col gap-1">
             Seed
             <input
               name="seed"
               defaultValue={seed}
               data-testid="seed-input"
-              className="border-line-interactive bg-surface rounded-control h-11 px-3 font-mono"
+              className="border-ink bg-surface h-11 border-[1.5px] px-3 font-mono"
             />
           </label>
-          <Button type="submit" variant="secondary">
+          <Button type="submit" variant="secondary" size="md">
             Nueva run
           </Button>
         </form>
       </div>
 
       <main>
-        <GameShell
-          controller={controller}
-          dependencies={dependencies}
-          showDebug
-          onRestart={() =>
-            descriptorFor(
-              seed,
-              dependencies.ruleset.version,
-              dependencies.ruleset.contentVersion,
-            )
-          }
-        />
+        <GameCanvas>
+          <RunView controller={controller} dependencies={dependencies} />
+          <HarnessDebug controller={controller} />
+        </GameCanvas>
       </main>
+    </div>
+  )
+}
+
+/**
+ * El panel de diagnóstico.
+ *
+ * Sólo existe en el harness: es la ventana al estado del motor que hace falta
+ * para depurar una transición, y nunca se monta en el juego.
+ */
+function HarnessDebug({
+  controller,
+}: {
+  readonly controller: ReturnType<typeof createGameController>
+}) {
+  const [open, setOpen] = useState(false)
+  const state = useControllerSelector(controller, (current) => current)
+
+  return (
+    <div className="flex flex-col gap-2">
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => {
+          setOpen((current) => !current)
+        }}
+        aria-expanded={open}
+        aria-controls="debug-panel"
+      >
+        {open ? 'Ocultar' : 'Mostrar'} diagnóstico
+      </Button>
+      {open ? <DebugPanel state={state} /> : null}
     </div>
   )
 }

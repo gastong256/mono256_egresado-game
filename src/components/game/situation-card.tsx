@@ -1,66 +1,106 @@
 import type { ReactNode } from 'react'
 
+import { DataGrid, Eyebrow, type DataGridItem } from '@/components/ui'
 import { cn } from '@/lib/ui/cn'
 
 /**
- * Situación matemática.
+ * Situación.
  *
- * Impone el orden en que se entiende un desafío: contexto, después datos,
- * después qué hay que decidir, después la acción. La jerarquía es tipográfica —
- * el contexto va chico y gris, la consigna va destacada— para que se pueda
- * captar de un vistazo sin leer todo.
+ * Impone el orden en que se entiende un desafío y no lo deja a la maquetación:
  *
- * No decora: un desafío ya exige atención y cada borde de más se la resta.
+ *     contexto → datos → consigna → interacción → resultado
+ *
+ * El eyebrow rojo ubica el momento del año, el título va en **caja mixta** —las
+ * mayúsculas quedan para las etiquetas de 9–11 px— y todo número con el que haya
+ * que razonar baja a la grilla de datos. Un dato necesario escondido en la prosa
+ * es la forma más rápida de convertir un juego en un ejercicio de lectura.
+ *
+ * La consigna no vive acá: vive arriba de las opciones, dentro del bloque
+ * oscuro, porque la pregunta y la elección tienen que leerse juntas.
  */
 export function SituationCard({
+  eyebrow,
   title,
-  context,
   setup,
-  goal,
+  data,
+  media,
   children,
-  footnote,
-  actions,
   className,
 }: {
+  readonly eyebrow: string
   readonly title: string
-  /** De dónde viene la situación en la historia del año. */
-  readonly context?: string
   readonly setup: string
-  /** Qué se le pide decidir al jugador. */
-  readonly goal: string
-  readonly children: ReactNode
-  readonly footnote?: ReactNode
-  readonly actions?: ReactNode
+  readonly data?: readonly DataGridItem[]
+  /** Imagen contextual, cuando la hay. Con frecuencia no la hay. */
+  readonly media?: ReactNode
+  /** El bloque de decisión. */
+  readonly children?: ReactNode
   readonly className?: string
 }) {
   return (
     <article
-      aria-labelledby="challenge-title"
-      className={cn('flex flex-col gap-5', className)}
+      aria-labelledby="situation-title"
+      className={cn('motion-enter flex flex-col gap-3.5', className)}
     >
-      <header className="flex flex-col gap-2">
-        {context === undefined ? null : (
-          <p className="text-caption text-foreground-muted text-pretty">
-            {context}
-          </p>
-        )}
-        <h2
-          id="challenge-title"
-          className="text-title text-foreground text-balance"
-        >
-          {title}
-        </h2>
-        <p className="text-body text-foreground text-pretty">{setup}</p>
-        <p className="text-subheading text-foreground text-pretty">{goal}</p>
-      </header>
-
-      {children}
-
-      {footnote === undefined ? null : (
-        <div className="text-caption text-foreground-muted">{footnote}</div>
+      <Eyebrow>{eyebrow}</Eyebrow>
+      <h2
+        id="situation-title"
+        className="text-display font-display text-ink text-balance"
+      >
+        {title}
+      </h2>
+      <p className="text-body text-ink-secondary text-pretty">{setup}</p>
+      {media}
+      {data === undefined || data.length === 0 ? null : (
+        <DataGrid items={data} />
       )}
-
-      {actions === undefined ? null : <div>{actions}</div>}
+      {children}
     </article>
+  )
+}
+
+/**
+ * Momento narrativo.
+ *
+ * Tiene que leerse como historia y no como problema, sin que haga falta un
+ * cartel que diga «NARRATIVA». La diferencia la hacen la forma y la tipografía:
+ * sin grilla de datos, sin bloque oscuro, con la prosa un punto más grande y más
+ * aireada que en una situación matemática.
+ */
+export function NarrativeCard({
+  eyebrow,
+  title,
+  children,
+  effects,
+  media,
+  className,
+}: {
+  readonly eyebrow: string
+  readonly title: string
+  readonly children: ReactNode
+  /** Chips de lo que este beat movió, si movió algo. */
+  readonly effects?: ReactNode
+  readonly media?: ReactNode
+  readonly className?: string
+}) {
+  return (
+    <section
+      aria-labelledby="narrative-title"
+      data-testid="narrative-card"
+      className={cn('motion-enter flex flex-col gap-3', className)}
+    >
+      <Eyebrow>{eyebrow}</Eyebrow>
+      <h2
+        id="narrative-title"
+        className="text-display font-display text-ink text-balance"
+      >
+        {title}
+      </h2>
+      <div className="text-body-lg text-ink-secondary text-pretty">
+        {children}
+      </div>
+      {media}
+      {effects}
+    </section>
   )
 }

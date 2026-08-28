@@ -16,7 +16,6 @@ import {
   divide,
   efficiencyFromUsage,
   err,
-  formatDecimal,
   fromDecimalString,
   fromInteger,
   greaterThanOrEqual,
@@ -32,6 +31,7 @@ import {
   type Rational,
   type Result,
 } from '@/game'
+import { cifra, medida } from '@/content/numeros'
 
 import { pesos } from '../../pesos'
 
@@ -132,19 +132,24 @@ export const muralPaint: ChallengeDefinition = defineChallenge<MuralModel>({
   present(model) {
     return {
       kind: 'decision-card',
+      // La unidad va aparte de la cifra: en la caja de dato el número tiene que
+      // poder leerse solo, y `6 × 2,4` con «metros» debajo se lee de un golpe
+      // donde `6 m × 2,4 m` obliga a filtrar los símbolos.
       data: [
         {
           label: 'Pared',
-          value: `${formatDecimal(model.width, 1)} m × ${formatDecimal(model.height, 1)} m`,
+          value: `${medida(model.width, 1)} × ${medida(model.height, 1)}`,
+          unit: 'metros',
         },
         {
           label: 'Rinde',
-          value: `${formatDecimal(model.coveragePerLitre, 0)} m² por litro`,
+          value: cifra(model.coveragePerLitre, 0),
+          unit: 'm² por litro',
         },
       ],
       options: model.tins.map((tin) => ({
         id: tin.id,
-        label: `${formatDecimal(tin.litres, 0)} litro${tin.litres.n === 1n ? '' : 's'}`,
+        label: `${cifra(tin.litres, 0)} litro${tin.litres.n === 1n ? '' : 's'}`,
         detail: pesos(tin.priceMinor),
       })),
     }
@@ -175,14 +180,14 @@ export const muralPaint: ChallengeDefinition = defineChallenge<MuralModel>({
     const cheapest = Math.min(...sufficient.map((tin) => tin.priceMinor))
 
     const facts = [
-      { label: 'Superficie', value: `${formatDecimal(model.area, 2)} m²` },
+      { label: 'Superficie', value: `${cifra(model.area, 2)} m²` },
       {
         label: 'Pintura necesaria',
-        value: `${formatDecimal(model.requiredLitres, 2)} L`,
+        value: `${cifra(model.requiredLitres, 2)} L`,
       },
       {
         label: 'Compraste',
-        value: `${formatDecimal(chosen.litres, 0)} L`,
+        value: `${cifra(chosen.litres, 0)} L`,
       },
     ]
 
@@ -194,24 +199,31 @@ export const muralPaint: ChallengeDefinition = defineChallenge<MuralModel>({
         quality: 'invalid',
         feedback: {
           outcomeKey: 'mural.insufficient',
+          stamp: 'No alcanzó',
           facts: [
             ...facts,
             {
               label: 'Quedó sin pintar',
-              value: `${formatDecimal(uncovered, 2)} m²`,
+              value: `${cifra(uncovered, 2)} m²`,
             },
           ],
           violatedConstraint: 'cubrir la pared',
+          consequence:
+            'El mural queda a medias el día de la feria y hay que taparlo con un afiche.',
         },
         metrics: metrics({
           efficiency: 0,
           precision: 0.3,
           risk: 0.4,
         }),
-        statEffects: [
-          { stat: 'energy', delta: -3 },
-          { stat: 'team', delta: -2 },
-        ],
+        // El mural es el único evento académico de 7.º: la profesora lo toma
+        // como parte del trabajo del trimestre, así que pone nota. Las tres notas
+        // están autoradas para que el promedio del año caiga donde el diseño de
+        // referencia lo muestra.
+        careerEffects: {
+          grade: 7.4,
+          estilo: { axis: 'improvisador', amount: 10 },
+        },
         flagEffects: [{ flag: 'g7.muralFaltoPintura', value: true }],
       })
     }
@@ -220,7 +232,7 @@ export const muralPaint: ChallengeDefinition = defineChallenge<MuralModel>({
     const efficiency = efficiencyFromUsage(model.requiredLitres, chosen.litres)
     const leftoverFact = {
       label: 'Sobró',
-      value: `${formatDecimal(leftover, 2)} L`,
+      value: `${cifra(leftover, 2)} L`,
     }
 
     if (chosen.priceMinor === cheapest) {
@@ -228,15 +240,18 @@ export const muralPaint: ChallengeDefinition = defineChallenge<MuralModel>({
         quality: 'optimal',
         feedback: {
           outcomeKey: 'mural.optimal',
+          stamp: 'Alcanzó',
           facts: [...facts, leftoverFact],
           optimalComparison:
             'Era el envase más barato entre los que alcanzaban para toda la pared.',
+          consequence:
+            'El mural queda listo y la profesora lo toma como parte del trabajo del trimestre.',
         },
         metrics: metrics({ efficiency, precision: 1, risk: 0 }),
-        statEffects: [
-          { stat: 'knowledge', delta: 4 },
-          { stat: 'initiative', delta: 3 },
-        ],
+        careerEffects: {
+          grade: 8.4,
+          estilo: { axis: 'estratega', amount: 10 },
+        },
         flagEffects: [{ flag: 'g7.muralOptimo', value: true }],
       })
     }
@@ -246,15 +261,21 @@ export const muralPaint: ChallengeDefinition = defineChallenge<MuralModel>({
       quality: 'functional',
       feedback: {
         outcomeKey: 'mural.oversized',
+        stamp: 'Alcanzó',
         facts: [
           ...facts,
           leftoverFact,
           { label: 'De más', value: pesos(overpaid) },
         ],
         optimalComparison: `Con el envase de ${pesos(cheapest)} alcanzaba igual.`,
+        consequence:
+          'El mural queda listo, pero la plata que sobró era para el resto de la feria.',
       },
       metrics: metrics({ efficiency, precision: 1, risk: 0 }),
-      statEffects: [{ stat: 'knowledge', delta: 2 }],
+      careerEffects: {
+        grade: 8.1,
+        estilo: { axis: 'improvisador', amount: 10 },
+      },
       flagEffects: [{ flag: 'g7.muralPintado', value: true }],
     })
   },

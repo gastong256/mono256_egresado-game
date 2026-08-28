@@ -24,7 +24,7 @@ import type { ToolId } from '../challenges/interactions'
 import type { FlagValue } from '../narrative/conditions'
 import type { ProfileId } from '../profiles/policy'
 import type { StageId } from '../progression/stages'
-import type { VisibleStat } from '../progression/stats'
+import type { EstiloAxis } from '../progression/career'
 import type { RunState } from './state'
 
 export type DomainEvent =
@@ -76,11 +76,25 @@ export type DomainEvent =
       readonly points: number
     }
   | {
-      readonly type: 'stat.changed'
-      readonly stat: VisibleStat
-      readonly from: number
+      /**
+       * A visible career dimension moved.
+       *
+       * `from` is `null` the first time a dimension appears, which is what makes
+       * the progressive reveal of the HUD a fact of the domain rather than a
+       * guess the UI has to make.
+       */
+      readonly type: 'career.changed'
+      readonly dimension: 'promedio' | 'equipo'
+      readonly from: number | null
       readonly to: number
     }
+  | {
+      /** Aura is reported as a signed delta *and* a running total. */
+      readonly type: 'aura.changed'
+      readonly delta: number
+      readonly total: number
+    }
+  | { readonly type: 'estilo.nudged'; readonly axis: EstiloAxis }
   | {
       readonly type: 'flag.set'
       readonly flag: string

@@ -4,30 +4,30 @@ import type { ComponentPropsWithoutRef, ReactNode } from 'react'
 import { cn } from '@/lib/ui/cn'
 
 /**
- * Etiqueta corta.
+ * Chip.
  *
- * Para nombrar una etapa, un estado o un momento: «7.º GRADO», «ÓPTIMO».
+ * Para decir en dos palabras qué se movió: «Promedio 8,0 → 8,4», «Estratega ↑».
+ * Radio 0, tabular, y **siempre con signo o flecha**: ninguno de los cuatro
+ * tonos se distingue sólo por color, así que en escala de grises un chip que
+ * subió y uno que bajó siguen siendo distintos.
  *
- * Ninguna variante se distingue sólo por color: todas llevan borde propio y el
- * texto siempre dice lo que la etiqueta significa. Un lector de pantalla y una
- * persona con daltonismo leen exactamente lo mismo que el resto.
+ * - `up` / `down` — una dimensión visible se movió, lleno y con signo.
+ * - `outline` — tendencia de Estilo, contorno de tinta.
+ * - `soft` — secundario: acompaña, no anuncia.
  */
 
 const badge = cva(
-  'inline-flex items-center gap-1.5 rounded-pill border px-2.5 py-1 text-label uppercase',
+  'text-chip font-display inline-flex items-center gap-1 px-[9px] py-[5px]',
   {
     variants: {
       tone: {
-        neutral: 'bg-surface-muted border-line-strong text-foreground-muted',
-        brand:
-          'bg-primary-subtle border-primary text-primary-subtle-foreground',
-        accent: 'bg-accent-subtle border-accent text-accent-subtle-foreground',
-        outline: 'bg-transparent border-line-interactive text-foreground-muted',
-        inverse:
-          'bg-surface-inverse border-transparent text-foreground-inverse',
+        up: 'bg-green text-white',
+        down: 'bg-red text-white',
+        outline: 'border-ink text-ink border-[1.5px]',
+        soft: 'bg-canvas-sunken border-rule text-ink-secondary border',
       },
     },
-    defaultVariants: { tone: 'neutral' },
+    defaultVariants: { tone: 'soft' },
   },
 )
 
@@ -41,7 +41,61 @@ export interface BadgeProps
 
 export function Badge({ tone, className, children, ...rest }: BadgeProps) {
   return (
-    <span className={cn(badge({ tone }), className)} {...rest}>
+    <span data-numeric className={cn(badge({ tone }), className)} {...rest}>
+      {children}
+    </span>
+  )
+}
+
+/**
+ * Eyebrow: la línea roja de arriba del título.
+ *
+ * El rojo acá es tensión narrativa —«Segunda semana», «Feria escolar»—, nunca un
+ * error. Es una de las tres cosas que hacen que una pantalla se lea como
+ * Egresado y no como un formulario.
+ */
+export function Eyebrow({
+  children,
+  tone = 'accent',
+  className,
+}: {
+  readonly children: ReactNode
+  readonly tone?: 'accent' | 'muted'
+  readonly className?: string
+}) {
+  return (
+    <span
+      className={cn(
+        'text-eyebrow font-display uppercase',
+        tone === 'accent' ? 'text-red' : 'text-ink-label',
+        className,
+      )}
+    >
+      {children}
+    </span>
+  )
+}
+
+/**
+ * Etiqueta en versalitas.
+ *
+ * Las mayúsculas quedan para esto y sólo para esto: 9–11 px. El uppercase en
+ * títulos era la mitad de la huella deportiva de v0.1.
+ */
+export function Label({
+  children,
+  className,
+}: {
+  readonly children: ReactNode
+  readonly className?: string
+}) {
+  return (
+    <span
+      className={cn(
+        'text-label font-display text-ink-label uppercase',
+        className,
+      )}
+    >
       {children}
     </span>
   )

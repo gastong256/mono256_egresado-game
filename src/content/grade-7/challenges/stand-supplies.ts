@@ -243,6 +243,9 @@ export const standSupplies: ChallengeDefinition = defineChallenge<StandModel>({
         quality: 'invalid',
         feedback: {
           outcomeKey: 'stand.short',
+          stamp: 'Faltó',
+          consequence:
+            'A media tarde no queda nada para ofrecer y el stand cierra antes.',
           facts: [
             ...facts,
             {
@@ -256,7 +259,12 @@ export const standSupplies: ChallengeDefinition = defineChallenge<StandModel>({
           efficiency: 0,
           precision: servings / model.servingsNeeded,
         }),
-        statEffects: [{ stat: 'team', delta: -3 }],
+        // El stand es del curso: alcanzar o no alcanzar con la merienda es
+        // conducta hacia el grupo.
+        careerEffects: {
+          equipo: -3,
+          estilo: { axis: 'improvisador', amount: 8 },
+        },
         flagEffects: [{ flag: 'g7.standFaltoMerienda', value: true }],
       })
     }
@@ -266,6 +274,9 @@ export const standSupplies: ChallengeDefinition = defineChallenge<StandModel>({
         quality: 'invalid',
         feedback: {
           outcomeKey: 'stand.overBudget',
+          stamp: 'Te pasaste',
+          consequence:
+            'Hay que poner la diferencia de los bolsillos del curso, y no cae bien.',
           facts: [
             ...facts,
             {
@@ -276,7 +287,10 @@ export const standSupplies: ChallengeDefinition = defineChallenge<StandModel>({
           violatedConstraint: 'la plata del curso',
         },
         metrics: metrics({ efficiency: 0, precision: 1 }),
-        statEffects: [{ stat: 'energy', delta: -2 }],
+        careerEffects: {
+          equipo: -2,
+          estilo: { axis: 'improvisador', amount: 8 },
+        },
         flagEffects: [{ flag: 'g7.standSePaso', value: true }],
       })
     }
@@ -291,15 +305,18 @@ export const standSupplies: ChallengeDefinition = defineChallenge<StandModel>({
         quality: 'optimal',
         feedback: {
           outcomeKey: 'stand.optimal',
+          stamp: 'Abastecido',
+          consequence:
+            'El stand llega hasta el final con mercadería y sin deberle plata a nadie.',
           facts,
           optimalComparison:
             'Ninguna combinación de paquetes cubría las porciones por menos.',
         },
         metrics: metrics({ efficiency, precision: 1 }),
-        statEffects: [
-          { stat: 'knowledge', delta: 3 },
-          { stat: 'team', delta: 4 },
-        ],
+        careerEffects: {
+          equipo: 4,
+          estilo: { axis: 'estratega', amount: 10 },
+        },
         flagEffects: [{ flag: 'g7.standRedondo', value: true }],
       })
     }
@@ -309,11 +326,17 @@ export const standSupplies: ChallengeDefinition = defineChallenge<StandModel>({
       quality: efficiency >= 0.9 ? 'efficient' : 'functional',
       feedback: {
         outcomeKey: 'stand.covered',
+        stamp: 'Abastecido',
+        consequence:
+          'El stand funciona, aunque sobró mercadería que nadie sabe qué hacer con ella.',
         facts: [...facts, { label: 'De más', value: pesos(overspend) }],
         optimalComparison: `La mejor combinación costaba ${pesos(model.optimalCostMinor)}.`,
       },
       metrics: metrics({ efficiency, precision: 1 }),
-      statEffects: [{ stat: 'team', delta: 2 }],
+      careerEffects: {
+        equipo: 2,
+        estilo: { axis: 'aplicado', amount: 8 },
+      },
       flagEffects: [{ flag: 'g7.standAbastecido', value: true }],
     })
   },

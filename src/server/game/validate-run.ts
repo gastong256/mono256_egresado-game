@@ -9,7 +9,7 @@ import 'server-only'
  *
  * The submission is `unknown` on purpose — it arrives from the network. Nothing
  * a client asserts about the outcome is read: the score, the profile and the
- * final stats returned here are produced by the engine replaying the actions,
+ * final career returned here is produced by the engine replaying the actions,
  * so a payload claiming a score simply has that field ignored.
  *
  * This is the use case only. Endpoints, sessions, rate limiting and persistence
@@ -27,7 +27,7 @@ import {
   replayRun,
   type EngineDependencies,
   type EngineRejection,
-  type PlayerStats,
+  type CareerState,
   type ProfileId,
   type Result,
   type RunId,
@@ -39,7 +39,7 @@ export interface AuthoritativeRunResult {
   /** Recomputed by replay. Never taken from the submission. */
   readonly officialScore: number
   readonly profile: ProfileId
-  readonly stats: PlayerStats
+  readonly career: CareerState
   readonly eventsPlayed: number
   readonly versions: VersionTriple
   /** Commands the server actually accepted while replaying. */
@@ -104,7 +104,7 @@ export function validateSubmittedRun(
     runId: state.descriptor.runId,
     officialScore: state.completion.totalScore,
     profile: state.completion.profile.profileId,
-    stats: state.completion.stats,
+    career: state.completion.career,
     eventsPlayed: state.completion.eventsPlayed,
     versions: expected,
     actionsApplied: replayed.value.applied,

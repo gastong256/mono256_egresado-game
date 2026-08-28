@@ -81,6 +81,7 @@ describe('content validation', () => {
         priority: 0,
         requires: { kind: 'always' },
         tags: [],
+        eyebrow: 'Prueba',
         title: 'Roto',
         text: 'Referencia contenido inexistente.',
         challengePool: [toChallengeId('dev.does-not-exist')],
@@ -107,6 +108,7 @@ describe('content validation', () => {
         priority: 0,
         requires: { kind: 'always' },
         tags: [],
+        eyebrow: 'Prueba',
         title: 'Desalineado',
         text: 'Ofrece un desafío de 5.º año en séptimo grado.',
         // The survey challenge only declares year-4 and year-5.
@@ -134,10 +136,11 @@ describe('content validation', () => {
         priority: 0,
         requires: { kind: 'any', conditions: [] },
         tags: [],
+        eyebrow: 'Prueba',
         title: 'Imposible',
         text: 'Peso cero y condición vacía.',
         challengePool: [],
-        effects: [{ kind: 'stat-add', stat: 'energy', delta: 90 }],
+        effects: [{ kind: 'career', effects: { equipo: 90 } }],
         followUps: [],
       },
     ]

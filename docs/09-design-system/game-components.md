@@ -1,79 +1,77 @@
-# Componentes de juego
+# Primitivas de juego
 
-Viven en `src/components/game/`. A diferencia de las primitivas de UI, éstos **sí** conocen el dominio: una etapa, una situación matemática, un momento narrativo, el resultado de una decisión. Están construidos componiendo primitivas de UI.
+Viven en `src/components/game/`. Conocen el dominio: leen `RunState`, `CareerState` y `PendingFeedback`. **Formatean; no calculan ninguna regla.**
 
-Ninguno contiene reglas de juego. Todos formatean lo que devolvió el motor.
+## GameSheet, StageHeader, SceneColumn, ActionSlot
 
-## GameCanvas y GameShell
+El shell. Una columna de 412 px centrada, con `.eg-canvas` y una regla de 1 px alrededor.
 
-`GameCanvas` impone la geometría: ancho de juego, márgenes con safe area, ritmo vertical. `GameShell` arma la partida: encabezado, progreso, estadísticas y el contenido que corresponda a la fase que devolvió el motor.
+`SceneColumn` tiene altura mínima y `ActionSlot` se ancla con `margin-top: auto`, así el primario cae siempre en el mismo lugar. El `-18px` inferior del bloque de decisión está calculado contra el padding de la columna: los dos se mueven juntos o ninguno.
 
-`GameShell` **no sabe nada de ningún desafío**. Elige entre feedback, desafío, momento narrativo o cierre según el estado, y nada más.
+## CareerStrip
 
-## StageHeader y StageProgress
+El HUD, de 46 px. `Promedio | Equipo | Aura | [triángulo]`.
 
-El nombre de la etapa es el `<h1>` de la pantalla de juego. Se ve como una etiqueta chica, pero estructuralmente es el encabezado principal: una página sin `h1` deja a quien navega por encabezados sin punto de entrada.
+**Arranca vacía.** Cada celda aparece la primera vez que su dimensión se toca. Eso no es una animación de entrada: es la diferencia entre `null` y 0 ([ADR-016](../03-architecture/adr/ADR-016-career-player-model.md)).
 
-`StageProgress` deriva del estado del motor y **no tiene ninguna cantidad de eventos escrita adentro**. Una etapa de siete y una de doce lo usan igual. La barra y el texto dicen lo mismo, que es el punto: el avance no puede depender de percibir una longitud.
+Promedio y Equipo son cajas de papel con borde de tinta; **Aura es un bloque negro con brackets** incluso a esta escala — es su firma a cualquier tamaño.
 
-## StatIndicator
+Estilo aparece como un glifo que abre el panel, y sólo cuando hay suficientes decisiones para que el triángulo signifique algo. Cambia demasiado lento para justificar píxeles en pleno desafío, y un triángulo compite con las cajas de dato por el instinto de «leer las formas».
 
-Las estadísticas van deliberadamente calladas: son contexto, no la tarea. Mientras alguien resuelve una cuenta, cuatro números grandes arriba de la pantalla sólo gastan memoria de trabajo.
+## SituationCard y NarrativeCard
 
-La barra va en gris y no en verde a propósito: cuatro barras verdes le compiten atención al progreso y al botón de acción, que son los dos lugares donde el verde sí significa algo.
+`SituationCard` impone el orden en que se entiende un desafío y no lo deja a la maquetación:
 
-## SituationCard
+```text
+contexto → datos → consigna → interacción → resultado
+```
 
-Una de las piezas más importantes del producto. Impone el orden en que se entiende un desafío: contexto, datos, consigna, acción. La jerarquía es tipográfica para que se pueda captar de un vistazo sin leer todo.
+La consigna **no** vive en la tarjeta: vive arriba de las opciones, dentro del bloque oscuro, porque la pregunta y la elección tienen que leerse juntas.
 
-No decora. Un desafío ya exige atención y cada borde de más se la resta.
+`NarrativeCard` tiene que leerse como historia y no como problema, sin un cartel que diga «NARRATIVA». La diferencia la hacen la forma y la tipografía: sin grilla de datos, sin bloque oscuro, prosa un punto más grande.
 
-## NarrativeCard
+## DecisionBlock
 
-Un momento narrativo tiene que leerse como historia y no como problema, **sin que haga falta un cartel que diga «NARRATIVA»**. La diferencia la hacen la forma y la tipografía, no una estética aparte: sin tarjeta blanca, con una regla roja al costado y el texto más aireado.
+La única superficie oscura del juego además de Aura. Sangra hasta los bordes del shell con márgenes negativos: un bloque oscuro con papel a los costados se leería como una tarjeta más, y lo que tiene que leerse es «la pantalla cambió de modo».
 
-El rojo acá es acento de marca —algo que pasa— y no significa error.
-
-## DataMetric, MetricGroup y MetricRows
-
-- **DataMetric**: un hecho cuantitativo. Rótulo arriba, valor abajo, unidad y nota opcionales.
-- **MetricGroup**: varios datos comparables, en dos columnas desde 360 px. Un dato impar al final ocupa el ancho entero: suelto a media caja se ve como un error de maquetación.
-- **MetricRows**: pares rótulo/valor en una línea, para listas que se recorren de arriba a abajo —los números que explican una consecuencia— y no se comparan de a pares.
+Es un `<fieldset>` nombrado con `aria-labelledby` y no con un `<legend>`. Un legend se renderiza sobre el borde del fieldset, fuera del relleno, así que sobre un bloque a sangre la consigna quedaba flotando medio afuera. El nombre accesible es el mismo.
 
 ## FeedbackPanel
 
-El vocabulario es el del motor: `optimal`, `efficient`, `functional`, `invalid`. Acá no hay «correcto» ni «incorrecto».
+Convierte un resultado en **consecuencia**, no en veredicto. Pestaña → glifo + palabra + sello → ledger con la cuenta real → comparación → consecuencia → chips → bloque de Aura opcional.
 
-Cada resultado se distingue por tres cosas a la vez: un nombre escrito, un ícono con forma propia y un tono. Nunca por el color solo. Cada uno lleva además una frase que explica qué significa, sin retar a nadie.
+Tres reglas que existe para sostener:
 
-Un test verifica que el panel no use jamás vocabulario de examen.
+1. el ledger **siempre** muestra la aritmética real;
+2. los chips muestran **sólo** lo que se movió — `Promedio +0` no es representable;
+3. el bloque de Aura aparece **sólo** si Aura cambió.
 
-## Milestone
+Un `Insuficiente` nunca bloquea: tiene consecuencia y el juego sigue.
 
-Cerrar un año es el único momento donde la marca puede subir el volumen, y el único lugar con animación de entrada. Sirve para «Tu 7.º grado» hoy y para «Egresado» cuando exista, sin cambiar de forma.
+## EstiloTriangle
 
-La animación **mueve pero no desvanece**: arrancar en opacidad cero dejaba el título ilegible durante 320 ms, y un escaneo de accesibilidad lo marcaba como falla de contraste con razón.
+SVG inline y aritmética, sin librería de charting: un radar de tres puntos son cuatro polígonos y un círculo, e importar 40 kB para eso sería pagar un peaje por no escribir doce líneas.
 
-## YearResult
+Los ejes se distinguen por **patrón de trazo** —lleno, guionado, punteado—, no por tres colores inventados. El polígono es el mismo verde hacia donde sea que se incline: ningún eje es el malo.
 
-El cierre del año que se jugó, no una tarjeta de egreso: el perfil definitivo pertenece a la carrera completa y no se inventa acá. Todo sale del estado del motor.
+**El dibujo nunca es la única lectura.** El label accesible dice los tres porcentajes y el panel los imprime al lado.
 
-Los momentos del año se nombran con el título del storylet, nunca con su identificador.
+## AuraBlock, AuraCell, AuraChip
 
-## Interacciones
+Cuatro magnitudes, todas sobre negro y todas con brackets. Nunca una barra, nunca un porcentaje, siempre con signo explícito. Sin rodillo de casino y sin shake en las pérdidas: una pérdida pica por ser silenciosa.
 
-Están en `src/components/game/interactions/` y se despachan desde `interaction-area.tsx`, cuyo `switch` exhaustivo **es** el registro: agregar un tipo de interacción al motor hace que ese archivo no compile hasta que exista un renderer.
+## CareerChips
 
-| Renderer | Compone |
-|---|---|
-| `OptionGroup` | `ChoiceCard` dentro de un `fieldset` |
-| `NumericAnswer` | `NumberField` más un slider grueso atado al mismo valor |
-| `BudgetBuilder` | filas con precio unitario y `QuantityStepper` |
-| `AssignmentBoard` | lista de personas visible más un `select` por tarea |
+Un chip por dimensión que se movió. La ausencia de una clave en el reporte del motor hace que el cero no sea representable — no es una regla que el componente tenga que recordar.
 
-Ninguno evalúa nada. Juntan un borrador y lo mandan al motor.
+## Milestone, ArchetypeStamp, MemorablePanel, Confetti
 
-Dos decisiones que vale la pena no revertir:
+El único momento del juego donde la marca sube el volumen, y por eso el único que usa el numeral de 66 px, el tilde grande, el sello rotado y el confeti. Si esa gramática apareciera en una pantalla de desafío, dejaría de significar «terminaste un año».
 
-- **El presupuesto no muestra el total.** Calcularlo es el desafío.
-- **La asignación muestra quién puede hacer qué arriba de las tareas.** Metido sólo dentro de las opciones del `select`, el dato queda truncado en un teléfono y la decisión se vuelve adivinanza.
+Dice **«vas camino a»** y no «sos»: 7.º es el primero de seis años, y un veredicto cerrado sobre alguien de doce años sería el lenguaje clínico que el GDD prohíbe.
+
+## SceneMedia
+
+Todo el tratamiento de imagen vive acá y no se repite por pantalla: 16:9 (3:2 en mobile), `object-fit: cover`, foco por `object-position`, borde de 1 px, radio 0, desaturado ~15 %.
+
+El pack raster está **briefeado y no generado**, y ninguna pantalla del slice de 7.º lo monta. El componente existe para que la primera imagen que se produzca entre por un solo lugar.

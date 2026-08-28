@@ -10,47 +10,59 @@ import { extendTailwindMerge } from 'tailwind-merge'
  * consumidor pueda sobrescribir sin pelearse con el orden.
  *
  * La configuración extendida no es opcional. `tailwind-merge` trae su propio
- * mapa de grupos, y ante un `text-heading` que no reconoce como tamaño lo
- * clasifica como color: eso hacía que `text-heading` borrara
- * `text-primary-foreground` y los botones primarios salieran con la tinta
- * heredada en lugar de blanca. Cada escala propia del sistema tiene que estar
- * declarada acá.
+ * mapa de grupos, y ante un `text-display` que no reconoce como tamaño lo
+ * clasifica como color: eso hacía que un rol tipográfico borrara el color del
+ * texto y el botón primario saliera con la tinta heredada. Cada escala propia
+ * del sistema tiene que estar declarada acá.
  */
 
-const merge = extendTailwindMerge<'egresado-motion'>({
-  extend: {
-    classGroups: {
-      // Roles tipográficos: son tamaños, no colores.
-      'font-size': [
-        {
-          text: [
-            'display',
-            'title',
-            'heading',
-            'subheading',
-            'body',
-            'body-sm',
-            'caption',
-            'label',
-            'data',
-            'data-lg',
-            'data-xl',
-          ],
-        },
-      ],
-      rounded: [{ rounded: ['control', 'surface', 'card', 'pill'] }],
-      shadow: [{ shadow: ['surface', 'raised', 'overlay'] }],
-      // Utilidades propias declaradas en `base.css`.
-      px: ['px-gutter'],
-      pb: ['pb-safe'],
-      'egresado-motion': [
-        'motion-fast',
-        'motion-standard',
-        'motion-emphasized',
-      ],
+const merge = extendTailwindMerge<'eg-motion' | 'eg-canvas' | 'eg-text-shadow'>(
+  {
+    extend: {
+      classGroups: {
+        // Roles tipográficos: son tamaños, no colores.
+        'font-size': [
+          {
+            text: [
+              'milestone',
+              'display',
+              'section',
+              'aura',
+              'data-lg',
+              'data',
+              'title',
+              'option',
+              'goal',
+              'detail',
+              'action',
+              'body-lg',
+              'body',
+              'ledger',
+              'meta',
+              'caption',
+              'chip',
+              'label',
+              'eyebrow',
+            ],
+          },
+        ],
+        'font-family': [{ font: ['display', 'body'] }],
+        // Utilidades propias declaradas en `base.css`.
+        px: ['px-gutter'],
+        pb: ['pb-safe'],
+        'eg-canvas': ['eg-canvas'],
+        'eg-text-shadow': ['text-shadow-aura', 'text-shadow-aura-sm'],
+        'eg-motion': [
+          'motion-enter',
+          'motion-resolve',
+          'motion-select',
+          'motion-progress',
+          'motion-estilo',
+        ],
+      },
     },
   },
-})
+)
 
 export function cn(...values: ClassValue[]): string {
   return merge(clsx(values))

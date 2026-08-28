@@ -13,10 +13,11 @@ import type { SolutionQuality } from '../challenges/taxonomy'
 import { qualityRank } from '../challenges/evaluation'
 import type { StageId } from '../progression/stages'
 import {
-  readStat,
-  type PlayerStats,
-  type VisibleStat,
-} from '../progression/stats'
+  ESTILO_AXES,
+  promedio,
+  type CareerState,
+  type EstiloAxis,
+} from '../progression/career'
 
 export type FlagValue = boolean | number | string
 export type FlagMap = Readonly<Record<string, FlagValue>>
@@ -25,24 +26,40 @@ export type FlagMap = Readonly<Record<string, FlagValue>>
 export interface NarrativeContext {
   readonly stage: StageId
   readonly eventIndex: number
-  readonly stats: PlayerStats
+  readonly career: CareerState
   readonly flags: FlagMap
   readonly seenStorylets: readonly StoryletId[]
   /** Qualities of resolved challenges, oldest first. */
   readonly qualityHistory: readonly SolutionQuality[]
 }
 
+/**
+ * A career dimension a condition may compare against.
+ *
+ * The three Estilo axes are included because "leans Improvisador" is exactly the
+ * kind of thing later years will branch on, and they are always present — an
+ * axis share is never `null`.
+ */
+export const CAREER_DIMENSIONS = [
+  'promedio',
+  'equipo',
+  'aura',
+  ...ESTILO_AXES,
+] as const
+
+export type CareerDimension = (typeof CAREER_DIMENSIONS)[number]
+
 export type StoryletCondition =
   | { readonly kind: 'always' }
   | { readonly kind: 'stage-in'; readonly stages: readonly StageId[] }
   | {
-      readonly kind: 'stat-at-least'
-      readonly stat: VisibleStat
+      readonly kind: 'career-at-least'
+      readonly dimension: CareerDimension
       readonly value: number
     }
   | {
-      readonly kind: 'stat-at-most'
-      readonly stat: VisibleStat
+      readonly kind: 'career-at-most'
+      readonly dimension: CareerDimension
       readonly value: number
     }
   | { readonly kind: 'flag-set'; readonly flag: string }
@@ -65,6 +82,28 @@ export type StoryletCondition =
   | { readonly kind: 'any'; readonly conditions: readonly StoryletCondition[] }
   | { readonly kind: 'not'; readonly condition: StoryletCondition }
 
+/**
+ * Reads one dimension, or `null` when the run has not established it yet.
+ *
+ * Promedio is derived from the grade ledger rather than stored, so it is read
+ * through the same function the HUD uses and cannot drift from it.
+ */
+export function readCareerDimension(
+  career: CareerState,
+  dimension: CareerDimension,
+): number | null {
+  switch (dimension) {
+    case 'promedio':
+      return promedio(career)
+    case 'equipo':
+      return career.equipo
+    case 'aura':
+      return career.aura
+    default:
+      return career.estilo[dimension satisfies EstiloAxis]
+  }
+}
+
 export function evaluateCondition(
   condition: StoryletCondition,
   context: NarrativeContext,
@@ -74,10 +113,16 @@ export function evaluateCondition(
       return true
     case 'stage-in':
       return condition.stages.includes(context.stage)
-    case 'stat-at-least':
-      return readStat(context.stats, condition.stat) >= condition.value
-    case 'stat-at-most':
-      return readStat(context.stats, condition.stat) <= condition.value
+    case 'career-at-least': {
+      const value = readCareerDimension(context.career, condition.dimension)
+      // A dimension the run has not established yet cannot satisfy a threshold
+      // in either direction: `null` is "no evidence", not a low number.
+      return value !== null && value >= condition.value
+    }
+    case 'career-at-most': {
+      const value = readCareerDimension(context.career, condition.dimension)
+      return value !== null && value <= condition.value
+    }
     case 'flag-set':
       return Object.hasOwn(context.flags, condition.flag)
     case 'flag-not-set':
@@ -136,11 +181,11 @@ export function validateCondition(
       return condition.stages.length === 0
         ? [`${path}: stage-in lists no stages, so it can never match`]
         : []
-    case 'stat-at-least':
-    case 'stat-at-most':
+    case 'career-at-least':
+    case 'career-at-most':
       return Number.isFinite(condition.value)
         ? []
-        : [`${path}: stat threshold must be a finite number`]
+        : [`${path}: career threshold must be a finite number`]
     case 'recent-quality-at-least':
       return condition.count <= 0
         ? [`${path}: recent-quality-at-least needs a positive count`]

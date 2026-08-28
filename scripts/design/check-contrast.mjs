@@ -6,9 +6,9 @@
  * cada rol hasta su color real y verifica las combinaciones que el producto usa
  * de verdad contra los mínimos de WCAG 2.2.
  *
- * Esto existe porque «se ve oscuro» no es una medición. Un verde de marca puede
- * parecer suficientemente oscuro y quedarse en 4,27:1 con texto blanco; el gate
- * lo dice antes de que llegue a una pantalla.
+ * Esto existe porque «se ve oscuro» no es una medición. En dos rondas anteriores
+ * del sistema el token de etiqueta falló AA a 4,1–4,4:1 pareciendo
+ * suficientemente gris; el gate lo dice antes de que llegue a una pantalla.
  *
  * La fuente de verdad es el CSS. Este script no define ningún color: si alguien
  * mueve un token y rompe una combinación, falla acá.
@@ -17,30 +17,25 @@
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 
-import {
-  contrastRatio,
-  isOutOfGamut,
-  oklchToHex,
-  parseOklch,
-} from './color.mjs'
+import { contrastRatio, parseHex } from './color.mjs'
 
 const root = new URL('../../', import.meta.url)
 const read = (relative) =>
   readFileSync(fileURLToPath(new URL(relative, root)), 'utf8')
 
-/** `--color-green-600: oklch(...)` → paleta primitiva. */
+/** `--color-bottle-600: #1B6B3A` → paleta primitiva. */
 function readPalette(css) {
   const palette = new Map()
   for (const [, name, value] of css.matchAll(
-    /--color-([a-z0-9-]+):\s*(oklch\([^)]*\))/gu,
+    /--color-([a-z0-9-]+):\s*(#[0-9a-fA-F]{3,8})\s*;/gu,
   )) {
-    const parsed = parseOklch(value)
+    const parsed = parseHex(value)
     if (parsed !== undefined) palette.set(name, parsed)
   }
   return palette
 }
 
-/** `--primary: var(--color-green-600)` → rol semántico. */
+/** `--green: var(--color-bottle-600)` → rol semántico. */
 function readSemantics(css) {
   const semantics = new Map()
   for (const [, name, target] of css.matchAll(
@@ -53,9 +48,6 @@ function readSemantics(css) {
 
 const palette = readPalette(read('src/styles/tokens.css'))
 const semantics = readSemantics(read('src/styles/theme.css'))
-
-// El blanco no está en OKLCH en el CSS; acá se representa exacto.
-palette.set('white', { l: 1, c: 0, h: 0 })
 
 function resolve(role) {
   const target = semantics.get(role)
@@ -79,53 +71,80 @@ function resolve(role) {
  * combinación nueva a la UI significa agregarla también a esta lista.
  */
 const PAIRS = [
-  [4.5, 'foreground', 'canvas'],
-  [4.5, 'foreground', 'surface'],
-  [4.5, 'foreground', 'surface-muted'],
-  [4.5, 'foreground-muted', 'canvas'],
-  [4.5, 'foreground-muted', 'surface'],
-  [4.5, 'foreground-muted', 'surface-muted'],
-  [4.5, 'primary-foreground', 'primary'],
-  [4.5, 'primary-foreground', 'primary-hover'],
-  [4.5, 'primary-foreground', 'primary-active'],
-  [4.5, 'accent-foreground', 'accent'],
-  [4.5, 'accent-foreground', 'accent-hover'],
-  [4.5, 'danger-foreground', 'danger'],
-  [4.5, 'danger-foreground', 'danger-hover'],
-  [4.5, 'primary-subtle-foreground', 'primary-subtle'],
-  [4.5, 'accent-subtle-foreground', 'accent-subtle'],
-  [4.5, 'selected-foreground', 'selected-surface'],
-  [4.5, 'optimal-foreground', 'optimal-surface'],
-  [4.5, 'efficient-foreground', 'efficient-surface'],
-  [4.5, 'functional-foreground', 'functional-surface'],
-  [4.5, 'invalid-foreground', 'invalid-surface'],
-  [4.5, 'data-foreground', 'surface'],
-  [4.5, 'data-foreground', 'surface-muted'],
-  [4.5, 'data-label', 'surface-muted'],
-  [4.5, 'danger', 'surface'],
-  // Contraste no textual: contornos de controles e indicadores de estado.
-  [3, 'line-interactive', 'surface'],
-  [3, 'line-interactive', 'canvas'],
-  [3, 'line-interactive', 'surface-muted'],
-  [3, 'line-selected', 'surface'],
-  [3, 'line-selected', 'selected-surface'],
-  [3, 'focus', 'focus-contrast'],
-  [3, 'progress-fill', 'progress-track'],
-  [3, 'optimal-line', 'optimal-surface'],
-  [3, 'efficient-line', 'efficient-surface'],
-  [3, 'functional-line', 'functional-surface'],
-  [3, 'invalid-line', 'invalid-surface'],
+  // Tinta sobre las tres superficies de papel.
+  [4.5, 'ink', 'canvas'],
+  [4.5, 'ink', 'surface'],
+  [4.5, 'ink', 'canvas-sunken'],
+  [4.5, 'ink-secondary', 'canvas'],
+  [4.5, 'ink-secondary', 'surface'],
+  [4.5, 'ink-secondary', 'canvas-sunken'],
+  // El piso del sistema: 5,6:1 para etiquetas de 9–11 px. No aclararlo.
+  [4.5, 'ink-label', 'canvas'],
+  [4.5, 'ink-label', 'surface'],
+  [4.5, 'ink-label', 'canvas-sunken'],
+
+  // Estado y marca de corrección, como texto sobre papel.
+  [4.5, 'green', 'canvas'],
+  [4.5, 'green', 'surface'],
+  [4.5, 'red', 'canvas'],
+  [4.5, 'red', 'surface'],
+  [4.5, 'green-deep', 'green-tint'],
+
+  // El primario y su deshabilitado.
+  [4.5, 'on-action', 'action'],
+  [4.5, 'on-action', 'action-hover'],
+  [4.5, 'on-action-disabled', 'action-disabled'],
+
+  // Texto blanco sobre relleno: pestaña del panel, chips, glifo de resultado.
+  [4.5, 'outcome-optimal', 'canvas'],
+  [4.5, 'outcome-partial', 'canvas'],
+  [4.5, 'outcome-insufficient', 'canvas'],
+
+  // La superficie de decisión.
+  [4.5, 'on-decision', 'decision'],
+  [4.5, 'on-decision', 'decision-raised'],
+  [4.5, 'on-decision-strong', 'decision'],
+  [4.5, 'on-decision-muted', 'decision'],
+  [4.5, 'on-decision-muted', 'decision-raised'],
+  /*
+    El primario deshabilitado dentro del bloque oscuro. WCAG 2.2 exime a los
+    controles inactivos del mínimo de texto (SC 1.4.3, «Incidental»), así que
+    acá se sostiene el piso no textual de 3:1 en lugar de 4,5. El disabled nunca
+    es la única explicación: la línea de consigna dice qué falta.
+  */
+  [3, 'on-action-disabled-dark', 'action-disabled-dark'],
+  [4.5, 'on-selected-box', 'selected-box'],
+
+  // Aura, la única isla negra. Su verde sobre papel fallaría, y por eso la
+  // regla de que vive sólo acá se auto-impone.
+  [4.5, 'aura-gain', 'aura-surface'],
+  [4.5, 'aura-loss', 'aura-surface'],
+  [4.5, 'aura-label', 'aura-surface'],
+
+  // Contraste no textual: bordes de control e indicadores de estado.
+  [3, 'rule-strong', 'canvas'],
+  [3, 'rule-strong', 'surface'],
+  [3, 'progress-done', 'canvas'],
+  [3, 'progress-current', 'canvas'],
+  /*
+    `progress-pending` y `estilo-reference` no están en esta lista a propósito.
+    Las dos son andamiaje: la celda pendiente y el triángulo de referencia no
+    portan información que no esté también escrita —«Evento 3 de 7» y los tres
+    porcentajes del label del triángulo—, y los estados que sí informan se
+    distinguen por forma (relleno · contorno de 2 px · regla de 1 px). Subirles
+    el contraste las convertiría en ruido que compite con el dato.
+  */
+  [3, 'focus-ring', 'canvas'],
+  [3, 'focus-ring', 'action'],
+  [3, 'focus-ring-inverse', 'decision'],
+  [3, 'decision-rule', 'decision'],
+  [3, 'decision-rule-hover', 'decision'],
+  [3, 'aura-bracket', 'aura-surface'],
+  [3, 'estilo-axis', 'surface'],
 ]
 
 let failures = 0
 const lines = []
-
-for (const [name, color] of palette) {
-  if (isOutOfGamut(color)) {
-    failures += 1
-    lines.push(`  FUERA DE GAMUT  --color-${name} (${oklchToHex(color)})`)
-  }
-}
 
 for (const [minimum, foregroundRole, backgroundRole] of PAIRS) {
   const foreground = resolve(foregroundRole)
@@ -140,21 +159,20 @@ for (const [minimum, foregroundRole, backgroundRole] of PAIRS) {
 }
 
 console.log('Contraste del sistema de diseño')
-console.log(`  paleta      ${String(palette.size)} colores`)
-console.log(`  roles       ${String(semantics.size)} tokens semánticos`)
-console.log(`  pares       ${String(PAIRS.length)} combinaciones`)
+console.log(`  pigmentos   ${String(palette.size)}`)
+console.log(`  roles       ${String(semantics.size)}`)
+console.log(`  pares       ${String(PAIRS.length)}`)
 console.log()
-
-const verbose = process.argv.includes('--verbose')
 for (const line of lines) {
-  if (verbose || line.includes('FALLA') || line.includes('FUERA')) {
-    console.log(line)
-  }
+  console.log(line)
 }
-
 console.log()
+
 if (failures > 0) {
-  console.error(`${String(failures)} combinaciones no llegan al mínimo.`)
+  console.error(
+    `${String(failures)} combinación(es) por debajo del mínimo de WCAG 2.2.`,
+  )
   process.exit(1)
 }
-console.log('Todas las combinaciones cumplen WCAG 2.2 AA.')
+
+console.log('Todas las combinaciones que el producto pinta llegan al mínimo.')

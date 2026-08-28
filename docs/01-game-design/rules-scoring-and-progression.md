@@ -87,8 +87,8 @@ El perfil se calcula sobre features normalizadas:
 - eficiencia;
 - precisión;
 - riesgo;
-- colaboración;
-- iniciativa;
+- colaboración (derivada de Equipo; el punto neutro cuando no hay evidencia, no cero);
+- iniciativa (derivada de Estilo, no de una estadística visible);
 - uso de datos adicionales;
 - estabilidad entre años.
 

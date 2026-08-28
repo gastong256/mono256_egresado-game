@@ -1,19 +1,19 @@
 /**
- * Egresado Design System v0.1 — tokens primitivos.
+ * Egresado Design System v0.2 — tokens primitivos.
  *
- * Esta capa define el vocabulario crudo: la paleta, la escala tipográfica, el
- * radio, la elevación y el movimiento. No define significado. Un componente de
- * producto no debería consumir nada de acá directamente: para eso está la capa
- * semántica de `theme.css`.
+ * Esta capa define el vocabulario crudo: los pigmentos, la escala tipográfica,
+ * los grosores de borde y el movimiento. No define significado. Un componente de
+ * producto no consume nada de acá directamente: para eso está la capa semántica
+ * de `theme.css`.
  *
- * La paleta está escrita en OKLCH porque es perceptualmente uniforme: la misma
- * diferencia de luminosidad se ve igual de escalonada en verde que en rojo, y
- * eso es lo que permite que las tres familias se sientan de la misma familia.
- * Las tres comparten exactamente la misma rampa de luminosidad.
+ * Los valores son los del handoff de diseño v0.2 y se
+ * escriben en hexadecimal a propósito. La paleta no es una rampa generada: es un
+ * set corto de pigmentos elegidos y medidos uno por uno, y convertirlos a una
+ * escala perceptual sólo agregaría dígitos que nadie eligió. `pnpm design:check`
+ * verifica cada combinación real contra los mínimos de WCAG 2.2.
  *
- * Los valores no se eligieron a ojo. `pnpm design:contrast` convierte cada uno a
- * sRGB y verifica las combinaciones reales contra los mínimos de WCAG 2.2; si
- * alguien mueve un token y rompe una combinación, el gate falla.
+ * Los nombres son de material, no de rol: `bottle-600` es el verde botella del
+ * blazer, y recién en `theme.css` pasa a ser «estado» o «marca de corrección».
  */
 
 @theme {
@@ -27,148 +27,235 @@
   --color-transparent: transparent;
   --color-current: currentColor;
   --color-inherit: inherit;
-  --color-white: #fff;
+
+  /* ---- papel: la hoja cuadriculada es el mundo del juego ---- */
+  --color-paper: #f6f5f0;
+  --color-paper-grid: #e6e4dc;
+  --color-paper-sunken: #efede6;
+  --color-white: #ffffff;
+
+  /* Regla impresa y filete de renglón. */
+  --color-graphite: #c9c6be;
+  --color-hairline: #dad7cf;
+
+  /* ---- tinta ---- */
+  --color-ink-900: #16181a;
+  --color-ink-700: #45494a;
+  --color-ink-500: #5a5f5c;
 
   /*
-    Verde Egresado. Tono 152: verde de pasto, ni menta ni oliva. La croma sube
-    hacia el medio de la rampa y baja en los extremos, que es como se comporta
-    el gamut sRGB.
+    Verde botella. El del blazer del colegio, elegido para leerse como tinta
+    sobre papel y no como un verde emisivo de pantalla.
   */
-  --color-green-50: oklch(0.977 0.018 152);
-  --color-green-100: oklch(0.945 0.038 152);
-  --color-green-200: oklch(0.892 0.072 152);
-  --color-green-300: oklch(0.822 0.108 152);
-  --color-green-400: oklch(0.736 0.137 152);
-  --color-green-500: oklch(0.62 0.148 152);
-  --color-green-600: oklch(0.528 0.132 152);
-  --color-green-700: oklch(0.455 0.109 152);
-  --color-green-800: oklch(0.392 0.089 152);
-  --color-green-900: oklch(0.332 0.073 152);
-  --color-green-950: oklch(0.232 0.051 152);
+  --color-bottle-600: #1b6b3a;
+  --color-bottle-800: #14572f;
+  --color-bottle-050: #e3efe7;
 
-  /* Rojo Egresado. Tono 27: rojo cálido, no rosa y no naranja. */
-  --color-red-50: oklch(0.977 0.011 27);
-  --color-red-100: oklch(0.945 0.024 27);
-  --color-red-200: oklch(0.892 0.05 27);
-  --color-red-300: oklch(0.822 0.086 27);
-  --color-red-400: oklch(0.736 0.128 27);
-  --color-red-500: oklch(0.62 0.168 27);
-  --color-red-600: oklch(0.528 0.181 27);
-  --color-red-700: oklch(0.455 0.157 27);
-  --color-red-800: oklch(0.392 0.132 27);
-  --color-red-900: oklch(0.332 0.111 27);
-  --color-red-950: oklch(0.232 0.077 27);
+  /* Rojo escocés. Tensión y restricción; no es «error». */
+  --color-tartan-600: #c0272d;
+  --color-tartan-050: #fbeaea;
+
+  /* Lima. El único saturado que pisa el papel, y sólo en un botón. */
+  --color-lime-400: #c6f24e;
+  --color-lime-300: #d4f86e;
 
   /*
-    Gris estructural, con una traza mínima del tono verde. No es gris de
-    browser: al lado del verde de marca un gris puro se ve violáceo.
+    Pizarra. La superficie oscura donde se decide. No es negra: el negro está
+    reservado para Aura, y esa diferencia es lo que hace que Aura se lea como
+    otra cosa.
   */
-  --color-gray-50: oklch(0.977 0.004 152);
-  --color-gray-100: oklch(0.945 0.005 152);
-  --color-gray-200: oklch(0.892 0.006 152);
-  --color-gray-300: oklch(0.822 0.007 152);
-  --color-gray-400: oklch(0.736 0.008 152);
-  --color-gray-500: oklch(0.62 0.008 152);
-  --color-gray-600: oklch(0.528 0.008 152);
-  --color-gray-700: oklch(0.455 0.008 152);
-  --color-gray-800: oklch(0.392 0.008 152);
-  --color-gray-900: oklch(0.332 0.009 152);
-  --color-gray-950: oklch(0.232 0.011 152);
+  --color-slate-900: #1c1e1b;
+  --color-slate-800: #262925;
+  --color-slate-600: #33372f;
+  /*
+    El contorno de un control sobre pizarra.
+
+    El handoff v0.2 fija `#4A4E48` para esta regla. Medido contra `slate-900`
+    da 1,98:1, y el contorno de una casilla de opción es «información visual
+    necesaria para identificar un componente y su estado» —WCAG 2.2 SC 1.4.11,
+    mínimo 3:1—. Con ninguna opción elegida, ese contorno es lo único que dice
+    que hay una casilla ahí. Es el único token que la implementación reabrió, y
+    se movió lo mínimo para pasar: 3,46:1 sobre la pizarra y 3,04:1 sobre la
+    pizarra elevada. Ver `docs/09-design-system/decision-history.md`.
+  */
+  --color-slate-500: #6e736c;
+  --color-slate-300: #a8aca6;
+
+  /* Negro Aura. La única isla negra del sistema, y su verde propio. */
+  --color-void: #0a0c0a;
+  --color-neon-500: #2bd46e;
+  --color-neon-400: #4ae88c;
+  --color-coral-400: #ff5c63;
+  --color-ash-400: #8e938c;
 
   /*
-    Tipografía. Una sola familia variable, servida localmente por el paquete
-    `geist` a través de `next/font/local`: sin pedidos a un CDN en runtime y sin
-    descarga durante el build, que es lo que mantiene el build reproducible.
+    Tipografía. Dos familias variables servidas desde el repositorio con
+    `next/font/local`: sin pedido a un CDN en runtime y sin descarga durante el
+    build, que es lo que mantiene el build reproducible.
   */
-  --font-sans:
-    var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, 'Segoe UI',
+  --font-display:
+    var(--font-schibsted-grotesk), system-ui, -apple-system, 'Segoe UI',
     sans-serif;
+  --font-body:
+    var(--font-libre-franklin), system-ui, -apple-system, 'Segoe UI', sans-serif;
 
   /*
     Escala tipográfica por rol, no por tamaño. Se apagan `text-xs`…`text-9xl`
     para que nadie tenga que decidir si un dato va en `text-lg` o `text-xl`: se
-    elige el rol y el sistema decide el tamaño, la altura de línea y el tracking.
+    elige el rol y el sistema decide el tamaño, la interlínea, el tracking y el
+    peso.
   */
   --text-*: initial;
 
-  --text-display: 2.25rem;
-  --text-display--line-height: 1.1;
-  --text-display--letter-spacing: -0.02em;
-  --text-display--font-weight: 700;
+  /* Cierre de etapa: el numeral del año. */
+  --text-milestone: 4.125rem;
+  --text-milestone--line-height: 0.82;
+  --text-milestone--letter-spacing: -0.05em;
+  --text-milestone--font-weight: 800;
 
-  --text-title: 1.5rem;
-  --text-title--line-height: 1.2;
+  /* Título de pantalla. */
+  --text-display: 1.9375rem;
+  --text-display--line-height: 1;
+  --text-display--letter-spacing: -0.035em;
+  --text-display--font-weight: 800;
+
+  /* Título de sección y titular de banner. */
+  --text-section: 1.5625rem;
+  --text-section--line-height: 1.02;
+  --text-section--letter-spacing: -0.03em;
+  --text-section--font-weight: 800;
+
+  /* La cifra de Aura, dentro del bloque negro. */
+  --text-aura: 2rem;
+  --text-aura--line-height: 1;
+  --text-aura--letter-spacing: -0.03em;
+  --text-aura--font-weight: 800;
+
+  /* Dato grande: el valor de una caja de dato o de un renglón de cierre. */
+  --text-data-lg: 1.3125rem;
+  --text-data-lg--line-height: 1;
+  --text-data-lg--letter-spacing: -0.03em;
+  --text-data-lg--font-weight: 800;
+
+  /* Dato de HUD y celda de grilla. */
+  --text-data: 1.25rem;
+  --text-data--line-height: 1;
+  --text-data--letter-spacing: -0.03em;
+  --text-data--font-weight: 800;
+
+  /* Encabezado de un bloque insertado: el estado del panel de resultado. */
+  --text-title: 1.0625rem;
+  --text-title--line-height: 1.15;
   --text-title--letter-spacing: -0.015em;
-  --text-title--font-weight: 650;
+  --text-title--font-weight: 800;
 
-  --text-heading: 1.1875rem;
-  --text-heading--line-height: 1.3;
-  --text-heading--letter-spacing: -0.01em;
-  --text-heading--font-weight: 620;
+  /* Etiqueta de una opción. */
+  --text-option: 1rem;
+  --text-option--line-height: 1.25;
+  --text-option--font-weight: 600;
 
-  --text-subheading: 1rem;
-  --text-subheading--line-height: 1.4;
-  --text-subheading--font-weight: 600;
+  /* La consigna, arriba de las opciones. */
+  --text-goal: 0.9375rem;
+  --text-goal--line-height: 1.3;
+  --text-goal--font-weight: 700;
 
-  --text-body: 1rem;
-  --text-body--line-height: 1.55;
+  /* Valor tabular al costado de una opción. */
+  --text-detail: 0.90625rem;
+  --text-detail--line-height: 1.2;
+  --text-detail--font-weight: 700;
 
-  --text-body-sm: 0.875rem;
-  --text-body-sm--line-height: 1.5;
+  /* Botón. */
+  --text-action: 0.875rem;
+  --text-action--line-height: 1;
+  --text-action--letter-spacing: 0.08em;
+  --text-action--font-weight: 800;
 
-  --text-caption: 0.8125rem;
+  /* Prosa de apertura. */
+  --text-body-lg: 0.875rem;
+  --text-body-lg--line-height: 1.55;
+  --text-body-lg--font-weight: 400;
+
+  /* Prosa de situación. */
+  --text-body: 0.84375rem;
+  --text-body--line-height: 1.5;
+  --text-body--font-weight: 400;
+
+  /* Valor de un renglón del ledger. */
+  --text-ledger: 0.84375rem;
+  --text-ledger--line-height: 1.3;
+  --text-ledger--font-weight: 700;
+
+  /* Metadato y etiqueta de renglón. */
+  --text-meta: 0.78125rem;
+  --text-meta--line-height: 1.5;
+  --text-meta--font-weight: 400;
+
+  /* Pie de pantalla y notas. */
+  --text-caption: 0.75rem;
   --text-caption--line-height: 1.45;
+  --text-caption--font-weight: 400;
 
-  --text-label: 0.75rem;
-  --text-label--line-height: 1.35;
-  --text-label--letter-spacing: 0.06em;
-  --text-label--font-weight: 600;
+  /* Chip de efecto. */
+  --text-chip: 0.71875rem;
+  --text-chip--line-height: 1.2;
+  --text-chip--font-weight: 700;
 
-  /* Los datos cuantitativos son el contenido más importante del juego. */
-  --text-data: 1.0625rem;
-  --text-data--line-height: 1.25;
-  --text-data--font-weight: 600;
+  /* Etiqueta en versalitas. */
+  --text-label: 0.6875rem;
+  --text-label--line-height: 1.2;
+  --text-label--letter-spacing: 0.13em;
+  --text-label--font-weight: 700;
 
-  --text-data-lg: 1.375rem;
-  --text-data-lg--line-height: 1.15;
-  --text-data-lg--letter-spacing: -0.01em;
-  --text-data-lg--font-weight: 680;
-
-  --text-data-xl: 2rem;
-  --text-data-xl--line-height: 1.05;
-  --text-data-xl--letter-spacing: -0.02em;
-  --text-data-xl--font-weight: 700;
+  /* Eyebrow: la línea roja arriba del título. */
+  --text-eyebrow: 0.59375rem;
+  --text-eyebrow--line-height: 1.2;
+  --text-eyebrow--letter-spacing: 0.16em;
+  --text-eyebrow--font-weight: 700;
 
   /*
-    Radio. Cuatro valores con nombre en lugar de siete sin criterio: control,
-    superficie, tarjeta y píldora. Redondeado, pero no de app para nenes.
+    Geometría. El radio es 0 en todo el sistema y no hay ninguna sombra: la
+    profundidad la da el peso del borde y el contraste de fondo, como un
+    impreso. Se apagan las dos escalas para que no exista la tentación.
   */
   --radius-*: initial;
-  --radius-control: 0.5rem;
-  --radius-surface: 0.75rem;
-  --radius-card: 1rem;
-  --radius-pill: 999px;
-  --radius-full: 9999px;
+  --shadow-*: initial;
+
+  /* Movimiento: dos curvas, cinco duraciones. */
+  --ease-*: initial;
+  --ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-fall: cubic-bezier(0.3, 0.1, 0.7, 1);
 
   /*
-    Elevación. Contenida a propósito: la jerarquía sale del espaciado, el fondo,
-    el borde y la tipografía, no de tarjetas flotando.
+    Ancho de la zona de juego. Una columna de 412 px en todos los breakpoints;
+    el máximo mayor existe sólo para interacciones genuinamente anchas.
   */
-  --shadow-*: initial;
-  --shadow-surface: 0 1px 2px 0 oklch(0.232 0.011 152 / 4%);
-  --shadow-raised:
-    0 1px 2px 0 oklch(0.232 0.011 152 / 5%),
-    0 4px 12px -2px oklch(0.232 0.011 152 / 7%);
-  --shadow-overlay:
-    0 8px 24px -4px oklch(0.232 0.011 152 / 12%),
-    0 2px 6px -1px oklch(0.232 0.011 152 / 8%);
+  --container-viewport: 412px;
+  --container-viewport-wide: 560px;
+}
 
-  /* Movimiento: corto, y con una sola curva por intención. */
-  --ease-*: initial;
-  --ease-standard: cubic-bezier(0.2, 0, 0.2, 1);
-  --ease-emphasized: cubic-bezier(0.2, 0, 0, 1);
+/*
+  Valores que no viajan por una utilidad de Tailwind: los consume CSS directo
+  (una utilidad propia, un `style` calculado o un pseudo-elemento).
+*/
+:root {
+  /* La celda de la cuadrícula. Padding y alturas son múltiplos de 8. */
+  --grid-cell: 16px;
 
-  /* Anchos de la zona de juego. Ver `--game-width` en theme.css. */
-  --container-game: 34rem;
-  --container-game-wide: 44rem;
+  /* Grosores de borde, por jerarquía. */
+  --border-rule: 1px;
+  --border-box: 1.5px;
+  --border-section: 2px;
+  --border-tab: 3px;
+
+  /* Objetivos táctiles. */
+  --hit-target-min: 44px;
+  --hit-target-choice: 52px;
+  --hit-target-grid: 56px;
+
+  /* Duraciones. El bloque de reduced-motion las lleva a 1 ms de una sola vez. */
+  --duration-select: 140ms;
+  --duration-enter: 200ms;
+  --duration-resolve: 320ms;
+  --duration-progress: 420ms;
+  --duration-celebrate: 1400ms;
 }

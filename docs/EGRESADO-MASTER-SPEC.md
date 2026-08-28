@@ -837,20 +837,32 @@ El número exacto puede variar por modo.
 
 ## 8. Estadísticas de carrera
 
+Cuatro dimensiones visibles. Nada más es permanente: energía, plata y similares pueden existir como **recursos locales** dentro de un minijuego, nunca como estadística de carrera. Ver [ADR-016](03-architecture/adr/ADR-016-career-player-model.md).
+
 ### Visibles
-- **Conocimiento**: desempeño académico/analítico.
-- **Equipo**: colaboración y decisiones sociales.
-- **Iniciativa**: proyectos y oportunidades.
-- **Energía**: capacidad temporal y desgaste.
+
+| | Tipo | Rango | Cambia cuando |
+|---|---|---|---|
+| **Promedio** | nota | 1,0–10,0 · un decimal | el evento es **genuinamente académico** |
+| **Equipo** | colaboración | 0–100 | está en juego la conducta hacia el grupo |
+| **Aura** | reputación | con signo, sin techo | el momento es **socialmente memorable** |
+| **Estilo** | ternario | Aplicado / Estratega / Improvisador, suman 100 | casi toda decisión lo empuja un poco |
+
+Tres reglas que definen el modelo tanto como los nombres:
+
+- **`null` no es 0.** Una dimensión que la run no tocó todavía no tiene valor, y no se dibuja. Aparecen de a una, la primera vez que algo las mueve.
+- **Promedio se deriva de notas reales**, no se acumula como un contador. Una decisión de colectivo ejercita matemática pero no es académica: no lo mueve.
+- **Ningún eje de Estilo es el malo.** Un Improvisador tiene que poder egresar.
 
 ### Derivadas/ocultas
 - Eficiencia.
 - Riesgo asumido.
 - Precisión.
 - Uso de información.
-- Razonamiento cuantitativo por categoría.
+- Dominio por categoría matemática.
+- Flags e historia narrativa.
 
-Las stats visibles generan narrativa; las ocultas ayudan a scoring, perfiles y analítica.
+Las visibles generan narrativa; las ocultas alimentan scoring, dificultad adaptativa, perfiles y analítica. **Ninguna oculta se renderiza**, y que exista en el estado no es motivo para mostrarla.
 
 ## 9. Filosofía de error
 
@@ -1130,7 +1142,7 @@ Recupera una decisión previa: un compañero vuelve a aparecer, una actividad ab
 2–4 eventos relacionados distribuidos en años.
 
 ### Evento sistémico
-Se activa por thresholds: alta iniciativa, energía muy baja, etc.
+Se activa por thresholds sobre una dimensión de carrera: Equipo muy bajo, Promedio bajo, Aura alta. Una dimensión todavía sin establecer **no satisface un umbral en ninguna dirección** — «sin evidencia» no es «poco».
 
 ### Evento final
 Resume o consume flags acumulados.
@@ -1280,8 +1292,8 @@ El perfil se calcula sobre features normalizadas:
 - eficiencia;
 - precisión;
 - riesgo;
-- colaboración;
-- iniciativa;
+- colaboración (derivada de Equipo; el punto neutro cuando no hay evidencia, no cero);
+- iniciativa (derivada de Estilo, no de una estadística visible);
 - uso de datos adicionales;
 - estabilidad entre años.
 
@@ -1320,17 +1332,26 @@ Diseñar inicialmente para ~390×844 CSS px y verificar mínimo 360 px de ancho.
 
 ```text
 ┌────────────────────────┐
-│ 2.º AÑO        Energía │
+│ 7.º GRADO      ▪▪□□□□□ │  etapa + progreso en celdas
 ├────────────────────────┤
-│ Título / situación     │
-│ Datos relevantes       │
-│                        │
-│ Interacción            │
-│                        │
+│ Promedio │ Equipo │ ◣  │  tira de carrera (aparición progresiva)
 ├────────────────────────┤
-│ Feedback / CTA         │
+│ EYEBROW                │
+│ Título de la situación │
+│ Prosa                  │
+│ ┌────────┐ ┌────────┐  │  grilla de datos sobre papel
+│ │ dato   │ │ dato   │  │
+│ └────────┘ └────────┘  │
+│▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│  bloque de decisión (oscuro, a sangre)
+│▓ consigna             ▓│
+│▓ opciones             ▓│
+│▓ [ CONFIRMAR ]        ▓│  el primario vive acá mientras se decide
 └────────────────────────┘
 ```
+
+Al resolver, el bloque oscuro suelta el primario, aparece el panel de resultado sobre papel y el primario reaparece al final del shell. **Existe exactamente un primario montado a la vez.**
+
+El ancho de juego es de 412 px máximo, centrado en todos los breakpoints: tablet y desktop centran contra la hoja, no ensanchan. Ver el [sistema de diseño](09-design-system/foundations.md).
 
 ## Navegación
 
@@ -2166,8 +2187,10 @@ El contenido de producto vive en `src/content/<etapa>/`, es una capa de arquitec
 
 # ADR-015 — Sistema de diseño con tokens semánticos y paleta restringida
 
-- Estado: Aceptado
+- Estado: Aceptado — reemplazado parcialmente por [ADR-017](03-architecture/adr/ADR-017-paper-visual-identity.md)
 - Fecha: 2026-08-22
+
+> **Qué sigue vigente y qué no.** La gobernanza de esta decisión sigue en pie: la cadena de tokens en una sola dirección, la paleta de Tailwind apagada y el contraste como gate obligatorio. Lo que ADR-017 reemplaza son los *valores* y las dependencias: la paleta pasó de OKLCH a hexadecimal, la escala tipográfica pasó a los roles de v0.2, el radio pasó a 0 en todo el sistema, y `geist` y `lucide-react` salieron.
 
 ## Contexto
 
@@ -2235,6 +2258,191 @@ No hay `ThemeProvider`. Con un solo tema, las variables CSS alcanzan.
 - Un color que el browser lee antes del CSS —el `theme_color` del manifiesto— necesita un literal. La única copia permitida vive en `src/lib/ui/brand.ts` y un test verifica que coincida con su token.
 - El tema oscuro queda diferido, pero no bloqueado: ningún componente supone que blanco es fondo ni que el gris oscuro es texto.
 - La regla de producto **elegir no es acertar** queda sostenida por el sistema: el estado seleccionado es neutro y nunca verde, y hay un test end-to-end que verifica que dos opciones de distinta calidad se vean idénticas antes de confirmar.
+
+---
+
+# FILE: 03-architecture/adr/ADR-016-career-player-model.md
+
+# ADR-016 — Modelo de jugador de carrera: Promedio, Equipo, Aura y Estilo
+
+- Estado: Aceptado
+- Fecha: 2026-08-28
+
+## Contexto
+
+El motor definía cuatro estadísticas visibles en `src/game/progression/stats.ts`: `knowledge`, `team`, `initiative` y `energy`. Las cuatro eran enteros acotados de 0 a 100, todas arrancaban en un punto medio y cada resultado de desafío empujaba dos o tres a la vez.
+
+Ese modelo tenía tres problemas que no se arreglaban con una pantalla mejor.
+
+**Ninguna de las cuatro significaba algo escolar.** `knowledge` subía 4 puntos por comprar bien la pintura del mural. No es una nota, no es un promedio, no es nada que un estudiante de doce años reconozca de su propia vida: es un contador de XP con nombre de materia.
+
+**Todas empezaban en 50.** Un jugador que todavía no había tomado ninguna decisión veía cuatro barras a la mitad. La interfaz afirmaba cuatro cosas sobre alguien de quien no sabía nada.
+
+**Todas se movían siempre.** Un panel de resultado terminaba mostrando cuatro cambios por cada decisión, lo que convierte cualquier consecuencia en ruido: si todo cambia siempre, nada cambió.
+
+El handoff de diseño v0.2 marcó explícitamente el reemplazo como **migración de datos, no re-skin**, y el modelo nuevo era la única parte del paquete que el motor tenía que aceptar antes de que se pudiera dibujar una sola pantalla.
+
+## Decisión
+
+Se reemplaza `PlayerStats` por `CareerState`, con cuatro dimensiones visibles y dos sistemas ocultos.
+
+```ts
+interface CareerState {
+  grades: readonly number[]                       // oculto: las notas reales
+  equipo: number | null                           // 0–100
+  aura: number | null                             // con signo, sin techo
+  estilo: { aplicado; estratega; improvisador }   // suman exactamente 100
+  estiloEvidence: number                          // oculto
+  mastery: Partial<Record<MathCategory, number>>  // oculto
+}
+```
+
+### 1. `null` no es cero
+
+Una dimensión que la run no tocó todavía **no tiene valor**, y la interfaz no dibuja nada en lugar de dibujar un cero. La tira de carrera arranca vacía y cada celda aparece la primera vez que su dimensión se mueve.
+
+No es una sutileza de presentación: mostrar `Promedio 0` antes de la primera nota le dice a alguien de doce años que va mal en una materia que todavía no empezó. El tipo lo hace imposible de escribir por accidente.
+
+### 2. Promedio se deriva de notas reales
+
+El estado guarda la lista de notas y `promedio()` devuelve su media redondeada a un decimal. No es un acumulador que suba con cada acierto.
+
+De ahí sale la regla de contenido más importante del modelo: **un evento mueve Promedio sólo si es genuinamente académico**. Decidir a qué hora tomar el colectivo ejercita porcentaje y tiempo, pero nadie pone una nota, así que no toca Promedio. El mural sí: la profesora lo toma como parte del trabajo del trimestre.
+
+Guardar las notas y no el promedio es lo que hace que esa afirmación sea auditable, y lo que permite que en 3.º año haya varias notas por trimestre sin cambiar nada del motor.
+
+### 3. Cada evento declara sólo lo que puede tocar
+
+```ts
+interface CareerEffects {
+  grade?: number
+  equipo?: number
+  aura?: number
+  estilo?: { axis; amount }
+  mastery?: readonly MasteryGain[]   // lo agrega el motor, no el contenido
+}
+```
+
+La ausencia de una clave significa que el evento no puede mover esa dimensión. El motor devuelve un `CareerChange` con una entrada por dimensión que efectivamente se movió, y la interfaz dibuja un chip por entrada presente.
+
+`Promedio +0` no es un caso que la UI tenga que recordar evitar: **no es representable**.
+
+### 4. Aura tiene signo y no tiene techo
+
+Aura es capital narrativo —momentos memorables, no cálculos correctos—. Un cálculo correcto nunca produce Aura. Nunca es una barra ni un porcentaje, y el signo va siempre explícito.
+
+### 5. Estilo es ternario y siempre suma 100
+
+Ningún eje es el malo: un Improvisador tiene que poder egresar. La renormalización usa el resto mayor con desempate sobre el orden canónico de los ejes, así que los tres enteros suman exactamente 100 en cualquier motor y en cualquier dispositivo — que es requisito de determinismo, no prolijidad.
+
+### 6. Dominio matemático lo calcula el motor
+
+`mastery` se deriva de las categorías declaradas por el desafío y de la calidad alcanzada, no de lo que escriba cada autor de contenido. Así todas las familias contribuyen en la misma escala y nadie puede hacer que un tema pese cinco veces más por descuido. Es un sistema oculto: alimenta la dificultad adaptativa de v0.3 y **no se renderiza nunca**.
+
+## Compatibilidad de runs
+
+La migración cambia el estado de la run, la función de transición y el códec de snapshots. En los términos de `core/versioning.ts` eso es un cambio de motor:
+
+- `ENGINE_VERSION` pasa a `2.0.0`;
+- el ruleset y el contenido de desarrollo pasan a `0.2.0-dev`;
+- el contenido de 7.º pasa a `0.2.0-grade-7`;
+- `SNAPSHOT_SCHEMA_VERSION` pasa a `2`.
+
+**No hay migración de snapshots de v1 a v2, y es deliberado.** Las dos formas no describen lo mismo: una run jugada bajo v1 no tiene notas ni Aura, y fabricarlas inventaría una carrera que ese jugador nunca tuvo. Un snapshot v1 se rechaza como versión no soportada, la aplicación descarta el checkpoint y ofrece una partida nueva. Reanudar hacia números que nadie se ganó es peor que empezar de cero.
+
+## Qué **no** cambió
+
+Vale la pena decirlo porque es la evidencia de que la migración no se llevó puesto el juego: las dos runs golden reproducen **el mismo recorrido, el mismo score, el mismo perfil y la misma cantidad de comandos** que antes. Lo único que cambió es el hash del estado final, porque el estado ahora lleva `career` en lugar de `stats`.
+
+La matemática de los cinco desafíos autorados, su evaluación y su comportamiento determinista quedaron intactos.
+
+## Consecuencias
+
+- Las condiciones narrativas `stat-at-least` / `stat-at-most` pasan a `career-at-least` / `career-at-most` sobre una dimensión. Una dimensión en `null` **no satisface un umbral en ninguna dirección**: «sin evidencia» no es «poco».
+- Las dos dimensiones ocultas del perfil que leían estadísticas visibles ahora leen la carrera: `collaboration` sale de Equipo normalizado —con el punto neutro cuando no hay evidencia, no con cero— e `initiative` sale de la parte de Estilo que no es por-el-libro. La política de perfiles sigue siendo de desarrollo y no oficial.
+- El contenido declara efectos más chicos y más específicos. La mayoría de los resultados de 7.º mueven una o dos dimensiones, no cuatro.
+- El panel de resultado gana una consecuencia narrativa y un sello autorados por resultado. Sin eso el panel dice qué pasó con los números pero no qué pasó en la historia, que es su trabajo.
+- La aparición progresiva de la tira de carrera deja de ser una decisión de la interfaz: es un hecho del dominio que la UI lee.
+
+---
+
+# FILE: 03-architecture/adr/ADR-017-paper-visual-identity.md
+
+# ADR-017 — Identidad papel: la hoja cuadriculada como canvas del juego
+
+- Estado: Aceptado
+- Fecha: 2026-08-28
+- Reemplaza parcialmente: [ADR-015](03-architecture/adr/ADR-015-design-system-tokens.md)
+
+## Contexto
+
+El sistema de diseño v0.1 (ADR-015) resolvió el problema de gobernanza: una cadena de tokens en una sola dirección, la paleta de Tailwind apagada y el contraste como gate. Esa parte sigue en pie y esta decisión no la toca.
+
+Lo que no resolvió fue la **identidad**. Una auditoría de similitud sobre v0.1 encontró que cuatro decisiones, juntas, producían la huella visual de un juego de carrera deportiva —el género de las referencias del proyecto, no el de Egresado—:
+
+1. canvas oscuro en todas las pantallas;
+2. tipografía display condensada en mayúsculas;
+3. barra de progreso segmentada arriba;
+4. CTA verde abajo.
+
+La conclusión no fue «se parece un poco»: fue que una captura de Egresado y una captura de la referencia se leían como el mismo producto con otro tema. Para un juego cuyo cliente final es un colegio y que se presenta en una feria escolar, eso es un problema de producto, no de gusto.
+
+El handoff de diseño v0.2 explora tres territorios visuales —*Boletín*, *Hoja cuadriculada*, *Legajo*— y cierra en un híbrido. La reconstrucción completa de esa historia vive en [decision-history](09-design-system/decision-history.md).
+
+## Decisión
+
+Se adopta la identidad papel de v0.2. Tres decisiones estructurales, más una que es de gobernanza.
+
+### 1. La hoja cuadriculada es el fondo de toda pantalla
+
+Celda de 16 px, dibujada con dos degradados lineales en la utilidad `.eg-canvas`. El fondo liso queda **reservado** para bloques insertados: caja de dato, ledger, sello, Aura, superficie de decisión.
+
+La cuadrícula no es decoración: es el sistema de alineación con el que los datos se leen como objetos apoyados sobre una hoja en lugar de como párrafos. Y resuelve tres cosas de una: máxima distancia de las referencias con un solo cambio, credibilidad escolar, y la matemática se ve.
+
+### 2. El oscuro sobrevive en dos lugares y en ninguno más
+
+- **La superficie de decisión** (`#1C1E1B`), el bloque donde se elige.
+- **El bloque de Aura** (`#0A0C0A`), la única isla negra del sistema.
+
+Ese cambio de superficie **es** la transición de estado: la decisión pasa en oscuro y el resultado vuelve al papel, antes de que el color entre a jugar. Se conserva la mejor propiedad del canvas negro —el foco— acotada a los dos momentos que la necesitan.
+
+### 3. Radio 0, sin sombras, y la marca de corrección como device
+
+La profundidad la da el peso del borde y el contraste de fondo, igual que un impreso. `--radius-*` y `--shadow-*` quedan apagados y el guardarraíl rechaza cualquier `rounded-*` o `shadow-*` en código de producto; la única excepción es el resplandor de Aura, que no es sombra sino luz.
+
+El device de la identidad es el **tilde verde y el subrayado rojo del docente**: la marca cae *sobre* el dato o la opción, nunca en un marco alrededor. Eso es exactamente lo que la separa de un frame deportivo, y por qué el subrayado de una restricción abraza la cifra en vez de cruzar la celda.
+
+Cuatro colores con cuatro trabajos: verde escolar para estado, rojo corrección para tensión y restricción, lima para el CTA —y sólo para botones—, verde Aura sólo dentro del bloque negro. **Verde ≠ correcto y rojo ≠ incorrecto**: la calidad del resultado la llevan glifo, palabra y borde superior; el color sólo refuerza.
+
+### 4. La paleta pasa de OKLCH a hexadecimal
+
+ADR-015 definió la paleta en OKLCH porque era una rampa generada de tres familias que tenían que sentirse hermanas. La paleta v0.2 no es una rampa: es un set corto de pigmentos elegidos y medidos uno por uno, calibrados desde el entorno del colegio —camisa blanca, gris de franela, verde botella, rojo escocés— y validados de a uno contra WCAG.
+
+Escribirlos en un espacio perceptual agregaría dígitos que nadie eligió. El gate de contraste se reescribió para leer hexadecimal; sigue midiendo sRGB y sigue siendo obligatorio.
+
+**El logo, el escudo y el uniforme del colegio no aparecen en ninguna parte de Egresado.** El entorno sembró familias de tono; los colores muestreados no se usan literalmente en ningún lado.
+
+## Dependencias
+
+Entran las dos familias del handoff, servidas desde el repositorio con `next/font/local`:
+
+| Fuente | Rol | Licencia |
+|---|---|---|
+| Schibsted Grotesk | títulos y datos | SIL OFL 1.1 |
+| Libre Franklin | prosa | SIL OFL 1.1 |
+
+El handoff sugiere `next/font/google`. Se eligió versionar los `.woff2` en `src/app/fonts/` porque da lo que la descarga en build no puede: bytes fijados en el repositorio, un build que no depende de que Google responda, y cero pedidos a un CDN en runtime. El resultado visual es idéntico y las dos licencias permiten la redistribución explícitamente; el texto de cada una viaja al lado del archivo.
+
+Salen `geist` —la familia que reemplazan— y `lucide-react`. El pack de pictogramas está diferido a propósito: el prototipo no necesitó ninguno, y dibujar iconos antes de que una pantalla los pida es cómo se podrean las librerías. Los signos que sí hacían falta (más, menos, tilde, tachado) son cuatro formas de CSS y SVG inline con `currentColor`, dibujadas con terminación cuadrada para acompañar la geometría de radio 0.
+
+## Consecuencias
+
+- La escala tipográfica pasa de roles genéricos a diecinueve roles del sistema, cada uno con tamaño, interlínea, tracking y peso. Cada uno tiene que estar declarado en `cn()`, y hay un test que lo cubre.
+- El guardarraíl de tokens gana dos reglas: radio y sombra. Las dos son binarias, no graduales.
+- Un `<legend>` se renderiza sobre el borde de su `<fieldset>`, fuera del relleno, así que sobre un bloque oscuro a sangre la consigna quedaba flotando medio afuera. El bloque de decisión nombra su grupo con `aria-labelledby`; el nombre accesible es el mismo.
+- El único token del handoff que la implementación reabrió es el contorno de control sobre pizarra: `#4A4E48` medía 1,98:1 y WCAG 2.2 SC 1.4.11 pide 3:1 para identificar un componente y su estado. Se movió lo mínimo para pasar. Todo el resto de la paleta entró tal cual.
+- La vitrina de `/dev/design-system` se reescribió sobre el sistema nuevo y sigue siendo la referencia viva: mirarla antes de inventar una primitiva es más barato que descubrir la duplicación en revisión.
+- El pack raster sigue **briefeado y no generado**, y ninguna pantalla del slice lo monta. `SceneMedia` existe para que la primera imagen que se produzca entre por un solo lugar. La apuesta UI-first se sostiene: todas las pantallas corren con cero imágenes.
 
 ---
 
@@ -2818,7 +3026,7 @@ El motor devuelve estado, eventos y **descripciones** de efecto. Nunca ejecuta u
 | `random/` | interfaz `Rng`, adaptador `pure-rand`, derivación de seeds por namespace |
 | `challenges/` | contratos, taxonomía, interacciones, registry, helpers de evaluación |
 | `narrative/` | storylets, condiciones, efectos, selección determinista |
-| `progression/` | etapas canónicas y stats visibles |
+| `progression/` | etapas canónicas y el modelo de carrera visible |
 | `difficulty/`, `scoring/`, `profiles/` | contratos de política + implementaciones de desarrollo |
 | `ruleset/` | ensamblado y validación del ruleset versionado |
 | `runs/` | estado, comandos, eventos, transición, action log, replay, snapshots, selectores |
@@ -2843,7 +3051,7 @@ interface RunDescriptor {
 
 ## Estado
 
-`RunState` es JSON-compatible: no contiene `Date`, `Map`, `Set`, instancias de clase ni funciones. Guarda descriptor, fase, etapa, índices de evento, stats, flags, dificultad, estado de selección, historial, `scorePreview`, racha y completion.
+`RunState` es JSON-compatible: no contiene `Date`, `Map`, `Set`, instancias de clase ni funciones. Guarda descriptor, fase, etapa, índices de evento, carrera, flags, dificultad, estado de selección, historial, `scorePreview`, racha y completion.
 
 El desafío activo se guarda como **dirección**, no como modelo:
 
@@ -2999,7 +3207,7 @@ Para que esa regla no dependa de la disciplina de quien edita, `tests/unit/engin
 
 ## Frontera con servidor
 
-El motor corre igual en browser y en Node. `src/server/game/validate-run.ts` es el caso de uso `server-only` que materializa ADR-004: recibe una submission no confiable, la parsea, verifica compatibilidad de versiones, la reproduce y devuelve score, perfil y stats **recalculados**. Nada que el cliente afirme sobre el resultado se lee; un payload que incluya su propio `officialScore` simplemente lo ve ignorado.
+El motor corre igual en browser y en Node. `src/server/game/validate-run.ts` es el caso de uso `server-only` que materializa ADR-004: recibe una submission no confiable, la parsea, verifica compatibilidad de versiones, la reproduce y devuelve score, perfil y carrera **recalculados**. Nada que el cliente afirme sobre el resultado se lee; un payload que incluya su propio `officialScore` simplemente lo ve ignorado.
 
 Rechaza con tipo una submission malformada, una acción insertada, una secuencia rota, una run truncada, un ruleset incompatible y un seed fuera del charset. Endpoints, sesión, rate limiting y persistencia siguen siendo trabajo aparte.
 
@@ -3926,7 +4134,9 @@ Cada uno deja un flag distinto, y el resumen final del año lo refleja. Es la pr
 
 La pantalla final muestra **el año**, no un perfil de egreso: `TU 7.º GRADO`. El perfil definitivo pertenece a la carrera completa y no se inventa acá.
 
-Incluye nickname, situaciones resueltas, decisiones eficientes u óptimas, stats visibles, score provisional y la consecuencia más memorable. El score usa el ruleset de desarrollo, que no es oficial (preguntas abiertas 5 y 24).
+Cierre de etapa: numeral del año con tilde, renglones de registro (Promedio, Equipo, eventos), Estilo expandido cuando hay evidencia suficiente, lo más memorable del año y el arquetipo con su sello. El bloque de Aura aparece sólo si Aura cambió, que con el contenido autorado de 7.º todavía no pasa (pregunta abierta 35).
+
+El score no se muestra: el oficial lo calcula el servidor reproduciendo la run, y el ruleset de desarrollo no es oficial (preguntas abiertas 5 y 24).
 
 ## Reanudar
 
@@ -3942,7 +4152,7 @@ No hay backend en el loop de juego: la partida es enteramente local (ADR-006).
 | Property | Toda variante ofrece al menos una solución suficiente; las vistas públicas no filtran la solución |
 | Integración | La run completa de 7.º sin React, en tres caminos: fuerte, mixto y débil |
 | Golden | Una run de referencia con seed y respuestas fijas |
-| Replay | El action log reproduce estado final, score, stats y flags |
+| Replay | El action log reproduce estado final, score, carrera y flags |
 | Resume | Snapshot → restaurar → continuar llega al mismo final |
 | Componentes | Renderers de interacción y pantallas |
 | E2E | Recorrido completo en browser, camino no óptimo, mobile, teclado y accesibilidad |
@@ -4013,7 +4223,9 @@ Lo que sí queda como deuda conocida:
 | ADR-012 | PRNG seeded, substreams y contrato de consumo | Aceptado |
 | ADR-013 | Aritmética racional exacta para evaluación matemática | Aceptado |
 | ADR-014 | Contenido de producto como paquete propio importable desde el cliente | Aceptado |
-| ADR-015 | Sistema de diseño con tokens semánticos y paleta restringida | Aceptado |
+| ADR-015 | Sistema de diseño con tokens semánticos y paleta restringida | Aceptado (reemplazado parcialmente por ADR-017) |
+| ADR-016 | Modelo de jugador de carrera: Promedio, Equipo, Aura y Estilo | Aceptado |
+| ADR-017 | Identidad papel: la hoja cuadriculada como canvas del juego | Aceptado |
 
 ## Regla para ADR nuevo
 
@@ -4132,8 +4344,15 @@ Estas decisiones requieren evidencia de prototipo, playtest, implementación u o
 
 ## Producto y proveedores
 
-32. ¿Cuál es el diseño visual definitivo validado para el público objetivo? *Gate: declarar definitivo el sistema visual de producción; no bloquea prototipos.*
+32. ¿Cuál es el diseño visual definitivo validado para el público objetivo? *Gate: declarar definitivo el sistema visual de producción; no bloquea prototipos.* **Parcialmente respondida por [ADR-017](03-architecture/adr/ADR-017-paper-visual-identity.md)**: la identidad papel v0.2 está implementada y cerrada del lado del diseño; falta la validación con el público objetivo, que es lo que este ítem sigue pidiendo.
 33. ¿Qué proveedor, si alguno, se adopta para product analytics y error tracking, con qué datos y retención? *Gate: agregar un proveedor o enviarle telemetría real.*
+
+## Diseño y modelo de jugador
+
+34. ¿La interacción de presupuesto muestra un total corriente mientras el jugador arma la compra? El handoff de diseño lo especifica; la implementación no lo muestra porque calcular el total *es* el desafío, y mostrarlo lo convertiría en comparar dos números que sacó otro. El handoff marca la interacción como «especificada, no construida» y la difiere a v0.3, así que la diferencia es una decisión de gameplay pendiente y no una deuda de implementación. *Gate: construir BudgetInteraction de verdad.*
+35. ¿Qué evento de 7.º introduce Aura? Ninguno de los cinco autorados es socialmente memorable, así que la dimensión existe, está construida y probada, y nunca aparece en una partida. El prototipo de diseño la introduce con el acto del 25 de Mayo, que es contenido de diseño marcado como provisional y no está autorado en el motor. *Gate: cerrar el contenido jugable de 7.º o autorar el primer evento memorable.*
+36. ¿Los arquetipos de cierre son los ocho perfiles del GDD o los que nombra el handoff de diseño? La pantalla usa los ocho del GDD —fuente autoritativa de game design—; el handoff nombra al pasar «El Rey del Último Minuto», «El Vago Eficiente» y «La Leyenda del Colegio», que no están en esa lista. Adoptarlos sería un cambio de game design, no de presentación. *Gate: congelar el set de perfiles de egreso.*
+37. ¿Cuánto tiempo se sostiene el rechazo de snapshots v1 antes de poder borrar el camino? Hoy un checkpoint del modelo de estadísticas viejo se descarta y se ofrece partida nueva. *Gate: prometer compatibilidad de resume entre releases; se cruza con la pregunta 26.*
 
 ---
 
@@ -4446,14 +4665,22 @@ Este directorio define la referencia funcional, lúdica, pedagógica y técnica 
 
 ### 09-design-system
 - `README.md`: qué es el sistema de diseño, su versión y por dónde entrar.
-- `colors.md`: paleta, roles del verde y del rojo, y la regla de que elegir no es acertar.
-- `typography.md`: roles tipográficos y tratamiento de los datos numéricos.
-- `foundations.md`: espaciado, layout, radio, bordes, elevación, movimiento y foco.
+- `decision-history.md`: por qué Egresado se ve así y qué decisiones no se reabren.
+- `colors.md`: los cuatro colores con cuatro trabajos y las tres superficies.
+- `typography.md`: las dos familias, los roles y cómo se escriben los números en es-AR.
+- `foundations.md`: cuadrícula, geometría, la marca de corrección, layout y movimiento.
 - `ui-components.md`: primitivas de UI, cuándo usarlas y cuándo no.
 - `game-components.md`: primitivas de juego y renderers de interacción.
 - `accessibility.md`: cómo el sistema sostiene el objetivo WCAG 2.2 AA.
 - `contribution.md`: cuándo promover un patrón y cómo se hace cumplir.
-- `migration-7-grade.md`: mapa de la migración del slice y lo que encontró.
+- `migration-7-grade.md`: qué cambió al migrar el slice a v0.2, y qué no.
+- `assets.md`: qué arte existe, qué está briefeado sin producir y qué es texto a propósito.
+- `apertura.png`: referencia visual del beat narrativo de apertura.
+- `colectivo-sin-resolver.png`: referencia visual de una situación con la decisión pendiente.
+- `colectivo-resuelto.png`: referencia visual de una situación resuelta como Parcial.
+- `mural-resuelto.png`: referencia visual de una situación académica resuelta como Óptimo.
+- `grilla-25-de-mayo.png`: referencia visual del patrón de grilla y del bloque de Aura.
+- `cierre-de-etapa.png`: referencia visual del cierre de año completo.
 
 ### audits
 

@@ -33,6 +33,15 @@ export interface Storylet {
   readonly requires: StoryletCondition
   /** Thematic tags used by content tooling and analytics. */
   readonly tags: readonly string[]
+  /**
+   * The moment of the year, shown as the red eyebrow above the title.
+   *
+   * Authored rather than derived from `tags`: tags exist for tooling and
+   * analytics, and a label the player reads is content. It is also what lets a
+   * challenge-bearing storylet put *when this happens* above the challenge's own
+   * title without the two competing.
+   */
+  readonly eyebrow: string
   readonly title: string
   readonly text: string
   /**

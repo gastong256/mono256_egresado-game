@@ -32,8 +32,8 @@ import { surveyConfidence } from './challenges/survey-confidence'
 import { tripBudget } from './challenges/trip-budget'
 import { developmentStorylets } from './storylets'
 
-export const DEVELOPMENT_RULESET_VERSION = '0.1.0-dev'
-export const DEVELOPMENT_CONTENT_VERSION = '0.1.0-dev'
+export const DEVELOPMENT_RULESET_VERSION = '0.2.0-dev'
+export const DEVELOPMENT_CONTENT_VERSION = '0.2.0-dev'
 
 /** Every development challenge definition. */
 export const developmentChallenges = [

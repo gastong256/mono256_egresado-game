@@ -1,17 +1,21 @@
-# Egresado Design System v0.1
+# Egresado Design System v0.2
 
-El sistema visual y de interacción de Egresado. Define una vez lo que ninguna pantalla debería volver a decidir por su cuenta: color, tipografía, espaciado, radio, elevación, foco, estados interactivos y cómo se muestra un dato numérico.
+El sistema visual y de interacción de Egresado. Define una vez lo que ninguna pantalla debería volver a decidir por su cuenta: color, tipografía, cuadrícula, geometría, foco, estados interactivos, movimiento y cómo se muestra un dato numérico.
 
-Es una versión `0.1`: la base está, la API todavía se puede mover. No supongas estabilidad de librería madura.
+Es una versión `0.2`: la identidad está cerrada, la API todavía se puede mover.
 
-## Por qué existe
+## La idea en una línea
 
-Antes de esta versión cada pantalla elegía sus grises, su radio y su tamaño de texto. Con una pantalla eso es velocidad; con seis años de secundaria por implementar es deriva garantizada. El sistema convierte esas decisiones en tokens y componentes, para que agregar 1.º año sea componer y no volver a diseñar.
+**Hoja cuadriculada como canvas. Tinta como información. Oscuro sólo al decidir. Y una única isla negra para Aura.**
+
+## Por qué existe la v0.2
+
+La v0.1 resolvió la gobernanza —tokens, paleta de Tailwind apagada, contraste como gate— y esa parte sigue vigente. Lo que no resolvió fue la identidad: cuatro decisiones juntas hacían que Egresado se leyera como un juego de carrera deportiva. La historia completa está en [decision-history](decision-history.md), y la decisión en [ADR-017](../03-architecture/adr/ADR-017-paper-visual-identity.md).
 
 ## La cadena
 
 ```text
-tokens primitivos      src/styles/tokens.css
+pigmentos              src/styles/tokens.css
         ↓
 tokens semánticos      src/styles/theme.css
         ↓
@@ -21,49 +25,64 @@ primitivas de juego    src/components/game/
         ↓
 patrones de interacción  src/components/game/interactions/
         ↓
-pantallas              src/app/, src/components/game/game-container.tsx
+pantallas              src/app/, src/components/game/run-view.tsx
 ```
 
-La flecha va en un solo sentido. Una pantalla consume primitivas; una primitiva consume tokens semánticos; los tokens semánticos consumen la paleta. Un componente de producto no toca la paleta cruda.
+La flecha va en un solo sentido. Un componente de producto no toca un pigmento.
 
 ## Dónde mirar
 
-La fuente de verdad son el CSS de tokens, las APIs de los componentes en TypeScript y la vitrina. Esta documentación explica el porqué, las reglas y los límites; no repite valores.
+La fuente de verdad son el CSS de tokens, las APIs en TypeScript y la vitrina. Esta documentación explica el porqué, las reglas y los límites; no repite valores.
 
 | Quiero… | Ir a |
 |---|---|
-| ver todo funcionando | `/dev/design-system` con el servidor de desarrollo levantado |
-| entender la paleta y sus reglas | [colores](colors.md) |
+| ver todo funcionando | `/dev/design-system` con el servidor levantado |
+| entender por qué se ve así | [historia de la decisión visual](decision-history.md) |
+| la paleta y sus reglas | [colores](colors.md) |
 | elegir un rol tipográfico | [tipografía](typography.md) |
-| espaciado, radio, elevación, movimiento, layout | [fundamentos](foundations.md) |
+| cuadrícula, geometría, layout, movimiento | [fundamentos](foundations.md) |
 | usar una primitiva de UI | [componentes de UI](ui-components.md) |
 | usar una primitiva de juego | [componentes de juego](game-components.md) |
 | reglas de accesibilidad | [accesibilidad](accessibility.md) |
 | agregar algo nuevo | [cómo contribuir](contribution.md) |
 | qué cambió en la migración | [migración de 7.º grado](migration-7-grade.md) |
 
+## Las seis reglas
+
+Si sólo se leen seis líneas de todo esto, que sean éstas:
+
+1. **Seleccionar no es acertar.** El color de resultado aparece recién después de Confirmar.
+2. **`null` no es 0.** Una dimensión sin establecer no se dibuja.
+3. **Sólo lo que se movió.** Nunca un `Promedio +0`.
+4. **Nada se distingue sólo por color.** Siempre hay un segundo canal.
+5. **Un solo primario por pantalla**, siempre en el mismo lugar.
+6. **Radio 0 y sin sombras.** La profundidad la da el borde.
+
 ## Gates
 
 ```bash
 pnpm design:check   # guardarraíl de tokens + contraste WCAG medido
-pnpm verify         # lo incluye, junto con lint, tipos, tests y Playwright
+pnpm test:e2e       # axe-core sobre cada pantalla, desktop y mobile
+pnpm verify         # todo lo anterior, más lint, tipos, tests y build
 ```
 
-`design:check` no es cosmético. Convierte cada color OKLCH a sRGB y verifica las 35 combinaciones que el producto pinta de verdad contra los mínimos de WCAG 2.2. Un verde de marca puede parecer suficientemente oscuro y quedarse en 4,27:1 con texto blanco; el gate lo dice antes de que llegue a una pantalla.
+`design:check` no es cosmético: resuelve cada rol hasta su pigmento y verifica cada combinación que el producto pinta contra los mínimos de WCAG 2.2. Un color que no está en su lista es un color que nadie midió.
 
 ## Evolución prevista
 
 | Versión | Alcance |
 |---|---|
-| v0.1 | fundamentos + migración completa de 7.º grado |
-| v0.2 | ajustes de playtest, identidad y movimiento más definidos |
-| v0.3 | visualización de datos avanzada y patrones de los años superiores |
-| v1.0 | sistema estabilizado para el juego completo |
+| v0.1 | fundamentos oscuros — **reemplazada** |
+| v0.2 | identidad papel, modelo de jugador, slice de 7.º |
+| v0.3 | respuesta a playtest: pictogramas, pack raster o confirmación UI-only, SFX, Budget y Assignment de verdad |
+| v0.4 | años posteriores: acento mínimo por año, interacciones multi-paso, historia de carrera |
+| v1.0 | sistema completo, hito de egreso, arquetipo final, audio |
 
-## Lo que v0.1 dejó afuera a propósito
+## Lo que v0.2 deja afuera a propósito
 
-- **Tema oscuro.** Hay un solo tema. Los tokens semánticos están armados para que un segundo tema sea un bloque de redefiniciones y no una reescritura de componentes, pero no existe todavía.
-- **Storybook.** La vitrina en `/dev/design-system` más los tests cubren la necesidad actual sin sumar mantenimiento. Vale reconsiderarlo cuando la cantidad de componentes crezca bastante o cuando haga falta revisión de diseño independiente.
-- **Radix.** Ninguna interacción actual lo necesita: no hay diálogo, popover ni combobox propio. Se evalúa cuando aparezca un widget que el HTML nativo no resuelva bien.
-- **Drag and drop.** El tablero de asignación se resuelve con `select` nativos, que es la ruta accesible obligatoria. Arrastrar se puede sumar encima del mismo estado.
-- **Logo.** El wordmark tipográfico alcanza; no se congela identidad gráfica sin necesidad.
+- **Tema oscuro completo.** Los tokens semánticos están armados para que un segundo tema sea un bloque de redefiniciones, pero no existe.
+- **Pack raster.** Briefeado y no generado. Todas las pantallas corren con cero imágenes; `SceneMedia` existe para cuando eso cambie.
+- **Pictogramas.** Ocho planeados, ninguno dibujado. El prototipo no necesitó ninguno, y dibujar iconos antes de que una pantalla los pida es cómo se podrean las librerías.
+- **Audio.** Ocho briefs, nada producido.
+- **Avatar y arte de personaje.** Estacionados: piden un pipeline de assets que la filosofía UI-first todavía no quiere.
+- **Storybook, Radix, drag and drop.** Sin cambios respecto de v0.1; las razones siguen siendo las mismas.

@@ -22,10 +22,11 @@ import {
   type EngineDependencies,
   type RunDescriptor,
 } from '@/game'
-import { Button, Wordmark } from '@/components/ui'
+import { Button, Eyebrow, Wordmark } from '@/components/ui'
 import { createGameController, type GameController } from './controller'
-import { GameCanvas, GameShell } from './game-shell'
+import { GameCanvas, GameSheet, SceneColumn, ActionSlot } from './game-shell'
 import { NicknameForm } from './nickname-form'
+import { RunView } from './run-view'
 import { firstStageLabel } from './stage-label'
 import { useControllerSelector } from './use-game-run'
 import {
@@ -174,13 +175,17 @@ export function GameContainer() {
     // título es el mismo que en la pantalla siguiente para que nada salte.
     return (
       <main aria-busy="true">
-        <GameCanvas className="justify-center">
-          <h1>
-            <Wordmark size="lg" />
-          </h1>
-          <p className="text-body text-foreground-muted">
-            Un segundo, estamos viendo si dejaste una partida empezada…
-          </p>
+        <GameCanvas>
+          <GameSheet>
+            <SceneColumn className="justify-center">
+              <h1>
+                <Wordmark size="lg" />
+              </h1>
+              <p className="text-body text-ink-secondary">
+                Un segundo, estamos viendo si dejaste una partida empezada…
+              </p>
+            </SceneColumn>
+          </GameSheet>
         </GameCanvas>
       </main>
     )
@@ -197,47 +202,48 @@ export function GameContainer() {
 
     return (
       <main>
-        <GameCanvas className="min-h-dvh justify-center">
-          <Wordmark size="sm" className="text-foreground-muted" />
-          <h1 className="text-title text-balance">
-            Tenés una partida empezada
-          </h1>
-          <p className="text-body text-foreground-muted text-pretty">
-            {checkpoint.nickname}, dejaste {stage} por la mitad.
-          </p>
-          <div className="flex flex-col gap-3">
-            <Button
-              size="lg"
-              block
-              data-testid="resume-run"
-              onClick={() => {
-                setScreen({
-                  kind: 'jugando',
-                  nickname: checkpoint.nickname,
-                  controller: buildController(
-                    checkpoint.nickname,
-                    checkpoint.state.descriptor,
-                    dependencies,
-                    checkpoint,
-                  ),
-                })
-              }}
-            >
-              Seguir jugando
-            </Button>
-            <Button
-              variant="secondary"
-              size="lg"
-              block
-              data-testid="discard-run"
-              onClick={() => {
-                clearCheckpoint()
-                setScreen({ kind: 'nombre' })
-              }}
-            >
-              Empezar de nuevo
-            </Button>
-          </div>
+        <GameCanvas>
+          <GameSheet>
+            <SceneColumn>
+              <Eyebrow>Partida empezada</Eyebrow>
+              <h1 className="text-display font-display text-ink text-balance">
+                Volvés a séptimo
+              </h1>
+              <p className="text-body-lg text-ink-secondary text-pretty">
+                {checkpoint.nickname}, dejaste {stage} por la mitad.
+              </p>
+              <ActionSlot>
+                <Button
+                  data-testid="resume-run"
+                  onClick={() => {
+                    setScreen({
+                      kind: 'jugando',
+                      nickname: checkpoint.nickname,
+                      controller: buildController(
+                        checkpoint.nickname,
+                        checkpoint.state.descriptor,
+                        dependencies,
+                        checkpoint,
+                      ),
+                    })
+                  }}
+                >
+                  Seguir jugando
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="md"
+                  data-testid="discard-run"
+                  onClick={() => {
+                    clearCheckpoint()
+                    setScreen({ kind: 'nombre' })
+                  }}
+                >
+                  Empezar de nuevo
+                </Button>
+              </ActionSlot>
+            </SceneColumn>
+          </GameSheet>
         </GameCanvas>
       </main>
     )
@@ -246,17 +252,21 @@ export function GameContainer() {
   if (current.kind === 'nombre') {
     return (
       <main>
-        <GameCanvas className="min-h-dvh justify-center">
-          <header className="flex flex-col gap-3">
-            <h1>
-              <Wordmark size="lg" />
-            </h1>
-            <p className="text-body text-foreground-muted text-pretty">
-              Seis años de secundaria en unos minutos. Empezás en {stage} y cada
-              decisión que tomás deja una marca en el año.
-            </p>
-          </header>
-          <NicknameForm onSubmit={startRun} stage={stage} />
+        <GameCanvas>
+          <GameSheet>
+            <SceneColumn>
+              <header className="flex flex-col gap-3">
+                <h1>
+                  <Wordmark size="lg" />
+                </h1>
+                <p className="text-body-lg text-ink-secondary text-pretty">
+                  Seis años de secundaria en unos minutos. Empezás en {stage} y
+                  cada decisión que tomás deja una marca en el año.
+                </p>
+              </header>
+              <NicknameForm onSubmit={startRun} stage={stage} />
+            </SceneColumn>
+          </GameSheet>
         </GameCanvas>
       </main>
     )
@@ -265,7 +275,6 @@ export function GameContainer() {
   return (
     <PlayingScreen
       controller={current.controller}
-      nickname={current.nickname}
       dependencies={dependencies}
       onPlayAgain={() => {
         clearCheckpoint()
@@ -282,12 +291,10 @@ export function GameContainer() {
  */
 function PlayingScreen({
   controller,
-  nickname,
   dependencies,
   onPlayAgain,
 }: {
   readonly controller: GameController
-  readonly nickname: string
   readonly dependencies: EngineDependencies
   readonly onPlayAgain: () => void
 }) {
@@ -300,12 +307,7 @@ function PlayingScreen({
     return (
       <main>
         <GameCanvas>
-          <YearResult
-            state={run}
-            nickname={nickname}
-            storylets={dependencies.storylets}
-            onPlayAgain={onPlayAgain}
-          />
+          <YearResult state={run} onPlayAgain={onPlayAgain} />
         </GameCanvas>
       </main>
     )
@@ -313,11 +315,9 @@ function PlayingScreen({
 
   return (
     <main>
-      <GameShell
-        controller={controller}
-        dependencies={dependencies}
-        playerName={nickname}
-      />
+      <GameCanvas>
+        <RunView controller={controller} dependencies={dependencies} />
+      </GameCanvas>
     </main>
   )
 }

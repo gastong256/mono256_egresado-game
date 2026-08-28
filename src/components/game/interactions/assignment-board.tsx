@@ -65,11 +65,11 @@ export function AssignmentBoard({
       >
         {agents.map((agent) => (
           <li key={agent.id}>
-            <Surface tone="muted" padding="compact">
-              <span className="text-subheading text-foreground block">
+            <Surface tone="sunken" padding="compact">
+              <span className="text-goal font-display text-ink block">
                 {agent.label}
               </span>
-              <span className="text-body-sm text-foreground-muted block">
+              <span className="text-meta text-ink-secondary block">
                 {agent.detail}
               </span>
             </Surface>
@@ -93,15 +93,17 @@ export function AssignmentBoard({
             <li
               key={task.id}
               data-chosen={selected !== ''}
-              className="border-line bg-surface rounded-surface data-[chosen=true]:border-line-selected border-2 p-3"
+              // Sin asignar: borde punteado. La tarea vacía tiene que leerse
+              // como un hueco, y el punteado lo dice sin depender del color.
+              className="bg-surface border-rule data-[chosen=true]:border-ink border border-dashed p-3 data-[chosen=true]:border-[1.5px] data-[chosen=true]:border-solid"
             >
               <label htmlFor={fieldId} className="block">
-                <span className="text-subheading text-foreground block">
+                <span className="text-goal font-display text-ink block">
                   {task.label}
                 </span>
                 <span
                   data-numeric
-                  className="text-body-sm text-data-foreground block font-semibold"
+                  className="text-meta font-display text-ink block font-bold"
                 >
                   {task.detail}
                 </span>
@@ -113,7 +115,7 @@ export function AssignmentBoard({
                 onChange={(event) => {
                   assign(task.id, event.target.value)
                 }}
-                className="border-line-interactive bg-surface text-foreground rounded-control text-body mt-2 h-11 w-full px-2"
+                className="border-ink bg-surface text-ink text-meta mt-2 h-11 w-full border-[1.5px] px-2"
               >
                 <option value="">Sin asignar</option>
                 {agents.map((agent) => (

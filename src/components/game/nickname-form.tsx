@@ -66,9 +66,7 @@ export function NicknameForm({
         }}
       />
 
-      <Button type="submit" size="lg" block>
-        Empezar {stage}
-      </Button>
+      <Button type="submit">Empezar {stage}</Button>
     </form>
   )
 }

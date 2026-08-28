@@ -32,8 +32,8 @@ import { notebookOffer } from './challenges/notebook-offer'
 import { standSupplies } from './challenges/stand-supplies'
 import { grade7Storylets } from './storylets'
 
-export const GRADE_7_RULESET_VERSION = '0.1.0-grade-7'
-export const GRADE_7_CONTENT_VERSION = '0.1.0-grade-7'
+export const GRADE_7_RULESET_VERSION = '0.2.0-grade-7'
+export const GRADE_7_CONTENT_VERSION = '0.2.0-grade-7'
 
 /** Los cinco desafíos jugables de 7.º grado. */
 export const grade7Challenges: readonly ChallengeDefinition[] = [

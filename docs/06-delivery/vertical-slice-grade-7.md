@@ -67,7 +67,9 @@ Cada uno deja un flag distinto, y el resumen final del año lo refleja. Es la pr
 
 La pantalla final muestra **el año**, no un perfil de egreso: `TU 7.º GRADO`. El perfil definitivo pertenece a la carrera completa y no se inventa acá.
 
-Incluye nickname, situaciones resueltas, decisiones eficientes u óptimas, stats visibles, score provisional y la consecuencia más memorable. El score usa el ruleset de desarrollo, que no es oficial (preguntas abiertas 5 y 24).
+Cierre de etapa: numeral del año con tilde, renglones de registro (Promedio, Equipo, eventos), Estilo expandido cuando hay evidencia suficiente, lo más memorable del año y el arquetipo con su sello. El bloque de Aura aparece sólo si Aura cambió, que con el contenido autorado de 7.º todavía no pasa (pregunta abierta 35).
+
+El score no se muestra: el oficial lo calcula el servidor reproduciendo la run, y el ruleset de desarrollo no es oficial (preguntas abiertas 5 y 24).
 
 ## Reanudar
 
@@ -83,7 +85,7 @@ No hay backend en el loop de juego: la partida es enteramente local (ADR-006).
 | Property | Toda variante ofrece al menos una solución suficiente; las vistas públicas no filtran la solución |
 | Integración | La run completa de 7.º sin React, en tres caminos: fuerte, mixto y débil |
 | Golden | Una run de referencia con seed y respuestas fijas |
-| Replay | El action log reproduce estado final, score, stats y flags |
+| Replay | El action log reproduce estado final, score, carrera y flags |
 | Resume | Snapshot → restaurar → continuar llega al mismo final |
 | Componentes | Renderers de interacción y pantallas |
 | E2E | Recorrido completo en browser, camino no óptimo, mobile, teclado y accesibilidad |

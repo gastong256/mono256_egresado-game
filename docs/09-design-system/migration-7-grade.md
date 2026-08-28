@@ -1,55 +1,72 @@
-# Migración de 7.º grado
+# Migración de 7.º grado a v0.2
 
-El slice jugable de 7.º grado se migró entero al sistema de diseño. No quedó estilo improvisado en ninguna pantalla del juego.
+Qué cambió al llevar el slice jugable del sistema oscuro v0.1 a la identidad papel, y qué **no**.
 
-## De dónde se venía
+## Lo que no cambió
 
-El estado anterior tenía dos paletas peleadas: el CSS global pintaba un lienzo crema con un degradado terracota, y los componentes usaban `slate-*` de Tailwind. Ningún color venía de una decisión de marca. La tipografía era `Arial, Helvetica, sans-serif`. Había 27 usos distintos de utilidades de color crudo, tres radios sin criterio y ocho tamaños de texto.
+Vale empezar por acá, porque es la evidencia de que la migración no se llevó puesto el juego.
 
-## Mapa
+La matemática de los cinco desafíos autorados, su evaluación y su comportamiento determinista quedaron **intactos**. Las dos runs golden reproducen el mismo recorrido, el mismo score, el mismo perfil y la misma cantidad de comandos que antes; lo único que cambió es el hash del estado final, porque el estado ahora lleva `career` en lugar de `stats`.
 
-| Antes | Ahora |
+## Lo que cambió
+
+### 1. El modelo de jugador
+
+`knowledge · team · initiative · energy` → `Promedio · Equipo · Aura · Estilo`. Es migración de datos, no re-skin: ver [ADR-016](../03-architecture/adr/ADR-016-career-player-model.md).
+
+Los efectos de los cinco desafíos se reescribieron contra `CareerEffects`. La mayoría declara **una o dos** dimensiones, no cuatro:
+
+| Evento | Mueve | Por qué |
+|---|---|---|
+| colectivo | sólo Estilo | ejercita porcentaje y tiempo, pero nadie pone una nota |
+| mural | Promedio + Estilo | la profesora lo toma como trabajo del trimestre |
+| cuaderno | Equipo + Estilo | la plata es del curso y el proyecto depende de la compra |
+| proyecto | Equipo + Estilo | está en juego la conducta hacia el grupo |
+| feria | Equipo + Estilo | el stand es del curso |
+
+Las tres primeras filas vienen mapeadas del handoff. Las dos últimas se autoraron acá siguiendo la misma regla, porque el handoff no las cubre.
+
+### 2. El vocabulario de resultado
+
+El motor sigue hablando `invalid · functional · efficient · optimal` —con sus factores de score documentados en el GDD— y el jugador lee `Insuficiente · Parcial · Resuelto · Óptimo`. La traducción es posicional y total, y vive en `components/game/outcome.ts`.
+
+Renombrar en el dominio habría movido factores de score, tests golden y la huella del ruleset por una decisión de rótulo.
+
+### 3. Contenido nuevo, autorado
+
+Dos campos por resultado que el modelo v0.1 no tenía y el panel v0.2 necesita:
+
+- **`consequence`** — qué pasa en la historia. Sin esto el panel dice qué pasó con los números pero no qué pasó en el mundo, que es su trabajo.
+- **`stamp`** — el veredicto en una o dos palabras, para el sello. Opcional: no toda situación tiene uno que valga la pena.
+
+Y tres campos de presentación en los datos: `unit`, `constraint` y `span`. Cuál de los números aprieta es una afirmación sobre el problema, y adivinarla desde la presentación sería inventarla.
+
+Cada storylet gana un `eyebrow`: el momento del año que va arriba del título. Autorado y no derivado de `tags`, porque las tags existen para tooling y una etiqueta que el jugador lee es contenido.
+
+### 4. Los números se escriben en es-AR
+
+`src/content/numeros.ts` acompaña a `pesos.ts`: el motor produce `14.40` porque su salida entra en estado determinista, y el contenido lo escribe `14,40`. La pared es `6 × 2,4` y no `6,0 × 2,4` — el cero de más sugiere una precisión que la medida no tiene.
+
+### 5. Las pantallas
+
+| v0.1 | v0.2 |
 |---|---|
-| `<h1>` suelto con el nombre de la etapa | `StageHeader` |
-| barra de progreso a mano | `StageProgress` sobre `Progress` |
-| lista de estadísticas en `dl` | `StatRow` sobre `StatIndicator` |
-| `<article>` del desafío | `SituationCard` |
-| `<section>` narrativa | `NarrativeCard` |
-| `DataList` dentro del renderer | `MetricGroup` y `MetricRows` |
-| label con radio y clases repetidas | `ChoiceCard` |
-| panel de feedback con clases `slate` | `FeedbackPanel` con los cuatro estados del motor |
-| resumen del año con grilla a mano | `YearResult` sobre `Milestone` y `DataMetric` |
-| botones con la misma cadena de clases copiada nueve veces | `Button` |
-| `input` numérico con clases propias | `NumberField` y `QuantityStepper` |
-| aviso del harness | `Callout` |
-| portada con clases sueltas | `Wordmark`, tokens y `Button` |
+| `GameShell` monolítico | `GameSheet` + `StageHeader` + `CareerStrip` + `SceneColumn` + `ActionSlot` |
+| `StatRow` con cuatro barras | `CareerStrip` con aparición progresiva |
+| `StageProgress` con `<progress>` | celdas de la cuadrícula |
+| opciones sobre papel | opciones dentro del bloque oscuro |
+| panel con ícono de librería | panel con pestaña, ledger, sello y chips |
+| resumen con conteos | cierre de etapa con numeral, registro, Estilo y arquetipo |
+| puntaje visible en el HUD | fuera: el score oficial lo calcula el servidor |
 
-No conviven dos sistemas: el viejo se eliminó.
+### 6. Compatibilidad
 
-## Lo que la migración encontró
+`ENGINE_VERSION` a `2.0.0`, snapshot a `v2`, ruleset y contenido a `0.2.0`. Un checkpoint v1 se rechaza, se descarta y se ofrece partida nueva: reanudar hacia números que nadie se ganó es peor que empezar de cero.
 
-Ninguna de estas cosas se vio revisando el diff. Todas aparecieron al mirar la pantalla o al correr un gate.
+## Lo que no se migró, y por qué
 
-- **Botones primarios con tinta oscura sobre verde.** `tailwind-merge` no reconocía `text-heading` como tamaño, lo clasificaba como color y borraba `text-primary-foreground`. No fallaba ningún test ni ningún tipo. Ahora hay grupos declarados y un test que los cubre.
-- **Verde de marca en 4,27:1 con texto blanco.** El gate de contraste lo bloqueó antes de que llegara a una pantalla.
-- **Dos bordes de feedback en 1,5:1.** Servían para distinguir estados y no se veían.
-- **El título del cierre de año, ilegible 320 ms.** La animación de entrada arrancaba en opacidad cero y axe lo marcó como falla de contraste, con razón. Ahora mueve pero no desvanece.
-- **El campo de cantidad sin nombre accesible.** Lo expuso el escaneo de la vitrina. Se arregló en la primitiva, haciendo el nombre obligatorio en el tipo, y no en el ejemplo.
-- **La pantalla de juego sin `h1`.** El encabezado de etapa había quedado como `span`.
-- **El manifiesto PWA con la paleta vieja.** Lo encontró el guardarraíl de tokens.
+**El acto del 25 de Mayo no existe en el motor.** Es la interacción de grilla del prototipo de diseño, marcada ahí mismo como provisional, y es el evento que introduce Aura. Autorarlo como contenido de producción habría sido inventar un desafío y sus consecuencias sin ninguna fuente autoritativa que los defina.
 
-## Comportamiento del juego
+Consecuencia visible: **Aura no aparece en el slice de 7.º**, porque ninguno de los cinco eventos autorados es socialmente memorable. Las primitivas están construidas, probadas y visibles en la vitrina. La tira no la muestra porque el modelo dice que no hay nada que mostrar, que es exactamente el comportamiento correcto.
 
-La migración no tocó matemática, evaluación de desafíos, reglas de storylets, determinismo, scoring, progresión ni protocolo de replay. Los 5.000 runs deterministas y los tests de motor, contenido, replay y propiedades siguen dando lo mismo que antes.
-
-## Qué tiene que decidir quien implemente 1.º año
-
-Visualmente, casi nada:
-
-- elegir primitivas de juego que ya existen;
-- componer los layouts que ya existen;
-- escribir contenido;
-- agregar un renderer sólo si aparece una interacción realmente nueva;
-- agregar un token o un componente sólo ante un requerimiento repetido y genuinamente nuevo.
-
-Lo que **no** tiene que decidir: qué verde, qué radio de tarjeta, qué estilo de botón, qué caja de feedback, cómo se ve el foco, cómo se muestra un número. Si algo de eso vuelve a ser necesario, el sistema está incompleto.
+**Budget y Assignment se migraron visualmente, no funcionalmente.** El handoff los marca «especificados, no construidos» y los difiere a v0.3. En particular, el total corriente del presupuesto sigue sin mostrarse: ver el registro de preguntas abiertas.

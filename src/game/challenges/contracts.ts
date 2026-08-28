@@ -28,16 +28,10 @@ import type {
   ToolId,
 } from './interactions'
 import type { StageId } from '../progression/stages'
-import type { StatEffect, VisibleStat } from '../progression/stats'
+import type { CareerEffects } from '../progression/career'
 import type { DifficultyLevel, MathCategory, SolutionQuality } from './taxonomy'
 
-export type {
-  DifficultyLevel,
-  MathCategory,
-  SolutionQuality,
-  StatEffect,
-  VisibleStat,
-}
+export type { CareerEffects, DifficultyLevel, MathCategory, SolutionQuality }
 
 /** Structured explanation of a result. Localization happens in the UI layer. */
 export interface FeedbackFact {
@@ -54,6 +48,23 @@ export interface ChallengeFeedback {
   readonly violatedConstraint?: string
   /** Comparison against the declared optimum, when the challenge declares one. */
   readonly optimalComparison?: string
+  /**
+   * What happens in the story because of this outcome.
+   *
+   * The panel's job is to turn a result into a consequence, not to hand out a
+   * verdict: the ledger explains the arithmetic and this line says what it cost
+   * or bought in the world. Authored per outcome, because a consequence the
+   * engine could derive would be a restatement of the numbers above it.
+   */
+  readonly consequence?: string
+  /**
+   * El veredicto en una o dos palabras, para el sello.
+   *
+   * «Alcanzó», «Llegaste tarde». Es lenguaje de legajo y es opcional: no toda
+   * situación tiene un veredicto que se pueda decir en una palabra, y forzarlo
+   * produciría sellos genéricos que no dicen nada.
+   */
+  readonly stamp?: string
 }
 
 /**
@@ -77,8 +88,14 @@ export interface ChallengeEvaluation {
   readonly quality: SolutionQuality
   readonly feedback: ChallengeFeedback
   readonly metrics: ReasoningMetrics
-  /** Visible-stat deltas requested by this outcome. */
-  readonly statEffects: readonly StatEffect[]
+  /**
+   * What this outcome does to the career.
+   *
+   * An outcome declares only the dimensions it can genuinely touch — most
+   * declare one or two, never four. Deciding which bus to take exercises
+   * arithmetic but is not academic, so it moves Estilo and nothing else.
+   */
+  readonly careerEffects: CareerEffects
   /** Narrative flags this outcome sets. */
   readonly flagEffects: readonly FlagEffect[]
 }

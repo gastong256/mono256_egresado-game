@@ -158,11 +158,25 @@ export const busTiming: ChallengeDefinition = defineChallenge<BusModel>({
       kind: 'timeline',
       data: [
         {
-          label: 'Viaje sin demora',
-          value: `${String(model.scheduledMinutes)} min`,
+          label: 'Viaje normal',
+          value: String(model.scheduledMinutes),
+          unit: 'minutos',
         },
-        { label: 'Demora de hoy', value: `${String(model.delayPercent)} %` },
-        { label: 'Entrada', value: formatClock(model.entryMinutesOfDay) },
+        {
+          label: 'Demora de hoy',
+          value: `${String(model.delayPercent)} %`,
+          unit: 'más de viaje',
+          // Es el número que aprieta, y es rojo *antes* de que el jugador haga
+          // nada: el subrayado marca la tensión de la situación, no un error.
+          constraint: true,
+        },
+        {
+          label: 'Entrada',
+          value: formatClock(model.entryMinutesOfDay),
+          unit: 'sin excepción',
+          // La restricción de la que trata la pantalla ocupa las dos columnas.
+          span: 2,
+        },
       ],
       unitLabel: 'minutos',
       options,
@@ -207,14 +221,19 @@ export const busTiming: ChallengeDefinition = defineChallenge<BusModel>({
         quality: 'invalid',
         feedback: {
           outcomeKey: 'bus.late',
+          stamp: 'Llegaste tarde',
           facts: [
             ...facts,
             { label: 'Tarde por', value: `${String(-margin)} min` },
           ],
           violatedConstraint: 'hora de entrada',
+          consequence:
+            'Entrás con el timbre ya sonando y te anotan la llegada tarde.',
         },
         metrics: metrics({ efficiency: 0, precision: 0, risk: 0.9 }),
-        statEffects: [{ stat: 'energy', delta: -3 }],
+        // El colectivo no es un evento académico: ejercita porcentaje y tiempo
+        // pero nadie pone una nota. Sólo mueve Estilo.
+        careerEffects: { estilo: { axis: 'improvisador', amount: 8 } },
         flagEffects: [{ flag: 'g7.llegoTarde', value: true }],
       })
     }
@@ -227,12 +246,14 @@ export const busTiming: ChallengeDefinition = defineChallenge<BusModel>({
         quality: 'functional',
         feedback: {
           outcomeKey: 'bus.tight',
+          stamp: 'Llegaste',
           facts: [...facts, marginFact],
           optimalComparison:
             'Llegaste, pero sin ningún colchón: cualquier demora extra te dejaba afuera.',
+          consequence: 'Entrás justo, sin tiempo para nada más que sentarte.',
         },
         metrics: metrics({ efficiency: 0.5, precision: 0.6, risk: 0.7 }),
-        statEffects: [{ stat: 'knowledge', delta: 2 }],
+        careerEffects: { estilo: { axis: 'estratega', amount: 8 } },
         flagEffects: [{ flag: 'g7.llegoJusto', value: true }],
       })
     }
@@ -242,15 +263,15 @@ export const busTiming: ChallengeDefinition = defineChallenge<BusModel>({
         quality: 'optimal',
         feedback: {
           outcomeKey: 'bus.optimal',
+          stamp: 'Llegaste',
           facts: [...facts, marginFact],
           optimalComparison:
             'Llegaste con tiempo suficiente sin madrugar de más.',
+          consequence:
+            'Entrás caminando, con tiempo de sobra para acomodar las cosas.',
         },
         metrics: metrics({ efficiency: 1, precision: 1, risk: 0.2 }),
-        statEffects: [
-          { stat: 'knowledge', delta: 4 },
-          { stat: 'initiative', delta: 2 },
-        ],
+        careerEffects: { estilo: { axis: 'estratega', amount: 8 } },
         flagEffects: [{ flag: 'g7.llegoComodo', value: true }],
       })
     }
@@ -260,11 +281,14 @@ export const busTiming: ChallengeDefinition = defineChallenge<BusModel>({
       quality: 'efficient',
       feedback: {
         outcomeKey: 'bus.early',
+        stamp: 'Llegaste',
         facts: [
           ...facts,
           marginFact,
           { label: 'Esperando', value: `${String(wasted)} min de más` },
         ],
+        consequence:
+          'Llegás con la escuela todavía cerrada y esperás en la puerta.',
         ...(best === undefined
           ? {}
           : {
@@ -276,10 +300,9 @@ export const busTiming: ChallengeDefinition = defineChallenge<BusModel>({
         precision: 1,
         risk: 0.1,
       }),
-      statEffects: [
-        { stat: 'knowledge', delta: 3 },
-        { stat: 'energy', delta: -1 },
-      ],
+      // Tomarse el primero y esperar en la puerta es la lectura por el libro:
+      // llega seguro, gastando tiempo que no hacía falta.
+      careerEffects: { estilo: { axis: 'aplicado', amount: 8 } },
       flagEffects: [{ flag: 'g7.llegoComodo', value: true }],
     })
   },

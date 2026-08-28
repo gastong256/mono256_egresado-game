@@ -220,7 +220,7 @@ export const notebookDiscount: ChallengeDefinition =
             violatedConstraint: 'cash-available',
           },
           metrics: metrics({ efficiency: 0, precision: 0, risk: 0.5 }),
-          statEffects: [{ stat: 'energy', delta: -1 }],
+          careerEffects: { estilo: { axis: 'improvisador', amount: 6 } },
           flagEffects: [{ flag: 'notebook.overspent', value: true }],
         })
       }
@@ -240,10 +240,7 @@ export const notebookDiscount: ChallengeDefinition =
               'Fue la opción más barata entre las que se podían pagar.',
           },
           metrics: metrics({ efficiency, precision: 1, risk: 0 }),
-          statEffects: [
-            { stat: 'knowledge', delta: 2 },
-            { stat: 'team', delta: 1 },
-          ],
+          careerEffects: { equipo: 2, estilo: { axis: 'aplicado', amount: 6 } },
           flagEffects: [{ flag: 'notebook.bestDeal', value: true }],
         })
       }
@@ -263,7 +260,7 @@ export const notebookDiscount: ChallengeDefinition =
           optimalComparison: `La más barata costaba $ ${formatMoney(money(bestTotal))}.`,
         },
         metrics: metrics({ efficiency, precision: 1, risk: 0 }),
-        statEffects: [{ stat: 'knowledge', delta: 1 }],
+        careerEffects: { estilo: { axis: 'aplicado', amount: 6 } },
         flagEffects: [],
       })
     },

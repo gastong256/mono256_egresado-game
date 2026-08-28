@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { render, screen, waitFor, within } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -8,9 +8,11 @@ import { GameContainer } from '@/components/game/game-container'
 import { NicknameForm } from '@/components/game/nickname-form'
 import { YearResult } from '@/components/game/year-result'
 import { createGrade7Dependencies } from '@/content/grade-7'
+import { formatPromedio } from '@/components/game/format'
 import {
   activeChallengeView,
   createRun,
+  promedio,
   toRunId,
   toRunSeed,
   transition,
@@ -171,65 +173,38 @@ describe('el resumen del año', () => {
   const state = completedRun('resumen-7')
 
   it('cuenta lo que el motor registró, no lo que la pantalla supone', () => {
-    render(
-      <YearResult
-        state={state}
-        nickname="Sofi"
-        storylets={dependencies.storylets}
-        onPlayAgain={vi.fn()}
-      />,
+    render(<YearResult state={state} onPlayAgain={vi.fn()} />)
+
+    const record = screen.getByTestId('year-record')
+    expect(record.textContent).toContain(
+      String(state.completion?.eventsPlayed ?? state.history.length),
     )
 
-    const challenges = state.history.filter(
-      (entry) => entry.challengeId !== undefined,
-    )
-    const resolved = challenges.filter(
-      (entry) => entry.quality !== undefined && entry.quality !== 'invalid',
-    ).length
-
-    const resueltas = screen.getByText('Situaciones resueltas').parentElement
-    expect(resueltas?.textContent).toContain(
-      `${String(resolved)} de ${String(challenges.length)}`,
-    )
-
-    const puntaje = screen.getByText('Puntaje del año').parentElement
-    expect(puntaje?.textContent).toContain(
-      String(state.completion?.totalScore ?? 0),
+    // Promedio y Equipo salen del estado de carrera, y una dimensión que la run
+    // nunca tocó se dibuja como «—», nunca como 0.
+    const average = promedio(state.career)
+    expect(record.textContent).toContain(
+      average === null ? '—' : formatPromedio(average),
     )
   })
 
-  it('nombra cada momento del año en castellano, no con identificadores', () => {
-    render(
-      <YearResult
-        state={state}
-        nickname="Sofi"
-        storylets={dependencies.storylets}
-        onPlayAgain={vi.fn()}
-      />,
-    )
+  it('no inventa ninguna dimensión que la run no haya establecido', () => {
+    render(<YearResult state={state} onPlayAgain={vi.fn()} />)
 
-    const lista = within(
-      screen.getByRole('heading', { name: 'Cómo te fue' })
-        .parentElement as HTMLElement,
-    ).getByRole('list')
-
-    expect(lista.textContent).not.toContain('g7.')
-    for (const item of within(lista).getAllByRole('listitem')) {
-      expect(item.textContent?.trim().length).toBeGreaterThan(0)
+    if (state.career.aura === null) {
+      // Aura sólo la mueve un momento socialmente memorable, y el contenido
+      // autorado de 7.º todavía no tiene ninguno.
+      expect(screen.queryByTestId('aura-block')).not.toBeInTheDocument()
     }
   })
 
   it('cierra séptimo sin prometer un perfil de egresado', () => {
-    render(
-      <YearResult
-        state={state}
-        nickname="Sofi"
-        storylets={dependencies.storylets}
-        onPlayAgain={vi.fn()}
-      />,
-    )
+    render(<YearResult state={state} onPlayAgain={vi.fn()} />)
 
-    expect(screen.getByRole('heading', { name: 'Tu 7.º grado' })).toBeDefined()
+    expect(screen.getByRole('heading', { name: '7.º' })).toBeDefined()
+    // «Vas camino a», no «sos»: el perfil definitivo pertenece a la carrera
+    // completa y no se cierra en el primer año.
+    expect(screen.getByTestId('archetype')).toHaveTextContent(/Vas camino a/u)
     expect(document.body.textContent).not.toMatch(/perfil (final )?de egres/iu)
     expect(document.body.textContent).not.toMatch(/game over/iu)
     expect(document.body.textContent).toContain('están en construcción')
@@ -238,14 +213,7 @@ describe('el resumen del año', () => {
   it('ofrece volver a jugar', async () => {
     const user = userEvent.setup()
     const onPlayAgain = vi.fn()
-    render(
-      <YearResult
-        state={state}
-        nickname="Sofi"
-        storylets={dependencies.storylets}
-        onPlayAgain={onPlayAgain}
-      />,
-    )
+    render(<YearResult state={state} onPlayAgain={onPlayAgain} />)
 
     await user.click(screen.getByRole('button', { name: 'Jugar de nuevo' }))
     expect(onPlayAgain).toHaveBeenCalledTimes(1)
@@ -261,7 +229,7 @@ describe('el resumen del año', () => {
 async function resolveFirstChallenge(
   user: ReturnType<typeof userEvent.setup>,
 ): Promise<void> {
-  await user.click(await screen.findByRole('button', { name: 'Continuar' }))
+  await user.click(await screen.findByRole('button', { name: 'Seguir' }))
 
   const radios = screen.queryAllByRole('radio')
   if (radios[0] !== undefined) {
@@ -311,7 +279,7 @@ describe('el juego completo en pantalla', () => {
 
     expect(
       await screen.findByRole('heading', {
-        name: 'Tenés una partida empezada',
+        name: 'Volvés a séptimo',
       }),
     ).toBeDefined()
     expect(screen.getByText(/Ivo/u)).toBeDefined()

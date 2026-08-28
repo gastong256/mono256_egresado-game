@@ -40,8 +40,12 @@ const findings = []
 const filePaths = listedFiles.stdout.split('\0').filter(Boolean)
 
 for (const filePath of filePaths) {
-  const file = lstatSync(filePath)
-  if (!file.isFile() || file.isSymbolicLink()) {
+  // `git ls-files --cached` sigue listando un archivo borrado hasta que la
+  // eliminación se prepara, así que un árbol de trabajo con borrados sin
+  // preparar hacía explotar el gate en lugar de reportar hallazgos. Un archivo
+  // que ya no está en disco no puede contener un secreto.
+  const file = lstatSync(filePath, { throwIfNoEntry: false })
+  if (file === undefined || !file.isFile() || file.isSymbolicLink()) {
     continue
   }
 

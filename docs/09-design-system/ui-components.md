@@ -1,75 +1,71 @@
-# Componentes de UI
+# Primitivas de UI
 
-Viven en `src/components/ui/` y se importan desde `@/components/ui`. No saben nada del dominio: no conocen desafíos, storylets ni etapas. Esa ignorancia es lo que los hace reutilizables.
+Viven en `src/components/ui/`. Son agnósticas del dominio: una primitiva no sabe qué es una `SolutionQuality` ni un `CareerState`. Como mucho sabe que existen cuatro *tonos* de resultado, que es vocabulario visual.
 
-Las props están tipadas en TypeScript; acá va lo que el tipo no dice.
+Antes de crear una, mirar `/dev/design-system`. Si el patrón ya está, se compone.
 
 ## Button
 
-Un `<button>` nativo. Las variantes describen **jerarquía**, no color.
+Variantes: `primary` (lima), `secondary` (contorno de tinta), `ghost` (texto subrayado).
 
-| Variante | Cuándo |
-|---|---|
-| `primary` | la acción de la pantalla. Verde de marca |
-| `secondary` | una alternativa real: «Empezar de nuevo» |
-| `ghost` | una acción de baja prioridad que no debería competir |
-| `danger` | destruye algo del jugador |
+**La lima es sólo un botón.** Es el único saturado que pisa el papel, y el momento en que aparece en cualquier otra cosa deja de significar «acá se sigue».
 
-Tamaños `sm`, `md`, `lg`. En el juego, la acción principal va `lg` y `block`.
+La prop `surface` no es estética: el deshabilitado de papel desaparece contra la pizarra del bloque de decisión, así que el botón necesita saber sobre qué está apoyado para elegir su propio gris.
 
-Una pantalla tiene **una sola** acción primaria. Tres botones verdes seguidos no son tres acciones importantes: son ninguna.
+El primario lleva `data-primary`, que es lo que hace contable la invariante de «uno solo por pantalla». Contarlos por color no serviría: el primario deshabilitado no es lima y sigue siendo el primario.
 
-`type` es `button` por defecto. Un botón dentro de un formulario lo enviaría sin querer; para eso hay que pedir `type="submit"` explícitamente.
-
-## Surface
-
-La caja estructural: fondo, borde, radio, relleno. Tonos `default`, `muted`, `raised`, `plain`.
-
-No es responsable de ningún significado de dominio. Si necesitás una superficie que además diga algo —una situación, un resultado—, componé una primitiva de juego sobre `Surface` en lugar de agregarle una variante.
-
-Acepta `as` para cambiar de elemento sin perder los atributos.
-
-## Badge
-
-Etiqueta corta: «7.º GRADO», «Evento 3 de 7», «Beta». Tonos `neutral`, `brand`, `accent`, `outline`, `inverse`.
-
-Ninguna variante se distingue sólo por color: todas llevan borde propio y el texto siempre dice lo que la etiqueta significa.
-
-## TextField y NumberField
-
-Etiqueta visible, control, y ayuda o error asociados por `aria-describedby`.
-
-**El placeholder no hace de etiqueta.** Desaparece justo cuando la persona escribe y necesita recordar qué le pedían.
-
-El error reemplaza a la ayuda —dos textos compitiendo confunden—, se anuncia con `role="alert"` y marca `aria-invalid`.
-
-`NumberField` abre teclado decimal en el teléfono y muestra la unidad al costado, no adentro del campo. **No valida matemática**: el parseo exacto lo hace el motor sobre racionales, y lo que se escribió es lo que se evalúa.
-
-## QuantityStepper
-
-Campo numérico con dos botones de 44 px. Los botones existen porque las flechitas nativas de un `input[type=number]` son inusables con el pulgar.
-
-Los tres nombres accesibles —campo, restar, sumar— son **props requeridas**. No es una opción: un input numérico sin etiqueta es una violación crítica, y dejar que el componente se pueda usar mal es dejar que el bug exista. Esta regla salió de un escaneo que encontró exactamente ese caso en la vitrina.
+**El disabled nunca es la única explicación.** Si el primario está apagado, la línea de consigna dice qué falta.
 
 ## ChoiceCard
 
-Una opción elegible. Por dentro es un radio nativo dentro de su label: el grupo se recorre con flechas y se selecciona con espacio.
+El componente más importante del juego.
 
-El radio se restila con `appearance-none` pero **sigue visible y sigue siendo el blanco del clic**. Esconderlo con `sr-only` rompía dos cosas: el anillo de foco se dibuja sobre el control, y un control de 1 px no recibe bien el puntero.
+> **Seleccionado es blanco, nunca verde.** Elegir significa «esta es mi decisión», no «esta es la correcta». El color de resultado aparece recién después de Confirmar.
 
-El estado seleccionado es neutro y nunca verde. Ver [colores](colors.md#elegir-no-es-acertar).
+La regla está sostenida por el tipo, no por la disciplina: mientras el estado es `pending` no hay forma de que una opción tome verde ni rojo, porque el tono sólo se lee en los estados resueltos.
 
-## Progress
+Por dentro es un `<input type="radio">` dentro de su `<label>`. El input **es** la casilla de 32 px —restilado, no escondido—, así que sigue siendo el blanco del clic a tamaño completo, y las flechas entre opciones vienen gratis. El anillo de foco se pinta sobre la fila entera con `has-[:focus-visible]`, porque un anillo alrededor de una casilla de 32 px no dice qué opción está enfocada.
 
-Un `<progress>` nativo: trae rol, valor y máximo sin ARIA a mano. La pista y el relleno se pintan con variantes arbitrarias sobre los pseudo-elementos, que es una de las pocas excepciones legítimas a la regla de no usar valores arbitrarios.
+Dos superficies: `decision` (dentro del bloque oscuro) y `paper`. No es decoración — la decisión ocurre en oscuro y el resultado vuelve al papel, y ese cambio de superficie *es* la transición de estado.
 
-## Separator, Callout y Wordmark
+## DataMetric y DataGrid
 
-- **Separator**: `<hr>` decorativo, fuera del árbol de accesibilidad. Existe para que no haya doce variantes de `border-t` sueltas.
-- **Callout**: información **fuera** del bucle de juego. No es el panel de feedback: el resultado de una decisión tiene su propio componente porque tiene su propio vocabulario.
-- **Wordmark**: el nombre con un punto verde. El punto es decorativo; quien escucha la página oye «Egresado».
+Todo número con el que haya que razonar va en la grilla. Esconder un dato necesario en la prosa convierte un problema de matemática en uno de lectura.
 
-## Lo que no existe todavía
+La caja se apoya sobre la cuadrícula con fondo liso y borde de tinta de 1,5 px: eso es lo que la hace leer como objeto. Un dato impar al final ocupa las dos columnas.
 
-- **IconButton**: no hay ningún botón de sólo ícono fuera de `QuantityStepper`, que ya resuelve el suyo. Se crea cuando haya un segundo caso.
-- **Dialog, Popover, Tooltip, Select propio**: ninguna interacción actual los necesita. Cuando aparezca uno, la conversación empieza por Radix y no por escribirlo a mano.
+La variante `constraint` lleva el subrayado rojo **sobre la cifra**, con `self-start` para que abrace el número en vez de cruzar la celda.
+
+## Ledger
+
+El panel de resultado **siempre** muestra la aritmética real. El jugador tiene que poder ver el porqué, no sólo el veredicto: ésa es la diferencia entre un juego sobre decisiones con números y un examen con animaciones.
+
+## Badge
+
+Cuatro tonos: `up`, `down`, `outline`, `soft`. **Siempre con signo o flecha**, nunca sólo color: en escala de grises uno que subió y uno que bajó siguen siendo distintos.
+
+`Eyebrow` y `Label` acompañan: son los dos únicos lugares donde el sistema escribe en versalitas.
+
+## StageProgress
+
+**Celdas de la cuadrícula, no una barra.** Una barra segmentada arriba era una de las cuatro decisiones que hacían que v0.1 se leyera como un juego de carrera deportiva.
+
+Los tres estados se distinguen por **forma** antes que por color: hecho es relleno, actual es contorno de 2 px, pendiente es regla de 1 px. Las celdas son decorativas y el texto dice lo mismo, así que nadie tiene que contar cuadraditos con un lector de pantalla.
+
+## Surface y Stamp
+
+`Surface` es el bloque insertado, con cinco tonos: `paper`, `data`, `sunken`, `decision`, `aura`. Los dos oscuros declaran `data-surface`, que es lo que invierte el anillo de foco sin que cada control de adentro tenga que saberlo.
+
+`Stamp` es el veredicto en una palabra, rotado. Lenguaje de legajo.
+
+## TextField, NumberField y QuantityStepper
+
+Etiqueta visible siempre; el placeholder nunca hace de etiqueta. El error se anuncia con `role="alert"` y marca `aria-invalid`, así que el estado nunca depende de que el borde se vea rojo.
+
+**La validación es al blur, nunca por tecla.** Corregir a alguien mientras todavía está escribiendo el segundo dígito de `14` no es ayudar, es interrumpir.
+
+Los tres controles del stepper llevan nombre accesible **obligatorio**, como props requeridas: un `input[type=number]` suelto sin etiqueta es una violación crítica, y dejar que el componente se pueda usar mal es dejar que el bug exista.
+
+## Marks
+
+`TickMark`, `SlashMark`, `PartialMark`, `MilestoneTick`. SVG inline con `currentColor`, no un icon font ni archivos. Van `aria-hidden` sin excepción: acompañan una palabra que ya dice lo mismo, y anunciarla dos veces es ruido.

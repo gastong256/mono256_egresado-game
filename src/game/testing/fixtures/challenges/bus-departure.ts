@@ -191,7 +191,7 @@ export const busDeparture: ChallengeDefinition = defineChallenge<BusModel>({
           violatedConstraint: 'arrival-deadline',
         },
         metrics: metrics({ efficiency: 0, precision, risk: 0.8 }),
-        statEffects: [{ stat: 'energy', delta: -1 }],
+        careerEffects: { estilo: { axis: 'improvisador', amount: 6 } },
         flagEffects: [{ flag: 'bus.late', value: true }],
       })
     }
@@ -205,10 +205,7 @@ export const busDeparture: ChallengeDefinition = defineChallenge<BusModel>({
           optimalComparison: 'Calculaste la demora exacta.',
         },
         metrics: metrics({ efficiency: 1, precision: 1, risk: 0.2 }),
-        statEffects: [
-          { stat: 'knowledge', delta: 2 },
-          { stat: 'initiative', delta: 1 },
-        ],
+        careerEffects: { estilo: { axis: 'estratega', amount: 6 } },
         flagEffects: [{ flag: 'bus.onTime', value: true }],
       })
     }
@@ -233,7 +230,7 @@ export const busDeparture: ChallengeDefinition = defineChallenge<BusModel>({
         precision,
         risk: wastedMargin ? 0.1 : 0.6,
       }),
-      statEffects: [{ stat: 'knowledge', delta: 1 }],
+      careerEffects: { estilo: { axis: 'aplicado', amount: 6 } },
       flagEffects: [],
     })
   },

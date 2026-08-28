@@ -1,57 +1,64 @@
 # Tipografía
 
-## La familia
+## Dos familias
 
-**Geist**, variable, servida localmente por el paquete `geist` a través de `next/font/local`. Los archivos viven en `node_modules`: no hay pedido a un CDN en runtime ni descarga durante el build, y el build sigue siendo reproducible sin red.
+**Schibsted Grotesk** para títulos y datos. **Libre Franklin** para prosa.
 
-Una sola familia. Geist tiene buena cobertura de castellano —acentos, `ñ`, `¿`— y números legibles a tamaño chico, que es lo que este juego necesita.
+Las dos son SIL OFL 1.1 y viven versionadas en `src/app/fonts/`, servidas con `next/font/local`: sin pedido a un CDN en runtime y sin descarga durante el build. Son variables, así que los cinco pesos que usa el sistema no cuestan cinco descargas. El subset es `latin`, que cubre todo el castellano rioplatense más los signos que el juego escribe de verdad: `×`, `²`, `·`, el menos tipográfico `−` y la flecha `↑` de las tendencias de Estilo.
+
+## Caja mixta en los títulos
+
+Las mayúsculas quedan para etiquetas de 9–11 px: eyebrow, etiqueta de dato, botón. **Un título nunca va en versalitas.**
+
+No es una preferencia. El uppercase en títulos era la mitad de la huella de juego de carrera deportiva que v0.2 existe para deshacer ([decision-history](decision-history.md)). Un `text-transform: uppercase` en un `<h2>` es la forma más rápida de que una pantalla deje de ser Egresado.
 
 ## Roles, no tamaños
 
-Las escalas por defecto de Tailwind están apagadas: `text-sm`, `text-lg` y `text-2xl` no existen en este proyecto. En su lugar hay roles, y cada uno trae ya decidido el tamaño, la altura de línea, el tracking y el peso.
+La escala está apagada (`--text-*: initial`), así que `text-lg` y `text-2xl` no generan nada. Se elige un **rol** y el sistema decide tamaño, interlínea, tracking y peso.
 
-| Rol | Para qué |
-|---|---|
-| `text-display` | el cierre de un año, el nombre del producto en portada |
-| `text-title` | el título de una situación o de un momento narrativo |
-| `text-heading` | encabezado de una sección dentro de una pantalla |
-| `text-subheading` | la consigna de un desafío, la etiqueta de un campo, el rótulo de una opción |
-| `text-body` | prosa: el planteo de una situación, el texto de un storylet |
-| `text-body-sm` | detalle secundario, listas densas |
-| `text-caption` | metadatos, notas al pie, puntaje |
-| `text-label` | rótulo de un dato, en mayúsculas y con tracking |
-| `text-data` | un dato cuantitativo |
-| `text-data-lg` | un dato destacado |
-| `text-data-xl` | el dato protagonista de una pantalla |
+| Rol | Familia | Para qué |
+|---|---|---|
+| `text-milestone` | SG 800 | el numeral del año en el cierre de etapa |
+| `text-display` | SG 800 | título de pantalla |
+| `text-section` | SG 800 | título de sección, titular de banner |
+| `text-aura` | SG 800 | la cifra de Aura, dentro del bloque negro |
+| `text-data-lg` | SG 800 | valor de una caja de dato o renglón de cierre |
+| `text-data` | SG 800 | dato del HUD, celda de grilla |
+| `text-title` | SG 800 | encabezado de un bloque insertado |
+| `text-option` | SG 600 | etiqueta de una opción |
+| `text-goal` | SG 700 | la consigna, arriba de las opciones |
+| `text-detail` | SG 700 | valor tabular al costado de una opción |
+| `text-action` | SG 800 | botón (el único rol en versalitas grandes) |
+| `text-body-lg` | LF 400 | prosa de apertura |
+| `text-body` | LF 400 | prosa de situación |
+| `text-ledger` | SG 700 | valor de un renglón del ledger |
+| `text-meta` | LF 400 | metadato, etiqueta de renglón |
+| `text-caption` | LF 400 | pie de pantalla, nota |
+| `text-chip` | SG 700 | chip de efecto |
+| `text-label` | SG 700 | etiqueta en versalitas |
+| `text-eyebrow` | SG 700 | la línea roja arriba del título |
 
-Elegir un rol es una decisión de significado. Si ninguno encaja, lo más probable es que el contenido esté mal jerarquizado, no que falte un tamaño.
+Un rol nuevo hay que declararlo en `cn()`. `tailwind-merge` trae su propio mapa de grupos y ante un nombre que no conoce puede clasificarlo como color: eso hace que un rol tipográfico borre el color del texto sin que falle ningún test ni ningún tipo. Hay un test que cubre cada escala.
 
-## Los números
+## Números
 
-Los datos cuantitativos son el contenido más importante de Egresado, y su trabajo es ganarle a la prosa que los rodea. Lo consiguen por **tamaño, peso y tinta**, nunca por color: siguen destacándose en escala de grises y para alguien con daltonismo.
+**Todo valor cuantitativo lleva `tabular-nums`.** No es negociable: sin eso una cifra «salta» cuando cambia de 9 a 10, y comparar dos datos contiguos pasa a depender de dónde cayó cada dígito. El elemento lleva `data-numeric` o la utilidad directa.
 
-`tabular-nums` se aplica a todo lo marcado con `data-numeric`. Alinea las cifras entre métricas: comparar `28` con `42` en dos cajas contiguas no debería depender de dónde cayó cada dígito, y un contador que pasa de `9` a `10` no debería empujar lo que tiene al lado.
+Egresado es un juego de datos y se escribe en es-AR:
 
-Los datos **no** van en monoespaciada. Se probó la alternativa y no mejora la comprensión: convierte un precio en código fuente.
+| Tipo | Se escribe | Quién formatea |
+|---|---|---|
+| Plata | `$ 21.000` | `src/content/pesos.ts` |
+| Medidas | `6 × 2,4` · `14,40 m²` | `src/content/numeros.ts` |
+| Promedio | `8,4` | `components/game/format.ts` |
+| Aura | `+2.450` / `−150` | `components/game/format.ts` |
+| Porcentaje | `36 %` | `components/game/format.ts` |
+| Hora | `07:45` | el contenido, 24 h |
 
-## Jerarquía de una situación
+El motor produce decimales canónicos (`14.40`) porque su salida entra en estado determinista y no puede depender de una locale. La coma decimal y el punto de miles son decisión de producto y viven en la capa que corresponde. Ninguno de los formateadores usa `Intl`: la salida tiene que ser idéntica en cualquier dispositivo.
 
-Un desafío tiene que dejar este orden obvio de un vistazo:
+Dos detalles que parecen menores y no lo son: el promedio escribe siempre el decimal (`8,0`, no `8`), porque una nota sin decimal se lee como un entero suelto; y Aura usa el menos tipográfico `−` y no un guion, porque a 32 px un guion se lee como un renglón.
 
-```text
-contexto        text-caption, gris
-título          text-title
-planteo         text-body
-consigna        text-subheading
-datos           text-label + text-data
-interacción     rótulos en text-subheading
-acción          botón grande
-```
+## Probar con contenido real
 
-La prosa narrativa y los hechos numéricos nunca tienen el mismo peso visual.
-
-## Límites
-
-- No hay tamaños arbitrarios (`text-[17px]`). Si aparece uno, falta un rol o sobra una idea.
-- El texto se prueba a 360, 390 y 430 px, más tablet y desktop.
-- El zoom del navegador y el aumento de tamaño de texto del sistema no pueden romper el juego: todo está en unidades relativas.
+Nunca con Lorem Ipsum. Un sistema tipográfico siempre se ve bien con texto falso; lo que rompe la maqueta es `6 × 2,4 m`, `$ 21.000`, `Improvisador ↑` y una consecuencia de tres renglones en castellano con acentos.

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import {
+  promedio,
   activeChallengeView,
   appendAction,
   canonicalize,
@@ -255,9 +256,14 @@ describe('la run de 7.º grado', () => {
     const weak = play('slice-comparar', 'debil')
 
     expect(strong.state.scorePreview).toBeGreaterThan(weak.state.scorePreview)
-    expect(strong.state.stats.knowledge).toBeGreaterThan(
-      weak.state.stats.knowledge,
-    )
+
+    // El mural es el único evento académico del año, así que el Promedio es la
+    // dimensión que separa a las dos partidas.
+    const strongAverage = promedio(strong.state.career)
+    const weakAverage = promedio(weak.state.career)
+    expect(strongAverage).not.toBeNull()
+    expect(weakAverage).not.toBeNull()
+    expect(strongAverage ?? 0).toBeGreaterThan(weakAverage ?? 0)
   })
 })
 
@@ -304,7 +310,7 @@ describe('reproducibilidad del año', () => {
 
     expect(canonicalize(replayed.value.state)).toBe(canonicalize(played.state))
     expect(replayed.value.state.scorePreview).toBe(played.state.scorePreview)
-    expect(replayed.value.state.stats).toEqual(played.state.stats)
+    expect(replayed.value.state.career).toEqual(played.state.career)
     expect(replayed.value.state.flags).toEqual(played.state.flags)
     expect(replayed.value.state.completion?.profile.profileId).toBe(
       played.state.completion?.profile.profileId,

@@ -1,147 +1,156 @@
 'use client'
 
 /**
- * Resumen del año.
+ * Cierre del año.
  *
  * Es el cierre del año que se jugó, no una tarjeta de egreso: el perfil
- * definitivo pertenece a la carrera completa y no se inventa acá.
+ * definitivo pertenece a la carrera completa y no se inventa acá. Por eso dice
+ * «vas camino a» y no «sos» — un veredicto cerrado sobre alguien de doce años
+ * sería exactamente el lenguaje clínico que el GDD prohíbe.
  *
- * Todo lo que muestra sale del estado que devolvió el motor. La pantalla
- * formatea; no calcula nada.
+ * Es el único momento del juego donde el modelo del jugador se muestra completo
+ * y expandido. Durante el desafío la tira es de 46 px porque el desafío es lo
+ * importante; acá el año terminó y la carrera pasa a ser lo que se lee.
+ *
+ * Todo sale del estado que devolvió el motor. La pantalla formatea; no calcula.
  */
 
-import { RotateCcw } from 'lucide-react'
+import {
+  isEstiloEstablished,
+  promedio,
+  type RunState,
+  type SolutionQuality,
+} from '@/game'
+import { Button, RecordRow } from '@/components/ui'
 
-import { Button, Surface } from '@/components/ui'
-import type { RunState, SolutionQuality, Storylet } from '@/game'
-
-import { DataMetric } from './data-metric'
-import { Milestone } from './milestone'
+import { AuraBlock } from './aura-display'
+import { CareerStrip } from './career-strip'
+import { EstiloLegend, EstiloTriangle } from './estilo-triangle'
+import { formatEquipo, formatPromedio, NOT_ESTABLISHED } from './format'
+import { ActionSlot, GameSheet, SceneColumn, StageHeader } from './game-shell'
+import { ArchetypeStamp, MemorablePanel, Milestone } from './milestone'
+import { profileLabel } from './profile-label'
 import { stageLabel } from './stage-label'
 
-const QUALITY_LABEL: Readonly<Record<SolutionQuality, string>> = {
-  invalid: 'no salió',
-  functional: 'resuelto',
-  efficient: 'eficiente',
-  optimal: 'redondo',
-}
+/**
+ * Lo más memorable del año.
+ *
+ * Se elige por conteo, no por azar: dos runs con el mismo recorrido cierran con
+ * la misma frase, que es lo que hace que el cierre se sienta un resumen y no una
+ * galleta de la fortuna.
+ *
+ * Con el contenido autorado de 7.º ninguna situación produce Aura todavía —el
+ * acto del 25 de Mayo es contenido de diseño, no del motor—, así que la línea
+ * habla de cómo se resolvió el año y no de un momento memorable inventado.
+ */
+function memorableLine(qualities: readonly SolutionQuality[]): string {
+  const optimal = qualities.filter((quality) => quality === 'optimal').length
+  const failed = qualities.filter((quality) => quality === 'invalid').length
 
-/** Frases de cierre según cómo fue el año. Se elige por conteo, no por azar. */
-function closingLine(optimal: number, resolved: number, total: number): string {
-  if (optimal >= total - 1) {
+  if (optimal >= qualities.length - 1 && qualities.length > 0) {
     return 'Casi todo salió como lo pensaste. El curso te va a buscar el año que viene.'
   }
-  if (resolved === total) {
+  if (failed === 0) {
     return 'Resolviste todo lo que se te puso adelante, algunas cosas con más margen que otras.'
   }
-  if (resolved >= Math.ceil(total / 2)) {
-    return 'Un año con idas y vueltas: algunas decisiones salieron bien y otras costaron.'
+  if (failed === 1) {
+    return 'Un año con idas y vueltas: casi todo salió, y una se fue de las manos.'
   }
   return 'Séptimo se hizo cuesta arriba, pero llegaste al final y el stand abrió igual.'
 }
 
 export function YearResult({
   state,
-  nickname,
-  storylets,
   onPlayAgain,
 }: {
   readonly state: RunState
-  readonly nickname: string
-  /** Se usa para nombrar cada momento del año sin exponer identificadores. */
-  readonly storylets: readonly Storylet[]
   readonly onPlayAgain: () => void
 }) {
-  const titleOf = (storyletId: string): string =>
-    storylets.find((storylet) => storylet.id === storyletId)?.title ??
-    'Un momento del año'
-
+  const { career, completion } = state
+  const average = promedio(career)
   const challenges = state.history.filter(
     (entry) => entry.challengeId !== undefined,
   )
-  const resolved = challenges.filter(
-    (entry) => entry.quality !== undefined && entry.quality !== 'invalid',
-  ).length
-  const optimal = challenges.filter(
-    (entry) => entry.quality === 'optimal',
-  ).length
-  const efficient = challenges.filter(
-    (entry) => entry.quality === 'efficient',
-  ).length
-
-  const coordinated = state.flags['g7.coordina'] === true
+  const qualities = challenges.flatMap((entry) =>
+    entry.quality === undefined ? [] : [entry.quality],
+  )
 
   return (
-    <section
-      aria-labelledby="resultado-titulo"
-      className="flex flex-col gap-6"
-      data-testid="year-result"
-    >
-      <Milestone
-        eyebrow={`${nickname} · año terminado`}
-        title={`Tu ${stageLabel(state.stage)}`}
-      >
-        <span id="resultado-titulo">
-          {closingLine(optimal, resolved, challenges.length)}
-        </span>
-      </Milestone>
+    <GameSheet>
+      <StageHeader
+        stage={stageLabel(state.stage)}
+        resolved={state.history.length}
+        total={state.history.length}
+      />
 
-      <div className="grid grid-cols-2 gap-2">
-        <DataMetric
-          label="Situaciones resueltas"
-          value={`${String(resolved)} de ${String(challenges.length)}`}
-          prominent
-        />
-        <DataMetric
-          label="Puntaje del año"
-          value={String(state.completion?.totalScore ?? 0)}
-          prominent
-        />
-        <DataMetric label="Decisiones redondas" value={String(optimal)} />
-        <DataMetric label="Decisiones eficientes" value={String(efficient)} />
-      </div>
+      {/* La tira sigue arriba: el cierre no cambia de mundo, sólo sube el
+          volumen. Abajo el modelo se repite expandido, que es la única pantalla
+          donde eso vale la pena. */}
+      <CareerStrip career={career} />
 
-      <section aria-labelledby="momentos" className="flex flex-col gap-2">
-        <h3 id="momentos" className="text-heading">
-          Cómo te fue
-        </h3>
-        <ul className="flex list-none flex-col p-0">
-          {challenges.map((entry) => (
-            <li
-              key={entry.sequence}
-              className="border-line flex items-baseline justify-between gap-3 border-b py-2 last:border-b-0"
-            >
-              <span className="text-body-sm text-foreground">
-                {titleOf(entry.storyletId)}
-              </span>
-              <span className="text-body-sm text-foreground-muted font-semibold">
-                {entry.quality === undefined
-                  ? '—'
-                  : QUALITY_LABEL[entry.quality]}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </section>
+      <SceneColumn>
+        <Milestone eyebrow="Cierre de etapa" numeral={stageNumeral(state)}>
+          <div className="flex flex-col" data-testid="year-record">
+            <RecordRow
+              label="Promedio"
+              value={
+                average === null ? NOT_ESTABLISHED : formatPromedio(average)
+              }
+            />
+            <RecordRow
+              label="Equipo"
+              value={
+                career.equipo === null
+                  ? NOT_ESTABLISHED
+                  : formatEquipo(career.equipo)
+              }
+            />
+            <RecordRow
+              label="Eventos"
+              value={String(completion?.eventsPlayed ?? state.history.length)}
+              last
+            />
+          </div>
 
-      <Surface tone="muted" padding="default">
-        <p className="text-body-sm text-foreground text-pretty">
-          {coordinated
-            ? 'Terminaste el año coordinando el proyecto del curso.'
-            : 'Terminaste el año con una parte concreta del proyecto a tu cargo.'}
-        </p>
-      </Surface>
+          {/* El bloque negro aparece sólo si Aura existe. Un `+0` sobre negro
+              sería un anuncio de que no pasó nada. */}
+          {career.aura === null ? null : <AuraBlock value={career.aura} />}
 
-      <div className="flex flex-col gap-3">
-        <Button size="lg" block onClick={onPlayAgain} data-testid="play-again">
-          <RotateCcw aria-hidden className="size-5" />
-          Jugar de nuevo
-        </Button>
-        <p className="text-caption text-foreground-muted text-center text-pretty">
-          Por ahora Egresado llega hasta acá. Los años siguientes están en
-          construcción.
-        </p>
-      </div>
-    </section>
+          {isEstiloEstablished(career) ? (
+            <div className="flex items-center gap-3.5 pt-0.5">
+              <div className="w-[88px] shrink-0">
+                <EstiloTriangle estilo={career.estilo} />
+              </div>
+              <EstiloLegend estilo={career.estilo} className="flex-1" />
+            </div>
+          ) : null}
+
+          <MemorablePanel>{memorableLine(qualities)}</MemorablePanel>
+
+          {completion === undefined ? null : (
+            <ArchetypeStamp
+              archetype={profileLabel(completion.profile.profileId)}
+              stampLine={`DIC · ${stageNumeral(state)}`}
+            />
+          )}
+        </Milestone>
+
+        <ActionSlot>
+          <Button onClick={onPlayAgain} data-testid="play-again">
+            Jugar de nuevo
+          </Button>
+          <p className="text-caption text-ink-secondary text-center text-pretty">
+            Por ahora Egresado llega hasta acá. Los años siguientes están en
+            construcción.
+          </p>
+        </ActionSlot>
+      </SceneColumn>
+    </GameSheet>
   )
+}
+
+/** El numeral del año, sin la palabra: «7.º», no «7.º grado». */
+function stageNumeral(state: RunState): string {
+  const [numeral] = stageLabel(state.stage).split(' ')
+  return numeral ?? stageLabel(state.stage)
 }

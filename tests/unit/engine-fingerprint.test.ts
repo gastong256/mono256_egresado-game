@@ -30,25 +30,31 @@ import { createDevelopmentDependencies } from '@/game/testing'
 
 const dependencies = createDevelopmentDependencies()
 
+/*
+ * Regenerados para la migración de carrera (`ENGINE_VERSION` 2.0.0, ruleset y
+ * contenido `0.2.0-dev`). El recorrido, el score y el perfil de las runs golden
+ * quedaron idénticos: lo que cambió es la forma del estado persistido, que es
+ * exactamente el tipo de cambio que la versión de motor existe para declarar.
+ */
 const EXPECTED = {
-  engine: 'f3839f4f',
-  ruleset: 'd67a6d29',
-  content: '61162875',
+  engine: 'b272785f',
+  ruleset: 'd3319440',
+  content: '0689336b',
 } as const
 
 describe('version fingerprints', () => {
   it('pins the deterministic kernel to its engine version', () => {
-    expect(ENGINE_VERSION).toBe('1.0.0')
+    expect(ENGINE_VERSION).toBe('2.0.0')
     expect(engineFingerprint()).toBe(EXPECTED.engine)
   })
 
   it('pins the scoring rules to the declared ruleset version', () => {
-    expect(dependencies.ruleset.version).toBe('0.1.0-dev')
+    expect(dependencies.ruleset.version).toBe('0.2.0-dev')
     expect(rulesetFingerprint(dependencies.ruleset)).toBe(EXPECTED.ruleset)
   })
 
   it('pins the playable content to the declared content version', () => {
-    expect(dependencies.ruleset.contentVersion).toBe('0.1.0-dev')
+    expect(dependencies.ruleset.contentVersion).toBe('0.2.0-dev')
     expect(
       contentFingerprint(dependencies.challenges, dependencies.storylets),
     ).toBe(EXPECTED.content)

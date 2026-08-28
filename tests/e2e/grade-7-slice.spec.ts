@@ -27,7 +27,7 @@ async function startRun(page: Page, nickname: string): Promise<void> {
   await page.goto('/jugar')
   await page.getByLabel('¿Cómo te decimos?').fill(nickname)
   await page.getByRole('button', { name: 'Empezar 7.º grado' }).click()
-  await expect(page.getByRole('button', { name: 'Continuar' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Seguir' })).toBeVisible()
 }
 
 /** Responde la situación en pantalla. `pick` elige entre las opciones. */
@@ -76,13 +76,11 @@ async function playYear(
   let answered = 0
 
   for (let step = 0; step < 20; step += 1) {
-    if (
-      (await page.getByRole('heading', { name: 'Tu 7.º grado' }).count()) > 0
-    ) {
+    if ((await page.getByTestId('milestone').count()) > 0) {
       break
     }
 
-    const advance = page.getByRole('button', { name: 'Continuar' })
+    const advance = page.getByRole('button', { name: 'Seguir' })
     if ((await advance.count()) > 0) {
       await advance.first().click()
       continue
@@ -115,15 +113,20 @@ test('un estudiante juega 7.º grado de principio a fin', async ({ page }) => {
   await expect(
     page.getByRole('heading', { name: 'Arranca séptimo' }),
   ).toBeVisible()
-  await expect(page.getByText('Evento 0 de 7')).toBeVisible()
-  await page.getByRole('button', { name: 'Continuar' }).click()
+  // El progreso se dice con palabras además de con celdas.
+  await expect(page.getByText('Evento 1 de 7')).toBeVisible()
+  // La tira de carrera arranca ausente: `null` no es 0.
+  await expect(page.getByTestId('career-strip')).toHaveCount(0)
+  await page.getByRole('button', { name: 'Seguir' }).click()
 
   // Primera situación: el colectivo. Los datos tienen que estar a la vista.
   await expect(
     page.getByRole('heading', { name: 'El colectivo de siempre' }),
   ).toBeVisible()
-  await expect(page.getByText('Viaje sin demora')).toBeVisible()
+  await expect(page.getByText('Viaje normal').first()).toBeVisible()
   await expect(page.getByText('Entrada')).toBeVisible()
+  // El deshabilitado nunca es la única explicación.
+  await expect(page.getByText('Elegí una opción para confirmar.')).toBeVisible()
   await expect(page.getByRole('button', { name: 'Confirmar' })).toBeDisabled()
 
   await page.getByRole('radio').first().check()
@@ -132,20 +135,21 @@ test('un estudiante juega 7.º grado de principio a fin', async ({ page }) => {
   // El feedback explica la consecuencia con los números, no con un veredicto.
   const feedback = page
     .getByRole('alert')
-    .filter({ hasText: /Óptimo|Eficiente|Resuelto|No alcanzó/u })
+    .filter({ hasText: /Óptimo|Resuelto|Parcial|Insuficiente/u })
   await expect(feedback.first()).toBeVisible()
   await expect(page.getByText('Viaje de hoy')).toBeVisible()
-  await expect(page.getByText('Llegás')).toBeVisible()
+  await expect(page.getByTestId('ledger').getByText('Llegás')).toBeVisible()
+  // Y al resolver hay exactamente un primario en pantalla.
+  await expect(page.getByRole('button', { name: 'Confirmar' })).toHaveCount(0)
+  await expect(page.getByRole('button', { name: 'Seguir' })).toHaveCount(1)
 
   const answered = await playYear(page, 'primera')
   expect(answered).toBe(4)
 
   // Cierre del año.
-  await expect(
-    page.getByRole('heading', { name: 'Tu 7.º grado' }),
-  ).toBeVisible()
-  await expect(page.getByText('Sofi')).toBeVisible()
-  await expect(page.getByText('Situaciones resueltas')).toBeVisible()
+  await expect(page.getByTestId('milestone')).toBeVisible()
+  await expect(page.getByTestId('year-record')).toContainText('Promedio')
+  await expect(page.getByTestId('archetype')).toContainText('Vas camino a')
   await expect(
     page.getByRole('button', { name: 'Jugar de nuevo' }),
   ).toBeVisible()
@@ -164,11 +168,9 @@ test('decidir mal no corta la partida', async ({ page }) => {
 
   // Cinco situaciones respondidas eligiendo siempre la última opción.
   expect(answered).toBe(5)
-  await expect(
-    page.getByRole('heading', { name: 'Tu 7.º grado' }),
-  ).toBeVisible()
+  await expect(page.getByTestId('milestone')).toBeVisible()
   // El año termina igual: un error nunca es game over.
-  await expect(page.getByText('Situaciones resueltas')).toBeVisible()
+  await expect(page.getByTestId('year-record')).toBeVisible()
 
   expect(problems).toEqual([])
 })
@@ -177,37 +179,35 @@ test('volver a jugar empieza una partida nueva', async ({ page }) => {
   await startRun(page, 'Nadia')
   await playYear(page, 'primera')
 
-  await expect(
-    page.getByRole('heading', { name: 'Tu 7.º grado' }),
-  ).toBeVisible()
+  await expect(page.getByTestId('milestone')).toBeVisible()
   await page.getByRole('button', { name: 'Jugar de nuevo' }).click()
 
   // Arranca de cero, no en el resumen anterior.
   await expect(
     page.getByRole('heading', { name: 'Arranca séptimo' }),
   ).toBeVisible()
-  await expect(page.getByText('Evento 0 de 7')).toBeVisible()
+  await expect(page.getByText('Evento 1 de 7')).toBeVisible()
 })
 
 test('recargar en medio del año ofrece seguir la partida', async ({ page }) => {
   await startRun(page, 'Ivo')
 
   // Se avanzan un par de eventos para que exista un checkpoint.
-  await page.getByRole('button', { name: 'Continuar' }).click()
+  await page.getByRole('button', { name: 'Seguir' }).click()
   await answerChallenge(page, 'primera')
-  await page.getByRole('button', { name: 'Continuar' }).click()
+  await page.getByRole('button', { name: 'Seguir' }).click()
 
   await page.reload()
 
   await expect(
-    page.getByRole('heading', { name: 'Tenés una partida empezada' }),
+    page.getByRole('heading', { name: 'Volvés a séptimo' }),
   ).toBeVisible()
   await expect(page.getByText('Ivo')).toBeVisible()
 
   await page.getByRole('button', { name: 'Seguir jugando' }).click()
 
   // Vuelve donde estaba, no al principio.
-  await expect(page.getByText('Evento 0 de 7')).toHaveCount(0)
+  await expect(page.getByText('Evento 1 de 7')).toHaveCount(0)
   await expect(page.getByRole('heading', { level: 1 })).toContainText(
     '7.º grado',
   )
@@ -215,9 +215,9 @@ test('recargar en medio del año ofrece seguir la partida', async ({ page }) => 
 
 test('descartar la partida guardada empieza de nuevo', async ({ page }) => {
   await startRun(page, 'Cami')
-  await page.getByRole('button', { name: 'Continuar' }).click()
+  await page.getByRole('button', { name: 'Seguir' }).click()
   await answerChallenge(page, 'primera')
-  await page.getByRole('button', { name: 'Continuar' }).click()
+  await page.getByRole('button', { name: 'Seguir' }).click()
 
   await page.reload()
   await page.getByRole('button', { name: 'Empezar de nuevo' }).click()
@@ -272,7 +272,7 @@ test('se puede jugar sólo con el teclado', async ({ page }) => {
     page.getByRole('heading', { name: 'Arranca séptimo' }),
   ).toBeVisible()
 
-  const advance = page.getByRole('button', { name: 'Continuar' })
+  const advance = page.getByRole('button', { name: 'Seguir' })
   await advance.focus()
   await expect(advance).toBeFocused()
   await page.keyboard.press('Enter')
@@ -290,7 +290,7 @@ test('se puede jugar sólo con el teclado', async ({ page }) => {
   await expect(
     page
       .getByRole('alert')
-      .filter({ hasText: /Óptimo|Eficiente|Resuelto|No alcanzó/u }),
+      .filter({ hasText: /Óptimo|Resuelto|Parcial|Insuficiente/u }),
   ).toBeVisible()
 })
 
@@ -307,16 +307,14 @@ test('no hay desbordes horizontales en pantallas chicas', async ({ page }) => {
 
   expect(await overflow()).toBe(false)
 
-  await page.getByRole('button', { name: 'Continuar' }).click()
+  await page.getByRole('button', { name: 'Seguir' }).click()
   expect(await overflow()).toBe(false)
 
   await answerChallenge(page, 'primera')
   expect(await overflow()).toBe(false)
 
   await playYear(page, 'primera')
-  await expect(
-    page.getByRole('heading', { name: 'Tu 7.º grado' }),
-  ).toBeVisible()
+  await expect(page.getByTestId('milestone')).toBeVisible()
   expect(await overflow()).toBe(false)
 })
 
@@ -324,6 +322,17 @@ test('las pantallas principales no tienen violaciones de accesibilidad', async (
   page,
 }) => {
   const scan = async (label: string): Promise<void> => {
+    // axe mide el color efectivo, y la opacidad cuenta: escanear en medio de la
+    // entrada de 200 ms reporta como falla de contraste algo que en reposo
+    // cumple de sobra.
+    await page.evaluate(async () => {
+      await Promise.all(
+        document
+          .getAnimations()
+          .map((animation) => animation.finished.catch(() => undefined)),
+      )
+    })
+
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
       .analyze()
@@ -348,15 +357,13 @@ test('las pantallas principales no tienen violaciones de accesibilidad', async (
   await page.getByRole('button', { name: 'Empezar 7.º grado' }).click()
   await scan('apertura')
 
-  await page.getByRole('button', { name: 'Continuar' }).click()
+  await page.getByRole('button', { name: 'Seguir' }).click()
   await scan('situación')
 
   await answerChallenge(page, 'primera')
   await scan('feedback')
 
   await playYear(page, 'primera')
-  await expect(
-    page.getByRole('heading', { name: 'Tu 7.º grado' }),
-  ).toBeVisible()
+  await expect(page.getByTestId('milestone')).toBeVisible()
   await scan('resumen')
 })

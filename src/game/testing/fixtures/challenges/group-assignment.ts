@@ -272,7 +272,7 @@ export const groupAssignment: ChallengeDefinition =
             violatedConstraint: overloaded ? 'member-hours' : 'task-coverage',
           },
           metrics: metrics({ efficiency: 0, precision: 0, risk: 0.5 }),
-          statEffects: [{ stat: 'team', delta: -1 }],
+          careerEffects: { equipo: -2 },
           flagEffects: [{ flag: 'assignment.failed', value: true }],
         })
       }
@@ -289,10 +289,10 @@ export const groupAssignment: ChallengeDefinition =
               'Ninguna otra distribución aprovechaba mejor los fuertes del grupo.',
           },
           metrics: metrics({ efficiency: 1, precision: 1, risk: 0 }),
-          statEffects: [
-            { stat: 'team', delta: 2 },
-            { stat: 'initiative', delta: 1 },
-          ],
+          careerEffects: {
+            equipo: 4,
+            estilo: { axis: 'estratega', amount: 6 },
+          },
           flagEffects: [{ flag: 'assignment.optimal', value: true }],
         })
       }
@@ -305,7 +305,7 @@ export const groupAssignment: ChallengeDefinition =
           optimalComparison: `La mejor distribución sumaba ${String(model.bestScore)} puntos de afinidad; la tuya sumó ${String(score)}.`,
         },
         metrics: metrics({ efficiency: ratio, precision: 1, risk: 0.2 }),
-        statEffects: [{ stat: 'team', delta: 1 }],
+        careerEffects: { equipo: 2 },
         flagEffects: [],
       })
     },

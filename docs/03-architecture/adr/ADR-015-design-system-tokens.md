@@ -1,7 +1,9 @@
 # ADR-015 — Sistema de diseño con tokens semánticos y paleta restringida
 
-- Estado: Aceptado
+- Estado: Aceptado — reemplazado parcialmente por [ADR-017](ADR-017-paper-visual-identity.md)
 - Fecha: 2026-08-22
+
+> **Qué sigue vigente y qué no.** La gobernanza de esta decisión sigue en pie: la cadena de tokens en una sola dirección, la paleta de Tailwind apagada y el contraste como gate obligatorio. Lo que ADR-017 reemplaza son los *valores* y las dependencias: la paleta pasó de OKLCH a hexadecimal, la escala tipográfica pasó a los roles de v0.2, el radio pasó a 0 en todo el sistema, y `geist` y `lucide-react` salieron.
 
 ## Contexto
 

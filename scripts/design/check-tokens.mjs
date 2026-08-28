@@ -30,14 +30,32 @@ const rootPath = fileURLToPath(root)
 const PRODUCT_GLOBS = ['src/app/**/*.{ts,tsx}', 'src/components/**/*.{ts,tsx}']
 const EXEMPT = ['src/components/dev/']
 
+const UTILITY_PREFIX =
+  '(?:bg|text|border|outline|ring|fill|stroke|accent|divide|placeholder|caret|shadow|from|via|to)'
+
+/** Los pigmentos de `tokens.css`. Una pantalla consume roles, no pigmentos. */
+const PIGMENTS = [
+  'paper(?:-grid|-sunken)?',
+  'graphite',
+  'hairline',
+  'ink-(?:900|700|500)',
+  'bottle-(?:050|600|800)',
+  'tartan-(?:050|600)',
+  'lime-(?:300|400)',
+  'slate-(?:300|500|600|800|900)',
+  'void',
+  'neon-(?:400|500)',
+  'coral-400',
+  'ash-400',
+].join('|')
+
 const RULES = [
   {
     id: 'paleta-cruda',
-    // `bg-green-600` en una pantalla en lugar de `bg-primary`.
-    pattern:
-      /\b(?:bg|text|border|outline|ring|fill|stroke|accent|divide|placeholder|from|via|to)-(?:green|red|gray)-(?:50|100|200|300|400|500|600|700|800|900|950)\b/gu,
+    // `bg-bottle-600` en una pantalla en lugar de `bg-green`.
+    pattern: new RegExp(`\\b${UTILITY_PREFIX}-(?:${PIGMENTS})\\b`, 'gu'),
     message:
-      'usa la paleta primitiva directamente; consumí un token semántico (bg-primary, text-foreground-muted, border-line…)',
+      'usa un pigmento directamente; consumí un token semántico (bg-canvas, text-ink-label, border-rule, bg-green…)',
   },
   {
     id: 'color-arbitrario',
@@ -51,13 +69,23 @@ const RULES = [
     // Las escalas por defecto están apagadas: si aparecen, no generan nada.
     pattern: /\btext-(?:xs|sm|base|lg|xl|2xl|3xl|4xl|5xl|6xl|7xl|8xl|9xl)\b/gu,
     message:
-      'usa un tamaño de Tailwind que este proyecto apagó; elegí un rol (text-body, text-heading, text-data…)',
+      'usa un tamaño de Tailwind que este proyecto apagó; elegí un rol (text-body, text-display, text-data…)',
   },
   {
     id: 'radio-ajeno',
-    pattern: /\brounded-(?:xs|sm|md|lg|xl|2xl|3xl|4xl)\b/gu,
+    // El radio es 0 en todo el sistema v0.2. No hay excepciones y no hay una
+    // escala de radios: si aparece `rounded-`, la pantalla dejó de ser Egresado.
+    pattern: /\brounded(?:-[a-z0-9[\]]+)*\b/gu,
     message:
-      'usa un radio de Tailwind que este proyecto apagó; elegí rounded-control, rounded-surface, rounded-card o rounded-pill',
+      'el radio del sistema es 0; una tarjeta redondeada rompe la geometría de impreso de v0.2',
+  },
+  {
+    id: 'sombra-ajena',
+    // La profundidad la da el peso del borde y el contraste de fondo. La única
+    // excepción es el resplandor de Aura, que no es sombra sino luz.
+    pattern: /\bshadow-(?!aura)[a-z0-9[\]-]+\b/gu,
+    message:
+      'el sistema no usa sombras; la única excepción es text-shadow-aura dentro del bloque negro',
   },
 ]
 

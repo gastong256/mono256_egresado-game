@@ -86,7 +86,9 @@ test('plays an engine run in the browser without console errors', async ({
     'Herramienta de desarrollo',
   )
   await expect(page.getByTestId('stage-label')).toHaveText('7.º grado')
-  await expect(page.getByTestId('score-preview')).toContainText('0')
+  // La tira de carrera arranca ausente: ninguna dimensión se tocó todavía, y
+  // el sistema no dibuja un cero donde no hay valor.
+  await expect(page.getByTestId('career-strip')).toHaveCount(0)
 
   // Advance past the opening narrative beats to the first challenge.
   await advanceToChallenge(page)
@@ -179,7 +181,7 @@ test('exposes the run identity needed to reproduce a bug', async ({ page }) => {
 
   const panel = page.getByLabel('Diagnóstico de desarrollo')
   await expect(panel).toContainText('e2e-alpha')
-  await expect(panel).toContainText('0.1.0-dev')
+  await expect(panel).toContainText('0.2.0-dev')
   await expect(panel).toContainText('grade-7')
 })
 

@@ -85,14 +85,22 @@ Este directorio define la referencia funcional, lúdica, pedagógica y técnica 
 
 ### 09-design-system
 - `README.md`: qué es el sistema de diseño, su versión y por dónde entrar.
-- `colors.md`: paleta, roles del verde y del rojo, y la regla de que elegir no es acertar.
-- `typography.md`: roles tipográficos y tratamiento de los datos numéricos.
-- `foundations.md`: espaciado, layout, radio, bordes, elevación, movimiento y foco.
+- `decision-history.md`: por qué Egresado se ve así y qué decisiones no se reabren.
+- `colors.md`: los cuatro colores con cuatro trabajos y las tres superficies.
+- `typography.md`: las dos familias, los roles y cómo se escriben los números en es-AR.
+- `foundations.md`: cuadrícula, geometría, la marca de corrección, layout y movimiento.
 - `ui-components.md`: primitivas de UI, cuándo usarlas y cuándo no.
 - `game-components.md`: primitivas de juego y renderers de interacción.
 - `accessibility.md`: cómo el sistema sostiene el objetivo WCAG 2.2 AA.
 - `contribution.md`: cuándo promover un patrón y cómo se hace cumplir.
-- `migration-7-grade.md`: mapa de la migración del slice y lo que encontró.
+- `migration-7-grade.md`: qué cambió al migrar el slice a v0.2, y qué no.
+- `assets.md`: qué arte existe, qué está briefeado sin producir y qué es texto a propósito.
+- `apertura.png`: referencia visual del beat narrativo de apertura.
+- `colectivo-sin-resolver.png`: referencia visual de una situación con la decisión pendiente.
+- `colectivo-resuelto.png`: referencia visual de una situación resuelta como Parcial.
+- `mural-resuelto.png`: referencia visual de una situación académica resuelta como Óptimo.
+- `grilla-25-de-mayo.png`: referencia visual del patrón de grilla y del bloque de Aura.
+- `cierre-de-etapa.png`: referencia visual del cierre de año completo.
 
 ### audits
 

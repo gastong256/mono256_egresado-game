@@ -39,12 +39,11 @@ import type { Storylet } from '../narrative/storylet'
 import { emptyDimensions, type ProfileDimensions } from '../profiles/policy'
 import type { StageConfig } from '../progression/stages'
 import {
-  applyStatEffects,
-  initialStats,
-  readStat,
-  VISIBLE_STATS,
-  type PlayerStats,
-} from '../progression/stats'
+  applyCareerEffects,
+  initialCareer,
+  masteryGainsFor,
+  type CareerChange,
+} from '../progression/career'
 import { createRng } from '../random/rng'
 import {
   firstStage,
@@ -141,25 +140,51 @@ function narrativeContext(state: RunState): NarrativeContext {
   return {
     stage: state.stage,
     eventIndex: state.eventIndex,
-    stats: state.stats,
+    career: state.career,
     flags: state.flags,
     seenStorylets: state.seenStorylets,
     qualityHistory: state.qualityHistory,
   }
 }
 
-function statChangeEvents(
-  before: PlayerStats,
-  after: PlayerStats,
-): readonly DomainEvent[] {
-  return VISIBLE_STATS.filter(
-    (stat) => readStat(before, stat) !== readStat(after, stat),
-  ).map((stat) => ({
-    type: 'stat.changed' as const,
-    stat,
-    from: readStat(before, stat),
-    to: readStat(after, stat),
-  }))
+/**
+ * One event per dimension that actually moved.
+ *
+ * Derived from the change report the career module produced rather than from a
+ * diff of two states, so a grade that happens to equal the running average is
+ * still reported as an academic event.
+ */
+function careerChangeEvents(change: CareerChange): readonly DomainEvent[] {
+  const events: DomainEvent[] = []
+
+  if (change.promedio !== undefined) {
+    events.push({
+      type: 'career.changed',
+      dimension: 'promedio',
+      from: change.promedio.from,
+      to: change.promedio.to,
+    })
+  }
+  if (change.equipo !== undefined) {
+    events.push({
+      type: 'career.changed',
+      dimension: 'equipo',
+      from: change.equipo.from,
+      to: change.equipo.to,
+    })
+  }
+  if (change.aura !== undefined) {
+    events.push({
+      type: 'aura.changed',
+      delta: change.aura.delta,
+      total: change.aura.total,
+    })
+  }
+  if (change.estilo !== undefined) {
+    events.push({ type: 'estilo.nudged', axis: change.estilo.axis })
+  }
+
+  return events
 }
 
 function requireStage(ruleset: Ruleset, state: RunState): StageConfig {
@@ -218,10 +243,10 @@ function beginEvent(
   })
 
   const applied = applyEffects(
-    { stats: state.stats, flags: state.flags },
+    { career: state.career, flags: state.flags },
     storylet.effects,
   )
-  events.push(...statChangeEvents(state.stats, applied.stats))
+  events.push(...careerChangeEvents(applied.change))
   for (const effect of storylet.effects) {
     if (effect.kind === 'flag-set') {
       events.push({ type: 'flag.set', flag: effect.flag, value: effect.value })
@@ -239,17 +264,19 @@ function beginEvent(
 
   const baseEvent: ActiveEvent = {
     storyletId: storylet.id,
+    eyebrow: storylet.eyebrow,
     title: storylet.title,
     text: storylet.text,
     challenge: undefined,
     revealed: [],
     toolsUsed: [],
+    careerChange: applied.change,
   }
 
   const common = {
     ...state,
-    stats: applied.stats,
-    flags: applied.flags,
+    career: applied.slice.career,
+    flags: applied.slice.flags,
     selection: recordSelection(state.selection, storylet.id, state.eventIndex),
     seenStorylets,
   }
@@ -346,10 +373,16 @@ function computeDimensions(state: RunState): ProfileDimensions {
     precision,
     risk,
     informationUse,
-    // Team and initiative are the visible stats the narrative moved, normalized
-    // against their documented bounds.
-    collaboration: state.stats.team / 100,
-    initiative: state.stats.initiative / 100,
+    // Two hidden dimensions read the career instead of the answer log.
+    // `collaboration` is Equipo normalised; a run that never met a collaborative
+    // event has no evidence either way, so it sits at the neutral midpoint
+    // rather than at zero — `null` is not a low score.
+    collaboration: (state.career.equipo ?? 50) / 100,
+    // `initiative` is how much of Estilo is *not* by-the-book: both planning
+    // ahead and improvising are ways of acting on your own account, and the
+    // difference between them is already carried by `risk` and `efficiency`.
+    initiative:
+      (state.career.estilo.estratega + state.career.estilo.improvisador) / 100,
     stability: Math.max(0, 1 - deviation * 2),
   }
 }
@@ -361,7 +394,7 @@ function completeRun(
 ): TransitionResult {
   const profile = dependencies.ruleset.profile.classify(
     computeDimensions(state),
-    state.stats,
+    state.career,
   )
 
   const completed: RunState = {
@@ -373,7 +406,7 @@ function completeRun(
     completion: {
       totalScore: state.scorePreview,
       profile,
-      stats: state.stats,
+      career: state.career,
       eventsPlayed: state.history.length,
     },
   }
@@ -510,7 +543,7 @@ export function createRun(
     stage: stage.id,
     eventIndex: 0,
     stageEventIndex: 0,
-    stats: initialStats(),
+    career: initialCareer(),
     flags: {},
     difficulty: initialDifficultyState(
       dependencies.ruleset.difficulty.initialFor(stage, undefined),
@@ -595,7 +628,17 @@ function handleAnswer(
     optimalStreak: state.optimalStreak,
   })
 
-  const withStats = applyStatEffects(state.stats, result.statEffects)
+  // Mastery is the engine's job, not content's: it comes from the challenge's
+  // declared categories and the quality reached, so every family contributes on
+  // the same scale. It is hidden and never rendered.
+  const definition = dependencies.challenges.get(active.challenge.definitionId)
+  const applied = applyCareerEffects(state.career, {
+    ...result.careerEffects,
+    mastery: [
+      ...(result.careerEffects.mastery ?? []),
+      ...masteryGainsFor(result.quality, definition?.categories ?? []),
+    ],
+  })
   const flags = result.flagEffects.reduce(
     (current, effect) => ({ ...current, [effect.flag]: effect.value }),
     state.flags,
@@ -618,7 +661,7 @@ function handleAnswer(
       instanceId: command.instanceId,
       points: score.totalPoints,
     },
-    ...statChangeEvents(state.stats, withStats),
+    ...careerChangeEvents(applied.change),
     ...result.flagEffects.map((effect) => ({
       type: 'flag.set' as const,
       flag: effect.flag,
@@ -666,7 +709,7 @@ function handleAnswer(
     state: {
       ...state,
       phase: 'feedback',
-      stats: withStats,
+      career: applied.career,
       flags,
       qualityHistory,
       difficulty,
@@ -678,6 +721,7 @@ function handleAnswer(
         quality: result.quality,
         feedback: result.feedback,
         score,
+        careerChange: applied.change,
       },
     },
     events,

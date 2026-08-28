@@ -1,20 +1,21 @@
-import { GeistSans } from 'geist/font/sans'
 import type { Metadata, Viewport } from 'next'
 import type { ReactNode } from 'react'
 
 import { BRAND_HEX } from '@/lib/ui/brand'
 
+import { fontVariables } from './fonts'
 import './globals.css'
 
 /**
  * Layout raíz.
  *
- * La tipografía se carga con `next/font/local` a través del paquete `geist`:
- * los archivos viven en `node_modules`, así que no hay pedido a un CDN ni en
- * runtime ni durante el build, y el build sigue siendo reproducible sin red.
+ * Las dos familias del sistema se cargan con `next/font/local` desde
+ * `src/app/fonts`: sin pedido a un CDN en runtime y sin descarga durante el
+ * build. Cada una publica su variable CSS, que es lo que consumen los tokens
+ * `--font-display` y `--font-body`.
  *
- * `GeistSans.variable` publica `--font-geist-sans`, que es lo que consume el
- * token `--font-sans` del sistema de diseño.
+ * `lang="es-AR"` no es decorativo: el juego escribe coma decimal, punto de miles
+ * y hora de 24 h, y un lector de pantalla tiene que leerlos con esas reglas.
  */
 
 export const metadata: Metadata = {
@@ -34,8 +35,8 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: ReactNode }>) {
   return (
-    <html lang="es" className={GeistSans.variable}>
-      <body className="bg-canvas text-foreground text-body min-h-dvh font-sans antialiased">
+    <html lang="es-AR" className={fontVariables}>
+      <body className="bg-canvas text-ink text-body font-body min-h-dvh antialiased">
         {children}
       </body>
     </html>

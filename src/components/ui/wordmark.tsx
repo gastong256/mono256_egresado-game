@@ -3,13 +3,13 @@ import { cn } from '@/lib/ui/cn'
 /**
  * Wordmark.
  *
- * Egresado no tiene logo todavía y este no es el momento de inventarle uno. La
- * marca es el nombre bien compuesto y un punto verde: repetido en la portada, en
- * la entrada y en el cierre del año, alcanza para que dos capturas se reconozcan
- * como el mismo producto.
+ * No es una imagen: es Schibsted Grotesk 800 con tracking −0,03em. Escala libre,
+ * recolorea por token, sin pipeline de assets, y sigue siendo texto
+ * seleccionable y buscable.
  *
- * El punto es decorativo y está fuera del árbol de accesibilidad: el nombre ya
- * está escrito.
+ * Egresado no tiene logo y éste no es el momento de inventarle uno. La marca es
+ * el nombre bien compuesto sobre papel cuadriculado; el tilde verde vive en el
+ * cierre de etapa, que es donde significa algo.
  */
 export function Wordmark({
   className,
@@ -21,21 +21,14 @@ export function Wordmark({
   return (
     <span
       className={cn(
-        'inline-flex items-baseline font-semibold tracking-tight',
-        size === 'sm' && 'text-heading',
-        size === 'md' && 'text-title',
+        'font-display text-ink inline-block',
+        size === 'sm' && 'text-[17px] font-extrabold tracking-[-0.03em]',
+        size === 'md' && 'text-section',
         size === 'lg' && 'text-display',
         className,
       )}
     >
       Egresado
-      <span
-        aria-hidden="true"
-        className={cn(
-          'bg-primary ml-1 inline-block rounded-full',
-          size === 'lg' ? 'size-2' : 'size-1.5',
-        )}
-      />
     </span>
   )
 }

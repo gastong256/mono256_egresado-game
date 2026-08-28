@@ -157,9 +157,9 @@ export const developmentProfilePolicy: ProfilePolicy = {
   id: 'development-profile-v1',
   production: false,
 
-  // Visible stats are part of the contract for future policies; this one
-  // classifies purely on the hidden reasoning dimensions, so it does not read
-  // them and the parameter is omitted.
+  // The career is part of the contract for future policies; this one classifies
+  // purely on the hidden reasoning dimensions, so it does not read it and the
+  // parameter is omitted.
   classify(dimensions: ProfileDimensions): ProfileResult {
     const ranked = PROFILE_IDS.map((profileId, index) => ({
       profileId,

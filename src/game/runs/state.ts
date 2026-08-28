@@ -30,7 +30,7 @@ import type { FlagMap } from '../narrative/conditions'
 import type { SelectionState } from '../narrative/selection'
 import type { ProfileResult } from '../profiles/policy'
 import type { StageId } from '../progression/stages'
-import type { PlayerStats } from '../progression/stats'
+import type { CareerChange, CareerState } from '../progression/career'
 import type { ScoreBreakdown } from '../scoring/policy'
 
 /** Modes from the GDD. `practice` carries no ranking. */
@@ -70,6 +70,8 @@ export type RunPhase = 'narrative' | 'challenge' | 'feedback' | 'completed'
 
 export interface ActiveEvent {
   readonly storyletId: StoryletId
+  /** The moment of the year, shown above the title. */
+  readonly eyebrow: string
   readonly title: string
   readonly text: string
   /** Absent for a purely narrative beat. */
@@ -78,6 +80,14 @@ export interface ActiveEvent {
   readonly revealed: readonly string[]
   /** Tools opened on this event; recorded for analytics, never penalised. */
   readonly toolsUsed: readonly ToolId[]
+  /**
+   * What the storylet's own effects moved when the beat opened.
+   *
+   * A purely narrative beat can still change the career — the course offering
+   * you the coordination of the project moves Equipo — and the card shows a chip
+   * for it. Keeping the report in state means a resume redraws the same chip.
+   */
+  readonly careerChange: CareerChange
 }
 
 /** Feedback awaiting acknowledgement, kept in state so a resume can restore it. */
@@ -86,6 +96,14 @@ export interface PendingFeedback {
   readonly quality: SolutionQuality
   readonly feedback: ChallengeFeedback
   readonly score: ScoreBreakdown
+  /**
+   * The career dimensions this outcome actually moved.
+   *
+   * Reported by the engine rather than diffed by the UI, so the panel can render
+   * one chip per dimension present and none for the rest. `Promedio +0` is not
+   * representable.
+   */
+  readonly careerChange: CareerChange
 }
 
 export interface ResolvedEvent {
@@ -105,7 +123,7 @@ export interface ResolvedEvent {
 export interface RunCompletion {
   readonly totalScore: number
   readonly profile: ProfileResult
-  readonly stats: PlayerStats
+  readonly career: CareerState
   readonly eventsPlayed: number
 }
 
@@ -118,7 +136,7 @@ export interface RunState {
   readonly eventIndex: number
   /** Event counter within the current stage. */
   readonly stageEventIndex: number
-  readonly stats: PlayerStats
+  readonly career: CareerState
   readonly flags: FlagMap
   readonly difficulty: DifficultyState
   readonly selection: SelectionState

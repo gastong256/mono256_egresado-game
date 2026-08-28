@@ -45,7 +45,7 @@ Estas reglas se verifican con lint de fronteras, un proyecto TypeScript sin DOM/
 3. `generate` debe **construir** parámetros válidos, no confiar en el reintento. El reintento es una red de seguridad para el caso raro, no un sustituto de resolver el problema internamente.
 4. `verify` declara las invariantes: existe al menos una solución funcional, el óptimo existe si se declara, no hay división por cero, no hay opciones equivalentes engañosas, las unidades son consistentes y los valores entran en la UI.
 5. `present` no puede filtrar la solución.
-6. `evaluate` devuelve calidad, feedback estructurado con los números que explican la consecuencia, métricas, efectos de stats y flags.
+6. `evaluate` devuelve calidad, feedback estructurado —los números que explican la consecuencia, más la consecuencia narrativa y el sello—, métricas, efectos de carrera y flags. Un resultado declara **sólo** las dimensiones que puede tocar: la ausencia de una clave no es un cero.
 7. Registrar la definición en el content set y referenciarla desde un storylet cuyas etapas estén incluidas en las del desafío.
 8. Correr `pnpm game:validate-content -- --stats` y `pnpm game:simulate`.
 

@@ -225,10 +225,7 @@ export const recyclingChart: ChallengeDefinition =
               'Comparaste kilos por alumno y no el total absoluto.',
           },
           metrics: metrics({ efficiency: 1, precision: 1, risk: 0 }),
-          statEffects: [
-            { stat: 'knowledge', delta: 2 },
-            { stat: 'team', delta: 1 },
-          ],
+          careerEffects: { equipo: 2, estilo: { axis: 'aplicado', amount: 6 } },
           flagEffects: [{ flag: 'recycling.readRatio', value: true }],
         })
       }
@@ -248,7 +245,7 @@ export const recyclingChart: ChallengeDefinition =
             optimalComparison: `${best.label} juntó ${formatDecimal(best.perStudent, 2)} kg por alumno.`,
           },
           metrics: metrics({ efficiency: 0, precision, risk: 0.4 }),
-          statEffects: [{ stat: 'knowledge', delta: 0 }],
+          careerEffects: {},
           flagEffects: [{ flag: 'recycling.readTotals', value: true }],
         })
       }
@@ -261,7 +258,7 @@ export const recyclingChart: ChallengeDefinition =
           optimalComparison: `${best.label} tuvo la mejor proporción.`,
         },
         metrics: metrics({ efficiency: 0.4, precision, risk: 0.3 }),
-        statEffects: [{ stat: 'knowledge', delta: 1 }],
+        careerEffects: { estilo: { axis: 'aplicado', amount: 6 } },
         flagEffects: [],
       })
     },

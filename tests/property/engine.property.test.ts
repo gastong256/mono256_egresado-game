@@ -12,7 +12,6 @@ import {
   serializeSnapshot,
   STAGE_ORDER,
   toRunSeed,
-  VISIBLE_STATS,
 } from '@/game'
 import {
   createDevelopmentDependencies,
@@ -23,11 +22,14 @@ import { createRng } from '@/game/random/rng'
 import { deriveSeedValue } from '@/game/random/seed'
 import { eligibleStorylets, selectStorylet } from '@/game/narrative/selection'
 import {
-  initialStats,
-  readStat,
-  STAT_MAXIMUM,
-  STAT_MINIMUM,
-} from '@/game/progression/stats'
+  EQUIPO_MAX,
+  EQUIPO_MIN,
+  ESTILO_AXES,
+  initialCareer,
+  promedio,
+  PROMEDIO_MAX,
+  PROMEDIO_MIN,
+} from '@/game/progression/career'
 import { developmentScoringPolicy } from '@/game/scoring/development-policy'
 import { developmentProfilePolicy } from '@/game/profiles/development-policy'
 import { SOLUTION_QUALITIES } from '@/game/challenges/taxonomy'
@@ -256,7 +258,7 @@ describe('profile policy', () => {
         (dimensions) => {
           const result = developmentProfilePolicy.classify(
             dimensions,
-            initialStats(),
+            initialCareer(),
           )
           expect(result.profileId).toBeTruthy()
           expect(result.runnerUpId).not.toBe(result.profileId)
@@ -280,11 +282,11 @@ describe('profile policy', () => {
         (dimensions) => {
           const first = developmentProfilePolicy.classify(
             dimensions,
-            initialStats(),
+            initialCareer(),
           )
           const second = developmentProfilePolicy.classify(
             dimensions,
-            initialStats(),
+            initialCareer(),
           )
           expect(second).toEqual(first)
         },
@@ -304,7 +306,7 @@ describe('storylet selection', () => {
           const context = {
             stage,
             eventIndex,
-            stats: initialStats(),
+            career: initialCareer(),
             flags: {},
             seenStorylets: [],
             qualityHistory: [],
@@ -369,11 +371,37 @@ describe('run invariants across seeds', () => {
           dependencies.ruleset.stages.length,
         )
 
-        for (const stat of VISIBLE_STATS) {
-          const value = readStat(state.stats, stat)
-          expect(value).toBeGreaterThanOrEqual(STAT_MINIMUM)
-          expect(value).toBeLessThanOrEqual(STAT_MAXIMUM)
-          expect(Number.isInteger(value)).toBe(true)
+        // Ninguna run válida puede producir un estado de carrera imposible:
+        // una dimensión establecida está dentro de rango, y una que nadie tocó
+        // sigue en `null` en vez de haberse convertido en 0.
+        const average = promedio(state.career)
+        if (average !== null) {
+          expect(average).toBeGreaterThanOrEqual(PROMEDIO_MIN)
+          expect(average).toBeLessThanOrEqual(PROMEDIO_MAX)
+        }
+        if (state.career.equipo !== null) {
+          expect(state.career.equipo).toBeGreaterThanOrEqual(EQUIPO_MIN)
+          expect(state.career.equipo).toBeLessThanOrEqual(EQUIPO_MAX)
+          expect(Number.isInteger(state.career.equipo)).toBe(true)
+        }
+        if (state.career.aura !== null) {
+          expect(Number.isInteger(state.career.aura)).toBe(true)
+        }
+
+        // Estilo es ternario: los tres porcentajes suman exactamente 100 en
+        // cualquier run, sin importar cuántos empujones recibió.
+        const estiloTotal = ESTILO_AXES.reduce(
+          (sum, axis) => sum + state.career.estilo[axis],
+          0,
+        )
+        expect(estiloTotal).toBe(100)
+        for (const axis of ESTILO_AXES) {
+          expect(Number.isInteger(state.career.estilo[axis])).toBe(true)
+        }
+
+        for (const value of Object.values(state.career.mastery)) {
+          expect(value).toBeGreaterThanOrEqual(0)
+          expect(value).toBeLessThanOrEqual(1)
         }
 
         expect(Number.isFinite(state.scorePreview)).toBe(true)

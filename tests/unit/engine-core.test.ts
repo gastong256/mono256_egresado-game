@@ -64,7 +64,7 @@ import {
   recordSelection,
   selectStorylet,
 } from '@/game/narrative/selection'
-import { initialStats } from '@/game/progression/stats'
+import { initialCareer } from '@/game/progression/career'
 import { createRng } from '@/game/random/rng'
 import { toStoryletId } from '@/game'
 import type { Storylet } from '@/game'
@@ -156,8 +156,8 @@ describe('rejection descriptions', () => {
 describe('version compatibility', () => {
   const expected = {
     gameVersion: ENGINE_VERSION,
-    rulesetVersion: '0.1.0-dev',
-    contentVersion: '0.1.0-dev',
+    rulesetVersion: '0.2.0-dev',
+    contentVersion: '0.2.0-dev',
   }
 
   it('accepts an exact match', () => {
@@ -362,7 +362,12 @@ describe('storylet conditions', () => {
   const context: NarrativeContext = {
     stage: 'year-2',
     eventIndex: 5,
-    stats: { ...initialStats(), knowledge: 70, energy: 20 },
+    career: {
+      ...initialCareer(),
+      grades: [7],
+      equipo: 20,
+      aura: 250,
+    },
     flags: { 'mural.optimal': true, attempts: 3 },
     seenStorylets: [toStoryletId('dev.mural')],
     qualityHistory: ['functional', 'optimal', 'efficient', 'invalid'],
@@ -373,20 +378,29 @@ describe('storylet conditions', () => {
     ['matching stage', { kind: 'stage-in', stages: ['year-2'] }, true],
     ['other stage', { kind: 'stage-in', stages: ['year-4'] }, false],
     [
-      'stat at least',
-      { kind: 'stat-at-least', stat: 'knowledge', value: 70 },
+      'career at least',
+      { kind: 'career-at-least', dimension: 'promedio', value: 7 },
       true,
     ],
     [
-      'stat at least, unmet',
-      { kind: 'stat-at-least', stat: 'knowledge', value: 71 },
+      'career at least, unmet',
+      { kind: 'career-at-least', dimension: 'promedio', value: 7.1 },
       false,
     ],
-    ['stat at most', { kind: 'stat-at-most', stat: 'energy', value: 20 }, true],
     [
-      'stat at most, unmet',
-      { kind: 'stat-at-most', stat: 'energy', value: 19 },
+      'career at most',
+      { kind: 'career-at-most', dimension: 'equipo', value: 20 },
+      true,
+    ],
+    [
+      'career at most, unmet',
+      { kind: 'career-at-most', dimension: 'equipo', value: 19 },
       false,
+    ],
+    [
+      'an Estilo axis, which is never null',
+      { kind: 'career-at-least', dimension: 'aplicado', value: 30 },
+      true,
     ],
     ['flag set', { kind: 'flag-set', flag: 'mural.optimal' }, true],
     ['flag not set', { kind: 'flag-not-set', flag: 'absent' }, true],
@@ -504,43 +518,53 @@ describe('storylet conditions', () => {
   it('accepts well-formed conditions', () => {
     expect(validateCondition({ kind: 'always' })).toEqual([])
     expect(
-      validateCondition({ kind: 'stat-at-least', stat: 'team', value: 10 }),
+      validateCondition({
+        kind: 'career-at-least',
+        dimension: 'equipo',
+        value: 10,
+      }),
     ).toEqual([])
   })
 })
 
 describe('storylet effects', () => {
   it('applies and removes flags without mutating the input', () => {
-    const before = { stats: initialStats(), flags: { keep: true, drop: 1 } }
+    const before = { career: initialCareer(), flags: { keep: true, drop: 1 } }
     const after = applyEffects(before, [
-      { kind: 'stat-add', stat: 'team', delta: 5 },
+      { kind: 'career', effects: { equipo: 5 } },
       { kind: 'flag-set', flag: 'added', value: 'yes' },
       { kind: 'flag-clear', flag: 'drop' },
       { kind: 'flag-clear', flag: 'never-existed' },
     ])
 
-    expect(after.stats.team).toBe(55)
-    expect(after.flags).toEqual({ keep: true, added: 'yes' })
+    // Equipo arranca en `null` y el primer evento colaborativo la establece
+    // desde el punto neutro, no desde cero.
+    expect(after.slice.career.equipo).toBe(55)
+    expect(after.change.equipo).toEqual({ from: null, to: 55, delta: 5 })
+    expect(after.slice.flags).toEqual({ keep: true, added: 'yes' })
     // The input is untouched.
     expect(before.flags).toEqual({ keep: true, drop: 1 })
-    expect(before.stats.team).toBe(50)
+    expect(before.career.equipo).toBeNull()
   })
 
-  it('rejects oversized stat deltas and empty flag names', () => {
+  it('rejects oversized deltas and empty flag names', () => {
     expect(
-      validateEffect({ kind: 'stat-add', stat: 'team', delta: 40 }).length,
+      validateEffect({ kind: 'career', effects: { equipo: 40 } }).length,
     ).toBeGreaterThan(0)
     expect(
-      validateEffect({ kind: 'stat-add', stat: 'team', delta: Number.NaN })
+      validateEffect({ kind: 'career', effects: { equipo: Number.NaN } })
         .length,
+    ).toBeGreaterThan(0)
+    expect(
+      validateEffect({ kind: 'career', effects: { grade: 12 } }).length,
     ).toBeGreaterThan(0)
     expect(
       validateEffect({ kind: 'flag-set', flag: '', value: 1 }).length,
     ).toBe(1)
     expect(validateEffect({ kind: 'flag-clear', flag: '' }).length).toBe(1)
-    expect(
-      validateEffect({ kind: 'stat-add', stat: 'team', delta: 3 }),
-    ).toEqual([])
+    expect(validateEffect({ kind: 'career', effects: { equipo: 3 } })).toEqual(
+      [],
+    )
   })
 })
 
@@ -553,6 +577,7 @@ describe('storylet selection edge cases', () => {
     priority: 0,
     requires: { kind: 'always' },
     tags: [],
+    eyebrow: 'Prueba',
     title: 'Uno',
     text: 'Texto',
     challengePool: [],
@@ -563,7 +588,7 @@ describe('storylet selection edge cases', () => {
   const context: NarrativeContext = {
     stage: 'year-1',
     eventIndex: 3,
-    stats: initialStats(),
+    career: initialCareer(),
     flags: {},
     seenStorylets: [],
     qualityHistory: [],

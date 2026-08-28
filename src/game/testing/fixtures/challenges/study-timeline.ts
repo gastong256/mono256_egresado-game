@@ -180,7 +180,7 @@ export const studyTimeline: ChallengeDefinition =
             precision: chosen.minutes / model.minutesNeeded,
             risk: 0.7,
           }),
-          statEffects: [{ stat: 'knowledge', delta: -1 }],
+          careerEffects: { estilo: { axis: 'improvisador', amount: 6 } },
           flagEffects: [{ flag: 'study.underprepared', value: true }],
         })
       }
@@ -200,10 +200,7 @@ export const studyTimeline: ChallengeDefinition =
               'Fue el bloque más ajustado que alcanzaba, así que el resto de la semana quedó libre.',
           },
           metrics: metrics({ efficiency, precision: 1, risk: 0.2 }),
-          statEffects: [
-            { stat: 'knowledge', delta: 2 },
-            { stat: 'energy', delta: 1 },
-          ],
+          careerEffects: { estilo: { axis: 'aplicado', amount: 6 } },
           flagEffects: [{ flag: 'study.planned', value: true }],
         })
       }
@@ -221,7 +218,7 @@ export const studyTimeline: ChallengeDefinition =
           ],
         },
         metrics: metrics({ efficiency, precision: 1, risk: 0.1 }),
-        statEffects: [{ stat: 'knowledge', delta: 1 }],
+        careerEffects: { estilo: { axis: 'aplicado', amount: 6 } },
         flagEffects: [],
       })
     },

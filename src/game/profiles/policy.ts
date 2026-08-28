@@ -10,7 +10,7 @@
  * defines the dimensions and the classification mechanism only.
  */
 
-import type { PlayerStats } from '../progression/stats'
+import type { CareerState } from '../progression/career'
 
 export const PROFILE_IDS = [
   'strategist',
@@ -29,7 +29,7 @@ export type ProfileId = (typeof PROFILE_IDS)[number]
  * Normalized run features, each 0..1.
  *
  * These are the hidden educational dimensions from the GDD, kept separate from
- * the visible career stats.
+ * the four visible career dimensions.
  */
 export interface ProfileDimensions {
   readonly efficiency: number
@@ -59,7 +59,7 @@ export interface ProfileResult {
 export interface ProfilePolicy {
   readonly id: string
   readonly production: boolean
-  classify(dimensions: ProfileDimensions, stats: PlayerStats): ProfileResult
+  classify(dimensions: ProfileDimensions, career: CareerState): ProfileResult
 }
 
 export function emptyDimensions(): ProfileDimensions {

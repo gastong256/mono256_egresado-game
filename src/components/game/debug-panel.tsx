@@ -7,8 +7,8 @@
  * the last domain events and the action log — everything needed to reproduce a
  * bug from a seed.
  *
- * Only rendered when the caller passes `showDebug`, which the development
- * harness route gates on the environment. It is never mounted by a production
+ * Only rendered by the development harness, which its route gates on the
+ * environment. It is never mounted by a production
  * screen, and it deliberately exposes nothing that is not already derivable
  * from the client's own state.
  */
@@ -23,7 +23,7 @@ export function DebugPanel({ state }: { readonly state: ControllerState }) {
     <section
       id="debug-panel"
       aria-label="Diagnóstico de desarrollo"
-      className="border-line-interactive rounded-surface text-caption mt-3 flex flex-col gap-3 border border-dashed p-3"
+      className="border-rule text-caption mt-3 flex flex-col gap-3 border border-dashed p-3"
     >
       <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1">
         {(
@@ -47,17 +47,19 @@ export function DebugPanel({ state }: { readonly state: ControllerState }) {
           ] as const
         ).map(([label, value]) => (
           <div key={label} className="contents">
-            <dt className="text-foreground-muted">{label}</dt>
+            <dt className="text-ink-secondary">{label}</dt>
             <dd className="font-mono break-all">{value}</dd>
           </div>
         ))}
       </dl>
 
       <div>
-        <h3 className="text-subheading mb-1">Últimos eventos de dominio</h3>
+        <h3 className="text-goal font-display mb-1">
+          Últimos eventos de dominio
+        </h3>
         <ul className="flex list-none flex-col gap-0.5 p-0 font-mono">
           {state.lastEvents.length === 0 ? (
-            <li className="text-foreground-muted">—</li>
+            <li className="text-ink-secondary">—</li>
           ) : (
             state.lastEvents.map((event, index) => (
               <li key={`${event.type}-${String(index)}`}>{event.type}</li>
@@ -67,7 +69,7 @@ export function DebugPanel({ state }: { readonly state: ControllerState }) {
       </div>
 
       <div>
-        <h3 className="text-subheading mb-1">Flags</h3>
+        <h3 className="text-goal font-display mb-1">Flags</h3>
         <p className="font-mono break-all">
           {Object.keys(run.flags).length === 0
             ? '—'

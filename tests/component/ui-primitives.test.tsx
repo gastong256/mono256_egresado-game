@@ -10,8 +10,8 @@ import {
   Callout,
   ChoiceCard,
   NumberField,
-  Progress,
   QuantityStepper,
+  StageProgress,
   Surface,
   TextField,
   Wordmark,
@@ -281,23 +281,22 @@ describe('QuantityStepper', () => {
   })
 })
 
-describe('Progress', () => {
-  it('usa la semántica nativa de progreso', () => {
-    render(<Progress value={3} max={7} label="Progreso del año" />)
+describe('StageProgress', () => {
+  it('dice el avance con palabras, no sólo con celdas', () => {
+    render(<StageProgress resolved={3} total={7} />)
 
-    const progress = screen.getByRole('progressbar', {
-      name: 'Progreso del año',
-    })
-    expect(progress.tagName).toBe('PROGRESS')
-    expect(progress).toHaveAttribute('value', '3')
-    expect(progress).toHaveAttribute('max', '7')
+    // El progreso son celdas de la cuadrícula, no una barra: el texto es lo que
+    // hace que no haya que contar cuadraditos con un lector de pantalla.
+    expect(screen.getByText('Evento 4 de 7')).toBeInTheDocument()
   })
 })
 
 describe('Badge, Surface, Callout y Wordmark', () => {
   it('la etiqueta dice lo que significa, no sólo lo pinta', () => {
-    render(<Badge tone="brand">7.º grado</Badge>)
-    expect(screen.getByText('7.º grado')).toBeInTheDocument()
+    render(<Badge tone="up">Promedio 8,0 → 8,4</Badge>)
+    // El chip lleva siempre signo o flecha: en escala de grises uno que subió y
+    // uno que bajó siguen siendo distintos.
+    expect(screen.getByText('Promedio 8,0 → 8,4')).toBeInTheDocument()
   })
 
   it('Surface puede cambiar de elemento sin perder atributos', () => {
@@ -311,22 +310,19 @@ describe('Badge, Surface, Callout y Wordmark', () => {
     expect(within(section).getByText('contenido')).toBeInTheDocument()
   })
 
-  it('Callout mantiene el ícono fuera del árbol de accesibilidad', () => {
-    const { container } = render(
-      <Callout tone="warning" title="Sin conexión">
+  it('Callout dice el tono con palabras y no sólo con el filete', () => {
+    render(
+      <Callout tone="accent" title="Sin conexión">
         Se reintenta después.
       </Callout>,
     )
     expect(screen.getByText('Sin conexión')).toBeInTheDocument()
-    // El tono ya está dicho con palabras; el ícono no aporta nada leído.
-    expect(container.querySelectorAll('svg[aria-hidden="true"]')).toHaveLength(
-      1,
-    )
+    expect(screen.getByText('Se reintenta después.')).toBeInTheDocument()
   })
 
   it('el wordmark se lee como el nombre del producto', () => {
     render(<Wordmark />)
-    // El punto verde es decorativo: quien escucha la página oye "Egresado".
+    // Es texto compuesto, no una imagen: seleccionable y buscable.
     expect(screen.getByText('Egresado').textContent?.trim()).toBe('Egresado')
   })
 })

@@ -230,7 +230,7 @@ export const muralCoverage: ChallengeDefinition = defineChallenge<MuralModel>({
           precision: precisionFromDistance(chosen.litres, model.requiredLitres),
           risk: 0,
         }),
-        statEffects: [{ stat: 'energy', delta: -1 }],
+        careerEffects: { estilo: { axis: 'improvisador', amount: 6 } },
         flagEffects: [{ flag: 'mural.repurchase', value: true }],
       })
     }
@@ -251,10 +251,7 @@ export const muralCoverage: ChallengeDefinition = defineChallenge<MuralModel>({
           optimalComparison: `Fue la opción suficiente más barata: $ ${formatMoney(money(chosen.priceMinor))}.`,
         },
         metrics: metrics({ efficiency, precision: 1, risk: 0 }),
-        statEffects: [
-          { stat: 'knowledge', delta: 2 },
-          { stat: 'initiative', delta: 1 },
-        ],
+        careerEffects: { estilo: { axis: 'estratega', amount: 6 } },
         flagEffects: [{ flag: 'mural.optimal', value: true }],
       })
     }
@@ -277,7 +274,7 @@ export const muralCoverage: ChallengeDefinition = defineChallenge<MuralModel>({
             }),
       },
       metrics: metrics({ efficiency, precision: 1, risk: 0 }),
-      statEffects: [{ stat: 'knowledge', delta: 1 }],
+      careerEffects: { estilo: { axis: 'aplicado', amount: 6 } },
       flagEffects: [],
     })
   },

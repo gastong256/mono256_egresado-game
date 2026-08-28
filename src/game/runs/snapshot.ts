@@ -29,7 +29,15 @@ import {
   type VersionTriple,
 } from '../core/versioning'
 import { STAGE_ORDER } from '../progression/stages'
-import { SOLUTION_QUALITIES } from '../challenges/taxonomy'
+import { ESTILO_AXES } from '../progression/career'
+import type {
+  CareerChange,
+  CareerState,
+  Estilo,
+  EstiloAxis,
+} from '../progression/career'
+import { MATH_CATEGORIES, SOLUTION_QUALITIES } from '../challenges/taxonomy'
+import type { MathCategory } from '../challenges/taxonomy'
 import type { ChallengeFeedback } from '../challenges/contracts'
 import { PROFILE_IDS } from '../profiles/policy'
 import { runStateIssues } from './invariants'
@@ -38,11 +46,18 @@ import type { RunState } from './state'
 /**
  * Snapshot schema version.
  *
- * Raised when the persisted shape changes. No migration registry exists yet
- * because no second version exists; the version field and this codec are the
- * boundary where one would be added.
+ * Raised when the persisted shape changes.
+ *
+ * Version 2 replaced the four v0.1 stats (`knowledge · team · initiative ·
+ * energy`) with the career model (`Promedio · Equipo · Aura · Estilo`). The two
+ * shapes do not describe the same thing — a run played under v1 has no grades
+ * and no Aura, and inventing them would fabricate a career the player never
+ * had — so there is deliberately no migration from 1 to 2. A v1 snapshot is
+ * rejected as an unsupported version, which the application handles by
+ * discarding the checkpoint and offering a fresh run; that is a better outcome
+ * than resuming into numbers nobody earned.
  */
-export const SNAPSHOT_SCHEMA_VERSION = 1
+export const SNAPSHOT_SCHEMA_VERSION = 2
 
 // Built from the canonical tuples, so each schema infers the exact literal
 // union. That is what lets the restore path below be cast-free.
@@ -60,11 +75,46 @@ const difficultySchema = z.union([
 const flagValueSchema = z.union([z.boolean(), z.number(), z.string()])
 const flagMapSchema = z.record(z.string(), flagValueSchema)
 
-const statsSchema = z.object({
-  knowledge: z.number().int().min(0).max(100),
-  team: z.number().int().min(0).max(100),
-  initiative: z.number().int().min(0).max(100),
-  energy: z.number().int().min(0).max(100),
+const estiloSchema = z
+  .object({
+    aplicado: z.number().int().min(0).max(100),
+    estratega: z.number().int().min(0).max(100),
+    improvisador: z.number().int().min(0).max(100),
+  })
+  // Estilo is a ternary split, so the three shares agreeing with each other is
+  // part of the shape and not an afterthought a caller could skip.
+  .refine(
+    (estilo) =>
+      estilo.aplicado + estilo.estratega + estilo.improvisador === 100,
+    { message: 'the three Estilo shares must add up to 100' },
+  )
+
+const careerSchema = z.object({
+  grades: z.array(z.number().min(1).max(10)).max(256),
+  equipo: z.number().int().min(0).max(100).nullable(),
+  aura: z.number().int().nullable(),
+  estilo: estiloSchema,
+  estiloEvidence: z.number().int().min(0),
+  // Partial on purpose: a category with no key has no evidence yet, which is
+  // a different statement from mastery 0.
+  mastery: z.partialRecord(z.enum(MATH_CATEGORIES), z.number().min(0).max(1)),
+})
+
+const careerChangeSchema = z.object({
+  promedio: z
+    .object({ from: z.number().nullable(), to: z.number() })
+    .nullable(),
+  equipo: z
+    .object({
+      from: z.number().nullable(),
+      to: z.number(),
+      delta: z.number().int(),
+    })
+    .nullable(),
+  aura: z
+    .object({ delta: z.number().int(), total: z.number().int() })
+    .nullable(),
+  estilo: z.object({ axis: z.enum(ESTILO_AXES) }).nullable(),
 })
 
 const metricsSchema = z.object({
@@ -81,6 +131,8 @@ const feedbackSchema = z.object({
   facts: z.array(factSchema).max(32),
   violatedConstraint: z.string().optional(),
   optimalComparison: z.string().optional(),
+  consequence: z.string().optional(),
+  stamp: z.string().optional(),
 })
 
 const scoreSchema = z.object({
@@ -103,6 +155,7 @@ const challengeRefSchema = z.object({
 
 const activeEventSchema = z.object({
   storyletId: z.string().regex(IDENTIFIER_PATTERN),
+  eyebrow: z.string(),
   title: z.string(),
   text: z.string(),
   challenge: challengeRefSchema.nullable(),
@@ -110,6 +163,7 @@ const activeEventSchema = z.object({
   toolsUsed: z
     .array(z.enum(['calculator', 'notepad', 'table', 'ruler']))
     .max(8),
+  careerChange: careerChangeSchema,
 })
 
 const resolvedEventSchema = z.object({
@@ -141,7 +195,7 @@ const stateSchema = z.object({
   stage: stageSchema,
   eventIndex: z.number().int().min(0),
   stageEventIndex: z.number().int().min(0),
-  stats: statsSchema,
+  career: careerSchema,
   flags: flagMapSchema,
   difficulty: z.object({
     current: difficultySchema,
@@ -159,6 +213,7 @@ const stateSchema = z.object({
       quality: qualitySchema,
       feedback: feedbackSchema,
       score: scoreSchema,
+      careerChange: careerChangeSchema,
     })
     .nullable(),
   history: z.array(resolvedEventSchema).max(256),
@@ -172,7 +227,7 @@ const stateSchema = z.object({
         evidence: z.array(z.object({ key: z.string(), value: z.string() })),
         runnerUpId: profileSchema.nullable(),
       }),
-      stats: statsSchema,
+      career: careerSchema,
       eventsPlayed: z.number().int().min(0),
     })
     .nullable(),
@@ -211,6 +266,8 @@ function restoreFeedback(raw: {
   facts: readonly { label: string; value: string }[]
   violatedConstraint?: string | undefined
   optimalComparison?: string | undefined
+  consequence?: string | undefined
+  stamp?: string | undefined
 }): ChallengeFeedback {
   return {
     outcomeKey: raw.outcomeKey,
@@ -221,6 +278,63 @@ function restoreFeedback(raw: {
     ...(raw.optimalComparison === undefined
       ? {}
       : { optimalComparison: raw.optimalComparison }),
+    ...(raw.consequence === undefined ? {} : { consequence: raw.consequence }),
+    ...(raw.stamp === undefined ? {} : { stamp: raw.stamp }),
+  }
+}
+
+/** Persisted form of a change report: absent optionals become explicit nulls. */
+function careerChangeToJson(change: CareerChange): {
+  promedio: { from: number | null; to: number } | null
+  equipo: { from: number | null; to: number; delta: number } | null
+  aura: { delta: number; total: number } | null
+  estilo: { axis: EstiloAxis } | null
+} {
+  return {
+    promedio: orNull(change.promedio),
+    equipo: orNull(change.equipo),
+    aura: orNull(change.aura),
+    estilo: orNull(change.estilo),
+  }
+}
+
+/**
+ * Rebuilds a change report so absent dimensions are genuinely absent.
+ *
+ * `exactOptionalPropertyTypes` distinguishes "key missing" from "key present and
+ * undefined", and the whole point of the report is that a missing key means the
+ * dimension did not move.
+ */
+function restoreCareerChange(raw: {
+  promedio: { from: number | null; to: number } | null
+  equipo: { from: number | null; to: number; delta: number } | null
+  aura: { delta: number; total: number } | null
+  estilo: { axis: EstiloAxis } | null
+}): CareerChange {
+  return {
+    ...(raw.promedio === null ? {} : { promedio: raw.promedio }),
+    ...(raw.equipo === null ? {} : { equipo: raw.equipo }),
+    ...(raw.aura === null ? {} : { aura: raw.aura }),
+    ...(raw.estilo === null ? {} : { estilo: raw.estilo }),
+  }
+}
+
+/** Deep copy of a career, so the snapshot never aliases live state. */
+function careerToJson(career: CareerState): {
+  grades: number[]
+  equipo: number | null
+  aura: number | null
+  estilo: Estilo
+  estiloEvidence: number
+  mastery: Partial<Record<MathCategory, number>>
+} {
+  return {
+    grades: [...career.grades],
+    equipo: career.equipo,
+    aura: career.aura,
+    estilo: { ...career.estilo },
+    estiloEvidence: career.estiloEvidence,
+    mastery: { ...career.mastery },
   }
 }
 
@@ -238,7 +352,7 @@ export function serializeSnapshot(state: RunState): RunSnapshot {
       stage: state.stage,
       eventIndex: state.eventIndex,
       stageEventIndex: state.stageEventIndex,
-      stats: { ...state.stats },
+      career: careerToJson(state.career),
       flags: { ...state.flags },
       difficulty: {
         current: state.difficulty.current,
@@ -252,11 +366,13 @@ export function serializeSnapshot(state: RunState): RunSnapshot {
           ? null
           : {
               storyletId: active.storyletId,
+              eyebrow: active.eyebrow,
               title: active.title,
               text: active.text,
               challenge: orNull(active.challenge),
               revealed: [...active.revealed],
               toolsUsed: [...active.toolsUsed],
+              careerChange: careerChangeToJson(active.careerChange),
             },
       pendingFeedback:
         feedback === undefined
@@ -266,6 +382,7 @@ export function serializeSnapshot(state: RunState): RunSnapshot {
               quality: feedback.quality,
               feedback: feedback.feedback,
               score: feedback.score,
+              careerChange: careerChangeToJson(feedback.careerChange),
             },
       history: state.history.map((entry) => ({
         ...entry,
@@ -280,11 +397,13 @@ export function serializeSnapshot(state: RunState): RunSnapshot {
         completion === undefined
           ? null
           : {
-              ...completion,
+              totalScore: completion.totalScore,
               profile: {
                 ...completion.profile,
                 runnerUpId: orNull(completion.profile.runnerUpId),
               },
+              career: careerToJson(completion.career),
+              eventsPlayed: completion.eventsPlayed,
             },
     },
   }
@@ -344,7 +463,7 @@ export function restoreSnapshot(
     stage: raw.stage,
     eventIndex: raw.eventIndex,
     stageEventIndex: raw.stageEventIndex,
-    stats: raw.stats,
+    career: raw.career,
     flags: raw.flags,
     difficulty: {
       current: raw.difficulty.current,
@@ -358,6 +477,7 @@ export function restoreSnapshot(
         ? undefined
         : {
             storyletId: toStoryletId(raw.activeEvent.storyletId),
+            eyebrow: raw.activeEvent.eyebrow,
             title: raw.activeEvent.title,
             text: raw.activeEvent.text,
             challenge:
@@ -376,6 +496,7 @@ export function restoreSnapshot(
                   },
             revealed: raw.activeEvent.revealed,
             toolsUsed: raw.activeEvent.toolsUsed,
+            careerChange: restoreCareerChange(raw.activeEvent.careerChange),
           },
     pendingFeedback:
       raw.pendingFeedback === null
@@ -385,6 +506,7 @@ export function restoreSnapshot(
             quality: raw.pendingFeedback.quality,
             feedback: restoreFeedback(raw.pendingFeedback.feedback),
             score: raw.pendingFeedback.score,
+            careerChange: restoreCareerChange(raw.pendingFeedback.careerChange),
           },
     history: raw.history.map((entry) => ({
       sequence: entry.sequence,
@@ -417,7 +539,7 @@ export function restoreSnapshot(
               evidence: raw.completion.profile.evidence,
               runnerUpId: raw.completion.profile.runnerUpId ?? undefined,
             },
-            stats: raw.completion.stats,
+            career: raw.completion.career,
             eventsPlayed: raw.completion.eventsPlayed,
           },
   }

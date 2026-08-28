@@ -50,7 +50,7 @@ Recupera una decisión previa: un compañero vuelve a aparecer, una actividad ab
 2–4 eventos relacionados distribuidos en años.
 
 ### Evento sistémico
-Se activa por thresholds: alta iniciativa, energía muy baja, etc.
+Se activa por thresholds sobre una dimensión de carrera: Equipo muy bajo, Promedio bajo, Aura alta. Una dimensión todavía sin establecer **no satisface un umbral en ninguna dirección** — «sin evidencia» no es «poco».
 
 ### Evento final
 Resume o consume flags acumulados.

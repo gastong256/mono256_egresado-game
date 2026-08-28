@@ -201,12 +201,9 @@ export const surveyConfidence: ChallengeDefinition =
             risk: reasoned ? 0.1 : 0.7,
             informationUse,
           }),
-          statEffects: reasoned
-            ? [
-                { stat: 'knowledge', delta: 2 },
-                { stat: 'initiative', delta: 1 },
-              ]
-            : [{ stat: 'knowledge', delta: 1 }],
+          careerEffects: reasoned
+            ? { estilo: { axis: 'estratega', amount: 6 } }
+            : { estilo: { axis: 'aplicado', amount: 6 } },
           flagEffects: [{ flag: 'survey.trustedEvidence', value: true }],
         })
       }
@@ -228,7 +225,7 @@ export const surveyConfidence: ChallengeDefinition =
             risk: 0,
             informationUse,
           }),
-          statEffects: [{ stat: 'knowledge', delta: 1 }],
+          careerEffects: { estilo: { axis: 'aplicado', amount: 6 } },
           flagEffects: [{ flag: 'survey.abstained', value: true }],
         })
       }
@@ -248,7 +245,7 @@ export const surveyConfidence: ChallengeDefinition =
           risk: 0.9,
           informationUse,
         }),
-        statEffects: [{ stat: 'team', delta: -1 }],
+        careerEffects: { equipo: -2 },
         flagEffects: [{ flag: 'survey.misread', value: true }],
       })
     },

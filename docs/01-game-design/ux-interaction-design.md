@@ -12,17 +12,26 @@ Diseñar inicialmente para ~390×844 CSS px y verificar mínimo 360 px de ancho.
 
 ```text
 ┌────────────────────────┐
-│ 2.º AÑO        Energía │
+│ 7.º GRADO      ▪▪□□□□□ │  etapa + progreso en celdas
 ├────────────────────────┤
-│ Título / situación     │
-│ Datos relevantes       │
-│                        │
-│ Interacción            │
-│                        │
+│ Promedio │ Equipo │ ◣  │  tira de carrera (aparición progresiva)
 ├────────────────────────┤
-│ Feedback / CTA         │
+│ EYEBROW                │
+│ Título de la situación │
+│ Prosa                  │
+│ ┌────────┐ ┌────────┐  │  grilla de datos sobre papel
+│ │ dato   │ │ dato   │  │
+│ └────────┘ └────────┘  │
+│▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│  bloque de decisión (oscuro, a sangre)
+│▓ consigna             ▓│
+│▓ opciones             ▓│
+│▓ [ CONFIRMAR ]        ▓│  el primario vive acá mientras se decide
 └────────────────────────┘
 ```
+
+Al resolver, el bloque oscuro suelta el primario, aparece el panel de resultado sobre papel y el primario reaparece al final del shell. **Existe exactamente un primario montado a la vez.**
+
+El ancho de juego es de 412 px máximo, centrado en todos los breakpoints: tablet y desktop centran contra la hoja, no ensanchan. Ver el [sistema de diseño](../09-design-system/foundations.md).
 
 ## Navegación
 

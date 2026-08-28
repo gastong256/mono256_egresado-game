@@ -39,6 +39,18 @@ export interface PresentedOption {
 export interface PresentedDatum {
   readonly label: string
   readonly value: string
+  /** Unidad, debajo de la cifra. `28` / `minutos`. */
+  readonly unit?: string
+  /**
+   * Este dato **es** la restricción de la situación.
+   *
+   * Lo declara quien autora el contenido, no la UI: cuál de los números aprieta
+   * es una afirmación sobre el problema, y adivinarla desde la presentación
+   * sería inventarla. La capa visual le pone el subrayado rojo sobre la cifra.
+   */
+  readonly constraint?: boolean
+  /** Ocupa las dos columnas de la grilla. Para el dato del que trata la pantalla. */
+  readonly span?: 1 | 2
 }
 
 export interface PresentedBudgetItem {

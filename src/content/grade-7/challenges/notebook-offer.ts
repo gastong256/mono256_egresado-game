@@ -214,12 +214,20 @@ export const notebookOffer: ChallengeDefinition =
           quality: 'invalid',
           feedback: {
             outcomeKey: 'notebook.unaffordable',
+            stamp: 'No alcanzó',
+            consequence:
+              'Se posterga la compra y el proyecto se muestra desde el celular de alguien.',
             facts: [...facts, { label: 'Faltaban', value: pesos(missing) }],
             violatedConstraint: 'la plata que juntaron',
             optimalComparison: `La otra oferta dejaba la notebook en ${pesos(cheapest)}.`,
           },
           metrics: metrics({ efficiency: 0, precision: 0.2, risk: 0.6 }),
-          statEffects: [{ stat: 'team', delta: -3 }],
+          // La plata es del curso y el proyecto depende de la compra: lo que
+          // está en juego es la conducta hacia el grupo, no una nota.
+          careerEffects: {
+            equipo: -3,
+            estilo: { axis: 'improvisador', amount: 8 },
+          },
           flagEffects: [{ flag: 'g7.notebookNoSalio', value: true }],
         })
       }
@@ -228,6 +236,9 @@ export const notebookOffer: ChallengeDefinition =
         quality: 'optimal',
         feedback: {
           outcomeKey: 'notebook.bought',
+          stamp: 'Comprada',
+          consequence:
+            'La notebook llega a tiempo y el proyecto se puede mostrar como estaba pensado.',
           facts: [
             ...facts,
             {
@@ -246,10 +257,10 @@ export const notebookOffer: ChallengeDefinition =
           precision: 1,
           risk: 0,
         }),
-        statEffects: [
-          { stat: 'knowledge', delta: 4 },
-          { stat: 'team', delta: 3 },
-        ],
+        careerEffects: {
+          equipo: 3,
+          estilo: { axis: 'estratega', amount: 10 },
+        },
         flagEffects: [{ flag: 'g7.notebookComprada', value: true }],
       })
     },

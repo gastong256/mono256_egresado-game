@@ -33,12 +33,16 @@ import {
 import { nextStage, stageIndex, isStageId } from '@/game/progression/stages'
 import { isNarrativeOnly } from '@/game/narrative/storylet'
 import {
-  applyStatEffects,
-  clampStat,
-  initialStats,
-  isVisibleStat,
-  readStat,
-} from '@/game/progression/stats'
+  applyCareerEffects,
+  clampEquipo,
+  clampGrade,
+  initialCareer,
+  isEstiloAxis,
+  isEstiloEstablished,
+  nudgeEstilo,
+  promedio,
+  ESTILO_AXES,
+} from '@/game/progression/career'
 import {
   addQuantities,
   compareQuantities,
@@ -74,27 +78,68 @@ describe('progression stages', () => {
   })
 })
 
-describe('player stats', () => {
+describe('the career model', () => {
   it('clamps into the documented bounds', () => {
-    expect(clampStat(-40)).toBe(0)
-    expect(clampStat(400)).toBe(100)
-    expect(clampStat(Number.NaN)).toBe(0)
-    expect(clampStat(12.6)).toBe(13)
+    expect(clampEquipo(-40)).toBe(0)
+    expect(clampEquipo(400)).toBe(100)
+    expect(clampEquipo(Number.NaN)).toBe(0)
+    expect(clampGrade(0.4)).toBe(1)
+    expect(clampGrade(12)).toBe(10)
+    expect(clampGrade(8.44)).toBe(8.4)
   })
 
-  it('applies effects without mutating the original', () => {
-    const base = initialStats()
-    const next = applyStatEffects(base, [
-      { stat: 'knowledge', delta: 10 },
-      { stat: 'energy', delta: -200 },
-    ])
+  it('starts every visible dimension unestablished, never at zero', () => {
+    const base = initialCareer()
 
-    expect(readStat(next, 'knowledge')).toBe(60)
-    expect(readStat(next, 'energy')).toBe(0)
-    // The original object is untouched.
-    expect(readStat(base, 'knowledge')).toBe(50)
-    expect(isVisibleStat('team')).toBe(true)
-    expect(isVisibleStat('luck')).toBe(false)
+    // `null` no es 0: mostrar «Promedio 0» antes de la primera nota diría que
+    // alguien va mal en una materia que todavía no empezó.
+    expect(promedio(base)).toBeNull()
+    expect(base.equipo).toBeNull()
+    expect(base.aura).toBeNull()
+    expect(isEstiloEstablished(base)).toBe(false)
+  })
+
+  it('derives Promedio from the real grades, not from an accumulator', () => {
+    const base = initialCareer()
+    const first = applyCareerEffects(base, { grade: 8.4 }).career
+    const second = applyCareerEffects(first, { grade: 7.4 }).career
+
+    expect(promedio(first)).toBe(8.4)
+    expect(promedio(second)).toBe(7.9)
+    // El original queda intacto.
+    expect(promedio(base)).toBeNull()
+  })
+
+  it('reports only the dimensions an event actually moved', () => {
+    const applied = applyCareerEffects(initialCareer(), {
+      estilo: { axis: 'estratega', amount: 8 },
+    })
+
+    // El colectivo ejercita porcentaje y tiempo, pero nadie pone una nota.
+    expect(applied.change.estilo).toEqual({ axis: 'estratega' })
+    expect(applied.change.promedio).toBeUndefined()
+    expect(applied.change.equipo).toBeUndefined()
+    expect(applied.change.aura).toBeUndefined()
+  })
+
+  it('keeps the three Estilo shares adding up to exactly 100', () => {
+    let estilo = initialCareer().estilo
+    for (const axis of [...ESTILO_AXES, 'estratega', 'aplicado'] as const) {
+      estilo = nudgeEstilo(estilo, { axis, amount: 7 })
+      const total = ESTILO_AXES.reduce((sum, key) => sum + estilo[key], 0)
+      expect(total).toBe(100)
+    }
+
+    expect(isEstiloAxis('estratega')).toBe(true)
+    expect(isEstiloAxis('suertudo')).toBe(false)
+  })
+
+  it('carries Aura with a sign and no ceiling', () => {
+    const gained = applyCareerEffects(initialCareer(), { aura: 1000 })
+    const lost = applyCareerEffects(gained.career, { aura: -150 })
+
+    expect(gained.change.aura).toEqual({ delta: 1000, total: 1000 })
+    expect(lost.change.aura).toEqual({ delta: -150, total: 850 })
   })
 })
 
@@ -333,20 +378,54 @@ describe('selectors', () => {
 describe('snapshot corruption handling', () => {
   it.each([
     ['a non-object', 42],
-    ['a missing state', { schemaVersion: 1 }],
+    ['a missing state', { schemaVersion: 2 }],
     ['an unknown schema version', { schemaVersion: 99, state: {} }],
     [
-      'an out-of-range stat',
+      'an out-of-range career value',
+      {
+        schemaVersion: 2,
+        state: {
+          career: {
+            grades: [],
+            equipo: 500,
+            aura: null,
+            estilo: { aplicado: 34, estratega: 33, improvisador: 33 },
+            estiloEvidence: 0,
+            mastery: {},
+          },
+        },
+      },
+    ],
+    [
+      'an Estilo split that does not add up to 100',
+      {
+        schemaVersion: 2,
+        state: {
+          career: {
+            grades: [],
+            equipo: null,
+            aura: null,
+            estilo: { aplicado: 50, estratega: 33, improvisador: 33 },
+            estiloEvidence: 0,
+            mastery: {},
+          },
+        },
+      },
+    ],
+    [
+      'a snapshot from the v0.1 stat model',
       {
         schemaVersion: 1,
-        state: { stats: { knowledge: 500, team: 0, initiative: 0, energy: 0 } },
+        state: {
+          stats: { knowledge: 50, team: 50, initiative: 50, energy: 70 },
+        },
       },
     ],
   ])('refuses %s', (_label, payload) => {
     const result = restoreSnapshot(payload, {
-      gameVersion: '1.0.0',
-      rulesetVersion: '0.1.0-dev',
-      contentVersion: '0.1.0-dev',
+      gameVersion: '2.0.0',
+      rulesetVersion: '0.2.0-dev',
+      contentVersion: '0.2.0-dev',
     })
 
     expect(isErr(result)).toBe(true)
@@ -427,7 +506,7 @@ describe('profile classification', () => {
   it('produces a stable result for neutral evidence', () => {
     const result = developmentProfilePolicy.classify(
       emptyDimensions(),
-      initialStats(),
+      initialCareer(),
     )
 
     expect(result.profileId).toBeTruthy()
@@ -446,7 +525,7 @@ describe('profile classification', () => {
         informationUse: 1,
         stability: 0.9,
       },
-      initialStats(),
+      initialCareer(),
     )
 
     expect(result.profileId).toBe('scientist')
@@ -466,7 +545,7 @@ describe('profile classification', () => {
         informationUse: 0,
         stability: 0.1,
       },
-      initialStats(),
+      initialCareer(),
     )
 
     expect(result.profileId).toBe('improviser')

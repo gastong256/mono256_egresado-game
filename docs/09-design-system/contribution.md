@@ -1,62 +1,74 @@
-# Cómo crecer el sistema
+# Cómo contribuir al sistema
 
-## Antes de escribir un estilo
+## Antes de escribir un componente
 
-1. Abrí `/dev/design-system` y fijate si el patrón ya existe.
-2. Si existe, componelo. Si casi existe, extendé el componente en lugar de copiarlo.
-3. Si no existe, seguí el árbol de abajo.
+1. Mirar `/dev/design-system`. Si el patrón ya está, se compone.
+2. Mirar `src/components/ui/` y `src/components/game/`.
+3. Mirar las [capturas de referencia](reference/) y la [historia de la decisión](decision-history.md) si la duda es de intención visual.
 
-## Qué promover y hasta dónde
+La pregunta no es «¿cómo lo dibujo?», es «¿esto ya está resuelto?». Casi siempre lo está.
 
-### Un layout único de una pantalla
+## Dónde va
 
-Se queda local. Componer `GameCanvas`, `Surface` y unas utilidades en una pantalla no necesita convertirse en nada.
-
-### Un patrón visual que se repite
-
-A partir de la segunda aparición, componente. La tercera copia ya divergió.
-
-### Un significado que se repite
-
-Token semántico. Si tres lugares necesitan «el color de algo que el jugador eligió», eso es `selected-*` y no `gray-100` escrito tres veces.
-
-### Una interacción de dominio nueva
-
-Entra por la arquitectura de interacciones: un tipo en el motor, un renderer en `interactions/`, y el `switch` exhaustivo obliga a completarlo.
-
-## Reglas duras
-
-- Los componentes de producto consumen **tokens semánticos**, nunca la paleta cruda.
-- Nada de colores escritos a mano. El único hexadecimal permitido está en `src/lib/ui/brand.ts`, para el manifiesto y el `themeColor`, y hay un test que verifica que coincida con el token del que es copia.
-- Nada de tamaños de texto ni radios fuera de los roles del sistema.
-- Un valor arbitrario de Tailwind necesita una razón escrita al lado. Los pseudo-elementos de `<progress>` son un ejemplo legítimo.
-- Una primitiva nueva define sus estados a conciencia: `default`, `hover`, `focus-visible`, `active`, `selected`, `disabled`, y `loading` o `error` si aplican.
-- Una primitiva nueva que pueda quedar sin nombre accesible tiene que hacer ese nombre **obligatorio en el tipo**.
-- El foco no se reimplementa. Está resuelto una vez en la capa base.
-- Ningún estado se distingue sólo por color.
-
-## Cómo se hace cumplir
-
-| Regla | Mecanismo |
+| Si… | Va en |
 |---|---|
-| paleta ajena | `--color-*: initial` — `bg-blue-500` no existe |
-| paleta cruda en una pantalla | `pnpm design:check` |
-| color a mano | `pnpm design:check` |
-| escala tipográfica o radio ajenos | `--text-*: initial`, `--radius-*: initial` más `pnpm design:check` |
-| contraste insuficiente | `pnpm design:check` y axe en Playwright |
-| conflicto de clases | `cn()` con los grupos del proyecto declarados, más `tests/unit/cn.test.ts` |
+| no sabe nada del dominio | `src/components/ui/` |
+| lee `RunState`, `CareerState` o `PendingFeedback` | `src/components/game/` |
+| renderiza una interacción del motor | `src/components/game/interactions/` |
+| sólo existe para documentar el sistema | `src/components/dev/` |
 
-Si agregás un rol tipográfico o una escala propia, **declaralo en `cn()`**. `tailwind-merge` trae su propio mapa de grupos y ante un nombre desconocido puede clasificarlo mal: eso hizo que `text-heading` borrara `text-primary-foreground` y los botones primarios salieran con tinta oscura sobre verde, sin que fallara ningún test ni ningún tipo.
+La flecha va en un solo sentido: una pantalla consume primitivas, una primitiva consume tokens semánticos, un token semántico consume un pigmento. Nunca al revés.
+
+## Reglas que el guardarraíl hace cumplir
+
+`pnpm design:check` rechaza:
+
+- un pigmento crudo en una pantalla (`bg-bottle-600` en vez de `bg-green`);
+- un color escrito a mano (no pasa por el gate de contraste);
+- un tamaño de la escala apagada de Tailwind;
+- cualquier `rounded-*` — el radio del sistema es 0;
+- cualquier `shadow-*` que no sea el resplandor de Aura.
+
+Las dos últimas son binarias. No hay un radio chico aceptable.
+
+## Reglas que ningún script puede hacer cumplir
+
+Estas dependen de quien escribe:
+
+- **Elegir no es acertar.** Ningún estado de selección puede parecerse a un resultado.
+- **`null` no es 0.** Una dimensión sin establecer no se dibuja.
+- **Sólo lo que se movió.** Nunca un `+0`.
+- **Nada sólo por color.** Siempre un segundo canal.
+- **Un solo primario por pantalla.**
+- **Caja mixta en títulos.**
+
+Hay tests para las tres últimas. Para las otras, el [checklist de distancia](decision-history.md) es la herramienta.
+
+## Agregar un rol tipográfico
+
+1. Definirlo en `tokens.css` con tamaño, interlínea, tracking y peso.
+2. **Declararlo en `cn()`.** Sin esto `tailwind-merge` puede clasificarlo como color y hacer que borre el color del texto, sin que falle ningún test ni ningún tipo.
+3. Agregar el caso a `tests/unit/cn.test.ts`.
+4. Mostrarlo en la vitrina.
+
+## Agregar un color
+
+Ver [colores](colors.md). El paso que no se saltea es agregar cada combinación nueva a la lista de pares del gate de contraste: un color que no está en la lista es un color que nadie midió.
+
+## Cómo se testea un componente
+
+Comportamiento y semántica, **nunca la cadena de clases**. Si un test se rompe porque cambió un `px-4`, el test estaba mirando el lugar equivocado.
+
+Lo que sí vale la pena afirmar: que un botón siga siendo un `<button>`, que un error siga asociado a su campo, que una dimensión sin establecer no se dibuje, que seleccionar no revele el resultado.
 
 ## Dependencias
 
-Se agrega una dependencia cuando resuelve un problema real, no porque sea común en sistemas de diseño. Las que están:
+Antes de agregar una, revisar qué hay. El sistema evita a propósito:
 
-| Paquete | Por qué |
-|---|---|
-| `clsx` + `tailwind-merge` | una sola utilidad `cn()` para componer clases con resolución de conflictos |
-| `class-variance-authority` | variantes tipadas en componentes que realmente tienen variantes |
-| `lucide-react` | un solo lenguaje de íconos, con importación por ícono |
-| `geist` | la familia tipográfica, servida localmente |
+- un framework de componentes genérico;
+- CSS-in-JS en runtime;
+- una librería de charting para un triángulo de tres puntos;
+- una librería de animación para tres keyframes;
+- Storybook — la vitrina más los tests cubren la necesidad actual.
 
-No se usa CSS-in-JS en runtime. No hay `ThemeProvider`: con un solo tema, las variables CSS alcanzan, y agregar contexto de React «por si viene el modo oscuro» es costo sin beneficio.
+Ver la [política de dependencias](../08-engineering/dependency-and-decision-policy.md).

@@ -3,89 +3,87 @@
 /**
  * Consecuencia de una decisión.
  *
- * El vocabulario es el del motor —óptimo, eficiente, funcionó, no alcanzó— y no
- * el de un examen. Acá no hay «correcto» ni «incorrecto»: hay una decisión y lo
- * que pasó por haberla tomado.
+ * El vocabulario es el del sistema —Óptimo · Resuelto · Parcial · Insuficiente—
+ * y no el de un examen. Acá no hay «correcto» ni «incorrecto»: hay una decisión y
+ * lo que pasó por haberla tomado.
  *
- * Cada resultado se distingue por tres cosas a la vez: un nombre escrito, un
- * ícono con forma propia y un tono de color. Nunca por el color solo. Alguien
- * que no distingue rojo de verde lee «No alcanzó» junto a un triángulo y entiende
- * exactamente lo mismo.
+ * Tres reglas que este componente existe para sostener:
+ *
+ * 1. **El ledger siempre muestra la cuenta real.** El jugador tiene que poder
+ *    ver el porqué, no sólo el veredicto. Ésa es la diferencia entre un juego
+ *    sobre decisiones con números y un examen con animaciones.
+ * 2. **Los chips muestran sólo lo que se movió.** `Promedio +0` no existe.
+ * 3. **El bloque de Aura aparece sólo si Aura cambió.** Un cálculo correcto nunca
+ *    produce Aura; sólo un momento memorable lo hace.
+ *
+ * Un `Insuficiente` nunca bloquea: tiene consecuencia y el juego sigue.
+ *
+ * La calidad se distingue por **glifo + palabra + borde superior de 3 px**, tres
+ * canales de los cuales ninguno es cromático por sí solo. Se lee en escala de
+ * grises.
  *
  * Todo lo que muestra sale del feedback estructurado del motor. Formatea; no
  * calcula.
  */
 
-import { cva } from 'class-variance-authority'
-import { Award, Check, CircleCheck, TriangleAlert } from 'lucide-react'
-import { useEffect, useRef, type ComponentType } from 'react'
+import { useEffect, useRef } from 'react'
 
-import { Button } from '@/components/ui'
-import type { PendingFeedback, SolutionQuality } from '@/game'
+import type { PendingFeedback } from '@/game'
+import {
+  Ledger,
+  PartialMark,
+  SlashMark,
+  Stamp,
+  TickMark,
+  type OutcomeTone,
+} from '@/components/ui'
 import { cn } from '@/lib/ui/cn'
 
-import { MetricRows } from './data-metric'
+import { AuraBlock } from './aura-display'
+import { CareerChips } from './career-chips'
+import { OUTCOME } from './outcome'
 
-interface QualityPresentation {
-  readonly label: string
-  /** Qué significa ese resultado, en una frase y sin retar a nadie. */
-  readonly meaning: string
-  readonly Icon: ComponentType<{ className?: string; 'aria-hidden'?: boolean }>
+const TAB: Readonly<Record<OutcomeTone, string>> = {
+  optimal: 'bg-outcome-optimal',
+  resolved: 'bg-outcome-resolved',
+  partial: 'bg-outcome-partial',
+  insufficient: 'bg-outcome-insufficient',
 }
 
-const QUALITY: Readonly<Record<SolutionQuality, QualityPresentation>> = {
-  optimal: {
-    label: 'Óptimo',
-    meaning: 'La mejor de las opciones que había.',
-    Icon: Award,
-  },
-  efficient: {
-    label: 'Eficiente',
-    meaning: 'Resolvió bien, con margen de sobra.',
-    Icon: CircleCheck,
-  },
-  functional: {
-    label: 'Funcionó',
-    meaning: 'Alcanzó, aunque justo.',
-    Icon: Check,
-  },
-  invalid: {
-    label: 'No alcanzó',
-    meaning: 'Esta vez no dio para lo que hacía falta.',
-    Icon: TriangleAlert,
-  },
+const FRAME: Readonly<Record<OutcomeTone, string>> = {
+  optimal: 'border-outcome-optimal border-t-[3px]',
+  resolved: 'border-rule border-t-outcome-resolved border-t-[3px]',
+  partial: 'border-rule border-t-outcome-partial border-t-[3px]',
+  insufficient: 'border-outcome-insufficient border-t-[3px]',
 }
 
-const panel = cva('rounded-card border-2 p-5 flex flex-col gap-4', {
-  variants: {
-    quality: {
-      optimal: 'border-optimal-line bg-optimal-surface',
-      efficient: 'border-efficient-line bg-efficient-surface',
-      functional: 'border-functional-line bg-functional-surface',
-      invalid: 'border-invalid-line bg-invalid-surface',
-    },
-  },
-})
+const GLYPH_BOX: Readonly<Record<OutcomeTone, string>> = {
+  optimal: 'bg-outcome-optimal text-white',
+  resolved: 'border-outcome-resolved text-outcome-resolved border-[1.5px]',
+  partial: 'border-outcome-partial text-outcome-partial border-[1.5px]',
+  insufficient: 'text-outcome-insufficient',
+}
 
-const ink = cva('', {
-  variants: {
-    quality: {
-      optimal: 'text-optimal-foreground',
-      efficient: 'text-efficient-foreground',
-      functional: 'text-functional-foreground',
-      invalid: 'text-invalid-foreground',
-    },
-  },
-})
+function OutcomeGlyph({ tone }: { readonly tone: OutcomeTone }) {
+  if (tone === 'insufficient') {
+    return <SlashMark />
+  }
+  if (tone === 'partial') {
+    return <PartialMark />
+  }
+  return <TickMark className="size-[15px]" />
+}
 
 export interface FeedbackPanelProps {
   readonly feedback: PendingFeedback
-  readonly onContinue: () => void
+  readonly className?: string
 }
 
-export function FeedbackPanel({ feedback, onContinue }: FeedbackPanelProps) {
+export function FeedbackPanel({ feedback, className }: FeedbackPanelProps) {
   const headingRef = useRef<HTMLHeadingElement>(null)
-  const { label, meaning, Icon } = QUALITY[feedback.quality]
+  const { tone, label } = OUTCOME[feedback.quality]
+  const aura = feedback.careerChange.aura
+  const { consequence, stamp } = feedback.feedback
 
   useEffect(() => {
     // Mover el foco al resultado es lo que lo hace alcanzable con teclado y con
@@ -96,70 +94,86 @@ export function FeedbackPanel({ feedback, onContinue }: FeedbackPanelProps) {
   return (
     <section
       aria-labelledby="feedback-title"
-      className={panel({ quality: feedback.quality })}
+      data-testid="feedback-panel"
+      className={cn('motion-resolve flex flex-col', className)}
     >
-      <div className="flex items-start gap-3">
-        <Icon
-          aria-hidden
+      {/* La pestaña. Lenguaje de legajo: dice de qué es el bloque de abajo. */}
+      <div className="flex pl-0.5">
+        <span
           className={cn(
-            'mt-0.5 size-7 shrink-0',
-            ink({ quality: feedback.quality }),
+            'text-label font-display px-[11px] pt-1.5 pb-[5px] text-white uppercase',
+            TAB[tone],
           )}
-        />
-        <div className="min-w-0">
-          <h2
-            id="feedback-title"
-            ref={headingRef}
-            tabIndex={-1}
-            // `alert` anuncia el resultado apenas se dibuja.
-            role="alert"
-            className={cn(
-              'text-title outline-none',
-              ink({ quality: feedback.quality }),
-            )}
-            data-quality={feedback.quality}
-            data-testid="feedback-heading"
-          >
-            {label}
-          </h2>
-          <p
-            className={cn(
-              'text-body-sm mt-0.5',
-              ink({ quality: feedback.quality }),
-            )}
-          >
-            {meaning}
-          </p>
-        </div>
+        >
+          Resultado
+        </span>
       </div>
 
-      <MetricRows items={feedback.feedback.facts} />
+      <div
+        className={cn(
+          'bg-canvas flex flex-col gap-3 border p-[15px]',
+          FRAME[tone],
+        )}
+      >
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5">
+            <span
+              className={cn(
+                'flex size-7 shrink-0 items-center justify-center',
+                GLYPH_BOX[tone],
+              )}
+            >
+              <OutcomeGlyph tone={tone} />
+            </span>
+            <h2
+              id="feedback-title"
+              ref={headingRef}
+              tabIndex={-1}
+              // `alert` anuncia el resultado apenas se dibuja.
+              role="alert"
+              data-quality={feedback.quality}
+              data-testid="feedback-heading"
+              className="text-title font-display text-ink outline-none"
+            >
+              {label}
+            </h2>
+          </div>
+          {stamp === undefined ? null : (
+            // El sello toma el color del resultado, pero la palabra ya dice el
+            // veredicto: en escala de grises sigue leyéndose igual.
+            <Stamp tone={tone === 'insufficient' ? 'red' : 'green'}>
+              {stamp}
+            </Stamp>
+          )}
+        </div>
 
-      {feedback.feedback.violatedConstraint === undefined ? null : (
-        <p className="text-body-sm text-foreground text-pretty">
-          Lo que no se cumplió:{' '}
-          <strong className="font-semibold">
-            {feedback.feedback.violatedConstraint}
-          </strong>
-        </p>
-      )}
+        <Ledger items={feedback.feedback.facts} />
 
-      {feedback.feedback.optimalComparison === undefined ? null : (
-        <p className="text-body-sm text-foreground text-pretty">
-          {feedback.feedback.optimalComparison}
-        </p>
-      )}
+        {feedback.feedback.optimalComparison === undefined ? null : (
+          <p className="text-meta text-ink text-pretty">
+            {feedback.feedback.optimalComparison}
+          </p>
+        )}
 
-      <p className="text-caption text-foreground-muted" data-numeric>
-        Puntos del evento:{' '}
-        <span className="text-foreground font-semibold">
-          {feedback.score.totalPoints}
-        </span>
-      </p>
+        {feedback.feedback.violatedConstraint === undefined ? null : (
+          <p className="text-meta text-ink text-pretty">
+            Lo que no se cumplió:{' '}
+            <strong className="font-semibold">
+              {feedback.feedback.violatedConstraint}
+            </strong>
+          </p>
+        )}
 
-      <Button onClick={onContinue} data-testid="continue" size="lg" block>
-        Continuar
-      </Button>
+        {consequence === undefined ? null : (
+          <p className="text-meta border-red text-ink-secondary border-l-[3px] pl-3 text-pretty">
+            {consequence}
+          </p>
+        )}
+
+        <CareerChips change={feedback.careerChange} />
+
+        {aura === undefined ? null : <AuraBlock value={aura.delta} />}
+      </div>
     </section>
   )
 }

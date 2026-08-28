@@ -298,6 +298,9 @@ export const groupTasks: ChallengeDefinition = defineChallenge<GroupModel>({
         quality: 'invalid',
         feedback: {
           outcomeKey: overloaded ? 'group.overloaded' : 'group.incomplete',
+          stamp: 'Quedó a medias',
+          consequence:
+            'La semana siguiente falta la mitad del trabajo y hay que rehacerlo a las apuradas.',
           facts,
           violatedConstraint:
             overloadedMember && overloadedTask
@@ -305,7 +308,12 @@ export const groupTasks: ChallengeDefinition = defineChallenge<GroupModel>({
               : 'quedaron tareas sin asignar',
         },
         metrics: metrics({ efficiency: 0, precision: 0.2, risk: 0.5 }),
-        statEffects: [{ stat: 'team', delta: -3 }],
+        // Repartir el trabajo pone en juego la conducta hacia el grupo, no una
+        // nota: mueve Equipo y Estilo.
+        careerEffects: {
+          equipo: -3,
+          estilo: { axis: 'improvisador', amount: 10 },
+        },
         flagEffects: [{ flag: 'g7.grupoDesarmado', value: true }],
       })
     }
@@ -318,15 +326,18 @@ export const groupTasks: ChallengeDefinition = defineChallenge<GroupModel>({
         quality: 'optimal',
         feedback: {
           outcomeKey: 'group.optimal',
+          stamp: 'Repartido',
+          consequence:
+            'Cada uno hace lo suyo sin quejarse y el proyecto llega entero a la feria.',
           facts,
           optimalComparison:
             'Cada parte quedó en manos de quien mejor la hacía y a nadie le faltaron horas.',
         },
         metrics: metrics({ efficiency: 1, precision: 1, risk: 0 }),
-        statEffects: [
-          { stat: 'team', delta: 5 },
-          { stat: 'initiative', delta: 3 },
-        ],
+        careerEffects: {
+          equipo: 5,
+          estilo: { axis: 'estratega', amount: 10 },
+        },
         flagEffects: [{ flag: 'g7.grupoOrganizado', value: true }],
       })
     }
@@ -336,14 +347,17 @@ export const groupTasks: ChallengeDefinition = defineChallenge<GroupModel>({
         quality: 'efficient',
         feedback: {
           outcomeKey: 'group.efficient',
+          stamp: 'Repartido',
+          consequence:
+            'El trabajo sale, con un par de reclamos por cómo quedó repartido.',
           facts,
           optimalComparison: comparison,
         },
         metrics: metrics({ efficiency: ratio, precision: 1, risk: 0.1 }),
-        statEffects: [
-          { stat: 'team', delta: 3 },
-          { stat: 'initiative', delta: 1 },
-        ],
+        careerEffects: {
+          equipo: 3,
+          estilo: { axis: 'estratega', amount: 8 },
+        },
         flagEffects: [{ flag: 'g7.grupoOrganizado', value: true }],
       })
     }
@@ -352,11 +366,17 @@ export const groupTasks: ChallengeDefinition = defineChallenge<GroupModel>({
       quality: 'functional',
       feedback: {
         outcomeKey: 'group.functional',
+        stamp: 'Repartido',
+        consequence:
+          'Se cubren todas las partes, aunque algunos terminan haciendo de más.',
         facts,
         optimalComparison: comparison,
       },
       metrics: metrics({ efficiency: ratio, precision: 1, risk: 0.2 }),
-      statEffects: [{ stat: 'team', delta: 2 }],
+      careerEffects: {
+        equipo: 2,
+        estilo: { axis: 'aplicado', amount: 8 },
+      },
       flagEffects: [{ flag: 'g7.grupoCubierto', value: true }],
     })
   },

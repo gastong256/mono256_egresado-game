@@ -1,35 +1,43 @@
 import { cva, type VariantProps } from 'class-variance-authority'
-import type { ElementType, ComponentPropsWithoutRef, ReactNode } from 'react'
+import type { ComponentPropsWithoutRef, ElementType, ReactNode } from 'react'
 
 import { cn } from '@/lib/ui/cn'
 
 /**
- * Superficie.
+ * Bloque insertado.
  *
- * La caja estructural del sistema: fondo, borde y radio. No sabe nada del
- * dominio —no es una tarjeta de situación ni un panel de feedback— y por eso
- * sirve para componer los dos.
+ * La regla de fondo del sistema: el papel cuadriculado es el fondo de **toda**
+ * pantalla, y el fondo liso queda reservado para bloques insertados —caja de
+ * dato, ledger, sello, Aura, superficie de decisión—. Así el papel se ve
+ * alrededor y el bloque se lee como un objeto apoyado encima, no como un
+ * párrafo.
  *
- * La jerarquía sale del fondo y del borde antes que de la sombra: una tarjeta
- * de juego no tiene por qué flotar como si fuera un modal.
+ * Sin radio y sin sombra: la profundidad la da el peso del borde y el contraste
+ * de fondo, igual que un impreso.
  */
 
-const surface = cva('rounded-surface', {
+const surface = cva('', {
   variants: {
     tone: {
-      default: 'bg-surface border border-line',
-      muted: 'bg-surface-muted border border-line',
-      raised: 'bg-surface border border-line shadow-raised',
-      plain: 'bg-transparent',
+      /** Papel liso con regla fina: lo que rodea, no lo que se lee. */
+      paper: 'bg-surface border-rule border',
+      /** Caja de dato: borde de tinta de 1,5 px. */
+      data: 'bg-surface border-ink border-[1.5px]',
+      /** Hundido: una nota al costado del flujo. */
+      sunken: 'bg-canvas-sunken border-rule border',
+      /** Superficie de decisión. El foco cae donde hay que elegir. */
+      decision: 'bg-decision text-on-decision',
+      /** La única isla negra del sistema. */
+      aura: 'bg-aura-surface',
     },
     padding: {
       none: '',
-      compact: 'p-3',
+      compact: 'p-[10px]',
       default: 'p-4',
       roomy: 'p-5',
     },
   },
-  defaultVariants: { tone: 'default', padding: 'default' },
+  defaultVariants: { tone: 'paper', padding: 'default' },
 })
 
 export interface SurfaceProps<T extends ElementType> extends VariantProps<
@@ -51,8 +59,44 @@ export function Surface<T extends ElementType = 'div'>({
 
   return (
     <Component
+      // El anillo de foco se invierte sobre las dos superficies oscuras; lo
+      // declara el contenedor y no cada control de adentro.
+      {...(tone === 'decision'
+        ? { 'data-surface': 'decision' }
+        : tone === 'aura'
+          ? { 'data-surface': 'aura' }
+          : {})}
       className={cn(surface({ tone, padding }), className)}
       {...rest}
     />
+  )
+}
+
+/**
+ * Sello.
+ *
+ * Rotado −3°, con borde de 2 px en el color del estado. Es lenguaje de legajo:
+ * dice el veredicto en una palabra —«Alcanzó», «Llegaste tarde»— al lado del
+ * resultado, sin repetir la cuenta.
+ */
+export function Stamp({
+  children,
+  tone = 'green',
+  className,
+}: {
+  readonly children: ReactNode
+  readonly tone?: 'green' | 'red'
+  readonly className?: string
+}) {
+  return (
+    <span
+      className={cn(
+        'text-label font-display shrink-0 -rotate-3 border-2 px-[10px] py-[5px] uppercase',
+        tone === 'green' ? 'border-green text-green' : 'border-red text-red',
+        className,
+      )}
+    >
+      {children}
+    </span>
   )
 }

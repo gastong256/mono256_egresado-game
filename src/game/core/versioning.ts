@@ -20,8 +20,16 @@ import { assertNever } from './exhaustive'
 import type { EngineRejection } from './errors'
 import { err, ok, type Result } from './result'
 
-/** Engine/game version of this build. Also serialized as `gameVersion`. */
-export const ENGINE_VERSION = '1.0.0'
+/**
+ * Engine/game version of this build. Also serialized as `gameVersion`.
+ *
+ * `2.0.0` is the career migration: the visible player model went from four
+ * bounded stats to `Promedio · Equipo · Aura · Estilo`, which changed run state,
+ * the transition function and the snapshot codec. A `1.x` action log cannot
+ * reproduce its original result under this engine, and that is exactly what the
+ * version triple exists to say out loud instead of discovering it in a replay.
+ */
+export const ENGINE_VERSION = '2.0.0'
 
 export interface VersionTriple {
   readonly gameVersion: string

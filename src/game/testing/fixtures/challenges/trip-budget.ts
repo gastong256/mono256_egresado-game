@@ -243,7 +243,7 @@ export const tripBudget: ChallengeDefinition = defineChallenge<TripBudgetModel>(
             efficiency: 0,
             precision: meals / model.mealsNeeded,
           }),
-          statEffects: [{ stat: 'team', delta: -1 }],
+          careerEffects: { equipo: -2 },
           flagEffects: [{ flag: 'trip.short', value: true }],
         })
       }
@@ -263,7 +263,7 @@ export const tripBudget: ChallengeDefinition = defineChallenge<TripBudgetModel>(
             violatedConstraint: 'budget',
           },
           metrics: metrics({ efficiency: 0, precision: 1 }),
-          statEffects: [{ stat: 'energy', delta: -1 }],
+          careerEffects: { estilo: { axis: 'improvisador', amount: 6 } },
           flagEffects: [{ flag: 'trip.overBudget', value: true }],
         })
       }
@@ -283,10 +283,7 @@ export const tripBudget: ChallengeDefinition = defineChallenge<TripBudgetModel>(
               'Ninguna combinación de combos cubría las viandas por menos.',
           },
           metrics: metrics({ efficiency, precision: 1 }),
-          statEffects: [
-            { stat: 'knowledge', delta: 2 },
-            { stat: 'team', delta: 1 },
-          ],
+          careerEffects: { equipo: 2, estilo: { axis: 'aplicado', amount: 6 } },
           flagEffects: [{ flag: 'trip.optimal', value: true }],
         })
       }
@@ -306,7 +303,7 @@ export const tripBudget: ChallengeDefinition = defineChallenge<TripBudgetModel>(
           optimalComparison: `La mejor combinación costaba $ ${formatMoney(money(model.optimalCostMinor))}.`,
         },
         metrics: metrics({ efficiency, precision: 1 }),
-        statEffects: [{ stat: 'knowledge', delta: 1 }],
+        careerEffects: { estilo: { axis: 'aplicado', amount: 6 } },
         flagEffects: [],
       })
     },

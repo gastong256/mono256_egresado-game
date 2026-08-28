@@ -6,19 +6,13 @@
  * test de TypeScript sin perder el chequeo.
  */
 
-export interface Oklch {
-  readonly l: number
-  readonly c: number
-  readonly h: number
+export interface Rgb {
+  readonly r: number
+  readonly g: number
+  readonly b: number
 }
 
-export function parseOklch(value: string): Oklch | undefined
-export function oklchToLinearRgb(color: Oklch): {
-  r: number
-  g: number
-  b: number
-}
-export function isOutOfGamut(color: Oklch, tolerance?: number): boolean
-export function oklchToHex(color: Oklch): string
-export function relativeLuminance(color: Oklch): number
-export function contrastRatio(foreground: Oklch, background: Oklch): number
+export function parseHex(value: string): Rgb | undefined
+export function toHex(color: Rgb): string
+export function relativeLuminance(color: Rgb): number
+export function contrastRatio(foreground: Rgb, background: Rgb): number

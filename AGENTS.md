@@ -31,8 +31,8 @@ No implementes producto o gameplay sin una tarea explicitamente acotada.
 
 - El sistema de diseño decide color, tipografia, espaciado, radio, elevacion, foco y presentacion de datos. Una pantalla no vuelve a decidir nada de eso: lee [docs/09-design-system/](docs/09-design-system/README.md) y usa la skill `egresado-design-system`.
 - Antes de crear una primitiva visual, revisa `/dev/design-system` y `src/components/ui/`.
-- Consumi tokens semanticos (`bg-primary`, `text-foreground-muted`); nunca la paleta cruda ni colores escritos a mano en una pantalla.
-- Ningun estado se distingue solo por color, y elegir una opcion nunca puede parecerse a acertar.
+- Consumi tokens semanticos (`bg-canvas`, `text-ink-label`, `border-rule`); nunca un pigmento crudo ni colores escritos a mano en una pantalla. El radio es 0 y no hay sombras.
+- Ningun estado se distingue solo por color, y elegir una opcion nunca puede parecerse a acertar. Una dimension de carrera sin establecer no se dibuja: `null` no es 0.
 - `pnpm design:check` es el gate del sistema y forma parte de `pnpm verify`.
 
 ## Decisiones y dependencias

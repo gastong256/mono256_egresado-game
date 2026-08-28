@@ -18,7 +18,9 @@ test('renders the landing page without browser errors', async ({ page }) => {
     page.getByRole('heading', { level: 1, name: 'Egresado' }),
   ).toBeVisible()
   await expect(page.getByRole('link', { name: 'Jugar' })).toBeVisible()
-  await expect(page.locator('html')).toHaveAttribute('lang', 'es')
+  // es-AR y no es: el juego escribe coma decimal, punto de miles y hora de
+  // 24 h, y un lector de pantalla tiene que leerlos con esas reglas.
+  await expect(page.locator('html')).toHaveAttribute('lang', 'es-AR')
   expect(response?.headers()['x-content-type-options']).toBe('nosniff')
   expect(response?.headers()['referrer-policy']).toBe(
     'strict-origin-when-cross-origin',

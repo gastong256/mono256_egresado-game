@@ -27,6 +27,12 @@ import {
  *
  * Regenerating these numbers without a version bump silently invalidates every
  * stored replay, which is exactly what this file exists to prevent.
+ *
+ * Los valores actuales corresponden a la migración del modelo de jugador
+ * (`ENGINE_VERSION` 2.0.0). Vale la pena mirar qué cambió y qué no: el trace, el
+ * score, el perfil y la cantidad de comandos de las dos runs quedaron **iguales**
+ * — la secuencia de juego no se movió. Lo único que cambió es el hash del estado
+ * final, porque el estado ahora lleva `career` en lugar de `stats`.
  */
 
 const dependencies = createDevelopmentDependencies()
@@ -63,7 +69,7 @@ const GOLDEN_RUNS: readonly Golden[] = [
       'year-5|dev.orientation|dev.survey-confidence|optimal|1630',
       'graduation|dev.graduation|-|-|0',
     ],
-    hash: '66474458c8dcd9b38484fcdb99f3a52465309096c1110ebee0b5d6569e562842',
+    hash: 'd4c094439ce918a811b5b6a3675bc86493ce5e99f1fd252339b759d2adb01ead',
   },
   {
     seed: 'golden-beta',
@@ -86,7 +92,7 @@ const GOLDEN_RUNS: readonly Golden[] = [
       'year-5|dev.orientation|dev.survey-confidence|invalid|495',
       'graduation|dev.graduation|-|-|0',
     ],
-    hash: 'e7cae03f2f8cb6337c78e9b26ceffa89258337c9c1fd657e30b87ecd0dcf8aec',
+    hash: '2d32735fa74f72eba9c6ab8b8c38a800a73ca6bfa059120afd114a4a942a1ac4',
   },
 ]
 
@@ -121,8 +127,8 @@ describe('golden deterministic protocol', () => {
   it('pins the versions the golden values belong to', () => {
     // A version bump must be accompanied by regenerated golden values, so the
     // two are asserted together.
-    expect(dependencies.ruleset.version).toBe('0.1.0-dev')
-    expect(dependencies.ruleset.contentVersion).toBe('0.1.0-dev')
+    expect(dependencies.ruleset.version).toBe('0.2.0-dev')
+    expect(dependencies.ruleset.contentVersion).toBe('0.2.0-dev')
     expect(dependencies.ruleset.official).toBe(false)
   })
 })

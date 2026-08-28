@@ -65,20 +65,32 @@ El número exacto puede variar por modo.
 
 ## 8. Estadísticas de carrera
 
+Cuatro dimensiones visibles. Nada más es permanente: energía, plata y similares pueden existir como **recursos locales** dentro de un minijuego, nunca como estadística de carrera. Ver [ADR-016](../03-architecture/adr/ADR-016-career-player-model.md).
+
 ### Visibles
-- **Conocimiento**: desempeño académico/analítico.
-- **Equipo**: colaboración y decisiones sociales.
-- **Iniciativa**: proyectos y oportunidades.
-- **Energía**: capacidad temporal y desgaste.
+
+| | Tipo | Rango | Cambia cuando |
+|---|---|---|---|
+| **Promedio** | nota | 1,0–10,0 · un decimal | el evento es **genuinamente académico** |
+| **Equipo** | colaboración | 0–100 | está en juego la conducta hacia el grupo |
+| **Aura** | reputación | con signo, sin techo | el momento es **socialmente memorable** |
+| **Estilo** | ternario | Aplicado / Estratega / Improvisador, suman 100 | casi toda decisión lo empuja un poco |
+
+Tres reglas que definen el modelo tanto como los nombres:
+
+- **`null` no es 0.** Una dimensión que la run no tocó todavía no tiene valor, y no se dibuja. Aparecen de a una, la primera vez que algo las mueve.
+- **Promedio se deriva de notas reales**, no se acumula como un contador. Una decisión de colectivo ejercita matemática pero no es académica: no lo mueve.
+- **Ningún eje de Estilo es el malo.** Un Improvisador tiene que poder egresar.
 
 ### Derivadas/ocultas
 - Eficiencia.
 - Riesgo asumido.
 - Precisión.
 - Uso de información.
-- Razonamiento cuantitativo por categoría.
+- Dominio por categoría matemática.
+- Flags e historia narrativa.
 
-Las stats visibles generan narrativa; las ocultas ayudan a scoring, perfiles y analítica.
+Las visibles generan narrativa; las ocultas alimentan scoring, dificultad adaptativa, perfiles y analítica. **Ninguna oculta se renderiza**, y que exista en el estado no es motivo para mostrarla.
 
 ## 9. Filosofía de error
 

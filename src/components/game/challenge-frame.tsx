@@ -3,122 +3,135 @@
 /**
  * Marco de un desafío.
  *
- * Compone la situación, la interacción y el control de envío. Tiene exactamente
- * un estado local —el borrador de la respuesta— y lo limpia sólo cuando cambia
- * la instancia del desafío, así que un re-render nunca descarta lo que el
- * jugador venía armando.
+ * Compone la situación sobre papel, el bloque oscuro de decisión y —una vez
+ * resuelto— la marca de corrección sobre la opción elegida.
  *
- * No contiene reglas de juego: el borrador se le entrega al motor y el veredicto
- * vuelve de ahí.
+ * No contiene reglas de juego ni estado: el borrador lo sostiene la vista de la
+ * run, porque el primario puede vivir en dos lugares y los dos tienen que poder
+ * enviarlo. Acá no se evalúa nada, ni siquiera para previsualizar.
+ *
+ * **El primario vive adentro del bloque oscuro mientras se decide.** Al resolver,
+ * el bloque lo suelta y reaparece al final del shell, debajo del panel de
+ * resultado: nunca hay dos primarios montados y nunca hay que scrollear para
+ * atrás para continuar.
  */
 
-import { Calculator, NotebookPen, Ruler, Table2 } from 'lucide-react'
-import { useCallback, useState, type ComponentType } from 'react'
+import type { ReactNode } from 'react'
 
-import { Button } from '@/components/ui'
-import type { InteractionAnswer, PublicChallengeView, ToolId } from '@/game'
+import type { OutcomeTone } from '@/components/ui'
+import type { InteractionAnswer, PublicChallengeView } from '@/game'
 
-import { InteractionArea, isDraftSubmittable } from './interaction-area'
+import { DecisionBlock } from './decision-block'
+import {
+  interactionData,
+  InteractionControls,
+  missingRequirement,
+  usesDecisionBlock,
+} from './interaction-area'
 import { SituationCard } from './situation-card'
-
-/**
- * Herramientas, en castellano y con ícono.
- *
- * El motor las identifica con un id estable; el jugador lee una palabra. El
- * ícono acompaña, nunca reemplaza: el nombre siempre está escrito.
- */
-const TOOL: Readonly<
-  Record<ToolId, { label: string; Icon: ComponentType<{ className?: string }> }>
-> = {
-  calculator: { label: 'calculadora', Icon: Calculator },
-  notepad: { label: 'anotador', Icon: NotebookPen },
-  table: { label: 'tabla', Icon: Table2 },
-  ruler: { label: 'regla', Icon: Ruler },
-}
 
 export interface ChallengeFrameProps {
   readonly view: PublicChallengeView
-  readonly storyletTitle: string
-  readonly storyletText: string
+  /** El momento del año. Es el eyebrow rojo de la situación. */
+  readonly eyebrow: string
+  readonly draft: InteractionAnswer | undefined
   readonly disabled: boolean
-  readonly onSubmit: (answer: InteractionAnswer) => void
+  /**
+   * Presente cuando el desafío ya se resolvió.
+   *
+   * Antes de esto no existe: es lo que hace estructuralmente imposible que una
+   * opción tome color de resultado mientras se está decidiendo.
+   */
+  readonly resolution?: {
+    readonly chosenId: string | undefined
+    readonly tone: OutcomeTone
+  }
+  /** El primario, sólo si a este desafío le toca montarlo en el bloque oscuro. */
+  readonly action?: ReactNode
+  readonly onDraftChange: (answer: InteractionAnswer | undefined) => void
   readonly onRequestInformation: (key: string) => void
 }
 
 export function ChallengeFrame({
   view,
-  storyletTitle,
-  storyletText,
+  eyebrow,
+  draft,
   disabled,
-  onSubmit,
+  resolution,
+  action,
+  onDraftChange,
   onRequestInformation,
 }: ChallengeFrameProps) {
-  const [draft, setDraft] = useState<InteractionAnswer | undefined>(undefined)
-  // Atar el borrador al id de la instancia lo reinicia cuando —y sólo cuando—
-  // se presenta un desafío nuevo.
-  const [draftFor, setDraftFor] = useState<string>(view.ref.instanceId)
+  const resolved = resolution !== undefined
+  const missing = missingRequirement(view.interaction, draft)
+  const inDecisionBlock = usesDecisionBlock(view.interaction)
 
-  if (draftFor !== view.ref.instanceId) {
-    setDraftFor(view.ref.instanceId)
-    setDraft(undefined)
-  }
-
-  const submittable = !disabled && isDraftSubmittable(view.interaction, draft)
-
-  const handleSubmit = useCallback(() => {
-    if (draft === undefined) {
-      return
-    }
-    // Chequear también acá, y no sólo en el botón, evita un doble envío por un
-    // doble toque rápido; el motor rechaza el segundo de todos modos.
-    if (!isDraftSubmittable(view.interaction, draft)) {
-      return
-    }
-    onSubmit(draft)
-  }, [draft, onSubmit, view.interaction])
+  const controls = (
+    <InteractionControls
+      presentation={view.interaction}
+      draft={draft}
+      disabled={disabled || resolved}
+      {...(resolution === undefined ? {} : { resolution })}
+      onDraftChange={onDraftChange}
+      onRequestInformation={onRequestInformation}
+      instanceId={view.ref.instanceId}
+    />
+  )
 
   return (
     <SituationCard
+      eyebrow={eyebrow}
       title={view.narrative.title}
-      context={`${storyletTitle}: ${storyletText}`}
       setup={view.narrative.setup}
-      goal={view.narrative.goal}
-      footnote={
-        view.tools.length === 0 ? undefined : (
-          <p className="flex flex-wrap items-center gap-x-3 gap-y-1">
-            <span>Podés usar:</span>
-            {view.tools.map((tool) => {
-              const { label, Icon } = TOOL[tool]
-              return (
-                <span key={tool} className="inline-flex items-center gap-1.5">
-                  <Icon className="size-4" />
-                  {label}
-                </span>
-              )
-            })}
-          </p>
-        )
-      }
-      actions={
-        <Button
-          size="lg"
-          block
-          disabled={!submittable}
-          onClick={handleSubmit}
-          data-testid="submit-answer"
-        >
-          Confirmar
-        </Button>
-      }
+      data={interactionData(view.interaction)}
     >
-      <InteractionArea
-        presentation={view.interaction}
-        draft={draft}
-        disabled={disabled}
-        onDraftChange={setDraft}
-        onRequestInformation={onRequestInformation}
-        instanceId={view.ref.instanceId}
-      />
+      {inDecisionBlock ? (
+        <DecisionBlock
+          goal={view.narrative.goal}
+          {...(action === undefined
+            ? {}
+            : {
+                action: (
+                  <>
+                    {action}
+                    {/* El deshabilitado nunca es la única explicación: si el
+                        primario está apagado, esta línea dice por qué. */}
+                    {missing === undefined ? null : (
+                      <p className="text-caption text-on-decision-muted mt-2">
+                        {missing}
+                      </p>
+                    )}
+                  </>
+                ),
+              })}
+        >
+          {controls}
+        </DecisionBlock>
+      ) : (
+        <div className="flex flex-col gap-3">
+          <p className="text-goal font-display text-ink">
+            {view.narrative.goal}
+          </p>
+          {controls}
+          {resolved || missing === undefined ? null : (
+            <p className="text-caption text-ink-secondary">{missing}</p>
+          )}
+        </div>
+      )}
     </SituationCard>
   )
+}
+
+/**
+ * Si el bloque oscuro de este desafío monta el primario.
+ *
+ * La vista de la run la consulta para saber si tiene que montar el suyo. Es la
+ * garantía de que nunca hay dos: si el bloque oscuro tiene el botón, el slot de
+ * acción queda vacío.
+ */
+export function challengeOwnsPrimary(
+  view: PublicChallengeView,
+  resolved: boolean,
+): boolean {
+  return !resolved && usesDecisionBlock(view.interaction)
 }

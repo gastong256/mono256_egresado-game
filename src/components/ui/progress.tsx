@@ -1,41 +1,54 @@
 import { cn } from '@/lib/ui/cn'
 
 /**
- * Progreso.
+ * Progreso: celdas de la cuadrícula, no una barra.
  *
- * Es un `<progress>` nativo: trae rol, valor y máximo sin ARIA a mano, y un
- * lector de pantalla lo anuncia como progreso aunque el CSS no cargue.
+ * Una barra segmentada arriba de la pantalla era una de las cuatro decisiones
+ * que hacían que v0.1 se leyera como un juego de carrera deportiva. Estas son
+ * celdas de 16 px alineadas a la misma grilla que el fondo, y los tres estados
+ * se distinguen por **forma** antes que por color:
  *
- * Los pseudo-elementos de `::-webkit-progress-*` no aceptan clases de Tailwind,
- * así que la pista y el relleno se pintan con variantes arbitrarias apuntando a
- * tokens del sistema. Es una de las pocas excepciones legítimas a la regla de
- * no usar valores arbitrarios.
+ * - hecho — relleno;
+ * - actual — contorno de 2 px;
+ * - pendiente — regla de 1 px.
+ *
+ * En escala de grises los tres siguen siendo distintos, que es la prueba.
+ *
+ * Las celdas son decorativas: el texto accesible dice lo mismo, así que nadie
+ * tiene que contar cuadraditos con un lector de pantalla.
  */
-export function Progress({
-  value,
-  max,
-  label,
+export function StageProgress({
+  resolved,
+  total,
   className,
 }: {
-  readonly value: number
-  readonly max: number
-  readonly label: string
+  /** Eventos ya cerrados. La celda `resolved` es la que se está jugando. */
+  readonly resolved: number
+  readonly total: number
   readonly className?: string
 }) {
+  const cells = Array.from({ length: Math.max(0, total) }, (_, index) => index)
+
   return (
-    <progress
-      value={value}
-      max={max}
-      aria-label={label}
-      className={cn(
-        'rounded-pill h-1.5 w-full appearance-none overflow-hidden',
-        'bg-progress-track',
-        '[&::-webkit-progress-bar]:bg-progress-track',
-        '[&::-webkit-progress-value]:bg-progress-fill',
-        '[&::-webkit-progress-value]:rounded-pill',
-        '[&::-moz-progress-bar]:bg-progress-fill',
-        className,
-      )}
-    />
+    <div
+      className={cn('flex items-center gap-1', className)}
+      data-testid="stage-progress"
+    >
+      <span className="sr-only">
+        Evento {Math.min(resolved + 1, total)} de {total}
+      </span>
+      {cells.map((index) => (
+        <span
+          key={index}
+          aria-hidden="true"
+          className={cn(
+            'motion-progress block size-4',
+            index < resolved && 'bg-progress-done',
+            index === resolved && 'border-progress-current border-2',
+            index > resolved && 'border-progress-pending border',
+          )}
+        />
+      ))}
+    </div>
   )
 }

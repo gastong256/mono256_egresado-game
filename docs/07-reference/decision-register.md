@@ -16,7 +16,9 @@
 | ADR-012 | PRNG seeded, substreams y contrato de consumo | Aceptado |
 | ADR-013 | Aritmética racional exacta para evaluación matemática | Aceptado |
 | ADR-014 | Contenido de producto como paquete propio importable desde el cliente | Aceptado |
-| ADR-015 | Sistema de diseño con tokens semánticos y paleta restringida | Aceptado |
+| ADR-015 | Sistema de diseño con tokens semánticos y paleta restringida | Aceptado (reemplazado parcialmente por ADR-017) |
+| ADR-016 | Modelo de jugador de carrera: Promedio, Equipo, Aura y Estilo | Aceptado |
+| ADR-017 | Identidad papel: la hoja cuadriculada como canvas del juego | Aceptado |
 
 ## Regla para ADR nuevo
 

@@ -1,64 +1,125 @@
-'use client'
+import type { ReactNode } from 'react'
 
-/**
- * Shell de juego.
- *
- * Es la capa estructural estable alrededor de una run: ancho de la zona de
- * juego, encabezado de etapa, progreso, el contenido y las acciones. No sabe
- * nada de ningún desafío en particular; qué se dibuja adentro lo decide la fase
- * que devolvió el motor.
- *
- * Sigue las reglas de UX: columna única mobile-first, legible a 360 px, una sola
- * acción visible por vez, y nada cuyo significado dependa del color.
- */
-
-import { useCallback, useState } from 'react'
-
-import { Button, Separator, Surface } from '@/components/ui'
-import type {
-  EngineDependencies,
-  InteractionAnswer,
-  RunDescriptor,
-} from '@/game'
+import { StageProgress } from '@/components/ui'
 import { cn } from '@/lib/ui/cn'
 
-import { ChallengeFrame } from './challenge-frame'
-import type { GameController } from './controller'
-import { DebugPanel } from './debug-panel'
-import { FeedbackPanel } from './feedback-panel'
-import { NarrativeCard } from './narrative-card'
-import { StageHeader, StageProgress } from './stage-header'
-import { stageLabel } from './stage-label'
-import { StatRow } from './stat-indicator'
-import { useGameRun } from './use-game-run'
-
-export interface GameShellProps {
-  readonly controller: GameController
-  readonly dependencies: EngineDependencies
-  /** Muestra el panel de diagnóstico. Nunca se habilita en producción. */
-  readonly showDebug?: boolean
-  readonly onRestart?: () => RunDescriptor
-  /** Se muestra en el encabezado para que la run se sienta del jugador. */
-  readonly playerName?: string
-}
-
 /**
- * Geometría de la zona de juego.
+ * El shell.
  *
- * Un ancho máximo acotado en desktop: la lectura de un enunciado y la
- * comparación de cuatro opciones no mejoran por estirarse a 1200 px.
+ * Una columna de **412 px máximo, centrada, en todos los breakpoints**. Tablet y
+ * desktop centran contra la hoja; no ensanchan. Estirar el juego a 1200 px no
+ * mejora ni leer un enunciado ni comparar cuatro opciones — sólo obliga a barrer
+ * la cabeza de un lado al otro de la pantalla.
+ *
+ * `.eg-canvas` es el cambio de una línea que hace que todo se vea como Egresado:
+ * la cuadrícula del papel alrededor de cada bloque insertado.
+ *
+ * El slot de acción se ancla con `margin-top: auto` sobre una columna de altura
+ * mínima, así el primario cae **siempre en el mismo lugar**, esté la pantalla
+ * llena o casi vacía. Que el botón no se mueva entre escenas es lo que permite
+ * jugar sin volver a buscarlo cada vez.
  */
+
+/** El fondo de la página: la hoja se centra sobre un papel apenas más oscuro. */
 export function GameCanvas({
   children,
   className,
 }: {
-  readonly children: React.ReactNode
+  readonly children: ReactNode
   readonly className?: string
 }) {
   return (
     <div
       className={cn(
-        'max-w-game px-gutter pb-safe mx-auto flex w-full flex-col gap-6 py-6',
+        'px-gutter pb-safe flex min-h-dvh w-full justify-center py-6',
+        className,
+      )}
+    >
+      <div className="max-w-viewport flex w-full flex-col gap-3">
+        {children}
+      </div>
+    </div>
+  )
+}
+
+/**
+ * La hoja.
+ *
+ * Cuadriculada, con una regla de 1 px alrededor. Todo lo del juego pasa adentro.
+ */
+export function GameSheet({
+  children,
+  className,
+}: {
+  readonly children: ReactNode
+  readonly className?: string
+}) {
+  return (
+    <div
+      className={cn('eg-canvas border-rule flex flex-col border', className)}
+    >
+      {children}
+    </div>
+  )
+}
+
+/**
+ * Encabezado de etapa.
+ *
+ * El año a la izquierda y las celdas de progreso a la derecha. Nada más: cada
+ * elemento que se agregue acá le compite atención a la matemática de abajo.
+ *
+ * El nombre de la etapa es el `<h1>` de la pantalla de juego. Se ve como una
+ * etiqueta chica, pero estructuralmente es el encabezado principal: una página
+ * sin `h1` deja a quien navega por encabezados sin punto de entrada.
+ */
+export function StageHeader({
+  stage,
+  resolved,
+  total,
+  className,
+}: {
+  readonly stage: string
+  readonly resolved: number
+  readonly total: number
+  readonly className?: string
+}) {
+  return (
+    <div
+      className={cn(
+        'border-rule flex items-center justify-between gap-3 border-b px-4 py-3.5',
+        className,
+      )}
+    >
+      <h1
+        data-testid="stage-label"
+        className="font-display text-ink text-[10px] font-bold tracking-[0.16em] uppercase"
+      >
+        {stage}
+      </h1>
+      <StageProgress resolved={resolved} total={total} />
+    </div>
+  )
+}
+
+/**
+ * La columna de contenido.
+ *
+ * `min-height` sostiene la posición del primario; el `-18px` inferior del bloque
+ * de decisión está calculado contra este padding, así que los dos se mueven
+ * juntos o ninguno.
+ */
+export function SceneColumn({
+  children,
+  className,
+}: {
+  readonly children: ReactNode
+  readonly className?: string
+}) {
+  return (
+    <div
+      className={cn(
+        'flex min-h-[430px] flex-col gap-4 px-4 pt-[18px] pb-[18px]',
         className,
       )}
     >
@@ -67,173 +128,23 @@ export function GameCanvas({
   )
 }
 
-export function GameShell({
-  controller,
-  dependencies,
-  showDebug = false,
-  onRestart,
-  playerName,
-}: GameShellProps) {
-  const run = useGameRun(controller, dependencies)
-  const [debugOpen, setDebugOpen] = useState(false)
-  const { state, dispatch } = run
-  const active = state.run.activeEvent
-
-  const submitAnswer = useCallback(
-    (answer: InteractionAnswer) => {
-      const instanceId = active?.challenge?.instanceId
-      if (instanceId === undefined) {
-        return
-      }
-      dispatch({ type: 'ANSWER', instanceId, answer })
-    },
-    [active?.challenge?.instanceId, dispatch],
-  )
-
-  const requestInformation = useCallback(
-    (key: string) => {
-      const instanceId = active?.challenge?.instanceId
-      if (instanceId === undefined) {
-        return
-      }
-      dispatch({ type: 'REQUEST_INFO', instanceId, key })
-    },
-    [active?.challenge?.instanceId, dispatch],
-  )
-
-  const advance = useCallback(() => {
-    dispatch({ type: 'CONTINUE' })
-  }, [dispatch])
-
+/**
+ * El slot del primario.
+ *
+ * Existe exactamente **un** primario montado a la vez. Mientras se decide vive
+ * dentro del bloque oscuro, junto a las opciones; al resolver salta acá, debajo
+ * del panel de resultado. Nadie tiene que scrollear para atrás para continuar.
+ */
+export function ActionSlot({
+  children,
+  className,
+}: {
+  readonly children: ReactNode
+  readonly className?: string
+}) {
   return (
-    <GameCanvas>
-      <header className="flex flex-col gap-4">
-        <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
-          <StageHeader
-            stage={stageLabel(state.run.stage)}
-            {...(playerName === undefined ? {} : { playerName })}
-          />
-          <p
-            data-numeric
-            data-testid="score-preview"
-            className="text-caption text-foreground-muted"
-          >
-            Puntaje{' '}
-            <span className="text-foreground font-semibold">{run.score}</span>
-          </p>
-        </div>
-
-        <StageProgress
-          resolved={run.progress.eventsResolved}
-          total={run.progress.totalEvents}
-        />
-
-        <Separator />
-
-        <StatRow
-          stats={[
-            { label: 'Conocimiento', value: state.run.stats.knowledge },
-            { label: 'Equipo', value: state.run.stats.team },
-            { label: 'Iniciativa', value: state.run.stats.initiative },
-            { label: 'Energía', value: state.run.stats.energy },
-          ]}
-        />
-      </header>
-
-      <div className="flex flex-col gap-4">
-        {run.complete && state.run.completion !== undefined ? (
-          <Surface
-            as="section"
-            tone="raised"
-            padding="roomy"
-            aria-labelledby="run-complete"
-            className="flex flex-col gap-3"
-            data-testid="run-complete"
-          >
-            <h2 id="run-complete" className="text-title">
-              Carrera terminada
-            </h2>
-            {/* El motor garantiza que una run terminada trae su resultado, y el
-                códec de snapshots rechaza un estado que diga lo contrario, así
-                que estos valores nunca se sustituyen por un placeholder. */}
-            <p data-numeric className="text-body">
-              Puntaje estimado:{' '}
-              <strong>{state.run.completion.totalScore}</strong>
-            </p>
-            <p className="text-body">
-              Perfil de egreso:{' '}
-              <strong data-testid="profile">
-                {state.run.completion.profile.profileId}
-              </strong>
-            </p>
-            <p className="text-caption text-foreground-muted">
-              El puntaje oficial lo calcula el servidor reproduciendo la
-              partida. Este número es una estimación local.
-            </p>
-            {onRestart === undefined ? null : (
-              <Button
-                onClick={() => {
-                  controller.restart(onRestart())
-                }}
-              >
-                Jugar otra vez
-              </Button>
-            )}
-          </Surface>
-        ) : state.run.phase === 'feedback' && state.run.pendingFeedback ? (
-          <FeedbackPanel
-            feedback={state.run.pendingFeedback}
-            onContinue={advance}
-          />
-        ) : state.run.phase === 'challenge' && state.view && active ? (
-          <ChallengeFrame
-            view={state.view}
-            storyletTitle={active.title}
-            storyletText={active.text}
-            disabled={!run.canAnswer}
-            onSubmit={submitAnswer}
-            onRequestInformation={requestInformation}
-          />
-        ) : active ? (
-          <NarrativeCard
-            title={active.title}
-            actions={
-              <Button size="lg" block onClick={advance} data-testid="continue">
-                Continuar
-              </Button>
-            }
-          >
-            {active.text}
-          </NarrativeCard>
-        ) : null}
-
-        {state.lastRejection === undefined ? null : (
-          <p
-            role="status"
-            className="text-body-sm text-danger"
-            data-testid="rejection"
-          >
-            El motor rechazó la acción: {state.lastRejection.kind}
-          </p>
-        )}
-      </div>
-
-      {showDebug ? (
-        <footer>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => {
-              setDebugOpen((open) => !open)
-            }}
-            aria-expanded={debugOpen}
-            aria-controls="debug-panel"
-          >
-            {debugOpen ? 'Ocultar' : 'Mostrar'} diagnóstico
-          </Button>
-          {debugOpen ? <DebugPanel state={state} /> : null}
-        </footer>
-      ) : null}
-    </GameCanvas>
+    <div className={cn('mt-auto flex flex-col gap-2 pt-4', className)}>
+      {children}
+    </div>
   )
 }

@@ -5,16 +5,18 @@ import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 
 import { createGameController } from '@/components/game/controller'
-import { GameShell } from '@/components/game/game-shell'
 import {
-  InteractionArea,
+  InteractionControls,
   isDraftSubmittable,
 } from '@/components/game/interaction-area'
+import { RunView } from '@/components/game/run-view'
+import { useControllerSelector } from '@/components/game/use-game-run'
+import { YearResult } from '@/components/game/year-result'
 import {
   createDevelopmentDependencies,
   developmentRunDescriptor,
 } from '@/game/testing'
-import type { InteractionPresentation } from '@/game'
+import { isRunComplete, type InteractionPresentation } from '@/game'
 
 const dependencies = createDevelopmentDependencies()
 
@@ -23,6 +25,27 @@ function controllerFor(seed: string) {
     developmentRunDescriptor(seed, dependencies),
     dependencies,
   )
+}
+
+/**
+ * El recorrido completo, como lo compone la aplicación.
+ *
+ * Mientras la run está activa se dibuja la vista de juego; cuando el motor la da
+ * por terminada, el cierre del año. Qué mostrar lo decide el estado del motor,
+ * que es exactamente lo que hace el contenedor real.
+ */
+function RunHarness({
+  controller,
+}: {
+  readonly controller: ReturnType<typeof controllerFor>
+}) {
+  const run = useControllerSelector(controller, (state) => state.run)
+
+  if (isRunComplete(run)) {
+    return <YearResult state={run} onPlayAgain={() => undefined} />
+  }
+
+  return <RunView controller={controller} dependencies={dependencies} />
 }
 
 /**
@@ -64,11 +87,13 @@ describe('game shell', () => {
     const user = userEvent.setup()
     const controller = controllerFor('component-shell')
 
-    render(<GameShell controller={controller} dependencies={dependencies} />)
+    render(<RunHarness controller={controller} />)
 
     expect(screen.getByTestId('stage-label')).toHaveTextContent('7.º grado')
     expect(screen.getByTestId('narrative-card')).toBeInTheDocument()
-    expect(screen.getByTestId('score-preview')).toHaveTextContent('0')
+    // La tira de carrera arranca ausente: ninguna dimensión se tocó todavía, y
+    // `null` no es 0.
+    expect(screen.queryByTestId('career-strip')).not.toBeInTheDocument()
 
     await user.click(screen.getByTestId('continue'))
 
@@ -81,7 +106,7 @@ describe('game shell', () => {
     const user = userEvent.setup()
     const controller = controllerFor('component-submit')
 
-    render(<GameShell controller={controller} dependencies={dependencies} />)
+    render(<RunHarness controller={controller} />)
     await user.click(screen.getByTestId('continue'))
 
     const submit = screen.getByTestId('submit-answer')
@@ -98,7 +123,7 @@ describe('game shell', () => {
     const user = userEvent.setup()
     const controller = controllerFor('component-feedback')
 
-    render(<GameShell controller={controller} dependencies={dependencies} />)
+    render(<RunHarness controller={controller} />)
     await user.click(screen.getByTestId('continue'))
     await provideAnswer(user)
     await user.click(screen.getByTestId('submit-answer'))
@@ -114,12 +139,17 @@ describe('game shell', () => {
     expect(panel).not.toBeNull()
     if (panel === null) return
     expect(within(panel).getAllByRole('definition').length).toBeGreaterThan(0)
-    expect(within(panel).getByTestId('continue')).toBeInTheDocument()
+
+    // Al resolver, el bloque oscuro suelta el primario y reaparece uno solo al
+    // final del shell. La invariante del sistema es que nunca haya dos.
+    expect(within(panel).queryByTestId('continue')).toBeNull()
+    expect(screen.getByTestId('continue')).toBeInTheDocument()
+    expect(screen.queryAllByTestId('submit-answer')).toHaveLength(0)
   })
 
   it('surfaces an engine rejection instead of failing silently', () => {
     const controller = controllerFor('component-rejection')
-    render(<GameShell controller={controller} dependencies={dependencies} />)
+    render(<RunHarness controller={controller} />)
 
     // The dispatch originates outside React, so the resulting re-render has to
     // be flushed with act() before the DOM is asserted on.
@@ -143,10 +173,10 @@ describe('game shell', () => {
     const user = userEvent.setup()
     const controller = controllerFor('component-full-run')
 
-    render(<GameShell controller={controller} dependencies={dependencies} />)
+    render(<RunHarness controller={controller} />)
 
     for (let step = 0; step < 60; step += 1) {
-      if (screen.queryByTestId('run-complete') !== null) {
+      if (screen.queryByTestId('milestone') !== null) {
         break
       }
 
@@ -171,8 +201,8 @@ describe('game shell', () => {
       }
     }
 
-    expect(screen.getByTestId('run-complete')).toBeInTheDocument()
-    expect(screen.getByTestId('profile').textContent).toBeTruthy()
+    expect(screen.getByTestId('milestone')).toBeInTheDocument()
+    expect(screen.getByTestId('archetype').textContent).toBeTruthy()
   }, 40_000)
 })
 
@@ -263,7 +293,7 @@ describe('interaction renderers', () => {
       const onDraftChange = vi.fn()
 
       render(
-        <InteractionArea
+        <InteractionControls
           presentation={presentation}
           draft={undefined}
           disabled={false}
@@ -298,7 +328,7 @@ describe('interaction renderers', () => {
     if (presentation === undefined) throw new Error('missing case')
 
     render(
-      <InteractionArea
+      <InteractionControls
         presentation={presentation}
         draft={undefined}
         disabled={false}
@@ -322,7 +352,7 @@ describe('interaction renderers', () => {
     if (presentation === undefined) throw new Error('missing case')
 
     render(
-      <InteractionArea
+      <InteractionControls
         presentation={presentation}
         draft={undefined}
         disabled={false}
@@ -343,7 +373,7 @@ describe('interaction renderers', () => {
     if (presentation === undefined) throw new Error('missing case')
 
     render(
-      <InteractionArea
+      <InteractionControls
         presentation={presentation}
         draft={undefined}
         disabled

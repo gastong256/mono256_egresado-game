@@ -36,7 +36,7 @@ El motor devuelve estado, eventos y **descripciones** de efecto. Nunca ejecuta u
 | `random/` | interfaz `Rng`, adaptador `pure-rand`, derivación de seeds por namespace |
 | `challenges/` | contratos, taxonomía, interacciones, registry, helpers de evaluación |
 | `narrative/` | storylets, condiciones, efectos, selección determinista |
-| `progression/` | etapas canónicas y stats visibles |
+| `progression/` | etapas canónicas y el modelo de carrera visible |
 | `difficulty/`, `scoring/`, `profiles/` | contratos de política + implementaciones de desarrollo |
 | `ruleset/` | ensamblado y validación del ruleset versionado |
 | `runs/` | estado, comandos, eventos, transición, action log, replay, snapshots, selectores |
@@ -61,7 +61,7 @@ interface RunDescriptor {
 
 ## Estado
 
-`RunState` es JSON-compatible: no contiene `Date`, `Map`, `Set`, instancias de clase ni funciones. Guarda descriptor, fase, etapa, índices de evento, stats, flags, dificultad, estado de selección, historial, `scorePreview`, racha y completion.
+`RunState` es JSON-compatible: no contiene `Date`, `Map`, `Set`, instancias de clase ni funciones. Guarda descriptor, fase, etapa, índices de evento, carrera, flags, dificultad, estado de selección, historial, `scorePreview`, racha y completion.
 
 El desafío activo se guarda como **dirección**, no como modelo:
 
@@ -217,7 +217,7 @@ Para que esa regla no dependa de la disciplina de quien edita, `tests/unit/engin
 
 ## Frontera con servidor
 
-El motor corre igual en browser y en Node. `src/server/game/validate-run.ts` es el caso de uso `server-only` que materializa ADR-004: recibe una submission no confiable, la parsea, verifica compatibilidad de versiones, la reproduce y devuelve score, perfil y stats **recalculados**. Nada que el cliente afirme sobre el resultado se lee; un payload que incluya su propio `officialScore` simplemente lo ve ignorado.
+El motor corre igual en browser y en Node. `src/server/game/validate-run.ts` es el caso de uso `server-only` que materializa ADR-004: recibe una submission no confiable, la parsea, verifica compatibilidad de versiones, la reproduce y devuelve score, perfil y carrera **recalculados**. Nada que el cliente afirme sobre el resultado se lee; un payload que incluya su propio `officialScore` simplemente lo ve ignorado.
 
 Rechaza con tipo una submission malformada, una acción insertada, una secuencia rota, una run truncada, un ruleset incompatible y un seed fuera del charset. Endpoints, sesión, rate limiting y persistencia siguen siendo trabajo aparte.
 

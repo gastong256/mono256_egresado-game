@@ -1,186 +1,186 @@
 /**
- * Egresado Design System v0.1 — tokens semánticos.
+ * Egresado Design System v0.2 — tokens semánticos.
  *
- * Esta es la capa que consumen los componentes. Un componente pide `bg-surface`
- * o `text-foreground-muted`, no `bg-gray-100`: así el día que cambie la paleta
- * —o exista un tema oscuro— se cambia acá y no en sesenta archivos.
+ * Esta es la capa que consumen los componentes. Un componente pide `bg-canvas`
+ * o `text-ink-label`, no `bg-paper` ni `text-ink-500`: así el día que cambie un
+ * pigmento —o exista un tema por año— se cambia acá y no en sesenta archivos.
  *
- * Cada token existe porque hay algo que lo usa. Si un token se queda sin
- * consumidores, se borra.
+ * Los roles vienen del handoff v0.2. Cada uno existe porque hay algo que lo usa;
+ * si un token se queda sin consumidores, se borra.
  *
- * v0.1 tiene un solo tema. Los valores viven en `:root` en lugar de estar
- * incrustados en `@theme` justamente para que un segundo tema sea un bloque de
- * redefiniciones y no una reescritura de los componentes.
+ * Los valores viven en `:root` en lugar de estar incrustados en `@theme` para
+ * que un segundo tema sea un bloque de redefiniciones y no una reescritura de
+ * los componentes.
  */
 
 :root {
   color-scheme: light;
 
-  /* Superficies. El lienzo es apenas más oscuro que las tarjetas: eso solo ya
-     hace que el contenido del juego se lea como algo apoyado encima. */
-  --canvas: var(--color-gray-50);
+  /* ---- Superficies ------------------------------------------------------ */
+  /* La hoja cuadriculada es el fondo de toda pantalla. */
+  --canvas: var(--color-paper);
+  --canvas-grid: var(--color-paper-grid);
+  --canvas-sunken: var(--color-paper-sunken);
+  /* Fondo liso: sólo bloques insertados —dato, ledger, sello, Aura, decisión—,
+     así el papel se ve alrededor y el dato se lee como objeto. */
   --surface: var(--color-white);
-  --surface-muted: var(--color-gray-100);
-  --surface-inverse: var(--color-gray-950);
 
-  /* Texto. */
-  --foreground: var(--color-gray-900);
-  --foreground-muted: var(--color-gray-600);
-  --foreground-subtle: var(--color-gray-500);
-  --foreground-inverse: var(--color-white);
+  /* El oscuro existe en dos lugares y en ninguno más: el bloque de decisión… */
+  --decision: var(--color-slate-900);
+  --decision-raised: var(--color-slate-800);
+  /* …y el bloque negro de Aura, que es la única isla negra del sistema. */
+  --aura-surface: var(--color-void);
 
-  /* Bordes y separadores. `line` es el borde estructural; `line-interactive`
-     es el de un control, y por eso llega al contraste no textual de WCAG. */
-  --line: var(--color-gray-200);
-  --line-strong: var(--color-gray-300);
-  --line-interactive: var(--color-gray-500);
-  --line-selected: var(--color-gray-900);
+  /* ---- Reglas y bordes -------------------------------------------------- */
+  --rule: var(--color-graphite);
+  --rule-soft: var(--color-hairline);
+  --rule-strong: var(--color-ink-900);
+  --decision-rule: var(--color-slate-500);
+  --decision-rule-hover: var(--color-ash-400);
 
-  /* Acción primaria: el verde de marca. */
-  --primary: var(--color-green-600);
-  --primary-hover: var(--color-green-700);
-  --primary-active: var(--color-green-800);
-  --primary-foreground: var(--color-white);
-  --primary-subtle: var(--color-green-50);
-  --primary-subtle-foreground: var(--color-green-900);
+  /* ---- Tinta ------------------------------------------------------------ */
+  --ink: var(--color-ink-900);
+  --ink-secondary: var(--color-ink-700);
+  --ink-label: var(--color-ink-500);
+  --on-decision: var(--color-paper);
+  --on-decision-muted: var(--color-slate-300);
+  --on-decision-strong: var(--color-white);
 
-  /* Acento de marca: el rojo. Es tensión narrativa y énfasis, no un error. */
-  --accent: var(--color-red-600);
-  --accent-hover: var(--color-red-700);
-  --accent-active: var(--color-red-800);
-  --accent-foreground: var(--color-white);
-  --accent-subtle: var(--color-red-50);
-  --accent-subtle-foreground: var(--color-red-900);
+  /* ---- Verde escolar: estado, marca de corrección, progreso ------------- */
+  --green: var(--color-bottle-600);
+  --green-deep: var(--color-bottle-800);
+  --green-tint: var(--color-bottle-050);
 
-  /* Acción destructiva. Deliberadamente distinta del acento de marca: si
-     fueran el mismo token, borrar una partida y un momento narrativo intenso
-     se verían igual. */
-  --danger: var(--color-red-700);
-  --danger-hover: var(--color-red-800);
-  --danger-foreground: var(--color-white);
+  /* ---- Rojo corrección: tensión y restricción. NO «error» --------------- */
+  --red: var(--color-tartan-600);
+  --red-tint: var(--color-tartan-050);
 
-  /* Foco. Uno solo para todo el producto, con halo blanco para que el anillo
-     se vea también sobre un botón verde o rojo. */
-  --focus: var(--color-green-700);
-  --focus-contrast: var(--color-white);
+  /* ---- Lima acción: el CTA. Sólo botones -------------------------------- */
+  --action: var(--color-lime-400);
+  --action-hover: var(--color-lime-300);
+  --on-action: var(--color-ink-900);
+  --action-disabled: var(--color-paper-grid);
+  --on-action-disabled: var(--color-ink-500);
+  /* El mismo botón dentro del bloque oscuro necesita su propio deshabilitado:
+     el gris de papel sobre pizarra desaparece. */
+  --action-disabled-dark: var(--color-slate-600);
+  --on-action-disabled-dark: var(--color-ash-400);
 
-  /* Selección. NUNCA verde: antes de confirmar, el jugador no puede deducir de
-     un color si eligió bien. Ver `docs/design-system/colors.md`. */
-  --selected-surface: var(--color-gray-100);
-  --selected-line: var(--color-gray-900);
-  --selected-foreground: var(--color-gray-900);
+  /* ---- Aura: verde brillante que vive SÓLO sobre negro ------------------ */
+  --aura-bracket: var(--color-neon-500);
+  --aura-gain: var(--color-neon-400);
+  --aura-loss: var(--color-coral-400);
+  --aura-label: var(--color-ash-400);
 
-  /* Deshabilitado. */
-  --disabled-surface: var(--color-gray-100);
-  --disabled-foreground: var(--color-gray-500);
-  --disabled-line: var(--color-gray-300);
+  /* ---- Foco: una sola regla, negra -------------------------------------- */
+  /* Negra, así nunca se confunde con un color de estado. Sobre la superficie
+     de decisión se invierte, que es la única variación. */
+  --focus-ring: var(--color-ink-900);
+  --focus-ring-inverse: var(--color-paper);
 
-  /* Resultado de una decisión, en el vocabulario del motor. No hay
-     "correcto"/"incorrecto": hay óptimo, eficiente, funcionó y no alcanzó. */
-  /* Óptimo y eficiente son los dos verdes, y se distinguen por la intensidad
-     del relleno además del ícono y del nombre. El borde de los cuatro llega al
-     contraste no textual: si sirve para identificar un estado, tiene que verse.
-     Un borde verde claro sobre relleno verde claro no lo cumplía. */
-  --optimal-surface: var(--color-green-100);
-  --optimal-line: var(--color-green-600);
-  --optimal-foreground: var(--color-green-900);
+  /* ---- Calidad del resultado -------------------------------------------- */
+  /* Cuatro estados, y ninguno se distingue sólo por color: cada uno lleva
+     glifo + palabra + borde superior. El color sólo refuerza, y por eso óptimo
+     y resuelto pueden compartir verde sin volverse ambiguos. */
+  --outcome-optimal: var(--color-bottle-600);
+  --outcome-resolved: var(--color-bottle-600);
+  --outcome-partial: var(--color-ink-500);
+  --outcome-insufficient: var(--color-tartan-600);
 
-  --efficient-surface: var(--color-green-50);
-  --efficient-line: var(--color-green-500);
-  --efficient-foreground: var(--color-green-900);
+  /* ---- Progreso: celdas de la cuadrícula, no una barra ------------------ */
+  --progress-done: var(--color-bottle-600);
+  --progress-current: var(--color-ink-900);
+  --progress-pending: var(--color-graphite);
 
-  --functional-surface: var(--color-gray-100);
-  --functional-line: var(--color-gray-500);
-  --functional-foreground: var(--color-gray-900);
+  /* ---- Estilo: un solo verde; los ejes se distinguen por trazo ---------- */
+  --estilo-reference: var(--color-graphite);
+  --estilo-axis: var(--color-bottle-600);
+  --estilo-point: var(--color-ink-900);
 
-  --invalid-surface: var(--color-red-50);
-  --invalid-line: var(--color-red-600);
-  --invalid-foreground: var(--color-red-900);
+  /* ---- Selección: blanca, nunca verde ----------------------------------- */
+  /* Elegir significa «esta es mi decisión», no «esta es la correcta». */
+  --selected-box: var(--color-paper);
+  --on-selected-box: var(--color-ink-900);
 
-  /* Progreso. */
-  --progress-track: var(--color-gray-200);
-  --progress-fill: var(--color-green-600);
-
-  /* Datos cuantitativos: el número va más oscuro que el texto corrido, para
-     que gane la mirada sin necesidad de color. */
-  --data-foreground: var(--color-gray-950);
-  --data-label: var(--color-gray-600);
-
-  /* Movimiento. */
-  --motion-fast: 140ms;
-  --motion-standard: 200ms;
-  --motion-emphasized: 320ms;
+  /* ---- Deshabilitado ---------------------------------------------------- */
+  --disabled-surface: var(--color-paper-grid);
+  --disabled-ink: var(--color-ink-500);
 }
 
 /*
   `inline` hace que las utilidades de Tailwind referencien la variable en lugar
-  de copiar su valor. Es lo que permite que un tema futuro redefina `:root` y
-  que `bg-surface` cambie sin recompilar los componentes.
+  de copiar su valor. Es lo que permite que un tema futuro redefina `:root` y que
+  `bg-canvas` cambie sin recompilar los componentes.
 */
 @theme inline {
   --color-canvas: var(--canvas);
+  --color-canvas-grid: var(--canvas-grid);
+  --color-canvas-sunken: var(--canvas-sunken);
   --color-surface: var(--surface);
-  --color-surface-muted: var(--surface-muted);
-  --color-surface-inverse: var(--surface-inverse);
+  --color-decision: var(--decision);
+  --color-decision-raised: var(--decision-raised);
+  --color-aura-surface: var(--aura-surface);
 
-  --color-foreground: var(--foreground);
-  --color-foreground-muted: var(--foreground-muted);
-  --color-foreground-subtle: var(--foreground-subtle);
-  --color-foreground-inverse: var(--foreground-inverse);
+  --color-rule: var(--rule);
+  --color-rule-soft: var(--rule-soft);
+  --color-rule-strong: var(--rule-strong);
+  --color-decision-rule: var(--decision-rule);
+  --color-decision-rule-hover: var(--decision-rule-hover);
 
-  --color-line: var(--line);
-  --color-line-strong: var(--line-strong);
-  --color-line-interactive: var(--line-interactive);
-  --color-line-selected: var(--line-selected);
+  --color-ink: var(--ink);
+  --color-ink-secondary: var(--ink-secondary);
+  --color-ink-label: var(--ink-label);
+  --color-on-decision: var(--on-decision);
+  --color-on-decision-muted: var(--on-decision-muted);
+  --color-on-decision-strong: var(--on-decision-strong);
 
-  --color-primary: var(--primary);
-  --color-primary-hover: var(--primary-hover);
-  --color-primary-active: var(--primary-active);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary-subtle: var(--primary-subtle);
-  --color-primary-subtle-foreground: var(--primary-subtle-foreground);
+  --color-green: var(--green);
+  --color-green-deep: var(--green-deep);
+  --color-green-tint: var(--green-tint);
+  --color-red: var(--red);
+  --color-red-tint: var(--red-tint);
 
-  --color-accent: var(--accent);
-  --color-accent-hover: var(--accent-hover);
-  --color-accent-active: var(--accent-active);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent-subtle: var(--accent-subtle);
-  --color-accent-subtle-foreground: var(--accent-subtle-foreground);
+  --color-action: var(--action);
+  --color-action-hover: var(--action-hover);
+  --color-on-action: var(--on-action);
+  --color-action-disabled: var(--action-disabled);
+  --color-on-action-disabled: var(--on-action-disabled);
+  --color-action-disabled-dark: var(--action-disabled-dark);
+  --color-on-action-disabled-dark: var(--on-action-disabled-dark);
 
-  --color-danger: var(--danger);
-  --color-danger-hover: var(--danger-hover);
-  --color-danger-foreground: var(--danger-foreground);
+  --color-aura-bracket: var(--aura-bracket);
+  --color-aura-gain: var(--aura-gain);
+  --color-aura-loss: var(--aura-loss);
+  --color-aura-label: var(--aura-label);
 
-  --color-focus: var(--focus);
-  --color-focus-contrast: var(--focus-contrast);
+  --color-focus-ring: var(--focus-ring);
+  --color-focus-ring-inverse: var(--focus-ring-inverse);
 
-  --color-selected-surface: var(--selected-surface);
-  --color-selected-line: var(--selected-line);
-  --color-selected-foreground: var(--selected-foreground);
+  --color-outcome-optimal: var(--outcome-optimal);
+  --color-outcome-resolved: var(--outcome-resolved);
+  --color-outcome-partial: var(--outcome-partial);
+  --color-outcome-insufficient: var(--outcome-insufficient);
+
+  --color-progress-done: var(--progress-done);
+  --color-progress-current: var(--progress-current);
+  --color-progress-pending: var(--progress-pending);
+
+  --color-estilo-reference: var(--estilo-reference);
+  --color-estilo-axis: var(--estilo-axis);
+  --color-estilo-point: var(--estilo-point);
+
+  --color-selected-box: var(--selected-box);
+  --color-on-selected-box: var(--on-selected-box);
 
   --color-disabled-surface: var(--disabled-surface);
-  --color-disabled-foreground: var(--disabled-foreground);
-  --color-disabled-line: var(--disabled-line);
+  --color-disabled-ink: var(--disabled-ink);
 
-  --color-optimal-surface: var(--optimal-surface);
-  --color-optimal-line: var(--optimal-line);
-  --color-optimal-foreground: var(--optimal-foreground);
-
-  --color-efficient-surface: var(--efficient-surface);
-  --color-efficient-line: var(--efficient-line);
-  --color-efficient-foreground: var(--efficient-foreground);
-
-  --color-functional-surface: var(--functional-surface);
-  --color-functional-line: var(--functional-line);
-  --color-functional-foreground: var(--functional-foreground);
-
-  --color-invalid-surface: var(--invalid-surface);
-  --color-invalid-line: var(--invalid-line);
-  --color-invalid-foreground: var(--invalid-foreground);
-
-  --color-progress-track: var(--progress-track);
-  --color-progress-fill: var(--progress-fill);
-
-  --color-data-foreground: var(--data-foreground);
-  --color-data-label: var(--data-label);
+  /*
+    El resplandor de Aura. Es la única excepción a «sin sombras» del sistema, y
+    no es una sombra: es luz, y por eso vive dentro del único bloque negro.
+  */
+  --text-shadow-aura: 0 0 24px
+    color-mix(in srgb, var(--aura-bracket) 50%, transparent);
+  --text-shadow-aura-sm: 0 0 14px
+    color-mix(in srgb, var(--aura-bracket) 50%, transparent);
 }

@@ -11,6 +11,6 @@ export default function manifest(): MetadataRoute.Manifest {
     display: 'standalone',
     background_color: BRAND_HEX.canvas,
     theme_color: BRAND_HEX.canvas,
-    lang: 'es',
+    lang: 'es-AR',
   }
 }

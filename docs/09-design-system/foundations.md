@@ -1,87 +1,79 @@
 # Fundamentos
 
-## Espaciado
+Cuadrícula, geometría, layout y movimiento. Los valores viven en `src/styles/`; acá está el criterio.
 
-No hay vocabulario propio de espaciado. La escala de Tailwind ya es coherente, y agregarle alias (`space-component`, `space-section`) sólo habría creado una segunda forma de decir lo mismo.
+## La cuadrícula
 
-Lo que sí hay es intención. El espaciado es lo que agrupa:
+Celda de **16 px**. Padding y alturas en múltiplos de 8.
 
-```text
-situación
-    aire
-datos
-    juntos entre sí
-consigna
-    separada
-interacción
-    espacio de blanco alrededor de cada objetivo táctil
-feedback
-    frontera de estado nueva
-```
+La utilidad `.eg-canvas` la dibuja con dos degradados lineales, y es el fondo de **toda** pantalla. No es decoración: es el sistema de alineación con el que los datos se leen como objetos apoyados sobre una hoja en lugar de como párrafos.
 
-Proximidad y región común hacen el trabajo que en otro sistema harían cuatro bordes más. Si dos cosas se leen como un grupo, no necesitan una caja.
+Es también el cambio de una línea que hace que algo se vea como Egresado. Si una pantalla nueva no muestra la cuadrícula alrededor de sus bloques, se volvió genérica.
+
+## Geometría
+
+| | Valor |
+|---|---|
+| Radio | **0, siempre** |
+| Regla | 1 px |
+| Caja de dato | 1,5 px de tinta |
+| Sección | 2 px de tinta |
+| Pestaña / módulo | 3 px superior en el color del estado |
+| Sombra | **ninguna** |
+
+La profundidad la da el peso del borde y el contraste de fondo, igual que un impreso. Las dos escalas están apagadas (`--radius-*` y `--shadow-*`) y el guardarraíl rechaza cualquier `rounded-*` o `shadow-*` en código de producto.
+
+La única excepción es el resplandor de Aura, que no es una sombra sino luz, y vive dentro del único bloque negro del sistema.
+
+## La marca de corrección
+
+El device de la identidad. El tilde verde y el subrayado rojo del docente, convertidos en sistema:
+
+| Marca | Significa |
+|---|---|
+| Tilde verde lleno | resultado conseguido |
+| Tilde verde en contorno | alcanzó, pero de más |
+| Cuadrado gris | resolvió una parte |
+| Tachado rojo | no alcanzó |
+| Subrayado rojo corto | el dato que era la restricción |
+
+**La marca cae sobre el dato o la opción, nunca en un marco alrededor.** Eso es precisamente lo que la separa de un frame deportivo, y por qué el subrayado de una restricción abraza la cifra en vez de cruzar la celda.
+
+Los cuatro glifos son SVG inline con `currentColor` y terminación cuadrada. Van `aria-hidden` sin excepción: acompañan una palabra que ya dice lo mismo.
 
 ## Layout
 
-Egresado es mobile-first y portrait-first. El viewport de referencia es ~390×844, y se verifica desde 360 px.
+- Viewport de juego: **412 px máximo**, centrado, en todos los breakpoints.
+- Gutter de 16 px, con safe area.
+- Verificado a **360 / 390 / 412**.
+- Tablet y desktop **centran**, no estiran. Un máximo mayor (≤560 px) queda reservado para interacciones genuinamente anchas.
 
-- **Ancho de juego**: `max-w-game` (34 rem). En desktop el juego no se estira: leer un enunciado y comparar cuatro opciones no mejora a 1200 px de ancho.
-- **`max-w-game-wide`** (44 rem) existe para una interacción que realmente necesite más aire horizontal en pantallas grandes. Hoy no la usa nadie.
-- **Márgenes**: `px-gutter` incluye las safe areas del teléfono con `env()`. En un browser común `env()` vale 0, así que no agrega relleno inútil.
-- **`pb-safe`** protege la acción principal de la barra de gestos.
+Estirar el juego a 1200 px no mejora ni leer un enunciado ni comparar cuatro opciones: sólo obliga a barrer la cabeza de un lado al otro de la pantalla.
 
-`GameCanvas` es el componente que impone esta geometría. Una pantalla de juego no la vuelve a decidir.
+## El slot de acción
 
-## Radio
+**Existe exactamente un primario montado a la vez.** Mientras se decide vive dentro del bloque oscuro, junto a las opciones; al resolver salta al final del shell, debajo del panel de resultado. Nunca hay que scrollear para atrás para continuar.
 
-Cuatro valores con nombre:
+El slot se ancla con `margin-top: auto` sobre una columna de altura mínima, así el primario cae siempre en el mismo lugar esté la pantalla llena o casi vacía. Que el botón no se mueva entre escenas es lo que permite jugar sin volver a buscarlo cada vez.
 
-| Token | Para qué |
-|---|---|
-| `rounded-control` | botones, campos, controles |
-| `rounded-surface` | tarjetas, paneles, superficies |
-| `rounded-card` | contenedores grandes de un estado, como el panel de feedback |
-| `rounded-pill` | etiquetas, barras de progreso |
-
-Los radios por defecto de Tailwind están apagados. Egresado usa esquinas redondeadas moderadas: lo bastante como para no verse a documento administrativo, no tanto como para verse a aplicación para nenes.
-
-## Bordes
-
-El diseño es predominantemente claro, así que el borde hace mucho más trabajo que la sombra.
-
-| Token | Para qué | Contraste |
-|---|---|---|
-| `line` | separación estructural, borde de tarjeta | decorativo |
-| `line-strong` | agrupación un poco más marcada | decorativo |
-| `line-interactive` | contorno de un control: campo, botón secundario, radio | ≥ 3:1 |
-| `line-selected` | lo que el jugador eligió | ≥ 3:1 |
-
-La distinción importa: sólo el borde que **identifica un componente o un estado** tiene que llegar al contraste no textual. Un separador no.
-
-## Elevación
-
-Tres niveles y el vacío: `shadow-surface`, `shadow-raised`, `shadow-overlay`. La jerarquía sale antes del espaciado, del fondo, del borde y de la tipografía. Una tarjeta de juego no tiene por qué flotar como si fuera un modal.
+Hay un test end-to-end que cuenta los primarios en cada paso del año.
 
 ## Movimiento
 
-Tres duraciones con nombre —`motion-fast`, `motion-standard`, `motion-emphasized`— y dos curvas: `ease-standard` y `ease-emphasized`. Los tiempos están dentro de los 150–350 ms que fija la guía de UX, que también responde a una necesidad concreta: en una feria, una animación larga baja el throughput.
+Cinco duraciones, dos curvas, **tres keyframes en total**. Todo lo demás es una `transition`.
 
-Se anima la selección, la llegada del feedback, el cambio de progreso, el estado de un botón y el hito de fin de año. Nada más.
+| Utilidad | Duración | Para qué |
+|---|---|---|
+| `motion-select` | 140 ms | elegir una opción |
+| `motion-enter` | 200 ms | el bloque de contenido en cada cambio de escena |
+| `motion-resolve` | 320 ms | un pop por resolución, sólo el panel de resultado |
+| `motion-progress` | 420 ms | celda de progreso y transiciones numéricas |
+| `motion-estilo` | 320 ms | polígono y centroide del triángulo |
 
-`prefers-reduced-motion: reduce` está implementado desde el primer día y reduce toda transición y animación a un instante. **El significado nunca depende del movimiento**: el hito de fin de año se desplaza pero no se desvanece, justamente para que su título no quede ilegible mientras entra.
+Sin librería de animación, sin Lottie, sin video. **Nunca se anima el ancho de un borde**: reflowea.
 
-## Foco
+El confeti del cierre son 18 tiras de CSS de 3×12 px con posiciones y retardos deterministas. Deterministas a propósito: el mismo cierre tiene que verse igual en dos capturas, y una captura de regresión con `Math.random()` adentro no sirve para nada. Dispara en cierre de etapa, egreso y Aura de `+1.000`, y en ningún otro lugar.
 
-Un solo tratamiento para todo el producto:
+## Reduced motion
 
-```text
-anillo verde de 3 px
-    separado 2 px del control
-    con el hueco relleno de blanco
-```
-
-El halo blanco es lo que mantiene el anillo visible también sobre un botón verde o rojo, sin que cada componente invente el suyo. Está definido una vez, en `:focus-visible` de la capa base.
-
-## Objetivos táctiles
-
-Los controles importantes apuntan a 44×44 px o más, que es holgado respecto del mínimo de WCAG pero es lo que hace usable un juego con el pulgar. Entre acciones contiguas hay separación suficiente para no tocar la equivocada.
+Un solo bloque global lleva las cinco duraciones a 1 ms. **Ninguna información se transmite sólo por movimiento**: los porcentajes de Estilo están impresos, el resultado está escrito y el progreso se distingue por forma. El confeti directamente no se dibuja — una tira detenida sobre el título no es una celebración discreta.

@@ -11,10 +11,10 @@
  */
 
 export const BRAND_HEX = {
-  /** `--color-gray-50`, el lienzo de la aplicación. */
-  canvas: '#f5f8f6',
-  /** `--color-green-600`, el verde de marca. */
-  primary: '#148043',
-  /** `--color-gray-900`, la tinta del texto. */
-  ink: '#333734',
+  /** `--color-paper`: la hoja cuadriculada, que es el fondo de todo. */
+  canvas: '#f6f5f0',
+  /** `--color-bottle-600`: el verde escolar de estado y marca de corrección. */
+  green: '#1b6b3a',
+  /** `--color-ink-900`: la tinta. */
+  ink: '#16181a',
 } as const
