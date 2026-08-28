@@ -57,6 +57,15 @@ export interface RunDescriptor {
   readonly gameVersion: string
   readonly rulesetVersion: string
   readonly contentVersion: string
+  /**
+   * The approved variant catalog this run draws from, when it draws from one.
+   *
+   * Absent is a real answer, not a missing value: a run that plays a template's
+   * curated variants is not drawing from a catalog, and stamping one on it
+   * would claim an approval that never happened. It becomes required only for
+   * runs that must be auditable against a frozen competitive catalog.
+   */
+  readonly variantCatalogVersion?: string
 }
 
 /**

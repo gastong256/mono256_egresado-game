@@ -475,7 +475,7 @@ describe('el acto del 25 de Mayo · clasificación y Aura', () => {
   it('las variantes autoradas usan números que se clasifican de memoria', () => {
     for (const variant of may25ActReference.variants) {
       for (const round of variant.rounds) {
-        for (const value of round.numbers) {
+        for (const value of round) {
           expect(Number.isSafeInteger(value)).toBe(true)
           expect(value).toBeGreaterThanOrEqual(0)
           expect(value).toBeLessThanOrEqual(30)

@@ -29,6 +29,7 @@
 import {
   IDENTIFIER_PATTERN,
   toChallengeId,
+  toRunSeed,
   toScenarioFamilyId,
   toVariantId,
   type ChallengeId,
@@ -40,6 +41,7 @@ import type { EngineRejection } from '../core/errors'
 import { EngineInvariantError } from '../core/invariant'
 import { err, ok, type Result } from '../core/result'
 import { deriveSeedValue, type RngPath } from '../random/seed'
+import { createRng, type Rng } from '../random/rng'
 import type { StageId } from '../progression/stages'
 
 /**
@@ -198,17 +200,36 @@ export function variantRngPath(ref: ChallengeVariantRef): RngPath {
 }
 
 /**
- * The deterministic generator seed a variant owns under a run.
+ * The seed the whole variant space hangs from.
  *
- * `same run seed + same variant address = same variant seed`, and nothing else
- * enters the derivation. It reuses the engine's substream derivation rather than
- * introducing a second source of randomness.
+ * A variant's parameters must be the same problem for every player who draws
+ * it — that is what makes a pre-validated catalog mean anything, and what makes
+ * a competition fair. So the variant substream is **not** derived from the run
+ * seed: it is derived from this fixed content seed plus the variant's semantic
+ * address. Two different runs that schedule `bus/g7.bus-timing/c00042` face the
+ * identical problem.
+ *
+ * The run seed still decides *which* variants a run sees. It does not decide
+ * what they contain.
  */
-export function deriveVariantSeed(
-  runSeed: RunSeed,
-  ref: ChallengeVariantRef,
-): number {
-  return deriveSeedValue(runSeed, variantRngPath(ref))
+export const VARIANT_SPACE_SEED: RunSeed = toRunSeed(
+  'egresado.variant-space.v1',
+)
+
+/**
+ * The deterministic generator seed a variant owns.
+ *
+ * `same variant address = same variant seed`, everywhere, forever. It reuses the
+ * engine's substream derivation rather than introducing a second source of
+ * randomness.
+ */
+export function deriveVariantSeed(ref: ChallengeVariantRef): number {
+  return deriveSeedValue(VARIANT_SPACE_SEED, variantRngPath(ref))
+}
+
+/** The substream a variant's parameters are generated from. */
+export function createVariantRng(ref: ChallengeVariantRef): Rng {
+  return createRng(VARIANT_SPACE_SEED, variantRngPath(ref))
 }
 
 /**

@@ -50,7 +50,16 @@ import { grade7Storylets } from './storylets'
  * cambió algo que no cambió.
  */
 export const GRADE_7_RULESET_VERSION = '0.3.0-grade-7'
-export const GRADE_7_CONTENT_VERSION = '0.4.0-grade-7'
+export const GRADE_7_CONTENT_VERSION = '0.5.0-grade-7'
+
+/**
+ * Versión del catálogo de variantes aprobadas.
+ *
+ * Identifica un conjunto estable de variantes validadas. **No es el catálogo de
+ * la feria**: es el de desarrollo, y el nombre lo dice. Congelar el catálogo
+ * oficial de una competencia es una decisión de evento que todavía no se tomó.
+ */
+export const GRADE_7_VARIANT_CATALOG_VERSION = 'grade-7-dev-1'
 
 /** Los seis desafíos jugables de 7.º grado. */
 export const grade7Challenges: readonly ChallengeDefinition[] = [

@@ -50,6 +50,10 @@ runPnpm('Unit, component, integration and property tests', ['test:coverage'])
 // Content and simulation gates run after the tests: they exercise the same
 // engine, so a failure here points at content or scale rather than at a unit.
 runPnpm('Content validation', ['game:validate-content', '--', '--seeds=60'])
+// The committed variant catalog must be exactly what today's code produces, and
+// every entry in it must still validate. The deep statistical sweep is a
+// separate, much slower command: `pnpm game:variants audit`.
+runPnpm('Approved variant catalog', ['game:variants', 'check'])
 runPnpm('Deterministic run simulation', [
   'game:simulate',
   '--',

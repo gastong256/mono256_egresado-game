@@ -17,7 +17,6 @@ import {
   err,
   metrics,
   ok,
-  authoredVariant,
   authoredVariantIds,
   toChallengeId,
   type ChallengeDefinition,
@@ -34,6 +33,7 @@ import {
   roundTo,
 } from '@/game'
 import { BUS_FAMILY } from '../families'
+import { busTimingVariants, type BusParams } from './bus-timing.variants'
 
 interface Departure {
   readonly id: string
@@ -52,19 +52,15 @@ interface BusModel {
 /** Margen mínimo, en minutos, para considerar que la llegada es segura. */
 const SAFE_MARGIN = 5
 
-/**
- * Dos variantes autoradas. El seed elige una; las dos están verificadas por
- * tests y las dos ofrecen exactamente una salida óptima y al menos una que
- * llega tarde.
- */
 /** Identidad estable de la plantilla. */
 const BUS_TIMING_ID = toChallengeId('g7.bus-timing')
 
-const VARIANTS = [
-  { id: 'demora-25', delayPercent: 25, departures: [405, 420, 430, 440] },
-  { id: 'demora-50', delayPercent: 50, departures: [405, 420, 430, 440] },
-] as const
-
+/**
+ * Referencia para los tests de contenido.
+ *
+ * Los parámetros de cada variante —duración, demora, entrada y salidas— viven
+ * en su fuente de variantes; acá sólo queda lo que el desafío fija.
+ */
 const SCHEDULED_MINUTES = 28
 const ENTRY_MINUTES_OF_DAY = 7 * 60 + 45
 
@@ -97,27 +93,30 @@ function bestMargin(model: BusModel): number | undefined {
   return safe[0]
 }
 
-export const busTiming: ChallengeDefinition = defineChallenge<BusModel>({
+export const busTiming: ChallengeDefinition = defineChallenge<
+  BusModel,
+  BusParams
+>({
   id: BUS_TIMING_ID,
   family: BUS_FAMILY,
   placement: 'anchor',
-  variants: authoredVariantIds(VARIANTS),
+  variants: authoredVariantIds(busTimingVariants.authored),
+  variantSource: busTimingVariants,
   interaction: 'timeline',
   categories: ['time-and-rates', 'proportions-and-percentages'],
   stages: ['grade-7'],
   baseDifficulty: 2,
   tools: ['calculator'],
 
-  generate({ variantId }) {
-    const variant = authoredVariant(BUS_TIMING_ID, VARIANTS, variantId)
-    const travel = travelWithDelay(SCHEDULED_MINUTES, variant.delayPercent)
+  generate({ params }) {
+    const travel = travelWithDelay(params.scheduledMinutes, params.delayPercent)
 
     return {
-      scheduledMinutes: SCHEDULED_MINUTES,
-      delayPercent: variant.delayPercent,
+      scheduledMinutes: params.scheduledMinutes,
+      delayPercent: params.delayPercent,
       travelMinutes: Number(travel.n),
-      entryMinutesOfDay: ENTRY_MINUTES_OF_DAY,
-      departures: variant.departures.map((minutesOfDay) => ({
+      entryMinutesOfDay: params.entryMinutesOfDay,
+      departures: params.departures.map((minutesOfDay) => ({
         id: `salida-${String(minutesOfDay)}`,
         minutesOfDay,
       })),
@@ -322,7 +321,7 @@ export const busTimingReference = {
   scheduledMinutes: SCHEDULED_MINUTES,
   entryMinutesOfDay: ENTRY_MINUTES_OF_DAY,
   safeMargin: SAFE_MARGIN,
-  variants: VARIANTS,
+  variants: busTimingVariants.authored,
   travelWithDelay: (delayPercent: number): number =>
     Number(travelWithDelay(SCHEDULED_MINUTES, delayPercent).n),
   formatClock,

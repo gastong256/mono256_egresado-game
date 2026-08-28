@@ -18,7 +18,6 @@ export {
 export { developmentStorylets } from './fixtures/storylets'
 export { developmentFamilies } from './fixtures/families'
 export {
-  instanceRefFor,
   materializeEveryVariant,
   materializeVariant,
   type MaterializeOptions,

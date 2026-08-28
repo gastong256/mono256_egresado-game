@@ -11,73 +11,22 @@
  * accidentally ask for a variant or a stage the template does not have.
  */
 
-import {
-  toChallengeInstanceId,
-  toRunSeed,
-  type VariantId,
-} from '../core/branded'
+import { toRunSeed } from '../core/branded'
 import {
   variantRefOf,
   type ChallengeDefinition,
-  type ChallengeInstanceRef,
   type MaterializedChallenge,
 } from '../challenges/contracts'
-import { variantRngPath } from '../challenges/content-model'
-import type { DifficultyLevel } from '../challenges/taxonomy'
-import { EngineInvariantError } from '../core/invariant'
-import type { StageId } from '../progression/stages'
+import {
+  instanceRefFor,
+  type InstanceAddressOptions,
+} from '../challenges/instance-address'
+import { createVariantRng } from '../challenges/content-model'
 import { createRng } from '../random/rng'
 
-export interface MaterializeOptions {
-  /** Run seed the two substreams are derived from. */
+export interface MaterializeOptions extends InstanceAddressOptions {
+  /** Run seed the challenge substream is derived from. */
   readonly seed: string
-  /** Defaults to the template's first declared stage. */
-  readonly stage?: StageId
-  /** Defaults to the template's first declared variant. */
-  readonly variantId?: VariantId
-  readonly eventIndex?: number
-  /** Defaults to the template's intrinsic difficulty. */
-  readonly difficulty?: DifficultyLevel
-}
-
-/** The instance address a run would build for these options. */
-export function instanceRefFor(
-  template: ChallengeDefinition,
-  options: MaterializeOptions,
-): ChallengeInstanceRef {
-  const stage = options.stage ?? template.stages[0]
-  if (stage === undefined) {
-    throw new EngineInvariantError(
-      `challenge ${template.id} declares no stage to materialise in`,
-    )
-  }
-
-  const variantId = options.variantId ?? template.variants[0]
-  if (variantId === undefined) {
-    throw new EngineInvariantError(
-      `challenge ${template.id} declares no variant`,
-    )
-  }
-
-  if (!template.variants.includes(variantId)) {
-    throw new EngineInvariantError(
-      `challenge ${template.id} does not declare variant ${variantId}`,
-    )
-  }
-
-  const eventIndex = options.eventIndex ?? 0
-
-  return {
-    instanceId: toChallengeInstanceId(
-      `${stage}:${String(eventIndex)}:${template.id}`,
-    ),
-    familyId: template.family,
-    templateId: template.id,
-    variantId,
-    stageId: stage,
-    eventIndex,
-    difficulty: options.difficulty ?? template.baseDifficulty,
-  }
 }
 
 /** Generates the instance a run would generate at this address. */
@@ -101,7 +50,7 @@ export function materializeVariant(
     ]),
     difficulty: ref.difficulty,
     variantId: ref.variantId,
-    variantRng: createRng(seed, variantRngPath(variantRefOf(ref))),
+    variantRng: createVariantRng(variantRefOf(ref)),
   })
 }
 

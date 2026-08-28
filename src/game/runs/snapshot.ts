@@ -59,7 +59,7 @@ import type { RunState } from './state'
  * discarding the checkpoint and offering a fresh run; that is a better outcome
  * than resuming into numbers nobody earned.
  */
-export const SNAPSHOT_SCHEMA_VERSION = 3
+export const SNAPSHOT_SCHEMA_VERSION = 4
 
 // Built from the canonical tuples, so each schema infers the exact literal
 // union. That is what lets the restore path below be cast-free.
@@ -193,6 +193,9 @@ const stateSchema = z.object({
     gameVersion: z.string().min(1),
     rulesetVersion: z.string().min(1),
     contentVersion: z.string().min(1),
+    // Null rather than absent: a snapshot says explicitly that the run drew
+    // from no catalog, instead of leaving a reader to guess.
+    variantCatalogVersion: z.string().min(1).nullable(),
   }),
   phase: z.enum(['narrative', 'challenge', 'feedback', 'completed']),
   status: z.enum(['active', 'completed', 'abandoned']),
@@ -350,7 +353,10 @@ export function serializeSnapshot(state: RunState): RunSnapshot {
   return {
     schemaVersion: SNAPSHOT_SCHEMA_VERSION,
     state: {
-      descriptor: { ...state.descriptor },
+      descriptor: {
+        ...state.descriptor,
+        variantCatalogVersion: orNull(state.descriptor.variantCatalogVersion),
+      },
       phase: state.phase,
       status: state.status,
       stage: state.stage,
@@ -461,6 +467,9 @@ export function restoreSnapshot(
       gameVersion: raw.descriptor.gameVersion,
       rulesetVersion: raw.descriptor.rulesetVersion,
       contentVersion: raw.descriptor.contentVersion,
+      ...(raw.descriptor.variantCatalogVersion === null
+        ? {}
+        : { variantCatalogVersion: raw.descriptor.variantCatalogVersion }),
     },
     phase: raw.phase,
     status: raw.status,

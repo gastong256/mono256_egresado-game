@@ -39,6 +39,12 @@ import type {
   ChallengePlacementRole,
   ChallengeVariantRef,
 } from './content-model'
+import {
+  eraseVariantSource,
+  resolveVariantParams,
+  type ErasedVariantSource,
+  type VariantSourceSpec,
+} from './variant-source'
 
 export type { CareerEffects, DifficultyLevel, MathCategory, SolutionQuality }
 
@@ -147,19 +153,33 @@ export function variantRefOf(ref: ChallengeInstanceRef): ChallengeVariantRef {
   }
 }
 
-export interface GenerationContext {
+/** What a caller supplies to materialise an instance. */
+export interface MaterializationContext {
   readonly rng: Rng
   readonly difficulty: DifficultyLevel
-  /** Which authored variant of this template is being materialised. */
+  /** Which variant of this template is being materialised. */
   readonly variantId: VariantId
   /**
    * Substream addressed by the variant identity alone.
    *
-   * A template that derives its own numbers should draw from here rather than
-   * from `rng`, so the same variant produces the same case wherever a run
-   * schedules it. Templates with fully authored parameters never touch it.
+   * It is derived from the fixed variant-space seed, not from the run, so the
+   * same address is the same problem in every run.
    */
   readonly variantRng: Rng
+}
+
+/** What a template's `generate` receives: the context plus resolved parameters. */
+export interface GenerationContext<
+  TParams = unknown,
+> extends MaterializationContext {
+  /**
+   * The parameters behind this variant address.
+   *
+   * Already resolved: authored records are looked up, generated candidates are
+   * produced from the variant substream. A template turns them into its private
+   * model and never has to know which of the two happened.
+   */
+  readonly params: TParams
 }
 
 /** Everything the UI may see. Deliberately excludes the solution. */
@@ -207,7 +227,7 @@ export interface MaterializedChallenge {
  * rule: which scenario family it belongs to, how a run may place it, and which
  * concrete variants it can produce.
  */
-export interface ChallengeSpec<TModel> {
+export interface ChallengeSpec<TModel, TParams> {
   readonly id: ChallengeId
   /** Scenario family this template belongs to. */
   readonly family: ScenarioFamilyId
@@ -221,13 +241,21 @@ export interface ChallengeSpec<TModel> {
    * changes which case a stored seed produces and needs a content version bump.
    */
   readonly variants: readonly VariantId[]
+  /**
+   * Where this template's variants come from, and how they are checked.
+   *
+   * The declared `variants` above are what the live game plays; the source can
+   * reach further — a candidate space the catalog pipeline explores — without
+   * changing what a normal run schedules.
+   */
+  readonly variantSource: VariantSourceSpec<TParams>
   readonly interaction: InteractionKind
   readonly categories: readonly MathCategory[]
   /** Stages this template may be scheduled in. Permission, not selection. */
   readonly stages: readonly StageId[]
   readonly baseDifficulty: DifficultyLevel
   readonly tools: readonly ToolId[]
-  generate(context: GenerationContext): TModel
+  generate(context: GenerationContext<TParams>): TModel
   verify(model: TModel): readonly string[]
   narrate(model: TModel): ChallengeNarrative
   requestable?(model: TModel): readonly RequestableInformation[]
@@ -251,6 +279,7 @@ export interface ChallengeDefinition {
   readonly family: ScenarioFamilyId
   readonly placement: ChallengePlacementRole
   readonly variants: readonly VariantId[]
+  readonly variantSource: ErasedVariantSource
   readonly interaction: InteractionKind
   readonly categories: readonly MathCategory[]
   readonly stages: readonly StageId[]
@@ -258,7 +287,7 @@ export interface ChallengeDefinition {
   readonly tools: readonly ToolId[]
   materialize(
     ref: ChallengeInstanceRef,
-    context: GenerationContext,
+    context: MaterializationContext,
   ): MaterializedChallenge
 }
 
@@ -302,8 +331,8 @@ const MAX_GENERATION_ATTEMPTS = 24
  * Because the attempt index is part of the substream address, the retry is as
  * deterministic as the first draw and replay is unaffected.
  */
-export function defineChallenge<TModel>(
-  spec: ChallengeSpec<TModel>,
+export function defineChallenge<TModel, TParams>(
+  spec: ChallengeSpec<TModel, TParams>,
 ): ChallengeDefinition {
   if (spec.variants.length === 0) {
     throw new EngineInvariantError(
@@ -321,6 +350,7 @@ export function defineChallenge<TModel>(
     family: spec.family,
     placement: spec.placement,
     variants: spec.variants,
+    variantSource: eraseVariantSource(spec.id, spec.variantSource),
     interaction: spec.interaction,
     categories: spec.categories,
     stages: spec.stages,
@@ -328,8 +358,15 @@ export function defineChallenge<TModel>(
     tools: spec.tools,
     materialize(
       ref: ChallengeInstanceRef,
-      context: GenerationContext,
+      context: MaterializationContext,
     ): MaterializedChallenge {
+      const params = resolveVariantParams(
+        spec.id,
+        spec.variantSource,
+        context.variantId,
+        context.variantRng,
+      )
+
       let model: TModel | undefined
       let attempts = 0
       let lastIssues: readonly string[] = []
@@ -341,6 +378,7 @@ export function defineChallenge<TModel>(
           difficulty: context.difficulty,
           variantId: context.variantId,
           variantRng: context.variantRng,
+          params,
         })
         lastIssues = spec.verify(candidate)
         if (lastIssues.length === 0) {

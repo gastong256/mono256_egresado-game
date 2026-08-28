@@ -27,7 +27,7 @@ import {
   type MaterializedChallenge,
   type PublicChallengeView,
 } from '../challenges/contracts'
-import { variantRngPath } from '../challenges/content-model'
+import { createVariantRng } from '../challenges/content-model'
 import type { ContentCatalog } from '../challenges/content-catalog'
 import type { DifficultyLevel } from '../challenges/taxonomy'
 import { initialDifficultyState } from '../difficulty/policy'
@@ -113,7 +113,7 @@ export function materializeChallenge(
     return err({ kind: 'unknown-challenge', challengeId: ref.templateId })
   }
 
-  if (!template.variants.includes(ref.variantId)) {
+  if (!template.variantSource.accepts(ref.variantId)) {
     return err({ kind: 'unknown-challenge', challengeId: ref.templateId })
   }
 
@@ -122,7 +122,7 @@ export function materializeChallenge(
       rng: createRng(descriptor.seed, challengeRngPath(ref)),
       difficulty: ref.difficulty,
       variantId: ref.variantId,
-      variantRng: createRng(descriptor.seed, variantRngPath(variantRefOf(ref))),
+      variantRng: createVariantRng(variantRefOf(ref)),
     }),
   )
 }

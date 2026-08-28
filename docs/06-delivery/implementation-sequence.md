@@ -17,7 +17,7 @@ Si el roadmap y el código difieren, **el código gana** y el roadmap se corrige
 - Fases de validación externa y congelamiento: [ciclo de entrega real](../00-product/real-delivery-lifecycle.md).
 - Qué se construye por capas de alcance: [alcance y roadmap](../00-product/scope-and-roadmap.md) y [backlog](mvp-backlog.md).
 
-**Última reconciliación contra el código:** 28 de agosto de 2026, al cerrar STAGE-02.
+**Última reconciliación contra el código:** 28 de agosto de 2026, al cerrar STAGE-03.
 
 ---
 
@@ -51,8 +51,8 @@ Tabla de navegación. Los contratos de cada etapa, más abajo, son la autoridad.
 | [STAGE-00](#stage-00-auditoría-funcional-ejecutable) | Auditoría funcional ejecutable | `DONE` | — | — |
 | [STAGE-01](#stage-01-contratos-de-run-versiones-y-seeds) | Contratos de run, versiones y seeds | `DONE` | STAGE-00 | — |
 | [STAGE-02](#stage-02-scenariofamily-challengetemplate-challengevariant) | ScenarioFamily → Template → Variant | `DONE` | STAGE-01 | — |
-| [STAGE-03](#stage-03-generación-validación-y-catálogo-de-variantes) | Generación, validación y catálogo de variantes | **`READY`** | STAGE-02 | — |
-| [STAGE-04](#stage-04-enriquecimiento-de-7º-y-demo-candidate) | Enriquecimiento de 7.º y Demo Candidate | `PARTIAL` | STAGE-02, STAGE-03 | — |
+| [STAGE-03](#stage-03-generación-validación-y-catálogo-de-variantes) | Generación, validación y catálogo de variantes | `DONE` | STAGE-02 | — |
+| [STAGE-04](#stage-04-enriquecimiento-de-7º-y-demo-candidate) | Enriquecimiento de 7.º y Demo Candidate | **`PARTIAL`** · activa | STAGE-02, STAGE-03 | — |
 | [STAGE-05](#stage-05-modelo-de-dificultad-y-run-composer) | Modelo de dificultad y Run Composer | `NOT_STARTED` | STAGE-03 | — |
 | [STAGE-06](#stage-06-scorepolicy-competitiva) | ScorePolicy competitiva | `NOT_STARTED` | STAGE-05 | — |
 | [GATE-TG1](#gate-tg1-teacher-gate-1) | **Teacher Gate 1** | `TEACHER_GATE` | STAGE-04, STAGE-06 | externo |
@@ -102,7 +102,7 @@ Estado real contra el código al 28 de agosto de 2026. Es la base de la que sale
 | Ledger de notas y Promedio derivado | `DONE` | `career.ts` → `grades: readonly number[]` | previa |
 | `null` ≠ 0 en dimensiones de carrera | `DONE` | `career.ts`, `tests/component/grade-7-ui.test.tsx` | previa |
 | Aura con signo, sin techo, introducida en juego | `DONE` | `career.ts`, `src/content/grade-7/challenges/may-25-act.ts`, E2E «el acto del 25 de Mayo introduce Aura» | STAGE-04 |
-| Acto del 25 de Mayo | `DONE` | `may-25-act.ts`, `src/game/math/classification.ts`, `tests/unit/number-classification.test.ts`, 6 E2E, contenido `0.4.0-grade-7` | STAGE-04 |
+| Acto del 25 de Mayo | `DONE` | `may-25-act.ts`, `src/game/math/classification.ts`, `tests/unit/number-classification.test.ts`, 6 E2E, contenido `0.5.0-grade-7` | STAGE-04 |
 | Mastery y flags ocultos | `DONE` | `career.ts` → `mastery`, `src/game/narrative/` | previa |
 | Motor determinista separado de React | `DONE` | [ADR-011](../03-architecture/adr/ADR-011-functional-core-transition-engine.md), `tests/unit/architecture-lint.test.ts`, `tests/unit/engine-modules.test.ts` | previa |
 | Tripleta de versiones de run | `DONE` | `src/game/core/versioning.ts`, `assertCompatibleVersions` | STAGE-01 |
@@ -112,14 +112,14 @@ Estado real contra el código al 28 de agosto de 2026. Es la base de la que sale
 | Snapshot versionado con rechazo explícito | `DONE` | `src/game/runs/snapshot.ts`, E2E de reanudación y de checkpoint corrupto | STAGE-01 |
 | Separación outcome ≠ carrera ≠ score | `DONE` | `challenges/contracts.ts`, `progression/career.ts`, `scoring/policy.ts` | STAGE-01 |
 | `scoreVersion` | `NOT_STARTED` | — | STAGE-06 |
-| `variantCatalogVersion` | `NOT_STARTED` | — | STAGE-03 |
+| `variantCatalogVersion` | `DONE` | campo opcional del descriptor de run | STAGE-03 |
 | `ScenarioFamily` | `DONE` | `src/game/challenges/content-model.ts`, [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md), `tests/unit/content-model.test.ts` | STAGE-02 |
 | `ChallengeTemplate` | `DONE` | una `ChallengeDefinition` declara familia, rol y variantes; dos plantillas conviven en la familia `school-data` | STAGE-02 |
 | `ChallengeVariant` | `DONE` | `ChallengeVariantRef` con dirección `familia/plantilla/variante`, round-trip y substream propio | STAGE-02 |
-| `VariantGenerator` reutilizable | `PARTIAL` | `generate(context)` por desafío; sin abstracción por restricción compartida | STAGE-03 |
-| `VariantValidator` transversal | `PARTIAL` | `verify(model)` por desafío; la validación de contenido recorre **todas** las variantes declaradas y falla si dos colisionan; sin contrato de invariantes común | STAGE-03 |
-| Catálogo de variantes desplegado | `NOT_STARTED` | — | STAGE-03 |
-| Auditoría estadística de variantes | `PARTIAL` | `ChallengeGenerationStats` ya reporta seeds, fallos, presentaciones distintas y distribución de opción correcta | STAGE-03 |
+| `VariantGenerator` reutilizable | `DONE` | contrato de fuente de variantes + generadores por restricción en cinco plantillas | STAGE-03 |
+| `VariantValidator` transversal | `DONE` | genéricas + por plantilla con oráculos independientes, diagnósticos tipados | STAGE-03 |
+| Catálogo de variantes aprobado y versionado | `DONE` | `ApprovedVariantCatalog`, artefacto `grade-7-dev-1` comprometido y verificado en `pnpm verify` | STAGE-03 |
+| Auditoría estadística de variantes | `DONE` | `pnpm game:variants audit`: 50.013 candidatos, 0 rechazos, 30.671 problemas distintos | STAGE-03 |
 | `DifficultyBand` (CORE/STANDARD/STRETCH) | `NOT_STARTED` | hoy sólo `DifficultyLevel` 1–5 en `challenges/taxonomy.ts` | STAGE-05 |
 | `difficultyCost` | `NOT_STARTED` | — | STAGE-05 |
 | `DifficultyBudget` | `NOT_STARTED` | — | STAGE-05 |
@@ -309,9 +309,9 @@ Criterios que la etapa sumó sobre el contrato original:
 
 ### STAGE-03 — Generación, validación y catálogo de variantes
 
-- **Estado:** **`READY`** — es la etapa activa. Ver [etapa actual](current-stage.md).
+- **Estado:** `DONE`
 - **Depende de:** STAGE-02 (`DONE`)
-- **Desbloquea:** STAGE-04, STAGE-05
+- **Desbloquea:** STAGE-04 (ahora `READY`) y STAGE-05
 
 **Punto de partida.** STAGE-02 dejó el vocabulario: una variante ya tiene dirección estable, substream propio y lugar en un catálogo y en un plan. Lo que falta es producirlas en cantidad, validarlas como población y aprobar las que entran a una competencia.
 
@@ -325,29 +325,59 @@ Criterios que la etapa sumó sobre el contrato original:
 
 **Criterios de aceptación.**
 
-- [ ] Los generadores son deterministas y no consultan ninguna fuente ambiente.
-- [ ] Los validadores rechazan efectivamente casos inválidos, con test que lo demuestre.
-- [ ] Miles de seeds por plantilla donde el espacio paramétrico lo justifique.
-- [ ] El tooling reporta fallas de forma legible por máquina.
-- [ ] **Cero variantes inválidas en el catálogo desplegado.**
-- [ ] Cero opciones duplicadas en el catálogo desplegado.
-- [ ] El catálogo es reproducible y versionado; el mismo insumo produce el mismo catálogo.
-- [ ] La auditoría estadística reporta sesgo de posición, distribución de dificultad, duplicados por fingerprint y tasa de invalidez.
-- [ ] El runtime competitivo selecciona sólo variantes aprobadas.
+- [x] Los generadores son deterministas y no consultan ninguna fuente ambiente; el substream sale de un seed de contenido fijo, no del seed de la run.
+- [x] Los validadores rechazan efectivamente casos inválidos, con tests que lo demuestran para cada categoría de diagnóstico.
+- [x] Miles de direcciones por plantilla: **10.000 por plantilla generada, 50.013 en total**.
+- [x] El tooling reporta fallas de forma legible por máquina, con códigos de diagnóstico estables.
+- [x] **Cero variantes inválidas en el catálogo aprobado**, verificado entrada por entrada.
+- [x] Cero opciones duplicadas: es una validación genérica y hay test.
+- [x] El catálogo es reproducible y versionado; dos builds dan el mismo archivo byte a byte, y reordenar el registro de contenido da el mismo catálogo.
+- [x] La auditoría reporta sesgo de posición de la respuesta, problemas distintos, duplicados por huella y tasa de rechazo, con umbrales documentados.
+- [x] La resolución del catálogo devuelve sólo variantes aprobadas, y una aprobada se materializa, se juega y se reproduce.
+
+Criterios que la etapa sumó sobre el contrato original:
+
+- [x] Toda plantilla de producción participa del pipeline con una estrategia deliberada: cinco generadas, una autorada con su razón escrita.
+- [x] Las variantes autoradas pasan por las mismas validaciones, huella y deduplicación que las generadas.
+- [x] La huella es semántica: dos direcciones que producen el mismo problema colisionan y se deduplican.
+- [x] Una variante es el mismo problema en toda partida, y una plantilla que dependa de la run se rechaza con `address-not-deterministic`.
+- [x] Una plantilla futura suma generador, validadores y metadata **sin tocar el pipeline**.
+- [x] El juego actual no cambió: mismo recorrido golden, misma distribución en 5.000 runs simuladas.
 
 **Validación requerida.** `pnpm game:validate-content` con conteo alto de seeds, `pnpm test`, el nuevo comando de auditoría de catálogo, `pnpm verify`.
 
-**Riesgos.** El costo de generación puede volver lento el arranque si el catálogo se construye en runtime; es un job de build. Un fingerprint mal definido esconde variantes equivalentes.
+**Riesgos.** El costo de generación puede volver lento el arranque si el catálogo se construye en runtime; es un job de build, y el artefacto está comprometido. Un fingerprint mal definido esconde variantes equivalentes.
 
-**Decisiones.** `RECOMENDADA` (D-008): catálogo prevalidado para competencia. `LOCKED` (D-007): seeds deterministas.
+**Decisiones.** `RECOMENDADA` (D-008): catálogo prevalidado para competencia — **implementado**. `LOCKED` (D-007): seeds deterministas.
 
-**Exit gate.** ¿Se puede generar, validar y reproducir un conjunto grande de variantes sin depender de aleatoriedad ambiente?
+**Evidencia de completitud.**
+
+| Qué | Dónde |
+|---|---|
+| Decisión | [ADR-020](../03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md) |
+| Fuente de variantes y generadores | `src/game/challenges/variant-source.ts` |
+| Validación y diagnósticos | `src/game/challenges/variant-validation.ts` |
+| SHA-256 portable | `src/game/content/hash.ts`, verificado contra FIPS 180-4 y `node:crypto` |
+| Catálogo aprobado, canonización e integridad | `src/game/content/variant-catalog.ts` |
+| Pipeline | `src/game/content/variant-pipeline.ts` |
+| Auditoría estadística y umbrales | `src/game/content/variant-audit.ts` |
+| Generadores y oráculos por plantilla | `src/content/grade-7/challenges/*.variants.ts` |
+| Artefacto versionado | `src/content/grade-7/variant-catalog.json`, `grade-7-dev-1`, 133 variantes |
+| Tooling | `pnpm game:variants build \| check \| audit`; `check` dentro de `pnpm verify` |
+| Tests | `tests/unit/variant-pipeline.test.ts` (40), `tests/property/variant-generation.property.test.ts` (16) |
+| Barrida profunda | 50.013 candidatos, **0 rechazos**, 30.671 problemas distintos, 0 errores |
+| Estabilidad del juego | golden con mismo recorrido, score, perfil y comandos; 5.000 runs simuladas con 0 hallazgos y la misma distribución |
+| Versionado | `ENGINE_VERSION 4.0.0`, `SNAPSHOT_SCHEMA_VERSION 4`, contenido `0.4.0-dev` y `0.5.0-grade-7`; **ruleset sin cambios**, huella idéntica |
+
+**Lo que no entró, y por qué.** El catálogo de la feria **no** se congeló: `grade-7-dev-1` es de desarrollo y decir lo contrario sería inventar una decisión de evento. No se creó ninguna plantilla nueva de producción, no se movió contenido de año y el inventario de escenarios sigue `OPEN`. El catálogo aprobado todavía no alimenta la selección de una run: eso es STAGE-04 y STAGE-05.
+
+**Exit gate.** ¿Se puede generar, validar y reproducir un conjunto grande de variantes sin depender de aleatoriedad ambiente? — **Sí**: 50.013 candidatos deterministas, cero rechazos, catálogo versionado reproducible byte a byte y una variante aprobada que se juega y se reproduce.
 
 ---
 
 ### STAGE-04 — Enriquecimiento de 7.º y Demo Candidate
 
-- **Estado:** `PARTIAL` — Aura y el acto están `DONE`; el enriquecimiento de contenido y la preparación de la demo dependen de STAGE-03. La migración estructural de los seis desafíos ya está terminada.
+- **Estado:** **`PARTIAL`, y es la etapa activa** — Aura y el acto están `DONE`, la migración estructural también, y el pipeline de variantes ya está disponible. Queda el enriquecimiento de contenido y la preparación de la demo. Ver [etapa actual](current-stage.md).
 - **Depende de:** STAGE-02, STAGE-03
 - **Desbloquea:** GATE-TG1
 

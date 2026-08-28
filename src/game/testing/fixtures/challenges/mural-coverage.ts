@@ -9,6 +9,10 @@
  */
 
 import { toChallengeId, toVariantId } from '../../../core/branded'
+import {
+  developmentVariantSource,
+  type DevelopmentParams,
+} from '../variant-source'
 import { DEV_MURAL_FAMILY } from '../families'
 import { err, ok, type Result } from '../../../core/result'
 import type { EngineRejection } from '../../../core/errors'
@@ -59,11 +63,15 @@ const HEIGHT_STEPS = ['2.0', '2.2', '2.4', '2.6', '3.0']
 const COVERAGE_STEPS = [6, 8, 10]
 const TIN_SIZES = ['1', '2', '4', '5']
 
-export const muralCoverage: ChallengeDefinition = defineChallenge<MuralModel>({
+export const muralCoverage: ChallengeDefinition = defineChallenge<
+  MuralModel,
+  DevelopmentParams
+>({
   id: toChallengeId('dev.mural-coverage'),
   family: DEV_MURAL_FAMILY,
   placement: 'checkpoint',
   variants: [toVariantId('base')],
+  variantSource: developmentVariantSource,
   interaction: 'decision-card',
   categories: ['space-and-shape', 'quantity'],
   stages: ['grade-7', 'year-1'],

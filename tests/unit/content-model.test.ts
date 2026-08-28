@@ -143,7 +143,7 @@ describe('challenge variant', () => {
         seed: 'x',
         variantId: toVariantId('no-existe'),
       }),
-    ).toThrow(/does not declare variant/)
+    ).toThrow(/does not accept variant/)
   })
 
   it('refuses a template that declares no variant or a repeated one', () => {
@@ -155,6 +155,11 @@ describe('challenge variant', () => {
       stages: ['grade-7' as const],
       baseDifficulty: 1 as const,
       tools: [],
+      variantSource: {
+        authored: [{ id: 'a' }],
+        validators: [],
+        canonical: () => ({}),
+      },
       generate: () => ({}),
       verify: () => [],
       narrate: () => ({ title: 't', setup: 's', goal: 'g' }),
@@ -466,14 +471,19 @@ describe('new content needs no core engine change', () => {
     placement: 'anchor' | 'recovery',
     variants: readonly string[],
   ): ChallengeDefinition {
-    return defineChallenge<{
-      readonly precio: number
-      readonly propina: number
-    }>({
+    return defineChallenge<
+      { readonly precio: number; readonly propina: number },
+      { readonly id: string }
+    >({
       id,
       family: KIOSCO,
       placement,
       variants: variants.map(toVariantId),
+      variantSource: {
+        authored: variants.map((id) => ({ id })),
+        validators: [],
+        canonical: () => ({}),
+      },
       interaction: 'decision-card',
       categories: ['quantity'],
       stages: ['grade-7', 'year-2'],

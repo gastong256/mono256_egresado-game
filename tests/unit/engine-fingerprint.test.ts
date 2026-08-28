@@ -31,8 +31,23 @@ import { createDevelopmentDependencies } from '@/game/testing'
 const dependencies = createDevelopmentDependencies()
 
 /*
- * Regenerados para el modelo de contenido (`ENGINE_VERSION` 3.0.0, contenido
- * `0.3.0-dev`).
+ * Regenerados para el pipeline de variantes (`ENGINE_VERSION` 4.0.0, contenido
+ * `0.4.0-dev`).
+ *
+ * Se movieron dos de las tres huellas, y la que no se movió es la que más dice:
+ *
+ * - **motor**: el descriptor de una run puede declarar de qué catálogo de
+ *   variantes salió, y eso cambió el códec de snapshot;
+ * - **contenido**: cada plantilla declara de dónde salen sus variantes
+ *   —autoradas o generadas, con qué generador y sobre qué espacio de
+ *   candidatos—, y eso es identidad de contenido;
+ * - **ruleset**: intacto en `d3319440`. Score, dificultad, perfil y etapas no se
+ *   tocaron, y por eso su versión no sube.
+ *
+ * Las runs golden reproducen el mismo recorrido, el mismo score, el mismo perfil
+ * y la misma cantidad de comandos.
+ *
+ * El contexto anterior, del modelo de contenido (`ENGINE_VERSION` 3.0.0):
  *
  * Dos de los tres se movieron y el tercero no, que es justamente lo que estos
  * fingerprints existen para mostrar:
@@ -50,14 +65,14 @@ const dependencies = createDevelopmentDependencies()
  * golden quedaron **idénticos**.
  */
 const EXPECTED = {
-  engine: '48adb1a7',
+  engine: 'd56b1117',
   ruleset: 'd3319440',
-  content: '53820929',
+  content: '8a9b29d9',
 } as const
 
 describe('version fingerprints', () => {
   it('pins the deterministic kernel to its engine version', () => {
-    expect(ENGINE_VERSION).toBe('3.0.0')
+    expect(ENGINE_VERSION).toBe('4.0.0')
     expect(engineFingerprint()).toBe(EXPECTED.engine)
   })
 
@@ -67,7 +82,7 @@ describe('version fingerprints', () => {
   })
 
   it('pins the playable content to the declared content version', () => {
-    expect(dependencies.ruleset.contentVersion).toBe('0.3.0-dev')
+    expect(dependencies.ruleset.contentVersion).toBe('0.4.0-dev')
     expect(
       contentFingerprint(dependencies.catalog, dependencies.storylets),
     ).toBe(EXPECTED.content)

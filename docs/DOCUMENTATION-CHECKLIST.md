@@ -46,6 +46,7 @@
 - [x] Toolchain reproducible con gate de consistencia e imagen standalone sin cambiar la topología Vercel.
 - [x] Arquitectura objetivo del motor con el estado real de cada capacidad.
 - [x] Modelo de contenido: familia de escenario, plantilla y variante, con catálogo separado del plan de la run.
+- [x] Pipeline de variantes: generación por restricción, validación con oráculos independientes, huella, deduplicación, auditoría y catálogo aprobado versionado.
 
 ## Calidad
 - [x] Unit/integration/E2E.

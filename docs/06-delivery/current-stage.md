@@ -4,103 +4,97 @@ Vista corta del estado de ejecución. El detalle completo, los contratos de toda
 
 ---
 
-## STAGE-03 — Generación, validación y catálogo de variantes
+## STAGE-04 — Enriquecimiento de 7.º y Demo Candidate
 
-**Estado:** `READY` — dependencias satisfechas, nadie la empezó todavía.
+**Estado:** `PARTIAL` — Aura, el acto del 25 de Mayo y la migración estructural están `DONE`; el enriquecimiento de contenido y la preparación de la demo docente están pendientes y ya no tienen bloqueos.
 
 ## Por qué está activa
 
-STAGE-02 está `DONE` con evidencia: el contenido ya se direcciona por familia de escenario, plantilla y variante; una variante tiene identidad estable y substream propio; el catálogo de contenido disponible está separado del plan de la run; la elegibilidad por etapa y los roles de colocación son declarativos; y agregar contenido nuevo no requiere tocar el motor. Ver [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md).
+STAGE-03 está `DONE` con evidencia: existe un pipeline de variantes completo —generación por restricción, validación con oráculos independientes, huella SHA-256, deduplicación, auditoría estadística y catálogo aprobado versionado—, y la barrida profunda de 50.013 candidatos no produjo un solo rechazo. Ver [ADR-020](../03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md).
 
-Lo que falta ahora es **producción y control de variantes en cantidad**. Hoy cada plantilla trae dos o tres casos escritos a mano. Eso alcanza para probar la arquitectura y no alcanza para una feria: sin generación por restricción, catálogo prevalidado y auditoría estadística, no hay forma de afirmar que ninguna variante desplegada es ambigua, imposible o trivial.
+Lo que falta ahora es **usar toda esa maquinaria en contenido real**. El pipeline puede producir treinta mil problemas distintos, pero la partida de 7.º sigue jugando dos variantes curadas por desafío y una sola estructura cognitiva por familia. Convertir eso en una Demo Candidate que un docente pueda jugar dos veces y notar la diferencia es trabajo de contenido, no de arquitectura.
 
 ## Objetivo
 
-Poder generar, validar y reproducir un conjunto grande de variantes sin depender de aleatoriedad ambiente, y desplegar sólo las aprobadas.
-
-> Variabilidad no es aleatoriedad libre.
+Que 7.º sea una **Demo Candidate representativa del producto final**: que la segunda partida cambie los valores y, en alguna familia, cambie la pregunta.
 
 ## Scope IN
 
-- Generación por restricción, incluida generación inversa donde convenga.
-- `VariantValidator` con invariantes genéricos y por plantilla, como contrato transversal.
-- Tooling offline: `generador → N seeds candidatas → validación → análisis estadístico → catálogo aprobado`.
-- Catálogo desplegado, versionado y reproducible, **distinto** del `ContentCatalog` autorado que ya existe.
-- `variantCatalogVersion` en la identidad de la run.
-- Selección determinista de variantes aprobadas por id.
+- Conectar el catálogo aprobado con la selección de contenido de una run, sin inventar el compositor completo.
+- Sumar estructuras cognitivas donde aporten de verdad: una familia con dos plantillas distintas prueba lo que el modelo promete.
+- Ampliar la variación de las familias existentes usando el catálogo, no escribiendo variantes a mano.
+- Definir qué juega la demo docente y en qué se diferencia de una run normal.
+- QA visual y funcional del recorrido completo; materiales de revisión docente.
 
 ## Scope OUT
 
 **Nada de esto se implementa en esta etapa.**
 
-- Bandas de dificultad, `difficultyCost`, presupuesto y compositor de runs → STAGE-05. El presupuesto ya está definido como contrato validable; **construir** planes no es de acá.
+- Bandas de dificultad, `difficultyCost`, presupuesto equiparado y Run Composer completo → STAGE-05.
 - `FairScore`, `MathPerformance`, `ScorePolicy` competitiva, `scoreVersion` → STAGE-06.
-- Enriquecer 7.º con plantillas que aporten variación cognitiva real y preparar la Teacher Demo Candidate → STAGE-04. La migración estructural de los seis desafíos actuales ya está completa; mover contenido de año sigue abierto.
 - Egreso, recuperaciones, contenido de 1.º–5.º → STAGE-07 y STAGE-08.
 - Ranking, endpoints, persistencia, fair mode → STAGE-09.
-- Cerrar el inventario de escenarios: sigue **OPEN**.
-- Cualquier cambio al sistema de diseño, a los tokens o a la matemática existente.
+- Congelar el catálogo oficial de la feria: es una decisión de evento, no de contenido.
+- Cerrar el inventario de escenarios ni mover contenido de año: sigue **OPEN**.
+- Cualquier cambio al sistema de diseño o a los tokens.
 
 ## Criterios de aceptación
 
-- [ ] Los generadores son deterministas y no consultan ninguna fuente ambiente.
-- [ ] Los validadores rechazan efectivamente casos inválidos, con test que lo demuestre.
-- [ ] Miles de seeds por plantilla donde el espacio paramétrico lo justifique.
-- [ ] El tooling reporta fallas de forma legible por máquina.
-- [ ] **Cero variantes inválidas en el catálogo desplegado.**
-- [ ] Cero opciones duplicadas en el catálogo desplegado.
-- [ ] El catálogo es reproducible y versionado: el mismo insumo produce el mismo catálogo.
-- [ ] La auditoría estadística reporta sesgo de posición, distribución de dificultad, duplicados por fingerprint y tasa de invalidez.
-- [ ] El runtime competitivo selecciona sólo variantes aprobadas.
+- [ ] Los cinco desafíos previos conservan su intención matemática; cualquier cambio es deliberado y está escrito.
+- [x] El acto del 25 de Mayo está en el flujo real de la partida.
+- [x] Aura pasa de `null` a un valor significativo durante la run y no se dibuja antes.
+- [x] Clasificación y F1 probados, incluidos los tres casos de denominador cero.
+- [x] Jugable con teclado y en 360/390/430 px.
+- [x] El motor evalúa la matemática; React no.
+- [x] Replay, snapshot y simulación correctos.
+- [x] El cierre de año sigue funcionando.
+- [ ] Una segunda partida muestra variación real, no reordenamiento de opciones.
+- [ ] Al menos una familia aloja dos estructuras cognitivas distintas en contenido de producción.
+- [ ] Está definido qué juega la demo docente y por qué.
 
 ## Lectura requerida antes de tocar código
 
 1. `AGENTS.md` de la raíz.
-2. Este documento y el [contrato de STAGE-03](implementation-sequence.md).
-3. [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md) — el vocabulario sobre el que se construye.
-4. [Familias, plantillas y variantes](../01-game-design/challenge-families-and-variants.md).
-5. [Validación y auditoría de variantes](../04-quality/variant-validation-and-audit.md) y [validación de contenido](../04-quality/content-validation.md).
+2. Este documento y el [contrato de STAGE-04](implementation-sequence.md).
+3. [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md) y [ADR-020](../03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md) — el modelo de contenido y su pipeline.
+4. [Vertical slice de 7.º](vertical-slice-grade-7.md) — el alcance de la demo.
+5. [Familias, plantillas y variantes](../01-game-design/challenge-families-and-variants.md) y [catálogo de desafíos](../01-game-design/challenge-catalog.md).
 6. [Migración del modelo de contenido](../03-architecture/content-model-migration.md) — cómo se autora una plantilla hoy.
-7. [Base teórica](../07-reference/research-basis.md) — por qué se pregeneran y se aprueban las variantes.
-8. El código: `src/game/challenges/`, `src/game/content/`, `src/content/grade-7/challenges/`.
+7. [Guía de autoría](../01-game-design/content-authoring-guide.md) y [marco matemático](../01-game-design/math-design-framework.md).
+8. El código: `src/content/grade-7/`, `src/game/challenges/`, `src/game/content/`.
 
 ## Validación requerida
 
-`pnpm test` · `pnpm typecheck` · `pnpm lint` · `pnpm game:validate-content` · `pnpm game:simulate` · `pnpm verify`.
+`pnpm test` · `pnpm typecheck` · `pnpm lint` · `pnpm game:validate-content` · `pnpm game:variants check` · `pnpm game:simulate` · `pnpm verify`.
+
+Cuando se toque un generador: `pnpm game:variants audit` y `pnpm game:variants build`.
 
 Con Node `24.19.0`, la versión que `pnpm toolchain:check` exige exacta.
 
 ## Bloqueos
 
-Ninguno. La etapa puede empezar.
+Ninguno. La etapa puede avanzar.
 
 ## Decisiones abiertas o de Teacher Gate relevantes ahora
 
-- `RECOMENDADA` (D-008): catálogo prevalidado y desplegado para competencia. Es dirección de arquitectura, no contrato cerrado.
-- `LOCKED` (D-007): variantes deterministas por seed. Ya implementado; no se reabre.
-- `OPEN` ([preguntas 46 y 46-bis](../07-reference/open-questions.md)): cuántas familias, plantillas y variantes tiene Egresado, y qué pasa con los seis escenarios actuales. **No se cierra en esta etapa**: acá se construye la maquinaria de producción, no el inventario.
-
-Ninguna decisión de Teacher Gate bloquea STAGE-03. El primer gate docente llega después de STAGE-04 y STAGE-06.
+- `OPEN` ([preguntas 46 y 46-bis](../07-reference/open-questions.md)): cuántas familias, plantillas y variantes tiene Egresado, y qué pasa con los seis escenarios actuales. **No se cierra acá.**
+- `OPEN` ([pregunta 42](../07-reference/open-questions.md)): si el acto del 25 de Mayo entra a producción. Está implementado; falta la aprobación de contenido.
+- `TEACHER GATE`: nivel matemático, terminología y duración objetivo de la demo. Se llevan al Gate 1, después de STAGE-06.
 
 ## Evidencia ya disponible
 
-- Modelo de contenido — [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md), `src/game/challenges/content-model.ts`, `content-catalog.ts`, `src/game/content/run-plan.ts`.
-- Direccionamiento determinista de variantes — `variantRngPath`, `deriveVariantSeed`, `tests/property/content-model.property.test.ts`.
-- Catálogo ≠ plan de run, roles, elegibilidad y presupuesto — `tests/unit/content-model.test.ts`, 34 tests.
-- Contenido nuevo sin tocar el motor — test de registro sintético en el mismo archivo.
-- Equivalencia semántica de la migración — `tests/unit/engine-golden.test.ts`: mismo recorrido, score, perfil y comandos.
-- Versionado — `ENGINE_VERSION 3.0.0`, `SNAPSHOT_SCHEMA_VERSION 3`, contenido `0.3.0-dev` y `0.4.0-grade-7`, ruleset sin cambios.
-- Sistema de diseño v0.2 — [ADR-017](../03-architecture/adr/ADR-017-paper-visual-identity.md), `pnpm design:check`, E2E de diseño.
+- Pipeline de variantes — [ADR-020](../03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md); 50.013 candidatos con 0 rechazos y 30.671 problemas distintos.
+- Catálogo aprobado `grade-7-dev-1` — `src/content/grade-7/variant-catalog.json`, 133 variantes, verificado en `pnpm verify`.
+- Modelo de contenido — [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md).
 - Career Model v2 — [ADR-016](../03-architecture/adr/ADR-016-career-player-model.md).
-- Contratos de run, versiones y seed — `src/game/core/versioning.ts`, `src/game/random/seed.ts`.
-- Precursor de verificación autoritativa — `src/server/game/validate-run.ts`.
+- Sistema de diseño v0.2 — [ADR-017](../03-architecture/adr/ADR-017-paper-visual-identity.md).
+- Estabilidad del juego — golden con mismo recorrido, score, perfil y comandos; 5.000 runs simuladas sin hallazgos.
+- Versionado — `ENGINE_VERSION 4.0.0`, `SNAPSHOT_SCHEMA_VERSION 4`, contenido `0.4.0-dev` y `0.5.0-grade-7`, ruleset sin cambios.
 
 ## Siguiente etapa
 
-Completar STAGE-03 destraba **STAGE-04 — enriquecimiento de 7.º y Demo Candidate**, que usa el pipeline de variantes en contenido real, suma estructuras cognitivas donde aporten y define la selección de la demo docente sin confundirla con una run normal. También destraba **STAGE-05 — dificultad y Run Composer**, que es quien empieza a *construir* planes en vez de sólo validarlos.
-
-El primer gate externo es **Teacher Gate 1**, después de STAGE-04 y STAGE-06.
+Completar STAGE-04 y STAGE-06 habilita el **Teacher Gate 1**, el primer gate externo. En paralelo, **STAGE-05 — dificultad y Run Composer** puede empezar en cuanto STAGE-04 defina qué contenido compone una demo.
 
 ## Última reconciliación
 
-28 de agosto de 2026, al cerrar STAGE-02, con `pnpm verify` en verde.
+28 de agosto de 2026, al cerrar STAGE-03, con `pnpm verify` en verde.

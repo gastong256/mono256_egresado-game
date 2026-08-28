@@ -23,7 +23,6 @@ import {
   multiply,
   ok,
   subtract,
-  authoredVariant,
   authoredVariantIds,
   toChallengeId,
   type ChallengeDefinition,
@@ -33,6 +32,7 @@ import {
   type Rational,
   type Result,
 } from '@/game'
+import { muralPaintVariants, type MuralParams } from './mural-paint.variants'
 import { MURAL_FAMILY } from '../families'
 import { cifra, medida } from '@/content/numeros'
 
@@ -60,11 +60,6 @@ interface MuralModel {
 /** Identidad estable de la plantilla. */
 const MURAL_PAINT_ID = toChallengeId('g7.mural-paint')
 
-const VARIANTS = [
-  { id: 'pared-6x24', width: '6', height: '2.4', coverage: 8 }, // 14,4 m² -> 1,8 L
-  { id: 'pared-5x24', width: '5', height: '2.4', coverage: 8 }, // 12,0 m² -> 1,5 L
-] as const
-
 /** Envases reales de una pinturería, con precio por litro decreciente. */
 const TINS = [
   { id: 'lata-1l', litres: '1', priceMinor: 1_200_000 },
@@ -72,22 +67,25 @@ const TINS = [
   { id: 'lata-4l', litres: '4', priceMinor: 3_800_000 },
 ] as const
 
-export const muralPaint: ChallengeDefinition = defineChallenge<MuralModel>({
+export const muralPaint: ChallengeDefinition = defineChallenge<
+  MuralModel,
+  MuralParams
+>({
   id: MURAL_PAINT_ID,
   family: MURAL_FAMILY,
   placement: 'checkpoint',
-  variants: authoredVariantIds(VARIANTS),
+  variants: authoredVariantIds(muralPaintVariants.authored),
+  variantSource: muralPaintVariants,
   interaction: 'decision-card',
   categories: ['space-and-shape', 'quantity'],
   stages: ['grade-7'],
   baseDifficulty: 2,
   tools: ['calculator'],
 
-  generate({ variantId }) {
-    const variant = authoredVariant(MURAL_PAINT_ID, VARIANTS, variantId)
-    const width = fromDecimalString(variant.width)
-    const height = fromDecimalString(variant.height)
-    const coveragePerLitre = fromInteger(variant.coverage)
+  generate({ params }) {
+    const width = fromDecimalString(params.width)
+    const height = fromDecimalString(params.height)
+    const coveragePerLitre = fromInteger(params.coverage)
     const area = multiply(width, height)
 
     return {
@@ -291,4 +289,7 @@ export const muralPaint: ChallengeDefinition = defineChallenge<MuralModel>({
 })
 
 /** Expuesto para los tests de contenido. */
-export const muralPaintReference = { variants: VARIANTS, tins: TINS }
+export const muralPaintReference = {
+  variants: muralPaintVariants.authored,
+  tins: TINS,
+}

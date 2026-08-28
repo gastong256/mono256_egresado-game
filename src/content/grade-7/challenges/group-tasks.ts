@@ -17,7 +17,6 @@ import {
   err,
   metrics,
   ok,
-  authoredVariant,
   authoredVariantIds,
   toChallengeId,
   type AgentAssignment,
@@ -27,6 +26,7 @@ import {
   type InteractionAnswer,
   type Result,
 } from '@/game'
+import { groupTasksVariants, type GroupParams } from './group-tasks.variants'
 import { GROUP_PROJECT_FAMILY } from '../families'
 
 interface Task {
@@ -62,67 +62,6 @@ const TASKS: readonly Task[] = [
  */
 /** Identidad estable de la plantilla. */
 const GROUP_TASKS_ID = toChallengeId('g7.group-tasks')
-
-const VARIANTS = [
-  {
-    id: 'equipo-a',
-    members: [
-      {
-        id: 'lucas',
-        name: 'Lucas',
-        hoursFree: 6,
-        skill: { investigacion: 1, diseno: 1, presentacion: 1, maqueta: 3 },
-      },
-      {
-        id: 'sofia',
-        name: 'Sofía',
-        hoursFree: 5,
-        skill: { investigacion: 3, diseno: 1, presentacion: 2, maqueta: 1 },
-      },
-      {
-        id: 'mateo',
-        name: 'Mateo',
-        hoursFree: 4,
-        skill: { investigacion: 2, diseno: 3, presentacion: 1, maqueta: 1 },
-      },
-      {
-        id: 'vos',
-        name: 'Vos',
-        hoursFree: 3,
-        skill: { investigacion: 1, diseno: 2, presentacion: 3, maqueta: 2 },
-      },
-    ],
-  },
-  {
-    id: 'equipo-b',
-    members: [
-      {
-        id: 'lucas',
-        name: 'Lucas',
-        hoursFree: 7,
-        skill: { investigacion: 2, diseno: 1, presentacion: 1, maqueta: 3 },
-      },
-      {
-        id: 'sofia',
-        name: 'Sofía',
-        hoursFree: 6,
-        skill: { investigacion: 3, diseno: 2, presentacion: 1, maqueta: 1 },
-      },
-      {
-        id: 'mateo',
-        name: 'Mateo',
-        hoursFree: 3,
-        skill: { investigacion: 1, diseno: 3, presentacion: 2, maqueta: 1 },
-      },
-      {
-        id: 'vos',
-        name: 'Vos',
-        hoursFree: 2,
-        skill: { investigacion: 1, diseno: 1, presentacion: 3, maqueta: 1 },
-      },
-    ],
-  },
-]
 
 /** Afinidad total de un reparto, o -1 si viola alguna restricción. */
 function scoreAssignment(
@@ -186,19 +125,23 @@ function bestPossibleSkill(model: GroupModel): number {
   return best
 }
 
-export const groupTasks: ChallengeDefinition = defineChallenge<GroupModel>({
+export const groupTasks: ChallengeDefinition = defineChallenge<
+  GroupModel,
+  GroupParams
+>({
   id: GROUP_TASKS_ID,
   family: GROUP_PROJECT_FAMILY,
   placement: 'anchor',
-  variants: authoredVariantIds(VARIANTS),
+  variants: authoredVariantIds(groupTasksVariants.authored),
+  variantSource: groupTasksVariants,
   interaction: 'assignment-board',
   categories: ['optimization-and-constraints', 'quantity'],
   stages: ['grade-7'],
   baseDifficulty: 3,
   tools: ['notepad'],
 
-  generate({ variantId }) {
-    const { members } = authoredVariant(GROUP_TASKS_ID, VARIANTS, variantId)
+  generate({ params }) {
+    const { members } = params
     const draft: GroupModel = { tasks: TASKS, members, bestSkill: 0 }
     return { tasks: TASKS, members, bestSkill: bestPossibleSkill(draft) }
   },
@@ -398,4 +341,7 @@ export const groupTasks: ChallengeDefinition = defineChallenge<GroupModel>({
 })
 
 /** Expuesto para los tests de contenido. */
-export const groupTasksReference = { tasks: TASKS, variants: VARIANTS }
+export const groupTasksReference = {
+  tasks: TASKS,
+  variants: groupTasksVariants.authored,
+}

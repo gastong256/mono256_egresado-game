@@ -12,6 +12,10 @@
  */
 
 import { toChallengeId, toVariantId } from '../../../core/branded'
+import {
+  developmentVariantSource,
+  type DevelopmentParams,
+} from '../variant-source'
 import { DEV_BUS_FAMILY } from '../families'
 import { err, ok, type Result } from '../../../core/result'
 import type { EngineRejection } from '../../../core/errors'
@@ -50,11 +54,15 @@ function formatClock(minutesOfDay: number): string {
   return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`
 }
 
-export const busDeparture: ChallengeDefinition = defineChallenge<BusModel>({
+export const busDeparture: ChallengeDefinition = defineChallenge<
+  BusModel,
+  DevelopmentParams
+>({
   id: toChallengeId('dev.bus-departure'),
   family: DEV_BUS_FAMILY,
   placement: 'anchor',
   variants: [toVariantId('base')],
+  variantSource: developmentVariantSource,
   interaction: 'numeric-input',
   categories: ['time-and-rates', 'proportions-and-percentages'],
   stages: ['grade-7', 'year-1', 'year-2'],

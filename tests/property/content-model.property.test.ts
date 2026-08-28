@@ -70,23 +70,19 @@ describe('variant address', () => {
 })
 
 describe('variant seed derivation', () => {
-  it('depends only on the run seed and the semantic address', () => {
+  it('depends only on the semantic address, not on the run', () => {
     fc.assert(
-      fc.property(arbSeed, arbAddress, (seed, ref) => {
-        const runSeed = toRunSeed(seed)
-        expect(deriveVariantSeed(runSeed, ref)).toBe(
-          deriveVariantSeed(runSeed, { ...ref }),
-        )
+      fc.property(arbAddress, (ref) => {
+        expect(deriveVariantSeed(ref)).toBe(deriveVariantSeed({ ...ref }))
       }),
     )
   })
 
   it('changes when any part of the address changes', () => {
     fc.assert(
-      fc.property(arbSeed, arbAddress, arbIdentifier, (seed, ref, other) => {
-        const runSeed = toRunSeed(seed)
-        const base = deriveVariantSeed(runSeed, ref)
-        const moved = deriveVariantSeed(runSeed, {
+      fc.property(arbAddress, arbIdentifier, (ref, other) => {
+        const base = deriveVariantSeed(ref)
+        const moved = deriveVariantSeed({
           ...ref,
           variantId: toVariantId(other),
         })

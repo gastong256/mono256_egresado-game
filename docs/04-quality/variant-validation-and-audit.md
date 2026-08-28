@@ -1,6 +1,8 @@
 # Validación y auditoría de variantes
 
-**Estado: mixto.** Los invariantes por desafío son **implementados y vigentes**. El contrato transversal de validador, el catálogo desplegado y la auditoría estadística agregada son **TARGET / RECOMENDADOS**.
+**Estado: implementado.** El contrato transversal de validador, el catálogo aprobado y la auditoría estadística existen desde [ADR-020](../03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md). Lo que sigue abierto es el catálogo **oficial de la feria**, que es una decisión de evento y no de arquitectura.
+
+Comandos: `pnpm game:variants check` reconstruye el catálogo comprometido y revalida cada entrada —forma parte de `pnpm verify`—; `pnpm game:variants audit` corre la barrida estadística grande; `pnpm game:variants build` reconstruye el artefacto.
 
 [Validación de contenido](content-validation.md) describe el pipeline vigente de un desafío. Este documento describe lo que hace falta agregar cuando las variantes decidan premios: no alcanza con que cada desafío se valide a sí mismo, hace falta poder afirmar algo sobre **el conjunto desplegado**.
 

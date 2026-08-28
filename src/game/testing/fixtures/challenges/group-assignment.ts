@@ -11,6 +11,10 @@
  */
 
 import { toChallengeId, toVariantId } from '../../../core/branded'
+import {
+  developmentVariantSource,
+  type DevelopmentParams,
+} from '../variant-source'
 import { DEV_GROUP_PROJECT_FAMILY } from '../families'
 import { err, ok, type Result } from '../../../core/result'
 import type { EngineRejection } from '../../../core/errors'
@@ -112,205 +116,202 @@ function bestPossibleScore(model: AssignmentModel): number {
   return best
 }
 
-export const groupAssignment: ChallengeDefinition =
-  defineChallenge<AssignmentModel>({
-    id: toChallengeId('dev.group-assignment'),
-    family: DEV_GROUP_PROJECT_FAMILY,
-    placement: 'anchor',
-    variants: [toVariantId('base')],
-    interaction: 'assignment-board',
-    categories: ['optimization-and-constraints', 'patterns-and-relations'],
-    stages: ['year-2', 'year-3'],
-    baseDifficulty: 4,
-    tools: ['notepad'],
+export const groupAssignment: ChallengeDefinition = defineChallenge<
+  AssignmentModel,
+  DevelopmentParams
+>({
+  id: toChallengeId('dev.group-assignment'),
+  family: DEV_GROUP_PROJECT_FAMILY,
+  placement: 'anchor',
+  variants: [toVariantId('base')],
+  variantSource: developmentVariantSource,
+  interaction: 'assignment-board',
+  categories: ['optimization-and-constraints', 'patterns-and-relations'],
+  stages: ['year-2', 'year-3'],
+  baseDifficulty: 4,
+  tools: ['notepad'],
 
-    generate({ rng }) {
-      const tasks = TASKS.map((task) => ({
-        ...task,
-        hoursRequired: rng.nextInt(2, 6),
-      }))
+  generate({ rng }) {
+    const tasks = TASKS.map((task) => ({
+      ...task,
+      hoursRequired: rng.nextInt(2, 6),
+    }))
 
-      // Feasibility is built in rather than hoped for: the first `tasks.length`
-      // members are given enough hours to cover the most demanding task, so a
-      // valid assignment always exists. The remaining member is unconstrained,
-      // which is what keeps the choice interesting.
-      const hardestTask = tasks.reduce(
-        (max, task) => Math.max(max, task.hoursRequired),
-        0,
-      )
-      const members = rng
-        .shuffle(NAMES)
-        .slice(0, 4)
-        .map((label, index) => {
-          const skill: Record<string, number> = {}
-          for (const task of tasks) {
-            skill[task.id] = rng.nextInt(1, 5)
-          }
-          return {
-            id: `member-${String(index)}`,
-            label,
-            hoursAvailable:
-              index < tasks.length
-                ? rng.nextInt(hardestTask, hardestTask + 3)
-                : rng.nextInt(2, hardestTask + 3),
-            skill,
-          }
-        })
+    // Feasibility is built in rather than hoped for: the first `tasks.length`
+    // members are given enough hours to cover the most demanding task, so a
+    // valid assignment always exists. The remaining member is unconstrained,
+    // which is what keeps the choice interesting.
+    const hardestTask = tasks.reduce(
+      (max, task) => Math.max(max, task.hoursRequired),
+      0,
+    )
+    const members = rng
+      .shuffle(NAMES)
+      .slice(0, 4)
+      .map((label, index) => {
+        const skill: Record<string, number> = {}
+        for (const task of tasks) {
+          skill[task.id] = rng.nextInt(1, 5)
+        }
+        return {
+          id: `member-${String(index)}`,
+          label,
+          hoursAvailable:
+            index < tasks.length
+              ? rng.nextInt(hardestTask, hardestTask + 3)
+              : rng.nextInt(2, hardestTask + 3),
+          skill,
+        }
+      })
 
-      const draft: AssignmentModel = { members, tasks, bestScore: 0 }
-      return { members, tasks, bestScore: bestPossibleScore(draft) }
-    },
+    const draft: AssignmentModel = { members, tasks, bestScore: 0 }
+    return { members, tasks, bestScore: bestPossibleScore(draft) }
+  },
 
-    verify(model) {
-      const issues: string[] = []
+  verify(model) {
+    const issues: string[] = []
 
-      if (model.bestScore < 0) {
-        issues.push('no feasible assignment covers every task')
-      }
-      if (model.members.length < model.tasks.length) {
-        issues.push('there are fewer members than tasks')
-      }
+    if (model.bestScore < 0) {
+      issues.push('no feasible assignment covers every task')
+    }
+    if (model.members.length < model.tasks.length) {
+      issues.push('there are fewer members than tasks')
+    }
 
-      const skillValues = model.members.flatMap((member) =>
-        model.tasks.map((task) => member.skill[task.id] ?? 0),
-      )
-      if (new Set(skillValues).size === 1) {
-        issues.push(
-          'every member is equally skilled, so the choice is arbitrary',
-        )
-      }
+    const skillValues = model.members.flatMap((member) =>
+      model.tasks.map((task) => member.skill[task.id] ?? 0),
+    )
+    if (new Set(skillValues).size === 1) {
+      issues.push('every member is equally skilled, so the choice is arbitrary')
+    }
 
-      return issues
-    },
+    return issues
+  },
 
-    narrate() {
-      return {
-        title: 'El trabajo grupal',
-        setup:
-          'Hay que repartir el trabajo final y cada quien tiene horas y fuertes distintos.',
-        goal: 'Asigná una persona por tarea sin pasarte de sus horas.',
-      }
-    },
+  narrate() {
+    return {
+      title: 'El trabajo grupal',
+      setup:
+        'Hay que repartir el trabajo final y cada quien tiene horas y fuertes distintos.',
+      goal: 'Asigná una persona por tarea sin pasarte de sus horas.',
+    }
+  },
 
-    present(model) {
-      return {
-        kind: 'assignment-board',
-        agents: model.members.map((member) => ({
-          id: member.id,
-          label: member.label,
-          detail: `${String(member.hoursAvailable)} h · ${model.tasks
-            .map(
-              (task) => `${task.label} ${String(member.skill[task.id] ?? 0)}/5`,
-            )
-            .join(' · ')}`,
-        })),
-        tasks: model.tasks.map((task) => ({
-          id: task.id,
-          label: task.label,
-          detail: `${String(task.hoursRequired)} h`,
-        })),
-      }
-    },
+  present(model) {
+    return {
+      kind: 'assignment-board',
+      agents: model.members.map((member) => ({
+        id: member.id,
+        label: member.label,
+        detail: `${String(member.hoursAvailable)} h · ${model.tasks
+          .map(
+            (task) => `${task.label} ${String(member.skill[task.id] ?? 0)}/5`,
+          )
+          .join(' · ')}`,
+      })),
+      tasks: model.tasks.map((task) => ({
+        id: task.id,
+        label: task.label,
+        detail: `${String(task.hoursRequired)} h`,
+      })),
+    }
+  },
 
-    evaluate(
-      model,
-      answer: InteractionAnswer,
-    ): Result<ChallengeEvaluation, EngineRejection> {
-      if (answer.kind !== 'assignment-board') {
+  evaluate(
+    model,
+    answer: InteractionAnswer,
+  ): Result<ChallengeEvaluation, EngineRejection> {
+    if (answer.kind !== 'assignment-board') {
+      return err({
+        kind: 'invalid-answer',
+        detail: `expected assignment-board, received ${answer.kind}`,
+      })
+    }
+
+    for (const pair of answer.assignments) {
+      if (!model.members.some((member) => member.id === pair.agentId)) {
         return err({
           kind: 'invalid-answer',
-          detail: `expected assignment-board, received ${answer.kind}`,
+          detail: `unknown member ${pair.agentId}`,
         })
       }
-
-      for (const pair of answer.assignments) {
-        if (!model.members.some((member) => member.id === pair.agentId)) {
-          return err({
-            kind: 'invalid-answer',
-            detail: `unknown member ${pair.agentId}`,
-          })
-        }
-        if (!model.tasks.some((task) => task.id === pair.taskId)) {
-          return err({
-            kind: 'invalid-answer',
-            detail: `unknown task ${pair.taskId}`,
-          })
-        }
+      if (!model.tasks.some((task) => task.id === pair.taskId)) {
+        return err({
+          kind: 'invalid-answer',
+          detail: `unknown task ${pair.taskId}`,
+        })
       }
+    }
 
-      const score = scoreAssignment(model, answer.assignments)
-      const facts = model.tasks.map((task) => {
-        const pair = answer.assignments.find(
-          (entry) => entry.taskId === task.id,
+    const score = scoreAssignment(model, answer.assignments)
+    const facts = model.tasks.map((task) => {
+      const pair = answer.assignments.find((entry) => entry.taskId === task.id)
+      const member = model.members.find((entry) => entry.id === pair?.agentId)
+      return {
+        label: task.label,
+        value:
+          member === undefined
+            ? 'sin asignar'
+            : `${member.label} (${String(member.skill[task.id] ?? 0)}/5, ${String(member.hoursAvailable)} h)`,
+      }
+    })
+
+    if (score < 0) {
+      const overloaded = answer.assignments.find((pair) => {
+        const member = model.members.find((entry) => entry.id === pair.agentId)
+        const task = model.tasks.find((entry) => entry.id === pair.taskId)
+        return (
+          member !== undefined &&
+          task !== undefined &&
+          member.hoursAvailable < task.hoursRequired
         )
-        const member = model.members.find((entry) => entry.id === pair?.agentId)
-        return {
-          label: task.label,
-          value:
-            member === undefined
-              ? 'sin asignar'
-              : `${member.label} (${String(member.skill[task.id] ?? 0)}/5, ${String(member.hoursAvailable)} h)`,
-        }
       })
-
-      if (score < 0) {
-        const overloaded = answer.assignments.find((pair) => {
-          const member = model.members.find(
-            (entry) => entry.id === pair.agentId,
-          )
-          const task = model.tasks.find((entry) => entry.id === pair.taskId)
-          return (
-            member !== undefined &&
-            task !== undefined &&
-            member.hoursAvailable < task.hoursRequired
-          )
-        })
-
-        return ok({
-          quality: 'invalid',
-          feedback: {
-            outcomeKey: overloaded
-              ? 'assignment.overloaded'
-              : 'assignment.incomplete',
-            facts,
-            violatedConstraint: overloaded ? 'member-hours' : 'task-coverage',
-          },
-          metrics: metrics({ efficiency: 0, precision: 0, risk: 0.5 }),
-          careerEffects: { equipo: -2 },
-          flagEffects: [{ flag: 'assignment.failed', value: true }],
-        })
-      }
-
-      const ratio = model.bestScore > 0 ? score / model.bestScore : 1
-
-      if (score === model.bestScore) {
-        return ok({
-          quality: 'optimal',
-          feedback: {
-            outcomeKey: 'assignment.optimal',
-            facts,
-            optimalComparison:
-              'Ninguna otra distribución aprovechaba mejor los fuertes del grupo.',
-          },
-          metrics: metrics({ efficiency: 1, precision: 1, risk: 0 }),
-          careerEffects: {
-            equipo: 4,
-            estilo: { axis: 'estratega', amount: 6 },
-          },
-          flagEffects: [{ flag: 'assignment.optimal', value: true }],
-        })
-      }
 
       return ok({
-        quality: ratio >= 0.85 ? 'efficient' : 'functional',
+        quality: 'invalid',
         feedback: {
-          outcomeKey: 'assignment.covered',
+          outcomeKey: overloaded
+            ? 'assignment.overloaded'
+            : 'assignment.incomplete',
           facts,
-          optimalComparison: `La mejor distribución sumaba ${String(model.bestScore)} puntos de afinidad; la tuya sumó ${String(score)}.`,
+          violatedConstraint: overloaded ? 'member-hours' : 'task-coverage',
         },
-        metrics: metrics({ efficiency: ratio, precision: 1, risk: 0.2 }),
-        careerEffects: { equipo: 2 },
-        flagEffects: [],
+        metrics: metrics({ efficiency: 0, precision: 0, risk: 0.5 }),
+        careerEffects: { equipo: -2 },
+        flagEffects: [{ flag: 'assignment.failed', value: true }],
       })
-    },
-  })
+    }
+
+    const ratio = model.bestScore > 0 ? score / model.bestScore : 1
+
+    if (score === model.bestScore) {
+      return ok({
+        quality: 'optimal',
+        feedback: {
+          outcomeKey: 'assignment.optimal',
+          facts,
+          optimalComparison:
+            'Ninguna otra distribución aprovechaba mejor los fuertes del grupo.',
+        },
+        metrics: metrics({ efficiency: 1, precision: 1, risk: 0 }),
+        careerEffects: {
+          equipo: 4,
+          estilo: { axis: 'estratega', amount: 6 },
+        },
+        flagEffects: [{ flag: 'assignment.optimal', value: true }],
+      })
+    }
+
+    return ok({
+      quality: ratio >= 0.85 ? 'efficient' : 'functional',
+      feedback: {
+        outcomeKey: 'assignment.covered',
+        facts,
+        optimalComparison: `La mejor distribución sumaba ${String(model.bestScore)} puntos de afinidad; la tuya sumó ${String(score)}.`,
+      },
+      metrics: metrics({ efficiency: ratio, precision: 1, risk: 0.2 }),
+      careerEffects: { equipo: 2 },
+      flagEffects: [],
+    })
+  },
+})

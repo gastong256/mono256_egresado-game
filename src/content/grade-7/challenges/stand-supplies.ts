@@ -19,7 +19,6 @@ import {
   fromInteger,
   metrics,
   ok,
-  authoredVariant,
   authoredVariantIds,
   toChallengeId,
   type ChallengeDefinition,
@@ -28,6 +27,10 @@ import {
   type InteractionAnswer,
   type Result,
 } from '@/game'
+import {
+  standSuppliesVariants,
+  type StandParams,
+} from './stand-supplies.variants'
 import { SCHOOL_FAIR_FAMILY } from '../families'
 
 import { pesos } from '../../pesos'
@@ -79,11 +82,6 @@ const PACKS: readonly Pack[] = [
 /** Identidad estable de la plantilla. */
 const STAND_SUPPLIES_ID = toChallengeId('g7.stand-supplies')
 
-const VARIANTS = [
-  { id: 'porciones-24', servingsNeeded: 24, budgetMinor: 2_400_000 },
-  { id: 'porciones-20', servingsNeeded: 20, budgetMinor: 2_100_000 },
-] as const
-
 /**
  * Costo mínimo para cubrir al menos `target` porciones.
  *
@@ -121,25 +119,27 @@ function minimumCost(target: number, packs: readonly Pack[]): number {
   return optimum
 }
 
-export const standSupplies: ChallengeDefinition = defineChallenge<StandModel>({
+export const standSupplies: ChallengeDefinition = defineChallenge<
+  StandModel,
+  StandParams
+>({
   id: STAND_SUPPLIES_ID,
   family: SCHOOL_FAIR_FAMILY,
   placement: 'anchor',
-  variants: authoredVariantIds(VARIANTS),
+  variants: authoredVariantIds(standSuppliesVariants.authored),
+  variantSource: standSuppliesVariants,
   interaction: 'budget-builder',
   categories: ['quantity', 'optimization-and-constraints'],
   stages: ['grade-7'],
   baseDifficulty: 3,
   tools: ['calculator', 'notepad'],
 
-  generate({ variantId }) {
-    const variant = authoredVariant(STAND_SUPPLIES_ID, VARIANTS, variantId)
-
+  generate({ params }) {
     return {
-      servingsNeeded: variant.servingsNeeded,
-      budgetMinor: variant.budgetMinor,
+      servingsNeeded: params.servingsNeeded,
+      budgetMinor: params.budgetMinor,
       packs: PACKS,
-      optimalCostMinor: minimumCost(variant.servingsNeeded, PACKS),
+      optimalCostMinor: minimumCost(params.servingsNeeded, PACKS),
     }
   },
 
@@ -354,6 +354,6 @@ export const standSupplies: ChallengeDefinition = defineChallenge<StandModel>({
 /** Expuesto para los tests de contenido. */
 export const standSuppliesReference = {
   packs: PACKS,
-  variants: VARIANTS,
+  variants: standSuppliesVariants.authored,
   minimumCost,
 }

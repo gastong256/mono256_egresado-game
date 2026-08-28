@@ -28,8 +28,11 @@ import {
  * Regenerating these numbers without a version bump silently invalidates every
  * stored replay, which is exactly what this file exists to prevent.
  *
- * Los valores actuales corresponden al modelo de contenido (`ENGINE_VERSION`
- * 3.0.0, contenido `0.3.0-dev`). Vale la pena mirar qué cambió y qué no: el
+ * Los valores actuales corresponden al pipeline de variantes (`ENGINE_VERSION`
+ * 4.0.0, contenido `0.4.0-dev`). Otra vez: el recorrido, el score, el perfil y
+ * la cantidad de comandos quedaron **iguales**. Lo único que se movió es el
+ * hash del estado, porque el descriptor puede llevar ahora la versión del
+ * catálogo de variantes del que salió la run. Vale la pena mirar qué cambió y qué no: el
  * trace, el score, el perfil y la cantidad de comandos de las dos runs quedaron
  * **iguales** — la secuencia de juego no se movió, y las plantillas de
  * desarrollo generan exactamente los mismos números porque cada una declara una
@@ -72,7 +75,7 @@ const GOLDEN_RUNS: readonly Golden[] = [
       'year-5|dev.orientation|dev.survey-confidence|optimal|1630',
       'graduation|dev.graduation|-|-|0',
     ],
-    hash: 'f6bdf18609cd885e2181556040c821c34a1401596f84313c813581965b6664a1',
+    hash: '2b38de925beff57185e6efb00ecb4b3da8869974fe484821f29043fe20c122b8',
   },
   {
     seed: 'golden-beta',
@@ -95,7 +98,7 @@ const GOLDEN_RUNS: readonly Golden[] = [
       'year-5|dev.orientation|dev.survey-confidence|invalid|495',
       'graduation|dev.graduation|-|-|0',
     ],
-    hash: 'd4f0ef469804cb53b1f3aa1b7fa070cb4a5d62fd6de5938f9dafaea5512a0e07',
+    hash: '4350020e01aac6355c62541f03ee5296dfef9df06ec902fd37f1e6eab607cc9d',
   },
 ]
 
@@ -131,7 +134,7 @@ describe('golden deterministic protocol', () => {
     // A version bump must be accompanied by regenerated golden values, so the
     // two are asserted together.
     expect(dependencies.ruleset.version).toBe('0.2.0-dev')
-    expect(dependencies.ruleset.contentVersion).toBe('0.3.0-dev')
+    expect(dependencies.ruleset.contentVersion).toBe('0.4.0-dev')
     expect(dependencies.ruleset.official).toBe(false)
   })
 })

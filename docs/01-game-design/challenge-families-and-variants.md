@@ -119,9 +119,9 @@ Los criterios de aceptación de estos controles están en [validación y auditor
 | Catálogo de contenido disponible, separado del plan de la run | **implementado** — `ContentCatalog` y `RunPlan` |
 | Elegibilidad por etapa declarativa, incluso no contigua | **implementada** |
 | Roles de colocación y presupuesto de beats por año | **implementados** como contrato de plan validable |
-| Generador por restricción como abstracción reutilizable | **no implementada** |
-| Catálogo desplegado y versionado de variantes competitivas | **no implementado** |
-| `variantCatalogVersion` en la identidad de la run | **no implementado**; hoy la tripleta es `gameVersion`/`rulesetVersion`/`contentVersion` |
+| Generador por restricción como abstracción reutilizable | **implementada** — [ADR-020](../03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md) |
+| Catálogo desplegado y versionado de variantes competitivas | **implementado** como catálogo de desarrollo `grade-7-dev-1`; el oficial de la feria sigue sin congelar |
+| `variantCatalogVersion` en la identidad de la run | **implementado** como campo opcional: una run que juega variantes curadas no salió de ningún catálogo y lo dice omitiéndolo |
 
 Cuidado con la palabra «catálogo»: el **catálogo de contenido** que ya existe es lo autorado y disponible; el **catálogo desplegado de variantes** que todavía no existe es el conjunto generado, validado y aprobado para competencia. Son dos cosas distintas.
 

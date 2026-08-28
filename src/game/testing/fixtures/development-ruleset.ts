@@ -34,7 +34,7 @@ import { developmentFamilies } from './families'
 import { developmentStorylets } from './storylets'
 
 export const DEVELOPMENT_RULESET_VERSION = '0.2.0-dev'
-export const DEVELOPMENT_CONTENT_VERSION = '0.3.0-dev'
+export const DEVELOPMENT_CONTENT_VERSION = '0.4.0-dev'
 
 /** Every development challenge definition. */
 export const developmentChallenges = [

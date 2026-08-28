@@ -211,8 +211,10 @@ export {
   isPlacementRole,
   parseVariantAddress,
   sameVariantAddress,
+  createVariantRng,
   variantRngPath,
   PLACEMENT_ROLES,
+  VARIANT_SPACE_SEED,
   type AuthoredVariant,
   type ChallengePlacementRole,
   type ChallengeVariantRef,
@@ -236,6 +238,66 @@ export {
   type ValidationIssue,
   type ValidationSeverity,
 } from './content/issues'
+
+// Variant pipeline: sources, validation, fingerprints and approved catalogs
+export { sha256Hex } from './content/hash'
+export {
+  candidateIndexOf,
+  candidateVariantId,
+  resolveVariantParams,
+  sourceAcceptsVariant,
+  type AuthoredParams,
+  type CandidateContext,
+  type ErasedVariantSource,
+  type VariantGenerator,
+  type VariantSourceSpec,
+} from './challenges/variant-source'
+export {
+  countByCode,
+  isApprovable,
+  paramsValidator,
+  validateGeneric,
+  validateVariant,
+  variantDiagnostic,
+  PRESENTATION_LIMITS,
+  VARIANT_DIAGNOSTIC_CODES,
+  type VariantDiagnostic,
+  type VariantDiagnosticCode,
+  type VariantValidationInput,
+  type VariantValidator,
+} from './challenges/variant-validation'
+export {
+  approvedVariantsFor,
+  canonicalCatalog,
+  findApprovedVariant,
+  serializeCatalog,
+  variantFingerprint,
+  verifyCatalogIntegrity,
+  type ApprovedVariant,
+  type ApprovedVariantCatalog,
+  type CatalogGeneratorRecord,
+  type VariantSourceKind,
+} from './content/variant-catalog'
+export {
+  auditVariantCatalog,
+  AUDIT_THRESHOLDS,
+  type OptionPositionStats,
+  type TemplateAudit,
+  type VariantAuditReport,
+} from './content/variant-audit'
+export {
+  buildVariantCatalog,
+  evaluateVariant,
+  type BuildCatalogOptions,
+  type BuildCatalogOutput,
+  type CandidateResult,
+  type PipelineReport,
+  type TemplatePipelineReport,
+} from './content/variant-pipeline'
+export {
+  instanceRefFor,
+  type InstanceAddressOptions,
+} from './challenges/instance-address'
 export type {
   AgentAssignment,
   BudgetLine,

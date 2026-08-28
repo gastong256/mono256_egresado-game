@@ -39,6 +39,7 @@
 03-architecture/adr/ADR-017-paper-visual-identity.md
 03-architecture/adr/ADR-018-blueprint-v0-2-decision-authority.md
 03-architecture/adr/ADR-019-scenario-family-template-variant.md
+03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md
 03-architecture/analytics-observability.md
 03-architecture/api-contracts.md
 03-architecture/architecture-overview.md

@@ -23,7 +23,15 @@ import { err, ok, type Result } from './result'
 /**
  * Engine/game version of this build. Also serialized as `gameVersion`.
  *
- * `3.0.0` is the content model: a challenge instance is now addressed by its
+ * `4.0.0` is the variant catalog: a run descriptor can now record which
+ * approved variant catalog it drew from, which changed the snapshot codec. The
+ * field is optional — a run that plays a template's curated variants drew from
+ * no catalog and says so by omitting it — but the serialized shape moved, and a
+ * `3.x` snapshot is refused rather than guessed at. Gameplay, mathematics and
+ * RNG consumption did not move: the golden runs reproduce the same trace, score,
+ * profile and command count.
+ *
+ * `3.0.0` was the content model: a challenge instance is now addressed by its
  * full content identity — scenario family, template and variant — instead of a
  * bare definition id. The snapshot codec changed with it, and variant selection
  * moved onto its own substream, so a seed that used to produce one authored
@@ -37,7 +45,7 @@ import { err, ok, type Result } from './result'
  * reproduce its original result under this engine, and that is exactly what the
  * version triple exists to say out loud instead of discovering it in a replay.
  */
-export const ENGINE_VERSION = '3.0.0'
+export const ENGINE_VERSION = '4.0.0'
 
 export interface VersionTriple {
   readonly gameVersion: string

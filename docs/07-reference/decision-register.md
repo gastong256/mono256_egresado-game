@@ -21,6 +21,7 @@
 | ADR-017 | Identidad papel: la hoja cuadriculada como canvas del juego | Aceptado |
 | ADR-018 | Autoridad y madurez de las decisiones del Project Blueprint v0.2 | Aceptado |
 | ADR-019 | Modelo de contenido: familia de escenario, plantilla y variante | Aceptado |
+| ADR-020 | Pipeline de variantes y catálogo aprobado | Aceptado |
 
 ## Regla para ADR nuevo
 
@@ -53,7 +54,7 @@ Estas decisiones vienen del [Project Blueprint v0.2.0](blueprint-v0.2-integratio
 | D-005 | Sin game over global: el error cambia el camino, no termina la partida | PRODUCT DIRECTION | parcial; falta contenido de recuperación ([fail-forward](../01-game-design/graduation-and-fail-forward.md)) |
 | D-006 | Jerarquía `ScenarioFamily → Template → Variant` | RECOMENDADA | **implementada** ([ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md)); el inventario de contenido sigue abierto |
 | D-007 | Variantes deterministas por seed | LOCKED como dirección de arquitectura | implementado ([ADR-003](../03-architecture/adr/ADR-003-deterministic-seeded-engine.md), [ADR-012](../03-architecture/adr/ADR-012-seeded-prng-and-substreams.md)) |
-| D-008 | Catálogo de variantes prevalidado y desplegado para competencia | RECOMENDADA | no implementado |
+| D-008 | Catálogo de variantes prevalidado y desplegado para competencia | RECOMENDADA | **implementado** ([ADR-020](../03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md)); el catálogo oficial de la feria sigue sin congelar |
 | D-009 | Intentos ilimitados con personal best en el ranking | RECOMENDADA · TEACHER GATE | no implementado ([modo feria](../05-operations/fair-mode-and-competition-freeze.md)) |
 | D-010 | `FairScore` separado de las stats de carrera | RECOMENDADA | no implementado ([score competitivo](../01-game-design/competitive-scoring-and-ranking.md)) |
 | D-011 | La matemática domina el `FairScore` | RECOMENDADA · TEACHER GATE | no implementado |

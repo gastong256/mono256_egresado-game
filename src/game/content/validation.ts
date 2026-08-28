@@ -23,7 +23,7 @@ import {
 import { validateEffect } from '../narrative/effects'
 import type { Storylet } from '../narrative/storylet'
 import { createRng } from '../random/rng'
-import { variantRngPath } from '../challenges/content-model'
+import { createVariantRng } from '../challenges/content-model'
 import { variantRefOf } from '../challenges/contracts'
 import type { StageConfig, StageId } from '../progression/stages'
 import type { Ruleset } from '../ruleset/ruleset'
@@ -475,7 +475,7 @@ function runGeneration(input: ContentValidationInput): {
             rng: createRng(seed, ['validate']),
             difficulty,
             variantId,
-            variantRng: createRng(seed, variantRngPath(variantRefOf(ref))),
+            variantRng: createVariantRng(variantRefOf(ref)),
           })
 
           checked += 1

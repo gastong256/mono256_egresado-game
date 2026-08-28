@@ -112,6 +112,9 @@ export function contentFingerprint(
         // Variant order is content identity: selection draws an index from this
         // list, so reordering it changes which case a stored seed produces.
         template.variants.join(','),
+        // The generator decides what every candidate address contains, so its
+        // identity and version are content identity too.
+        `${String(template.variantSource.generatorId ?? 'authored')}@${String(template.variantSource.generatorVersion ?? '-')}:${String(template.variantSource.candidateSpace)}`,
         template.interaction,
         String(template.baseDifficulty),
         [...template.stages].sort().join(','),
