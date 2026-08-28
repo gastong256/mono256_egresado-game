@@ -22,6 +22,7 @@
 | ADR-018 | Autoridad y madurez de las decisiones del Project Blueprint v0.2 | Aceptado |
 | ADR-019 | Modelo de contenido: familia de escenario, plantilla y variante | Aceptado |
 | ADR-020 | Pipeline de variantes y catálogo aprobado | Aceptado |
+| ADR-021 | [El catálogo aprobado dentro del juego, y el demo docente](../03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md) | Aceptado |
 
 ## Regla para ADR nuevo
 

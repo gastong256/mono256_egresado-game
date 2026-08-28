@@ -196,8 +196,8 @@ De requisito de producto a estado de implementación. La columna de estado es un
 
 | Requisito de producto | Regla de game design | Capacidad de motor | Estado actual | Fase futura |
 |---|---|---|---|---|
-| Escenarios que no se memorizan | [familias, plantillas y variantes](../01-game-design/challenge-families-and-variants.md) | `ScenarioFamily`/`Template`/`Variant`, fuentes híbridas y generador por restricción | modelo y pipeline **implementados**; profundidad cognitiva pendiente | STAGE-04 del [roadmap](../06-delivery/implementation-sequence.md) |
-| Competencia sin variantes defectuosas | [validación y auditoría de variantes](../04-quality/variant-validation-and-audit.md) | validador transversal + catálogo aprobado | **implementado para desarrollo** en `grade-7-dev-1`; catálogo oficial pendiente | FREEZE |
+| Escenarios que no se memorizan | [familias, plantillas y variantes](../01-game-design/challenge-families-and-variants.md) | `ScenarioFamily`/`Template`/`Variant`, fuentes híbridas y generador por restricción | primera variación cognitiva de producción **implementada** en `bus`; profundidad del resto del catálogo abierta | STAGE-04 / STAGE-08 del [roadmap](../06-delivery/implementation-sequence.md) |
+| Competencia sin variantes defectuosas | [validación y auditoría de variantes](../04-quality/variant-validation-and-audit.md) | validador transversal + catálogo aprobado | **implementado para desarrollo y consumido por gameplay** en `grade-7-dev-2`; catálogo oficial pendiente | FREEZE |
 | Identidad de carrera legible | [ADR-016](../03-architecture/adr/ADR-016-career-player-model.md) | `CareerState` v0.2 | **implementado** | — |
 | Runs comparables entre sí | [dificultad](../01-game-design/difficulty-and-playability.md) | bandas + scheduler por presupuesto | `DifficultyLevel` 1–5, sin presupuesto | STAGE-05 |
 | Ranking dominado por matemática | [score competitivo](../01-game-design/competitive-scoring-and-ranking.md) | `ScorePolicy` + `ScoringEngine` competitivo | score por evento de desarrollo | STAGE-06 |

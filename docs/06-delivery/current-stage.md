@@ -6,7 +6,7 @@ Vista corta del estado de ejecución. El detalle completo, los contratos de toda
 
 ## STAGE-05 — Modelo de dificultad y Run Composer
 
-**Estado:** `NOT_STARTED`. Sin bloqueos: las dos etapas de las que depende están `DONE`.
+**Estado:** `READY`. Es la etapa actual; sus dos dependencias están `DONE` y la implementación todavía no empezó.
 
 ## Por qué está activa
 

@@ -33,7 +33,7 @@ Se congelan:
 
 - `rulesetVersion`;
 - `contentVersion`;
-- `variantCatalogVersion` del catálogo oficial cuando el evento lo defina —el campo técnico ya existe, pero `grade-7-dev-1` no es un freeze de feria—;
+- `variantCatalogVersion` del catálogo oficial cuando el evento lo defina —el campo técnico ya existe, pero ni `grade-7-dev-1` ni `grade-7-dev-2` son un freeze de feria—;
 - `scoreVersion` cuando exista;
 - el comparador del leaderboard;
 - la política de intentos.

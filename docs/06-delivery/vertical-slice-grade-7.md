@@ -157,7 +157,7 @@ Lo que sí queda como deuda conocida:
 
 El slice de 7.º no es un prototipo descartable: es la **candidata a demo docente** de la Fase A del [ciclo de entrega real](../00-product/real-delivery-lifecycle.md). Su trabajo es que el Departamento de Matemática pueda decidir si el proyecto se extiende a todos los años.
 
-La **Teacher Demo Candidate** puede seleccionar deliberadamente más contenido que un segmento normal para exponer matemática, patrones de interacción y las cuatro dimensiones de carrera. El **plan normal de una run**, en cambio, selecciona uno o dos beats ordinarios por etapa desde un catálogo disponible más amplio. Son dos configuraciones de selección sobre el mismo modelo; no requieren motores distintos. Ver [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md).
+La **Teacher Demo Candidate** expone deliberadamente más contenido que un segmento normal para mostrar matemática, patrones de interacción y las cuatro dimensiones de carrera. Está implementada como `DemoPlan`, un tipo y una validación separados; **no** es un `RunPlan` con un máximo mayor. El **plan normal de una run** mantiene uno o dos beats ordinarios por etapa desde un catálogo disponible más amplio. Ver [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md) y [ADR-021](../03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md).
 
 Tiene que probar ocho cosas:
 
@@ -170,11 +170,11 @@ Tiene que probar ocho cosas:
 7. El motor genera y reproduce variantes deterministas.
 8. Las mismas fundaciones de UI y de motor escalan a los años siguientes.
 
-### Variación: qué alcanza y qué no
+### Variación: qué demostró STAGE-04 y qué sigue abierto
 
-Los seis escenarios actuales —colectivo, mural, cuaderno, proyecto grupal, stand y acto del 25 de Mayo— ya están migrados estructuralmente a familia/plantilla/variante, sin reescribir su matemática. Lo que la demo todavía debe agregar es variación estructural real: plantillas adicionales sólo donde aporten otra pregunta o forma de razonamiento, usando el pipeline de STAGE-03 donde corresponda. Ver [la migración](../03-architecture/content-model-migration.md) y [familias, plantillas y variantes](../01-game-design/challenge-families-and-variants.md).
+La diversidad **paramétrica** ya llega al gameplay desde `grade-7-dev-2`. La diversidad **cognitiva** tiene su primera prueba de producción en la familia `bus`: `g7.bus-timing` pide elegir una salida en un timeline y `g7.bus-latest-departure` pide producir una anticipación numérica recorriendo la relación al revés. Seeds distintas pueden elegir cualquiera de las dos dentro del slot del colectivo.
 
-STAGE-03 ya produjo profundidad **paramétrica** y un catálogo aprobado reproducible. STAGE-04 debe volver esa diversidad visible en gameplay y sumar profundidad **cognitiva**; una no sustituye a la otra.
+Eso demuestra la capacidad, no completa el inventario. Las otras cinco familias siguen con una plantilla cada una, y cuántas familias y plantillas necesita el juego final permanece **OPEN**. Ver [la migración](../03-architecture/content-model-migration.md), [familias y variantes](../01-game-design/challenge-families-and-variants.md) y [ADR-021](../03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md).
 
 No se puede llamar «dinámico» a un cambio de orden de las opciones.
 

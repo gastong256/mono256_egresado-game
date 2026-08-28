@@ -53,7 +53,7 @@ Tabla de navegación. Los contratos de cada etapa, más abajo, son la autoridad.
 | [STAGE-02](#stage-02-scenariofamily-challengetemplate-challengevariant) | ScenarioFamily → Template → Variant | `DONE` | STAGE-01 | — |
 | [STAGE-03](#stage-03-generación-validación-y-catálogo-de-variantes) | Generación, validación y catálogo de variantes | `DONE` | STAGE-02 | — |
 | [STAGE-04](#stage-04-enriquecimiento-de-7º-y-demo-candidate) | Enriquecimiento de 7.º y Demo Candidate | `DONE` | STAGE-02, STAGE-03 | — |
-| [STAGE-05](#stage-05-modelo-de-dificultad-y-run-composer) | Modelo de dificultad y Run Composer | `NOT_STARTED` · activa | STAGE-03 | — |
+| [STAGE-05](#stage-05-modelo-de-dificultad-y-run-composer) | Modelo de dificultad y Run Composer | `READY` · actual | STAGE-03, STAGE-04 | — |
 | [STAGE-06](#stage-06-scorepolicy-competitiva) | ScorePolicy competitiva | `NOT_STARTED` | STAGE-05 | — |
 | [GATE-TG1](#gate-tg1-teacher-gate-1) | **Teacher Gate 1** | `TEACHER_GATE` | STAGE-04, STAGE-06 | externo |
 | [STAGE-07](#stage-07-invariante-de-egreso-fail-forward-y-recuperaciones) | Egreso, fail-forward y recuperaciones | `NOT_STARTED` | GATE-TG1 | — |
@@ -75,6 +75,7 @@ flowchart TD
     S2 --> S3[STAGE-03 · generación y catálogo]
     S3 --> S4[STAGE-04 · 7.º Demo Candidate]
     S3 --> S5[STAGE-05 · dificultad y composer]
+    S4 --> S5
     S5 --> S6[STAGE-06 · ScorePolicy]
     S4 --> TG1{{GATE-TG1 · Teacher Gate 1}}
     S6 --> TG1
@@ -114,9 +115,9 @@ Estado real contra el código al 28 de agosto de 2026, tras cerrar STAGE-04. Es 
 | `scoreVersion` | `NOT_STARTED` | — | STAGE-06 |
 | `variantCatalogVersion` | `DONE` | campo opcional del descriptor; viaja en snapshot y en action log, y `createRun` rechaza una run que declare otro catálogo del que se le da | STAGE-04 |
 | `ScenarioFamily` | `DONE` | `src/game/challenges/content-model.ts`, [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md), `tests/unit/content-model.test.ts` | STAGE-02 |
-| `ChallengeTemplate` | `DONE` | una `ChallengeDefinition` declara familia, rol y variantes; dos plantillas conviven en la familia `school-data` | STAGE-02 |
+| `ChallengeTemplate` | `DONE` | una `ChallengeDefinition` declara familia, rol y variantes; `school-data` lo prueba en desarrollo y `bus` en producción | STAGE-02/STAGE-04 |
 | `ChallengeVariant` | `DONE` | `ChallengeVariantRef` con dirección `familia/plantilla/variante`, round-trip y substream propio | STAGE-02 |
-| `VariantGenerator` reutilizable | `DONE` | contrato de fuente de variantes + generadores por restricción en cinco plantillas | STAGE-03 |
+| `VariantGenerator` reutilizable | `DONE` | contrato de fuente de variantes + generadores por restricción en seis plantillas de producción | STAGE-03/STAGE-04 |
 | `VariantValidator` transversal | `DONE` | genéricas + por plantilla con oráculos independientes, diagnósticos tipados | STAGE-03 |
 | Catálogo de variantes aprobado y versionado | `DONE` | `ApprovedVariantCatalog`; `grade-7-dev-1` y `grade-7-dev-2` comprometidos, verificados en `pnpm verify`; las versiones publicadas son inmutables | STAGE-03 |
 | Catálogo aprobado consumido por la partida real | `DONE` | `ApprovedVariantLookup` en `EngineDependencies`, `tests/integration/grade-7-catalog-selection.test.ts` | STAGE-04 |
@@ -228,7 +229,7 @@ Estado real contra el código al 28 de agosto de 2026, tras cerrar STAGE-04. Es 
 
 - **Estado:** `DONE`
 - **Depende de:** STAGE-01 (`DONE`)
-- **Desbloquea:** STAGE-03 (ahora `DONE`) y STAGE-04 (ahora activa)
+- **Desbloquea:** STAGE-03 y STAGE-04 (ambas `DONE`)
 
 **Punto de partida y propósito.** Al abrir STAGE-02, cada desafío era una definición monolítica con un array interno de parámetros: alcanzaba para que cambiaran los números, no la pregunta. La etapa debía permitir varias estructuras cognitivas por escenario y variantes reproducibles de primera clase.
 
@@ -314,7 +315,7 @@ Criterios que la etapa sumó sobre el contrato original:
 
 - **Estado:** `DONE`
 - **Depende de:** STAGE-02 (`DONE`)
-- **Desbloquea:** STAGE-04 (ahora activa) y STAGE-05
+- **Desbloquea:** STAGE-04 (`DONE`) y STAGE-05 (`READY`)
 
 **Punto de partida.** STAGE-02 dejó el vocabulario: una variante ya tenía dirección estable, substream propio y lugar en un catálogo y en un plan. Al abrir STAGE-03 faltaba producirlas en cantidad, validarlas como población y aprobar las que pudieran entrar a una competencia.
 
@@ -426,7 +427,7 @@ La **Teacher Demo Candidate** puede mostrar más mecánicas que un segmento norm
 Criterios que la etapa sumó sobre el contrato original:
 
 - [x] El puerto que lleva el catálogo a la selección es angosto: `src/game/challenges` sigue sin poder importar `src/game/content`, y no se debilitó la regla de capas.
-- [x] Una versión publicada del catálogo es inmutable: `grade-7-dev-1` no se regeneró, y `grade-7-dev-2` es un superconjunto exacto con las mismas huellas.
+- [x] Una versión publicada del catálogo es inmutable: `grade-7-dev-1` no se regeneró. `grade-7-dev-2` conserva las huellas de las plantillas cuyo contrato no cambió, agrega `g7.bus-latest-departure` y materializa de nuevo las direcciones generadas del acto bajo el generador versión `2`.
 - [x] El demo docente **no** es un plan de run válido, y hay un test que lo corre por `validateStagePlan` y comprueba que lo rechaza.
 - [x] El presupuesto de beats de una run no se aflojó, ni se volvió configurable para el demo.
 - [x] El artefacto de catálogo se parsea en la frontera, no se castea.
@@ -464,7 +465,7 @@ Criterios que la etapa sumó sobre el contrato original:
 | `g7.group-tasks` | `group-project` | assignment-board | optimización con restricciones | `anchor` | Equipo, Estilo | **autorada** | repartir trabajo; sus parámetros son contenido escrito |
 | `g7.stand-supplies` | `school-fair` | budget-builder | optimización con restricciones | `anchor` | Equipo, Estilo | generada | el cierre: packs, mínimo y presupuesto |
 
-Las siete están en el catálogo aprobado vigente y hay un test que lo comprueba. Seis interacciones, seis familias, seis dominios y las cuatro dimensiones de carrera. **Seis beats ordinarios: el triple del presupuesto de una run, a propósito.**
+Las siete están en el catálogo aprobado vigente y hay un test que lo comprueba. Seis interacciones, seis familias, seis dominios y las cuatro dimensiones de carrera. **Siete beats ordinarios: más de tres veces el máximo de una run, a propósito.**
 
 **Lo que no entró, y por qué.** El catálogo de la feria **no** se congeló: `grade-7-dev-2` es de desarrollo. El inventario de escenarios sigue `OPEN`: que la familia colectivo tenga dos plantillas no dice cuántas tendrá ninguna otra. No se movió contenido de año, no se renombró ningún id y no se tocó una cuenta de los seis desafíos anteriores. El demo docente es un **candidato**: ningún docente lo aprobó, y eso es el Teacher Gate 1.
 
@@ -476,7 +477,7 @@ La segunda plantilla se agregó en la familia colectivo y en ninguna otra. El mu
 
 ### STAGE-05 — Modelo de dificultad y Run Composer
 
-- **Estado:** `NOT_STARTED`, **y es la etapa activa**. Ver [etapa actual](current-stage.md).
+- **Estado:** `READY`, **y es la etapa actual**. La implementación todavía no empezó; ver [etapa actual](current-stage.md).
 - **Depende de:** STAGE-03 (`DONE`), STAGE-04 (`DONE`)
 - **Desbloquea:** STAGE-06
 
