@@ -196,16 +196,16 @@ De requisito de producto a estado de implementación. La columna de estado es un
 
 | Requisito de producto | Regla de game design | Capacidad de motor | Estado actual | Fase futura |
 |---|---|---|---|---|
-| Escenarios que no se memorizan | [familias, plantillas y variantes](../01-game-design/challenge-families-and-variants.md) | `ScenarioFamily`/`Template`/`Variant`, generador por restricción | variantes autoradas por desafío, seeded y verificadas | paso 2 de la [secuencia](../06-delivery/implementation-sequence.md) |
-| Competencia sin variantes defectuosas | [validación y auditoría de variantes](../04-quality/variant-validation-and-audit.md) | validador transversal + catálogo desplegado | invariantes por desafío; sin catálogo | pasos 2 y 9 |
+| Escenarios que no se memorizan | [familias, plantillas y variantes](../01-game-design/challenge-families-and-variants.md) | `ScenarioFamily`/`Template`/`Variant`, generador por restricción | variantes autoradas por desafío, seeded y verificadas | STAGE-02 del [roadmap](../06-delivery/implementation-sequence.md) |
+| Competencia sin variantes defectuosas | [validación y auditoría de variantes](../04-quality/variant-validation-and-audit.md) | validador transversal + catálogo desplegado | invariantes por desafío; sin catálogo | STAGE-03 |
 | Identidad de carrera legible | [ADR-016](../03-architecture/adr/ADR-016-career-player-model.md) | `CareerState` v0.2 | **implementado** | — |
-| Runs comparables entre sí | [dificultad](../01-game-design/difficulty-and-playability.md) | bandas + scheduler por presupuesto | `DifficultyLevel` 1–5, sin presupuesto | paso 2 |
-| Ranking dominado por matemática | [score competitivo](../01-game-design/competitive-scoring-and-ranking.md) | `ScorePolicy` + `ScoringEngine` competitivo | score por evento de desarrollo | paso 3, tras Teacher Gate 1 |
-| Premiar mejora y no volumen | [modo feria](../05-operations/fair-mode-and-competition-freeze.md) | comparador versionado + personal best | no implementado | paso 8 |
-| El navegador no decide el premio | [ADR-004](../03-architecture/adr/ADR-004-server-authoritative-scoring.md) | verificación por replay en servidor | base en `src/server/game/validate-run.ts` | paso 8 |
-| Reproducibilidad y auditoría de una run | [ADR-003](../03-architecture/adr/ADR-003-deterministic-seeded-engine.md) | seed + tripleta de versiones + action log | **implementado** | `scoreVersion` y `variantCatalogVersion` en paso 8 |
-| El error no expulsa al jugador | [egreso y fail-forward](../01-game-design/graduation-and-fail-forward.md) | invariante de egreso + recuperación comprimida | sin contenido de recuperación | pasos 6 y 7 |
-| Datos mínimos de menores | [ADR-008](../03-architecture/adr/ADR-008-anonymous-identity.md) | identidad pseudónima | **implementado** en la base | retención abierta, paso 9 |
+| Runs comparables entre sí | [dificultad](../01-game-design/difficulty-and-playability.md) | bandas + scheduler por presupuesto | `DifficultyLevel` 1–5, sin presupuesto | STAGE-05 |
+| Ranking dominado por matemática | [score competitivo](../01-game-design/competitive-scoring-and-ranking.md) | `ScorePolicy` + `ScoringEngine` competitivo | score por evento de desarrollo | STAGE-06 |
+| Premiar mejora y no volumen | [modo feria](../05-operations/fair-mode-and-competition-freeze.md) | comparador versionado + personal best | no implementado | STAGE-09 |
+| El navegador no decide el premio | [ADR-004](../03-architecture/adr/ADR-004-server-authoritative-scoring.md) | verificación por replay en servidor | base en `src/server/game/validate-run.ts` | STAGE-09 |
+| Reproducibilidad y auditoría de una run | [ADR-003](../03-architecture/adr/ADR-003-deterministic-seeded-engine.md) | seed + tripleta de versiones + action log | **implementado** | `scoreVersion` en STAGE-06, `variantCatalogVersion` en STAGE-03 |
+| El error no expulsa al jugador | [egreso y fail-forward](../01-game-design/graduation-and-fail-forward.md) | invariante de egreso + recuperación comprimida | sin contenido de recuperación | STAGE-07 |
+| Datos mínimos de menores | [ADR-008](../03-architecture/adr/ADR-008-anonymous-identity.md) | identidad pseudónima | **implementado** en la base | retención abierta, STAGE-10 |
 
 ## Qué NO hizo esta integración
 

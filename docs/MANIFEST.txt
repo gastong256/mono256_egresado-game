@@ -56,6 +56,7 @@
 05-operations/fair-runbook.md
 05-operations/fallback-and-incident-plan.md
 05-operations/leaderboard-and-moderation.md
+06-delivery/current-stage.md
 06-delivery/definition-of-done.md
 06-delivery/implementation-sequence.md
 06-delivery/mvp-backlog.md

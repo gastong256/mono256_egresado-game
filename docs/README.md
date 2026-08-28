@@ -33,7 +33,8 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 12. [sistema de diseño](09-design-system/README.md) — la autoridad visual.
 13. [testing](04-quality/testing-strategy.md) y [modo feria y congelamiento](05-operations/fair-mode-and-competition-freeze.md) — calidad y operación.
 14. [preguntas abiertas](07-reference/open-questions.md) — lo que **no** se decide desde el código.
-15. [secuencia de implementación](06-delivery/implementation-sequence.md) — en qué orden se construye lo que falta.
+15. [etapa actual](06-delivery/current-stage.md) — dónde estamos y qué se puede implementar ahora.
+16. [roadmap de implementación](06-delivery/implementation-sequence.md) — el contrato completo de cada etapa.
 
 ## Mapa documental
 
@@ -92,7 +93,8 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 
 ### 06-delivery
 - `mvp-backlog.md`: backlog priorizado.
-- `implementation-sequence.md`: en qué orden se construye lo que falta y contra qué gate.
+- `implementation-sequence.md`: roadmap canónico — etapas, estado, alcance, dependencias, gates y criterios de aceptación.
+- `current-stage.md`: vista corta de la etapa activa, su alcance y qué no implementar todavía.
 - `teacher-gates.md`: qué decide el Departamento de Matemática en cada gate.
 - `definition-of-done.md`: DoD global y por tipo de cambio.
 - `repository-conventions.md`: estructura implementada, fronteras, comandos y reglas de dependencia.

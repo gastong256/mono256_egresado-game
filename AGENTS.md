@@ -21,6 +21,8 @@ Egresado es un videojuego web de partidas breves donde estudiantes recorren la s
 
 No implementes producto o gameplay sin una tarea explicitamente acotada.
 
+Para cualquier trabajo funcional del Blueprint —motor, contenido, variantes, dificultad, score, egreso, ranking o feria— lee antes [la etapa actual](docs/06-delivery/current-stage.md) y el contrato de esa etapa en [el roadmap de implementacion](docs/06-delivery/implementation-sequence.md). El roadmap declara que esta `DONE` con evidencia, que etapa esta activa, su **Scope IN**, su **Scope OUT** y su exit gate. Respeta el Scope OUT: lo que parece faltar suele pertenecer a otra etapa. Si el roadmap y el codigo difieren, gana el codigo y el roadmap se corrige despues de auditar.
+
 ## Invariantes no negociables
 
 - El motor es TypeScript puro, determinista y reproducible por seed, versiones y acciones. No depende de React, DOM, red, DB, almacenamiento local, hora global no inyectada ni `Math.random()` directo.
