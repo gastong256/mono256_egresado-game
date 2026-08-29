@@ -98,6 +98,7 @@ export function validateComposedPlan(
   }
 
   const seenStages = new Set<StageId>()
+  const templatesInPreviousStages = new Set<string>()
   let previousIndex = -1
   let recomputedRunCost = 0
 
@@ -185,6 +186,30 @@ export function validateComposedPlan(
           ),
         )
       }
+      if (
+        stagePolicy.hostableTemplates !== undefined &&
+        !stagePolicy.hostableTemplates.includes(template.id)
+      ) {
+        issues.push(
+          contentError(
+            'plan.template-not-hostable',
+            beatSubject,
+            `the narrative for ${stage.stageId} cannot host template ${template.id}`,
+          ),
+        )
+      }
+      if (
+        stagePolicy.allowTemplateRepeats !== true &&
+        templatesInPreviousStages.has(template.id)
+      ) {
+        issues.push(
+          contentError(
+            'plan.repeated-template',
+            beatSubject,
+            'the template was already planned in an earlier stage',
+          ),
+        )
+      }
       if (templatesInStage.has(template.id)) {
         issues.push(
           contentError(
@@ -264,6 +289,10 @@ export function validateComposedPlan(
         )
       }
       recomputedStageCost += cost
+    }
+
+    for (const templateId of templatesInStage) {
+      templatesInPreviousStages.add(templateId)
     }
 
     if (anchors !== 1) {

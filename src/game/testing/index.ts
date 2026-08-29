@@ -22,6 +22,11 @@ export {
   composedDevelopmentCompositionPolicy,
   COMPOSED_DEVELOPMENT_RULESET_VERSION,
 } from './fixtures/composed-ruleset'
+export {
+  createSyntheticSixStageCompositionCatalog,
+  syntheticSixStageCompositionPolicy,
+  SYNTHETIC_SIX_STAGE_IDS,
+} from './fixtures/six-stage-composition'
 export { developmentFamilies } from './fixtures/families'
 export {
   materializeEveryVariant,

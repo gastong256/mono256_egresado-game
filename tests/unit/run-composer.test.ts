@@ -16,8 +16,11 @@ import {
   validateStagePlan,
   toRunPlan,
   candidateDifficultyCostPolicy,
+  costOf,
+  toChallengeId,
   COMPOSITION_OBJECTIVES,
   DEFAULT_STAGE_BEAT_BUDGET,
+  type ApprovedVariantLookup,
   type ComposedRunPlan,
   type CompositionPolicy,
 } from '@/game'
@@ -176,6 +179,112 @@ describe('componer un año normal de 7.º', () => {
       ),
     )
     expect(plans.size).toBeGreaterThan(4)
+  })
+
+  it('prueba explícitamente la política válida de un solo beat aunque exista un secundario', () => {
+    const oneBeatPolicy: CompositionPolicy = {
+      ...grade7CompositionPolicy,
+      id: 'grade-7-one-beat-proof',
+      version: '1.0.0-test',
+      stages: [
+        stageCompositionPolicy('grade-7', {
+          ordinaryBeats: { min: 1, max: 1 },
+          difficulty: { target: 150, tolerance: 0 },
+          narrativeBeats: 1,
+          hostableTemplates: [...GRADE_7_HOSTABLE_TEMPLATES],
+        }),
+      ],
+    }
+    expect(
+      grade7ApprovedVariants.variantsFor(toChallengeId('g7.may-25-act')).length,
+    ).toBeGreaterThan(0)
+
+    for (const seed of SEEDS.slice(0, 8)) {
+      const request = {
+        seed: toRunSeed(`one-${seed}`),
+        stages: ['grade-7'] as const,
+        catalog: grade7Catalog,
+        approvedVariants: grade7ApprovedVariants,
+        policy: oneBeatPolicy,
+      }
+      const first = composeRun(request)
+      const second = composeRun(request)
+      if (!isOk(first) || !isOk(second)) throw new Error('no compuso')
+
+      const stage = first.value.stages[0]
+      expect(stage?.beats).toHaveLength(1)
+      expect(stage?.beats[0]?.role).toBe('anchor')
+      expect(stage?.eventCount).toBe(2)
+      expect(
+        validateComposedPlan(first.value, {
+          catalog: grade7Catalog,
+          policy: oneBeatPolicy,
+          approvedVariants: grade7ApprovedVariants,
+        }),
+      ).toEqual([])
+      const stagePlan = toRunPlan(first.value).stages[0]
+      if (stagePlan === undefined) throw new Error('sin StagePlan')
+      expect(
+        validateStagePlan(grade7Catalog, stagePlan, {
+          budget: { min: 1, max: 1 },
+          approvedVariants: grade7ApprovedVariants,
+        }),
+      ).toEqual([])
+
+      const parsed = parseRunPlan(
+        JSON.parse(JSON.stringify(serializeRunPlan(first.value))) as unknown,
+      )
+      if (!isOk(parsed)) throw new Error('no serializó')
+      expect(planFingerprint(parsed.value)).toBe(planFingerprint(first.value))
+      expect(planFingerprint(second.value)).toBe(planFingerprint(first.value))
+    }
+  })
+
+  it('la cardinalidad de variantes de una plantilla no amplifica su selección', () => {
+    const sparse: ApprovedVariantLookup = {
+      catalogVersion: 'cardinality-probe',
+      variantsFor(templateId) {
+        return grade7ApprovedVariants.variantsFor(templateId).slice(0, 1)
+      },
+    }
+    const expanded: ApprovedVariantLookup = {
+      catalogVersion: 'cardinality-probe',
+      variantsFor(templateId) {
+        const approved = grade7ApprovedVariants.variantsFor(templateId)
+        return templateId === toChallengeId('g7.bus-timing')
+          ? approved
+          : approved.slice(0, 1)
+      },
+    }
+    expect(
+      expanded.variantsFor(toChallengeId('g7.bus-timing')).length,
+    ).toBeGreaterThan(sparse.variantsFor(toChallengeId('g7.bus-timing')).length)
+
+    const selectedAnchors = (approvedVariants: ApprovedVariantLookup) =>
+      Array.from({ length: 1_000 }, (_, index) => {
+        const composed = composeRun({
+          seed: toRunSeed(`cardinality-${String(index)}`),
+          stages: ['grade-7'],
+          catalog: grade7Catalog,
+          approvedVariants,
+          policy: grade7CompositionPolicy,
+        })
+        if (!isOk(composed)) throw new Error('no compuso')
+        return composed.value.stages[0]?.beats[0]?.variant.templateId
+      })
+
+    const sparseSelection = selectedAnchors(sparse)
+    const expandedSelection = selectedAnchors(expanded)
+    expect(expandedSelection).toEqual(sparseSelection)
+    expect(
+      expandedSelection.filter(
+        (templateId) => templateId === toChallengeId('g7.bus-timing'),
+      ),
+    ).toHaveLength(
+      sparseSelection.filter(
+        (templateId) => templateId === toChallengeId('g7.bus-timing'),
+      ).length,
+    )
   })
 })
 
@@ -709,6 +818,106 @@ describe('validar un plan es otro programa', () => {
     ).map((issue) => issue.code)
 
     expect(codes).toContain('plan.stage-order')
+  })
+
+  it('rechaza una plantilla que la narrativa de la etapa no puede alojar', () => {
+    const plan = planOf('compose-1')
+    const stage = plan.stages[0]
+    const anchor = stage?.beats.find((beat) => beat.role === 'anchor')
+    const unhostable = grade7Catalog.template(toChallengeId('g7.mural-paint'))
+    const variantId = grade7ApprovedVariants.variantsFor(
+      toChallengeId('g7.mural-paint'),
+    )[0]
+    if (
+      stage === undefined ||
+      anchor === undefined ||
+      unhostable === undefined ||
+      unhostable.placement === 'recovery' ||
+      variantId === undefined
+    ) {
+      throw new Error('fixture incompleta')
+    }
+
+    const cost = costOf(candidateDifficultyCostPolicy, unhostable.band)
+    const replacement = {
+      variant: {
+        familyId: unhostable.family,
+        templateId: unhostable.id,
+        variantId,
+      },
+      role: unhostable.placement,
+      band: unhostable.band,
+      cost,
+    } as const
+    const difficultyCost = anchor.cost + cost
+    const tampered: ComposedRunPlan = {
+      ...plan,
+      difficultyCost,
+      stages: [
+        {
+          ...stage,
+          beats: [anchor, replacement],
+          difficultyCost,
+        },
+      ],
+    }
+
+    const codes = validateComposedPlan(tampered, {
+      catalog: grade7Catalog,
+      policy: grade7CompositionPolicy,
+      approvedVariants: grade7ApprovedVariants,
+    }).map((issue) => issue.code)
+
+    expect(codes).toContain('plan.template-not-hostable')
+  })
+
+  it('rechaza repetir una plantilla entre etapas cuando la política lo prohíbe', () => {
+    const development = createComposedDevelopmentDependencies()
+    const composed = composeRun({
+      seed: toRunSeed('repetida'),
+      stages: development.ruleset.stages.map((stage) => stage.id),
+      catalog: development.catalog,
+      policy: composedDevelopmentCompositionPolicy,
+    })
+    if (!isOk(composed)) throw new Error('no compuso')
+
+    const grade7Stage = composed.value.stages[0]
+    const year1Stage = composed.value.stages[1]
+    const repeatedAnchor = grade7Stage?.beats.find(
+      (beat) => beat.role === 'anchor',
+    )
+    const year1Anchor = year1Stage?.beats.find((beat) => beat.role === 'anchor')
+    if (
+      grade7Stage === undefined ||
+      year1Stage === undefined ||
+      repeatedAnchor === undefined ||
+      year1Anchor === undefined
+    ) {
+      throw new Error('fixture incompleta')
+    }
+
+    const beats = year1Stage.beats.map((beat) =>
+      beat === year1Anchor ? repeatedAnchor : beat,
+    )
+    const difficultyCost = beats.reduce((sum, beat) => sum + beat.cost, 0)
+    const stages = composed.value.stages.map((stage) =>
+      stage === year1Stage ? { ...stage, beats, difficultyCost } : stage,
+    )
+    const tampered: ComposedRunPlan = {
+      ...composed.value,
+      stages,
+      difficultyCost: stages.reduce(
+        (sum, stage) => sum + stage.difficultyCost,
+        0,
+      ),
+    }
+
+    const codes = validateComposedPlan(tampered, {
+      catalog: development.catalog,
+      policy: composedDevelopmentCompositionPolicy,
+    }).map((issue) => issue.code)
+
+    expect(codes).toContain('plan.repeated-template')
   })
 
   it('no valida re-componiendo: acepta un plan legal que no es el elegido', () => {

@@ -259,10 +259,16 @@ export {
 export { planFingerprint } from './plan/plan-fingerprint'
 export {
   auditComposition,
+  type AuditContentSelectionStatus,
+  type AuditContentStatus,
+  type AuditCounts,
   type CompositionAuditOptions,
   type CompositionAuditReport,
+  type CompositionVerificationAudit,
   type CostDistribution,
+  type DominantTemplateAudit,
   type StageAudit,
+  type VariantCoverageAudit,
 } from './plan/composition-audit'
 export {
   validateComposedPlan,
