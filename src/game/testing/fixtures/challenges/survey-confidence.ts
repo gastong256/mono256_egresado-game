@@ -60,6 +60,14 @@ export const surveyConfidence: ChallengeDefinition = defineChallenge<
   categories: ['data-and-statistics', 'probability-and-uncertainty'],
   stages: ['year-4', 'year-5'],
   baseDifficulty: 4,
+  cognitive: {
+    steps: 2,
+    constraints: 1,
+    selection: 2,
+    optimization: 1,
+    uncertainty: 2,
+    construction: 0,
+  },
   tools: ['calculator'],
 
   generate({ rng }) {

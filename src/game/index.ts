@@ -80,12 +80,7 @@ export {
   type RunActionEnvelope,
   type RunActionLog,
 } from './runs/action-log'
-export {
-  canonicalize,
-  replayRun,
-  statesMatch,
-  type ReplayOutcome,
-} from './runs/replay'
+export { replayRun, statesMatch, type ReplayOutcome } from './runs/replay'
 export {
   restoreSnapshot,
   serializeSnapshot,
@@ -230,9 +225,71 @@ export {
   type ResolvedPlanEntry,
   type RunPlan,
   type RunPlanEntry,
+  type PlanResolutionOptions,
   type StageBeatBudget,
   type StageContentPlan,
-} from './content/run-plan'
+} from './plan/run-plan'
+export {
+  composeRun,
+  composeStage,
+  composedStage,
+  toRunPlan,
+  type ComposedBeat,
+  type ComposedRunPlan,
+  type ComposedStagePlan,
+  type RunCompositionRequest,
+} from './plan/composer'
+export {
+  compositionPolicyIssues,
+  stageCompositionPolicy,
+  stagePolicyFor,
+  developmentCompositionPolicy,
+  COMPOSITION_OBJECTIVES,
+  type CompositionObjective,
+  type CompositionPolicy,
+  type StageCompositionPolicy,
+} from './plan/composition-policy'
+export {
+  compositionFailure,
+  describeCompositionFailure,
+  COMPOSITION_FAILURE_CODES,
+  type CompositionFailure,
+  type CompositionFailureCode,
+} from './plan/composition-failure'
+export { planFingerprint } from './plan/plan-fingerprint'
+export {
+  auditComposition,
+  type CompositionAuditOptions,
+  type CompositionAuditReport,
+  type CostDistribution,
+  type StageAudit,
+} from './plan/composition-audit'
+export {
+  validateComposedPlan,
+  type PlanValidationContext,
+} from './plan/plan-validator'
+export { parseRunPlan, serializeRunPlan } from './plan/plan-codec'
+export {
+  agreesWithDocumentedLevel,
+  bandOf,
+  cognitiveLoad,
+  documentedLevelsFor,
+  isDifficultyBand,
+  BAND_THRESHOLDS,
+  DIFFICULTY_BANDS,
+  MAX_COGNITIVE_LOAD,
+  MIN_COGNITIVE_LOAD,
+  type CognitiveProfile,
+  type DifficultyBand,
+} from './difficulty/cognitive'
+export {
+  costOf,
+  difficultyCostPolicyIssues,
+  formatCost,
+  candidateDifficultyCostPolicy,
+  type DifficultyCost,
+  type DifficultyCostPolicy,
+} from './difficulty/cost-policy'
 export {
   demoAsStagePlan,
   isValidStagePlan,
@@ -242,14 +299,15 @@ export {
   type DemoPlan,
   type DemoPlanEntry,
 } from './content/demo-plan'
+export { canonicalize } from './core/canonical'
 export {
   hasNoErrors,
   type ValidationIssue,
   type ValidationSeverity,
-} from './content/issues'
+} from './core/issues'
 
 // Variant pipeline: sources, validation, fingerprints and approved catalogs
-export { sha256Hex } from './content/hash'
+export { sha256Hex } from './core/hash'
 export {
   candidateIndexOf,
   candidateVariantId,

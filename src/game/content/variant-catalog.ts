@@ -25,7 +25,7 @@
  * generated one is genuinely the same problem.
  */
 
-import { canonicalize } from '../runs/replay'
+import { canonicalize } from '../core/canonical'
 import {
   createVariantRng,
   formatVariantAddress,
@@ -46,8 +46,8 @@ import {
 import type { EngineRejection } from '../core/errors'
 import { err, ok, type Result } from '../core/result'
 import type { ApprovedVariantLookup } from '../challenges/variant-source'
-import { contentError, type ValidationIssue } from './issues'
-import { sha256Hex } from './hash'
+import { contentError, type ValidationIssue } from '../core/issues'
+import { sha256Hex } from '../core/hash'
 
 /** How a variant came to exist. */
 export type VariantSourceKind = 'authored' | 'generated'

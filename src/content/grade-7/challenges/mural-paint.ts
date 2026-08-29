@@ -80,6 +80,17 @@ export const muralPaint: ChallengeDefinition = defineChallenge<
   categories: ['space-and-shape', 'quantity'],
   stages: ['grade-7'],
   baseDifficulty: 2,
+  // Área, litros por metro y envases enteros: tres pasos encadenados donde
+  // perder el intermedio pierde el problema. La restricción es cubrir la pared;
+  // la optimización, no comprar de más.
+  cognitive: {
+    steps: 3,
+    constraints: 1,
+    selection: 1,
+    optimization: 1,
+    uncertainty: 0,
+    construction: 0,
+  },
   tools: ['calculator'],
 
   generate({ params }) {

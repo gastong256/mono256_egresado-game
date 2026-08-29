@@ -26,7 +26,7 @@ import type { RunDescriptor } from './state'
  * replayed against whatever catalog that server happened to hold, and the same
  * seed would resolve different variants without anyone noticing.
  */
-export const ACTION_LOG_VERSION = 2
+export const ACTION_LOG_VERSION = 3
 
 export interface RunActionEnvelope {
   /** Strictly increasing, starting at zero. */
@@ -55,6 +55,10 @@ const descriptorSchema = z.object({
   // Null, not absent: a log states explicitly that its run drew from no
   // approved catalog rather than leaving a reader to assume it.
   variantCatalogVersion: z.string().min(1).max(64).nullable(),
+  // Which composed plan this run played. Null for an uncomposed run, and that
+  // is a statement, not a gap: a run that resolved its content as it went did
+  // not have a plan to fingerprint.
+  planFingerprint: z.string().min(1).max(128).nullable(),
 })
 
 const envelopeSchema = z.object({
@@ -145,6 +149,9 @@ export function parseActionLog(
     ...(raw.variantCatalogVersion === null
       ? {}
       : { variantCatalogVersion: raw.variantCatalogVersion }),
+    ...(raw.planFingerprint === null
+      ? {}
+      : { planFingerprint: raw.planFingerprint }),
   }
 
   return ok({ version: parsed.data.version, descriptor, actions })
@@ -157,6 +164,7 @@ export function serializeActionLog(log: RunActionLog): unknown {
     descriptor: {
       ...log.descriptor,
       variantCatalogVersion: log.descriptor.variantCatalogVersion ?? null,
+      planFingerprint: log.descriptor.planFingerprint ?? null,
     },
     actions: log.actions.map((envelope) => ({
       sequence: envelope.sequence,

@@ -132,6 +132,17 @@ export const standSupplies: ChallengeDefinition = defineChallenge<
   categories: ['quantity', 'optimization-and-constraints'],
   stages: ['grade-7'],
   baseDifficulty: 3,
+  // Dos restricciones simultáneas que no se satisfacen por separado —cubrir las
+  // porciones y no pasarse del presupuesto— sobre una combinación de packs que
+  // el jugador arma, buscando la más barata.
+  cognitive: {
+    steps: 2,
+    constraints: 2,
+    selection: 1,
+    optimization: 2,
+    uncertainty: 0,
+    construction: 1,
+  },
   tools: ['calculator', 'notepad'],
 
   generate({ params }) {

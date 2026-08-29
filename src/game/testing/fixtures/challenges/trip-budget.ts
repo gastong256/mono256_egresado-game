@@ -93,6 +93,14 @@ export const tripBudget: ChallengeDefinition = defineChallenge<
   categories: ['optimization-and-constraints', 'quantity'],
   stages: ['year-2', 'year-3', 'year-5'],
   baseDifficulty: 4,
+  cognitive: {
+    steps: 2,
+    constraints: 2,
+    selection: 1,
+    optimization: 2,
+    uncertainty: 0,
+    construction: 1,
+  },
   tools: ['calculator', 'notepad'],
 
   generate({ rng, difficulty }) {

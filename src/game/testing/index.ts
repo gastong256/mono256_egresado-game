@@ -16,6 +16,12 @@ export {
   DEVELOPMENT_RULESET_VERSION,
 } from './fixtures/development-ruleset'
 export { developmentStorylets } from './fixtures/storylets'
+export {
+  createComposedDevelopmentDependencies,
+  createComposedDevelopmentRuleset,
+  composedDevelopmentCompositionPolicy,
+  COMPOSED_DEVELOPMENT_RULESET_VERSION,
+} from './fixtures/composed-ruleset'
 export { developmentFamilies } from './fixtures/families'
 export {
   materializeEveryVariant,

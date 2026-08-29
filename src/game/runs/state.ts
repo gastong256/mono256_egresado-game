@@ -30,6 +30,7 @@ import type { FlagMap } from '../narrative/conditions'
 import type { SelectionState } from '../narrative/selection'
 import type { ProfileResult } from '../profiles/policy'
 import type { StageId } from '../progression/stages'
+import type { ComposedRunPlan } from '../plan/composer'
 import type { CareerChange, CareerState } from '../progression/career'
 import type { ScoreBreakdown } from '../scoring/policy'
 
@@ -66,6 +67,16 @@ export interface RunDescriptor {
    * runs that must be auditable against a frozen competitive catalog.
    */
   readonly variantCatalogVersion?: string
+  /**
+   * Fingerprint of the composed plan this run must play.
+   *
+   * Present only for a composed run, and then it is a promise the engine keeps:
+   * `createRun` composes from the seed and the declared policies and refuses the
+   * run if what comes out is not this plan. A calibration that moved after the
+   * run was created is caught here instead of quietly producing a different
+   * game under the same identity.
+   */
+  readonly planFingerprint?: string
 }
 
 /**
@@ -137,6 +148,15 @@ export interface RunCompletion {
 }
 
 export interface RunState {
+  /**
+   * The content this run plays, decided once before it started.
+   *
+   * Present for a composed run and absent for one that resolves its content as
+   * it goes. When it is here it is authoritative: the runtime executes these
+   * beats and never draws a template or a variant of its own, because a plan
+   * the engine can quietly deviate from is not a plan.
+   */
+  readonly plan?: ComposedRunPlan
   readonly descriptor: RunDescriptor
   readonly phase: RunPhase
   readonly status: 'active' | 'completed' | 'abandoned'

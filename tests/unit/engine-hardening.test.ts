@@ -151,6 +151,7 @@ describe('ENG-SEC-001 · identifier charset enforced at trust boundaries', () =>
               ...descriptor,
               seed,
               variantCatalogVersion: descriptor.variantCatalogVersion ?? null,
+              planFingerprint: descriptor.planFingerprint ?? null,
             },
             actions: [],
           }),

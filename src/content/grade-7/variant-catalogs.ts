@@ -21,6 +21,7 @@ import {
 } from '@/game'
 import catalogDev1 from './variant-catalog.grade-7-dev-1.json'
 import catalogDev2 from './variant-catalog.grade-7-dev-2.json'
+import catalogDev3 from './variant-catalog.grade-7-dev-3.json'
 import { GRADE_7_VARIANT_CATALOG_VERSION } from './versions'
 
 /**
@@ -45,6 +46,7 @@ export const grade7VariantCatalogs: Readonly<
 > = {
   'grade-7-dev-1': published(catalogDev1),
   'grade-7-dev-2': published(catalogDev2),
+  'grade-7-dev-3': published(catalogDev3),
 }
 
 /** El catálogo del que sale el contenido de una partida nueva. */

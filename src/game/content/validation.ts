@@ -33,7 +33,7 @@ import {
   contentWarning,
   hasNoErrors,
   type ValidationIssue,
-} from './issues'
+} from '../core/issues'
 
 export interface ChallengeGenerationStats {
   readonly challengeId: ChallengeId

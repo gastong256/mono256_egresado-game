@@ -1,6 +1,6 @@
 # Dificultad y jugabilidad universal
 
-**Estado: mixto.** El principio de piso bajo y techo alto es **RECOMENDADO** como principio de diseño y ya gobierna el contenido existente. Las bandas `CORE / STANDARD / STRETCH`, el presupuesto de dificultad y los multiplicadores son **RECOMENDADOS y configurables**. La calibración final es **TEACHER GATE**. La elección entre dificultad manual, adaptativa o híbrida sigue **OPEN** ([pregunta 5](../07-reference/open-questions.md)).
+**Estado: mixto, y desde STAGE-05 parcialmente implementado.** El principio de piso bajo y techo alto es **RECOMENDADO** como principio de diseño y ya gobierna el contenido existente. Las bandas `CORE / STANDARD / STRETCH` y el presupuesto de dificultad están **implementados** como política versionada y configurable ([ADR-022](../03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md)); los multiplicadores de score siguen siendo documentación y pertenecen a STAGE-06. La calibración final es **TEACHER GATE**. La elección entre dificultad manual, adaptativa o híbrida sigue **OPEN** ([pregunta 5](../07-reference/open-questions.md)).
 
 Este documento explica *cómo debe subir* la dificultad. Qué matemática se usa en cada año está en el [marco matemático](math-design-framework.md); qué factores hacen difícil un desafío concreto está en el [sistema de desafíos](challenge-system.md).
 
@@ -67,12 +67,51 @@ El motor define `DifficultyLevel` de 1 a 5 por plantilla (`src/game/challenges/t
 
 **Este mapeo es una lectura documental, no una migración.** Nada en el código cambia por él; existe para que un documento que dice `STRETCH` y un test que dice `difficulty: 5` se puedan leer juntos.
 
+Desde STAGE-05 las dos escalas coexisten con roles distintos y **pueden discrepar**: `DifficultyLevel` es la perilla que la política de dificultad del runtime mueve durante una partida, y la banda es la clasificación estructural con la que el compositor agenda. Donde no coinciden, es un hallazgo de calibración para el Gate y está registrado en la tabla de abajo, no un defecto que el motor tenga que reconciliar.
+
+## De dónde sale la banda, en el código
+
+Una plantilla declara seis rasgos de su estructura, y la banda sale de su suma. No se elige: se deriva.
+
+| Rasgo | Qué mide | Rango |
+|---|---|---|
+| `steps` | pasos encadenados antes de que exista una respuesta | 1–4 |
+| `constraints` | restricciones que tienen que valer **a la vez** | 0–3 |
+| `selection` | cuánto del trabajo es decidir qué dato importa | 0–3 |
+| `optimization` | si alcanza con una respuesta que funcione o hay que buscar la mejor | 0–2 |
+| `uncertainty` | lectura estadística, estimación, información incompleta | 0–2 |
+| `construction` | si la respuesta hay que **producirla** en vez de reconocerla | 0–1 |
+
+`CORE` hasta 4, `STANDARD` hasta 7, `STRETCH` de 8 en adelante. Esos dos umbrales son toda la superficie de calibración de la clasificación: moverlos reclasifica contenido sin tocar una línea de composición.
+
+Un autor que quiere que su plantilla se agende como más exigente tiene que nombrar el rasgo que la vuelve así, y eso es justamente lo que impide que «difícil» degenere en «cuentas más incómodas».
+
+## Clasificación del contenido actual
+
+**Calibración candidata de ingeniería, no verdad pedagógica.** El Teacher Gate puede mover cualquier fila sin que cambie nada de la arquitectura. Los rasgos van en el orden de la tabla de arriba.
+
+| Plantilla | Dominio | Rasgos | Carga | Banda | Costo | Nivel autorado | Por qué |
+|---|---|---|---|---|---|---|---|
+| `g7.may-25-act` | patrones · cantidad | 1·0·2·0·0·1 | 4 | CORE | 1,00 | 2 ✓ | una regla por celda, escrita en pantalla; lo que pesa son tres reglas y veinticuatro celdas |
+| `g7.bus-timing` | tiempo · porcentajes | 2·1·1·1·0·0 | 5 | STANDARD | 1,50 | 2 ✗ | demora aplicada a cuatro salidas y comparadas contra la entrada |
+| `g7.notebook-offer` | porcentajes | 2·1·1·1·0·0 | 5 | STANDARD | 1,50 | 3 ✓ | dos ofertas que hay que llevar a la misma unidad, con el efectivo como límite |
+| `g7.bus-latest-departure` | tiempo · porcentajes | 2·1·1·1·0·1 | 6 | STANDARD | 1,50 | 3 ✓ | la misma relación al revés, y sin opciones: el número lo produce el jugador |
+| `g7.mural-paint` | espacio y forma | 3·1·1·1·0·0 | 6 | STANDARD | 1,50 | 2 ✗ | área, litros y envases enteros: cadena de tres donde perder el intermedio pierde el problema |
+| `g7.stand-supplies` | optimización | 2·2·1·2·0·1 | 8 | STRETCH | 2,10 | 3 ✗ | porciones mínimas y presupuesto a la vez, sobre una combinación que se arma |
+| `g7.group-tasks` | optimización | 2·2·2·2·0·1 | 9 | STRETCH | 2,10 | 3 ✗ | repartir todo sin pasarse de las horas de nadie, leyendo afinidad y disponibilidad |
+
+**Las cuatro divergencias con el nivel autorado son el resultado más útil de la tabla.** `baseDifficulty` se escribió como perilla de runtime y no como clasificación estructural, y donde las dos no coinciden hay una pregunta concreta para el Gate: ¿el mural es realmente más liviano que el colectivo? ¿El stand y el trabajo grupal son `STRETCH` para un chico de 7.º, o el año entero está calibrado alto? Un test fija la clasificación, así que moverla es una decisión visible en un diff.
+
 ## Presupuesto de dificultad
 
 **RECOMENDADO / TARGET.** Si las runs oficiales se arman con variantes procedurales, dos jugadores pueden recibir cargas distintas y el ranking deja de comparar habilidad. El presupuesto de dificultad ata la masa esperada de desafío de cada run.
 
 Forma discreta: por ejemplo 2 CORE, 3 STANDARD, 1 STRETCH.
 Forma numérica: `Σ difficultyCost ≈ constante`, con tolerancia declarada.
+
+**Implementado en la forma numérica.** Cada etapa declara objetivo y tolerancia, el compositor sólo produce planes que caen adentro, y un validador independiente lo vuelve a comprobar sobre el plan ya serializado. Los costos viven en centésimas enteras —100, 150, 210— porque un presupuesto que suma flotantes termina discutiendo consigo mismo si un plan entraba.
+
+La evidencia: 5.000 seeds de 7.º producen 1.374 planes distintos con carga total idéntica. Eso dice que el presupuesto funciona; **no** dice que las runs sean igual de difíciles para una persona. Ver [ADR-022](../03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) y `pnpm game:compose`.
 
 Los costos de scheduling son **metadata de armado de run** y están separados del multiplicador de score. El scheduler necesita distinguir fuerte entre CORE y STRETCH para balancear; el score necesita multiplicadores chicos para que la suerte del sorteo no domine sobre la habilidad. El diseño del scheduler está en [arquitectura objetivo del motor](../03-architecture/target-engine-architecture.md).
 

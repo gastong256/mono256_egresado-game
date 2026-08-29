@@ -28,8 +28,10 @@ import {
  * Regenerating these numbers without a version bump silently invalidates every
  * stored replay, which is exactly what this file exists to prevent.
  *
- * Los valores actuales corresponden al catálogo en el juego real
- * (`ENGINE_VERSION` 4.1.0, contenido de desarrollo `0.4.0-dev`). Otra vez: el recorrido, el score, el perfil y
+ * Los valores actuales corresponden al compositor de runs (`ENGINE_VERSION`
+ * 5.0.0, contenido de desarrollo `0.5.0-dev`). El hash del estado se movió
+ * porque el descriptor declara otras versiones; el recorrido, el score, el
+ * perfil y la cantidad de comandos son exactamente los de antes. Otra vez: el recorrido, el score, el perfil y
  * la cantidad de comandos quedaron **iguales**. Lo único que se movió es el
  * hash del estado, porque el descriptor puede llevar ahora la versión del
  * catálogo de variantes del que salió la run. Vale la pena mirar qué cambió y qué no: el
@@ -75,7 +77,7 @@ const GOLDEN_RUNS: readonly Golden[] = [
       'year-5|dev.orientation|dev.survey-confidence|optimal|1630',
       'graduation|dev.graduation|-|-|0',
     ],
-    hash: '5af44317a58563c59807605be27b270f03e2a696ef8d60616d66b64b9a9d0d75',
+    hash: '4cbce5da897d552e1354d03aa5a1a96351521a2d4a5688c3f24843d1a167e658',
   },
   {
     seed: 'golden-beta',
@@ -98,7 +100,7 @@ const GOLDEN_RUNS: readonly Golden[] = [
       'year-5|dev.orientation|dev.survey-confidence|invalid|495',
       'graduation|dev.graduation|-|-|0',
     ],
-    hash: 'c392fef162ae44c21ea23d3cfd55ce15ea3d48174b2ce5b17a2f354b5bc2b66c',
+    hash: 'bb9f24e3da0485f2b7c5817066f1b08a34fb874111a8b88c16702eebc086d5c5',
   },
 ]
 
@@ -134,7 +136,7 @@ describe('golden deterministic protocol', () => {
     // A version bump must be accompanied by regenerated golden values, so the
     // two are asserted together.
     expect(dependencies.ruleset.version).toBe('0.2.0-dev')
-    expect(dependencies.ruleset.contentVersion).toBe('0.4.0-dev')
+    expect(dependencies.ruleset.contentVersion).toBe('0.5.0-dev')
     expect(dependencies.ruleset.official).toBe(false)
   })
 })

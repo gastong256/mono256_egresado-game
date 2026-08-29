@@ -21,6 +21,7 @@
 
 import type { ContentCatalog } from '../challenges/content-catalog'
 import { ENGINE_VERSION } from '../core/versioning'
+import { cognitiveLoad } from '../difficulty/cognitive'
 import type { Storylet } from '../narrative/storylet'
 import { RNG_ALGORITHM } from '../random/rng'
 import { ACTION_LOG_VERSION } from '../runs/action-log'
@@ -63,6 +64,47 @@ export function engineFingerprint(): string {
  * Stage order, event budgets, target difficulty, enabled categories, narrative
  * pacing and the three policy identities all change the result of a run.
  */
+/**
+ * The composition policy, flattened.
+ *
+ * Every number in it changes which beats a seed composes, so every number is in
+ * the digest. Naming only the policy id would let a recalibration ship silently
+ * under the same ruleset version, which is the exact hole this file exists to
+ * close.
+ */
+function composition(ruleset: Ruleset): string {
+  const policy = ruleset.composition
+  if (policy === undefined) {
+    return 'none'
+  }
+
+  const stages = policy.stages
+    .map((stage) =>
+      [
+        stage.stageId,
+        `${String(stage.ordinaryBeats.min)}-${String(stage.ordinaryBeats.max)}`,
+        [...stage.secondaryRoles].sort().join(','),
+        `${String(stage.difficulty.target)}±${String(stage.difficulty.tolerance)}`,
+        String(stage.narrativeBeats),
+        `repeats:${String(stage.allowTemplateRepeats ?? false)}`,
+        [...(stage.hostableTemplates ?? [])].sort().join(','),
+      ].join(':'),
+    )
+    .join('|')
+
+  const costs = Object.entries(policy.costPolicy.costs)
+    .sort(([left], [right]) => (left < right ? -1 : 1))
+    .map(([band, cost]) => `${band}=${String(cost)}`)
+    .join(',')
+
+  return [
+    `${policy.id}@${policy.version}:${String(policy.official)}`,
+    `costs:${policy.costPolicy.id}@${policy.costPolicy.version}:${costs}`,
+    `objectives:${policy.objectives.join('>')}`,
+    `stages:${stages}`,
+  ].join(';')
+}
+
 export function rulesetFingerprint(ruleset: Ruleset): string {
   const stages = ruleset.stages
     .map((stage) =>
@@ -83,6 +125,7 @@ export function rulesetFingerprint(ruleset: Ruleset): string {
       `difficulty:${ruleset.difficulty.id}:${String(ruleset.difficulty.production)}`,
       `profile:${ruleset.profile.id}:${String(ruleset.profile.production)}`,
       `pacing:${String(ruleset.narrative.cooldownEvents)}:${String(ruleset.narrative.allowRepeats)}`,
+      `composition:${composition(ruleset)}`,
       `official:${String(ruleset.official)}`,
       `stages:${stages}`,
     ].join('|'),
@@ -117,6 +160,12 @@ export function contentFingerprint(
         `${String(template.variantSource.generatorId ?? 'authored')}@${String(template.variantSource.generatorVersion ?? '-')}:${String(template.variantSource.candidateSpace)}`,
         template.interaction,
         String(template.baseDifficulty),
+        // The cognitive profile is content that decides scheduling: change a
+        // trait and the composer may put a different beat in a year. Leaving it
+        // out would let a reclassification move a composed run without moving
+        // any version, which is the hole this digest exists to close.
+        template.band,
+        String(cognitiveLoad(template.cognitive)),
         [...template.stages].sort().join(','),
         [...template.categories].sort().join(','),
         [...template.tools].sort().join(','),

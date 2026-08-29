@@ -58,6 +58,14 @@ export const notebookDiscount: ChallengeDefinition = defineChallenge<
   categories: ['proportions-and-percentages', 'quantity'],
   stages: ['year-1', 'year-2'],
   baseDifficulty: 3,
+  cognitive: {
+    steps: 2,
+    constraints: 1,
+    selection: 1,
+    optimization: 1,
+    uncertainty: 0,
+    construction: 0,
+  },
   tools: ['calculator'],
 
   generate({ rng, difficulty }) {

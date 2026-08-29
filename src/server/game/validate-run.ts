@@ -24,7 +24,9 @@ import {
   isErr,
   ok,
   parseActionLog,
+  planFingerprint,
   replayRun,
+  validateComposedPlan,
   type EngineDependencies,
   type EngineRejection,
   type CareerState,
@@ -44,6 +46,16 @@ export interface AuthoritativeRunResult {
   readonly versions: VersionTriple
   /** Commands the server actually accepted while replaying. */
   readonly actionsApplied: number
+  /**
+   * The plan the run actually played, when it was composed.
+   *
+   * Recomputed by the server from the seed and its own policies, checked
+   * against the fingerprint the submission declared, and validated against the
+   * rules independently of how it was built.
+   */
+  readonly planFingerprint?: string
+  /** Total scheduling load of the composed plan. Never a score. */
+  readonly difficultyCost?: number
 }
 
 /**
@@ -89,7 +101,55 @@ export function validateSubmittedRun(
 
   const state = replayed.value.state
 
-  // 4. Only a finished run has an official result.
+  /*
+   * 4. Check the composition, when there is one.
+   *
+   * The client does not send a plan and could not be believed if it did: the
+   * server composes from the seed and its own policies, and the submission's
+   * fingerprint says which plan the player was promised. Then the plan is put
+   * through the same independent validator a plan from anywhere else would
+   * face — approved variants, one anchor, the beat budget, honest costs.
+   */
+  const plan = state.plan
+  if (plan !== undefined) {
+    const declared = log.value.descriptor.planFingerprint
+    const actual = planFingerprint(plan)
+    if (declared !== undefined && declared !== actual) {
+      return {
+        ok: false,
+        error: {
+          kind: 'unsupported-version',
+          field: 'planFingerprint',
+          expected: actual,
+          received: declared,
+        },
+      }
+    }
+
+    if (dependencies.composition !== undefined) {
+      const issues = validateComposedPlan(plan, {
+        catalog: dependencies.catalog,
+        policy: dependencies.composition,
+        ...(dependencies.approvedVariants === undefined
+          ? {}
+          : { approvedVariants: dependencies.approvedVariants }),
+      })
+      const blocking = issues.filter((issue) => issue.severity === 'error')
+      if (blocking.length > 0) {
+        return {
+          ok: false,
+          error: {
+            kind: 'invalid-content',
+            issues: blocking.map(
+              (issue) => `${issue.code} @ ${issue.subject}: ${issue.message}`,
+            ),
+          },
+        }
+      }
+    }
+  }
+
+  // 5. Only a finished run has an official result.
   if (state.status !== 'completed' || state.completion === undefined) {
     return {
       ok: false,
@@ -108,5 +168,11 @@ export function validateSubmittedRun(
     eventsPlayed: state.completion.eventsPlayed,
     versions: expected,
     actionsApplied: replayed.value.applied,
+    ...(plan === undefined
+      ? {}
+      : {
+          planFingerprint: planFingerprint(plan),
+          difficultyCost: plan.difficultyCost,
+        }),
   })
 }

@@ -76,6 +76,14 @@ export const muralCoverage: ChallengeDefinition = defineChallenge<
   categories: ['space-and-shape', 'quantity'],
   stages: ['grade-7', 'year-1'],
   baseDifficulty: 2,
+  cognitive: {
+    steps: 2,
+    constraints: 1,
+    selection: 0,
+    optimization: 1,
+    uncertainty: 0,
+    construction: 0,
+  },
   tools: ['calculator'],
 
   generate({ rng, difficulty }) {

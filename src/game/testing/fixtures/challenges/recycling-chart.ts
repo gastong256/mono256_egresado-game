@@ -64,6 +64,14 @@ export const recyclingChart: ChallengeDefinition = defineChallenge<
   categories: ['data-and-statistics', 'proportions-and-percentages'],
   stages: ['year-2', 'year-3', 'year-4'],
   baseDifficulty: 3,
+  cognitive: {
+    steps: 1,
+    constraints: 0,
+    selection: 2,
+    optimization: 0,
+    uncertainty: 1,
+    construction: 0,
+  },
   tools: ['calculator'],
 
   generate({ rng }) {

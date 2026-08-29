@@ -29,6 +29,7 @@
     "design:check": "node scripts/design/check-tokens.mjs && node scripts/design/check-contrast.mjs",
     "game:validate-content": "vite-node --config vitest.config.ts scripts/game/validate-content.ts",
     "game:variants": "vite-node --config vitest.config.ts scripts/game/variants.ts",
+    "game:compose": "vite-node --config vitest.config.ts scripts/game/compose.ts",
     "game:simulate": "vite-node --config vitest.config.ts scripts/game/simulate.ts",
     "game:simulate:deep": "vite-node --config vitest.config.ts scripts/game/simulate.ts -- --runs=5000 --verify=5",
     "db:start": "node scripts/start-local-supabase.mjs",

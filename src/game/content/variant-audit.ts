@@ -26,7 +26,11 @@ import { createVariantRng } from '../challenges/content-model'
 import { variantRefOf } from '../challenges/contracts'
 import { createRng } from '../random/rng'
 import { toRunSeed } from '../core/branded'
-import { contentError, contentWarning, type ValidationIssue } from './issues'
+import {
+  contentError,
+  contentWarning,
+  type ValidationIssue,
+} from '../core/issues'
 import type { PipelineReport } from './variant-pipeline'
 import type { ApprovedVariantCatalog } from './variant-catalog'
 

@@ -17,10 +17,21 @@ import { err, ok, type Result } from '../core/result'
 import type { EngineRejection } from '../core/errors'
 import {
   toChallengeInstanceId,
+  type ChallengeId,
   type ChallengeInstanceId,
   type StoryletId,
+  type VariantId,
 } from '../core/branded'
 import type { ApprovedVariantLookup } from '../challenges/variant-source'
+import {
+  composeRun,
+  composedStage,
+  type ComposedRunPlan,
+  type ComposedStagePlan,
+} from '../plan/composer'
+import type { CompositionPolicy } from '../plan/composition-policy'
+import { describeCompositionFailure } from '../plan/composition-failure'
+import { planFingerprint } from '../plan/plan-fingerprint'
 import {
   selectVariantId,
   variantRefOf,
@@ -77,6 +88,16 @@ export interface EngineDependencies {
    * with no catalog yet — selection falls back to the template's curated list.
    */
   readonly approvedVariants?: ApprovedVariantLookup
+  /**
+   * How this content set composes a normal run.
+   *
+   * Present means runs are **composed**: `createRun` picks the year's beats
+   * once, up front, and the runtime executes them. Absent keeps the older
+   * behaviour, where a storylet draws from its pool as the year goes — which is
+   * what the broad teacher demo is, and what a content set without a
+   * composition policy still gets.
+   */
+  readonly composition?: CompositionPolicy
 }
 
 /**
@@ -226,12 +247,101 @@ function requireStage(ruleset: Ruleset, state: RunState): StageConfig {
   return config
 }
 
+/** Looks a template up, refusing to continue if the catalog lost it. */
+function requireTemplate(
+  dependencies: EngineDependencies,
+  templateId: ChallengeId,
+): { readonly variants: readonly VariantId[] } {
+  const template = dependencies.catalog.template(templateId)
+  if (template === undefined) {
+    throw new EngineInvariantError(
+      `challenge template ${templateId} vanished between filtering and selection`,
+    )
+  }
+  return template
+}
+
+/**
+ * Ordinary beats this stage has already played.
+ *
+ * Counted from the history rather than tracked in a field, because the history
+ * is the record a replay rebuilds and a second counter could disagree with it.
+ */
+function beatsPlayedInStage(state: RunState): number {
+  return state.history.filter(
+    (entry) => entry.stage === state.stage && entry.challengeId !== undefined,
+  ).length
+}
+
+/** The planned beat this event should present, if the run is composed and owes one. */
+function plannedBeat(
+  state: RunState,
+): ComposedStagePlan['beats'][number] | undefined {
+  if (state.plan === undefined) {
+    return undefined
+  }
+  const stagePlan = composedStage(state.plan, state.stage)
+  return stagePlan?.beats[beatsPlayedInStage(state)]
+}
+
+/**
+ * How many events this stage plays.
+ *
+ * A composed stage runs for exactly as long as the content it was given: its
+ * beats plus its narrative cards. Falling back to the ruleset's fixed count
+ * would let a composed year keep asking for events after the plan ran out.
+ */
+function stageEventCount(state: RunState, stage: StageConfig): number {
+  if (state.plan === undefined) {
+    return stage.eventCount
+  }
+  return composedStage(state.plan, stage.id)?.eventCount ?? stage.eventCount
+}
+
+/**
+ * The storylets that may open this event.
+ *
+ * Unfiltered for an uncomposed run. For a composed one the plan decides what
+ * gets played, so a storylet that carries challenges is only eligible when it
+ * can host the beat that is due — and once the year's beats are spent, only
+ * narrative storylets remain. That is what keeps the composer authoritative
+ * over content while the narrative layer stays authoritative over framing: the
+ * story says where a beat happens, the plan says which beat it is.
+ */
+function hostingStorylets(
+  state: RunState,
+  dependencies: EngineDependencies,
+): readonly Storylet[] {
+  if (state.plan === undefined) {
+    return dependencies.storylets
+  }
+
+  const beat = plannedBeat(state)
+  const stagePlan = composedStage(state.plan, state.stage)
+  const remainingBeats =
+    (stagePlan?.beats.length ?? 0) - beatsPlayedInStage(state)
+  const remainingEvents = (stagePlan?.eventCount ?? 0) - state.stageEventIndex
+
+  return dependencies.storylets.filter((storylet) => {
+    if (storylet.challengePool.length === 0) {
+      // A narrative card only fits while the year has an event to spare. If
+      // every remaining event is owed to a planned beat, framing has to wait —
+      // otherwise a chatty content set could talk a year out of its decisions.
+      return remainingEvents > remainingBeats
+    }
+    return (
+      beat !== undefined &&
+      storylet.challengePool.includes(beat.variant.templateId)
+    )
+  })
+}
+
 /**
  * Opens the next event.
  *
  * Selects a storylet, applies its effects, and — when the storylet carries a
- * challenge pool — picks and generates the challenge. Returns the run in either
- * the `narrative` or the `challenge` phase.
+ * challenge pool — presents the challenge. In a composed run the challenge is
+ * the one the plan pinned; otherwise it is drawn from the storylet's pool.
  */
 function beginEvent(
   state: RunState,
@@ -249,7 +359,7 @@ function beginEvent(
   ])
 
   const outcome = selectStorylet(
-    dependencies.storylets,
+    hostingStorylets(state, dependencies),
     narrativeContext(state),
     state.selection,
     dependencies.ruleset.narrative,
@@ -257,6 +367,27 @@ function beginEvent(
   )
 
   if (outcome.kind === 'empty-pool') {
+    /*
+     * A composed stage that owes no more beats is simply finished.
+     *
+     * Its plan said how many decisions the year contains; the narrative cards
+     * around them are framing, and a year does not have to end on one. Ending
+     * the whole run here — which is what an uncomposed run does, because for it
+     * an empty pool really is content failing — would quietly shorten a career
+     * every time a year ran out of optional storylets.
+     *
+     * A stage that still owes a beat is the other case entirely: the plan named
+     * content the narrative cannot host, and that is a content defect. It ends
+     * the run and says so, exactly as before.
+     */
+    if (state.plan !== undefined && plannedBeat(state) === undefined) {
+      return advance(
+        { ...state, stageEventIndex: stageEventCount(state, stage) - 1 },
+        dependencies,
+        events,
+      )
+    }
+
     // Content cannot serve this stage. The run ends cleanly rather than
     // looping, and the fact is reported so validation and simulation can see it.
     events.push({ type: 'narrative.exhausted', stage: state.stage })
@@ -318,55 +449,74 @@ function beginEvent(
     }
   }
 
-  // Pick from the pool on its own substream so adding a challenge to a pool
-  // does not disturb storylet selection.
-  const pickRng = createRng(state.descriptor.seed, [
-    'stage',
-    state.stage,
-    'event',
-    state.eventIndex,
-    'challenge-pick',
-  ])
-  const eligible = storylet.challengePool.filter(
-    (id) => dependencies.catalog.template(id) !== undefined,
-  )
+  const planned = plannedBeat(state)
 
-  if (eligible.length === 0) {
-    throw new EngineInvariantError(
-      `storylet ${storylet.id} references no registered challenge; content validation should have rejected it`,
-    )
-  }
+  let templateId: ChallengeId
+  let variantId: VariantId
 
-  const templateId = pickRng.pick(eligible)
-  const template = dependencies.catalog.template(templateId)
-  if (template === undefined) {
-    throw new EngineInvariantError(
-      `challenge template ${templateId} vanished between filtering and selection`,
-    )
-  }
-
-  // The variant is chosen on its own substream, addressed by the template
-  // rather than by the slot. Which case the player sees is a content decision,
-  // and it must not shift because a storylet pool grew a neighbour.
-  //
-  // The pool it draws from is the approved catalog when the content set has
-  // one. That is the whole point of validating a population: the run seed
-  // decides *which* approved problem a player gets, never what that problem
-  // contains, and never reaches an address that failed validation.
-  const approved = dependencies.approvedVariants?.variantsFor(templateId) ?? []
-  const pool = approved.length > 0 ? approved : template.variants
-
-  const variantId = selectVariantId(
-    createRng(state.descriptor.seed, [
+  if (planned !== undefined) {
+    // Composed run: the content was decided before the run started and the
+    // runtime's job is to execute it. Rolling here — even for a value the
+    // composer would have produced anyway — would mean two places decide what a
+    // run contains, and only one of them is the thing a server can verify.
+    templateId = planned.variant.templateId
+    variantId = planned.variant.variantId
+  } else {
+    // Pick from the pool on its own substream so adding a challenge to a pool
+    // does not disturb storylet selection.
+    const pickRng = createRng(state.descriptor.seed, [
       'stage',
       state.stage,
       'event',
       state.eventIndex,
-      'variant-pick',
-      templateId,
-    ]),
-    pool,
-  )
+      'challenge-pick',
+    ])
+    const eligible = storylet.challengePool.filter(
+      (id) => dependencies.catalog.template(id) !== undefined,
+    )
+
+    if (eligible.length === 0) {
+      throw new EngineInvariantError(
+        `storylet ${storylet.id} references no registered challenge; content validation should have rejected it`,
+      )
+    }
+
+    templateId = pickRng.pick(eligible)
+
+    // The variant is chosen on its own substream, addressed by the template
+    // rather than by the slot. Which case the player sees is a content decision,
+    // and it must not shift because a storylet pool grew a neighbour.
+    //
+    // The pool it draws from is the approved catalog when the content set has
+    // one. That is the whole point of validating a population: the run seed
+    // decides *which* approved problem a player gets, never what that problem
+    // contains, and never reaches an address that failed validation.
+    const approved =
+      dependencies.approvedVariants?.variantsFor(templateId) ?? []
+    const pool =
+      approved.length > 0
+        ? approved
+        : requireTemplate(dependencies, templateId).variants
+
+    variantId = selectVariantId(
+      createRng(state.descriptor.seed, [
+        'stage',
+        state.stage,
+        'event',
+        state.eventIndex,
+        'variant-pick',
+        templateId,
+      ]),
+      pool,
+    )
+  }
+
+  const template = dependencies.catalog.template(templateId)
+  if (template === undefined) {
+    throw new EngineInvariantError(
+      `challenge template ${templateId} is not registered in the content catalog`,
+    )
+  }
 
   const difficulty: DifficultyLevel =
     state.descriptor.difficulty === 'fixed'
@@ -508,7 +658,7 @@ function advance(
 
   const nextStageEventIndex = state.stageEventIndex + 1
 
-  if (nextStageEventIndex < stage.eventCount) {
+  if (nextStageEventIndex < stageEventCount(state, stage)) {
     const opened = beginEvent(
       {
         ...state,
@@ -609,7 +759,60 @@ export function createRun(
     })
   }
 
+  /*
+   * Compose the run, once, before anything is played.
+   *
+   * This is the whole point of the stage: the content of a run is decided here
+   * and nowhere else. If the content set declares no composition policy the run
+   * stays uncomposed and resolves content as it goes — which is what the broad
+   * teacher demo is, and what every content set was before composition existed.
+   */
+  let plan: ComposedRunPlan | undefined
+  if (dependencies.composition !== undefined) {
+    const composed = composeRun({
+      seed: descriptor.seed,
+      stages: dependencies.ruleset.stages.map((config) => config.id),
+      catalog: dependencies.catalog,
+      ...(dependencies.approvedVariants === undefined
+        ? {}
+        : { approvedVariants: dependencies.approvedVariants }),
+      policy: dependencies.composition,
+    })
+
+    if (!composed.ok) {
+      return err({
+        kind: 'invalid-content',
+        issues: [describeCompositionFailure(composed.error)],
+      })
+    }
+    plan = composed.value
+
+    // A descriptor that names a plan is making a claim about which game this
+    // run is. Recomposing and comparing is what turns a moved calibration into
+    // a refusal instead of a different year played under the same identity.
+    const fingerprint = planFingerprint(plan)
+    if (
+      descriptor.planFingerprint !== undefined &&
+      descriptor.planFingerprint !== fingerprint
+    ) {
+      return err({
+        kind: 'unsupported-version',
+        field: 'planFingerprint',
+        expected: fingerprint,
+        received: descriptor.planFingerprint,
+      })
+    }
+  } else if (descriptor.planFingerprint !== undefined) {
+    return err({
+      kind: 'unsupported-version',
+      field: 'planFingerprint',
+      expected: '(no composition policy)',
+      received: descriptor.planFingerprint,
+    })
+  }
+
   const seeded: RunState = {
+    ...(plan === undefined ? {} : { plan }),
     descriptor,
     phase: 'narrative',
     status: 'active',

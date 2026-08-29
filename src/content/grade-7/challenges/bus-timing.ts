@@ -106,6 +106,18 @@ export const busTiming: ChallengeDefinition = defineChallenge<
   categories: ['time-and-rates', 'proportions-and-percentages'],
   stages: ['grade-7'],
   baseDifficulty: 2,
+  // Aplicar la demora es una relación; llevarla a cuatro salidas y compararlas
+  // con la hora de entrada es la segunda. La respuesta está entre las opciones
+  // —no hay que construirla— y elegir bien es elegir la que llega sin esperar
+  // de más, que es una optimización chica pero real.
+  cognitive: {
+    steps: 2,
+    constraints: 1,
+    selection: 1,
+    optimization: 1,
+    uncertainty: 0,
+    construction: 0,
+  },
   tools: ['calculator'],
 
   generate({ params }) {

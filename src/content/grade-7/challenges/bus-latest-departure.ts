@@ -93,6 +93,18 @@ export const busLatestDeparture: ChallengeDefinition = defineChallenge<
   categories: ['time-and-rates', 'proportions-and-percentages'],
   stages: ['grade-7'],
   baseDifficulty: 3,
+  // La misma estructura que `g7.bus-timing` recorrida al revés, y con una
+  // diferencia que se paga: no hay opciones que descartar, el número lo produce
+  // el jugador. Ésa es la única traza que separa a las dos plantillas, y es
+  // exactamente la que el modelo cognitivo existe para representar.
+  cognitive: {
+    steps: 2,
+    constraints: 1,
+    selection: 1,
+    optimization: 1,
+    uncertainty: 0,
+    construction: 1,
+  },
   tools: ['calculator'],
 
   generate({ params }) {

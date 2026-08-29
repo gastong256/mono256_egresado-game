@@ -17,6 +17,8 @@ import type { ContentSetId, RulesetId } from '../core/branded'
 import { err, ok, type Result } from '../core/result'
 import type { EngineRejection } from '../core/errors'
 import type { DifficultyPolicy } from '../difficulty/policy'
+import type { CompositionPolicy } from '../plan/composition-policy'
+import { compositionPolicyIssues } from '../plan/composition-policy'
 import type { ProfilePolicy } from '../profiles/policy'
 import type { ScoringPolicy } from '../scoring/policy'
 import {
@@ -41,6 +43,16 @@ export interface Ruleset {
   readonly scoring: ScoringPolicy
   readonly difficulty: DifficultyPolicy
   readonly profile: ProfilePolicy
+  /**
+   * How a normal run of this ruleset is composed.
+   *
+   * A rule, not content: it decides how many beats a year plays, which roles
+   * may fill them and how much load a run carries, and two players under
+   * different composition policies are not playing the same game. Absent means
+   * the ruleset does not compose — its runs resolve content as they go, which
+   * is what the broad teacher demo is.
+   */
+  readonly composition?: CompositionPolicy
   readonly narrative: NarrativePacing
   /**
    * True when this ruleset may produce official, ranked results.
@@ -79,6 +91,16 @@ export interface RulesetInput {
   readonly scoring: ScoringPolicy
   readonly difficulty: DifficultyPolicy
   readonly profile: ProfilePolicy
+  /**
+   * How a normal run of this ruleset is composed.
+   *
+   * A rule, not content: it decides how many beats a year plays, which roles
+   * may fill them and how much load a run carries, and two players under
+   * different composition policies are not playing the same game. Absent means
+   * the ruleset does not compose — its runs resolve content as they go, which
+   * is what the broad teacher demo is.
+   */
+  readonly composition?: CompositionPolicy
   readonly narrative: NarrativePacing
   /** Request an official ruleset; refused unless every policy is production. */
   readonly official?: boolean
@@ -137,6 +159,29 @@ export function createRuleset(
     }
   }
 
+  if (input.composition !== undefined) {
+    const issues = compositionPolicyIssues(input.composition)
+    if (issues.length > 0) {
+      return err({
+        kind: 'invalid-ruleset',
+        detail: `composition policy ${input.composition.id}: ${issues.join('; ')}`,
+      })
+    }
+
+    // A composed stage the ruleset does not declare would compose content for a
+    // year the run never reaches.
+    const declared = new Set(input.stages.map((stage) => stage.id))
+    const stray = input.composition.stages
+      .map((stage) => stage.stageId)
+      .filter((stageId) => !declared.has(stageId))
+    if (stray.length > 0) {
+      return err({
+        kind: 'invalid-ruleset',
+        detail: `composition policy configures stages the ruleset does not play: ${stray.join(', ')}`,
+      })
+    }
+  }
+
   if (input.narrative.cooldownEvents < 0) {
     return err({
       kind: 'invalid-ruleset',
@@ -156,6 +201,12 @@ export function createRuleset(
       input.profile.production
         ? undefined
         : `profile policy ${input.profile.id}`,
+      input.composition === undefined || input.composition.official
+        ? undefined
+        : `composition policy ${input.composition.id}`,
+      input.composition === undefined || input.composition.costPolicy.official
+        ? undefined
+        : `difficulty cost policy ${input.composition.costPolicy.id}`,
     ].filter((entry): entry is string => entry !== undefined)
 
     if (development.length > 0) {
@@ -176,6 +227,9 @@ export function createRuleset(
     difficulty: input.difficulty,
     profile: input.profile,
     narrative: input.narrative,
+    ...(input.composition === undefined
+      ? {}
+      : { composition: input.composition }),
     official,
   })
 }

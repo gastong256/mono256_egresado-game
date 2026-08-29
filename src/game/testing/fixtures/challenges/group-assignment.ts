@@ -129,6 +129,14 @@ export const groupAssignment: ChallengeDefinition = defineChallenge<
   categories: ['optimization-and-constraints', 'patterns-and-relations'],
   stages: ['year-2', 'year-3'],
   baseDifficulty: 4,
+  cognitive: {
+    steps: 2,
+    constraints: 2,
+    selection: 2,
+    optimization: 2,
+    uncertainty: 0,
+    construction: 1,
+  },
   tools: ['notepad'],
 
   generate({ rng }) {

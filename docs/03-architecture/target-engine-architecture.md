@@ -39,18 +39,18 @@ Esto ya es lo que hay: núcleo funcional con función de transición explícita 
 | 13 | `VariantGenerator` por restricción, reutilizable entre plantillas | **implementado** | [ADR-020](adr/ADR-020-variant-generation-and-approved-catalog.md), `src/game/challenges/variant-source.ts` |
 | 14 | `VariantValidator` con invariantes de dominio ejecutables | **implementado**: genéricas más las de cada plantilla, con oráculos independientes | `src/game/challenges/variant-validation.ts` |
 | 15 | Catálogo de variantes aprobado y versionado | **implementado para desarrollo y consumido por la partida** — `ApprovedVariantCatalog` con `grade-7-dev-1` y `grade-7-dev-2`, distintos del `ContentCatalog`; las versiones publicadas son inmutables y el catálogo oficial de feria no está congelado | `src/game/content/variant-catalog.ts`, [ADR-020](adr/ADR-020-variant-generation-and-approved-catalog.md), [ADR-021](adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md) |
-| 16 | Bandas `CORE / STANDARD / STRETCH` como metadata de autoría | **TARGET**; hoy existe `DifficultyLevel` 1–5 | [dificultad](../01-game-design/difficulty-and-playability.md) |
-| 17 | Scheduler por presupuesto de dificultad | **TARGET** | ídem |
+| 16 | Bandas `CORE / STANDARD / STRETCH` como metadata de autoría | **implementado**: la banda se deriva de seis rasgos cognitivos declarados por plantilla; `DifficultyLevel` 1–5 sigue siendo la perilla del runtime y las dos pueden discrepar | `src/game/difficulty/cognitive.ts`, [ADR-022](adr/ADR-022-difficulty-model-and-run-composer.md) |
+| 17 | Scheduler por presupuesto de dificultad | **implementado**: compositor determinista por enumeración, con presupuesto y tolerancia por etapa, validador independiente y verificación en servidor | `src/game/plan/`, [ADR-022](adr/ADR-022-difficulty-model-and-run-composer.md) |
 | 18 | `MathPerformance` / `TeamPerformance` / `AuraPerformance` normalizados | **TARGET** | [score competitivo](../01-game-design/competitive-scoring-and-ranking.md) |
 | 19 | `ScorePolicy` competitiva con pesos, topes y orden de desempate | **TARGET** | ídem |
-| 20 | `RunDescriptor` emitido por servidor | **TARGET** | este documento |
-| 21 | `scoreVersion` y `variantCatalogVersion` | **parcial**: `variantCatalogVersion` viaja en descriptor, snapshot y action log, y `createRun` lo comprueba contra el catálogo recibido; `scoreVersion` sigue pendiente | `src/game/runs/state.ts`, [ADR-021](adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md) |
-| 22 | Verificación autoritativa por replay en servidor | **TARGET**; hoy existe `src/server/game/validate-run.ts` como base | [ADR-004](adr/ADR-004-server-authoritative-scoring.md) |
+| 20 | `RunDescriptor` emitido por servidor | **TARGET**; el descriptor ya lleva la huella del plan que un servidor tendría que emitir y verificar | este documento, [ADR-022](adr/ADR-022-difficulty-model-and-run-composer.md) |
+| 21 | `scoreVersion` y `variantCatalogVersion` | **parcial**: `variantCatalogVersion` y la huella del plan viajan en descriptor, snapshot y action log, y `createRun` las comprueba; `scoreVersion` sigue pendiente | `src/game/runs/state.ts`, [ADR-021](adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md), [ADR-022](adr/ADR-022-difficulty-model-and-run-composer.md) |
+| 22 | Verificación autoritativa por replay en servidor | **TARGET** para endpoints y sesión; el caso de uso ya reproduce la run, recompone su plan, compara la huella y valida el plan contra las reglas | `src/server/game/validate-run.ts`, [ADR-004](adr/ADR-004-server-authoritative-scoring.md) |
 | 23 | Ranking con personal best transaccional | **TARGET** | [modo feria](../05-operations/fair-mode-and-competition-freeze.md) |
 | 24 | Invariante de egreso y recuperación fail-forward | **TARGET**; el modelo de contenido ya puede declarar un beat `recovery` condicional | [egreso y fail-forward](../01-game-design/graduation-and-fail-forward.md) |
 | 25 | Catálogo de contenido disponible separado del plan de la run | **implementado** | `ContentCatalog`, `RunPlan`, [ADR-019](adr/ADR-019-scenario-family-template-variant.md) |
 | 26 | Elegibilidad por etapa y roles de colocación declarativos | **implementado** | ídem |
-| 27 | Presupuesto de beats por año validable | **implementado** como contrato; **el compositor de runs es TARGET** | [dificultad](../01-game-design/difficulty-and-playability.md) |
+| 27 | Presupuesto de beats por año validable | **implementado y ejercido**: el compositor produce años de uno o dos beats ordinarios y el motor los ejecuta; `grade-7-composed` juega tres eventos contra los ocho de la demo | `src/game/plan/composer.ts`, [ADR-022](adr/ADR-022-difficulty-model-and-run-composer.md) |
 | 28 | Auditoría estadística de una población de variantes | **implementado** | `src/game/content/variant-audit.ts`, `pnpm game:variants audit` |
 
 ## Lo que la migración de carrera ya cerró

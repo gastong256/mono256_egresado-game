@@ -33,6 +33,11 @@ import type {
   ToolId,
 } from './interactions'
 import type { StageId } from '../progression/stages'
+import {
+  bandOf,
+  type CognitiveProfile,
+  type DifficultyBand,
+} from '../difficulty/cognitive'
 import type { CareerEffects } from '../progression/career'
 import type { DifficultyLevel, MathCategory, SolutionQuality } from './taxonomy'
 import type {
@@ -254,6 +259,15 @@ export interface ChallengeSpec<TModel, TParams> {
   /** Stages this template may be scheduled in. Permission, not selection. */
   readonly stages: readonly StageId[]
   readonly baseDifficulty: DifficultyLevel
+  /**
+   * What makes this template demanding, declared as structure.
+   *
+   * The run composer schedules by the band derived from this, so an author who
+   * wants a template treated as harder has to name the trait that makes it so.
+   * `baseDifficulty` remains the runtime knob the difficulty policy turns; the
+   * two answer different questions and are allowed to disagree.
+   */
+  readonly cognitive: CognitiveProfile
   readonly tools: readonly ToolId[]
   generate(context: GenerationContext<TParams>): TModel
   verify(model: TModel): readonly string[]
@@ -284,6 +298,10 @@ export interface ChallengeDefinition {
   readonly categories: readonly MathCategory[]
   readonly stages: readonly StageId[]
   readonly baseDifficulty: DifficultyLevel
+  /** The structure that makes this template demanding, as the author declared it. */
+  readonly cognitive: CognitiveProfile
+  /** Authoring band derived from `cognitive`. What the run composer schedules by. */
+  readonly band: DifficultyBand
   readonly tools: readonly ToolId[]
   materialize(
     ref: ChallengeInstanceRef,
@@ -355,6 +373,8 @@ export function defineChallenge<TModel, TParams>(
     categories: spec.categories,
     stages: spec.stages,
     baseDifficulty: spec.baseDifficulty,
+    cognitive: spec.cognitive,
+    band: bandOf(spec.cognitive),
     tools: spec.tools,
     materialize(
       ref: ChallengeInstanceRef,

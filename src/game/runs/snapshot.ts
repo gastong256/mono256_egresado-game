@@ -42,6 +42,8 @@ import { MATH_CATEGORIES, SOLUTION_QUALITIES } from '../challenges/taxonomy'
 import type { MathCategory } from '../challenges/taxonomy'
 import type { ChallengeFeedback } from '../challenges/contracts'
 import { PROFILE_IDS } from '../profiles/policy'
+import { parseRunPlan, serializeRunPlan } from '../plan/plan-codec'
+import type { ComposedRunPlan } from '../plan/composer'
 import { runStateIssues } from './invariants'
 import type { RunState } from './state'
 
@@ -59,7 +61,7 @@ import type { RunState } from './state'
  * discarding the checkpoint and offering a fresh run; that is a better outcome
  * than resuming into numbers nobody earned.
  */
-export const SNAPSHOT_SCHEMA_VERSION = 4
+export const SNAPSHOT_SCHEMA_VERSION = 5
 
 // Built from the canonical tuples, so each schema infers the exact literal
 // union. That is what lets the restore path below be cast-free.
@@ -196,7 +198,16 @@ const stateSchema = z.object({
     // Null rather than absent: a snapshot says explicitly that the run drew
     // from no catalog, instead of leaving a reader to guess.
     variantCatalogVersion: z.string().min(1).nullable(),
+    planFingerprint: z.string().min(1).max(128).nullable(),
   }),
+  /**
+   * The composed plan, stored rather than recomputed.
+   *
+   * A resume must play the year the player started, not the year the current
+   * calibration would compose today. Persisting the concrete plan is what makes
+   * that true by construction instead of by hoping no policy moved.
+   */
+  plan: z.unknown().nullable(),
   phase: z.enum(['narrative', 'challenge', 'feedback', 'completed']),
   status: z.enum(['active', 'completed', 'abandoned']),
   stage: stageSchema,
@@ -356,7 +367,9 @@ export function serializeSnapshot(state: RunState): RunSnapshot {
       descriptor: {
         ...state.descriptor,
         variantCatalogVersion: orNull(state.descriptor.variantCatalogVersion),
+        planFingerprint: orNull(state.descriptor.planFingerprint),
       },
+      plan: state.plan === undefined ? null : serializeRunPlan(state.plan),
       phase: state.phase,
       status: state.status,
       stage: state.stage,
@@ -458,6 +471,24 @@ export function restoreSnapshot(
     return compatibility
   }
 
+  // The plan is data like any other crossing this boundary, so it is parsed.
+  // A snapshot whose plan does not even have the right shape is corrupt, and
+  // saying so here is better than discovering it at the first challenge.
+  let restoredPlan: ComposedRunPlan | undefined
+  if (raw.plan !== null && raw.plan !== undefined) {
+    const parsedPlan = parseRunPlan(raw.plan)
+    if (!parsedPlan.ok) {
+      return err({
+        kind: 'corrupted-snapshot',
+        detail:
+          parsedPlan.error.kind === 'invalid-content'
+            ? `plan: ${parsedPlan.error.issues.join('; ')}`
+            : 'plan could not be parsed',
+      })
+    }
+    restoredPlan = parsedPlan.value
+  }
+
   const state: RunState = {
     descriptor: {
       runId: toRunId(raw.descriptor.runId),
@@ -470,7 +501,11 @@ export function restoreSnapshot(
       ...(raw.descriptor.variantCatalogVersion === null
         ? {}
         : { variantCatalogVersion: raw.descriptor.variantCatalogVersion }),
+      ...(raw.descriptor.planFingerprint === null
+        ? {}
+        : { planFingerprint: raw.descriptor.planFingerprint }),
     },
+    ...(restoredPlan === undefined ? {} : { plan: restoredPlan }),
     phase: raw.phase,
     status: raw.status,
     stage: raw.stage,

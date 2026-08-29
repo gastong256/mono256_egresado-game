@@ -206,6 +206,21 @@ describe('una versión publicada del catálogo no se toca', () => {
    * reescrito en silencio; publicando `dev-2` al lado, las dos afirmaciones
    * conviven y son verificables.
    */
+  it('publica dev-3 al lado de dev-2 en vez de editarlo', () => {
+    const dev2 = grade7VariantCatalogs['grade-7-dev-2']
+    const dev3 = grade7VariantCatalogs['grade-7-dev-3']
+    if (dev2 === undefined || dev3 === undefined) throw new Error('faltan')
+
+    // La única diferencia entre los dos es contra qué versión de contenido se
+    // construyeron. Ninguna dirección se movió, ninguna huella cambió, y aun
+    // así se publicó una versión nueva: la regla de inmutabilidad no admite
+    // excepciones «chicas», porque la primera excepción es la que la deroga.
+    expect(dev2.contentVersion).toBe('0.6.0-grade-7')
+    expect(dev3.contentVersion).toBe('0.7.0-grade-7')
+    expect(dev3.entries).toEqual(dev2.entries)
+    expect(dev3.generators).toEqual(dev2.generators)
+  })
+
   it('conserva las direcciones cuyo generador no se movió', () => {
     const previous = grade7VariantCatalogs['grade-7-dev-1']
     if (previous === undefined) throw new Error('falta grade-7-dev-1')

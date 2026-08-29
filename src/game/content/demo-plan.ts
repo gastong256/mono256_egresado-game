@@ -2,7 +2,7 @@
  * Demo plan: the content a teacher demonstration plays.
  *
  * A run plan answers "what does this player play this year", and its answer is
- * one or two beats ([`run-plan`](./run-plan.ts)). A demonstration asks a
+ * one or two beats ([`run-plan`](../plan/run-plan.ts)). A demonstration asks a
  * different question — "what is there to show" — and the honest answer to that
  * one is longer. The two are not the same artifact and this module exists so
  * that nobody has to pretend they are.
@@ -36,14 +36,18 @@ import {
 import type { ContentCatalog } from '../challenges/content-catalog'
 import type { InteractionKind } from '../challenges/interactions'
 import type { StageId } from '../progression/stages'
-import { contentError, contentWarning, type ValidationIssue } from './issues'
+import {
+  contentError,
+  contentWarning,
+  type ValidationIssue,
+} from '../core/issues'
 import {
   resolvePlanEntry,
   validateStagePlan,
   DEFAULT_STAGE_BEAT_BUDGET,
   type RunPlanEntry,
   type StageContentPlan,
-} from './run-plan'
+} from '../plan/run-plan'
 
 /** What a demonstration beat is there to prove. */
 export interface DemoPlanEntry {

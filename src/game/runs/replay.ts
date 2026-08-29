@@ -13,6 +13,7 @@
  * would not have allowed is not a valid run.
  */
 
+import { canonicalize } from '../core/canonical'
 import { err, ok, type Result } from '../core/result'
 import type { EngineRejection } from '../core/errors'
 import type { DomainEvent } from './events'
@@ -66,32 +67,4 @@ export function replayRun(
  */
 export function statesMatch(left: RunState, right: RunState): boolean {
   return canonicalize(left) === canonicalize(right)
-}
-
-/**
- * Stable JSON with keys sorted at every level.
- *
- * `JSON.stringify` preserves insertion order, which two structurally identical
- * states can differ in; sorting removes that as a source of false negatives.
- */
-export function canonicalize(value: unknown): string {
-  return JSON.stringify(sortValue(value))
-}
-
-function sortValue(value: unknown): unknown {
-  if (Array.isArray(value)) {
-    return value.map(sortValue)
-  }
-
-  if (value !== null && typeof value === 'object') {
-    const entries = Object.entries(value as Record<string, unknown>)
-      .filter(([, entry]) => entry !== undefined)
-      .sort(([left], [right]) => (left < right ? -1 : left > right ? 1 : 0))
-
-    return Object.fromEntries(
-      entries.map(([key, entry]) => [key, sortValue(entry)]),
-    )
-  }
-
-  return value
 }

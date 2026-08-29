@@ -67,6 +67,14 @@ export const busDeparture: ChallengeDefinition = defineChallenge<
   categories: ['time-and-rates', 'proportions-and-percentages'],
   stages: ['grade-7', 'year-1', 'year-2'],
   baseDifficulty: 2,
+  cognitive: {
+    steps: 2,
+    constraints: 1,
+    selection: 1,
+    optimization: 1,
+    uncertainty: 0,
+    construction: 0,
+  },
   tools: ['calculator', 'notepad'],
 
   generate({ rng, difficulty }) {

@@ -15,7 +15,8 @@ import { describeRejection } from '../core/errors'
 import { isErr } from '../core/result'
 import { ENGINE_VERSION } from '../core/versioning'
 import { parseActionLog, serializeActionLog } from '../runs/action-log'
-import { canonicalize, replayRun } from '../runs/replay'
+import { canonicalize } from '../core/canonical'
+import { replayRun } from '../runs/replay'
 import { restoreSnapshot, serializeSnapshot } from '../runs/snapshot'
 import type { RunDescriptor } from '../runs/state'
 import type { EngineDependencies } from '../runs/transition'
@@ -164,6 +165,31 @@ export function simulateMany(
         code: 'empty-run',
         detail: 'the run completed without resolving any event',
       })
+    }
+
+    /*
+     * A composed run has to play the year it was given.
+     *
+     * If it finishes with beats unplayed, the plan named content the narrative
+     * could not host, and the run quietly became shorter than the one the
+     * composer promised. That is the failure mode a plan exists to prevent, so
+     * it is worth a finding rather than a shrug.
+     */
+    if (state.plan !== undefined) {
+      const planned = state.plan.stages.reduce(
+        (sum, stage) => sum + stage.beats.length,
+        0,
+      )
+      const played = state.history.filter(
+        (entry) => entry.challengeId !== undefined,
+      ).length
+      if (played !== planned) {
+        findings.push({
+          seed,
+          code: 'plan-unplayed',
+          detail: `the plan holds ${String(planned)} beats and the run played ${String(played)}`,
+        })
+      }
     }
 
     const profile = state.completion?.profile.profileId

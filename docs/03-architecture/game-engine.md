@@ -186,13 +186,13 @@ createRun(descriptor) -> action[0] -> action[1] -> ... -> finalState
 
 El action log versionado es el artefacto de validación más fuerte: se puede volver a ejecutar. Las secuencias deben empezar en cero y avanzar de a uno; un salto se rechaza en vez de repararse. Un comando que las reglas no habrían permitido invalida el log completo.
 
-`ACTION_LOG_VERSION` es `2`. El log lleva el descriptor completo, `variantCatalogVersion` incluido: sin ese campo una run se reproducía contra el contenido equivocado sin decir nada, que es el defecto que [ADR-021](adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md) encontró y cerró.
+`ACTION_LOG_VERSION` es `3`. El log lleva el descriptor completo: `variantCatalogVersion` —sin ese campo una run se reproducía contra el contenido equivocado sin decir nada, que es el defecto que [ADR-021](adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md) encontró y cerró— y la huella del plan compuesto, que dice contra qué composición hay que reproducirla.
 
 La comparación usa una forma JSON canónica con claves ordenadas, así que el orden de inserción no puede producir un falso negativo.
 
 ## Snapshots
 
-Los snapshots son una **optimización para reanudar** (FR-009/FR-010), no un artefacto autoritativo. El codec valida agresivamente y rechaza lo que no reconoce; una versión incompatible produce un error explícito, nunca una migración silenciosa. `SNAPSHOT_SCHEMA_VERSION` es `4`; no existe un registro de migraciones porque las versiones anteriores se rechazan y la aplicación ofrece una partida nueva.
+Los snapshots son una **optimización para reanudar** (FR-009/FR-010), no un artefacto autoritativo. El codec valida agresivamente y rechaza lo que no reconoce; una versión incompatible produce un error explícito, nunca una migración silenciosa. Desde [ADR-022](adr/ADR-022-difficulty-model-and-run-composer.md) el snapshot guarda además el **plan concreto** de una run compuesta, en vez de la forma de recalcularlo: reanudar tiene que jugar el año que el jugador empezó, no el que la calibración de hoy compondría. `SNAPSHOT_SCHEMA_VERSION` es `5`; no existe un registro de migraciones porque las versiones anteriores se rechazan y la aplicación ofrece una partida nueva.
 
 ### Invariantes estructurales
 
@@ -214,7 +214,7 @@ Una run sólo puede reanudarse o revalidarse con un motor que declare el mismo t
 | Cambió | Subir |
 |---|---|
 | transición, orden de consumo de RNG, derivación de seed, formato de action log, codec de snapshot, generación de un desafío existente | `ENGINE_VERSION` |
-| política de scoring, dificultad, progresión o perfil | versión de ruleset |
+| política de scoring, dificultad, progresión, perfil **o composición** | versión de ruleset |
 | datos de desafíos o storylets | versión de contenido |
 
 Los golden tests de `tests/unit/engine-golden.test.ts` fallan ante cualquier cambio accidental de salida determinista. Regenerarlos sin subir la versión correspondiente invalida en silencio los replays guardados.

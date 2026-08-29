@@ -31,7 +31,26 @@ import { createDevelopmentDependencies } from '@/game/testing'
 const dependencies = createDevelopmentDependencies()
 
 /*
- * Regenerados para el catálogo en el juego real (`ENGINE_VERSION` 4.1.0).
+ * Regenerados para el compositor de runs (`ENGINE_VERSION` 5.0.0).
+ *
+ * Se movieron las tres, y cada una por su motivo:
+ *
+ * - **motor**: la versión, el codec de snapshot (5) y el del action log (3).
+ *   Una run compuesta guarda su plan y su log declara la huella de ese plan.
+ * - **ruleset**: el ruleset declara ahora su política de composición, así que
+ *   la huella la cubre. El content set de desarrollo no compone y su entrada
+ *   dice `composition:none` — la huella igual se mueve, porque el digest ganó
+ *   un campo, y eso es preferible a un digest que no puede ver una política que
+ *   decide qué es una run.
+ * - **contenido**: cada plantilla declara su perfil cognitivo, y de ahí sale la
+ *   banda con la que el compositor la agenda. Es contenido que decide
+ *   scheduling, así que entra al digest y el contenido de desarrollo sube a
+ *   `0.5.0-dev`.
+ *
+ * Lo que **no** se movió es el juego: las runs golden reproducen el mismo
+ * recorrido, el mismo score, el mismo perfil y la misma cantidad de comandos.
+ *
+ * El contexto anterior, del catálogo en el juego real (`ENGINE_VERSION` 4.1.0):
  *
  * Se movió **sólo el motor**, y las otras dos huellas lo confirman: la partida
  * elige ahora dentro del catálogo aprobado, `createRun` rechaza una run cuyo
@@ -76,14 +95,14 @@ const dependencies = createDevelopmentDependencies()
  * golden quedaron **idénticos**.
  */
 const EXPECTED = {
-  engine: '2477ca1f',
-  ruleset: 'd3319440',
-  content: '8a9b29d9',
+  engine: '9aa4a189',
+  ruleset: 'da245c60',
+  content: '1e0f405e',
 } as const
 
 describe('version fingerprints', () => {
   it('pins the deterministic kernel to its engine version', () => {
-    expect(ENGINE_VERSION).toBe('4.1.0')
+    expect(ENGINE_VERSION).toBe('5.0.0')
     expect(engineFingerprint()).toBe(EXPECTED.engine)
   })
 
@@ -93,7 +112,7 @@ describe('version fingerprints', () => {
   })
 
   it('pins the playable content to the declared content version', () => {
-    expect(dependencies.ruleset.contentVersion).toBe('0.4.0-dev')
+    expect(dependencies.ruleset.contentVersion).toBe('0.5.0-dev')
     expect(
       contentFingerprint(dependencies.catalog, dependencies.storylets),
     ).toBe(EXPECTED.content)

@@ -154,6 +154,14 @@ describe('challenge variant', () => {
       categories: ['quantity' as const],
       stages: ['grade-7' as const],
       baseDifficulty: 1 as const,
+      cognitive: {
+        steps: 1 as const,
+        constraints: 0 as const,
+        selection: 0 as const,
+        optimization: 0 as const,
+        uncertainty: 0 as const,
+        construction: 0 as const,
+      },
       tools: [],
       variantSource: {
         authored: [{ id: 'a' }],
@@ -488,6 +496,14 @@ describe('new content needs no core engine change', () => {
       categories: ['quantity'],
       stages: ['grade-7', 'year-2'],
       baseDifficulty: 2,
+      cognitive: {
+        steps: 1,
+        constraints: 0,
+        selection: 0,
+        optimization: 0,
+        uncertainty: 0,
+        construction: 0,
+      },
       tools: [],
       // `variantRng` está direccionado sólo por la identidad de la variante:
       // una plantilla que genera sus propios números saca los mismos la juegue

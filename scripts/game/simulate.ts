@@ -11,7 +11,9 @@
  *     --seed=<prefix>  seed prefix, so a sweep is reproducible (default "sim")
  *     --verify=<n>     run the replay/snapshot check every n runs (default 25)
  *     --verbose        print the per-run seed of every finding
-     --content=<grade-7|development>  content set (default grade-7)
+     --content=<grade-7|grade-7-composed|development|development-composed>
+                      content set (default grade-7). The composed sets play runs
+                      whose content the composer pinned before they started.
  *
  * This lives outside `src/game` on purpose: the deterministic core may not read
  * `process`, argv or stdout, so the tooling that drives it stays out here where
@@ -19,7 +21,11 @@
  */
 
 import { createDevelopmentDependencies } from '../../src/game/testing/fixtures/development-ruleset'
-import { createGrade7Dependencies } from '../../src/content/grade-7'
+import { createComposedDevelopmentDependencies } from '../../src/game/testing/fixtures/composed-ruleset'
+import {
+  createGrade7ComposedDependencies,
+  createGrade7Dependencies,
+} from '../../src/content/grade-7'
 import type { EngineDependencies } from '../../src/game'
 import { simulateMany } from '../../src/game/testing/simulation'
 
@@ -27,8 +33,10 @@ import { simulateMany } from '../../src/game/testing/simulation'
  * Which content set to exercise.
  *
  * `grade-7` is the playable product content and the default. `development` is
- * the fixture set that exists to prove the engine itself, and stays available
- * for engine work.
+ * the fixture set that exists to prove the engine itself. The `-composed`
+ * variants of both play runs whose content a run composer pinned up front, which
+ * is what makes this tool able to check that a composed run replays and
+ * snapshots as faithfully as any other.
  */
 function selectDependencies(argv: readonly string[]): EngineDependencies {
   const requested = argv
@@ -37,6 +45,12 @@ function selectDependencies(argv: readonly string[]): EngineDependencies {
 
   if (requested === 'development') {
     return createDevelopmentDependencies()
+  }
+  if (requested === 'development-composed') {
+    return createComposedDevelopmentDependencies()
+  }
+  if (requested === 'grade-7-composed') {
+    return createGrade7ComposedDependencies()
   }
   if (requested !== undefined && requested !== 'grade-7') {
     throw new Error(`unknown content set: ${requested}`)

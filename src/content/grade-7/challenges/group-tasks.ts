@@ -138,6 +138,18 @@ export const groupTasks: ChallengeDefinition = defineChallenge<
   categories: ['optimization-and-constraints', 'quantity'],
   stages: ['grade-7'],
   baseDifficulty: 3,
+  // El más exigente del año, y por estructura: hay que repartir todas las tareas
+  // (una restricción) sin pasarse de las horas de nadie (otra), leyendo a la vez
+  // afinidad y disponibilidad, y el reparto se construye —no está entre opciones—
+  // buscando el mejor, no uno que funcione.
+  cognitive: {
+    steps: 2,
+    constraints: 2,
+    selection: 2,
+    optimization: 2,
+    uncertainty: 0,
+    construction: 1,
+  },
   tools: ['notepad'],
 
   generate({ params }) {

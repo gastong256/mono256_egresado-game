@@ -1492,7 +1492,7 @@ Es un ejemplo documental: no se importa desde runtime ni reemplaza al [schema de
 
 # Dificultad y jugabilidad universal
 
-**Estado: mixto.** El principio de piso bajo y techo alto es **RECOMENDADO** como principio de diseño y ya gobierna el contenido existente. Las bandas `CORE / STANDARD / STRETCH`, el presupuesto de dificultad y los multiplicadores son **RECOMENDADOS y configurables**. La calibración final es **TEACHER GATE**. La elección entre dificultad manual, adaptativa o híbrida sigue **OPEN** ([pregunta 5](07-reference/open-questions.md)).
+**Estado: mixto, y desde STAGE-05 parcialmente implementado.** El principio de piso bajo y techo alto es **RECOMENDADO** como principio de diseño y ya gobierna el contenido existente. Las bandas `CORE / STANDARD / STRETCH` y el presupuesto de dificultad están **implementados** como política versionada y configurable ([ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md)); los multiplicadores de score siguen siendo documentación y pertenecen a STAGE-06. La calibración final es **TEACHER GATE**. La elección entre dificultad manual, adaptativa o híbrida sigue **OPEN** ([pregunta 5](07-reference/open-questions.md)).
 
 Este documento explica *cómo debe subir* la dificultad. Qué matemática se usa en cada año está en el [marco matemático](01-game-design/math-design-framework.md); qué factores hacen difícil un desafío concreto está en el [sistema de desafíos](01-game-design/challenge-system.md).
 
@@ -1559,12 +1559,51 @@ El motor define `DifficultyLevel` de 1 a 5 por plantilla (`src/game/challenges/t
 
 **Este mapeo es una lectura documental, no una migración.** Nada en el código cambia por él; existe para que un documento que dice `STRETCH` y un test que dice `difficulty: 5` se puedan leer juntos.
 
+Desde STAGE-05 las dos escalas coexisten con roles distintos y **pueden discrepar**: `DifficultyLevel` es la perilla que la política de dificultad del runtime mueve durante una partida, y la banda es la clasificación estructural con la que el compositor agenda. Donde no coinciden, es un hallazgo de calibración para el Gate y está registrado en la tabla de abajo, no un defecto que el motor tenga que reconciliar.
+
+## De dónde sale la banda, en el código
+
+Una plantilla declara seis rasgos de su estructura, y la banda sale de su suma. No se elige: se deriva.
+
+| Rasgo | Qué mide | Rango |
+|---|---|---|
+| `steps` | pasos encadenados antes de que exista una respuesta | 1–4 |
+| `constraints` | restricciones que tienen que valer **a la vez** | 0–3 |
+| `selection` | cuánto del trabajo es decidir qué dato importa | 0–3 |
+| `optimization` | si alcanza con una respuesta que funcione o hay que buscar la mejor | 0–2 |
+| `uncertainty` | lectura estadística, estimación, información incompleta | 0–2 |
+| `construction` | si la respuesta hay que **producirla** en vez de reconocerla | 0–1 |
+
+`CORE` hasta 4, `STANDARD` hasta 7, `STRETCH` de 8 en adelante. Esos dos umbrales son toda la superficie de calibración de la clasificación: moverlos reclasifica contenido sin tocar una línea de composición.
+
+Un autor que quiere que su plantilla se agende como más exigente tiene que nombrar el rasgo que la vuelve así, y eso es justamente lo que impide que «difícil» degenere en «cuentas más incómodas».
+
+## Clasificación del contenido actual
+
+**Calibración candidata de ingeniería, no verdad pedagógica.** El Teacher Gate puede mover cualquier fila sin que cambie nada de la arquitectura. Los rasgos van en el orden de la tabla de arriba.
+
+| Plantilla | Dominio | Rasgos | Carga | Banda | Costo | Nivel autorado | Por qué |
+|---|---|---|---|---|---|---|---|
+| `g7.may-25-act` | patrones · cantidad | 1·0·2·0·0·1 | 4 | CORE | 1,00 | 2 ✓ | una regla por celda, escrita en pantalla; lo que pesa son tres reglas y veinticuatro celdas |
+| `g7.bus-timing` | tiempo · porcentajes | 2·1·1·1·0·0 | 5 | STANDARD | 1,50 | 2 ✗ | demora aplicada a cuatro salidas y comparadas contra la entrada |
+| `g7.notebook-offer` | porcentajes | 2·1·1·1·0·0 | 5 | STANDARD | 1,50 | 3 ✓ | dos ofertas que hay que llevar a la misma unidad, con el efectivo como límite |
+| `g7.bus-latest-departure` | tiempo · porcentajes | 2·1·1·1·0·1 | 6 | STANDARD | 1,50 | 3 ✓ | la misma relación al revés, y sin opciones: el número lo produce el jugador |
+| `g7.mural-paint` | espacio y forma | 3·1·1·1·0·0 | 6 | STANDARD | 1,50 | 2 ✗ | área, litros y envases enteros: cadena de tres donde perder el intermedio pierde el problema |
+| `g7.stand-supplies` | optimización | 2·2·1·2·0·1 | 8 | STRETCH | 2,10 | 3 ✗ | porciones mínimas y presupuesto a la vez, sobre una combinación que se arma |
+| `g7.group-tasks` | optimización | 2·2·2·2·0·1 | 9 | STRETCH | 2,10 | 3 ✗ | repartir todo sin pasarse de las horas de nadie, leyendo afinidad y disponibilidad |
+
+**Las cuatro divergencias con el nivel autorado son el resultado más útil de la tabla.** `baseDifficulty` se escribió como perilla de runtime y no como clasificación estructural, y donde las dos no coinciden hay una pregunta concreta para el Gate: ¿el mural es realmente más liviano que el colectivo? ¿El stand y el trabajo grupal son `STRETCH` para un chico de 7.º, o el año entero está calibrado alto? Un test fija la clasificación, así que moverla es una decisión visible en un diff.
+
 ## Presupuesto de dificultad
 
 **RECOMENDADO / TARGET.** Si las runs oficiales se arman con variantes procedurales, dos jugadores pueden recibir cargas distintas y el ranking deja de comparar habilidad. El presupuesto de dificultad ata la masa esperada de desafío de cada run.
 
 Forma discreta: por ejemplo 2 CORE, 3 STANDARD, 1 STRETCH.
 Forma numérica: `Σ difficultyCost ≈ constante`, con tolerancia declarada.
+
+**Implementado en la forma numérica.** Cada etapa declara objetivo y tolerancia, el compositor sólo produce planes que caen adentro, y un validador independiente lo vuelve a comprobar sobre el plan ya serializado. Los costos viven en centésimas enteras —100, 150, 210— porque un presupuesto que suma flotantes termina discutiendo consigo mismo si un plan entraba.
+
+La evidencia: 5.000 seeds de 7.º producen 1.374 planes distintos con carga total idéntica. Eso dice que el presupuesto funciona; **no** dice que las runs sean igual de difíciles para una persona. Ver [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) y `pnpm game:compose`.
 
 Los costos de scheduling son **metadata de armado de run** y están separados del multiplicador de score. El scheduler necesita distinguir fuerte entre CORE y STRETCH para balancear; el score necesita multiplicadores chicos para que la suerte del sorteo no domine sobre la habilidad. El diseño del scheduler está en [arquitectura objetivo del motor](03-architecture/target-engine-architecture.md).
 
@@ -4015,6 +4054,139 @@ Run Composer, bandas de dificultad y presupuesto equiparado siguen siendo STAGE-
 
 ---
 
+# FILE: 03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md
+
+# ADR-022 — Modelo de dificultad y compositor de runs
+
+- Estado: Aceptado
+- Fecha: 2026-08-29
+
+## Contexto
+
+[ADR-021](03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md) puso el catálogo aprobado adentro del juego. Lo que quedó sin resolver es **quién elige**.
+
+Hoy elige el storylet dentro de su pool y el seed dentro de lo aprobado. Nadie mira dificultad, variedad, cobertura ni presupuesto. En una competencia eso significa que parte del resultado lo decide el sorteo, y ése es exactamente el problema que [la auditoría de equidad](04-quality/competition-fairness-audit.md) señala.
+
+Hay además una deuda concreta y vieja. [ADR-019](03-architecture/adr/ADR-019-scenario-family-template-variant.md) fijó que un año aporta **uno o dos beats ordinarios**, porque una carrera cruza seis años y el producto depende de que se pueda volver a jugar. El año de 7.º juega seis. Eso no era una violación —el contrato existía antes que el contenido, y STAGE-04 lo declaró densidad de demostración— pero seguía sin haber una partida normal en ninguna parte.
+
+La pregunta de esta etapa es una sola:
+
+> Tenemos un catálogo rico y confiable. ¿Cómo se elige lo poco que juega una run, de modo que siga siendo corta, determinista, variada, válida y comparable?
+
+## Decisión
+
+### 1. La dificultad se declara como estructura, no como número
+
+Una plantilla declara seis rasgos de su estructura —pasos encadenados, restricciones simultáneas, selección de información, optimización, incertidumbre, y si la respuesta hay que **construirla** o alcanza con reconocerla—. De ahí sale la banda `core / standard / stretch` por una función pura.
+
+Eso convierte en ejecutable lo que [el documento de dificultad](01-game-design/difficulty-and-playability.md) ya decía: la dificultad sube por relaciones, restricciones, planificación y optimización, y **no** por números grandes, decimales feos, fórmulas avanzadas ni presión de tiempo. Un autor que quiere que su plantilla se agende como `stretch` tiene que nombrar el rasgo que la vuelve así.
+
+El caso que mejor lo muestra es la familia colectivo. Sus dos plantillas comparten situación, matemática y hasta los cuatro primeros rasgos; se separan en uno solo:
+
+| | `g7.bus-timing` | `g7.bus-latest-departure` |
+|---|---|---|
+| construcción | 0 — la respuesta está entre cuatro salidas | 1 — el número lo produce el jugador |
+
+Seis rasgos y no treinta: uno que nadie puede clasificar dos veces igual es peor que ninguno.
+
+### 2. Costo de scheduling ≠ multiplicador de score
+
+El compositor necesita una señal **fuerte** entre `core` y `stretch` para poder equilibrar; el score necesita una **débil** para que la suerte del sorteo no le gane a la habilidad. Son dos números distintos y viven en lugares distintos. Este ADR define el primero. El segundo es STAGE-06 y sigue siendo documentación.
+
+Los costos van en **centésimas enteras** —100, 150, 210— y no en decimales. Un presupuesto que suma flotantes y después compara contra un límite termina discutiendo consigo mismo si un plan entraba; el motor ya rechaza el punto flotante donde el resultado importa ([ADR-013](03-architecture/adr/ADR-013-exact-rational-arithmetic.md)) y un presupuesto es uno de esos lugares.
+
+### 3. La calibración es un dato versionado, no una constante
+
+Bandas, costos, objetivos, presupuestos y tolerancias viven en dos objetos —`DifficultyCostPolicy` y `CompositionPolicy`— con `id`, `version` y `official: false`. Recalibrar es cambiar datos; ningún algoritmo de composición se toca. Es lo que un Teacher Gate necesita poder hacer.
+
+Ninguno de los números es oficial. Son los candidatos que el documento de diseño ya proponía, y siguen siendo `RECOMENDADA` con la calibración final en el Gate ([pregunta 44](07-reference/open-questions.md)).
+
+### 4. El compositor enumera; no sortea hasta acertar
+
+Un año juega un anchor y como mucho un secundario, así que el espacio factible es
+
+```text
+anchors × (nada | secundarios)
+```
+
+y cabe entero en memoria. El compositor lo construye completo, filtra por las restricciones duras y recién entonces ordena.
+
+Un `while (!válido) volver a sortear` habría sido más corto de escribir y esconde su propia distribución: sesga hacia lo que el RNG alcanza primero y no tiene peor caso acotado. La enumeración tiene una respuesta inspeccionable a «¿por qué este plan?»: le ganó a los otros, en este orden, por estos objetivos.
+
+### 5. Duras son filtros; blandas son un orden lexicográfico
+
+**Duras** —nunca se negocian, nunca se convierten en penalización—: elegibilidad de etapa, variante aprobada, exactamente un anchor, el presupuesto de uno a dos beats, rol secundario permitido, ninguna plantilla dos veces en un año, ninguna plantilla repetida en la carrera, y el sobre de dificultad.
+
+**Blandas** —declaradas en la política, aplicadas en orden—: cercanía al objetivo de dificultad, variedad de familia, variedad de interacción, cobertura de dominios, frescura de plantilla. Lexicográfico y no suma ponderada: una suma esconde por qué ganó un plan y deja que una preferencia menor le gane a la que importaba.
+
+Los empates que sobreviven a todos los objetivos los rompe un sorteo con el seed sobre una lista ordenada canónicamente. Ahí es donde la variedad entre partidas es real: 5.000 seeds de 7.º producen **1.374 planes distintos con carga idéntica**.
+
+### 6. No repetir una plantilla es una restricción dura
+
+Empezó como preferencia y la carrera de desarrollo mostró por qué no alcanza: el storylet que aloja una plantilla suele ser de una sola vez, así que agendarla de nuevo deja al segundo beat **sin dónde ocurrir**, y la run se acortaba en silencio. Es dura, y configurable por si algún día una plantilla debe reaparecer a propósito.
+
+Las **familias** sí pueden repetirse entre años: transferir el mismo razonamiento a otro contexto es un objetivo de diseño, y esto es sobre plantillas.
+
+### 7. El plan se decide una vez y se ejecuta
+
+`createRun` compone. El motor ejecuta. Un beat ordinario ya no se sortea en `beginEvent`: viene del plan.
+
+La capa narrativa no perdió nada — decide **dónde** ocurre un beat, y el plan decide **cuál** es. Un storylet con desafíos sólo es elegible si puede alojar el beat que toca; uno puramente narrativo entra sólo si al año le sobra un evento. Sin esa segunda regla, un content set conversador podía dejar a un año sin sus decisiones.
+
+La duración de una etapa compuesta sale del plan, no de `eventCount`. Ahí está la reconciliación de la deuda: la demo de 7.º sigue declarando ocho eventos y **una partida normal juega tres**.
+
+### 8. Recomponer en runtime está prohibido, y se comprueba
+
+Reanudar juega el mismo plan; reproducir, el mismo; el servidor verifica el mismo. El snapshot guarda el plan **concreto** en vez de la forma de recalcularlo, porque una reanudación tiene que jugar el año que el jugador empezó y no el que la calibración de hoy compondría.
+
+El descriptor lleva una **huella del plan**. `createRun` compone y compara: si la calibración se movió desde que la run se creó, la run se rechaza en lugar de jugar otro año con la misma identidad.
+
+### 9. El validador es otro programa
+
+El compositor construye planes válidos; el validador decide si un plan lo es. Igual que en [ADR-020](03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md) con generador y validador, y por el mismo motivo: un chequeo que re-ejecuta al constructor y compara sólo puede confirmar la opinión del constructor, y rechazaría un plan distinto pero perfectamente legal. Hay un test que le da exactamente ese plan y comprueba que lo acepta.
+
+Tampoco le cree al plan sus propias afirmaciones. Un beat declara rol, banda y costo; los tres se recalculan desde el catálogo y la política y se comparan. Un plan que dice que una plantilla `stretch` vale un beat `core` parsea perfecto y es el que una competencia tiene que poder rechazar.
+
+### 10. El compositor no conoce ningún id de contenido
+
+Ni familias, ni plantillas, ni materias, ni años. Lee metadata. Lo que 7.º tiene de particular —que su cadena narrativa corta sólo alcanza el colectivo y el acto— vive en la **política** como dato, no en el algoritmo.
+
+La prueba de que eso alcanza es una carrera de desarrollo de cinco etapas que se compone con el mismo código, con objetivos que suben de 250 a 310, sin que nada sepa qué es un año escolar. Agregar 1.º a 5.º de verdad será una entrada de política y contenido.
+
+## Alternativas consideradas
+
+**Dejar que el storylet siguiera eligiendo.** Es lo que había. Hace imposible cualquier afirmación sobre carga comparable y deja el ranking parcialmente al sorteo.
+
+**Un `RunPlan` con presupuesto configurable para poder seguir jugando seis beats en 7.º.** Vuelve negociable la única regla que mantiene corta una carrera. Ya se había rechazado en [ADR-021](03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md) para el demo docente, y vale igual acá.
+
+**Migrar la pantalla de 7.º a partidas compuestas.** Habría borrado la demo amplia que STAGE-04 acababa de construir y documentar, y habría necesitado marco narrativo nuevo para beats compuestos —contenido de producción, fuera del alcance de esta etapa—. Las dos formas conviven: el ruleset `grade-7` juega el arco completo y `grade-7-composed` juega el año normal. Cuál usa la pantalla es una decisión de producto que tiene sentido cuando existan los años 1.º a 5.º.
+
+**Dificultad por variante.** Se evaluó y se descartó: las variantes de una plantilla se mantienen dentro de su envolvente porque los generadores están restringidos, y darle a cada una un número propio habría multiplicado la superficie de calibración sin evidencia de que haga falta. Si aparece una plantilla cuyo espacio cruza bandas, la primera respuesta es apretar el generador.
+
+**Una suma ponderada de objetivos.** Más flexible y menos explicable. Con cinco objetivos y un espacio de dos beats, el orden lexicográfico dice lo mismo y se puede leer.
+
+**Un solver ILP/SAT.** Innecesario para un espacio de dos beats, y habría cambiado una decisión inspeccionable por una caja negra.
+
+## Consecuencias
+
+- `ENGINE_VERSION` pasa a `5.0.0`, `SNAPSHOT_SCHEMA_VERSION` a `5` y `ACTION_LOG_VERSION` a `3`. Componer cambia **qué es una run**, y las dos formas serializadas se movieron para llevar el plan y su huella.
+- **El ruleset ahora incluye la política de composición.** Es una regla, no contenido: decide cuántos beats juega un año, qué roles pueden llenarlos y cuánta carga lleva una run, y dos jugadores con políticas distintas no están jugando al mismo juego. Su huella la cubre entera, número por número, para que una recalibración no pueda viajar en silencio bajo la misma versión.
+- El contenido sube a `0.7.0-grade-7` y `0.5.0-dev`: el perfil cognitivo es contenido que decide scheduling, así que entra a la huella de contenido.
+- El catálogo aprobado vigente pasa a `grade-7-dev-3`. Sus entradas y huellas son las de `grade-7-dev-2`; lo único que cambió es contra qué versión de contenido se construyó. Se publicó al lado igual, porque la regla de inmutabilidad no admite excepciones «chicas».
+- Las runs golden cambian de hash y **no de resultado**: mismo recorrido, mismo score, mismo perfil, misma cantidad de comandos.
+- `pnpm game:compose` reporta la distribución de una barrida de seeds, y `pnpm game:simulate --content=…-composed` juega miles de runs compuestas verificando replay y snapshot.
+- Un content set sin política de composición no cambia en nada. La demo amplia de 7.º sigue jugando sus ocho eventos.
+
+## Lo que esto no prueba
+
+Que dos runs sean **igual de difíciles para una persona**. Lo que hay es comparabilidad estructural bajo una calibración que ningún docente validó todavía. Que 5.000 runs tengan carga idéntica dice que el presupuesto funciona, no que el presupuesto mida lo correcto. Eso lo deciden el Teacher Gate y, después, los datos de la feria.
+
+## No objetivos
+
+Score competitivo, `FairScore`, multiplicadores y `scoreVersion` siguen siendo STAGE-06. Egreso, recuperaciones y contenido de 1.º a 5.º, más adelante. La dificultad adaptativa en modo oficial sigue `OPEN` ([pregunta 5](07-reference/open-questions.md)), y este diseño no la decide: define el mecanismo con el que una política, adaptativa o no, tendría que expresarse.
+
+---
+
 # FILE: 03-architecture/analytics-observability.md
 
 # Analytics y observabilidad
@@ -4871,13 +5043,13 @@ createRun(descriptor) -> action[0] -> action[1] -> ... -> finalState
 
 El action log versionado es el artefacto de validación más fuerte: se puede volver a ejecutar. Las secuencias deben empezar en cero y avanzar de a uno; un salto se rechaza en vez de repararse. Un comando que las reglas no habrían permitido invalida el log completo.
 
-`ACTION_LOG_VERSION` es `2`. El log lleva el descriptor completo, `variantCatalogVersion` incluido: sin ese campo una run se reproducía contra el contenido equivocado sin decir nada, que es el defecto que [ADR-021](03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md) encontró y cerró.
+`ACTION_LOG_VERSION` es `3`. El log lleva el descriptor completo: `variantCatalogVersion` —sin ese campo una run se reproducía contra el contenido equivocado sin decir nada, que es el defecto que [ADR-021](03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md) encontró y cerró— y la huella del plan compuesto, que dice contra qué composición hay que reproducirla.
 
 La comparación usa una forma JSON canónica con claves ordenadas, así que el orden de inserción no puede producir un falso negativo.
 
 ## Snapshots
 
-Los snapshots son una **optimización para reanudar** (FR-009/FR-010), no un artefacto autoritativo. El codec valida agresivamente y rechaza lo que no reconoce; una versión incompatible produce un error explícito, nunca una migración silenciosa. `SNAPSHOT_SCHEMA_VERSION` es `4`; no existe un registro de migraciones porque las versiones anteriores se rechazan y la aplicación ofrece una partida nueva.
+Los snapshots son una **optimización para reanudar** (FR-009/FR-010), no un artefacto autoritativo. El codec valida agresivamente y rechaza lo que no reconoce; una versión incompatible produce un error explícito, nunca una migración silenciosa. Desde [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) el snapshot guarda además el **plan concreto** de una run compuesta, en vez de la forma de recalcularlo: reanudar tiene que jugar el año que el jugador empezó, no el que la calibración de hoy compondría. `SNAPSHOT_SCHEMA_VERSION` es `5`; no existe un registro de migraciones porque las versiones anteriores se rechazan y la aplicación ofrece una partida nueva.
 
 ### Invariantes estructurales
 
@@ -4899,7 +5071,7 @@ Una run sólo puede reanudarse o revalidarse con un motor que declare el mismo t
 | Cambió | Subir |
 |---|---|
 | transición, orden de consumo de RNG, derivación de seed, formato de action log, codec de snapshot, generación de un desafío existente | `ENGINE_VERSION` |
-| política de scoring, dificultad, progresión o perfil | versión de ruleset |
+| política de scoring, dificultad, progresión, perfil **o composición** | versión de ruleset |
 | datos de desafíos o storylets | versión de contenido |
 
 Los golden tests de `tests/unit/engine-golden.test.ts` fallan ante cualquier cambio accidental de salida determinista. Regenerarlos sin subir la versión correspondiente invalida en silencio los replays guardados.
@@ -5095,18 +5267,18 @@ Esto ya es lo que hay: núcleo funcional con función de transición explícita 
 | 13 | `VariantGenerator` por restricción, reutilizable entre plantillas | **implementado** | [ADR-020](03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md), `src/game/challenges/variant-source.ts` |
 | 14 | `VariantValidator` con invariantes de dominio ejecutables | **implementado**: genéricas más las de cada plantilla, con oráculos independientes | `src/game/challenges/variant-validation.ts` |
 | 15 | Catálogo de variantes aprobado y versionado | **implementado para desarrollo y consumido por la partida** — `ApprovedVariantCatalog` con `grade-7-dev-1` y `grade-7-dev-2`, distintos del `ContentCatalog`; las versiones publicadas son inmutables y el catálogo oficial de feria no está congelado | `src/game/content/variant-catalog.ts`, [ADR-020](03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md), [ADR-021](03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md) |
-| 16 | Bandas `CORE / STANDARD / STRETCH` como metadata de autoría | **TARGET**; hoy existe `DifficultyLevel` 1–5 | [dificultad](01-game-design/difficulty-and-playability.md) |
-| 17 | Scheduler por presupuesto de dificultad | **TARGET** | ídem |
+| 16 | Bandas `CORE / STANDARD / STRETCH` como metadata de autoría | **implementado**: la banda se deriva de seis rasgos cognitivos declarados por plantilla; `DifficultyLevel` 1–5 sigue siendo la perilla del runtime y las dos pueden discrepar | `src/game/difficulty/cognitive.ts`, [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) |
+| 17 | Scheduler por presupuesto de dificultad | **implementado**: compositor determinista por enumeración, con presupuesto y tolerancia por etapa, validador independiente y verificación en servidor | `src/game/plan/`, [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) |
 | 18 | `MathPerformance` / `TeamPerformance` / `AuraPerformance` normalizados | **TARGET** | [score competitivo](01-game-design/competitive-scoring-and-ranking.md) |
 | 19 | `ScorePolicy` competitiva con pesos, topes y orden de desempate | **TARGET** | ídem |
-| 20 | `RunDescriptor` emitido por servidor | **TARGET** | este documento |
-| 21 | `scoreVersion` y `variantCatalogVersion` | **parcial**: `variantCatalogVersion` viaja en descriptor, snapshot y action log, y `createRun` lo comprueba contra el catálogo recibido; `scoreVersion` sigue pendiente | `src/game/runs/state.ts`, [ADR-021](03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md) |
-| 22 | Verificación autoritativa por replay en servidor | **TARGET**; hoy existe `src/server/game/validate-run.ts` como base | [ADR-004](03-architecture/adr/ADR-004-server-authoritative-scoring.md) |
+| 20 | `RunDescriptor` emitido por servidor | **TARGET**; el descriptor ya lleva la huella del plan que un servidor tendría que emitir y verificar | este documento, [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) |
+| 21 | `scoreVersion` y `variantCatalogVersion` | **parcial**: `variantCatalogVersion` y la huella del plan viajan en descriptor, snapshot y action log, y `createRun` las comprueba; `scoreVersion` sigue pendiente | `src/game/runs/state.ts`, [ADR-021](03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md), [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) |
+| 22 | Verificación autoritativa por replay en servidor | **TARGET** para endpoints y sesión; el caso de uso ya reproduce la run, recompone su plan, compara la huella y valida el plan contra las reglas | `src/server/game/validate-run.ts`, [ADR-004](03-architecture/adr/ADR-004-server-authoritative-scoring.md) |
 | 23 | Ranking con personal best transaccional | **TARGET** | [modo feria](05-operations/fair-mode-and-competition-freeze.md) |
 | 24 | Invariante de egreso y recuperación fail-forward | **TARGET**; el modelo de contenido ya puede declarar un beat `recovery` condicional | [egreso y fail-forward](01-game-design/graduation-and-fail-forward.md) |
 | 25 | Catálogo de contenido disponible separado del plan de la run | **implementado** | `ContentCatalog`, `RunPlan`, [ADR-019](03-architecture/adr/ADR-019-scenario-family-template-variant.md) |
 | 26 | Elegibilidad por etapa y roles de colocación declarativos | **implementado** | ídem |
-| 27 | Presupuesto de beats por año validable | **implementado** como contrato; **el compositor de runs es TARGET** | [dificultad](01-game-design/difficulty-and-playability.md) |
+| 27 | Presupuesto de beats por año validable | **implementado y ejercido**: el compositor produce años de uno o dos beats ordinarios y el motor los ejecuta; `grade-7-composed` juega tres eventos contra los ocho de la demo | `src/game/plan/composer.ts`, [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) |
 | 28 | Auditoría estadística de una población de variantes | **implementado** | `src/game/content/variant-audit.ts`, `pnpm game:variants audit` |
 
 ## Lo que la migración de carrera ya cerró
@@ -6087,62 +6259,64 @@ Vista corta del estado de ejecución. El detalle completo, los contratos de toda
 
 ---
 
-## STAGE-05 — Modelo de dificultad y Run Composer
+## STAGE-06 — ScorePolicy competitiva
 
-**Estado:** `READY`. Es la etapa actual; sus dos dependencias están `DONE` y la implementación todavía no empezó.
+**Estado:** `READY`. Es la etapa actual; su dependencia está `DONE` y la implementación todavía no empezó.
 
 ## Por qué está activa
 
-STAGE-04 está `DONE` con evidencia: el catálogo aprobado alimenta la partida real de 7.º, la familia colectivo tiene dos plantillas con razonamientos distintos, y el demo docente existe como artefacto separado de una run. Ver [ADR-021](03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md).
+STAGE-05 está `DONE` con evidencia: el contenido de una partida se compone una sola vez, dentro de un presupuesto de dificultad, y el motor lo ejecuta sin volver a sortear nada. 5.000 seeds de 7.º producen 1.374 planes distintos con carga total idéntica. Ver [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md).
 
-Lo que falta ahora es **elegir ese contenido con criterio**. Hoy el storylet elige dentro de su pool y el seed elige dentro de lo aprobado; nadie mira dificultad, variedad, cobertura de dominios ni presupuesto. Mientras eso siga así, en una competencia el sorteo decide parte del resultado, y ése es exactamente el problema que esta etapa existe para cerrar.
+Eso deja las runs comparables **antes** de puntuarlas, que era la condición para que un score competitivo signifique algo. Lo que falta ahora es qué vale lo que el jugador hizo con ese contenido: hoy el score es una política de desarrollo que el motor se niega a declarar oficial, sin componentes normalizados, sin topes y sin orden de desempate.
 
-Hay además una deuda concreta que le toca: **el año de 7.º juega seis beats ordinarios y el presupuesto de una run es de uno o dos**. STAGE-04 no lo tapó —formalizó el demo como artefacto aparte y dejó el techo intacto—, pero reconciliarlo de verdad es componer runs, y eso es acá.
+Hay una separación que esta etapa hereda y no debe romper: el `difficultyCost` con el que el compositor agenda **no es** el multiplicador de score. El primero necesita ser fuerte para poder equilibrar una run; el segundo, chico, para que el sorteo no le gane a la habilidad.
 
 ## Objetivo
 
-Que muchas runs distintas tengan dificultad total comparable, con evidencia de simulación.
+Que la misma run con la misma policy dé siempre el mismo desglose y el mismo score.
 
 ## Scope IN
 
-- Bandas `CORE / STANDARD / STRETCH` como metadata de autoría, con correspondencia declarada contra `DifficultyLevel` 1–5.
-- `difficultyCost` **separado** de `scoreMultiplier`.
-- `DifficultyBudget` por run, con tolerancia.
-- Run Composer determinista que elige familia/plantilla/variante por variedad, presupuesto, no repetición, cobertura de dominios y coherencia narrativa.
-- Reporte de distribución de dificultad sobre miles de runs simuladas.
+- `MathPerformance`, `TeamPerformance` y `AuraPerformance` normalizados.
+- `ScorePolicy` versionada, con pesos, topes y orden de desempate declarados como configuración.
+- `FairScore` y su desglose explicable.
+- `scoreVersion` en la identidad de una run.
+- Golden de score y reporte de distribución por perfil sintético.
 
 ## Scope OUT
 
 **Nada de esto se implementa en esta etapa.**
 
-- `FairScore`, `MathPerformance`, `ScorePolicy` competitiva, `scoreVersion` → STAGE-06.
+- Ranking, endpoints, persistencia y fair mode → STAGE-09.
 - Egreso, recuperaciones, contenido de 1.º–5.º → STAGE-07 y STAGE-08.
-- Ranking, endpoints, persistencia, fair mode → STAGE-09.
-- Dificultad adaptativa en modo oficial.
+- Recalibrar bandas, costos o presupuestos de dificultad: son de STAGE-05 y su calibración final es del Teacher Gate.
 - Contenido nuevo: plantillas, variantes curadas o años.
 - Congelar el catálogo oficial de la feria: es una decisión de evento.
-- Cerrar el inventario de escenarios o mover contenido de año: sigue **OPEN**.
+- Migrar la pantalla del juego a partidas compuestas: es una decisión de producto que tiene sentido con los años 1.º a 5.º.
 - Cualquier cambio al sistema de diseño o a los tokens.
 
 ## Criterios de aceptación
 
-- [ ] La dificultad de cada plantilla es explícita y justificable por estructura, no por tamaño de los números.
-- [ ] `difficultyCost` y `scoreMultiplier` son campos distintos y están documentados como tales.
-- [ ] El composer es determinista para un seed y una configuración dados.
-- [ ] `abs(Σ difficultyCost − targetBudget) <= tolerance` como invariante testeada.
-- [ ] Miles de runs simuladas sin diferencias groseras de dificultad total.
-- [ ] La distribución de dificultad se reporta de forma legible.
-- [ ] Presupuesto y multiplicadores son configuración, no constantes dispersas, para poder llevarlos a Teacher Gate.
+- [ ] `ScorePolicy` está versionada y ninguna constante de peso vive dispersa en el código.
+- [ ] La misma run con la misma policy produce exactamente el mismo desglose y el mismo score.
+- [ ] El desglose explica componentes, multiplicadores, topes y versión de policy.
+- [ ] En la policy candidata, la matemática domina el resultado, verificado por simulación.
+- [ ] La contribución de Aura está acotada por un tope explícito.
+- [ ] **Estilo no aporta score directo**, verificado por test.
+- [ ] Promedio no se suma aparte de `MathPerformance` sin justificación escrita.
+- [ ] Se pueden cargar y testear varias policies en paralelo.
+- [ ] Golden tests de score fijan la salida de policies conocidas.
+- [ ] La simulación reporta la distribución de score por perfil sintético.
 
 ## Lectura requerida antes de tocar código
 
 1. `AGENTS.md` de la raíz.
-2. Este documento y el [contrato de STAGE-05](06-delivery/implementation-sequence.md).
-3. [Dificultad y jugabilidad universal](01-game-design/difficulty-and-playability.md) y [marco matemático](01-game-design/math-design-framework.md).
-4. [Auditoría de equidad competitiva](04-quality/competition-fairness-audit.md).
-5. [ADR-019](03-architecture/adr/ADR-019-scenario-family-template-variant.md) — `ContentCatalog` ≠ `RunPlan`, roles de colocación y el presupuesto de beats que el composer tiene que respetar.
-6. [ADR-021](03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md) — cómo llega hoy el contenido aprobado a la partida, y por qué el demo docente **no** es un plan de run.
-7. El código: `src/game/content/run-plan.ts`, `src/game/narrative/selection.ts`, `src/game/difficulty/`, `src/content/grade-7/`.
+2. Este documento y el [contrato de STAGE-06](06-delivery/implementation-sequence.md).
+3. [Score competitivo y ranking](01-game-design/competitive-scoring-and-ranking.md) y [reglas, scoring y progresión](01-game-design/rules-scoring-and-progression.md).
+4. [Fórmulas y algoritmos](07-reference/formulas-and-algorithms.md), [ejemplo de política](07-reference/score-policy.example.json) y [ejemplo de desglose](07-reference/score-breakdown.example.json).
+5. [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) — por qué el costo de scheduling y el multiplicador de score son dos números distintos.
+6. [ADR-016](03-architecture/adr/ADR-016-career-player-model.md) — Promedio, Equipo, Aura y Estilo, y por qué Estilo no puntúa.
+7. El código: `src/game/scoring/`, `src/game/profiles/`, `src/game/runs/state.ts`.
 
 ## Validación requerida
 
@@ -6156,29 +6330,31 @@ Ninguno. La etapa puede empezar.
 
 ## Decisiones abiertas o de Teacher Gate relevantes ahora
 
-- `RECOMENDADA` (D-014): presupuesto de dificultad. `RECOMENDADA` (D-015): piso bajo y techo alto.
-- `TEACHER GATE` ([pregunta 44](07-reference/open-questions.md)): calibración de bandas y costos.
-- `OPEN` ([pregunta 5](07-reference/open-questions.md)): dificultad manual, adaptativa o híbrida.
-- `OPEN` ([preguntas 46 y 46-bis](07-reference/open-questions.md)): cuántas familias, plantillas y variantes tiene Egresado. **No se cierra acá**, pero el composer tiene que funcionar sin esa respuesta.
+- `RECOMENDADA` (D-010): `FairScore` separado de las stats de carrera. `RECOMENDADA` (D-012): Estilo no puntúa directamente.
+- `TEACHER GATE` (D-011, [preguntas 38 y 39](07-reference/open-questions.md)): pesos exactos y calibración de calidades.
+- `TEACHER GATE` ([pregunta 44](07-reference/open-questions.md)): calibración de bandas y costos de dificultad. **No se cierra acá**, pero el multiplicador de score se discute contra ella.
+- `LOCKED`: el navegador no es autoridad de score.
 
 ## Evidencia ya disponible
 
-- Catálogo aprobado dentro del juego y demo docente — [ADR-021](03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md).
-- Catálogos `grade-7-dev-1` (133 variantes) y `grade-7-dev-2` (159), inmutables y verificados en `pnpm verify`.
-- Pipeline de variantes — [ADR-020](03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md); 36.064 candidatos con 0 rechazos sobre siete plantillas.
-- Modelo de contenido — [ADR-019](03-architecture/adr/ADR-019-scenario-family-template-variant.md); `RunPlan` y `validateStagePlan` ya definen qué plan es válido.
+- Modelo de dificultad y compositor de runs — [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md); `difficultyCost` ya existe y está separado del multiplicador de score.
+- Runs comparables antes de puntuar — `pnpm game:compose`: 5.000 seeds de 7.º, 1.374 planes distintos, carga total idéntica.
+- Catálogo aprobado dentro del juego — [ADR-021](03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md); catálogos `grade-7-dev-1`, `dev-2` y `dev-3`, inmutables.
+- Pipeline de variantes — [ADR-020](03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md).
+- Modelo de contenido — [ADR-019](03-architecture/adr/ADR-019-scenario-family-template-variant.md).
 - Career Model v2 — [ADR-016](03-architecture/adr/ADR-016-career-player-model.md).
 - Sistema de diseño v0.2 — [ADR-017](03-architecture/adr/ADR-017-paper-visual-identity.md).
+- Verificación autoritativa por replay — `src/server/game/validate-run.ts`, que ya recompone y valida el plan de una run compuesta.
 - Estabilidad del juego — golden con mismo recorrido, score, perfil y comandos; runs simuladas sin hallazgos.
-- Versionado — `ENGINE_VERSION 4.1.0`, `ACTION_LOG_VERSION 2`, `SNAPSHOT_SCHEMA_VERSION 4`, contenido `0.4.0-dev` y `0.6.0-grade-7`, ruleset sin cambios.
+- Versionado — `ENGINE_VERSION 5.0.0`, `SNAPSHOT_SCHEMA_VERSION 5`, `ACTION_LOG_VERSION 3`, contenido `0.7.0-grade-7` y `0.5.0-dev`.
 
 ## Siguiente etapa
 
-STAGE-06 — ScorePolicy competitiva, que depende de esta. Completar STAGE-04 (ya `DONE`) y STAGE-06 habilita el **Teacher Gate 1**, el primer gate externo.
+Completar STAGE-04 (ya `DONE`) y STAGE-06 habilita el **Teacher Gate 1**, el primer gate externo. En paralelo, STAGE-07 depende de ese gate.
 
 ## Última reconciliación
 
-28 de agosto de 2026, al cerrar STAGE-04, con `pnpm verify` en verde.
+29 de agosto de 2026, al cerrar STAGE-05, con `pnpm verify` en verde.
 
 ---
 
@@ -6289,7 +6465,7 @@ Si el roadmap y el código difieren, **el código gana** y el roadmap se corrige
 - Fases de validación externa y congelamiento: [ciclo de entrega real](00-product/real-delivery-lifecycle.md).
 - Qué se construye por capas de alcance: [alcance y roadmap](00-product/scope-and-roadmap.md) y [backlog](06-delivery/mvp-backlog.md).
 
-**Última reconciliación contra el código:** 28 de agosto de 2026, al cerrar STAGE-04.
+**Última reconciliación contra el código:** 29 de agosto de 2026, al cerrar STAGE-05.
 
 ---
 
@@ -6325,8 +6501,8 @@ Tabla de navegación. Los contratos de cada etapa, más abajo, son la autoridad.
 | [STAGE-02](#stage-02-scenariofamily-challengetemplate-challengevariant) | ScenarioFamily → Template → Variant | `DONE` | STAGE-01 | — |
 | [STAGE-03](#stage-03-generación-validación-y-catálogo-de-variantes) | Generación, validación y catálogo de variantes | `DONE` | STAGE-02 | — |
 | [STAGE-04](#stage-04-enriquecimiento-de-7º-y-demo-candidate) | Enriquecimiento de 7.º y Demo Candidate | `DONE` | STAGE-02, STAGE-03 | — |
-| [STAGE-05](#stage-05-modelo-de-dificultad-y-run-composer) | Modelo de dificultad y Run Composer | `READY` · actual | STAGE-03, STAGE-04 | — |
-| [STAGE-06](#stage-06-scorepolicy-competitiva) | ScorePolicy competitiva | `NOT_STARTED` | STAGE-05 | — |
+| [STAGE-05](#stage-05-modelo-de-dificultad-y-run-composer) | Modelo de dificultad y Run Composer | `DONE` | STAGE-03, STAGE-04 | — |
+| [STAGE-06](#stage-06-scorepolicy-competitiva) | ScorePolicy competitiva | `READY` · actual | STAGE-05 | — |
 | [GATE-TG1](#gate-tg1-teacher-gate-1) | **Teacher Gate 1** | `TEACHER_GATE` | STAGE-04, STAGE-06 | externo |
 | [STAGE-07](#stage-07-invariante-de-egreso-fail-forward-y-recuperaciones) | Egreso, fail-forward y recuperaciones | `NOT_STARTED` | GATE-TG1 | — |
 | [STAGE-08](#stage-08-contenido-incremental-de-1º-a-5º) | Contenido incremental 1.º → 5.º | `NOT_STARTED` | STAGE-07 | auditoría tras 1.º |
@@ -6365,7 +6541,7 @@ flowchart TD
 
 ## Matriz de capacidades
 
-Estado real contra el código al 28 de agosto de 2026, tras cerrar STAGE-04. Es la base de la que salen los estados de etapa de arriba, y lo que hay que reverificar antes de planificar.
+Estado real contra el código al 29 de agosto de 2026, tras cerrar STAGE-05. Es la base de la que salen los estados de etapa de arriba, y lo que hay que reverificar antes de planificar.
 
 | Capacidad | Estado | Evidencia | Etapa |
 |---|---|---|---|
@@ -6396,10 +6572,13 @@ Estado real contra el código al 28 de agosto de 2026, tras cerrar STAGE-04. Es 
 | Dos plantillas de producción en una familia | `DONE` | familia `bus` con `g7.bus-timing` y `g7.bus-latest-departure`, interacciones y razonamientos distintos | STAGE-04 |
 | Plan de demo docente, distinto del plan de una run | `DONE` | `src/game/content/demo-plan.ts`, `src/content/grade-7/demo-plan.ts`, `tests/unit/demo-plan.test.ts` | STAGE-04 |
 | Auditoría estadística de variantes | `DONE` | `pnpm game:variants audit`: 36.064 candidatos, 0 rechazos, 7.954 problemas distintos con siete plantillas | STAGE-03 |
-| `DifficultyBand` (CORE/STANDARD/STRETCH) | `NOT_STARTED` | hoy sólo `DifficultyLevel` 1–5 en `challenges/taxonomy.ts` | STAGE-05 |
-| `difficultyCost` | `NOT_STARTED` | — | STAGE-05 |
-| `DifficultyBudget` | `NOT_STARTED` | — | STAGE-05 |
-| `RunComposer` equiparado por presupuesto | `PARTIAL` | `RunPlan` y `validateStagePlan` definen qué plan es válido; `src/game/narrative/selection.ts` compone por peso y cooldown; **nada construye planes todavía** | STAGE-05 |
+| `DifficultyBand` (CORE/STANDARD/STRETCH) | `DONE` | `src/game/difficulty/cognitive.ts`; la banda se **deriva** de seis rasgos declarados por plantilla, no se elige | STAGE-05 |
+| `difficultyCost` | `DONE` | `src/game/difficulty/cost-policy.ts`, política versionada en centésimas enteras, separada del multiplicador de score | STAGE-05 |
+| `DifficultyBudget` | `DONE` | objetivo y tolerancia por etapa en la `CompositionPolicy`; el compositor sólo produce planes adentro y el validador lo recomprueba | STAGE-05 |
+| `RunComposer` equiparado por presupuesto | `DONE` | `src/game/plan/composer.ts`: enumeración exhaustiva, restricciones duras como filtros y objetivos blandos lexicográficos; 5.000 seeds de 7.º dan 1.374 planes distintos con carga idéntica | STAGE-05 |
+| Plan concreto ejecutado por el motor, sin recomposición en runtime | `DONE` | `RunState.plan`, `beginEvent` consume el beat pinchado, el snapshot lo persiste y el action log lleva su huella | STAGE-05 |
+| Validador de plan independiente del compositor | `DONE` | `src/game/plan/plan-validator.ts`; recalcula rol, banda y costo en vez de creerle al plan | STAGE-05 |
+| Verificación de composición en servidor | `DONE` para el alcance actual | `src/server/game/validate-run.ts` recompone, compara la huella y valida el plan | STAGE-05 |
 | `ScorePolicy` versionada | `PARTIAL` | `src/game/scoring/policy.ts` y `development-policy.ts`, con `production: false` y `createRuleset` negándose a construir un ruleset oficial | STAGE-06 |
 | `MathPerformance` · `TeamPerformance` · `AuraPerformance` | `NOT_STARTED` | — | STAGE-06 |
 | `FairScore` y desglose competitivo | `NOT_STARTED` | — | STAGE-06 |
@@ -6421,8 +6600,9 @@ Estado real contra el código al 28 de agosto de 2026, tras cerrar STAGE-04. Es 
 ### Discrepancias registradas
 
 - `STAGE_ORDER` incluye las siete etapas hasta `graduation`, pero sólo `grade-7` tiene contenido y ruleset. La estructura de progresión existe; **el egreso, no**. Documentación que hable de la carrera completa describe objetivo, no presente.
-- El presupuesto de uno a dos beats por año es un contrato de **plan**, y el slice de 7.º no usa planes: se compone por storylets y juega ocho eventos. No es una violación del contrato sino contenido anterior a él. STAGE-04 lo reconcilió por escrito y no por código: el año de 7.º **es** hoy la densidad de un demo, y por eso lo que se formalizó fue el `DemoPlan` —un artefacto separado, obligado a exceder el presupuesto—. Componer una run dentro del presupuesto es STAGE-05.
-- `GameMode` admite `'fair'` y `'practice'`, y `DifficultySetting` admite `'adaptive'`. Son literales que el motor acepta; ninguno tiene todavía la semántica competitiva que el roadmap describe a partir de STAGE-05.
+- El presupuesto de uno a dos beats por año era un contrato de **plan** que ningún código construía. STAGE-04 lo reconcilió por escrito con el `DemoPlan`; **STAGE-05 lo cerró por código**: existe una partida normal de 7.º de un anchor más un secundario, el motor la ejecuta y un validador independiente la comprueba. El arco de ocho eventos sigue existiendo y es el demo.
+- `GameMode` admite `'fair'` y `'practice'`, y `DifficultySetting` admite `'adaptive'`. Son literales que el motor acepta; ninguno tiene todavía la semántica competitiva que el roadmap describe a partir de STAGE-06.
+- **7.º tiene dos rulesets y juega de dos formas.** `grade-7` es el arco completo de ocho eventos, que es el demo docente; `grade-7-composed` es la partida normal de tres. La pantalla del juego sigue usando el primero: cuál corresponde a un jugador es una decisión de producto que tiene sentido cuando existan los años 1.º a 5.º. Ver [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md).
 
 ---
 
@@ -6749,11 +6929,11 @@ La segunda plantilla se agregó en la familia colectivo y en ninguna otra. El mu
 
 ### STAGE-05 — Modelo de dificultad y Run Composer
 
-- **Estado:** `READY`, **y es la etapa actual**. La implementación todavía no empezó; ver [etapa actual](06-delivery/current-stage.md).
+- **Estado:** `DONE`
 - **Depende de:** STAGE-03 (`DONE`), STAGE-04 (`DONE`)
-- **Desbloquea:** STAGE-06
+- **Desbloquea:** STAGE-06 (ahora activa)
 
-**Punto de partida.** STAGE-04 dejó el contenido: siete plantillas de 7.º, un catálogo aprobado que la partida consume y un demo docente definido. Lo que no dejó es una forma de **elegir** ese contenido con criterio. Hoy elige el storylet dentro de su pool y el seed dentro de lo aprobado; nadie mira dificultad, variedad ni presupuesto. Y el año de 7.º juega seis beats ordinarios, el triple del presupuesto que [ADR-019](03-architecture/adr/ADR-019-scenario-family-template-variant.md) fija: reconciliar eso —componiendo runs de verdad, no aflojando el techo— es el trabajo de esta etapa.
+**Punto de partida.** STAGE-04 dejó el contenido: siete plantillas de 7.º, un catálogo aprobado que la partida consume y un demo docente definido. Lo que no dejó es una forma de **elegir** ese contenido con criterio. Elegía el storylet dentro de su pool y el seed dentro de lo aprobado; nadie miraba dificultad, variedad ni presupuesto. Y el año de 7.º jugaba seis beats ordinarios contra el presupuesto de uno o dos que fija [ADR-019](03-architecture/adr/ADR-019-scenario-family-template-variant.md).
 
 **Propósito.** Producir runs distintas pero comparables. Sin esto, el sorteo de variantes decide parte del ranking.
 
@@ -6765,29 +6945,66 @@ La segunda plantilla se agregó en la familia colectivo y en ninguna otra. El mu
 
 **Criterios de aceptación.**
 
-- [ ] La dificultad de cada plantilla es explícita y justificable por estructura, no por tamaño de los números.
-- [ ] `difficultyCost` y `scoreMultiplier` son campos distintos y están documentados como tales.
-- [ ] El composer es determinista para un seed y una configuración dados.
-- [ ] `abs(Σ difficultyCost − targetBudget) <= tolerance` como invariante testeada.
-- [ ] Miles de runs simuladas sin diferencias groseras de dificultad total.
-- [ ] La distribución de dificultad se reporta de forma legible.
-- [ ] Presupuesto y multiplicadores son configuración, no constantes dispersas, para poder llevarlos a Teacher Gate.
+- [x] La dificultad de cada plantilla es explícita y justificable por estructura, no por tamaño de los números.
+- [x] `difficultyCost` y `scoreMultiplier` son campos distintos y están documentados como tales.
+- [x] El composer es determinista para un seed y una configuración dados.
+- [x] `abs(Σ difficultyCost − targetBudget) <= tolerance` como invariante testeada.
+- [x] Miles de runs simuladas sin diferencias groseras de dificultad total.
+- [x] La distribución de dificultad se reporta de forma legible.
+- [x] Presupuesto y multiplicadores son configuración, no constantes dispersas, para poder llevarlos a Teacher Gate.
 
-**Validación requerida.** `pnpm test`, `pnpm game:simulate:deep`, el reporte de distribución, `pnpm verify`.
+Criterios que la etapa sumó sobre el contrato original:
+
+- [x] El plan se decide **una vez**, antes de que la run empiece, y el motor lo ejecuta: `beginEvent` ya no sortea plantilla ni variante para un beat planificado.
+- [x] Reanudar, reproducir y verificar en servidor juegan el mismo plan; el snapshot guarda el plan concreto y el descriptor lleva su huella.
+- [x] El validador de planes es **otro programa** que el compositor, y recalcula rol, banda y costo en vez de creerle al plan.
+- [x] Una composición imposible falla con un diagnóstico tipado que nombra etapa, restricción y cuántos candidatos había.
+- [x] El compositor no conoce ningún id de contenido; lo particular de 7.º vive en su política como dato.
+- [x] La demo amplia de 7.º sigue jugándose exactamente igual.
+
+**Validación requerida.** `pnpm test`, `pnpm game:simulate:deep`, `pnpm game:compose`, `pnpm verify`.
+
+**Evidencia de completitud.**
+
+| Qué | Dónde |
+|---|---|
+| Decisión | [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) |
+| Modelo cognitivo y bandas | `src/game/difficulty/cognitive.ts`; seis rasgos por plantilla, banda derivada |
+| Costo de scheduling versionado | `src/game/difficulty/cost-policy.ts`; 100 · 150 · 210 centésimas, `official: false` |
+| Política de composición | `src/game/plan/composition-policy.ts`; presupuesto, roles, sobre, objetivos y repetición, todo configurable |
+| Compositor | `src/game/plan/composer.ts`; enumeración exhaustiva, duras como filtro, blandas lexicográficas |
+| Diagnósticos de fallo | `src/game/plan/composition-failure.ts`; siete códigos con etapa y conteo de candidatos |
+| Validador independiente | `src/game/plan/plan-validator.ts` |
+| Huella y serialización del plan | `src/game/plan/plan-fingerprint.ts`, `plan-codec.ts` |
+| Ejecución sin recomposición | `src/game/runs/transition.ts`; `RunState.plan`, `SNAPSHOT_SCHEMA_VERSION` 5, `ACTION_LOG_VERSION` 3 |
+| Verificación en servidor | `src/server/game/validate-run.ts` |
+| Partida normal de 7.º | `src/content/grade-7/composition.ts`; ruleset `grade-7-composed`, tres eventos, un anchor más un secundario |
+| Prueba de genericidad multi-etapa | `src/game/testing/fixtures/composed-ruleset.ts`; cinco etapas, objetivos de 250 a 310, sin contenido de producción nuevo |
+| Auditoría de distribución | `pnpm game:compose`: 5.000 seeds de 7.º, **1.374 planes distintos, carga total idéntica**; carrera de desarrollo con spread 0 |
+| Simulación de runs compuestas | `pnpm game:simulate --content=grade-7-composed` y `--content=development-composed`: 3.000 runs cada una, **0 hallazgos** |
+| Tests | `tests/unit/difficulty-model.test.ts` (14), `tests/unit/run-composer.test.ts` (43), `tests/integration/composed-run.test.ts` (15), `tests/property/run-composition.property.test.ts` (5) |
+| Estabilidad del juego | golden con mismo recorrido, score, perfil y comandos; 5.000 runs de la demo simuladas con 0 hallazgos |
+| Versionado | `ENGINE_VERSION 5.0.0`, `SNAPSHOT_SCHEMA_VERSION 5`, `ACTION_LOG_VERSION 3`, contenido `0.7.0-grade-7` y `0.5.0-dev`, catálogo `grade-7-dev-3`; **el ruleset ahora incluye la política de composición** y su huella la cubre |
+
+**Auditoría de dificultad del contenido actual.** La clasificación candidata de las siete plantillas de 7.º, con sus rasgos, su banda, su costo y las cuatro divergencias con el nivel autorado, está en [dificultad y jugabilidad](01-game-design/difficulty-and-playability.md). Es calibración de ingeniería y el Teacher Gate puede moverla sin tocar arquitectura.
+
+**Lo que no entró, y por qué.** La pantalla del juego **no** se migró a partidas compuestas: habría borrado la demo amplia que STAGE-04 acababa de construir, y un año compuesto necesita marco narrativo propio, que es contenido de producción y estaba fuera de alcance. Las dos formas conviven como dos rulesets. No se agregó contenido, no se movió nada de año y el inventario sigue `OPEN`. Ninguna calibración es oficial: bandas, umbrales, costos, objetivos y tolerancias son `RECOMENDADA` y van al Teacher Gate.
 
 **Riesgos.** Multiplicadores de score grandes hacen que el sorteo domine sobre la habilidad; ése es el motivo de mantenerlos chicos y de separarlos del costo de scheduling.
 
-**Decisiones.** `RECOMENDADA` (D-014): presupuesto de dificultad. `RECOMENDADA` (D-015): piso bajo y techo alto. `TEACHER_GATE` ([pregunta 44](07-reference/open-questions.md)): calibración de bandas y costos. `OPEN` ([pregunta 5](07-reference/open-questions.md)): manual, adaptativa o híbrida.
+**Decisiones.** `RECOMENDADA` (D-014): presupuesto de dificultad — **implementado**. `RECOMENDADA` (D-015): piso bajo y techo alto — vigente. `TEACHER_GATE` ([pregunta 44](07-reference/open-questions.md)): calibración de bandas y costos, **sigue abierta**. `OPEN` ([pregunta 5](07-reference/open-questions.md)): manual, adaptativa o híbrida, **sigue abierta**; esta etapa define el mecanismo, no la elección.
 
-**Exit gate.** ¿Muchas runs distintas tienen dificultad total comparable, con evidencia de simulación?
+**Exit gate.** ¿Muchas runs distintas tienen dificultad total comparable, con evidencia de simulación? — **Sí.** 5.000 seeds de 7.º producen 1.374 planes distintos con carga total idéntica, y una carrera de cinco etapas compone con spread cero. Comparable **no** es equivalencia psicométrica: es carga estructural pareja bajo una calibración que ningún docente validó todavía, y decirlo es parte del resultado.
 
 ---
 
 ### STAGE-06 — ScorePolicy competitiva
 
-- **Estado:** `NOT_STARTED`
-- **Depende de:** STAGE-05
+- **Estado:** `READY`, **y es la etapa actual**. Ver [etapa actual](06-delivery/current-stage.md).
+- **Depende de:** STAGE-05 (`DONE`)
 - **Desbloquea:** GATE-TG1, STAGE-09
+
+**Punto de partida.** STAGE-05 dejó runs comparables **antes** de puntuar: el contenido de una partida se compone una vez, dentro de un presupuesto de dificultad, y el motor lo ejecuta. Lo que falta es qué vale lo que el jugador hizo con ese contenido. El `difficultyCost` que el compositor usa para agendar ya existe y es deliberadamente **otro número** que el multiplicador de score; ese multiplicador —los valores candidatos 1,00 / 1,08 / 1,15 de [dificultad y jugabilidad](01-game-design/difficulty-and-playability.md)— sigue siendo documentación.
 
 **Propósito.** Un score para ranking que no contamine la identidad de carrera.
 
@@ -7904,8 +8121,8 @@ Estas decisiones vienen del [Project Blueprint v0.2.0](07-reference/blueprint-v0
 | D-011 | La matemática domina el `FairScore` | RECOMENDADA · TEACHER GATE | no implementado |
 | D-012 | Estilo no puntúa directamente | RECOMENDADA | vigente como regla de diseño |
 | D-013 | Desempate lexicográfico determinista y profundo | RECOMENDADA · TEACHER GATE | no implementado |
-| D-014 | Presupuesto de dificultad por run competitiva | RECOMENDADA | no implementado ([dificultad](01-game-design/difficulty-and-playability.md)) |
-| D-015 | Diseño de tareas de piso bajo y techo alto | RECOMENDADA como principio | vigente en el contenido de 7.º |
+| D-014 | Presupuesto de dificultad por run competitiva | RECOMENDADA | **implementado** ([ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md)) como política versionada; la calibración sigue en Teacher Gate |
+| D-015 | Diseño de tareas de piso bajo y techo alto | RECOMENDADA como principio | vigente en el contenido de 7.º, y ahora **ejecutable**: la banda de una plantilla se deriva de su estructura, no de sus números ([ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md)) |
 | D-016 | No hay playtest real con estudiantes antes de la feria | RESTRICCIÓN EXTERNA | declarada ([ciclo de entrega real](00-product/real-delivery-lifecycle.md)) |
 | D-017 | Congelamiento de reglas y score durante el evento oficial | RECOMENDADA como regla de operación | política escrita, sin evento oficial todavía |
 
@@ -8104,7 +8321,19 @@ Los archivos siguientes son **documentación**: muestran la forma de un contrato
 
 **Content catalog:** todo el contenido autorado y disponible de un content set — familias y plantillas. Responde *qué existe y dónde puede aparecer*. Implementado como `ContentCatalog`.
 
-**Run plan:** el contenido efectivamente elegido para una partida. Responde *qué juega esta run*. Implementado como `RunPlan`; **quién lo construye** es trabajo de STAGE-05.
+**Run plan:** el contenido efectivamente elegido para una partida. Responde *qué juega esta run*. Implementado como `RunPlan`, y desde [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) **construido por el compositor** antes de que la run empiece.
+
+**Run composer:** lo que elige el contenido de una run. Enumera las combinaciones legales de una etapa, filtra por las restricciones duras y ordena por objetivos blandos declarados en una política. No conoce ningún id de contenido.
+
+**Perfil cognitivo:** los seis rasgos con los que una plantilla declara qué la vuelve exigente — pasos, restricciones, selección, optimización, incertidumbre y si la respuesta hay que construirla. La banda se deriva de su suma.
+
+**Banda de dificultad:** `core`, `standard` o `stretch`. Metadata de autoría; nunca se le muestra al jugador.
+
+**difficultyCost:** cuánto pesa un beat para **agendar** una run, en centésimas enteras. No es el multiplicador de score y no debe fundirse con él: el compositor necesita una señal fuerte, el score una débil.
+
+**DifficultyBudget:** objetivo y tolerancia de carga de una etapa. El compositor sólo produce planes que caen adentro. Pasar el presupuesto es comparabilidad estructural, no equivalencia psicométrica.
+
+**Huella de plan:** `sha256` del plan compuesto, políticas incluidas. Deja que una reanudación, una reproducción o un servidor detecten que la calibración se movió, en vez de jugar otro año con la misma identidad.
 
 **Rol de colocación:** `anchor`, `checkpoint`, `special` o `recovery`. Semántica de agendado, nunca de calidad ni de efecto de carrera. Ver [ADR-019](03-architecture/adr/ADR-019-scenario-family-template-variant.md).
 
@@ -8162,7 +8391,7 @@ Estas decisiones requieren evidencia de prototipo, playtest, implementación u o
 
 ## Dificultad
 
-5. ¿Selección manual, adaptativa o híbrida?
+5. ¿Selección manual, adaptativa o híbrida? STAGE-05 **no la cierra**: define cómo se expresaría una política de composición, adaptativa o no, y deja el mecanismo listo para cualquiera de las tres.
 6. ¿Cómo mapear 12–17 sin preguntar edad exacta?
 7. ¿Se permite calculadora en ranking de feria?
 
@@ -8233,7 +8462,7 @@ Incorporadas desde el [Project Blueprint v0.2](07-reference/blueprint-v0.2-integ
 41. ¿Qué pasa ante un empate exacto en el ranking: puesto compartido, premio compartido o desempate anunciado? Un identificador interno **no** puede decidir un premio en silencio. *Gate: aprobación del organizador antes de repartir premios.* Se cruza con la pregunta 13.
 42. ¿El acto del 25 de Mayo entra a producción como desafío de 7.º o queda como ejemplar de diseño? Está implementado y jugable; lo que falta es la aprobación de contenido. *Gate: Teacher Gate 1.*
 43. ¿Cuál es la duración objetivo real de una run completa, y de la demo de 7.º? *Gate: Teacher Gate 1.* Se cruza con la pregunta 1.
-44. ¿Cómo se calibran las bandas `CORE / STANDARD / STRETCH` y sus costos de scheduling frente a los multiplicadores de score? *Gate: Teacher Gate 1; auditoría de equidad antes del congelamiento.*
+44. ¿Cómo se calibran las bandas `CORE / STANDARD / STRETCH` y sus costos de scheduling frente a los multiplicadores de score? *Gate: Teacher Gate 1; auditoría de equidad antes del congelamiento.* STAGE-05 construyó el **mecanismo** y no la respuesta: las bandas se derivan de seis rasgos declarados, los costos y los presupuestos son política versionada con `official: false`, y hay una [clasificación candidata de las siete plantillas de 7.º](01-game-design/difficulty-and-playability.md) con cuatro divergencias respecto del nivel autorado que son preguntas concretas para el Gate. Mover cualquiera de esos números es un cambio de datos. Ver [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md).
 45. ¿Qué desafíos deben ofrecer fórmula, calculadora o material de referencia, y esa disponibilidad cambia en modo competitivo? *Gate: Teacher Gate 1.* Se cruza con la pregunta 7.
 
 ## Contenido y producto, sin gate docente inmediato

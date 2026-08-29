@@ -23,6 +23,16 @@ import { err, ok, type Result } from './result'
 /**
  * Engine/game version of this build. Also serialized as `gameVersion`.
  *
+ * `5.0.0` is run composition: a run's content is chosen **before** it starts.
+ * A composed run carries a plan — which beats, in which years, drawn from which
+ * approved variants — and the runtime executes it instead of drawing a template
+ * from a storylet pool as it goes. That changes what a run *is*, so it changes
+ * the ruleset too: the composition and difficulty-cost policies are part of the
+ * rules now, not of the content. The snapshot codec moved to carry the plan
+ * (`SNAPSHOT_SCHEMA_VERSION` 5) and the action log to carry its fingerprint
+ * (`ACTION_LOG_VERSION` 3). An uncomposed run — the broad teacher demo, a
+ * content set with no composition policy — plays exactly as it did.
+ *
  * `4.1.0` puts the approved catalog into real gameplay: a run selects among
  * validated variants instead of a template's curated list, `createRun` refuses
  * a run whose declared catalog is not the one it is being replayed against, and
@@ -52,7 +62,7 @@ import { err, ok, type Result } from './result'
  * reproduce its original result under this engine, and that is exactly what the
  * version triple exists to say out loud instead of discovering it in a replay.
  */
-export const ENGINE_VERSION = '4.1.0'
+export const ENGINE_VERSION = '5.0.0'
 
 export interface VersionTriple {
   readonly gameVersion: string

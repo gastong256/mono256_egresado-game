@@ -17,10 +17,15 @@ import {
   ENGINE_VERSION,
   toContentSetId,
   toRulesetId,
+  ok,
+  planFingerprint,
   toRunId,
   toRunSeed,
+  composeRun,
   type ChallengeDefinition,
+  type CompositionFailure,
   type EngineDependencies,
+  type Result,
   type RunDescriptor,
   type Ruleset,
   type StageConfig,
@@ -31,10 +36,12 @@ import { developmentScoringPolicy } from '@/game/scoring/development-policy'
 
 import { grade7Families } from './families'
 import {
+  GRADE_7_COMPOSED_RULESET_VERSION,
   GRADE_7_CONTENT_VERSION,
   GRADE_7_RULESET_VERSION,
   GRADE_7_VARIANT_CATALOG_VERSION,
 } from './versions'
+import { grade7CompositionPolicy } from './composition'
 import { busLatestDeparture } from './challenges/bus-latest-departure'
 import { busTiming } from './challenges/bus-timing'
 import { groupTasks } from './challenges/group-tasks'
@@ -103,6 +110,41 @@ export function createGrade7Ruleset(): Ruleset {
   return result.value
 }
 
+/**
+ * El ruleset de una partida **compuesta** de 7.º.
+ *
+ * La diferencia con el de arriba no es de configuración: es qué es una run. Éste
+ * declara una política de composición, así que el contenido del año se elige una
+ * sola vez, antes de empezar, y el motor lo ejecuta. Son uno o dos beats
+ * ordinarios —el presupuesto de ADR-019— en vez del arco completo.
+ *
+ * La etapa declara los mismos ocho eventos que la demo porque un ruleset tiene
+ * que declarar alguno; una run compuesta no los lee, porque el plan dice cuánto
+ * dura cada año. Que los dos números no coincidan es visible a propósito.
+ */
+export function createGrade7ComposedRuleset(): Ruleset {
+  const result = createRuleset({
+    id: toRulesetId('grade-7-composed'),
+    version: GRADE_7_COMPOSED_RULESET_VERSION,
+    contentSetId: toContentSetId('grade-7'),
+    contentVersion: GRADE_7_CONTENT_VERSION,
+    stages: [GRADE_7_STAGE],
+    scoring: developmentScoringPolicy,
+    difficulty: developmentDifficultyPolicy,
+    profile: developmentProfilePolicy,
+    narrative: { cooldownEvents: 0, allowRepeats: false },
+    composition: grade7CompositionPolicy,
+  })
+
+  if (!result.ok) {
+    throw new EngineInvariantError(
+      `el ruleset compuesto de 7.º grado es inválido: ${result.error.kind}`,
+    )
+  }
+
+  return result.value
+}
+
 /** Todo lo que el motor necesita para jugar 7.º grado. */
 export function createGrade7Dependencies(): EngineDependencies {
   return {
@@ -115,11 +157,33 @@ export function createGrade7Dependencies(): EngineDependencies {
   }
 }
 
+/**
+ * Todo lo que el motor necesita para jugar una partida **compuesta** de 7.º.
+ *
+ * Mismo contenido, mismo catálogo aprobado, otra idea de run: el compositor
+ * elige el año antes de que empiece y el motor lo ejecuta sin volver a sortear
+ * nada.
+ */
+export function createGrade7ComposedDependencies(): EngineDependencies {
+  return {
+    ruleset: createGrade7ComposedRuleset(),
+    catalog: createContentCatalog(grade7Families, grade7Challenges),
+    storylets: grade7Storylets,
+    approvedVariants: grade7ApprovedVariants,
+    composition: grade7CompositionPolicy,
+  }
+}
+
 export {
+  GRADE_7_COMPOSED_RULESET_VERSION,
   GRADE_7_CONTENT_VERSION,
   GRADE_7_RULESET_VERSION,
   GRADE_7_VARIANT_CATALOG_VERSION,
 } from './versions'
+export {
+  grade7CompositionPolicy,
+  GRADE_7_HOSTABLE_TEMPLATES,
+} from './composition'
 /**
  * El descriptor de una run nueva de 7.º grado.
  *
@@ -144,6 +208,44 @@ export function createGrade7RunDescriptor(
     contentVersion: GRADE_7_CONTENT_VERSION,
     variantCatalogVersion: GRADE_7_VARIANT_CATALOG_VERSION,
   }
+}
+
+/**
+ * El descriptor de una partida compuesta de 7.º.
+ *
+ * Compone el plan y estampa su huella. Estampar la huella es lo que convierte
+ * «esta run juega este año» en algo que el motor puede comprobar: si la
+ * calibración se movió entre que la run se creó y que se la reproduce,
+ * `createRun` la rechaza en vez de jugar otro año con la misma identidad.
+ */
+export function createGrade7ComposedRunDescriptor(
+  seed: string,
+  overrides: Partial<Pick<RunDescriptor, 'runId' | 'mode' | 'difficulty'>> = {},
+): Result<RunDescriptor, CompositionFailure> {
+  const dependencies = createGrade7ComposedDependencies()
+  const composed = composeRun({
+    seed: toRunSeed(seed),
+    stages: dependencies.ruleset.stages.map((stage) => stage.id),
+    catalog: dependencies.catalog,
+    approvedVariants: grade7ApprovedVariants,
+    policy: grade7CompositionPolicy,
+  })
+
+  if (!composed.ok) {
+    return composed
+  }
+
+  return ok({
+    runId: overrides.runId ?? toRunId(`run-${seed}`),
+    seed: toRunSeed(seed),
+    mode: overrides.mode ?? 'practice',
+    difficulty: overrides.difficulty ?? 'adaptive',
+    gameVersion: ENGINE_VERSION,
+    rulesetVersion: GRADE_7_COMPOSED_RULESET_VERSION,
+    contentVersion: GRADE_7_CONTENT_VERSION,
+    variantCatalogVersion: GRADE_7_VARIANT_CATALOG_VERSION,
+    planFingerprint: planFingerprint(composed.value),
+  })
 }
 
 export { grade7Storylets, grade7StoryletIds } from './storylets'

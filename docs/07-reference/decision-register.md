@@ -61,8 +61,8 @@ Estas decisiones vienen del [Project Blueprint v0.2.0](blueprint-v0.2-integratio
 | D-011 | La matemática domina el `FairScore` | RECOMENDADA · TEACHER GATE | no implementado |
 | D-012 | Estilo no puntúa directamente | RECOMENDADA | vigente como regla de diseño |
 | D-013 | Desempate lexicográfico determinista y profundo | RECOMENDADA · TEACHER GATE | no implementado |
-| D-014 | Presupuesto de dificultad por run competitiva | RECOMENDADA | no implementado ([dificultad](../01-game-design/difficulty-and-playability.md)) |
-| D-015 | Diseño de tareas de piso bajo y techo alto | RECOMENDADA como principio | vigente en el contenido de 7.º |
+| D-014 | Presupuesto de dificultad por run competitiva | RECOMENDADA | **implementado** ([ADR-022](../03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md)) como política versionada; la calibración sigue en Teacher Gate |
+| D-015 | Diseño de tareas de piso bajo y techo alto | RECOMENDADA como principio | vigente en el contenido de 7.º, y ahora **ejecutable**: la banda de una plantilla se deriva de su estructura, no de sus números ([ADR-022](../03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md)) |
 | D-016 | No hay playtest real con estudiantes antes de la feria | RESTRICCIÓN EXTERNA | declarada ([ciclo de entrega real](../00-product/real-delivery-lifecycle.md)) |
 | D-017 | Congelamiento de reglas y score durante el evento oficial | RECOMENDADA como regla de operación | política escrita, sin evento oficial todavía |
 

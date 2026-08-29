@@ -32,9 +32,10 @@ import {
   type ChallengeVariantRef,
 } from '../challenges/content-model'
 import type { ContentCatalog } from '../challenges/content-catalog'
+import type { ApprovedVariantLookup } from '../challenges/variant-source'
 import type { ChallengeDefinition } from '../challenges/contracts'
 import type { StageId } from '../progression/stages'
-import { contentError, type ValidationIssue } from './issues'
+import { contentError, type ValidationIssue } from '../core/issues'
 
 /** One beat a run will play, addressed by content identity alone. */
 export interface RunPlanEntry {
@@ -77,6 +78,32 @@ export const DEFAULT_STAGE_BEAT_BUDGET: StageBeatBudget = {
   max: 2,
 }
 
+/**
+ * What a plan is checked against besides the catalog.
+ *
+ * The approved catalog is optional and the reason is historical: this module
+ * was written before one existed, when the only variants a plan could name were
+ * the ones a template declared. A composed run names approved addresses
+ * instead, so «the template declares it» stopped being the whole rule. Both are
+ * accepted, and which one applies is a property of the run, not of the plan.
+ */
+export interface PlanResolutionOptions {
+  readonly budget?: StageBeatBudget
+  readonly approvedVariants?: ApprovedVariantLookup
+}
+
+/** Variants a template may legitimately be planned with. */
+function playableVariants(
+  template: ChallengeDefinition,
+  approved: ApprovedVariantLookup | undefined,
+): readonly ChallengeVariantRef['variantId'][] {
+  if (approved === undefined) {
+    return template.variants
+  }
+  const fromCatalog = approved.variantsFor(template.id)
+  return fromCatalog.length === 0 ? template.variants : fromCatalog
+}
+
 /** A plan entry with its template resolved from the catalog. */
 export interface ResolvedPlanEntry {
   readonly variant: ChallengeVariantRef
@@ -98,6 +125,7 @@ function describe(ref: ChallengeVariantRef): string {
 export function resolvePlanEntry(
   catalog: ContentCatalog,
   entry: RunPlanEntry,
+  approved?: ApprovedVariantLookup,
 ): ResolvedPlanEntry | undefined {
   const template = catalog.template(entry.variant.templateId)
   if (template === undefined) {
@@ -106,7 +134,7 @@ export function resolvePlanEntry(
   if (template.family !== entry.variant.familyId) {
     return undefined
   }
-  if (!template.variants.includes(entry.variant.variantId)) {
+  if (!playableVariants(template, approved).includes(entry.variant.variantId)) {
     return undefined
   }
   return { variant: entry.variant, template, role: template.placement }
@@ -123,6 +151,7 @@ function resolveOrExplain(
   catalog: ContentCatalog,
   entry: RunPlanEntry,
   subject: string,
+  approved: ApprovedVariantLookup | undefined,
 ): ResolvedPlanEntry | ValidationIssue {
   const { familyId, templateId, variantId } = entry.variant
   const template = catalog.template(templateId)
@@ -141,11 +170,11 @@ function resolveOrExplain(
       `template ${templateId} belongs to ${template.family}, not ${familyId}`,
     )
   }
-  if (!template.variants.includes(variantId)) {
+  if (!playableVariants(template, approved).includes(variantId)) {
     return contentError(
       'plan.unknown-variant',
       subject,
-      `template ${templateId} does not declare variant ${variantId}`,
+      `variant ${variantId} is neither declared by ${templateId} nor approved for it`,
     )
   }
   return { variant: entry.variant, template, role: template.placement }
@@ -173,15 +202,21 @@ function isIssue(
 export function validateStagePlan(
   catalog: ContentCatalog,
   plan: StageContentPlan,
-  budget: StageBeatBudget = DEFAULT_STAGE_BEAT_BUDGET,
+  options: PlanResolutionOptions = {},
 ): readonly ValidationIssue[] {
+  const budget = options.budget ?? DEFAULT_STAGE_BEAT_BUDGET
   const issues: ValidationIssue[] = []
   const resolved: ResolvedPlanEntry[] = []
   const seen = new Set<string>()
 
   for (const entry of plan.entries) {
     const subject = `${plan.stageId}:${describe(entry.variant)}`
-    const outcome = resolveOrExplain(catalog, entry, subject)
+    const outcome = resolveOrExplain(
+      catalog,
+      entry,
+      subject,
+      options.approvedVariants,
+    )
     if (isIssue(outcome)) {
       issues.push(outcome)
       continue
@@ -245,7 +280,7 @@ export function validateStagePlan(
 export function validateRunPlan(
   catalog: ContentCatalog,
   plan: RunPlan,
-  budget: StageBeatBudget = DEFAULT_STAGE_BEAT_BUDGET,
+  options: PlanResolutionOptions = {},
 ): readonly ValidationIssue[] {
   const issues: ValidationIssue[] = []
   const seenStages = new Set<StageId>()
@@ -262,7 +297,7 @@ export function validateRunPlan(
       continue
     }
     seenStages.add(stagePlan.stageId)
-    issues.push(...validateStagePlan(catalog, stagePlan, budget))
+    issues.push(...validateStagePlan(catalog, stagePlan, options))
   }
 
   return issues

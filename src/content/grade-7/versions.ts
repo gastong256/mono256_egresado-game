@@ -6,8 +6,17 @@
  */
 
 /*
- * El ruleset se queda en 0.3.0 y el contenido sube a 0.4.0, y esta vez las dos
- * versiones se separan a propósito.
+ * El contenido sube a 0.7.0 con el modelo de dificultad cognitiva: cada
+ * plantilla declara ahora qué la vuelve exigente —pasos, restricciones,
+ * selección, optimización, incertidumbre y si la respuesta hay que construirla—
+ * y de ahí sale la banda con la que el compositor la agenda. La matemática no se
+ * tocó, pero esa metadata decide qué beat entra en un año, así que es identidad
+ * de contenido y la huella la cubre.
+ *
+ * El ruleset de la demo se queda en 0.3.0: sus políticas y su configuración de
+ * etapa son las mismas, y una partida sin compositor juega exactamente igual.
+ *
+ * El contexto anterior, de cuando el contenido subió a 0.4.0:
  *
  * El contenido cambió: cada plantilla declara ahora su familia de escenario, su
  * rol de colocación y sus variantes con identidad propia, y la variante dejó de
@@ -21,7 +30,17 @@
  * cambió algo que no cambió.
  */
 export const GRADE_7_RULESET_VERSION = '0.3.0-grade-7'
-export const GRADE_7_CONTENT_VERSION = '0.6.0-grade-7'
+export const GRADE_7_CONTENT_VERSION = '0.7.0-grade-7'
+
+/**
+ * El ruleset de una partida **compuesta** de 7.º.
+ *
+ * Es otro ruleset, no otra versión del mismo, y la diferencia es de fondo: uno
+ * juega el año entero como demostración y el otro juega el año que un jugador
+ * jugaría dentro de una carrera de seis. Comparten contenido y motor; no
+ * comparten qué es una run, y por eso no comparten identidad.
+ */
+export const GRADE_7_COMPOSED_RULESET_VERSION = '0.1.0-grade-7-composed'
 
 /**
  * Versión del catálogo de variantes aprobadas que la partida usa hoy.
@@ -30,8 +49,15 @@ export const GRADE_7_CONTENT_VERSION = '0.6.0-grade-7'
  * la feria**: es el de desarrollo, y el nombre lo dice. Congelar el catálogo
  * oficial de una competencia es una decisión de evento que todavía no se tomó.
  *
- * Una versión publicada no se edita. `grade-7-dev-2` existe porque la familia
- * colectivo ganó una segunda plantilla: cambiar `grade-7-dev-1` en el lugar
- * habría reescrito la historia de un conjunto que alguien pudo haber jugado.
+ * Una versión publicada no se edita. `grade-7-dev-2` existió porque la familia
+ * colectivo ganó una segunda plantilla, y `grade-7-dev-3` existe porque el
+ * contenido subió a `0.7.0-grade-7` con el modelo de dificultad cognitiva: el
+ * catálogo declara contra qué versión de contenido se construyó, así que esa
+ * línea cambió y editarla en el lugar habría reescrito un artefacto publicado.
+ *
+ * Las direcciones y las huellas de `dev-3` son las de `dev-2`: ningún generador
+ * se movió. Publicar al lado igual es lo correcto —la regla no admite
+ * excepciones «chicas»— y hay un test que comprueba que la única diferencia
+ * entre los dos es la versión de contenido.
  */
-export const GRADE_7_VARIANT_CATALOG_VERSION = 'grade-7-dev-2'
+export const GRADE_7_VARIANT_CATALOG_VERSION = 'grade-7-dev-3'

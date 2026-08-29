@@ -74,6 +74,17 @@ export const notebookOffer: ChallengeDefinition = defineChallenge<
   categories: ['proportions-and-percentages', 'quantity'],
   stages: ['grade-7'],
   baseDifficulty: 3,
+  // Dos ofertas que no se comparan solas: hay que llevar las dos a la misma
+  // unidad y recién ahí mirarlas contra la plata que hay. El efectivo es la
+  // restricción y elegir la más barata que entra es la optimización.
+  cognitive: {
+    steps: 2,
+    constraints: 1,
+    selection: 1,
+    optimization: 1,
+    uncertainty: 0,
+    construction: 0,
+  },
   tools: ['calculator'],
 
   generate({ params }) {

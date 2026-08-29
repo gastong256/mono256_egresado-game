@@ -173,6 +173,17 @@ export const may25Act: ChallengeDefinition = defineChallenge<
   categories: ['patterns-and-relations', 'quantity'],
   stages: ['grade-7'],
   baseDifficulty: 2,
+  // Cada celda es una sola pregunta —¿cumple la regla?— y la regla está escrita.
+  // Lo que pesa es que hay tres reglas distintas y veinticuatro celdas, y que la
+  // respuesta es el conjunto que el jugador arma, no una que reconoce.
+  cognitive: {
+    steps: 1,
+    constraints: 0,
+    selection: 2,
+    optimization: 0,
+    uncertainty: 0,
+    construction: 1,
+  },
   // Sin herramientas: estás bailando adelante de la escuela, no resolviendo una
   // guía. Una calculadora acá sería una mentira sobre la situación.
   tools: [],

@@ -58,6 +58,14 @@ export const studyTimeline: ChallengeDefinition = defineChallenge<
   categories: ['time-and-rates', 'optimization-and-constraints'],
   stages: ['year-1', 'year-2'],
   baseDifficulty: 2,
+  cognitive: {
+    steps: 2,
+    constraints: 1,
+    selection: 0,
+    optimization: 0,
+    uncertainty: 0,
+    construction: 1,
+  },
   tools: ['notepad'],
 
   generate({ rng }) {
