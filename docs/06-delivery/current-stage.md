@@ -10,7 +10,7 @@ Vista corta del estado de ejecución. El detalle completo, los contratos de toda
 
 ## Por qué está activa
 
-STAGE-05 está `DONE` con evidencia: el contenido de una partida se compone una sola vez, dentro de un presupuesto de dificultad, y el motor lo ejecuta sin volver a sortear nada. 5.000 seeds de 7.º producen 1.374 planes distintos con carga total idéntica. Ver [ADR-022](../03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md).
+STAGE-05 está `DONE` con evidencia reforzada: el contenido de una partida se compone una sola vez, dentro de un presupuesto de dificultad, y el motor lo ejecuta sin volver a sortear nada. 20.000 seeds de la partida normal de 7.º producen 1.404 planes distintos con carga total idéntica; todos pasan validación independiente, round-trip y recomposición. Además, 10.000 carreras sintéticas prueban las seis etapas académicas y un test explícito prueba el plan válido de un solo `anchor`. Ver [ADR-022](../03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md).
 
 Eso deja las runs comparables **antes** de puntuarlas, que era la condición para que un score competitivo signifique algo. Lo que falta ahora es qué vale lo que el jugador hizo con ese contenido: hoy el score es una política de desarrollo que el motor se niega a declarar oficial, sin componentes normalizados, sin topes y sin orden de desempate.
 
@@ -83,7 +83,7 @@ Ninguno. La etapa puede empezar.
 ## Evidencia ya disponible
 
 - Modelo de dificultad y compositor de runs — [ADR-022](../03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md); `difficultyCost` ya existe y está separado del multiplicador de score.
-- Runs comparables antes de puntuar — `pnpm game:compose`: 5.000 seeds de 7.º, 1.374 planes distintos, carga total idéntica.
+- Runs comparables antes de puntuar — `pnpm game:compose -- --content=grade-7 --runs=20000`: 20.000 planes válidos, 1.404 distintos, carga total idéntica; `--content=synthetic-six-stage --runs=10000`: 10.000 carreras de seis etapas, cero fallos.
 - Catálogo aprobado dentro del juego — [ADR-021](../03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md); catálogos `grade-7-dev-1`, `dev-2` y `dev-3`, inmutables.
 - Pipeline de variantes — [ADR-020](../03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md).
 - Modelo de contenido — [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md).
@@ -95,7 +95,7 @@ Ninguno. La etapa puede empezar.
 
 ## Siguiente etapa
 
-Completar STAGE-04 (ya `DONE`) y STAGE-06 habilita el **Teacher Gate 1**, el primer gate externo. En paralelo, STAGE-07 depende de ese gate.
+STAGE-04 ya está `DONE`; completar STAGE-06 habilita el **Teacher Gate 1**, el primer gate externo. En paralelo, STAGE-07 depende de ese gate.
 
 ## Última reconciliación
 

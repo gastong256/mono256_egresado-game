@@ -1,7 +1,8 @@
 schema_version: 1
 family_id: mural
 template_id: mural.coverage-packages.v1
-stage: grade7
+stages: [grade-7]
+placement: checkpoint
 status: draft
 
 narrative:
@@ -16,13 +17,21 @@ math:
     calculator: allowed
 
 variant:
-  difficulty: STANDARD
   generator: constraint-first
   invariants:
     - at_least_one_valid_solution
     - unique_optimum
     - readable_decimals
     - no_duplicate_options
+
+cognitive:
+  steps: 3
+  constraints: 1
+  selection: 1
+  optimization: 1
+  uncertainty: 0
+  construction: 0
+  derived_band: STANDARD # derivada de cognitive; no es un override de autoría
 
 interaction:
   type: choice

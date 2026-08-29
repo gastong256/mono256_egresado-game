@@ -1,6 +1,6 @@
 # Dificultad y jugabilidad universal
 
-**Estado: mixto, y desde STAGE-05 parcialmente implementado.** El principio de piso bajo y techo alto es **RECOMENDADO** como principio de diseño y ya gobierna el contenido existente. Las bandas `CORE / STANDARD / STRETCH` y el presupuesto de dificultad están **implementados** como política versionada y configurable ([ADR-022](../03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md)); los multiplicadores de score siguen siendo documentación y pertenecen a STAGE-06. La calibración final es **TEACHER GATE**. La elección entre dificultad manual, adaptativa o híbrida sigue **OPEN** ([pregunta 5](../07-reference/open-questions.md)).
+**Estado: arquitectura implementada; calibración candidata.** El principio de piso bajo y techo alto es **RECOMENDADO** como principio de diseño y ya gobierna el contenido existente. Los seis rasgos estructurales, las bandas derivadas `CORE / STANDARD / STRETCH`, los costos y el presupuesto por etapa están **implementados** como políticas versionadas y configurables ([ADR-022](../03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md)). Los multiplicadores de score siguen siendo documentación y pertenecen a STAGE-06. Los umbrales, costos y targets actuales son candidatos: la calibración final es **TEACHER GATE** y la elección entre dificultad manual, adaptativa o híbrida sigue **OPEN** ([pregunta 5](../07-reference/open-questions.md)).
 
 Este documento explica *cómo debe subir* la dificultad. Qué matemática se usa en cada año está en el [marco matemático](math-design-framework.md); qué factores hacen difícil un desafío concreto está en el [sistema de desafíos](challenge-system.md).
 
@@ -47,7 +47,7 @@ Qué desafíos deben ofrecer qué apoyo es **TEACHER GATE**; si se permite calcu
 
 ## Bandas de dificultad
 
-**RECOMENDADO** como metadata de autoría y competencia. No se muestran al jugador.
+**Implementadas** como metadata de autoría y scheduling; su interpretación y calibración exactas siguen **RECOMENDADAS / TEACHER GATE**. No se muestran al jugador.
 
 | Banda | Estructura |
 |---|---|
@@ -104,16 +104,16 @@ Un autor que quiere que su plantilla se agende como más exigente tiene que nomb
 
 ## Presupuesto de dificultad
 
-**RECOMENDADO / TARGET.** Si las runs oficiales se arman con variantes procedurales, dos jugadores pueden recibir cargas distintas y el ranking deja de comparar habilidad. El presupuesto de dificultad ata la masa esperada de desafío de cada run.
+**Implementado como mecanismo; calibración RECOMENDADA / TEACHER GATE.** Si las runs oficiales se arman con variantes procedurales, dos jugadores pueden recibir cargas distintas y el ranking deja de comparar habilidad. El presupuesto de dificultad ata la carga estructural esperada de cada run.
 
 Forma discreta: por ejemplo 2 CORE, 3 STANDARD, 1 STRETCH.
 Forma numérica: `Σ difficultyCost ≈ constante`, con tolerancia declarada.
 
 **Implementado en la forma numérica.** Cada etapa declara objetivo y tolerancia, el compositor sólo produce planes que caen adentro, y un validador independiente lo vuelve a comprobar sobre el plan ya serializado. Los costos viven en centésimas enteras —100, 150, 210— porque un presupuesto que suma flotantes termina discutiendo consigo mismo si un plan entraba.
 
-La evidencia: 5.000 seeds de 7.º producen 1.374 planes distintos con carga total idéntica. Eso dice que el presupuesto funciona; **no** dice que las runs sean igual de difíciles para una persona. Ver [ADR-022](../03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) y `pnpm game:compose`.
+La evidencia post-STAGE-05: 20.000 seeds de la partida normal de 7.º producen 1.404 planes concretos, todos con costo 2,50, cero fuera del sobre, cero fallos de validación independiente, round-trip o recomposición. Una prueba aparte compone 10.000 carreras sintéticas de exactamente seis etapas con sus propios targets y cero fallos. Eso dice que el mecanismo produce carga estructural comparable bajo la política candidata; **no** dice que las runs sean igual de difíciles para una persona. Ver [ADR-022](../03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) y `pnpm game:compose`.
 
-Los costos de scheduling son **metadata de armado de run** y están separados del multiplicador de score. El scheduler necesita distinguir fuerte entre CORE y STRETCH para balancear; el score necesita multiplicadores chicos para que la suerte del sorteo no domine sobre la habilidad. El diseño del scheduler está en [arquitectura objetivo del motor](../03-architecture/target-engine-architecture.md).
+Los costos de scheduling son **metadata de armado de run** y están separados del multiplicador de score. El compositor necesita distinguir fuerte entre CORE y STRETCH para balancear; el score necesita multiplicadores chicos para que la suerte del sorteo no domine sobre la habilidad. El estado implementado está en [game engine](../03-architecture/game-engine.md) y la brecha restante en [arquitectura objetivo](../03-architecture/target-engine-architecture.md).
 
 ### Valores candidatos
 

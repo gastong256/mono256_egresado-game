@@ -23,6 +23,7 @@
 | ADR-019 | Modelo de contenido: familia de escenario, plantilla y variante | Aceptado |
 | ADR-020 | Pipeline de variantes y catálogo aprobado | Aceptado |
 | ADR-021 | [El catálogo aprobado dentro del juego, y el demo docente](../03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md) | Aceptado |
+| ADR-022 | [Modelo de dificultad y compositor de runs](../03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) | Aceptado |
 
 ## Regla para ADR nuevo
 
