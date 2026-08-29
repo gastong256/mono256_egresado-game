@@ -101,6 +101,12 @@ export const tripBudget: ChallengeDefinition = defineChallenge<
     uncertainty: 0,
     construction: 1,
   },
+  scoring: {
+    math: 'discrete-quality',
+    team: 'none',
+    aura: 'none',
+    rationale: 'Fixture: the budget optimum is the mathematical fact.',
+  },
   tools: ['calculator', 'notepad'],
 
   generate({ rng, difficulty }) {

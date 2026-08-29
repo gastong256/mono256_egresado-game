@@ -72,6 +72,24 @@ export function engineFingerprint(): string {
  * under the same ruleset version, which is the exact hole this file exists to
  * close.
  */
+/** A template's scoring profile, flattened to what changes a score. */
+function scoringShape(template: {
+  readonly scoring: {
+    readonly math: unknown
+    readonly team: unknown
+    readonly aura: unknown
+  }
+}): string {
+  const shape = (signal: unknown): string =>
+    typeof signal === 'function' ? 'measured' : String(signal)
+
+  return [
+    `m=${shape(template.scoring.math)}`,
+    `t=${shape(template.scoring.team)}`,
+    `a=${shape(template.scoring.aura)}`,
+  ].join(',')
+}
+
 function composition(ruleset: Ruleset): string {
   const policy = ruleset.composition
   if (policy === undefined) {
@@ -166,6 +184,11 @@ export function contentFingerprint(
         // any version, which is the hole this digest exists to close.
         template.band,
         String(cognitiveLoad(template.cognitive)),
+        // How the template turns its result into competitive evidence is
+        // content too: changing the act from its F1 to the four discrete steps
+        // would change what a run is worth without any policy moving, and the
+        // content version is where that has to become visible.
+        scoringShape(template),
         [...template.stages].sort().join(','),
         [...template.categories].sort().join(','),
         [...template.tools].sort().join(','),

@@ -28,10 +28,14 @@ import {
  * Regenerating these numbers without a version bump silently invalidates every
  * stored replay, which is exactly what this file exists to prevent.
  *
- * Los valores actuales corresponden al compositor de runs (`ENGINE_VERSION`
- * 5.0.0, contenido de desarrollo `0.5.0-dev`). El hash del estado se movió
- * porque el descriptor declara otras versiones; el recorrido, el score, el
- * perfil y la cantidad de comandos son exactamente los de antes. Otra vez: el recorrido, el score, el perfil y
+ * Los valores actuales corresponden al score competitivo (`ENGINE_VERSION`
+ * 5.1.0, contenido de desarrollo `0.6.0-dev`). El hash del estado se movió
+ * porque el descriptor declara otras versiones; el recorrido, el score por
+ * evento, el perfil y la cantidad de comandos son exactamente los de antes.
+ *
+ * Estos golden fijan el score **por evento** de la capa de carrera, que esta
+ * etapa no tocó. El score competitivo tiene sus propios golden en
+ * `score-golden.test.ts` y no reinterpreta a éstos. Otra vez: el recorrido, el score, el perfil y
  * la cantidad de comandos quedaron **iguales**. Lo único que se movió es el
  * hash del estado, porque el descriptor puede llevar ahora la versión del
  * catálogo de variantes del que salió la run. Vale la pena mirar qué cambió y qué no: el
@@ -77,7 +81,7 @@ const GOLDEN_RUNS: readonly Golden[] = [
       'year-5|dev.orientation|dev.survey-confidence|optimal|1630',
       'graduation|dev.graduation|-|-|0',
     ],
-    hash: '4cbce5da897d552e1354d03aa5a1a96351521a2d4a5688c3f24843d1a167e658',
+    hash: '59c23661e9e3995fa710afd1a7d73339db15e49e1f74dd946b1219f6bd3ab343',
   },
   {
     seed: 'golden-beta',
@@ -100,7 +104,7 @@ const GOLDEN_RUNS: readonly Golden[] = [
       'year-5|dev.orientation|dev.survey-confidence|invalid|495',
       'graduation|dev.graduation|-|-|0',
     ],
-    hash: 'bb9f24e3da0485f2b7c5817066f1b08a34fb874111a8b88c16702eebc086d5c5',
+    hash: '1ba8488e8856b7515ae71bd2860feb9a18e6594208dd44ddbbb0d383b584eca0',
   },
 ]
 
@@ -136,7 +140,7 @@ describe('golden deterministic protocol', () => {
     // A version bump must be accompanied by regenerated golden values, so the
     // two are asserted together.
     expect(dependencies.ruleset.version).toBe('0.2.0-dev')
-    expect(dependencies.ruleset.contentVersion).toBe('0.5.0-dev')
+    expect(dependencies.ruleset.contentVersion).toBe('0.6.0-dev')
     expect(dependencies.ruleset.official).toBe(false)
   })
 })

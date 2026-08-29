@@ -13,6 +13,7 @@
  */
 
 import {
+  performanceFromRatio,
   defineChallenge,
   err,
   metrics,
@@ -149,6 +150,19 @@ export const groupTasks: ChallengeDefinition = defineChallenge<
     optimization: 2,
     uncertainty: 0,
     construction: 1,
+  },
+  // El único de 7.º que mide dos hechos distintos. `precision` dice si el
+  // reparto era factible y completo —eso es la matemática, y la calidad la
+  // resume—; `efficiency` es la afinidad, o sea cuánto jugó el reparto a la
+  // fuerza de cada uno. Se puede armar un reparto factible y torpe, y uno
+  // factible y bien pensado, y la diferencia entre los dos es exactamente lo
+  // que la componente de equipo existe para leer.
+  scoring: {
+    math: 'discrete-quality',
+    team: ({ metrics }) => performanceFromRatio(metrics.efficiency),
+    aura: 'none',
+    rationale:
+      'Factibilidad y óptimo son la matemática; la afinidad del reparto es un hecho distinto que el evaluador mide por separado y que la componente de equipo lee sin repetirlo.',
   },
   tools: ['notepad'],
 

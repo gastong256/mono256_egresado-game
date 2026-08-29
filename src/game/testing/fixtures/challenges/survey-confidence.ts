@@ -68,6 +68,12 @@ export const surveyConfidence: ChallengeDefinition = defineChallenge<
     uncertainty: 2,
     construction: 0,
   },
+  scoring: {
+    math: 'discrete-quality',
+    team: 'none',
+    aura: 'none',
+    rationale: 'Fixture: an estimate under uncertainty is one fact.',
+  },
   tools: ['calculator'],
 
   generate({ rng }) {

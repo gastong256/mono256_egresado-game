@@ -704,6 +704,13 @@ describe('the audit finds real problems', () => {
         uncertainty: 0,
         construction: 0,
       },
+      scoring: {
+        math: 'discrete-quality' as const,
+        team: 'none' as const,
+        aura: 'none' as const,
+        rationale:
+          'Test fixture: a single fact, read once by the mathematical component.',
+      },
       tools: [],
       generate: () => ({ valor: 1 }),
       verify: () => [],
@@ -810,6 +817,13 @@ describe('a future template joins without touching the pipeline', () => {
       optimization: 0,
       uncertainty: 0,
       construction: 0,
+    },
+    scoring: {
+      math: 'discrete-quality' as const,
+      team: 'none' as const,
+      aura: 'none' as const,
+      rationale:
+        'Test fixture: a single fact, read once by the mathematical component.',
     },
     tools: [],
     generate: ({ params }) => ({ total: params.precio * params.cantidad }),

@@ -162,6 +162,13 @@ describe('challenge variant', () => {
         uncertainty: 0 as const,
         construction: 0 as const,
       },
+      scoring: {
+        math: 'discrete-quality' as const,
+        team: 'none' as const,
+        aura: 'none' as const,
+        rationale:
+          'Test fixture: a single fact, read once by the mathematical component.',
+      },
       tools: [],
       variantSource: {
         authored: [{ id: 'a' }],
@@ -503,6 +510,13 @@ describe('new content needs no core engine change', () => {
         optimization: 0,
         uncertainty: 0,
         construction: 0,
+      },
+      scoring: {
+        math: 'discrete-quality' as const,
+        team: 'none' as const,
+        aura: 'none' as const,
+        rationale:
+          'Test fixture: a single fact, read once by the mathematical component.',
       },
       tools: [],
       // `variantRng` está direccionado sólo por la identidad de la variante:

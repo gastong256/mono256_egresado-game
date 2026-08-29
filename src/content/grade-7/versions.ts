@@ -6,7 +6,13 @@
  */
 
 /*
- * El contenido sube a 0.7.0 con el modelo de dificultad cognitiva: cada
+ * El contenido sube a 0.8.0 con el perfil de score: cada plantilla declara ahora
+ * qué hecho suyo lee cada componente competitiva —y cuál no lee ninguna—. No
+ * cambia qué produce un seed, pero sí cuánto vale una run, así que es identidad
+ * de contenido y la huella lo cubre.
+ *
+ * El contexto anterior, de cuando el contenido subió a 0.7.0 con el modelo de
+ * dificultad cognitiva: cada
  * plantilla declara ahora qué la vuelve exigente —pasos, restricciones,
  * selección, optimización, incertidumbre y si la respuesta hay que construirla—
  * y de ahí sale la banda con la que el compositor la agenda. La matemática no se
@@ -30,7 +36,7 @@
  * cambió algo que no cambió.
  */
 export const GRADE_7_RULESET_VERSION = '0.3.0-grade-7'
-export const GRADE_7_CONTENT_VERSION = '0.7.0-grade-7'
+export const GRADE_7_CONTENT_VERSION = '0.8.0-grade-7'
 
 /**
  * El ruleset de una partida **compuesta** de 7.º.
@@ -55,9 +61,10 @@ export const GRADE_7_COMPOSED_RULESET_VERSION = '0.1.0-grade-7-composed'
  * catálogo declara contra qué versión de contenido se construyó, así que esa
  * línea cambió y editarla en el lugar habría reescrito un artefacto publicado.
  *
- * Las direcciones y las huellas de `dev-3` son las de `dev-2`: ningún generador
- * se movió. Publicar al lado igual es lo correcto —la regla no admite
- * excepciones «chicas»— y hay un test que comprueba que la única diferencia
- * entre los dos es la versión de contenido.
+ * Las direcciones y las huellas de `dev-3` son las de `dev-2`, y las de `dev-4`
+ * son las de `dev-3`: ningún generador se movió en ninguno de los dos casos.
+ * Publicar al lado igual es lo correcto —la regla no admite excepciones
+ * «chicas»— y hay un test que comprueba que la única diferencia entre versiones
+ * consecutivas es contra qué contenido se construyeron.
  */
-export const GRADE_7_VARIANT_CATALOG_VERSION = 'grade-7-dev-3'
+export const GRADE_7_VARIANT_CATALOG_VERSION = 'grade-7-dev-4'

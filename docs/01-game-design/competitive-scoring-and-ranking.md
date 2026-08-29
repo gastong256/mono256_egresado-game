@@ -1,8 +1,8 @@
 # Score competitivo y ranking
 
-**Estado: RECOMENDADO / TEACHER GATE.** Nada de este documento es una regla cerrada. La separación entre identidad de carrera y score competitivo es una recomendación fuerte de arquitectura; **todos los coeficientes, topes y calibraciones son candidatos** y requieren aprobación del Departamento de Matemática antes del congelamiento de competencia. Los valores exactos siguen **OPEN** ([pregunta 24](../07-reference/open-questions.md)).
+**Estado: RECOMENDADO / TEACHER GATE, y desde STAGE-06 implementado como política candidata.** Nada de este documento es una regla cerrada. La separación entre identidad de carrera y score competitivo es una recomendación fuerte de arquitectura; **todos los coeficientes, topes y calibraciones son candidatos** y requieren aprobación del Departamento de Matemática antes del congelamiento de competencia. Los valores exactos siguen **OPEN** ([pregunta 24](../07-reference/open-questions.md)).
 
-El score por evento vigente —`base × calidad × dificultad + bonus − penalizaciones`— está en [reglas, scoring y progresión](rules-scoring-and-progression.md) y es lo que el motor implementa hoy. Este documento describe la capa **competitiva** que todavía no existe.
+El score por evento vigente —`base × calidad × dificultad + bonus − penalizaciones`— está en [reglas, scoring y progresión](rules-scoring-and-progression.md) y sigue siendo la capa de carrera. La capa **competitiva** que este documento describe está implementada desde STAGE-06 como `fair-score-dev-1`, con `official: false`; ver [ADR-023](../03-architecture/adr/ADR-023-competitive-score-policy.md).
 
 ## Tres capas que no son la misma cosa
 
@@ -77,6 +77,34 @@ La ponderación 80/15/5 es un **candidato defendible**, no una decisión tomada.
 
 Quien implemente esto debe escribirlo como política versionada y configurable, nunca como constantes anónimas. Ver [ejemplo de política de score](../07-reference/score-policy.example.json).
 
+### Qué pasa cuando una run no tiene la oportunidad
+
+Los planes difieren en qué contienen: una partida compuesta de 7.º son dos beats de pura matemática y no ofrece ni equipo ni aura. Puntuarla sobre 8.000 mientras otra se puntúa sobre 10.000 castigaría a alguien por un sorteo que no hizo.
+
+**Una componente sin oportunidad sale, y su peso se reparte entre las que quedaron.** El juego perfecto vale 10.000 en toda run válida, y sacar una secundaria sólo puede aumentar la proporción de la matemática. Las alternativas y por qué se descartaron están en [ADR-023](../03-architecture/adr/ADR-023-competitive-score-policy.md).
+
+### Qué componente lee cada plantilla
+
+Cada plantilla declara qué hecho suyo alimenta cada componente, y por qué es un hecho **distinto** del que otra ya leyó. La tabla de cobertura de 7.º está en el ADR; sus dos resultados incómodos vale la pena adelantarlos:
+
+- **el stand mueve Equipo en la carrera y no aporta equipo competitivo**, porque su eficiencia es el costo mínimo que la matemática ya cobró;
+- **ninguna plantilla de producción aporta aura competitiva**, porque el acto —el único evento que mueve Aura— sólo mide el F1 que la matemática ya usa. La componente existe, está topeada y la ejercitan los fixtures. Una componente honestamente vacía es mejor que una señal inventada para llenarla.
+
+### Evidencia de la calibración candidata
+
+Sobre 23.000 planes compuestos —20.000 años reales de 7.º más planes de uno, ocho y doce beats de fixtures— la política candidata da:
+
+| Perfil sintético | Score |
+|---|---|
+| juego perfecto | 10.000 en **todos** los planes, sin dispersión |
+| matemática fuerte, secundarias mínimas | 7.400 – 9.000 |
+| matemática floja, secundarias perfectas | 2.000 – 3.600 |
+| peor juego posible | 0 |
+
+Las dos franjas del medio **no se cruzan**: es la dominancia de la matemática medida, no afirmada. `pnpm game:score` reproduce la tabla y `pnpm game:score -- --compare` corre las mismas runs bajo calibraciones alternativas, que es la herramienta para discutir 80/15/5 en el Gate.
+
+Nada de esto dice que 80/15/5 sea la respuesta correcta. Dice que el mecanismo es justo en las formas en que se le pidió serlo.
+
 ## Qué no entra al score
 
 ### Promedio
@@ -132,10 +160,11 @@ Las reglas publicadas tienen que poder explicarse en tres frases: la matemática
 |---|---|
 | Score por evento determinista, con política nombrada y versionada | **implementado**, marcado `production: false` |
 | Separación entre stats visibles y métricas ocultas de razonamiento | **implementado** |
-| `MathPerformance` / `TeamPerformance` / `AuraPerformance` normalizados | **no implementado** |
-| `FairScore` y desglose competitivo | **no implementado** |
-| Comparador lexicográfico versionado | **no implementado** |
+| `MathPerformance` / `TeamPerformance` / `AuraPerformance` normalizados | **implementado**, en puntos básicos enteros |
+| `FairScore` y desglose competitivo | **implementado** como `fair-score-dev-1`, `official: false` |
+| Recomputación y verificación autoritativa del score en servidor | **implementado**: el servidor puntúa reproduciendo, y `verifyScoreClaim` contradice un reclamo campo por campo |
+| Comparador lexicográfico versionado | **no implementado**; sin ranking no tiene a qué ordenar, y el desglose ya reporta el primer criterio que va a necesitar |
 | Personal best transaccional en servidor | **no implementado** |
-| `scoreVersion` en la identidad de la run | **no implementado** |
+| `scoreVersion` en la identidad de la run | **implementado**, opcional: una partida de práctica no está compitiendo |
 
 Ver [arquitectura objetivo del motor](../03-architecture/target-engine-architecture.md).

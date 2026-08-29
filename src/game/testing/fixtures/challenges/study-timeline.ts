@@ -8,6 +8,7 @@
  */
 
 import { toChallengeId, toVariantId } from '../../../core/branded'
+import { performanceFromRatio } from '../../../challenges/scoring-profile'
 import {
   developmentVariantSource,
   type DevelopmentParams,
@@ -65,6 +66,16 @@ export const studyTimeline: ChallengeDefinition = defineChallenge<
     optimization: 0,
     uncertainty: 0,
     construction: 1,
+  },
+  // The only fixture that feeds the aura channel. Production content currently
+  // has no non-duplicating aura evidence, so without this the aggregation of a
+  // three-component score would never be exercised against real arithmetic.
+  scoring: {
+    math: 'discrete-quality',
+    team: 'none',
+    aura: ({ metrics }) => performanceFromRatio(metrics.precision),
+    rationale:
+      'Fixture: planning quality is the mathematics, and the precision of the plan under public commitment is the separate signal that exercises the aura component.',
   },
   tools: ['notepad'],
 

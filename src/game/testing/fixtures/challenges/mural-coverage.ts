@@ -84,6 +84,12 @@ export const muralCoverage: ChallengeDefinition = defineChallenge<
     uncertainty: 0,
     construction: 0,
   },
+  scoring: {
+    math: 'discrete-quality',
+    team: 'none',
+    aura: 'none',
+    rationale: 'Fixture: coverage and whole containers are one chain.',
+  },
   tools: ['calculator'],
 
   generate({ rng, difficulty }) {

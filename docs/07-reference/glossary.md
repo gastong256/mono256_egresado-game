@@ -82,6 +82,16 @@
 
 **DifficultyBudget:** objetivo y tolerancia de carga de una etapa. El compositor sólo produce planes que caen adentro. Pasar el presupuesto es comparabilidad estructural, no equivalencia psicométrica.
 
+**FairScore:** el score competitivo de una run entera, en puntos básicos de 0 a 10.000. Distinto del score por evento, que es de la capa de carrera y suma puntos por beat. Implementado en [ADR-023](../03-architecture/adr/ADR-023-competitive-score-policy.md) como `fair-score-dev-1`, con `official: false`.
+
+**MathPerformance · TeamPerformance · AuraPerformance:** las tres componentes normalizadas del score competitivo, cada una de 0 a 10.000. La matemática pondera por la recompensa de dificultad; las otras dos no.
+
+**Perfil de score:** lo que una plantilla declara sobre qué hecho suyo alimenta cada componente competitiva, y por qué es un hecho distinto del que otra ya leyó. `'none'` es una decisión escrita, no un default.
+
+**Recompensa por dificultad:** cuánto más vale resolver un beat de banda alta, deliberadamente chica —1,00 / 1,08 / 1,15— y **distinta del `difficultyCost`** con el que el compositor agenda. Confundirlas dejaría que el sorteo decidiera un ranking.
+
+**Oportunidad ausente:** una componente que ningún beat de la run ofrece. Sale del cálculo y su peso se reparte entre las que quedaron, para que un plan que el jugador no eligió no le cueste puntos.
+
 **Huella de plan:** `sha256` del plan compuesto, políticas incluidas. Deja que una reanudación, una reproducción o un servidor detecten que la calibración se movió, en vez de jugar otro año con la misma identidad.
 
 **Rol de colocación:** `anchor`, `checkpoint`, `special` o `recovery`. Semántica de agendado, nunca de calidad ni de efecto de carrera. Ver [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md).

@@ -118,6 +118,17 @@ export const busTiming: ChallengeDefinition = defineChallenge<
     uncertainty: 0,
     construction: 0,
   },
+  // Un solo hecho: si elegiste la salida que llega a horario sin esperar de más.
+  // El evaluador resuelve en cuatro escalones y no midió nada más fino, así que
+  // el mapeo discreto de la política es la lectura honesta. No hay evidencia de
+  // colaboración ni de actuación pública que no sea ya ese mismo hecho.
+  scoring: {
+    math: 'discrete-quality',
+    team: 'none',
+    aura: 'none',
+    rationale:
+      'Elegir la salida correcta es el único hecho que el colectivo mide; leerlo otra vez como equipo o aura sería cobrarlo dos veces.',
+  },
   tools: ['calculator'],
 
   generate({ params }) {

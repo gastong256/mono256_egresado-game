@@ -85,6 +85,13 @@ export const notebookOffer: ChallengeDefinition = defineChallenge<
     uncertainty: 0,
     construction: 0,
   },
+  scoring: {
+    math: 'discrete-quality',
+    team: 'none',
+    aura: 'none',
+    rationale:
+      'Comparar dos ofertas contra el efectivo disponible es un único hecho; no hay evidencia de equipo ni de actuación pública en la decisión.',
+  },
   tools: ['calculator'],
 
   generate({ params }) {

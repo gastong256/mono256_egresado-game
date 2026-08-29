@@ -77,6 +77,18 @@ export interface RunDescriptor {
    * game under the same identity.
    */
   readonly planFingerprint?: string
+  /**
+   * The competitive score policy this run is played under.
+   *
+   * Present only when the run is meant to be scored competitively, and then it
+   * is part of the run's identity for the same reason the catalog version is:
+   * a score computed under `fair-score-dev-1` and one computed under
+   * `fair-score-dev-2` are different claims about the same gameplay, and a
+   * submission that did not say which one it meant could not be verified.
+   *
+   * Absent is a real answer. A practice run is not competing.
+   */
+  readonly scoreVersion?: string
 }
 
 /**

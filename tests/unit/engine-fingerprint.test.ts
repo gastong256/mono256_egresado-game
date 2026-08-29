@@ -31,7 +31,22 @@ import { createDevelopmentDependencies } from '@/game/testing'
 const dependencies = createDevelopmentDependencies()
 
 /*
- * Regenerados para el compositor de runs (`ENGINE_VERSION` 5.0.0).
+ * Regenerados para el score competitivo (`ENGINE_VERSION` 5.1.0).
+ *
+ * Se movieron dos de las tres, y **la que no se movió es la evidencia**:
+ *
+ * - **motor**: la versión, el codec de snapshot (6) y el del action log (4).
+ *   Una run puede declarar ahora bajo qué calibración competitiva se juega.
+ * - **contenido**: cada plantilla declara qué hecho suyo lee cada componente
+ *   competitiva. No cambia qué produce un seed, pero sí cuánto vale una run, y
+ *   eso es identidad de contenido; el contenido de desarrollo sube a `0.6.0-dev`.
+ * - **ruleset**: idéntico en `da245c60`. Puntuar no toca una regla de juego, y
+ *   una huella que no se movió lo dice mejor que cualquier comentario.
+ *
+ * Las runs golden reproducen el mismo recorrido, el mismo score por evento, el
+ * mismo perfil y la misma cantidad de comandos.
+ *
+ * El contexto anterior, del compositor de runs (`ENGINE_VERSION` 5.0.0):
  *
  * Se movieron las tres, y cada una por su motivo:
  *
@@ -95,14 +110,14 @@ const dependencies = createDevelopmentDependencies()
  * golden quedaron **idénticos**.
  */
 const EXPECTED = {
-  engine: '9aa4a189',
+  engine: 'b9489cf4',
   ruleset: 'da245c60',
-  content: '1e0f405e',
+  content: 'dbaf5094',
 } as const
 
 describe('version fingerprints', () => {
   it('pins the deterministic kernel to its engine version', () => {
-    expect(ENGINE_VERSION).toBe('5.0.0')
+    expect(ENGINE_VERSION).toBe('5.1.0')
     expect(engineFingerprint()).toBe(EXPECTED.engine)
   })
 
@@ -112,7 +127,7 @@ describe('version fingerprints', () => {
   })
 
   it('pins the playable content to the declared content version', () => {
-    expect(dependencies.ruleset.contentVersion).toBe('0.5.0-dev')
+    expect(dependencies.ruleset.contentVersion).toBe('0.6.0-dev')
     expect(
       contentFingerprint(dependencies.catalog, dependencies.storylets),
     ).toBe(EXPECTED.content)

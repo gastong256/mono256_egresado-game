@@ -21,6 +21,7 @@ import {
   planFingerprint,
   toRunId,
   toRunSeed,
+  candidateFairScorePolicy,
   composeRun,
   type ChallengeDefinition,
   type CompositionFailure,
@@ -172,6 +173,37 @@ export function createGrade7ComposedDependencies(): EngineDependencies {
     approvedVariants: grade7ApprovedVariants,
     composition: grade7CompositionPolicy,
   }
+}
+
+/**
+ * Lo que el motor necesita para jugar una partida **competitiva** de 7.º.
+ *
+ * La misma partida compuesta, más la política de score bajo la que se la va a
+ * puntuar. Es una configuración de competencia y no contenido: el score no
+ * cambia ni un resultado, ni un efecto de carrera, ni qué contenido se compone.
+ * Está acá para que una run pueda declarar bajo qué calibración se jugó, que es
+ * lo que después permite verificar el score que reclame.
+ */
+export function createGrade7CompetitiveDependencies(): EngineDependencies {
+  return {
+    ...createGrade7ComposedDependencies(),
+    competitiveScore: candidateFairScorePolicy,
+  }
+}
+
+/** El descriptor de una partida competitiva de 7.º, con su `scoreVersion`. */
+export function createGrade7CompetitiveRunDescriptor(
+  seed: string,
+  overrides: Partial<Pick<RunDescriptor, 'runId' | 'mode' | 'difficulty'>> = {},
+): Result<RunDescriptor, CompositionFailure> {
+  const composed = createGrade7ComposedRunDescriptor(seed, overrides)
+  if (!composed.ok) {
+    return composed
+  }
+  return ok({
+    ...composed.value,
+    scoreVersion: candidateFairScorePolicy.version,
+  })
 }
 
 export {

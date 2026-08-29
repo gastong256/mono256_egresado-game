@@ -26,7 +26,7 @@ import type { RunDescriptor } from './state'
  * replayed against whatever catalog that server happened to hold, and the same
  * seed would resolve different variants without anyone noticing.
  */
-export const ACTION_LOG_VERSION = 3
+export const ACTION_LOG_VERSION = 4
 
 export interface RunActionEnvelope {
   /** Strictly increasing, starting at zero. */
@@ -59,6 +59,9 @@ const descriptorSchema = z.object({
   // is a statement, not a gap: a run that resolved its content as it went did
   // not have a plan to fingerprint.
   planFingerprint: z.string().min(1).max(128).nullable(),
+  // Which competitive calibration this run was played under. Null for a run
+  // that is not competing, which is a statement and not a gap.
+  scoreVersion: z.string().min(1).max(64).nullable(),
 })
 
 const envelopeSchema = z.object({
@@ -152,6 +155,7 @@ export function parseActionLog(
     ...(raw.planFingerprint === null
       ? {}
       : { planFingerprint: raw.planFingerprint }),
+    ...(raw.scoreVersion === null ? {} : { scoreVersion: raw.scoreVersion }),
   }
 
   return ok({ version: parsed.data.version, descriptor, actions })
@@ -165,6 +169,7 @@ export function serializeActionLog(log: RunActionLog): unknown {
       ...log.descriptor,
       variantCatalogVersion: log.descriptor.variantCatalogVersion ?? null,
       planFingerprint: log.descriptor.planFingerprint ?? null,
+      scoreVersion: log.descriptor.scoreVersion ?? null,
     },
     actions: log.actions.map((envelope) => ({
       sequence: envelope.sequence,

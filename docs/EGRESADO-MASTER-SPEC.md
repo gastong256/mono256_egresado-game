@@ -1199,9 +1199,9 @@ Además de `DifficultyLevel` 1–5, la autoría y la competencia usan tres banda
 
 # Score competitivo y ranking
 
-**Estado: RECOMENDADO / TEACHER GATE.** Nada de este documento es una regla cerrada. La separación entre identidad de carrera y score competitivo es una recomendación fuerte de arquitectura; **todos los coeficientes, topes y calibraciones son candidatos** y requieren aprobación del Departamento de Matemática antes del congelamiento de competencia. Los valores exactos siguen **OPEN** ([pregunta 24](07-reference/open-questions.md)).
+**Estado: RECOMENDADO / TEACHER GATE, y desde STAGE-06 implementado como política candidata.** Nada de este documento es una regla cerrada. La separación entre identidad de carrera y score competitivo es una recomendación fuerte de arquitectura; **todos los coeficientes, topes y calibraciones son candidatos** y requieren aprobación del Departamento de Matemática antes del congelamiento de competencia. Los valores exactos siguen **OPEN** ([pregunta 24](07-reference/open-questions.md)).
 
-El score por evento vigente —`base × calidad × dificultad + bonus − penalizaciones`— está en [reglas, scoring y progresión](01-game-design/rules-scoring-and-progression.md) y es lo que el motor implementa hoy. Este documento describe la capa **competitiva** que todavía no existe.
+El score por evento vigente —`base × calidad × dificultad + bonus − penalizaciones`— está en [reglas, scoring y progresión](01-game-design/rules-scoring-and-progression.md) y sigue siendo la capa de carrera. La capa **competitiva** que este documento describe está implementada desde STAGE-06 como `fair-score-dev-1`, con `official: false`; ver [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md).
 
 ## Tres capas que no son la misma cosa
 
@@ -1276,6 +1276,34 @@ La ponderación 80/15/5 es un **candidato defendible**, no una decisión tomada.
 
 Quien implemente esto debe escribirlo como política versionada y configurable, nunca como constantes anónimas. Ver [ejemplo de política de score](07-reference/score-policy.example.json).
 
+### Qué pasa cuando una run no tiene la oportunidad
+
+Los planes difieren en qué contienen: una partida compuesta de 7.º son dos beats de pura matemática y no ofrece ni equipo ni aura. Puntuarla sobre 8.000 mientras otra se puntúa sobre 10.000 castigaría a alguien por un sorteo que no hizo.
+
+**Una componente sin oportunidad sale, y su peso se reparte entre las que quedaron.** El juego perfecto vale 10.000 en toda run válida, y sacar una secundaria sólo puede aumentar la proporción de la matemática. Las alternativas y por qué se descartaron están en [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md).
+
+### Qué componente lee cada plantilla
+
+Cada plantilla declara qué hecho suyo alimenta cada componente, y por qué es un hecho **distinto** del que otra ya leyó. La tabla de cobertura de 7.º está en el ADR; sus dos resultados incómodos vale la pena adelantarlos:
+
+- **el stand mueve Equipo en la carrera y no aporta equipo competitivo**, porque su eficiencia es el costo mínimo que la matemática ya cobró;
+- **ninguna plantilla de producción aporta aura competitiva**, porque el acto —el único evento que mueve Aura— sólo mide el F1 que la matemática ya usa. La componente existe, está topeada y la ejercitan los fixtures. Una componente honestamente vacía es mejor que una señal inventada para llenarla.
+
+### Evidencia de la calibración candidata
+
+Sobre 23.000 planes compuestos —20.000 años reales de 7.º más planes de uno, ocho y doce beats de fixtures— la política candidata da:
+
+| Perfil sintético | Score |
+|---|---|
+| juego perfecto | 10.000 en **todos** los planes, sin dispersión |
+| matemática fuerte, secundarias mínimas | 7.400 – 9.000 |
+| matemática floja, secundarias perfectas | 2.000 – 3.600 |
+| peor juego posible | 0 |
+
+Las dos franjas del medio **no se cruzan**: es la dominancia de la matemática medida, no afirmada. `pnpm game:score` reproduce la tabla y `pnpm game:score -- --compare` corre las mismas runs bajo calibraciones alternativas, que es la herramienta para discutir 80/15/5 en el Gate.
+
+Nada de esto dice que 80/15/5 sea la respuesta correcta. Dice que el mecanismo es justo en las formas en que se le pidió serlo.
+
 ## Qué no entra al score
 
 ### Promedio
@@ -1331,11 +1359,12 @@ Las reglas publicadas tienen que poder explicarse en tres frases: la matemática
 |---|---|
 | Score por evento determinista, con política nombrada y versionada | **implementado**, marcado `production: false` |
 | Separación entre stats visibles y métricas ocultas de razonamiento | **implementado** |
-| `MathPerformance` / `TeamPerformance` / `AuraPerformance` normalizados | **no implementado** |
-| `FairScore` y desglose competitivo | **no implementado** |
-| Comparador lexicográfico versionado | **no implementado** |
+| `MathPerformance` / `TeamPerformance` / `AuraPerformance` normalizados | **implementado**, en puntos básicos enteros |
+| `FairScore` y desglose competitivo | **implementado** como `fair-score-dev-1`, `official: false` |
+| Recomputación y verificación autoritativa del score en servidor | **implementado**: el servidor puntúa reproduciendo, y `verifyScoreClaim` contradice un reclamo campo por campo |
+| Comparador lexicográfico versionado | **no implementado**; sin ranking no tiene a qué ordenar, y el desglose ya reporta el primer criterio que va a necesitar |
 | Personal best transaccional en servidor | **no implementado** |
-| `scoreVersion` en la identidad de la run | **no implementado** |
+| `scoreVersion` en la identidad de la run | **implementado**, opcional: una partida de práctica no está compitiendo |
 
 Ver [arquitectura objetivo del motor](03-architecture/target-engine-architecture.md).
 
@@ -4193,6 +4222,135 @@ Score competitivo, `FairScore`, multiplicadores y `scoreVersion` siguen siendo S
 
 ---
 
+# FILE: 03-architecture/adr/ADR-023-competitive-score-policy.md
+
+# ADR-023 — Política de score competitivo
+
+- Estado: Aceptado
+- Fecha: 2026-08-29
+
+## Contexto
+
+[ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) dejó runs **comparables antes de puntuar**: el contenido de una partida se compone una sola vez dentro de un presupuesto de dificultad, y 20.000 seeds de 7.º producen 1.404 planes distintos con carga total idéntica. Lo que no existía es qué vale lo que el jugador hizo con ese contenido.
+
+Lo que sí había es el score por evento —`base × calidad × dificultad + bonus`— que alimenta la vista previa de la run y vive en [reglas, scoring y progresión](01-game-design/rules-scoring-and-progression.md). Ése responde «cómo salió este beat». La pregunta de esta etapa es otra: **cuánto vale una run entera cuando se la compara con la de otra persona**.
+
+[El score competitivo](01-game-design/competitive-scoring-and-ranking.md) ya describía la capa y no estaba implementada. Este ADR la implementa, sin cerrar un solo coeficiente.
+
+## Decisión
+
+### 1. Cinco cosas distintas que no se colapsan en un número
+
+```text
+resultado del desafío  ≠  efecto de carrera  ≠  desempeño competitivo  ≠  FairScore  ≠  ranking
+```
+
+Un mismo beat produce las cuatro primeras a la vez y ninguna se deriva de otra por conveniencia: el trabajo grupal deja una nota en el legajo, mueve Estilo hacia Estratega, aporta un desempeño matemático y otro de equipo, y de todo eso sale una contribución al score. El ranking no existe todavía y no es de esta etapa.
+
+### 2. La plantilla declara qué hecho suyo lee cada componente
+
+Los evaluadores no miden lo mismo. El colectivo pregunta si elegiste la salida que llega a horario; el acto calcula un F1 sobre veinticuatro clasificaciones; el trabajo grupal responde dos preguntas separadas —si el reparto era factible y cuánto jugó a la fuerza de cada uno—. Aplanar todo eso en una métrica sería tirar evidencia que ya existe o inventar la que no.
+
+Así que cada plantilla declara un **perfil de score**: qué señal alimenta la matemática, cuál el equipo, cuál el aura, y **por qué**. `'none'` es una decisión que hay que escribir, no un default en el que se pueda caer, y la razón es obligatoria porque la pregunta no es «qué mide esta plantilla» sino «por qué esto es un hecho *distinto* del que otra componente ya leyó».
+
+El agregador no conoce ni un id de contenido. Una plantilla futura declara su perfil y se puntúa sola; hay un test que lo prueba con contenido que el scorer nunca vio.
+
+### 3. La auditoría de doble conteo, y lo que encontró
+
+| Plantilla | Matemática | Equipo | Aura | Por qué |
+|---|---|---|---|---|
+| `g7.bus-timing` | calidad discreta | — | — | elegir la salida correcta es su único hecho |
+| `g7.bus-latest-departure` | calidad discreta | — | — | el número producido es su único hecho |
+| `g7.mural-paint` | calidad discreta | — | — | la eficiencia reportada **es** el óptimo de compra |
+| `g7.notebook-offer` | calidad discreta | — | — | una sola comparación |
+| `g7.stand-supplies` | calidad discreta | — | — | su eficiencia es el costo mínimo, o sea la misma optimización |
+| `g7.group-tasks` | calidad discreta | afinidad del reparto | — | factibilidad y afinidad son dos hechos que el evaluador mide por separado |
+| `g7.may-25-act` | **F1** | — | — | la clasificación es su único hecho |
+
+Dos resultados de esa tabla merecen decirse en voz alta.
+
+**El stand mueve Equipo en la carrera y no aporta equipo competitivo.** Lo que mide es el costo mínimo, que ya se cobró como matemática. El efecto de carrera responde «qué le pasó al grupo»; la evidencia competitiva respondería «qué tan bien colaboró», y este evaluador no mide lo segundo. Que las dos capas discrepen es la prueba de que no son la misma.
+
+**Ninguna plantilla de producción aporta aura competitiva hoy.** El acto es el único evento que mueve Aura, y su única medida es el F1 que la matemática ya usa; darle además aura sería cobrar el mismo hecho dos veces con otro nombre. La componente existe, está normalizada y topeada, y la ejercitan los fixtures. Preferimos una componente honestamente vacía a una señal inventada para llenarla.
+
+### 4. La oportunidad ausente no cuesta puntos
+
+Los planes difieren en qué contienen. Una partida compuesta de 7.º son dos beats de pura matemática; el demo docente tiene equipo; una carrera sintética tiene las tres. Puntuar la primera sobre 8.000 y la segunda sobre 10.000 castigaría a alguien por un sorteo que no hizo.
+
+**Una componente sin oportunidad en una run sale, y su peso se reparte entre las que quedaron**, en proporción. Dos consecuencias: el juego perfecto vale exactamente 10.000 en toda run válida, y sacar una componente secundaria sólo puede **aumentar** la proporción de la matemática.
+
+Alternativas consideradas:
+
+- **normalizar cada componente contra sus propias oportunidades y dejar el peso quieto** — es lo mismo que puntuar sobre un máximo menor: el jugador sin contenido de equipo pierde 15 % que no tenía cómo ganar;
+- **garantizar oportunidades desde el compositor** — ata la composición al score, que es exactamente lo que [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) separó, y no hay contenido de aura con el que cumplirlo;
+- **tratar las secundarias como bonus con tope** — el juego perfecto pasaría a valer distinto según el plan, que es la invariante que esta etapa existe para sostener.
+
+### 5. La matemática manda, y es ejecutable
+
+`competitiveScorePolicyIssues` rechaza una política donde el peso matemático no supere la suma de los otros dos. No es una preferencia: es D-011 escrita como código, y ningún comentario bien intencionado la sostiene sola.
+
+La evidencia sobre 23.000 planes: una run con matemática floja y secundarias perfectas llega a 3.600; una con matemática fuerte y secundarias mínimas no baja de 7.400. **No se cruzan.**
+
+### 6. Estilo y Promedio no tienen peso porque no son componentes
+
+No valen cero: no existen. `SCORE_COMPONENTS` es `math · team · aura`, y un peso cero es un número que alguien puede subir editando una línea.
+
+Estilo no puntúa porque darle score a Aplicado, Estratega o Improvisador afirmaría que hay una personalidad objetivamente superior, y el juego dice explícitamente que ningún eje es el malo. Promedio no puntúa porque el desempeño matemático que lo produce ya se contó: sumarlo aparte cobra la misma habilidad dos veces.
+
+### 7. La recompensa por dificultad no es el costo de scheduling
+
+STAGE-05 cobra 210 centésimas por un beat `stretch` para poder **equilibrar** una run. Pagar 2,1× por resolverlo dejaría que el sorteo decidiera un ranking, que es justo lo que ese costo existe para evitar.
+
+Son dos números distintos: 1,00 / 1,08 / 1,15, y la validación rechaza cualquiera por encima de 1,50. Se aplica a los dos lados de la razón matemática, así que un plan más difícil vale un máximo **distinto en su reparto**, nunca más grande.
+
+### 8. Enteros, y un solo redondeo
+
+Todo en puntos básicos sobre racionales exactos, redondeado media-arriba una sola vez al final. Un ranking es exactamente donde dos máquinas no pueden permitirse discrepar por un flotante, y el motor ya rechaza el punto flotante donde el resultado importa ([ADR-013](03-architecture/adr/ADR-013-exact-rational-arithmetic.md)).
+
+Las contribuciones del desglose se reparten por **resto mayor**, así que las partes suman el total. Un desglose cuyas partes no cierran con el número que tiene al lado es un desglose que nadie puede defender.
+
+### 9. La run declara bajo qué calibración se juega
+
+`scoreVersion` entra a la identidad de la run, junto a la versión del catálogo y la huella del plan, y `createRun` la comprueba contra la política que recibe. Un score bajo `fair-score-dev-1` y uno bajo `fair-score-dev-2` son afirmaciones distintas sobre la misma partida, y una submission que no dijera cuál quiso decir no se podría verificar.
+
+Es opcional: una partida de práctica no está compitiendo, y ausente es una respuesta.
+
+### 10. El servidor calcula el score; no lo compara
+
+`validateSubmittedRun` reproduce la run y **puntúa desde el historial que él mismo produjo**. La submission no lleva un score que el servidor pueda mirar, y agregárselo no sirve: el parser lo ignora. Hay tests que lo intentan.
+
+`verifyScoreClaim` es el otro lado: dado un reclamo, recalcula y reporta cada campo que no coincide —el total, cada desempeño, cada peso efectivo, cada contribución, la madurez de la política—. Un desglose editado para contar otra historia bajo un total correcto sigue siendo falso, y es el que un docente leería.
+
+## Alternativas consideradas
+
+**Reusar el score por evento como score competitivo.** Es la suma de puntos de una run, y suma más quien jugó más beats. Deja de comparar habilidad en cuanto dos planes tienen distinta longitud.
+
+**Derivar las componentes de los efectos de carrera.** Tentador porque ya existen. Responden otra pregunta —qué le pasó al personaje— y usarlos habría metido Estilo y Promedio al score por la puerta de atrás.
+
+**Un peso cero para Estilo y Promedio en vez de no tenerlos.** Un cero es una invitación.
+
+**Redondear cada contribución por separado.** Más simple, y produce desgloses que no suman.
+
+## Consecuencias
+
+- `ENGINE_VERSION` pasa a `5.1.0`, `SNAPSHOT_SCHEMA_VERSION` a `6` y `ACTION_LOG_VERSION` a `4`: una run puede declarar su calibración competitiva. **Nada del juego se movió** — las runs golden reproducen el mismo recorrido, el mismo score por evento, el mismo perfil y la misma cantidad de comandos.
+- **La huella del ruleset queda idéntica en `da245c60`.** Puntuar no toca una regla de juego, y una huella que no se movió lo dice mejor que cualquier comentario.
+- El contenido sube a `0.8.0-grade-7` y `0.6.0-dev`: el perfil de score es contenido que decide cuánto vale una run, así que entra a la huella de contenido. El catálogo aprobado pasa a `grade-7-dev-4`, publicado al lado de `dev-3` sin editarlo.
+- `pnpm game:score` audita 23.000 planes reales y sintéticos, y `--compare` corre las mismas runs bajo calibraciones alternativas para que el Teacher Gate discuta con números.
+- El score no alimenta nada: ni un resultado, ni un efecto de carrera, ni una rama narrativa, ni qué contenido se compone. Puntuar es observar.
+
+## Lo que esto no decide
+
+Los coeficientes. 80/15/5, los cuatro escalones de calidad y las recompensas por dificultad son **candidatos** y van al Teacher Gate 1 ([preguntas 24, 38 y 39](07-reference/open-questions.md)). La política se llama `fair-score-dev-1`, lleva `official: false`, y `createRuleset` se niega a construir un ruleset oficial con una calibración de desarrollo.
+
+Que 23.000 runs se comporten como se espera dice que el mecanismo es justo en las formas en que se le pidió serlo. **No dice que 80/15/5 sea la respuesta correcta para una feria de matemática**, y ninguna barrida puede decirlo.
+
+## No objetivos
+
+Ranking, leaderboard, personal best, endpoints, persistencia e inscripción a un evento son STAGE-09. Egreso y recuperaciones, STAGE-07. El desempate lexicográfico está documentado y no implementado: sin ranking no tiene a qué ordenar, y el `optimalCount` que el desglose ya reporta es el primer dato que va a necesitar.
+
+---
+
 # FILE: 03-architecture/analytics-observability.md
 
 # Analytics y observabilidad
@@ -5066,13 +5224,13 @@ createRun(descriptor) -> action[0] -> action[1] -> ... -> finalState
 
 El action log versionado es el artefacto de validación más fuerte: se puede volver a ejecutar. Las secuencias deben empezar en cero y avanzar de a uno; un salto se rechaza en vez de repararse. Un comando que las reglas no habrían permitido invalida el log completo.
 
-`ACTION_LOG_VERSION` es `3`. El log lleva el descriptor completo: `variantCatalogVersion` —sin ese campo una run se reproducía contra el contenido equivocado sin decir nada, que es el defecto que [ADR-021](03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md) encontró y cerró— y la huella del plan compuesto, que dice contra qué composición hay que reproducirla.
+`ACTION_LOG_VERSION` es `4`. El log lleva el descriptor completo: `variantCatalogVersion` —sin ese campo una run se reproducía contra el contenido equivocado sin decir nada, que es el defecto que [ADR-021](03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md) encontró y cerró— la huella del plan compuesto, que dice contra qué composición hay que reproducirla, y el `scoreVersion`, que dice bajo qué calibración competitiva se jugó.
 
 La comparación usa una forma JSON canónica con claves ordenadas, así que el orden de inserción no puede producir un falso negativo.
 
 ## Snapshots
 
-Los snapshots son una **optimización para reanudar** (FR-009/FR-010), no un artefacto autoritativo. El codec valida agresivamente y rechaza lo que no reconoce; una versión incompatible produce un error explícito, nunca una migración silenciosa. Desde [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) el snapshot guarda además el **plan concreto** de una run compuesta, en vez de la forma de recalcularlo: reanudar tiene que jugar el año que el jugador empezó, no el que la calibración de hoy compondría. `SNAPSHOT_SCHEMA_VERSION` es `5`; no existe un registro de migraciones porque las versiones anteriores se rechazan y la aplicación ofrece una partida nueva.
+Los snapshots son una **optimización para reanudar** (FR-009/FR-010), no un artefacto autoritativo. El codec valida agresivamente y rechaza lo que no reconoce; una versión incompatible produce un error explícito, nunca una migración silenciosa. Desde [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) el snapshot guarda además el **plan concreto** de una run compuesta, en vez de la forma de recalcularlo: reanudar tiene que jugar el año que el jugador empezó, no el que la calibración de hoy compondría. `SNAPSHOT_SCHEMA_VERSION` es `6`; no existe un registro de migraciones porque las versiones anteriores se rechazan y la aplicación ofrece una partida nueva.
 
 ### Invariantes estructurales
 
@@ -5094,7 +5252,7 @@ Una run sólo puede reanudarse o revalidarse con un motor que declare el mismo t
 | Cambió | Subir |
 |---|---|
 | transición, orden de consumo de RNG, derivación de seed, formato de action log, codec de snapshot, generación de un desafío existente | `ENGINE_VERSION` |
-| política de scoring, dificultad, progresión, perfil **o composición** | versión de ruleset |
+| política de scoring por evento, dificultad, progresión, perfil **o composición** | versión de ruleset |
 | datos de desafíos o storylets | versión de contenido |
 
 Los golden tests de `tests/unit/engine-golden.test.ts` fallan ante cualquier cambio accidental de salida determinista. Regenerarlos sin subir la versión correspondiente invalida en silencio los replays guardados.
@@ -5292,11 +5450,11 @@ Esto ya es lo que hay: núcleo funcional con función de transición explícita 
 | 15 | Catálogo de variantes aprobado y versionado | **implementado para desarrollo y consumido por la partida** — `ApprovedVariantCatalog` con `grade-7-dev-1`, `dev-2` y `dev-3` inmutables; `dev-3` es el vigente y conserva la población semántica de `dev-2`; el catálogo oficial de feria no está congelado | `src/game/content/variant-catalog.ts`, [ADR-020](03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md), [ADR-021](03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md), [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) |
 | 16 | Bandas `CORE / STANDARD / STRETCH` como metadata de autoría | **implementado**: la banda se deriva de seis rasgos cognitivos declarados por plantilla; `DifficultyLevel` 1–5 sigue siendo la perilla del runtime y las dos pueden discrepar | `src/game/difficulty/cognitive.ts`, [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) |
 | 17 | Scheduler por presupuesto de dificultad | **implementado**: compositor determinista por enumeración, con presupuesto y tolerancia por etapa, validador independiente y verificación en servidor | `src/game/plan/`, [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) |
-| 18 | `MathPerformance` / `TeamPerformance` / `AuraPerformance` normalizados | **TARGET** | [score competitivo](01-game-design/competitive-scoring-and-ranking.md) |
-| 19 | `ScorePolicy` competitiva con pesos, topes y orden de desempate | **TARGET** | ídem |
+| 18 | `MathPerformance` / `TeamPerformance` / `AuraPerformance` normalizados | **implementado**: en puntos básicos enteros, y cada plantilla declara qué hecho suyo alimenta cada una | `src/game/scoring/`, [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md) |
+| 19 | `ScorePolicy` competitiva con pesos, topes y orden de desempate | **implementada salvo el desempate**: `fair-score-dev-1` con pesos, topes y recompensas validados; el comparador lexicográfico espera a que exista un ranking | `src/game/scoring/competitive-policy.ts`, [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md) |
 | 20 | `RunDescriptor` emitido por servidor | **TARGET**; el descriptor ya lleva la huella del plan que un servidor tendría que emitir y verificar | este documento, [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) |
-| 21 | `scoreVersion` y `variantCatalogVersion` | **parcial**: `variantCatalogVersion` y la huella del plan viajan en descriptor, snapshot y action log, y `createRun` las comprueba; `scoreVersion` sigue pendiente | `src/game/runs/state.ts`, [ADR-021](03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md), [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) |
-| 22 | Verificación autoritativa por replay en servidor | **TARGET** para endpoints y sesión; el caso de uso ya reproduce la run, recompone su plan, compara la huella y valida el plan contra las reglas | `src/server/game/validate-run.ts`, [ADR-004](03-architecture/adr/ADR-004-server-authoritative-scoring.md) |
+| 21 | `scoreVersion` y `variantCatalogVersion` | **implementado**: los tres —catálogo, huella del plan y versión de score— viajan en descriptor, snapshot y action log, y `createRun` los comprueba | `src/game/runs/state.ts`, [ADR-021](03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md), [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md), [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md) |
+| 22 | Verificación autoritativa por replay en servidor | **TARGET** para endpoints y sesión; el caso de uso ya reproduce la run, recompone y valida su plan, y **calcula su propio score competitivo** sin leer nada que el cliente afirme | `src/server/game/validate-run.ts`, [ADR-004](03-architecture/adr/ADR-004-server-authoritative-scoring.md), [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md) |
 | 23 | Ranking con personal best transaccional | **TARGET** | [modo feria](05-operations/fair-mode-and-competition-freeze.md) |
 | 24 | Invariante de egreso y recuperación fail-forward | **TARGET**; el modelo de contenido ya puede declarar un beat `recovery` condicional | [egreso y fail-forward](01-game-design/graduation-and-fail-forward.md) |
 | 25 | Catálogo de contenido disponible separado del plan de la run | **implementado** | `ContentCatalog`, `RunPlan`, [ADR-019](03-architecture/adr/ADR-019-scenario-family-template-variant.md) |
@@ -6282,102 +6440,87 @@ Vista corta del estado de ejecución. El detalle completo, los contratos de toda
 
 ---
 
-## STAGE-06 — ScorePolicy competitiva
+## GATE-TG1 — Teacher Gate 1
 
-**Estado:** `READY`. Es la etapa actual; su dependencia está `DONE` y la implementación todavía no empezó.
+**Estado:** `TEACHER_GATE`, pendiente. Es el hito actual, y **no es una etapa de ingeniería**: lo que falta es una decisión externa del Departamento de Matemática, no código.
 
-## Por qué está activa
+## Por qué es el hito actual
 
-STAGE-05 está `DONE` con evidencia reforzada: el contenido de una partida se compone una sola vez, dentro de un presupuesto de dificultad, y el motor lo ejecuta sin volver a sortear nada. 20.000 seeds de la partida normal de 7.º producen 1.404 planes distintos con carga total idéntica; todos pasan validación independiente, round-trip y recomposición. Además, 10.000 carreras sintéticas prueban las seis etapas académicas y un test explícito prueba el plan válido de un solo `anchor`. Ver [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md).
+Sus dos dependencias están `DONE`. STAGE-04 dejó una Demo Candidate jugable de 7.º; STAGE-06 dejó el score competitivo implementado, medido y **sin un solo coeficiente cerrado**. Ver [ADR-021](03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md), [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) y [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md).
 
-Eso deja las runs comparables **antes** de puntuarlas, que era la condición para que un score competitivo signifique algo. Lo que falta ahora es qué vale lo que el jugador hizo con ese contenido: hoy el score es una política de desarrollo que el motor se niega a declarar oficial, sin componentes normalizados, sin topes y sin orden de desempate.
+Lo que sigue no es implementar más: es que alguien que enseña matemática mire lo que hay y decida. Seguir construyendo sobre calibraciones que ningún docente aprobó es cómo un proyecto llega a una feria con un ranking que no puede defender.
 
-Hay una separación que esta etapa hereda y no debe romper: el `difficultyCost` con el que el compositor agenda **no es** el multiplicador de score. El primero necesita ser fuerte para poder equilibrar una run; el segundo, chico, para que el sorteo no le gane a la habilidad.
+## Qué se lleva al Gate
 
-## Objetivo
+- **La Demo Candidate de 7.º**: siete plantillas, seis interacciones, seis dominios y las cuatro dimensiones de carrera, en un recorrido jugable.
+- **La partida normal compuesta**: uno o dos beats por año, para que la diferencia entre demostración y partida se vea en pantalla.
+- **La clasificación de dificultad candidata** de las siete plantillas, con las cuatro divergencias respecto del nivel autorado que son preguntas concretas: ¿el mural es realmente más liviano que el colectivo? ¿El stand y el trabajo grupal son `STRETCH` para 7.º?
+- **La calibración competitiva candidata**: 80/15/5, los cuatro escalones de calidad, las recompensas por dificultad y los topes, con la evidencia de qué hacen sobre 23.000 planes.
+- **La tabla de doble conteo**: qué componente lee cada plantilla y por qué, incluida la decisión de que ninguna plantilla de producción aporte aura competitiva.
 
-Que la misma run con la misma policy dé siempre el mismo desglose y el mismo score.
+## Preguntas que el Gate tiene que responder
 
-## Scope IN
-
-- `MathPerformance`, `TeamPerformance` y `AuraPerformance` normalizados.
-- `ScorePolicy` versionada, con pesos, topes y orden de desempate declarados como configuración.
-- `FairScore` y su desglose explicable.
-- `scoreVersion` en la identidad de una run.
-- Golden de score y reporte de distribución por perfil sintético.
-
-## Scope OUT
-
-**Nada de esto se implementa en esta etapa.**
-
-- Ranking, endpoints, persistencia y fair mode → STAGE-09.
-- Egreso, recuperaciones, contenido de 1.º–5.º → STAGE-07 y STAGE-08.
-- Recalibrar bandas, costos o presupuestos de dificultad: son de STAGE-05 y su calibración final es del Teacher Gate.
-- Contenido nuevo: plantillas, variantes curadas o años.
-- Congelar el catálogo oficial de la feria: es una decisión de evento.
-- Migrar la pantalla del juego a partidas compuestas: es una decisión de producto que tiene sentido con los años 1.º a 5.º.
-- Cualquier cambio al sistema de diseño o a los tokens.
+- [ ] Nivel matemático y terminología de las siete situaciones.
+- [ ] Duración objetivo de una run y densidad de la demostración.
+- [ ] Ponderación del score competitivo: ¿80/15/5, u otra?
+- [ ] Calibración de los cuatro escalones de calidad.
+- [ ] Bandas y costos de dificultad ([pregunta 44](07-reference/open-questions.md)).
+- [ ] Política de intentos y de empate.
+- [ ] Lenguaje de recuperación y de egreso.
+- [ ] Si el acto del 25 de Mayo entra a producción ([pregunta 42](07-reference/open-questions.md)).
 
 ## Criterios de aceptación
 
-- [ ] `ScorePolicy` está versionada y ninguna constante de peso vive dispersa en el código.
-- [ ] La misma run con la misma policy produce exactamente el mismo desglose y el mismo score.
-- [ ] El desglose explica componentes, multiplicadores, topes y versión de policy.
-- [ ] En la policy candidata, la matemática domina el resultado, verificado por simulación.
-- [ ] La contribución de Aura está acotada por un tope explícito.
-- [ ] **Estilo no aporta score directo**, verificado por test.
-- [ ] Promedio no se suma aparte de `MathPerformance` sin justificación escrita.
-- [ ] Se pueden cargar y testear varias policies en paralelo.
-- [ ] Golden tests de score fijan la salida de policies conocidas.
-- [ ] La simulación reporta la distribución de score por perfil sintético.
+- [ ] Feedback registrado ítem por ítem.
+- [ ] Cada comentario clasificado como aceptado, rechazado o diferido.
+- [ ] Las decisiones cerradas actualizan el [registro de decisiones](07-reference/decision-register.md).
+- [ ] Las que siguen abiertas quedan en [preguntas abiertas](07-reference/open-questions.md).
+- [ ] La ScorePolicy candidata fue revisada por los docentes.
+- [ ] **No se presentó la validación docente como playtest con estudiantes.**
+- [ ] Este documento y el [roadmap](06-delivery/implementation-sequence.md) actualizados antes de empezar STAGE-07.
 
-## Lectura requerida antes de tocar código
+## Herramientas para conducir la sesión
 
-1. `AGENTS.md` de la raíz.
-2. Este documento y el [contrato de STAGE-06](06-delivery/implementation-sequence.md).
-3. [Score competitivo y ranking](01-game-design/competitive-scoring-and-ranking.md) y [reglas, scoring y progresión](01-game-design/rules-scoring-and-progression.md).
-4. [Fórmulas y algoritmos](07-reference/formulas-and-algorithms.md), [ejemplo de política](07-reference/score-policy.example.json) y [ejemplo de desglose](07-reference/score-breakdown.example.json).
-5. [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) — por qué el costo de scheduling y el multiplicador de score son dos números distintos.
-6. [ADR-016](03-architecture/adr/ADR-016-career-player-model.md) — Promedio, Equipo, Aura y Estilo, y por qué Estilo no puntúa.
-7. El código: `src/game/scoring/`, `src/game/profiles/`, `src/game/runs/state.ts`.
+- `pnpm game:score` — qué hace la calibración candidata sobre 23.000 planes.
+- `pnpm game:score -- --compare` — las mismas runs bajo 80/15/5, 85/10/5, 90/10/0 y sin recompensa por dificultad. Mover el dial deja de ser una discusión abstracta.
+- `pnpm game:compose` — la distribución de composición: 20.000 años de 7.º, 1.404 planes distintos, carga idéntica.
+- El juego en `/jugar`, que sigue jugando el arco completo de la demostración.
 
-## Validación requerida
+## Qué NO se hace mientras el Gate está pendiente
 
-`pnpm test` · `pnpm typecheck` · `pnpm lint` · `pnpm game:simulate:deep` · `pnpm verify`.
-
-Con Node `24.19.0`, la versión que `pnpm toolchain:check` exige exacta.
+- Cerrar coeficientes de score o de dificultad por decisión de ingeniería.
+- Ranking, leaderboard, personal best, endpoints o persistencia → STAGE-09.
+- Egreso, recuperaciones o contenido de 1.º–5.º → STAGE-07 y STAGE-08.
+- Congelar el catálogo oficial de la feria: es una decisión de evento.
+- Declarar oficial cualquier política: `createRuleset` lo impide por diseño, y las tres calibraciones vigentes llevan `official: false`.
 
 ## Bloqueos
 
-Ninguno. La etapa puede empezar.
+**Externo, y es el punto.** El gate depende de la disponibilidad del Departamento de Matemática. Ninguna tarea de ingeniería lo desbloquea.
 
-## Decisiones abiertas o de Teacher Gate relevantes ahora
+## Si el Gate se demora
 
-- `RECOMENDADA` (D-010): `FairScore` separado de las stats de carrera. `RECOMENDADA` (D-012): Estilo no puntúa directamente.
-- `TEACHER GATE` (D-011, [preguntas 38 y 39](07-reference/open-questions.md)): pesos exactos y calibración de calidades.
-- `TEACHER GATE` ([pregunta 44](07-reference/open-questions.md)): calibración de bandas y costos de dificultad. **No se cierra acá**, pero el multiplicador de score se discute contra ella.
-- `LOCKED`: el navegador no es autoridad de score.
+STAGE-07 depende de él y no debería empezar. Lo que sí puede avanzar sin comprometer decisiones docentes es trabajo de infraestructura de STAGE-09 que no fije reglas —sesión, límites de tasa, persistencia— siempre que no congele un coeficiente ni implemente ranking. Esa decisión es de producto y no está tomada.
 
-## Evidencia ya disponible
+## Evidencia disponible
 
-- Modelo de dificultad y compositor de runs — [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md); `difficultyCost` ya existe y está separado del multiplicador de score.
-- Runs comparables antes de puntuar — `pnpm game:compose -- --content=grade-7 --runs=20000`: 20.000 planes válidos, 1.404 distintos, carga total idéntica; `--content=synthetic-six-stage --runs=10000`: 10.000 carreras de seis etapas, cero fallos.
-- Catálogo aprobado dentro del juego — [ADR-021](03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md); catálogos `grade-7-dev-1`, `dev-2` y `dev-3`, inmutables.
+- Score competitivo — [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md); `fair-score-dev-1`, `official: false`; juego perfecto = 10.000 en los 23.000 planes auditados, y las franjas de matemática fuerte y floja no se cruzan.
+- Modelo de dificultad y compositor — [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md); 20.000 seeds, 1.404 planes distintos, carga total idéntica.
+- Catálogo aprobado dentro del juego — [ADR-021](03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md); catálogos `grade-7-dev-1` a `dev-4`, inmutables.
 - Pipeline de variantes — [ADR-020](03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md).
 - Modelo de contenido — [ADR-019](03-architecture/adr/ADR-019-scenario-family-template-variant.md).
 - Career Model v2 — [ADR-016](03-architecture/adr/ADR-016-career-player-model.md).
 - Sistema de diseño v0.2 — [ADR-017](03-architecture/adr/ADR-017-paper-visual-identity.md).
-- Verificación autoritativa por replay — `src/server/game/validate-run.ts`, que ya recompone y valida el plan de una run compuesta.
-- Estabilidad del juego — golden con mismo recorrido, score, perfil y comandos; runs simuladas sin hallazgos.
-- Versionado — `ENGINE_VERSION 5.0.0`, `SNAPSHOT_SCHEMA_VERSION 5`, `ACTION_LOG_VERSION 3`, contenido `0.7.0-grade-7` y `0.5.0-dev`.
+- Verificación autoritativa — el servidor reproduce la run, valida su plan y **calcula** su propio score competitivo.
+- Versionado — `ENGINE_VERSION 5.1.0`, `SNAPSHOT_SCHEMA_VERSION 6`, `ACTION_LOG_VERSION 4`, contenido `0.8.0-grade-7` y `0.6.0-dev`.
 
 ## Siguiente etapa
 
-STAGE-04 ya está `DONE`; completar STAGE-06 habilita el **Teacher Gate 1**, el primer gate externo. En paralelo, STAGE-07 depende de ese gate.
+STAGE-07 — invariante de egreso, fail-forward y recuperaciones, que depende de este gate.
 
 ## Última reconciliación
 
-29 de agosto de 2026, al cerrar STAGE-05, con `pnpm verify` en verde.
+29 de agosto de 2026, al cerrar STAGE-06, con `pnpm verify` en verde.
 
 ---
 
@@ -6488,7 +6631,7 @@ Si el roadmap y el código difieren, **el código gana** y el roadmap se corrige
 - Fases de validación externa y congelamiento: [ciclo de entrega real](00-product/real-delivery-lifecycle.md).
 - Qué se construye por capas de alcance: [alcance y roadmap](00-product/scope-and-roadmap.md) y [backlog](06-delivery/mvp-backlog.md).
 
-**Última reconciliación contra el código:** 29 de agosto de 2026, al cerrar STAGE-05.
+**Última reconciliación contra el código:** 29 de agosto de 2026, al cerrar STAGE-06.
 
 ---
 
@@ -6525,8 +6668,8 @@ Tabla de navegación. Los contratos de cada etapa, más abajo, son la autoridad.
 | [STAGE-03](#stage-03-generación-validación-y-catálogo-de-variantes) | Generación, validación y catálogo de variantes | `DONE` | STAGE-02 | — |
 | [STAGE-04](#stage-04-enriquecimiento-de-7º-y-demo-candidate) | Enriquecimiento de 7.º y Demo Candidate | `DONE` | STAGE-02, STAGE-03 | — |
 | [STAGE-05](#stage-05-modelo-de-dificultad-y-run-composer) | Modelo de dificultad y Run Composer | `DONE` | STAGE-03, STAGE-04 | — |
-| [STAGE-06](#stage-06-scorepolicy-competitiva) | ScorePolicy competitiva | `READY` · actual | STAGE-05 | — |
-| [GATE-TG1](#gate-tg1-teacher-gate-1) | **Teacher Gate 1** | `TEACHER_GATE` | STAGE-04, STAGE-06 | externo |
+| [STAGE-06](#stage-06-scorepolicy-competitiva) | ScorePolicy competitiva | `DONE` | STAGE-05 | — |
+| [GATE-TG1](#gate-tg1-teacher-gate-1) | **Teacher Gate 1** | `TEACHER_GATE` · **actual** | STAGE-04, STAGE-06 | externo |
 | [STAGE-07](#stage-07-invariante-de-egreso-fail-forward-y-recuperaciones) | Egreso, fail-forward y recuperaciones | `NOT_STARTED` | GATE-TG1 | — |
 | [STAGE-08](#stage-08-contenido-incremental-de-1º-a-5º) | Contenido incremental 1.º → 5.º | `NOT_STARTED` | STAGE-07 | auditoría tras 1.º |
 | [STAGE-09](#stage-09-fair-mode-servidor-autoritativo-y-ranking) | Fair mode, servidor autoritativo y ranking | `NOT_STARTED` | STAGE-06, STAGE-08 | — |
@@ -6564,7 +6707,7 @@ flowchart TD
 
 ## Matriz de capacidades
 
-Estado real contra el código al 29 de agosto de 2026, tras cerrar STAGE-05. Es la base de la que salen los estados de etapa de arriba, y lo que hay que reverificar antes de planificar.
+Estado real contra el código al 29 de agosto de 2026, tras cerrar STAGE-06. Es la base de la que salen los estados de etapa de arriba, y lo que hay que reverificar antes de planificar.
 
 | Capacidad | Estado | Evidencia | Etapa |
 |---|---|---|---|
@@ -6583,7 +6726,7 @@ Estado real contra el código al 29 de agosto de 2026, tras cerrar STAGE-05. Es 
 | Replay | `DONE` | `src/game/runs/replay.ts`, `tests/unit/engine-golden.test.ts`, `tests/property/engine.property.test.ts` | STAGE-01 |
 | Snapshot versionado con rechazo explícito | `DONE` | `src/game/runs/snapshot.ts`, E2E de reanudación y de checkpoint corrupto | STAGE-01 |
 | Separación outcome ≠ carrera ≠ score | `DONE` | `challenges/contracts.ts`, `progression/career.ts`, `scoring/policy.ts` | STAGE-01 |
-| `scoreVersion` | `NOT_STARTED` | — | STAGE-06 |
+| `scoreVersion` | `DONE` | campo opcional del descriptor, comprobado por `createRun`; viaja en snapshot y action log | STAGE-06 |
 | `variantCatalogVersion` | `DONE` | campo opcional del descriptor; viaja en snapshot y en action log, y `createRun` rechaza una run que declare otro catálogo del que se le da | STAGE-04 |
 | `ScenarioFamily` | `DONE` | `src/game/challenges/content-model.ts`, [ADR-019](03-architecture/adr/ADR-019-scenario-family-template-variant.md), `tests/unit/content-model.test.ts` | STAGE-02 |
 | `ChallengeTemplate` | `DONE` | una `ChallengeDefinition` declara familia, rol y variantes; `school-data` lo prueba en desarrollo y `bus` en producción | STAGE-02/STAGE-04 |
@@ -6602,13 +6745,14 @@ Estado real contra el código al 29 de agosto de 2026, tras cerrar STAGE-05. Es 
 | Plan concreto ejecutado por el motor, sin recomposición en runtime | `DONE` | `RunState.plan`, `beginEvent` consume el beat pinchado, el snapshot lo persiste y el action log lleva su huella | STAGE-05 |
 | Validador de plan independiente del compositor | `DONE` | `src/game/plan/plan-validator.ts`; recalcula rol, banda y costo en vez de creerle al plan | STAGE-05 |
 | Verificación de composición en servidor | `DONE` para el alcance actual | `src/server/game/validate-run.ts` recompone, compara la huella y valida el plan | STAGE-05 |
-| `ScorePolicy` versionada | `PARTIAL` | `src/game/scoring/policy.ts` y `development-policy.ts`, con `production: false` y `createRuleset` negándose a construir un ruleset oficial | STAGE-06 |
-| `MathPerformance` · `TeamPerformance` · `AuraPerformance` | `NOT_STARTED` | — | STAGE-06 |
-| `FairScore` y desglose competitivo | `NOT_STARTED` | — | STAGE-06 |
+| `ScorePolicy` versionada | `DONE` | dos capas separadas: el score por evento (`scoring/policy.ts`, `production: false`) y el competitivo (`scoring/competitive-policy.ts`, `fair-score-dev-1`, `official: false`) | STAGE-06 |
+| `MathPerformance` · `TeamPerformance` · `AuraPerformance` | `DONE` | normalizados en puntos básicos enteros; la plantilla declara qué hecho suyo alimenta cada uno | STAGE-06 |
+| `FairScore` y desglose competitivo | `DONE` | `src/game/scoring/fair-score.ts`; el desglose cierra exactamente y dice qué calibración lo produjo | STAGE-06 |
+| Verificación autoritativa del score en servidor | `DONE` para el alcance actual | el servidor puntúa reproduciendo, y `verifyScoreClaim` contradice un reclamo campo por campo | STAGE-06 |
 | Invariante de egreso | `NOT_STARTED` | `STAGE_ORDER` llega a `graduation`, pero no hay estado terminal `GRADUATED`; el único `run.graduated` vive en un fixture de test | STAGE-07 |
 | Recuperaciones y fail-forward | `NOT_STARTED` | — | STAGE-07 |
 | Contenido 1.º · 2.º · 3.º · 4.º · 5.º | `NOT_STARTED` | sólo existe `src/content/grade-7/` | STAGE-08 |
-| Verificación autoritativa por replay | `PARTIAL` | `src/server/game/validate-run.ts` + `tests/integration/server-run-validation.test.ts`: replaya y **ignora el score enviado**. Faltan endpoints, sesión, rate limit y persistencia | STAGE-09 |
+| Verificación autoritativa por replay | `PARTIAL` | `src/server/game/validate-run.ts`: replaya, valida el plan compuesto y **calcula su propio score competitivo**; nada de lo que el cliente afirme se lee. Faltan endpoints, sesión, rate limit y persistencia | STAGE-09 |
 | Ranking con personal best | `NOT_STARTED` | — | STAGE-09 |
 | Desempate lexicográfico | `NOT_STARTED` | — | STAGE-09 |
 | Fair mode operativo | `PARTIAL` | `GameMode` ya declara `'fair'` como literal; no hay comportamiento asociado | STAGE-09 |
@@ -6690,7 +6834,7 @@ Estado real contra el código al 29 de agosto de 2026, tras cerrar STAGE-05. Es 
 
 **Evidencia.** `src/game/core/versioning.ts`; `src/game/random/seed.ts` y `rng.ts`; `RunDescriptor` en `src/game/runs/state.ts`; `src/game/runs/replay.ts` y `snapshot.ts`; `tests/unit/engine-golden.test.ts`, `tests/unit/rng-addressing.test.ts`, `tests/property/engine.property.test.ts`, `tests/integration/server-run-validation.test.ts`.
 
-**Lo que no entró, y por qué.** Al cerrar STAGE-01, `scoreVersion` y `variantCatalogVersion` todavía no existían. Eran opcionales por diseño: agregar campos vacíos habría sido especulativo, porque nada podía poblarlos. `variantCatalogVersion` entró con STAGE-03; `scoreVersion` sigue reservado para [STAGE-06](#stage-06-scorepolicy-competitiva). No es trabajo huérfano.
+**Lo que no entró, y por qué.** Al cerrar STAGE-01, `scoreVersion` y `variantCatalogVersion` todavía no existían. Eran opcionales por diseño: agregar campos vacíos habría sido especulativo, porque nada podía poblarlos. `variantCatalogVersion` entró con STAGE-03 y `scoreVersion` con [STAGE-06](#stage-06-scorepolicy-competitiva). No era trabajo huérfano.
 
 **Riesgos.** Al agregar los dos ejes de versión faltantes hay que decidir si eso cambia la compatibilidad de replay. La regla vigente es igualdad exacta, no rangos semver.
 
@@ -7024,11 +7168,11 @@ Criterios que la etapa sumó sobre el contrato original:
 
 ### STAGE-06 — ScorePolicy competitiva
 
-- **Estado:** `READY`, **y es la etapa actual**. Ver [etapa actual](06-delivery/current-stage.md).
+- **Estado:** `DONE`
 - **Depende de:** STAGE-05 (`DONE`)
-- **Desbloquea:** GATE-TG1, STAGE-09
+- **Desbloquea:** GATE-TG1 (ahora el hito actual), STAGE-09
 
-**Punto de partida.** STAGE-05 dejó runs comparables **antes** de puntuar: el contenido de una partida se compone una vez, dentro de un presupuesto de dificultad, y el motor lo ejecuta. Lo que falta es qué vale lo que el jugador hizo con ese contenido. El `difficultyCost` que el compositor usa para agendar ya existe y es deliberadamente **otro número** que el multiplicador de score; ese multiplicador —los valores candidatos 1,00 / 1,08 / 1,15 de [dificultad y jugabilidad](01-game-design/difficulty-and-playability.md)— sigue siendo documentación.
+**Punto de partida.** STAGE-05 dejó runs comparables **antes** de puntuar: el contenido de una partida se compone una vez, dentro de un presupuesto de dificultad, y el motor lo ejecuta. Lo que faltaba es qué vale lo que el jugador hizo con ese contenido: el score que existía es el de la capa de carrera, que suma puntos por evento y por lo tanto suma más a quien jugó más beats.
 
 **Propósito.** Un score para ranking que no contamine la identidad de carrera.
 
@@ -7040,32 +7184,77 @@ Criterios que la etapa sumó sobre el contrato original:
 
 **Criterios de aceptación.**
 
-- [ ] `ScorePolicy` está versionada y ninguna constante de peso vive dispersa en el código.
-- [ ] **La misma run con la misma policy produce exactamente el mismo desglose y el mismo score.**
-- [ ] El desglose explica componentes, multiplicadores, topes y versión de policy.
-- [ ] En la policy candidata, la matemática domina el resultado, verificado por simulación.
-- [ ] La contribución de Aura está acotada por un tope explícito.
-- [ ] **Estilo no aporta score directo**, verificado por test.
-- [ ] Promedio no se suma aparte de `MathPerformance` sin justificación escrita.
-- [ ] Se pueden cargar y testear varias policies en paralelo.
-- [ ] Golden tests de score fijan la salida de policies conocidas.
-- [ ] La simulación reporta la distribución de score por perfil sintético.
+- [x] `ScorePolicy` está versionada y ninguna constante de peso vive dispersa en el código.
+- [x] **La misma run con la misma policy produce exactamente el mismo desglose y el mismo score.**
+- [x] El desglose explica componentes, multiplicadores, topes y versión de policy.
+- [x] En la policy candidata, la matemática domina el resultado, verificado por simulación.
+- [x] La contribución de Aura está acotada por un tope explícito.
+- [x] **Estilo no aporta score directo**, verificado por test.
+- [x] Promedio no se suma aparte de `MathPerformance` sin justificación escrita.
+- [x] Se pueden cargar y testear varias policies en paralelo.
+- [x] Golden tests de score fijan la salida de policies conocidas.
+- [x] La simulación reporta la distribución de score por perfil sintético.
 
-**Validación requerida.** `pnpm test`, golden de score, `pnpm game:simulate:deep`, `pnpm verify`.
+Criterios que la etapa sumó sobre el contrato original:
 
-**Riesgos.** Escribir 80/15/5 como constante final. La policy tiene que poder cambiar por configuración después del Teacher Gate sin tocar el motor.
+- [x] Cada plantilla declara **qué hecho suyo** lee cada componente competitiva, con su razón escrita; `'none'` es una decisión, no un default.
+- [x] Una componente sin oportunidad en una run no le cuesta puntos al jugador: su peso se reparte, y el juego perfecto vale la escala completa en todo plan válido.
+- [x] Ni Estilo ni Promedio tienen peso, porque no son componentes: no existe el número que alguien podría subir.
+- [x] La recompensa por dificultad es un concepto distinto del costo de scheduling, y la validación rechaza factores que dejarían al sorteo decidir un ranking.
+- [x] El servidor **calcula** el score reproduciendo la run; un reclamo adjunto a la submission no cambia nada.
+- [x] Aritmética entera con un solo redondeo; el desglose cierra exactamente con el total.
+- [x] Puntuar no toca el juego: la huella del ruleset quedó idéntica.
 
-**Decisiones.** `RECOMENDADA` (D-010, D-012): score separado de la carrera; Estilo sin puntaje. `TEACHER_GATE` (D-011, [preguntas 38 y 39](07-reference/open-questions.md)): pesos exactos y calibración de calidades. `LOCKED`: el navegador no es autoridad de score.
+**Validación requerida.** `pnpm test`, `pnpm game:score`, `pnpm game:simulate:deep`, `pnpm verify`.
 
-**Exit gate.** ¿La misma run con la misma policy da siempre el mismo desglose y el mismo score?
+**Evidencia de completitud.**
+
+| Qué | Dónde |
+|---|---|
+| Decisión | [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md) |
+| Perfil de score por plantilla | `src/game/challenges/scoring-profile.ts`; declarativo, con razón obligatoria |
+| Política competitiva versionada | `src/game/scoring/competitive-policy.ts`; `fair-score-dev-1`, `official: false` |
+| Validación de política | rechaza pesos que no suman, matemática no dominante, mapeo no monótono y recompensas de dificultad que decidirían un ranking |
+| Núcleo de score | `src/game/scoring/fair-score.ts`; racionales exactos, un redondeo, reparto por resto mayor |
+| Serialización y verificación | `score-codec.ts`, `score-verification.ts`; parsea en la frontera y contradice un reclamo campo por campo |
+| Identidad de la run | `scoreVersion` en el descriptor, comprobado por `createRun`; `SNAPSHOT_SCHEMA_VERSION` 6, `ACTION_LOG_VERSION` 4 |
+| Servidor autoritativo | `src/server/game/validate-run.ts` puntúa reproduciendo; hay un test que le adjunta un score falso y comprueba que no cambia nada |
+| Auditoría estadística | `pnpm game:score`: **23.000 planes** —20.000 años reales de 7.º más planes de 1, 8 y 12 beats— por cinco perfiles sintéticos |
+| Comparación de calibraciones | `pnpm game:score -- --compare`: las mismas runs bajo 80/15/5, 85/10/5, 90/10/0 y sin recompensa por dificultad |
+| Tests | `tests/unit/competitive-score.test.ts` (58), `tests/unit/score-golden.test.ts` (6), `tests/property/competitive-score.property.test.ts` (10), `tests/integration/competitive-run.test.ts` (13) |
+| Estabilidad del juego | golden con mismo recorrido, mismo score por evento, mismo perfil y misma cantidad de comandos; simulación sin hallazgos |
+| Versionado | `ENGINE_VERSION 5.1.0`, `SNAPSHOT_SCHEMA_VERSION 6`, `ACTION_LOG_VERSION 4`, contenido `0.8.0-grade-7` y `0.6.0-dev`, catálogo `grade-7-dev-4`; **huella del ruleset idéntica en `da245c60`** |
+
+**Resultados de la auditoría.**
+
+| Perfil sintético | Score sobre 23.000 planes |
+|---|---|
+| juego perfecto | 10.000 en **todos**, dispersión 0 |
+| matemática fuerte, secundarias mínimas | 7.400 – 9.000 |
+| matemática floja, secundarias perfectas | 2.000 – 3.600 |
+| peor juego posible | 0 |
+
+Las dos franjas del medio no se cruzan: la dominancia de la matemática está medida, no afirmada. Planes de 1, 2, 8 y 12 beats llegan al mismo techo, y un plan sin contenido de equipo o de aura llega al mismo techo que uno que lo tiene.
+
+**La tabla de doble conteo.** Qué componente lee cada plantilla, y por qué es un hecho distinto del que otra ya leyó, está en [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md) y en [score competitivo](01-game-design/competitive-scoring-and-ranking.md). Dos resultados incómodos que la etapa decidió registrar en vez de tapar: el stand mueve Equipo en la carrera y **no** aporta equipo competitivo, y **ninguna plantilla de producción aporta aura competitiva** —el acto, único evento que mueve Aura, sólo mide el F1 que la matemática ya usa—. La componente existe, está topeada y la ejercitan los fixtures.
+
+**Lo que no entró, y por qué.** Ningún coeficiente quedó cerrado: 80/15/5, los cuatro escalones de calidad y las recompensas por dificultad son candidatos del Teacher Gate. No hay ranking, ni leaderboard, ni personal best, ni endpoints, ni persistencia. El comparador lexicográfico sigue documentado y sin implementar: sin ranking no tiene a qué ordenar. Tampoco se tocó el score por evento de la capa de carrera, que sigue siendo `development-scoring-v1`.
+
+**Riesgos.** Escribir 80/15/5 como constante final. La policy tiene que poder cambiar por configuración después del Teacher Gate sin tocar el motor; `pnpm game:score -- --compare` existe para que esa discusión tenga números.
+
+**Decisiones.** `RECOMENDADA` (D-010, D-012): score separado de la carrera; Estilo sin puntaje — **implementadas**. `TEACHER_GATE` (D-011, [preguntas 38 y 39](07-reference/open-questions.md)): pesos exactos y calibración de calidades, **siguen abiertas**. `LOCKED`: el navegador no es autoridad de score.
+
+**Exit gate.** ¿La misma run con la misma policy da siempre el mismo desglose y el mismo score? — **Sí**, y el desglose cierra exactamente con el total. Lo que la etapa **no** puede afirmar es que la calibración sea la correcta: eso es lo que el Teacher Gate 1 tiene que decidir, y ahora tiene con qué.
 
 ---
 
 ### GATE-TG1 — Teacher Gate 1
 
-- **Estado:** `TEACHER_GATE` — pendiente. **No es una etapa de ingeniería.**
-- **Depende de:** STAGE-04, STAGE-06
+- **Estado:** `TEACHER_GATE` — **es el hito actual**, y **no es una etapa de ingeniería**. Ver [etapa actual](06-delivery/current-stage.md).
+- **Depende de:** STAGE-04 (`DONE`), STAGE-06 (`DONE`)
 - **Desbloquea:** STAGE-07
+
+**Punto de partida.** Las dos etapas de las que depende están cerradas, y con ellas llega lo que el Gate necesita para poder decidir en vez de opinar: una Demo Candidate jugable de 7.º, y una calibración competitiva completa y medida cuyos coeficientes nadie cerró. `pnpm game:score -- --compare` corre las mismas runs bajo calibraciones alternativas, que es la forma de discutir 80/15/5 con números.
 
 Aprobación externa del Departamento de Matemática sobre la Demo Candidate de 7.º. Qué se demuestra, cómo se conduce la sesión y qué se pide decidir está en [gates docentes](06-delivery/teacher-gates.md).
 
@@ -8153,10 +8342,10 @@ Estas decisiones vienen del [Project Blueprint v0.2.0](07-reference/blueprint-v0
 | D-007 | Variantes deterministas por seed | LOCKED como dirección de arquitectura | implementado ([ADR-003](03-architecture/adr/ADR-003-deterministic-seeded-engine.md), [ADR-012](03-architecture/adr/ADR-012-seeded-prng-and-substreams.md)) |
 | D-008 | Catálogo de variantes prevalidado y desplegado para competencia | RECOMENDADA | **implementado y consumido por la partida** ([ADR-020](03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md), [ADR-021](03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md)); las versiones publicadas son inmutables y el catálogo oficial de la feria sigue sin congelar |
 | D-009 | Intentos ilimitados con personal best en el ranking | RECOMENDADA · TEACHER GATE | no implementado ([modo feria](05-operations/fair-mode-and-competition-freeze.md)) |
-| D-010 | `FairScore` separado de las stats de carrera | RECOMENDADA | no implementado ([score competitivo](01-game-design/competitive-scoring-and-ranking.md)) |
-| D-011 | La matemática domina el `FairScore` | RECOMENDADA · TEACHER GATE | no implementado |
-| D-012 | Estilo no puntúa directamente | RECOMENDADA | vigente como regla de diseño |
-| D-013 | Desempate lexicográfico determinista y profundo | RECOMENDADA · TEACHER GATE | no implementado |
+| D-010 | `FairScore` separado de las stats de carrera | RECOMENDADA | **implementado** ([ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md)): el score no recibe la carrera, así que no hay por dónde filtrarla |
+| D-011 | La matemática domina el `FairScore` | RECOMENDADA · TEACHER GATE | **implementado como regla ejecutable**: la validación rechaza una política donde la matemática no supere a la suma del resto; los pesos exactos siguen en el Gate |
+| D-012 | Estilo no puntúa directamente | RECOMENDADA | **implementado**: Estilo y Promedio no son componentes de score, así que no existe el peso que alguien podría subir ([ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md)) |
+| D-013 | Desempate lexicográfico determinista y profundo | RECOMENDADA · TEACHER GATE | no implementado; sin ranking no tiene a qué ordenar, y el desglose ya reporta el primer criterio que necesita |
 | D-014 | Presupuesto de dificultad por run competitiva | RECOMENDADA | **implementado** ([ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md)) como política versionada; la calibración sigue en Teacher Gate |
 | D-015 | Diseño de tareas de piso bajo y techo alto | RECOMENDADA como principio | vigente en el contenido de 7.º, y ahora **ejecutable**: la banda de una plantilla se deriva de su estructura, no de sus números ([ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md)) |
 | D-016 | No hay playtest real con estudiantes antes de la feria | RESTRICCIÓN EXTERNA | declarada ([ciclo de entrega real](00-product/real-delivery-lifecycle.md)) |
@@ -8369,6 +8558,16 @@ Los archivos siguientes son **documentación**: muestran la forma de un contrato
 
 **DifficultyBudget:** objetivo y tolerancia de carga de una etapa. El compositor sólo produce planes que caen adentro. Pasar el presupuesto es comparabilidad estructural, no equivalencia psicométrica.
 
+**FairScore:** el score competitivo de una run entera, en puntos básicos de 0 a 10.000. Distinto del score por evento, que es de la capa de carrera y suma puntos por beat. Implementado en [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md) como `fair-score-dev-1`, con `official: false`.
+
+**MathPerformance · TeamPerformance · AuraPerformance:** las tres componentes normalizadas del score competitivo, cada una de 0 a 10.000. La matemática pondera por la recompensa de dificultad; las otras dos no.
+
+**Perfil de score:** lo que una plantilla declara sobre qué hecho suyo alimenta cada componente competitiva, y por qué es un hecho distinto del que otra ya leyó. `'none'` es una decisión escrita, no un default.
+
+**Recompensa por dificultad:** cuánto más vale resolver un beat de banda alta, deliberadamente chica —1,00 / 1,08 / 1,15— y **distinta del `difficultyCost`** con el que el compositor agenda. Confundirlas dejaría que el sorteo decidiera un ranking.
+
+**Oportunidad ausente:** una componente que ningún beat de la run ofrece. Sale del cálculo y su peso se reparte entre las que quedaron, para que un plan que el jugador no eligió no le cueste puntos.
+
 **Huella de plan:** `sha256` del plan compuesto, políticas incluidas. Deja que una reanudación, una reproducción o un servidor detecten que la calibración se movió, en vez de jugar otro año con la misma identidad.
 
 **Rol de colocación:** `anchor`, `checkpoint`, `special` o `recovery`. Semántica de agendado, nunca de calidad ni de efecto de carrera. Ver [ADR-019](03-architecture/adr/ADR-019-scenario-family-template-variant.md).
@@ -8464,7 +8663,7 @@ Estas decisiones requieren evidencia de prototipo, playtest, implementación u o
 
 ## Engine y scoring
 
-24. ¿Cuál es la fórmula y política de redondeo final del score oficial, incluidos calidad, dificultad, velocidad, rachas y penalizaciones? *Gate: congelar el ruleset de score oficial.*
+24. ¿Cuál es la fórmula y política de redondeo final del score oficial, incluidos calidad, dificultad, velocidad, rachas y penalizaciones? *Gate: congelar el ruleset de score oficial.* STAGE-06 fijó **el mecanismo y el redondeo** —puntos básicos enteros sobre racionales exactos, media-arriba una sola vez al final, reparto por resto mayor para que el desglose cierre— y dejó los coeficientes abiertos. La velocidad sigue afuera del score y su señal confiable es la [pregunta 27](#). Ver [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md).
 25. ~~¿Qué algoritmo PRNG y contrato de consumo/versionado se adopta para la primera implementación?~~ **Cerrada por [ADR-012](03-architecture/adr/ADR-012-seeded-prng-and-substreams.md)**: `pure-rand` `xoroshiro128plus` fijado, substreams derivados por namespace y golden replays en `tests/unit/engine-golden.test.ts`.
 26. ¿Durante cuánto tiempo y mediante qué artefactos se conservan engines, rulesets y contenido compatibles para reanudar o reproducir runs históricas? *Gate: prometer compatibilidad de resume/replay entre releases.*
 27. Si el tiempo participa del score o desempate, ¿qué señales y límites autoritativos usa el servidor sin confiar en `client_elapsed_ms`? *Gate: usar velocidad en score o ranking oficial.*
@@ -8492,8 +8691,8 @@ Estas decisiones requieren evidencia de prototipo, playtest, implementación u o
 
 Incorporadas desde el [Project Blueprint v0.2](07-reference/blueprint-v0.2-integration.md). **Ninguna se cierra desde el código.** Su gate es una sesión con los docentes; la forma de esa sesión está en [gates docentes](06-delivery/teacher-gates.md), y lo que se cierre se anota en el [registro de decisiones](07-reference/decision-register.md).
 
-38. ¿Cuáles son los coeficientes y topes exactos del score competitivo? La ponderación candidata es `0,80` matemática / `0,15` equipo / `0,05` Aura, y **es un candidato, no una decisión**. *Gate: Teacher Gate 1; se cruza con la pregunta 24, que cubre el score por evento.*
-39. ¿Qué valor de calidad matemática corresponde a cada resultado? La calibración candidata es `1,00 / 0,75 / 0,40 / 0,10` sobre `optimal / efficient / functional / invalid`. *Gate: Teacher Gate 1.*
+38. ¿Cuáles son los coeficientes y topes exactos del score competitivo? La ponderación candidata es `0,80` matemática / `0,15` equipo / `0,05` Aura, y **es un candidato, no una decisión**. Está implementada como `fair-score-dev-1` con `official: false`, y `pnpm game:score -- --compare` corre las mismas runs bajo 85/10/5 y 90/10/0 para que el Gate discuta con números en vez de con intuiciones. *Gate: Teacher Gate 1; se cruza con la pregunta 24, que cubre el score por evento.*
+39. ¿Qué valor de calidad matemática corresponde a cada resultado? La calibración candidata es `1,00 / 0,75 / 0,40 / 0,10` sobre `optimal / efficient / functional / invalid`. Implementada como dato de la política, y las plantillas cuyo evaluador midió algo más fino —el acto y su F1— la sobrescriben con su propia medida en vez de redondearse a cuatro cajas. *Gate: Teacher Gate 1.*
 40. ¿Los intentos en la feria son ilimitados o limitados a N? La recomendación es ilimitados con personal best; la decisión es del evento. *Gate: Teacher Gate 1; configuración del evento antes del congelamiento.* Se cruza con la pregunta 11.
 41. ¿Qué pasa ante un empate exacto en el ranking: puesto compartido, premio compartido o desempate anunciado? Un identificador interno **no** puede decidir un premio en silencio. *Gate: aprobación del organizador antes de repartir premios.* Se cruza con la pregunta 13.
 42. ¿El acto del 25 de Mayo entra a producción como desafío de 7.º o queda como ejemplar de diseño? Está implementado y jugable; lo que falta es la aprobación de contenido. *Gate: Teacher Gate 1.*

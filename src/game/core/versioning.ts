@@ -23,6 +23,14 @@ import { err, ok, type Result } from './result'
 /**
  * Engine/game version of this build. Also serialized as `gameVersion`.
  *
+ * `5.1.0` adds the competitive layer's identity to a run. A run may now declare
+ * the `scoreVersion` it is played under, so a submitted score says which
+ * calibration it is a claim about; the snapshot codec moved to carry it
+ * (`SNAPSHOT_SCHEMA_VERSION` 6) and so did the action log (`ACTION_LOG_VERSION`
+ * 4). **Gameplay did not move.** Scoring reads the history and never feeds back
+ * into it: the golden runs reproduce the same trace, score preview, profile and
+ * command count, and a run that declares no score policy plays exactly as before.
+ *
  * `5.0.0` is run composition: a run's content is chosen **before** it starts.
  * A composed run carries a plan — which beats, in which years, drawn from which
  * approved variants — and the runtime executes it instead of drawing a template
@@ -62,7 +70,7 @@ import { err, ok, type Result } from './result'
  * reproduce its original result under this engine, and that is exactly what the
  * version triple exists to say out loud instead of discovering it in a replay.
  */
-export const ENGINE_VERSION = '5.0.0'
+export const ENGINE_VERSION = '5.1.0'
 
 export interface VersionTriple {
   readonly gameVersion: string

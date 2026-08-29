@@ -72,6 +72,12 @@ export const recyclingChart: ChallengeDefinition = defineChallenge<
     uncertainty: 1,
     construction: 0,
   },
+  scoring: {
+    math: 'discrete-quality',
+    team: 'none',
+    aura: 'none',
+    rationale: 'Fixture: reading a chart is one fact.',
+  },
   tools: ['calculator'],
 
   generate({ rng }) {

@@ -38,6 +38,7 @@ import {
   type CognitiveProfile,
   type DifficultyBand,
 } from '../difficulty/cognitive'
+import type { ChallengeScoringProfile } from './scoring-profile'
 import type { CareerEffects } from '../progression/career'
 import type { DifficultyLevel, MathCategory, SolutionQuality } from './taxonomy'
 import type {
@@ -268,6 +269,15 @@ export interface ChallengeSpec<TModel, TParams> {
    * two answer different questions and are allowed to disagree.
    */
   readonly cognitive: CognitiveProfile
+  /**
+   * How this template's result becomes competitive evidence.
+   *
+   * Declared here, beside the evaluator that produced the result, because only
+   * the template knows whether its honest resolution is four quality steps or
+   * something finer, and whether it measured a second, genuinely different fact
+   * a secondary component may read.
+   */
+  readonly scoring: ChallengeScoringProfile
   readonly tools: readonly ToolId[]
   generate(context: GenerationContext<TParams>): TModel
   verify(model: TModel): readonly string[]
@@ -302,6 +312,8 @@ export interface ChallengeDefinition {
   readonly cognitive: CognitiveProfile
   /** Authoring band derived from `cognitive`. What the run composer schedules by. */
   readonly band: DifficultyBand
+  /** How this template's result becomes competitive evidence. */
+  readonly scoring: ChallengeScoringProfile
   readonly tools: readonly ToolId[]
   materialize(
     ref: ChallengeInstanceRef,
@@ -375,6 +387,7 @@ export function defineChallenge<TModel, TParams>(
     baseDifficulty: spec.baseDifficulty,
     cognitive: spec.cognitive,
     band: bandOf(spec.cognitive),
+    scoring: spec.scoring,
     tools: spec.tools,
     materialize(
       ref: ChallengeInstanceRef,

@@ -143,6 +143,18 @@ export const standSupplies: ChallengeDefinition = defineChallenge<
     uncertainty: 0,
     construction: 1,
   },
+  // Mueve Equipo en la carrera y aun así no aporta `team` competitivo: la
+  // eficiencia que mide es el costo mínimo, o sea la misma optimización que ya
+  // cuenta como matemática. El efecto de carrera responde «qué le pasó al
+  // grupo»; la evidencia competitiva respondería «qué tan bien colaboró», y este
+  // evaluador no mide lo segundo.
+  scoring: {
+    math: 'discrete-quality',
+    team: 'none',
+    aura: 'none',
+    rationale:
+      'La eficiencia del stand es el costo mínimo, que ya es la componente matemática; darle también equipo sería contar la misma optimización dos veces.',
+  },
   tools: ['calculator', 'notepad'],
 
   generate({ params }) {

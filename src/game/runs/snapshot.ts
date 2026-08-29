@@ -61,7 +61,7 @@ import type { RunState } from './state'
  * discarding the checkpoint and offering a fresh run; that is a better outcome
  * than resuming into numbers nobody earned.
  */
-export const SNAPSHOT_SCHEMA_VERSION = 5
+export const SNAPSHOT_SCHEMA_VERSION = 6
 
 // Built from the canonical tuples, so each schema infers the exact literal
 // union. That is what lets the restore path below be cast-free.
@@ -199,6 +199,7 @@ const stateSchema = z.object({
     // from no catalog, instead of leaving a reader to guess.
     variantCatalogVersion: z.string().min(1).nullable(),
     planFingerprint: z.string().min(1).max(128).nullable(),
+    scoreVersion: z.string().min(1).max(64).nullable(),
   }),
   /**
    * The composed plan, stored rather than recomputed.
@@ -368,6 +369,7 @@ export function serializeSnapshot(state: RunState): RunSnapshot {
         ...state.descriptor,
         variantCatalogVersion: orNull(state.descriptor.variantCatalogVersion),
         planFingerprint: orNull(state.descriptor.planFingerprint),
+        scoreVersion: orNull(state.descriptor.scoreVersion),
       },
       plan: state.plan === undefined ? null : serializeRunPlan(state.plan),
       phase: state.phase,
@@ -504,6 +506,9 @@ export function restoreSnapshot(
       ...(raw.descriptor.planFingerprint === null
         ? {}
         : { planFingerprint: raw.descriptor.planFingerprint }),
+      ...(raw.descriptor.scoreVersion === null
+        ? {}
+        : { scoreVersion: raw.descriptor.scoreVersion }),
     },
     ...(restoredPlan === undefined ? {} : { plan: restoredPlan }),
     phase: raw.phase,

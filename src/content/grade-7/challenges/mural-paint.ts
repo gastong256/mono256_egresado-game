@@ -91,6 +91,16 @@ export const muralPaint: ChallengeDefinition = defineChallenge<
     uncertainty: 0,
     construction: 0,
   },
+  // La eficiencia que el evaluador reporta *es* el óptimo de compra, no un
+  // segundo hecho: leerla como otra componente cobraría dos veces la misma
+  // cuenta.
+  scoring: {
+    math: 'discrete-quality',
+    team: 'none',
+    aura: 'none',
+    rationale:
+      'Área, litros y envases enteros son una sola cadena; la eficiencia reportada es ese mismo óptimo y no una señal independiente.',
+  },
   tools: ['calculator'],
 
   generate({ params }) {

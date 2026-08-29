@@ -30,6 +30,7 @@ import {
   type ComposedStagePlan,
 } from '../plan/composer'
 import type { CompositionPolicy } from '../plan/composition-policy'
+import type { CompetitiveScorePolicy } from '../scoring/competitive-policy'
 import { describeCompositionFailure } from '../plan/composition-failure'
 import { planFingerprint } from '../plan/plan-fingerprint'
 import {
@@ -98,6 +99,15 @@ export interface EngineDependencies {
    * composition policy still gets.
    */
   readonly composition?: CompositionPolicy
+  /**
+   * How this run's performance becomes a competitive score.
+   *
+   * Scoring never touches gameplay: no outcome, career effect, branch or plan
+   * depends on it. It is here so that a run declaring a `scoreVersion` can be
+   * checked against the policy it claims, and so a replay can produce the same
+   * score the run was played under.
+   */
+  readonly competitiveScore?: CompetitiveScorePolicy
 }
 
 /**
@@ -756,6 +766,19 @@ export function createRun(
       field: 'variantCatalogVersion',
       expected: catalogVersion ?? '(no approved catalog)',
       received: descriptor.variantCatalogVersion ?? '(no approved catalog)',
+    })
+  }
+
+  // A run that names a score policy has to be scored by that policy. Replaying
+  // it under another one would answer a different question with the same
+  // identity, which is the drift every version field here exists to stop.
+  const scoreVersion = dependencies.competitiveScore?.version
+  if ((descriptor.scoreVersion ?? null) !== (scoreVersion ?? null)) {
+    return err({
+      kind: 'unsupported-version',
+      field: 'scoreVersion',
+      expected: scoreVersion ?? '(no competitive policy)',
+      received: descriptor.scoreVersion ?? '(no competitive policy)',
     })
   }
 

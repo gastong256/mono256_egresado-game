@@ -11,6 +11,7 @@
  */
 
 import { toChallengeId, toVariantId } from '../../../core/branded'
+import { performanceFromRatio } from '../../../challenges/scoring-profile'
 import {
   developmentVariantSource,
   type DevelopmentParams,
@@ -136,6 +137,13 @@ export const groupAssignment: ChallengeDefinition = defineChallenge<
     optimization: 2,
     uncertainty: 0,
     construction: 1,
+  },
+  scoring: {
+    math: 'discrete-quality',
+    team: ({ metrics }) => performanceFromRatio(metrics.efficiency),
+    aura: 'none',
+    rationale:
+      'Fixture mirroring the production group task: feasibility is the mathematics, and how well the split used each agent is a separate measured fact the team component reads.',
   },
   tools: ['notepad'],
 

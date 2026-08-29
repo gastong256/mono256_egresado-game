@@ -75,6 +75,12 @@ export const busDeparture: ChallengeDefinition = defineChallenge<
     uncertainty: 0,
     construction: 0,
   },
+  scoring: {
+    math: 'discrete-quality',
+    team: 'none',
+    aura: 'none',
+    rationale: 'Fixture: one decision, four steps of resolution.',
+  },
   tools: ['calculator', 'notepad'],
 
   generate({ rng, difficulty }) {

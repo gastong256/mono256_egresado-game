@@ -305,6 +305,65 @@ export {
   type DemoPlan,
   type DemoPlanEntry,
 } from './content/demo-plan'
+export {
+  f1FromMetrics,
+  performanceFromRatio,
+  scoringProfileIssues,
+  PERFORMANCE_SCALE,
+  type ChallengeScoringProfile,
+  type ScoringEvidenceInput,
+  type ScoringSignal,
+} from './challenges/scoring-profile'
+export {
+  competitiveScorePolicyIssues,
+  secondaryInfluence,
+  weightOf,
+  candidateFairScorePolicy,
+  MAX_DIFFICULTY_REWARD,
+  SCORE_COMPONENTS,
+  SCORE_SCALE,
+  type CompetitiveScorePolicy,
+  type ScoreComponentKey,
+  type ScoreWeights,
+} from './scoring/competitive-policy'
+export {
+  aggregate,
+  resolveEvidence,
+  scoreRun,
+  scoredEventsOf,
+  SCORING_FAILURE_CODES,
+  type BeatEvidence,
+  type ComponentBreakdown,
+  type ComponentEvidence,
+  type FairScoreResult,
+  type ScoredEvent,
+  type ScoringFailure,
+  type ScoringFailureCode,
+} from './scoring/fair-score'
+export {
+  parseScoreClaim,
+  serializeScoreClaim,
+  type ScoreClaim,
+} from './scoring/score-codec'
+export {
+  verifyScoreClaim,
+  SCORE_CLAIM_ISSUES,
+  type ScoreClaimIssue,
+  type ScoreClaimIssueCode,
+  type ScoreVerification,
+} from './scoring/score-verification'
+export {
+  auditScorePolicy,
+  evidenceForProfile,
+  AUDIT_PROFILES,
+  type AuditedPlan,
+  type PerformanceProfile,
+  type PlanShapeAudit,
+  type ProfileAudit,
+  type ScoreAuditOptions,
+  type ScoreAuditReport,
+  type ScoreDistribution,
+} from './scoring/score-audit'
 export { canonicalize } from './core/canonical'
 export {
   hasNoErrors,

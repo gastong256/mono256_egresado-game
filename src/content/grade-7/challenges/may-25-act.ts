@@ -36,6 +36,7 @@
  */
 
 import {
+  f1FromMetrics,
   addClassification,
   classificationScore,
   clamp01,
@@ -183,6 +184,22 @@ export const may25Act: ChallengeDefinition = defineChallenge<
     optimization: 0,
     uncertainty: 0,
     construction: 1,
+  },
+  // El acto ya se juzga con F1, así que la componente matemática lee esa medida
+  // continua en vez de la banda que la resume: tirar precisión y cobertura para
+  // quedarse con cuatro cajas sería perder evidencia que el evaluador ya
+  // calculó.
+  //
+  // Y **no** aporta aura competitiva, aunque sea el único evento que mueve Aura
+  // en la carrera. La pregunta «qué tan bien saliste en público» no tiene acá
+  // otra respuesta que el F1 que ya se contó como matemática; una segunda
+  // lectura del mismo hecho es cobrarlo dos veces con otro nombre.
+  scoring: {
+    math: ({ metrics }) => f1FromMetrics(metrics.precision, metrics.efficiency),
+    team: 'none',
+    aura: 'none',
+    rationale:
+      'La clasificación se mide con F1 y ése es su único hecho: el aura de carrera sale de la misma medida, así que darle además aura competitiva la cobraría dos veces.',
   },
   // Sin herramientas: estás bailando adelante de la escuela, no resolviendo una
   // guía. Una calculadora acá sería una mentira sobre la situación.

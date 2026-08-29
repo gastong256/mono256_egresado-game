@@ -206,6 +206,20 @@ describe('una versión publicada del catálogo no se toca', () => {
    * reescrito en silencio; publicando `dev-2` al lado, las dos afirmaciones
    * conviven y son verificables.
    */
+  it('publica dev-4 al lado de dev-3 en vez de editarlo', () => {
+    const dev3 = grade7VariantCatalogs['grade-7-dev-3']
+    const dev4 = grade7VariantCatalogs['grade-7-dev-4']
+    if (dev3 === undefined || dev4 === undefined) throw new Error('faltan')
+
+    // Segunda vez que la regla se aplica a un cambio que no movió ninguna
+    // dirección: el contenido subió a 0.8.0 porque cada plantilla declara ahora
+    // cómo puntúa, y el catálogo dice contra qué contenido se construyó.
+    expect(dev3.contentVersion).toBe('0.7.0-grade-7')
+    expect(dev4.contentVersion).toBe('0.8.0-grade-7')
+    expect(dev4.entries).toEqual(dev3.entries)
+    expect(dev4.generators).toEqual(dev3.generators)
+  })
+
   it('publica dev-3 al lado de dev-2 en vez de editarlo', () => {
     const dev2 = grade7VariantCatalogs['grade-7-dev-2']
     const dev3 = grade7VariantCatalogs['grade-7-dev-3']

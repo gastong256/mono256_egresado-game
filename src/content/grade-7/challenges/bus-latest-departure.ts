@@ -105,6 +105,15 @@ export const busLatestDeparture: ChallengeDefinition = defineChallenge<
     uncertainty: 0,
     construction: 1,
   },
+  // Igual que su hermana de familia: el número que produjo el jugador es el
+  // único hecho, y las cuatro bandas de holgura son su resolución real.
+  scoring: {
+    math: 'discrete-quality',
+    team: 'none',
+    aura: 'none',
+    rationale:
+      'La anticipación que el jugador produjo es el único hecho medido; no hay una segunda señal independiente que equipo o aura puedan leer.',
+  },
   tools: ['calculator'],
 
   generate({ params }) {

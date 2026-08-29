@@ -26,12 +26,15 @@ import {
   parseActionLog,
   planFingerprint,
   replayRun,
+  scoreRun,
+  scoredEventsOf,
   validateComposedPlan,
   type EngineDependencies,
   type EngineRejection,
   type CareerState,
   type ProfileId,
   type Result,
+  type FairScoreResult,
   type RunId,
   type VersionTriple,
 } from '@/game'
@@ -56,6 +59,15 @@ export interface AuthoritativeRunResult {
   readonly planFingerprint?: string
   /** Total scheduling load of the composed plan. Never a score. */
   readonly difficultyCost?: number
+  /**
+   * The competitive score, recomputed here.
+   *
+   * Present only when the run declared a policy and the server holds it. Like
+   * `officialScore`, it is produced by replaying the run: nothing the client
+   * says about its own score is read, and there is no field a client could set
+   * to influence it.
+   */
+  readonly competitiveScore?: FairScoreResult
 }
 
 /**
@@ -149,7 +161,38 @@ export function validateSubmittedRun(
     }
   }
 
-  // 5. Only a finished run has an official result.
+  /*
+   * 5. Score the run competitively, when it declared a policy.
+   *
+   * From the replayed history and nothing else. The submission does not carry a
+   * score to compare against — it carries the actions, and this is what they are
+   * worth under the policy the run named.
+   */
+  let competitiveScore: FairScoreResult | undefined
+  if (
+    log.value.descriptor.scoreVersion !== undefined &&
+    dependencies.competitiveScore !== undefined
+  ) {
+    const scored = scoreRun(
+      scoredEventsOf(state.history),
+      dependencies.catalog,
+      dependencies.competitiveScore,
+    )
+    if (isErr(scored)) {
+      return {
+        ok: false,
+        error: {
+          kind: 'invalid-content',
+          issues: [
+            `${scored.error.code} @ ${scored.error.subject}: ${scored.error.detail}`,
+          ],
+        },
+      }
+    }
+    competitiveScore = scored.value
+  }
+
+  // 6. Only a finished run has an official result.
   if (state.status !== 'completed' || state.completion === undefined) {
     return {
       ok: false,
@@ -174,5 +217,6 @@ export function validateSubmittedRun(
           planFingerprint: planFingerprint(plan),
           difficultyCost: plan.difficultyCost,
         }),
+    ...(competitiveScore === undefined ? {} : { competitiveScore }),
   })
 }

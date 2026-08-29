@@ -42,6 +42,7 @@
 03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md
 03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md
 03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md
+03-architecture/adr/ADR-023-competitive-score-policy.md
 03-architecture/analytics-observability.md
 03-architecture/api-contracts.md
 03-architecture/architecture-overview.md
