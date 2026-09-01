@@ -1,6 +1,6 @@
 # Game engine
 
-Motor TypeScript determinista, puro y reproducible. Este documento describe el motor **implementado** en `src/game`. Las decisiones durables que lo gobiernan están en [ADR-003](adr/ADR-003-deterministic-seeded-engine.md), [ADR-004](adr/ADR-004-server-authoritative-scoring.md), [ADR-007](adr/ADR-007-content-as-data.md), [ADR-011](adr/ADR-011-functional-core-transition-engine.md), [ADR-012](adr/ADR-012-seeded-prng-and-substreams.md), [ADR-013](adr/ADR-013-exact-rational-arithmetic.md), [ADR-019](adr/ADR-019-scenario-family-template-variant.md), [ADR-020](adr/ADR-020-variant-generation-and-approved-catalog.md), [ADR-021](adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md) y [ADR-022](adr/ADR-022-difficulty-model-and-run-composer.md).
+Motor TypeScript determinista, puro y reproducible. Este documento describe el motor **implementado** en `src/game`. Las decisiones durables que lo gobiernan están en [ADR-003](adr/ADR-003-deterministic-seeded-engine.md), [ADR-004](adr/ADR-004-server-authoritative-scoring.md), [ADR-007](adr/ADR-007-content-as-data.md), [ADR-011](adr/ADR-011-functional-core-transition-engine.md), [ADR-012](adr/ADR-012-seeded-prng-and-substreams.md), [ADR-013](adr/ADR-013-exact-rational-arithmetic.md), [ADR-019](adr/ADR-019-scenario-family-template-variant.md), [ADR-020](adr/ADR-020-variant-generation-and-approved-catalog.md), [ADR-021](adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md), [ADR-022](adr/ADR-022-difficulty-model-and-run-composer.md) y [ADR-023](adr/ADR-023-competitive-score-policy.md).
 
 Para comandos y flujo de trabajo, ver [desarrollo del motor](../08-engineering/game-engine-development.md).
 
@@ -57,10 +57,11 @@ interface RunDescriptor {
   contentVersion: string
   variantCatalogVersion?: string
   planFingerprint?: string
+  scoreVersion?: string
 }
 ```
 
-`variantCatalogVersion` es opcional: una run que juega la lista curada de una plantilla no salió de un catálogo aprobado y no debe afirmar lo contrario. `planFingerprint` identifica el plan concreto de una run compuesta. `EngineDependencies` aporta `ruleset`, catálogo de contenido, `storylets` y, cuando existen, un `ApprovedVariantLookup` y una `CompositionPolicy`. Con el primer puerto la selección usa sólo variantes aprobadas; sin él cae en la lista curada de respaldo de la plantilla. El ruleset **no** forma parte del estado: contiene funciones y se inyecta; la run sólo guarda su versión.
+`variantCatalogVersion` es opcional: una run que juega la lista curada de una plantilla no salió de un catálogo aprobado y no debe afirmar lo contrario. `planFingerprint` identifica el plan concreto de una run compuesta. `scoreVersion` también es opcional: identifica la calibración competitiva cuando la run se juega con una `CompetitiveScorePolicy`; una práctica sin esa política lo omite. `EngineDependencies` aporta `ruleset`, catálogo de contenido, `storylets` y, cuando existen, un `ApprovedVariantLookup`, una `CompositionPolicy` y una `CompetitiveScorePolicy`. El ruleset **no** forma parte del estado: contiene funciones y se inyecta; la run sólo guarda sus identidades versionadas.
 
 ## Estado
 
@@ -191,6 +192,10 @@ Un ruleset **oficial** exige que las tres políticas estén marcadas `production
 
 `score_evento = base × calidad × dificultad + bonus - penalizaciones`, calculado sobre racionales y redondeado una sola vez al final. El resultado incluye un desglose explicable.
 
+La capa competitiva es independiente: cada plantilla declara qué hecho alimenta `MathPerformance`, `TeamPerformance` y `AuraPerformance`; Promedio y Estilo no son componentes. `scoreRun` normaliza la evidencia del `RunPlan`, retira componentes sin oportunidad, redistribuye proporcionalmente sus pesos y calcula un `FairScore` de 0 a 10.000 con racionales exactos, un solo redondeo y un desglose que cierra. El máximo perfecto es el mismo para todo plan válido.
+
+La política vigente tiene id `fair-score-dev-1`, versión `1.0.0-candidate` y `official: false`. La arquitectura está implementada; 80/15/5, el mapeo de calidad y las recompensas de dificultad siguen sujetos a Teacher Gate. Ver [ADR-023](adr/ADR-023-competitive-score-policy.md).
+
 El tiempo **no** participa: la pregunta abierta 27 no definió qué señal temporal puede considerar autoritativa el servidor, y las reglas advierten que un score dominado por velocidad perjudica accesibilidad.
 
 El perfil se calcula sobre dimensiones ocultas normalizadas, con desempate documentado y total: puntaje ponderado → dimensión dominante del perfil → orden canónico.
@@ -226,13 +231,15 @@ Se evaluó convertir `phase` en unión discriminada que lleve su payload, lo que
 
 ## Compatibilidad y versionado
 
-Una run sólo puede reanudarse o revalidarse con un motor que declare el mismo triple `gameVersion` / `rulesetVersion` / `contentVersion`. `variantCatalogVersion` agrega procedencia cuando la run consume un catálogo aprobado; no reemplaza esa compatibilidad ni se inventa para runs curadas —un content set sin catálogo lo omite—. Cuando el campo está, `createRun` lo **comprueba**: una run que declara un catálogo distinto del que se le está dando se rechaza, porque reproducirla produciría otro contenido con el mismo score.
+Una run sólo puede reanudarse o revalidarse con un motor que declare el mismo triple `gameVersion` / `rulesetVersion` / `contentVersion`. `variantCatalogVersion` agrega procedencia cuando la run consume un catálogo aprobado; `planFingerprint`, la composición concreta; y `scoreVersion`, la calibración competitiva cuando existe. Cuando esos campos están, `createRun` los **comprueba** contra las dependencias inyectadas; una práctica sin política competitiva omite `scoreVersion`.
 
 | Cambió | Subir |
 |---|---|
 | transición, orden de consumo de RNG, derivación de seed, formato de action log, codec de snapshot, generación de un desafío existente | `ENGINE_VERSION` |
 | política de scoring por evento, dificultad, progresión, perfil **o composición** | versión de ruleset |
-| datos de desafíos o storylets | versión de contenido |
+| datos de desafíos, storylets o perfil competitivo declarado por una plantilla | versión de contenido |
+| pesos, mapeo de calidad, recompensa de dificultad o topes competitivos | versión de la `CompetitiveScorePolicy`, estampada como `scoreVersion` |
+| población aprobada o versión de contenido contra la que se publicó | `variantCatalogVersion`; nunca se edita un catálogo anterior |
 
 Los golden tests de `tests/unit/engine-golden.test.ts` fallan ante cualquier cambio accidental de salida determinista. Regenerarlos sin subir la versión correspondiente invalida en silencio los replays guardados.
 
@@ -240,7 +247,7 @@ Para que esa regla no dependa de la disciplina de quien edita, `tests/unit/engin
 
 ## Frontera con servidor
 
-El motor corre igual en browser y en Node. `src/server/game/validate-run.ts` es el caso de uso `server-only` que materializa ADR-004: recibe una submission no confiable, la parsea, verifica compatibilidad de versiones, la reproduce y devuelve score, perfil y carrera **recalculados**. En una run compuesta recompone desde el seed y las políticas del servidor, compara `planFingerprint` y pasa el resultado por el validador independiente. Nada que el cliente afirme sobre el resultado se lee; un payload que incluya su propio `officialScore` simplemente lo ve ignorado.
+El motor corre igual en browser y en Node. `src/server/game/validate-run.ts` es el caso de uso `server-only` que materializa ADR-004: recibe una submission no confiable, la parsea, verifica compatibilidad de versiones, la reproduce y devuelve score por evento, perfil y carrera **recalculados**. En una run compuesta recompone desde el seed y las políticas del servidor, compara `planFingerprint` y pasa el resultado por el validador independiente. Si el descriptor declara `scoreVersion` y el servidor tiene esa política, calcula además el `FairScore` canónico desde el historial reproducido. Nada que el cliente afirme sobre el resultado se lee.
 
 Rechaza con tipo una submission malformada, una acción insertada, una secuencia rota, una run truncada, un ruleset incompatible y un seed fuera del charset. Endpoints, sesión, rate limiting y persistencia siguen siendo trabajo aparte.
 
@@ -254,7 +261,7 @@ Opcional. `canonicalize(state)` produce la forma estable sobre la que se puede c
 
 Una instancia de desafío se direcciona por su identidad de contenido completa —familia de escenario, plantilla y variante— más dónde la ubicó la run. Una `ChallengeDefinition` **es** una plantilla; el catálogo de contenido disponible (`ContentCatalog`) está separado del plan de contenido de una run (`RunPlan`), y la elegibilidad por etapa y el rol de colocación son metadata declarativa del contenido, no conocimiento del motor.
 
-Cada plantilla declara una fuente híbrida: registros autorados y, opcionalmente, un espacio generado por restricción. Ambas pasan por validadores genéricos y matemáticos, canonización, fingerprint SHA-256 y deduplicación antes de entrar en un `ApprovedVariantCatalog`. El catálogo vigente es `grade-7-dev-3`; es de desarrollo y la partida real de 7.º lo consume mediante `ApprovedVariantLookup`. `dev-1` y `dev-2` siguen publicados sin cambios. `dev-3` conserva las mismas direcciones y huellas semánticas de `dev-2`: se publicó como versión inmutable nueva para alinearse con `contentVersion 0.7.0-grade-7`, no porque agregara variantes jugables.
+Cada plantilla declara una fuente híbrida: registros autorados y, opcionalmente, un espacio generado por restricción. Ambas pasan por validadores genéricos y matemáticos, canonización, fingerprint SHA-256 y deduplicación antes de entrar en un `ApprovedVariantCatalog`. El catálogo vigente es `grade-7-dev-4`; es de desarrollo y la partida real de 7.º lo consume mediante `ApprovedVariantLookup`. `dev-1` a `dev-3` siguen publicados sin cambios. `dev-4` conserva las direcciones y huellas semánticas de `dev-3`: se publicó como versión inmutable nueva para alinearse con `contentVersion 0.8.0-grade-7` y sus perfiles de score, no porque agregara variantes matemáticas.
 
 `DemoPlan` es otro artefacto: declara qué muestra una demostración docente y su validador exige que no pueda pasar por `StageContentPlan`. No construye una run ni relaja el presupuesto normal de uno a dos beats. La composición normal ya existe como `RunComposer` + `ComposedRunPlan`; son caminos separados.
 
@@ -262,6 +269,6 @@ El motor no conoce ningún id de contenido: agregar una familia, una plantilla, 
 
 ## Lo que este documento no describe
 
-Este documento describe el motor **implementado**. Las capacidades que todavía no existen —score competitivo normalizado, `RunDescriptor` oficial emitido por servidor, `scoreVersion`, vinculación autoritativa con el catálogo de feria y ranking— están en [arquitectura objetivo del motor](target-engine-architecture.md), con el estado real de cada una. La base server-only de verificación por replay y composición ya existe; endpoints, sesión y persistencia siguen futuros.
+Este documento describe el motor **implementado**. Las capacidades que todavía no existen —`RunDescriptor` oficial emitido por servidor, vinculación con un catálogo de feria congelado, endpoints, sesión, persistencia, ranking, leaderboard, personal best, política final de intentos y desempate— están en [arquitectura objetivo del motor](target-engine-architecture.md), con el estado real de cada una. La base server-only de verificación por replay, composición y score competitivo ya existe; no es todavía un backend completo de competencia.
 
 La frontera fundamental no cambia en ninguna de esas evoluciones. Si una propuesta futura la toca, es un ADR nuevo.

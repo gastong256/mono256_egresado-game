@@ -130,13 +130,13 @@ La automatización no valida diversión ni claridad. Cada batch relevante debe p
 
 ## Simulación de competencia
 
-**No implementada.** Cuando exista score competitivo, la simulación masiva deja de alcanzar con jugadores aleatorios: hace falta generar perfiles sintéticos con estrategia, no clicks al azar.
+**Implementada en forma reducida de ingeniería; la auditoría completa sigue futura.** `pnpm game:score` usa perfiles sintéticos con estrategia sobre 23.000 planes y `pnpm game:score -- --compare` mide las mismas runs bajo calibraciones candidatas. Verifica propiedades del mecanismo —techo perfecto, oportunidades ausentes, dominancia matemática, determinismo y rangos—, no la equidad de una competencia congelada.
 
-Perfiles mínimos: alta precisión matemática, precisión media, precisión baja, optimizador, rápido y con errores, lento y preciso, orientado a decisiones de Equipo y orientado a Aura.
+La auditoría actual incluye juego perfecto, matemática fuerte con secundarias mínimas, matemática floja con secundarias perfectas, peor caso y un perfil mixto. El score no consume velocidad y el catálogo de producción no ofrece todavía una señal competitiva independiente de Aura; inventar esos perfiles como si fueran cobertura actual ocultaría ambas decisiones abiertas.
 
 La pregunta que la simulación tiene que contestar: **¿el ranking ordena por lo que dijimos que iba a ordenar?** Si un perfil orientado a Aura le gana a uno de alta precisión matemática, la ponderación está mal, no el jugador.
 
-Antes de la feria, el volumen sube de miles a decenas de miles de runs si el tiempo de ejecución lo permite, mirando distribución de score, resultados inalcanzables, estrategias dominantes, empates, repetición de variantes, distribución de dificultad, extremos de estado de carrera y alcanzabilidad del egreso.
+Antes de la feria, sobre contenido y política aprobados, la auditoría completa debe mirar distribución de score, resultados inalcanzables, estrategias dominantes, empates, repetición de variantes, distribución de dificultad, extremos de estado de carrera y alcanzabilidad del egreso. También debe incorporar intentos, personal best, señal temporal si se aprueba y comportamiento del fair mode real.
 
 La simulación captura lógica y equidad. **No captura diversión**, y un resultado sintético favorable no es validación con usuarios. Ver [ciclo de entrega real](../00-product/real-delivery-lifecycle.md).
 

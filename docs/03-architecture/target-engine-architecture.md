@@ -38,11 +38,11 @@ Esto ya es lo que hay: núcleo funcional con función de transición explícita 
 | 12 | Jerarquía `ScenarioFamily → Template → Variant` | **implementado** | [ADR-019](adr/ADR-019-scenario-family-template-variant.md), `src/game/challenges/content-model.ts` |
 | 13 | `VariantGenerator` por restricción, reutilizable entre plantillas | **implementado** | [ADR-020](adr/ADR-020-variant-generation-and-approved-catalog.md), `src/game/challenges/variant-source.ts` |
 | 14 | `VariantValidator` con invariantes de dominio ejecutables | **implementado**: genéricas más las de cada plantilla, con oráculos independientes | `src/game/challenges/variant-validation.ts` |
-| 15 | Catálogo de variantes aprobado y versionado | **implementado para desarrollo y consumido por la partida** — `ApprovedVariantCatalog` con `grade-7-dev-1`, `dev-2` y `dev-3` inmutables; `dev-3` es el vigente y conserva la población semántica de `dev-2`; el catálogo oficial de feria no está congelado | `src/game/content/variant-catalog.ts`, [ADR-020](adr/ADR-020-variant-generation-and-approved-catalog.md), [ADR-021](adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md), [ADR-022](adr/ADR-022-difficulty-model-and-run-composer.md) |
+| 15 | Catálogo de variantes aprobado y versionado | **implementado para desarrollo y consumido por la partida** — `ApprovedVariantCatalog` con `grade-7-dev-1` a `dev-4` inmutables; `dev-4` es el vigente y conserva la población semántica de `dev-3`; el catálogo oficial de feria no está congelado | `src/game/content/variant-catalog.ts`, [ADR-020](adr/ADR-020-variant-generation-and-approved-catalog.md), [ADR-021](adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md), [ADR-022](adr/ADR-022-difficulty-model-and-run-composer.md), [ADR-023](adr/ADR-023-competitive-score-policy.md) |
 | 16 | Bandas `CORE / STANDARD / STRETCH` como metadata de autoría | **implementado**: la banda se deriva de seis rasgos cognitivos declarados por plantilla; `DifficultyLevel` 1–5 sigue siendo la perilla del runtime y las dos pueden discrepar | `src/game/difficulty/cognitive.ts`, [ADR-022](adr/ADR-022-difficulty-model-and-run-composer.md) |
 | 17 | Scheduler por presupuesto de dificultad | **implementado**: compositor determinista por enumeración, con presupuesto y tolerancia por etapa, validador independiente y verificación en servidor | `src/game/plan/`, [ADR-022](adr/ADR-022-difficulty-model-and-run-composer.md) |
 | 18 | `MathPerformance` / `TeamPerformance` / `AuraPerformance` normalizados | **implementado**: en puntos básicos enteros, y cada plantilla declara qué hecho suyo alimenta cada una | `src/game/scoring/`, [ADR-023](adr/ADR-023-competitive-score-policy.md) |
-| 19 | `ScorePolicy` competitiva con pesos, topes y orden de desempate | **implementada salvo el desempate**: `fair-score-dev-1` con pesos, topes y recompensas validados; el comparador lexicográfico espera a que exista un ranking | `src/game/scoring/competitive-policy.ts`, [ADR-023](adr/ADR-023-competitive-score-policy.md) |
+| 19 | `ScorePolicy` competitiva con pesos, topes y recompensas | **implementada como candidata**: `fair-score-dev-1`, versión `1.0.0-candidate`, `official: false`; el desempate no pertenece al contrato implementado y espera al ranking | `src/game/scoring/competitive-policy.ts`, [ADR-023](adr/ADR-023-competitive-score-policy.md) |
 | 20 | `RunDescriptor` emitido por servidor | **TARGET**; el descriptor ya lleva la huella del plan que un servidor tendría que emitir y verificar | este documento, [ADR-022](adr/ADR-022-difficulty-model-and-run-composer.md) |
 | 21 | `scoreVersion` y `variantCatalogVersion` | **implementado**: los tres —catálogo, huella del plan y versión de score— viajan en descriptor, snapshot y action log, y `createRun` los comprueba | `src/game/runs/state.ts`, [ADR-021](adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md), [ADR-022](adr/ADR-022-difficulty-model-and-run-composer.md), [ADR-023](adr/ADR-023-competitive-score-policy.md) |
 | 22 | Verificación autoritativa por replay en servidor | **TARGET** para endpoints y sesión; el caso de uso ya reproduce la run, recompone y valida su plan, y **calcula su propio score competitivo** sin leer nada que el cliente afirme | `src/server/game/validate-run.ts`, [ADR-004](adr/ADR-004-server-authoritative-scoring.md), [ADR-023](adr/ADR-023-competitive-score-policy.md) |
@@ -61,9 +61,9 @@ Un agente futuro que lea el paquete original y planifique esa migración estarí
 
 ## `RunDescriptor` — presente y objetivo oficial
 
-El descriptor inmutable del core ya está implementado. Desde STAGE-03 admite `variantCatalogVersion?: string`: se omite en una run que sólo juega variantes curadas y registra la versión cuando la run se respalda en un catálogo aprobado.
+El descriptor inmutable del core ya está implementado. Admite `variantCatalogVersion?: string`, `planFingerprint?: string` y, desde STAGE-06, `scoreVersion?: string`. Los campos se omiten cuando la run no usa catálogo, plan compuesto o política competitiva respectivamente; una práctica sin score competitivo no inventa una versión.
 
-La forma siguiente sigue siendo el **objetivo conceptual del descriptor oficial emitido por servidor**. `eventId`, `playerId`, `scoreVersion`, asignaciones y emisión autoritativa todavía no son un contrato implementado:
+La forma siguiente sigue siendo el **objetivo conceptual del descriptor oficial emitido por servidor**. `eventId`, `playerId`, asignaciones y emisión autoritativa todavía no son un contrato implementado; `scoreVersion` sí existe en el descriptor del core, aunque todavía no hay un evento oficial que lo emita o congele:
 
 ```ts
 interface RunDescriptor {
@@ -80,7 +80,7 @@ interface RunDescriptor {
 }
 ```
 
-Ver [ejemplo](../07-reference/run-descriptor.example.json). El ejemplo es documentación: no se importa desde runtime ni define configuración de producción.
+El [ejemplo](../07-reference/run-descriptor.example.json) muestra el contrato implementado del core, incluida la opcionalidad que una run competitiva concreta resuelve; no incluye los campos futuros del objetivo oficial y no se importa desde runtime.
 
 Reglas asociadas:
 
@@ -122,10 +122,10 @@ Ejes de versión objetivo:
 | `engineVersion` / `gameVersion` | transición, consumo de RNG, derivación de seed, formato de action log o codec de snapshot |
 | `rulesetVersion` | scoring, dificultad, progresión o política de perfil |
 | `contentVersion` | datos de desafíos o storylets |
-| `scoreVersion` | **TARGET** — coeficientes y topes de la política competitiva |
+| `scoreVersion` | **implementado** — versión de la calibración competitiva, opcional fuera de competencia |
 | `variantCatalogVersion` | **implementado** como procedencia opcional del descriptor; su valor oficial de feria sigue futuro |
 
-Los tres primeros existen. `variantCatalogVersion` también existe como campo opcional, y la integridad del catálogo puede verificarse de forma independiente; vincular ambos en una run oficial pertenece al flujo futuro de feria. `scoreVersion` sigue `TARGET`. El conjunto oficial permitido se congelará por igualdad exacta, no por rangos semver.
+Los cinco ejes existen en los contratos actuales. `variantCatalogVersion` y `scoreVersion` son opcionales y `createRun` los comprueba contra las dependencias inyectadas cuando aparecen. Lo futuro es que un servidor de feria emita la identidad completa y que una configuración de evento congele el conjunto oficial permitido por igualdad exacta, no por rangos semver.
 
 ## Prohibiciones que siguen vigentes
 

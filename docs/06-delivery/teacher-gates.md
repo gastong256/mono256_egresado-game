@@ -64,6 +64,10 @@ No se usa la reunión para elegir tipografías, espaciados ni tokens: eso ya est
 **Competencia**
 - ¿Se acepta un score dominado por la matemática?
 - ¿Se acepta una contribución secundaria y acotada de Equipo y Aura?
+- La política candidata renormaliza los pesos cuando el `RunPlan` no ofrece Equipo o Aura: ¿son aceptables distintos conjuntos de oportunidad, debe el compositor exigir cierta cobertura o hace falta otro modelo?
+- Hoy sólo `g7.group-tasks` ofrece Equipo competitivo independiente y ninguna plantilla de producción ofrece Aura competitiva independiente: ¿deben participar esas componentes, y con qué evidencia futura?
+- ¿Se acepta la recompensa competitiva candidata `1,00 / 1,08 / 1,15`, separada de los costos de scheduling que ya equiparan estructuralmente los planes?
+- ¿Se acepta el mapeo candidato `1,00 / 0,75 / 0,40 / 0,10` para `optimal / efficient / functional / invalid`?
 - ¿Intentos ilimitados con mejor intento, o límite?
 - ¿Orden de desempate?
 

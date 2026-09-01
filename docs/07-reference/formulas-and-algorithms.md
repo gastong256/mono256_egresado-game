@@ -59,25 +59,26 @@ score_evento = base × calidad × dificultad + bonus − penalizaciones
 
 La forma está fijada por [reglas, scoring y progresión](../01-game-design/rules-scoring-and-progression.md) y el motor la implementa con aritmética racional exacta, redondeando una sola vez al final. Las constantes vigentes son de **desarrollo**, marcadas `production: false`, y la [pregunta 24](open-questions.md) es su gate.
 
-## 5 · Desempeño matemático competitivo — CANDIDATA
+## 5 · Desempeño matemático competitivo — IMPLEMENTADO / CALIBRACIÓN CANDIDATA
 
 ```text
-MathRaw         = Σ (1000 × q_i × d_i)
-MathMax         = Σ (1000 × d_i)
-MathPerformance = 10000 × MathRaw / MathMax
+MathRaw         = Σ (q_i × d_i)
+MathMax         = Σ (10000 × d_i)
+MathPerformance = round(10000 × MathRaw / MathMax)
 ```
 
-Con `q_i ∈ [0,1]` la calidad matemática del evento y `d_i` el multiplicador de su banda de dificultad. Normalizar contra el máximo alcanzable de esa run es lo que permite comparar runs armadas con plantillas distintas.
+Con `q_i ∈ [0,10000]` la calidad matemática del evento y `d_i` la recompensa de su banda de dificultad, ambos en puntos básicos enteros. Normalizar contra el máximo alcanzable de esa run es lo que permite comparar runs armadas con plantillas distintas.
 
-## 6 · FairScore — CANDIDATA / TEACHER GATE
+## 6 · FairScore — IMPLEMENTADO / CALIBRACIÓN CANDIDATA / TEACHER GATE
 
 ```text
-FairScore = round(wM × M + wT × T + wA × A)      con wM + wT + wA = 1
+Activas   = componentes con al menos una oportunidad
+FairScore = round(Σ(w_k × Performance_k) / Σ(w_k)) para k ∈ Activas
 ```
 
-Ponderación candidata: `0,80 / 0,15 / 0,05`. **No es la fórmula oficial.** Ver [score competitivo y ranking](../01-game-design/competitive-scoring-and-ranking.md) y el [ejemplo de política](score-policy.example.json).
+Ponderación declarada candidata: `8000 / 1500 / 500`. Si una componente no tuvo oportunidad en el `RunPlan`, sale de la suma y los pesos de las componentes activas se renormalizan proporcionalmente. El mecanismo usa racionales exactos, redondeo media-arriba una sola vez al final y resto mayor para que las contribuciones sumen el total; **los valores no son oficiales**. Ver [score competitivo y ranking](../01-game-design/competitive-scoring-and-ranking.md) y el [ejemplo de política](score-policy.example.json).
 
-## 7 · Comparador de ranking — CANDIDATA
+## 7 · Comparador de ranking — FUTURO / CANDIDATO
 
 Comparación lexicográfica, gana la tupla mayor:
 

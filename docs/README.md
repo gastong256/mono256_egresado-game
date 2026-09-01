@@ -110,11 +110,11 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 - `decision-register.md`: índice de decisiones y ADRs.
 - `content-schema.example.json`: ejemplo de definición de desafío.
 - `challenge-authoring.example.yaml`: ficha de autoría de una plantilla antes de que exista código.
-- `event-config.example.json`: ejemplo de configuración de un evento de feria.
+- `event-config.example.json`: objetivo futuro de configuración de un evento de feria; no es contrato de runtime actual.
 - `event-effects.example.json`: ejemplo de efectos de evento: carrera, ocultos y competencia por separado.
-- `run-descriptor.example.json`: ejemplo de identidad inmutable de una run oficial.
-- `score-breakdown.example.json`: ejemplo de desglose de score de una run verificada.
-- `score-policy.example.json`: ejemplo de política de score versionada, marcada como pendiente de gate docente.
+- `run-descriptor.example.json`: ejemplo del `RunDescriptor` implementado para una run competitiva de desarrollo.
+- `score-breakdown.example.json`: ejemplo actual del claim serializable de `FairScore`.
+- `score-policy.example.json`: política candidata implementada, marcada `official: false` y pendiente de gate docente.
 
 ### 08-engineering
 - `context-map.md`: qué fuentes leer para cada tipo de tarea.
@@ -192,6 +192,6 @@ Una decisión integrada declara su nivel, y **el nivel es parte de la decisión*
 
 Un documento no describe en presente una capacidad que no existe. Lo implementado vive en los documentos de arquitectura actuales; lo que falta, en [arquitectura objetivo del motor](03-architecture/target-engine-architecture.md), con el estado real de cada capacidad.
 
-Los documentos describen la **baseline de producto** al 28 de agosto de 2026. Lo implementado incluye el shell Next.js, toolchain reproducible, fronteras de módulos, Supabase opcional, Docker, gates de calidad, el motor determinista con replay y snapshots versionados, el modelo de carrera `Promedio · Equipo · Aura · Estilo` y el slice jugable de 7.º grado bajo el sistema de diseño v0.2. Todavía **no** incluye los años 1.º a 5.º, Auth, schema de producto, ranking, verificación de runs en servidor ni un despliegue público.
+Los documentos describen la **baseline de producto** al cierre de STAGE-06, el 29 de agosto de 2026. Lo implementado incluye el shell Next.js, toolchain reproducible, fronteras de módulos, Supabase opcional, Docker, gates de calidad, el motor determinista con replay y snapshots versionados, el modelo de carrera `Promedio · Equipo · Aura · Estilo`, el slice jugable de 7.º, composición por presupuesto y `FairScore` candidato con recomputación server-only. Todavía **no** incluye los años 1.º a 5.º, Auth, schema de producto, endpoints/sesión/persistencia de competencia, ranking ni un despliegue público.
 
 Las versiones exactas están fijadas en `package.json` y `pnpm-lock.yaml` bajo [ADR-010](03-architecture/adr/ADR-010-reproducible-node-pnpm-container-toolchain.md). Next.js `16.3.1` se conserva sólo como base local transitoria: `pnpm release:check` bloquea cualquier release público hasta actualizar a `>=16.3.2`, regenerar el lockfile y verificar el cambio completo.

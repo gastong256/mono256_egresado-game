@@ -10,7 +10,7 @@ El score por evento vigente —`base × calidad × dificultad + bonus − penali
 |---|---|---|
 | **Resultado de desafío** | ¿qué tan bien se resolvió esta situación? | `SolutionQuality` + métricas de razonamiento |
 | **Identidad de carrera** | ¿qué clase de recorrido escolar construí? | Promedio · Equipo · Aura · Estilo |
-| **Score competitivo** | ¿qué tan fuerte fue esta run oficial bajo las reglas del evento? | `FairScore`, sólo en modo feria |
+| **Score competitivo** | ¿qué tan fuerte fue esta run bajo una calibración concreta? | `FairScore`, cuando el descriptor declara `scoreVersion` |
 
 Están relacionadas y no son intercambiables. Un documento futuro que las trate como un solo sistema estará equivocado en las tres.
 
@@ -25,7 +25,7 @@ Una fórmula del tipo `Aura × 1 + Matemática × 10 + Equipo × 5` no significa
 
 Un multiplicador no expresa peso relativo hasta que cada componente está normalizado. Antes de normalizar, el «peso» es un accidente de escala.
 
-## Arquitectura de score recomendada
+## Arquitectura de score implementada con calibración candidata
 
 Cada evaluador devuelve, además de sus efectos de carrera, una medida de desempeño competitivo normalizada.
 
@@ -75,7 +75,7 @@ FairScore = round(0,80 × MathPerformance + 0,15 × TeamPerformance + 0,05 × Au
 
 La ponderación 80/15/5 es un **candidato defendible**, no una decisión tomada. Una intuición previa de `10:5:1` normaliza a 62,5 % / 31,25 % / 6,25 %, que probablemente le da demasiado peso competitivo a la conducta de equipo en una feria de matemática individual.
 
-Quien implemente esto debe escribirlo como política versionada y configurable, nunca como constantes anónimas. Ver [ejemplo de política de score](../07-reference/score-policy.example.json).
+La implementación lo expresa como política versionada y configurable, no como constantes anónimas. `fair-score-dev-1` es el id de la política y `1.0.0-candidate` su versión actual; ambas aparecen en el desglose, mientras el `scoreVersion` del descriptor guarda la versión de la calibración. Ver [ejemplo de política de score](../07-reference/score-policy.example.json).
 
 ### Qué pasa cuando una run no tiene la oportunidad
 

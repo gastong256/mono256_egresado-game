@@ -1,14 +1,36 @@
 {
-  "scoreVersion": "fair-score-v1",
-  "mathRaw": 5320,
-  "mathMax": 6000,
-  "mathPerformance": 8867,
-  "teamPerformance": 7200,
-  "auraPerformance": 6100,
-  "weights": {"math": 0.8, "team": 0.15, "aura": 0.05},
-  "fairScore": 8489,
-  "optimalCount": 3,
-  "accuracy": 0.91,
-  "difficultySolved": 6.4,
-  "activeTimeMs": 312400
+  "scorePolicyId": "fair-score-dev-1",
+  "scorePolicyVersion": "1.0.0-candidate",
+  "official": false,
+  "fairScore": 10000,
+  "components": [
+    {
+      "component": "math",
+      "opportunities": 2,
+      "performance": 10000,
+      "declaredWeight": 8000,
+      "effectiveWeight": 10000,
+      "contribution": 10000
+    },
+    {
+      "component": "team",
+      "opportunities": 0,
+      "performance": 0,
+      "declaredWeight": 1500,
+      "effectiveWeight": 0,
+      "contribution": 0
+    },
+    {
+      "component": "aura",
+      "opportunities": 0,
+      "performance": 0,
+      "declaredWeight": 500,
+      "effectiveWeight": 0,
+      "contribution": 0
+    }
+  ],
+  "mathRaw": 208000000,
+  "mathMax": 208000000,
+  "scoredBeats": 2,
+  "optimalCount": 2
 }

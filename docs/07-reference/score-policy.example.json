@@ -1,25 +1,26 @@
 {
-  "version": "fair-score-v1-candidate",
-  "status": "teacher-gate",
-  "weights": {"math": 0.80, "team": 0.15, "aura": 0.05},
+  "id": "fair-score-dev-1",
+  "version": "1.0.0-candidate",
+  "official": false,
+  "weights": {
+    "math": 8000,
+    "team": 1500,
+    "aura": 500
+  },
   "discreteQuality": {
-    "optimal": 1.0,
-    "resolved": 0.75,
-    "partial": 0.40,
-    "insufficient": 0.10
+    "optimal": 10000,
+    "efficient": 7500,
+    "functional": 4000,
+    "invalid": 1000
   },
-  "difficultyMultiplier": {
-    "CORE": 1.0,
-    "STANDARD": 1.08,
-    "STRETCH": 1.15
+  "difficultyReward": {
+    "core": 10000,
+    "standard": 10800,
+    "stretch": 11500
   },
-  "auraContributionCap": 10000,
-  "tieBreakOrder": [
-    "fairScore",
-    "mathPerformance",
-    "optimalCount",
-    "accuracy",
-    "difficultySolved",
-    "activeTimeMs"
-  ]
+  "componentCaps": {
+    "math": 10000,
+    "team": 10000,
+    "aura": 10000
+  }
 }

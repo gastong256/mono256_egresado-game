@@ -53,8 +53,8 @@ Un desafío correcto que no entra en la pantalla es un desafío roto. Ver [NFR](
 | huellas duplicadas | **implementado**: se reportan y deduplican intencionalmente |
 | problemas distintos y tasa de rechazo | **implementado** por plantilla |
 | posición y diversidad de respuesta correcta | **implementado** donde la interacción permite medirlas |
-| distribución por bandas `CORE / STANDARD / STRETCH` | **TARGET** — STAGE-05 |
-| comparabilidad de dificultad y score entre runs | **TARGET** — STAGE-05/STAGE-06 |
+| distribución por bandas `CORE / STANDARD / STRETCH` | **implementado**: perfil cognitivo, banda derivada y auditoría de composición desde STAGE-05 |
+| comparabilidad estructural y propiedades del score entre runs | **implementado en forma reducida**: `pnpm game:compose` + `pnpm game:score`; calibración empírica y competencia completa pendientes |
 
 La barrida profunda de cierre de STAGE-03 recorrió **50.013 direcciones**, aprobó **30.671 problemas semánticos distintos**, rechazó **0** y produjo **0 errores**. La de cierre de STAGE-04, ya con siete plantillas, recorrió **36.064** y aprobó **7.954** con **0 rechazos**. Los warnings de duplicación de Mural, Stand y la salida más tarde describen espacios finitos que el pipeline deduplica; no significan contenido inválido ni exigen que 10.000 direcciones produzcan 10.000 problemas únicos. El caso más nítido es `g7.bus-latest-departure`: su espacio son exactamente 360 problemas —30 pares duración/demora × 4 horas de entrada × 3 márgenes—, los aprueba a los 360 y el 96 % de duplicados es la consecuencia aritmética de agotarlo. La evidencia canónica está en el [roadmap](../06-delivery/implementation-sequence.md#stage-03-generación-validación-y-catálogo-de-variantes) y en [ADR-020](../03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md).
 
@@ -62,7 +62,7 @@ Los umbrales son **heurísticas de revisión, no constantes universales**. Su fu
 
 ## Auditoría Monte Carlo del armado de runs
 
-**TARGET.** Simular muchos calendarios de run contra perfiles de jugador sintéticos y comparar el score esperado por calendario.
+**Implementada en forma reducida.** `pnpm game:compose` audita composición y `pnpm game:score` cruza planes con perfiles sintéticos; `--compare` mantiene constantes las runs al mover las calibraciones candidatas. La auditoría completa sobre catálogo de feria, policy aprobada y operación real sigue futura.
 
 Pregunta que la auditoría tiene que poder responder: **¿cuánta varianza del score explica el sorteo de variantes, y no la habilidad?** Si el calendario explica una porción material, el equiparado por presupuesto de dificultad es débil y hay que corregirlo antes de la feria, no después.
 
@@ -76,6 +76,6 @@ Con datos reales se pueden estimar tasas de éxito, resultado parcial y tiempo p
 
 El catálogo ya existe y usa direcciones semánticas, no posiciones ni seeds guardados como contenido. `pnpm game:variants check` lo reconstruye, compara el artefacto byte a byte, recalcula huellas y revalida sus entradas; los tests materializan una misma dirección en runs y slots distintos. Los golden replays siguen protegiendo el protocolo completo del motor.
 
-Los casos por banda de dificultad y el catálogo oficial congelado siguen siendo futuros porque esas bandas todavía no existen.
+Las bandas y sus casos estructurales existen. Lo futuro es su calibración docente/empírica y el catálogo oficial congelado con el que se vaya a competir.
 
 Regla que ya está escrita y sigue valiendo: no crear goldens que congelen decisiones todavía abiertas.

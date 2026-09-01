@@ -2,11 +2,11 @@
   "eventId": "fair-2026",
   "status": "draft",
   "versions": {
-    "engine": "1.0.0",
-    "ruleset": "fair-2026-v1",
-    "content": "content-2026-v1",
-    "score": "fair-score-v1",
-    "variantCatalog": "variants-2026-v1"
+    "engine": "5.1.0",
+    "ruleset": "0.1.0-grade-7-composed",
+    "content": "0.8.0-grade-7",
+    "score": "1.0.0-candidate",
+    "variantCatalog": "grade-7-dev-4"
   },
   "attempts": {
     "mode": "unlimited",

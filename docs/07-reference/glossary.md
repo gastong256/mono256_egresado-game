@@ -82,9 +82,13 @@
 
 **DifficultyBudget:** objetivo y tolerancia de carga de una etapa. El compositor sólo produce planes que caen adentro. Pasar el presupuesto es comparabilidad estructural, no equivalencia psicométrica.
 
-**FairScore:** el score competitivo de una run entera, en puntos básicos de 0 a 10.000. Distinto del score por evento, que es de la capa de carrera y suma puntos por beat. Implementado en [ADR-023](../03-architecture/adr/ADR-023-competitive-score-policy.md) como `fair-score-dev-1`, con `official: false`.
+**FairScore:** score competitivo determinista de una run entera, producido por una `ScorePolicy` versionada a partir de evidencia de desempeño normalizada para su `RunPlan`. Distinto del score por evento y del ranking. Está implementado en [ADR-023](../03-architecture/adr/ADR-023-competitive-score-policy.md); la política vigente es candidata y no oficial.
 
-**MathPerformance · TeamPerformance · AuraPerformance:** las tres componentes normalizadas del score competitivo, cada una de 0 a 10.000. La matemática pondera por la recompensa de dificultad; las otras dos no.
+**ScorePolicy competitiva:** contrato versionado de pesos, escalones de calidad, recompensas de dificultad y topes con los que se calcula `FairScore`. La implementación candidata tiene id `fair-score-dev-1`, versión `1.0.0-candidate` y `official: false`; que exista no vuelve finales sus coeficientes.
+
+**scoreVersion:** campo opcional del `RunDescriptor` que identifica la versión de la calibración competitiva usada. Hoy guarda `1.0.0-candidate` cuando se inyecta `fair-score-dev-1`; se omite en una run de práctica sin política competitiva y viaja en snapshot y action log.
+
+**MathPerformance · TeamPerformance · AuraPerformance:** las tres componentes normalizadas del score competitivo, cada una de 0 a 10.000. La matemática pondera por la recompensa de dificultad; las otras dos no. Su existencia arquitectónica no implica que todo `RunPlan` ofrezca oportunidades de las tres.
 
 **Perfil de score:** lo que una plantilla declara sobre qué hecho suyo alimenta cada componente competitiva, y por qué es un hecho distinto del que otra ya leyó. `'none'` es una decisión escrita, no un default.
 
@@ -102,17 +106,9 @@
 
 **Dirección de variante:** `familia/plantilla/variante`. Tres identificadores semánticos estables; ni índice de array ni posición en el catálogo.
 
-**Difficulty budget:** masa de dificultad esperada asignada a una run para que distintas runs sigan siendo comparables.
-
-**Banda de dificultad:** `CORE`, `STANDARD` o `STRETCH`, metadata de autoría y competencia. Corresponde aproximadamente a `DifficultyLevel` 1–2 / 3 / 4–5 del motor.
-
-**MathPerformance:** medida normalizada de desempeño matemático orientada a competencia. No es una stat visible de carrera.
-
-**FairScore:** score compuesto oficial usado para el ranking. Objetivo, no implementado, y sus coeficientes están abiertos.
-
 **Personal best:** mejor run verificada de un participante en un evento. Es lo que el ranking compara, en vez de la suma de intentos.
 
-**Run descriptor:** identidad y configuración inmutables de una run oficial: versiones, seed, variantes asignadas y metadata del evento.
+**Run descriptor:** identidad y configuración inmutables de una run: seed, modo, dificultad y versiones; puede sumar catálogo, huella de plan y `scoreVersion`. La emisión por servidor y la metadata de evento/jugador para una run oficial siguen futuras.
 
 **Fail forward:** el error cambia las consecuencias y el contenido siguiente en vez de terminar la partida.
 

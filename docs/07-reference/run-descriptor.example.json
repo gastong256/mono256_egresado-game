@@ -1,19 +1,12 @@
 {
-  "runId": "run_demo_001",
-  "eventId": "fair-2026",
-  "playerId": "player_pseudonymous_123",
-  "runSeed": "94612839",
-  "engineVersion": "1.0.0",
-  "rulesetVersion": "fair-2026-v1",
-  "contentVersion": "content-2026-v1",
-  "scoreVersion": "fair-score-v1",
-  "variantCatalogVersion": "variants-2026-v1",
-  "slots": [
-    {
-      "familyId": "bus",
-      "templateId": "bus.delay.v1",
-      "variantSeed": "bus-00142",
-      "difficulty": "STANDARD"
-    }
-  ]
+  "runId": "run-reference-run",
+  "seed": "reference-run",
+  "mode": "fair",
+  "difficulty": "fixed",
+  "gameVersion": "5.1.0",
+  "rulesetVersion": "0.1.0-grade-7-composed",
+  "contentVersion": "0.8.0-grade-7",
+  "variantCatalogVersion": "grade-7-dev-4",
+  "planFingerprint": "a476b2ac29cc42ccb78f8554ae0c5b1bbc09ec8cf9428213b68b45bb6fa9d886",
+  "scoreVersion": "1.0.0-candidate"
 }

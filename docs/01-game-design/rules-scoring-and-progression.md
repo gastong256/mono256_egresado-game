@@ -113,13 +113,17 @@ Eso no significa que el bajo desempeño no tenga consecuencia. La dirección de 
 
 ## Este score no es el score de la competencia
 
-Lo anterior describe el **score por evento y por run**: es lo que el motor calcula hoy y lo que ve el jugador. Es una capa distinta del score competitivo de feria, que todavía no existe.
+Lo anterior describe el **score por evento y por run** que ve el jugador. Es una capa distinta del score competitivo de una run completa, implementado desde STAGE-06 como política candidata de desarrollo.
 
 | Capa | Qué responde | Estado |
 |---|---|---|
 | Resultado de desafío | ¿qué tan bien se resolvió esta situación? | implementado |
 | Score de run | ¿cuántos puntos hizo esta partida? | implementado, política de desarrollo |
 | Identidad de carrera | ¿qué recorrido escolar construí? | implementado |
-| `FairScore` competitivo | ¿qué tan fuerte fue esta run oficial bajo las reglas del evento? | **no implementado**, y sus coeficientes están abiertos |
+| Desempeño competitivo | ¿qué evidencia matemática, de equipo o de aura produjo cada beat? | implementado; Promedio y Estilo no son componentes |
+| `FairScore` competitivo | ¿qué tan fuerte fue esta run bajo una `ScorePolicy` concreta? | **implementado** como `fair-score-dev-1`, `official: false`; coeficientes abiertos |
+| Ranking | ¿cómo se ordenan runs verificadas y cuál es el personal best? | no implementado |
 
-La dirección propuesta para esa cuarta capa —matemática dominante, contribución acotada de Equipo y Aura, Estilo sin puntaje directo, mejor intento y desempate lexicográfico— está en [score competitivo y ranking](competitive-scoring-and-ranking.md). **Es una recomendación sujeta a Teacher Gate, no una regla cerrada**, y quien la implemente tiene que escribirla como política versionada y no como constantes en el código.
+La cadena vigente mantiene límites explícitos: resultado de desafío ≠ efecto de carrera ≠ desempeño competitivo ≠ `FairScore` ≠ ranking. `MathPerformance` domina; `TeamPerformance` y `AuraPerformance` son secundarias y acotadas; Promedio y Estilo no puntúan directamente. Cuando el `RunPlan` no ofrece una componente, ésta sale del cálculo y los pesos activos se renormalizan, de modo que una ejecución perfecta conserva el máximo de 10.000.
+
+La arquitectura y el mecanismo ya existen, incluida la aritmética entera y la recomputación en servidor. La calibración 80/15/5, los escalones de calidad y las recompensas de dificultad siguen siendo **candidatos sujetos a Teacher Gate**, y ranking, personal best y desempate siguen futuros. Ver [score competitivo y ranking](competitive-scoring-and-ranking.md) y [ADR-023](../03-architecture/adr/ADR-023-competitive-score-policy.md).

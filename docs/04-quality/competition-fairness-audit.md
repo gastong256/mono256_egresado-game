@@ -1,10 +1,18 @@
 # Auditoría de equidad competitiva
 
-**Estado: RECOMENDADO / TEACHER GATE.** Es un procedimiento de revisión, no un gate ejecutable todavía. Se corre antes del Teacher Gate 1 en su forma reducida y antes del congelamiento de competencia en su forma completa.
+**Estado: auditoría reducida ejecutable / auditoría completa RECOMENDADA · TEACHER GATE.** STAGE-05 y STAGE-06 implementaron evidencia de ingeniería sobre composición y score; eso no convierte en ejecutable ni en aprobada la auditoría completa de una competencia todavía inexistente.
 
 Un ranking con premios es una afirmación sobre personas. Esta auditoría existe para poder defender esa afirmación con evidencia, no con intención.
 
 Lo que se audita está definido en [score competitivo y ranking](../01-game-design/competitive-scoring-and-ranking.md); acá están las preguntas que hay que poder contestar.
+
+## Evidencia de ingeniería disponible ahora
+
+- `pnpm game:compose` compone, valida, serializa y recompone planes, y mide distribución y carga estructural.
+- `pnpm game:score` ejecuta la política candidata sobre 23.000 planes y comprueba techo perfecto, normalización de oportunidades, dominancia matemática y recomputación determinista.
+- `pnpm game:score -- --compare` repite las mismas runs con 80/15/5, 85/10/5, 90/10/0 y sin recompensa de dificultad. Son políticas de comparación para el Teacher Gate, no alternativas oficiales.
+
+Esta evidencia prueba invariantes del mecanismo y exhibe el efecto de candidatos concretos. No prueba que la calibración sea pedagógicamente correcta, que las bandas sean psicométricamente equivalentes ni que un ranking real sea justo.
 
 ## Comparabilidad
 
@@ -46,3 +54,5 @@ La regla publicada tiene que poder decirse en tres frases y coincidir con lo que
 ## Entregable
 
 La auditoría produce una tabla de respuestas con evidencia —salidas de simulación, distribuciones, tasas— y una lista explícita de lo que quedó sin resolver. Un «se ve bien» no cierra ningún punto.
+
+La **auditoría completa** se ejecuta recién sobre contenido final, dificultad y `ScorePolicy` aprobadas, política de intentos y empates decidida, fair mode real y catálogo oficial congelado. Debe sumar distribución entre participantes, tasa de empate, sesgo por volumen/velocidad, elegibilidad, personal best y operación autoritativa; la auditoría reducida actual no reemplaza nada de eso.
