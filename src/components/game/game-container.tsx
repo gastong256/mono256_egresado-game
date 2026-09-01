@@ -132,7 +132,19 @@ function buildController(
   return controller
 }
 
-export function GameContainer() {
+export interface GameContainerProps {
+  /**
+   * Seed to start the run with, instead of drawing a fresh one.
+   *
+   * Only the Teacher Gate route passes it, so a review session can show the
+   * same situation to two people on two days. A normal game never sets it: a
+   * player choosing their own draw is exactly what a competition cannot allow,
+   * and the route that offers this is closed outside development.
+   */
+  readonly initialSeed?: string
+}
+
+export function GameContainer({ initialSeed }: GameContainerProps = {}) {
   const dependencies = useMemo(() => createGrade7Dependencies(), [])
   const stage = useMemo(
     () => firstStageLabel(dependencies.ruleset.stages),
@@ -157,14 +169,16 @@ export function GameContainer() {
 
   const startRun = useCallback(
     (nickname: string) => {
-      const descriptor = createGrade7RunDescriptor(createSeedValue())
+      const descriptor = createGrade7RunDescriptor(
+        initialSeed ?? createSeedValue(),
+      )
       setScreen({
         kind: 'jugando',
         nickname,
         controller: buildController(nickname, descriptor, dependencies),
       })
     },
-    [dependencies],
+    [dependencies, initialSeed],
   )
 
   if (!probe.ready) {

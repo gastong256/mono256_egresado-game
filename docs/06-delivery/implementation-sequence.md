@@ -642,7 +642,7 @@ Las dos franjas del medio no se cruzan: la dominancia de la matemática está me
 
 **Punto de partida.** Las dos etapas de las que depende están cerradas, y con ellas llega lo que el Gate necesita para poder decidir en vez de opinar: una Demo Candidate jugable de 7.º, y una calibración competitiva completa y medida cuyos coeficientes nadie cerró. `pnpm game:score -- --compare` corre las mismas runs bajo calibraciones alternativas, que es la forma de discutir 80/15/5 con números.
 
-Aprobación externa del Departamento de Matemática sobre la Demo Candidate de 7.º. Qué se demuestra, cómo se conduce la sesión y qué se pide decidir está en [gates docentes](teacher-gates.md).
+Aprobación externa del Departamento de Matemática sobre la Demo Candidate de 7.º. Qué se pide decidir está en [gates docentes](teacher-gates.md); **el material para conducir la sesión está preparado en [el pack del Teacher Gate 1](teacher-gate-1/README.md)** —guion de quince minutos, casos reproducibles, planilla y acta— y se valida con `pnpm teacher-gate --validate`.
 
 **Se valida:** nivel matemático, terminología, situaciones, dificultad, ponderación de score, política de intentos, política de empate, duración de la run, lenguaje de recuperación.
 
@@ -655,6 +655,7 @@ Aprobación externa del Departamento de Matemática sobre la Demo Candidate de 7
 - [ ] La ScorePolicy candidata fue revisada por los docentes.
 - [ ] **No se presentó la validación docente como playtest con estudiantes.**
 - [ ] Este roadmap y la [etapa actual](current-stage.md) actualizados antes de empezar STAGE-07.
+- [ ] El [acta](teacher-gate-1/09-acta.md) registra qué versiones vieron los docentes.
 
 **Exit gate.** ¿Están cerradas o explícitamente diferidas las decisiones docentes que bloquean la producción de contenido?
 

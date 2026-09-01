@@ -67,6 +67,17 @@
 06-delivery/implementation-sequence.md
 06-delivery/mvp-backlog.md
 06-delivery/repository-conventions.md
+06-delivery/teacher-gate-1/01-guion.md
+06-delivery/teacher-gate-1/02-checklist-facilitador.md
+06-delivery/teacher-gate-1/03-casos.md
+06-delivery/teacher-gate-1/04-dificultad.md
+06-delivery/teacher-gate-1/05-puntaje.md
+06-delivery/teacher-gate-1/06-preguntas.md
+06-delivery/teacher-gate-1/07-planilla-decisiones.md
+06-delivery/teacher-gate-1/08-resumen-docente.md
+06-delivery/teacher-gate-1/09-acta.md
+06-delivery/teacher-gate-1/10-anexo.md
+06-delivery/teacher-gate-1/README.md
 06-delivery/teacher-gates.md
 06-delivery/vertical-slice-grade-7.md
 07-reference/blueprint-v0.2-integration.md

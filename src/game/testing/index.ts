@@ -17,6 +17,18 @@ export {
 } from './fixtures/development-ruleset'
 export { developmentStorylets } from './fixtures/storylets'
 export {
+  orderedTeacherGateCases,
+  teacherGateCase,
+  teacherGateCaseIssues,
+  TEACHER_GATE_1_CASES,
+  type TeacherGateCase,
+  type TeacherGateSurface,
+} from './teacher-gate/cases'
+export {
+  verifyTeacherGateCase,
+  type TeacherGateCaseReport,
+} from './teacher-gate/verify'
+export {
   createComposedDevelopmentDependencies,
   createComposedDevelopmentRuleset,
   composedDevelopmentCompositionPolicy,

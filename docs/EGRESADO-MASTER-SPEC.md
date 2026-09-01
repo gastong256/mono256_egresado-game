@@ -6502,12 +6502,27 @@ Lo que sigue no es implementar más: es que alguien que enseña matemática mire
 - [ ] **No se presentó la validación docente como playtest con estudiantes.**
 - [ ] Este documento y el [roadmap](06-delivery/implementation-sequence.md) actualizados antes de empezar STAGE-07.
 
+## El pack está preparado
+
+Todo el material para dar la reunión está en [el pack del Teacher Gate 1](06-delivery/teacher-gate-1/README.md): guion minuto a minuto, cuatro casos con sorteo fijo que reproducen la misma situación en cualquier máquina, tabla de niveles y de puntaje escritas para leer en voz alta, planilla de decisiones y acta.
+
+Antes de convocar a nadie:
+
+```bash
+pnpm dev
+pnpm teacher-gate --validate
+pnpm teacher-gate --prepare
+```
+
+Si `--validate` falla, el contenido cambió y los casos ya no muestran lo que el pack promete. **No se da la reunión con casos obsoletos.**
+
 ## Herramientas para conducir la sesión
 
 - `pnpm game:score` — qué hace la calibración candidata sobre 23.000 planes.
 - `pnpm game:score -- --compare` — las mismas runs bajo 80/15/5, 85/10/5, 90/10/0 y sin recompensa por dificultad. Mover el dial deja de ser una discusión abstracta.
 - `pnpm game:compose` — la distribución de composición: 20.000 años de 7.º, 1.404 planes distintos, carga idéntica.
-- El juego en `/jugar`, que sigue jugando el arco completo de la demostración.
+- `pnpm teacher-gate --case TG1-A` — la ficha de un caso, con la URL para jugarlo.
+- El juego en `/jugar`, que sigue jugando el arco completo de la demostración con un sorteo al azar.
 
 ## Qué NO se hace mientras el Gate está pendiente
 
@@ -7279,7 +7294,7 @@ Las dos franjas del medio no se cruzan: la dominancia de la matemática está me
 
 **Punto de partida.** Las dos etapas de las que depende están cerradas, y con ellas llega lo que el Gate necesita para poder decidir en vez de opinar: una Demo Candidate jugable de 7.º, y una calibración competitiva completa y medida cuyos coeficientes nadie cerró. `pnpm game:score -- --compare` corre las mismas runs bajo calibraciones alternativas, que es la forma de discutir 80/15/5 con números.
 
-Aprobación externa del Departamento de Matemática sobre la Demo Candidate de 7.º. Qué se demuestra, cómo se conduce la sesión y qué se pide decidir está en [gates docentes](06-delivery/teacher-gates.md).
+Aprobación externa del Departamento de Matemática sobre la Demo Candidate de 7.º. Qué se pide decidir está en [gates docentes](06-delivery/teacher-gates.md); **el material para conducir la sesión está preparado en [el pack del Teacher Gate 1](06-delivery/teacher-gate-1/README.md)** —guion de quince minutos, casos reproducibles, planilla y acta— y se valida con `pnpm teacher-gate --validate`.
 
 **Se valida:** nivel matemático, terminología, situaciones, dificultad, ponderación de score, política de intentos, política de empate, duración de la run, lenguaje de recuperación.
 
@@ -7292,6 +7307,7 @@ Aprobación externa del Departamento de Matemática sobre la Demo Candidate de 7
 - [ ] La ScorePolicy candidata fue revisada por los docentes.
 - [ ] **No se presentó la validación docente como playtest con estudiantes.**
 - [ ] Este roadmap y la [etapa actual](06-delivery/current-stage.md) actualizados antes de empezar STAGE-07.
+- [ ] El [acta](06-delivery/teacher-gate-1/09-acta.md) registra qué versiones vieron los docentes.
 
 **Exit gate.** ¿Están cerradas o explícitamente diferidas las decisiones docentes que bloquean la producción de contenido?
 
@@ -7743,6 +7759,1322 @@ Cambios que alteran resultados deben indicarlo explícitamente y actualizar la v
 
 ---
 
+# FILE: 06-delivery/teacher-gate-1/01-guion.md
+
+# Guion de la sesión · 15 minutos
+
+Para el facilitador. Los textos entre comillas son para decir en voz alta, no para leer palabra por palabra.
+
+**Regla de oro:** la primera partida se juega **sin explicación previa**. Lo más valioso de esta reunión es dónde alguien que sabe matemática se traba solo, y explicar antes destruye ese dato para siempre.
+
+---
+
+## 00:00 – 01:00 · Contexto
+
+**Objetivo:** que sepan qué se les pide y qué no.
+
+**Qué decís:**
+
+> «Egresado es un juego de partidas cortas donde un estudiante recorre la secundaria resolviendo situaciones con matemática. Hoy no venimos a mostrarles si el software anda: eso ya está probado. Venimos a que decidan cuatro cosas: si la matemática es apropiada, si los niveles que propusimos son razonables, cómo debería armarse el puntaje de una competencia, y qué habría que cambiar antes de producir el resto del juego.
+>
+> Van a jugar dos situaciones. **No les voy a explicar cómo se juegan**, a propósito: quiero ver dónde se traban.»
+
+**Qué NO explicás todavía:** el modelo de carrera, las variantes, cómo se compone una partida, el puntaje. Todo eso viene después de que jueguen.
+
+---
+
+## 01:00 – 05:00 · Caso TG1-A · El colectivo
+
+**Objetivo:** que Egresado se entienda jugando.
+
+**Qué mostrás:** `pnpm teacher-gate --case TG1-A` da la URL. Abrís, le pasás el teclado o el teléfono, y te callás.
+
+**Qué hace el docente:** escribe un nombre, avanza, y resuelve la situación del colectivo.
+
+**Qué observás y anotás** — esto es el dato, no su opinión:
+
+- ¿Entendió qué le piden sin preguntar?
+- ¿Qué dato miró primero?
+- ¿Descartó opciones o calculó una sola?
+- ¿Dónde dudó?
+- Cuando resolvió, ¿el resultado le explicó la consecuencia o sólo le dijo si acertó?
+
+**Qué preguntás, recién ahora:**
+
+> «¿Este razonamiento corresponde al nivel que esperarían en 7.º?»
+>
+> «¿La dificultad viene del razonamiento o de hacer la cuenta?»
+>
+> «¿La consigna se entiende sin ayuda?»
+
+**Tipo de decisión:** TG1-01 (nivel matemático) y TG1-02 (situaciones).
+
+**Si se va de tiempo:** cortás la conversación sobre los números concretos —«eso lo anoto y lo vemos después»— y pasás al caso B. El contraste es más importante que afinar un enunciado.
+
+---
+
+## 05:00 – 07:00 · Caso TG1-B · El mismo colectivo, otra pregunta
+
+**Objetivo:** mostrar que dos partidas pueden pedir razonamientos distintos, no sólo otros números. Es la idea que sostiene todo el diseño de contenido.
+
+**Qué mostrás:** `pnpm teacher-gate --case TG1-B`. Otra vez sin explicar.
+
+**Qué decís, sólo si no lo nota solo:**
+
+> «Es la misma situación de antes. ¿Qué cambió?»
+
+**Qué observás:**
+
+- ¿Notó que es el mismo contexto con la pregunta dada vuelta?
+- ¿Le costó más producir el número que elegir entre opciones?
+
+**Qué preguntás:**
+
+> «¿Es razonable que estas dos versiones convivan como situaciones distintas?»
+>
+> «¿Producir la respuesta debería considerarse más exigente que elegirla entre cuatro?»
+
+**Tipo de decisión:** TG1-03 (clasificación de dificultad).
+
+**Lo que NO hacés acá:** explicar cómo se generan las variantes ni cuántas hay. Si preguntan, respondés en una frase y seguís.
+
+---
+
+## 07:00 – 10:00 · Niveles
+
+**Objetivo:** que revisen la clasificación propuesta de las siete situaciones.
+
+**Qué mostrás:** la tabla de [04-dificultad.md](06-delivery/teacher-gate-1/04-dificultad.md), impresa o en pantalla. `pnpm teacher-gate --difficulty` da la misma lista desde el motor.
+
+**Qué decís:**
+
+> «Clasificamos cada situación en tres niveles. La idea es que el nivel salga de cuántas cosas hay que sostener a la vez, no de qué tan feas son las cuentas. Estos son nuestros candidatos y necesitamos que los revisen.»
+
+**Qué preguntás:**
+
+> «¿Alguna está claramente mal ubicada?»
+>
+> «¿Hay alguna donde la dificultad venga de la aritmética y no del razonamiento?»
+>
+> «¿El mismo contenido le seguiría resultando un desafío a un adulto?»
+
+**Tipo de decisión:** TG1-03.
+
+**MUST DISCUSS.** Si el tiempo aprieta, se recortan los casos C y D, no esto: la clasificación condiciona todo el contenido de 1.º a 5.º.
+
+---
+
+## 10:00 – 13:00 · Puntaje
+
+**Objetivo:** decidir la filosofía, no los decimales.
+
+**Qué mostrás:** [05-puntaje.md](06-delivery/teacher-gate-1/05-puntaje.md), y `pnpm teacher-gate --scores` para los ejemplos y la comparación.
+
+**Qué decís, en este orden** — filosofía primero, números después:
+
+> «Separamos dos cosas. Una es la carrera del personaje: promedio, equipo, aura y estilo, que es la historia de ese chico. La otra es el puntaje de competencia, que decide el ranking de la feria. No son lo mismo, y creemos que el promedio no debería sumar dos veces.
+>
+> La propuesta es que la matemática pese claramente más que todo lo demás junto. Miren estos cuatro ejemplos.»
+
+**Qué preguntás, en orden de importancia:**
+
+> «¿Aceptan un puntaje dominado por la matemática?»
+>
+> «¿El trabajo en equipo debería influir en el ranking? ¿Qué situaciones considerarían evidencia válida?»
+>
+> «Aura hoy no aporta puntos de competencia: el acto del 25 mueve Aura en la historia, pero lo único que medimos ahí es matemática, y usarlo dos veces sería premiar lo mismo dos veces. ¿Aura debería influir?»
+>
+> «Una partida puede no incluir una situación de equipo. En ese caso no se pierden esos puntos: el peso se reparte entre lo que sí estuvo. ¿Les parece aceptable que dos partidas midan combinaciones distintas?»
+
+**Tipo de decisión:** TG1-04 a TG1-07.
+
+**MUST DISCUSS:** dominancia de la matemática y equipo/Aura. Si falta tiempo, la normalización por oportunidad se puede diferir un día, pero no más: bloquea el diseño de contenido de los años siguientes.
+
+---
+
+## 13:00 – 15:00 · Decisiones
+
+**Objetivo:** salir con una palabra por ítem, no con una sensación.
+
+**Qué hacés:** abrís [07-planilla-decisiones.md](06-delivery/teacher-gate-1/07-planilla-decisiones.md) y la recorrés en voz alta.
+
+**Qué decís:**
+
+> «Necesito una de cuatro palabras por cada punto: aceptar, ajustar, rechazar o diferir. Si es ajustar, necesito saber qué. Si no hay acuerdo, lo anoto como desacuerdo y no lo cierro.»
+
+**Lo que no hacés:** forzar consenso. Un desacuerdo registrado es un resultado válido y útil; un «se ve bien» de compromiso no lo es.
+
+---
+
+## Si sobra tiempo
+
+En este orden:
+
+1. **TG1-C · El acto del 25 de Mayo** (3 min) — pedagogía, narrativa y competencia, preguntadas por separado. Ver [03-casos.md](06-delivery/teacher-gate-1/03-casos.md).
+2. **TG1-D · El trabajo grupal** (3 min) — la única situación que hoy aporta evidencia de equipo.
+
+## Si falta tiempo
+
+Se difieren, en este orden:
+
+1. política de intentos (TG1-10);
+2. política de empate (TG1-11);
+3. duración objetivo de la partida (TG1-12).
+
+Ninguna de las tres bloquea la etapa siguiente. La justificación está en [06-preguntas.md](06-delivery/teacher-gate-1/06-preguntas.md).
+
+## Qué no explicar nunca en esta reunión
+
+- Cómo se generan las variantes por dentro.
+- Qué es un seed, un catálogo o una huella.
+- Cómo el servidor verifica una partida.
+- Nada de arquitectura de software.
+
+Si alguien pregunta, hay una respuesta de una frase en el [anexo](06-delivery/teacher-gate-1/10-anexo.md). Después de la reunión.
+
+---
+
+# FILE: 06-delivery/teacher-gate-1/02-checklist-facilitador.md
+
+# Checklist del facilitador
+
+## Antes (el día anterior alcanza)
+
+- [ ] El repositorio está en el commit que se va a mostrar, y lo anotaste para el acta.
+- [ ] `pnpm dev` levanta la aplicación.
+- [ ] `pnpm teacher-gate --validate` termina en verde. **Si falla, no se da la reunión.**
+- [ ] Abriste los casos TG1-A y TG1-B una vez cada uno y llegaste a la situación esperada.
+- [ ] `pnpm teacher-gate --scores` corre y tenés los cuatro ejemplos a mano.
+- [ ] Imprimiste o compartiste [08-resumen-docente.md](06-delivery/teacher-gate-1/08-resumen-docente.md).
+- [ ] Tenés la planilla de decisiones lista para escribir, en papel o abierta.
+- [ ] Decidiste en qué pantalla van a jugar: si es teléfono, probá el ancho antes.
+- [ ] Reservaste 15 minutos reales, no 15 minutos dentro de otra reunión.
+
+## Durante
+
+- [ ] **No explicaste cómo se juega antes de la primera partida.**
+- [ ] Anotaste dónde dudó, no sólo lo que opinó.
+- [ ] Anotaste la primera confusión textualmente, con sus palabras.
+- [ ] Miraste el reloj al pasar de cada bloque.
+- [ ] Hiciste las preguntas exactas del guion, no «¿qué les parece?».
+- [ ] Registraste una de las cuatro palabras por cada ítem.
+- [ ] Cuando hubo desacuerdo, lo anotaste como desacuerdo en vez de resolverlo vos.
+- [ ] Cortaste las conversaciones de detalle con «lo anoto y lo vemos después».
+
+## Después
+
+- [ ] Pasaste la planilla a [09-acta.md](06-delivery/teacher-gate-1/09-acta.md) el mismo día, mientras te acordás.
+- [ ] Marcaste cuáles ítems quedaron como bloqueantes.
+- [ ] **No cambiaste ninguna calibración todavía.** Primero se revisa el conjunto de decisiones; cambiar de a una en caliente es cómo se pierde la trazabilidad.
+- [ ] Creaste la tarea de seguimiento por cada AJUSTAR.
+- [ ] Actualizaste el [registro de decisiones](07-reference/decision-register.md) con lo que se cerró.
+- [ ] Actualizaste las [preguntas abiertas](07-reference/open-questions.md) con lo que quedó abierto.
+- [ ] Recién ahí actualizaste el [roadmap](06-delivery/implementation-sequence.md) y la [etapa actual](06-delivery/current-stage.md).
+
+---
+
+## Hoja de observación
+
+Una por caso jugado. La completa **el facilitador**, no el docente: pedirle que llene un formulario le saca el tiempo que queremos que use jugando y hablando.
+
+**Caso:** ________  **Docente:** ________
+
+| Qué mirar | Anotación |
+|---|---|
+| ¿Entendió la consigna sin explicación? | |
+| ¿Qué información miró primero? | |
+| ¿Hubo alguna ambigüedad? ¿Cuál? | |
+| ¿Qué estrategia usó? | |
+| ¿La matemática fue central o decorativa? | |
+| Nivel percibido (fácil / adecuado / difícil) | |
+| ¿El resultado se entendió? | |
+| Comentario libre | |
+
+---
+
+## Cierre del gate
+
+**Esta lista empieza vacía y se completa después de la reunión real.** No se marca nada hoy.
+
+- [ ] Se revisó el nivel matemático de las situaciones mostradas.
+- [ ] Se revisó la clasificación de niveles.
+- [ ] Se revisó la filosofía del puntaje.
+- [ ] Se registraron las objeciones bloqueantes, si las hubo.
+- [ ] Se identificaron los ajustes necesarios, con responsable.
+- [ ] No queda ningún desacuerdo bloqueante sin resolver.
+- [ ] Cada decisión quedó registrada con la evidencia que se mostró.
+- [ ] Se asignaron los cambios de seguimiento.
+- [ ] El acta está completa, con versiones y participantes reales.
+
+Con todo eso marcado, y **sólo entonces**, el gate se puede declarar cerrado en el roadmap.
+
+---
+
+# FILE: 06-delivery/teacher-gate-1/03-casos.md
+
+# Los casos de la sesión
+
+Cuatro casos preparados. Los dos primeros son la sesión central; los otros dos salen si sobra tiempo.
+
+Cada uno arranca con un sorteo fijo, así que **dos personas en dos días distintos ven exactamente la misma situación**. Eso es lo que permite discutir sobre lo mismo.
+
+Para ver la ficha completa de cualquiera:
+
+```bash
+pnpm teacher-gate --case TG1-A
+```
+
+`pnpm teacher-gate --validate` comprueba que los cuatro sigan mostrando lo que este documento dice.
+
+---
+
+## TG1-A · El colectivo, elegir en cuál subirse
+
+**Para qué está:** que Egresado se entienda jugando, sin que nadie lo explique antes.
+**Tiempo:** 4 minutos. **Nivel propuesto:** STANDARD.
+
+**Qué va a ver el docente**
+
+El viaje al colegio dura 36 minutos y hoy el colectivo demora un 50 % más. La entrada es a las 08:00, sin excepción. Hay cuatro horarios de salida: 06:59, 07:05, 07:09 y 07:19.
+
+**Trabajo matemático**
+
+Calcular cuánto dura el viaje hoy —36 más la mitad, 54 minutos— y decidir cuál de las cuatro salidas llega a horario. La última salida segura es 07:06, así que dos de las cuatro sirven; entre ésas, una hace esperar seis minutos más que la otra en la puerta. Elegir bien no es sólo llegar: es llegar sin perder la mañana.
+
+**Qué observar**
+
+- ¿Entendió qué le piden sin preguntar?
+- ¿Qué dato miró primero?
+- ¿Descartó opciones o calculó una sola?
+- ¿El resultado le explicó la consecuencia o sólo le dijo si acertó?
+
+**Preguntas**
+
+- ¿Este razonamiento corresponde al nivel que esperarían en 7.º?
+- ¿La dificultad viene del razonamiento o de hacer la cuenta?
+- ¿La consigna es clara sin ayuda?
+- ¿Cambiarían algo de la situación o de los números?
+
+---
+
+## TG1-B · El colectivo, decir con cuánto tiempo salir
+
+**Para qué está:** mostrar que la misma situación puede pedir un razonamiento distinto. No otros números: otra pregunta.
+**Tiempo:** 2 minutos. **Nivel propuesto:** STANDARD.
+
+**Qué va a ver el docente**
+
+El mismo colectivo. Hoy el viaje dura 20 minutos y demora un 15 % más. La entrada sigue siendo a las 08:00 y el grupo pide llegar 10 minutos antes. **No hay opciones para elegir:** hay que escribir el número.
+
+**Trabajo matemático**
+
+Recorrer la misma relación al revés. En el caso A se va hacia adelante desde cada salida; acá se va hacia atrás desde la hora de llegada, sumando el margen que pidió el grupo. La respuesta —33 minutos de anticipación— hay que construirla, no reconocerla entre alternativas.
+
+**En qué se diferencia de A, exactamente**
+
+| | TG1-A | TG1-B |
+|---|---|---|
+| Pregunta | ¿a qué salida me subo? | ¿con cuánto tiempo salgo? |
+| Trabajo | evaluar cuatro candidatas y descartar | ir hacia atrás desde la llegada |
+| Respuesta | está entre las opciones | la produce quien juega |
+| Error | elegir mal | quedarse corto o pasarse |
+
+Ésta es la diferencia que el pack quiere que se discuta: **no cambian los números, cambia el razonamiento**.
+
+**Preguntas**
+
+- ¿Es razonable que estas dos versiones convivan como situaciones distintas?
+- ¿Producir la respuesta debería considerarse más exigente que elegirla entre cuatro?
+- ¿Las dos deberían estar en el mismo nivel, o una es más difícil?
+
+---
+
+## TG1-C · El acto del 25 de Mayo *(si hay tiempo)*
+
+**Para qué está:** revisar la única situación que ocurre en público y la única que mueve Aura.
+**Tiempo:** 3 minutos. **Nivel propuesto:** CORE.
+
+**Qué va a ver el docente**
+
+Tres pasos de una coreografía, cada uno con su regla escrita y ocho números para marcar:
+
+| Paso | Señal | Regla |
+|---|---|---|
+| 1 | Pañuelo blanco | números pares |
+| 2 | Pañuelo celeste | múltiplos de 3 |
+| 3 | Zapateo | números primos |
+
+En el paso de primos aparece el **1**, a propósito: es el error clásico de la edad, y la corrección lo muestra sin retar a nadie.
+
+**Trabajo matemático**
+
+Clasificar según una regla. Se corrige con precisión y cobertura a la vez, así que ni marcar todo ni marcar una sola celda alcanzan.
+
+**Preguntas — hacerlas por separado, no juntas**
+
+*Pedagogía*
+- ¿Pares, múltiplos y primos son apropiados para 7.º?
+- ¿La tarea de clasificar es clara y tiene sentido matemático?
+- ¿La estrategia de marcar sólo lo seguro debería dar un resultado aceptable?
+
+*Narrativa*
+- ¿El contexto del acto escolar es creíble y respetuoso?
+- ¿Tiene sentido que un momento público mueva algo así como «Aura»?
+
+*Competencia*
+- ¿Un evento de este tipo debería influir en el ranking?
+- Si sí, ¿qué evidencia sería distinta de la matemática que ya se mide?
+
+---
+
+## TG1-D · El trabajo grupal *(si hay tiempo)*
+
+**Para qué está:** revisar la única situación que hoy aporta evidencia de trabajo en equipo al puntaje.
+**Tiempo:** 3 minutos. **Nivel propuesto:** STRETCH.
+
+**Qué va a ver el docente**
+
+Cuatro partes del trabajo y cuatro personas con horas disponibles y fuerzas distintas. Hay que repartir sin pasarse de las horas de nadie.
+
+**Trabajo matemático**
+
+Asignación con dos restricciones que hay que sostener juntas, buscando el mejor reparto y no solamente uno que entre.
+
+**Por qué está en la conversación de puntaje**
+
+Es la única situación de 7.º donde el juego mide **dos hechos distintos**: si el reparto era factible —eso es matemática— y cuánto jugó a la fuerza de cada uno —eso es lo que la componente de equipo lee—. Se puede armar un reparto que entra y es torpe, y uno que entra y está bien pensado.
+
+**Preguntas**
+
+- ¿Esto es evidencia válida de trabajo en equipo, o es matemática de asignación con otro nombre?
+- ¿El ranking debería medir también capacidades de trabajo en equipo?
+- Si sí, ¿qué situaciones considerarían evidencia válida?
+
+---
+
+## Una limitación que conviene decir en voz alta
+
+Los cuatro casos salen del **recorrido de demostración** de 7.º, que juega las seis situaciones del año seguidas. Una partida normal jugaría una o dos por año. La diferencia está explicada en [06-preguntas.md](06-delivery/teacher-gate-1/06-preguntas.md), en la decisión TG1-12.
+
+No se buscó ningún caso «espectacular». Se buscaron casos representativos: si una situación se ve rara, es porque el contenido la produce así, no porque se haya elegido el sorteo más raro.
+
+---
+
+# FILE: 06-delivery/teacher-gate-1/04-dificultad.md
+
+# Niveles de dificultad · para conversar
+
+**Todo lo de esta página es una propuesta de ingeniería. Ningún docente la revisó todavía.** De eso se trata la reunión.
+
+## La idea
+
+Clasificamos cada situación en tres niveles según **cuántas cosas hay que sostener a la vez**, no según qué tan incómodas son las cuentas.
+
+| Nivel | Qué significa |
+|---|---|
+| **CORE** | una relación principal, poco que combinar |
+| **STANDARD** | dos relaciones o restricciones, una comparación, una cadena corta de pasos |
+| **STRETCH** | varias restricciones simultáneas, optimización, o hay que decidir qué información sirve |
+
+La distinción que nos importa sostener: **la dificultad tiene que venir del razonamiento**. Números más grandes, decimales más feos o una fórmula más avanzada no hacen a una situación más difícil en el sentido que nos interesa; hacen a la cuenta más molesta, que es otra cosa y castiga a quien razona bien y calcula lento.
+
+## Las siete situaciones de 7.º
+
+| Situación | Trabajo matemático | Qué tiene que hacer el estudiante | Nivel propuesto | Por qué |
+|---|---|---|---|---|
+| **El acto del 25 de Mayo** | clasificar por una regla | marcar, en tres pasos, los números que cumplen pares, múltiplos de 3 y primos | CORE | cada celda es una sola pregunta y la regla está escrita en pantalla |
+| **El colectivo — a cuál subirse** | porcentaje sobre una duración, comparación de horarios | calcular el viaje con demora y elegir la salida que llega sin esperar de más | STANDARD | dos relaciones encadenadas y cuatro alternativas que comparar |
+| **El cuaderno en oferta** | porcentaje contra descuento fijo | llevar dos ofertas a la misma unidad y mirarlas contra la plata disponible | STANDARD | dos ofertas que no se comparan solas, con un límite de efectivo |
+| **El colectivo — con cuánto tiempo salir** | la misma relación al revés, con un margen | decir cuántos minutos antes hay que salir | STANDARD | además de la cadena, hay que **construir** la respuesta en lugar de elegirla |
+| **El mural** | área y cobertura por envase entero | calcular la superficie, pasarla a litros y comprar por envases | STANDARD | cadena de tres pasos donde perder el intermedio pierde el problema |
+| **El stand de la feria** | packs, mínimo requerido y presupuesto | armar la compra más barata que cubra las porciones sin pasarse de plata | STRETCH | dos restricciones que no se satisfacen por separado, sobre una combinación que hay que armar |
+| **El trabajo grupal** | asignación con capacidad y afinidad | repartir cuatro partes sin pasarse de las horas de nadie | STRETCH | dos restricciones simultáneas más leer afinidad, y buscando el mejor reparto, no uno que entre |
+
+## Preguntas, situación por situación
+
+Para cada una:
+
+- ¿Este contenido corresponde al nivel esperado para la etapa?
+- ¿Qué parte sería demasiado fácil o demasiado difícil?
+- ¿La dificultad viene del razonamiento o de hacer cuentas?
+- ¿La clasificación en CORE / STANDARD / STRETCH les parece razonable?
+- ¿La cambiarían? ¿Por qué?
+- ¿La consigna evalúa el contenido matemático que queremos evaluar?
+- ¿Debería haber fórmula, calculadora o material de referencia disponible?
+
+## Las tres que más nos interesa que discutan
+
+**Las dos versiones del colectivo están en el mismo nivel.** Las clasificamos igual porque comparten la matemática, y las separamos por un solo rasgo: en una la respuesta está entre las opciones y en la otra hay que producirla. ¿Es suficiente para dejarlas empatadas, o construir la respuesta debería subirla de nivel?
+
+**El mural quedó en STANDARD y el acto en CORE.** Nos parece que la cadena de tres pasos del mural pesa más que aplicar una regla escrita, pero es exactamente el tipo de juicio que ustedes hacen mejor que nosotros.
+
+**Dos situaciones quedaron en STRETCH.** El stand y el trabajo grupal piden sostener dos restricciones a la vez y además optimizar. ¿Es demasiado para 7.º, o es justamente el techo alto que queremos que exista?
+
+## Para qué se usa esta clasificación
+
+Para armar partidas **comparables**. El juego intenta que dos personas reciban combinaciones de situaciones con una carga total parecida, y para eso necesita saber cuánto pesa cada una. Si un nivel está mal puesto, las partidas dejan de ser comparables aunque el puntaje esté bien calculado.
+
+Es también la razón por la que esta decisión es la más urgente de todas: condiciona el contenido de 1.º a 5.º, que todavía no existe.
+
+---
+
+# FILE: 06-delivery/teacher-gate-1/05-puntaje.md
+
+# El puntaje de competencia · para conversar
+
+**Nada de esta página está decidido.** Es la propuesta que traemos, y lo que necesitamos es que la revisen.
+
+## Primero: dos cosas que no son la misma
+
+| La carrera del personaje | El puntaje de competencia |
+|---|---|
+| Promedio, Equipo, Aura, Estilo | Matemática, Equipo, Aura |
+| Cuenta qué clase de recorrido escolar armó ese chico | Decide el orden en el ranking de la feria |
+| Cambia con la historia y con las decisiones | Sólo mira el desempeño medible de la partida |
+
+Están relacionadas, y no son intercambiables. Dos consecuencias concretas:
+
+**El Promedio no suma puntos de competencia.** El promedio sale del desempeño matemático que ya estamos midiendo; sumarlo aparte contaría la misma habilidad dos veces.
+
+**El Estilo no suma puntos de competencia.** Aplicado, Estratega e Improvisador son formas distintas de resolver, no mejores y peores. Darle puntos a una diría que hay una personalidad objetivamente superior, y eso rompe la idea del perfil.
+
+## La propuesta, en una frase
+
+**La matemática pesa claramente más que todo lo demás junto**, y lo demás suma poco y con techo.
+
+En números candidatos: 80 % matemática, 15 % trabajo en equipo, 5 % Aura. Sobre una escala de 0 a 10.000.
+
+## Qué mide cada componente hoy
+
+| Componente | De dónde sale | Situaciones que la alimentan hoy |
+|---|---|---|
+| **Matemática** | qué tan bien se resolvió cada situación | las siete |
+| **Trabajo en equipo** | cuánto jugó el reparto a la fuerza de cada persona | sólo el trabajo grupal |
+| **Aura** | desempeño en un momento público | **ninguna, hoy** |
+
+### Por qué Aura no suma hoy, aunque exista
+
+El acto del 25 de Mayo **sí** modifica Aura en la historia del personaje. Pero lo único que ahí se puede medir es qué tan bien clasificó los números, y eso ya se cuenta como matemática. Usar el mismo resultado también como Aura sería premiar dos veces la misma acción con otro nombre.
+
+Así que la componente existe, está limitada por un tope, y hoy ninguna situación de producción la alimenta. Preferimos una componente honestamente vacía a inventar una señal para llenarla.
+
+**Pregunta:** ¿Aura debería influir en el puntaje competitivo? Si sí, ¿qué tendría que medir un evento para que sea evidencia distinta de la matemática?
+
+### Por qué el stand mueve Equipo y no suma equipo
+
+El stand de la feria cambia la relación con el grupo en la historia. Pero lo que ahí medimos es el costo mínimo, que ya es la componente matemática. El cambio en la carrera responde «qué le pasó al grupo»; la evidencia competitiva respondería «qué tan bien colaboró», y esa situación no mide lo segundo.
+
+**Pregunta:** ¿queremos que el ranking mida también capacidades de trabajo en equipo, además de matemática? Si sí, ¿qué tipo de situaciones considerarían evidencia válida?
+
+## Cuando una partida no ofrece una componente
+
+Una partida puede no incluir ninguna situación de trabajo en equipo. En ese caso, **el estudiante no pierde esos puntos por algo que no pudo elegir**: el peso se reparte entre los aspectos que sí estuvieron presentes.
+
+La consecuencia buena: una partida perfecta llega al máximo, siempre, sin importar qué combinación le tocó.
+
+La consecuencia que hay que decidir: **dos partidas podrían estar midiendo combinaciones secundarias distintas**. Una mide matemática y equipo; otra, sólo matemática.
+
+**Pregunta:** ¿les parece aceptable? Las alternativas serían exigir que toda partida incluya una situación de equipo, o dejar el trabajo en equipo afuera del ranking.
+
+## Cuánto vale cada resultado
+
+Cada situación se resuelve en uno de cuatro niveles. La calibración candidata:
+
+| Resultado | Vale |
+|---|---|
+| Óptima | 100 % |
+| Eficiente | 75 % |
+| Funcional | 40 % |
+| Inválida | 10 % |
+
+Las situaciones que miden algo más fino usan su propia medida en vez de estas cuatro cajas. El acto del 25, por ejemplo, se juzga combinando precisión y cobertura, así que un 86 % y un 99 % no valen lo mismo aunque caigan en el mismo escalón.
+
+**Preguntas:**
+- ¿Las diferencias entre niveles representan bien el mérito matemático?
+- ¿Una resolución inválida debería recibir algo de crédito, o cero?
+- ¿Funcional al 40 % les parece razonable?
+
+## Una pequeña ventaja por resolver lo difícil
+
+Resolver una situación de mayor complejidad da una bonificación chica: 8 % para STANDARD y 15 % para STRETCH.
+
+Es deliberadamente chica. El juego ya intenta que las partidas tengan una carga total comparable **antes** de puntuar; la bonificación sólo reconoce que dentro de esa carga pareja hay situaciones que piden más.
+
+**Pregunta, con las dos posiciones sobre la mesa:**
+
+> Si el juego ya intenta que las partidas tengan una dificultad total comparable, ¿resolver una situación STRETCH debería además otorgar una pequeña ventaja en el puntaje?
+
+*A favor:* reconoce un esfuerzo cognitivo real, y es tan chica que no decide un ranking por sí sola.
+*En contra:* si las partidas ya son comparables, la bonificación es un premio por un sorteo que el estudiante no eligió.
+
+## Cuatro ejemplos reales
+
+Calculados con el motor, no inventados para la reunión. `pnpm teacher-gate --scores` los reproduce.
+
+| Partida | Puntaje | Qué muestra |
+|---|---|---|
+| Todo óptimo (colectivo + acto) | **10.000** | una partida perfecta llega al máximo |
+| Todo óptimo, una sola situación | **10.000** | menos situaciones no significa menos techo |
+| Matemática óptima, reparto grupal torpe | **7.651** | el equipo flojo baja poco |
+| Matemática floja, reparto grupal perfecto | **3.645** | el equipo perfecto no compra la partida |
+
+Los dos primeros son la evidencia de equidad que más nos importa: **nadie debería tener un techo mayor sólo por la combinación de situaciones que le tocó.**
+
+Los dos últimos son la dominancia de la matemática, medida: la distancia entre 7.651 y 3.645 la produce el desempeño matemático, no el trabajo en equipo.
+
+## Tres ponderaciones posibles
+
+| | Matemática | Equipo | Aura | Qué enfatiza |
+|---|---|---|---|---|
+| **A** | 80 % | 15 % | 5 % | mantiene la matemática dominante y deja lugar a lo demás |
+| **B** | 85 % | 10 % | 5 % | reduce el impacto del trabajo en equipo |
+| **C** | 90 % | 10 % | 0 % | Aura queda fuera del ranking |
+
+Sobre las mismas cuatro partidas:
+
+| Partida | A · 80/15/5 | B · 85/10/5 | C · 90/10/0 |
+|---|---|---|---|
+| Todo óptimo (dos situaciones) | 10.000 | 10.000 | 10.000 |
+| Todo óptimo (una situación) | 10.000 | 10.000 | 10.000 |
+| Matemática óptima, equipo torpe | 7.651 | 8.005 | 8.040 |
+| Matemática floja, equipo perfecto | 3.645 | 3.247 | 3.208 |
+
+Donde las tres columnas coinciden, la partida no ofrecía trabajo en equipo ni Aura: no hay nada sobre lo que la ponderación pueda cambiar algo.
+
+**Ninguna de las tres es la recomendada.** Elegir una, o pedir otra, es parte de lo que se decide hoy.
+
+## Lo que no está en el puntaje, y por qué
+
+**La cantidad de intentos.** Premiar más intentos premia tiempo libre; castigarlos castiga la práctica. Queda como dato informativo salvo que ustedes decidan otra cosa.
+
+**La velocidad.** No entra en el puntaje. Si alguna vez se usara para desempatar, habría que decidirlo explícitamente: el reloj mide también qué teléfono tiene cada uno y cuánto tarda en leer.
+
+---
+
+# FILE: 06-delivery/teacher-gate-1/06-preguntas.md
+
+# Las preguntas del gate, y cuáles bloquean
+
+Catorce decisiones. No todas pesan lo mismo, y una reunión de quince minutos no las cierra todas. Esta tabla existe para que el tiempo se gaste donde importa, y no ocho minutos discutiendo empates mientras la clasificación de dificultad queda sin resolver.
+
+## Prioridad
+
+| ID | Tema | Por qué importa ahora | ¿Bloquea? | Quién decide | Evidencia que se muestra | ¿Se puede diferir? |
+|---|---|---|---|---|---|---|
+| TG1-01 | Nivel matemático general | condiciona todo el contenido de 1.º a 5.º, que no existe todavía | **Sí** | Departamento | casos TG1-A y TG1-B jugados | No |
+| TG1-02 | Situaciones y consignas | una consigna ambigua invalida la medición, no sólo la experiencia | **Sí** | Departamento | los casos jugados | No |
+| TG1-03 | Clasificación de dificultad | es lo que hace comparables dos partidas; si está mal, el ranking mide otra cosa | **Sí** | Departamento | tabla de [04-dificultad.md](06-delivery/teacher-gate-1/04-dificultad.md) | No |
+| TG1-04 | Dominancia de la matemática | define qué clase de competencia es ésta | **Sí** | Departamento | ejemplos de [05-puntaje.md](06-delivery/teacher-gate-1/05-puntaje.md) | No |
+| TG1-05 | Equipo en la competencia | decide si hace falta autorar contenido de equipo para los años siguientes | **Sí** | Departamento | caso TG1-D y la tabla de ponderaciones | No |
+| TG1-06 | Aura en la competencia | ídem, y hoy ninguna situación la alimenta | **Sí** | Departamento | explicación del acto en [05-puntaje.md](06-delivery/teacher-gate-1/05-puntaje.md) | No |
+| TG1-07 | Reparto del peso cuando falta una componente | si no se acepta, cambia cómo se arman las partidas | **Sí** | Departamento | ejemplos de partida perfecta | Un día, no más |
+| TG1-08 | Bonificación por dificultad | afecta el ranking, pero es chica y aislable | No | Departamento | comparación con y sin bonificación | Sí |
+| TG1-09 | Cuánto vale cada resultado | afecta el ranking; se puede recalibrar sin tocar contenido | No | Departamento | tabla de calidades | Sí |
+| TG1-10 | Política de intentos | es una decisión de operación del evento | No | Organización + Departamento | ficha de intentos, abajo | Sí |
+| TG1-11 | Política de empate | ídem, y no hay ranking todavía | No | Organización + Departamento | ficha de empates, abajo | Sí |
+| TG1-12 | Duración objetivo de una partida | orienta cuánto contenido autorar por año | No | Producto + Departamento | explicación abajo | Sí |
+| TG1-13 | El acto del 25 de Mayo en producción | si se rechaza, se saca contenido ya construido | **Sí** | Departamento | caso TG1-C | No |
+| TG1-14 | Lenguaje de recuperación y egreso | condiciona el diseño de la etapa siguiente | No | Departamento | explicación abajo | Sí |
+
+**Bloquear** significa: la etapa siguiente asume una respuesta, y empezarla sin ella es construir sobre una suposición.
+
+Si el tiempo aprieta, se difieren en este orden: TG1-11, TG1-10, TG1-12, TG1-14, TG1-08, TG1-09.
+
+---
+
+## Fichas de las decisiones que no se muestran jugando
+
+### TG1-10 · Intentos
+
+¿Cuántas veces puede jugar una misma persona en la feria?
+
+| Opción | A favor | En contra |
+|---|---|---|
+| Ilimitados, cuenta el mejor intento | premia la mejora; nadie queda afuera por llegar tarde | quien tiene más tiempo libre practica más |
+| Cantidad fija de intentos | acota la ventaja de tiempo disponible | hay que explicar y controlar el límite en el día |
+| Una sola partida | simple de comunicar y de operar | un error de lectura arruina la única oportunidad |
+
+Lo que no queremos: que la suma de intentos sea el puntaje. Eso convierte el ranking en una medida de tiempo disponible.
+
+**Pregunta:** ¿qué filosofía prefieren? No hace falta que decidan el número.
+
+### TG1-11 · Empates
+
+Dos personas con el mismo puntaje.
+
+| Opción | A favor | En contra |
+|---|---|---|
+| Puesto y premio compartidos | honesto: si el puntaje empató, empataron | hay que preverlo con los premios |
+| Un criterio matemático secundario, anunciado antes | mantiene la matemática decidiendo | hay que elegirlo y explicarlo públicamente |
+| Otra regla, anunciada antes | lo que la organización necesite | tiene que estar escrita antes de la feria |
+
+**Sobre usar el tiempo para desempatar:** no lo proponemos por defecto. El reloj mide también qué teléfono tiene cada uno, cuánto tarda en leer y si se le cortó la conexión. Si igual se decide usarlo, conviene decidirlo sabiendo eso.
+
+**Pregunta:** ¿qué filosofía prefieren? El algoritmo lo resolvemos nosotros.
+
+### TG1-12 · Duración de una partida
+
+Una trayectoria completa son seis años, y cada año jugaría normalmente **una o dos situaciones**. Es decir, entre 6 y 12 situaciones por partida completa.
+
+Lo que van a ver hoy es el recorrido de **demostración** de 7.º, que juega las seis situaciones del año seguidas para que ustedes las puedan revisar todas. **No representa la duración de una partida real.**
+
+No decimos cuántos minutos porque no lo medimos con estudiantes todavía.
+
+**Pregunta:** ¿qué duración les parece razonable para una partida completa en el contexto de una feria?
+
+### TG1-14 · Recuperación y egreso
+
+La idea actual: **toda partida terminada llega al egreso**. Un mal resultado no termina la partida; deja consecuencias y, más adelante, situaciones de recuperación.
+
+Todavía no está implementado, y el lenguaje importa: «recuperación», «materia previa», «mesa de examen» y «promoción» significan cosas concretas en la escuela real.
+
+**Preguntas:** ¿es aceptable que no haya forma de perder? ¿Qué palabras usarían?
+
+---
+
+# FILE: 06-delivery/teacher-gate-1/07-planilla-decisiones.md
+
+# Planilla de decisiones · Teacher Gate 1
+
+Una fila por decisión. Se completa **durante** la reunión.
+
+**Fecha:** ____________  **Facilitador:** ____________
+**Participantes:** ____________________________________________
+
+Una de cuatro palabras por fila. **«Se ve bien» no cierra un ítem.**
+
+| | |
+|---|---|
+| **ACEPTAR** | queda como está |
+| **AJUSTAR** | la idea sirve, hay que cambiar algo concreto |
+| **RECHAZAR** | no sirve, hay que pensarlo de nuevo |
+| **DIFERIR** | no se decide hoy, y no bloquea seguir |
+
+---
+
+## TG1-01 · Nivel matemático general
+
+**Pregunta:** ¿la matemática de las situaciones mostradas es apropiada para 7.º?
+**Evidencia:** casos TG1-A y TG1-B jugados. **Bloquea:** sí.
+
+Decisión: ☐ ACEPTAR ☐ AJUSTAR ☐ RECHAZAR ☐ DIFERIR
+
+Comentario: ______________________________________________
+
+Cambio pedido: ___________________________________________
+
+Prioridad: ☐ alta ☐ media ☐ baja   Responsable: __________
+
+---
+
+## TG1-02 · Situaciones y consignas
+
+**Pregunta:** ¿son claras, creíbles y sin ambigüedad?
+**Evidencia:** los casos jugados y lo que se observó. **Bloquea:** sí.
+
+Decisión: ☐ ACEPTAR ☐ AJUSTAR ☐ RECHAZAR ☐ DIFERIR
+
+Comentario: ______________________________________________
+
+Cambio pedido: ___________________________________________
+
+Prioridad: ☐ alta ☐ media ☐ baja   Responsable: __________
+
+---
+
+## TG1-03 · Clasificación de dificultad
+
+**Pregunta:** ¿los niveles CORE / STANDARD / STRETCH están bien puestos?
+**Evidencia:** tabla de [04-dificultad.md](06-delivery/teacher-gate-1/04-dificultad.md). **Bloquea:** sí.
+
+Decisión: ☐ ACEPTAR ☐ AJUSTAR ☐ RECHAZAR ☐ DIFERIR
+
+Situaciones a reclasificar: ______________________________
+
+Comentario: ______________________________________________
+
+Prioridad: ☐ alta ☐ media ☐ baja   Responsable: __________
+
+---
+
+## TG1-04 · Dominancia de la matemática
+
+**Pregunta:** ¿se acepta un puntaje donde la matemática pesa más que todo lo demás junto?
+**Evidencia:** ejemplos y comparación de ponderaciones. **Bloquea:** sí.
+
+Decisión: ☐ ACEPTAR ☐ AJUSTAR ☐ RECHAZAR ☐ DIFERIR
+
+Ponderación preferida: ☐ A 80/15/5 ☐ B 85/10/5 ☐ C 90/10/0 ☐ otra: ______
+
+Comentario: ______________________________________________
+
+Prioridad: ☐ alta ☐ media ☐ baja   Responsable: __________
+
+---
+
+## TG1-05 · Trabajo en equipo en la competencia
+
+**Pregunta:** ¿el ranking debería medir también trabajo en equipo? ¿Con qué evidencia?
+**Evidencia:** caso TG1-D. **Bloquea:** sí.
+
+Decisión: ☐ ACEPTAR ☐ AJUSTAR ☐ RECHAZAR ☐ DIFERIR
+
+Qué sería evidencia válida: ______________________________
+
+Comentario: ______________________________________________
+
+Prioridad: ☐ alta ☐ media ☐ baja   Responsable: __________
+
+---
+
+## TG1-06 · Aura en la competencia
+
+**Pregunta:** ¿un momento público debería influir en el ranking? Hoy ninguna situación lo alimenta sin repetir la matemática.
+**Evidencia:** explicación del acto en [05-puntaje.md](06-delivery/teacher-gate-1/05-puntaje.md). **Bloquea:** sí.
+
+Decisión: ☐ ACEPTAR ☐ AJUSTAR ☐ RECHAZAR ☐ DIFERIR
+
+Qué sería evidencia válida: ______________________________
+
+Comentario: ______________________________________________
+
+Prioridad: ☐ alta ☐ media ☐ baja   Responsable: __________
+
+---
+
+## TG1-07 · Reparto del peso cuando falta una componente
+
+**Pregunta:** si una partida no ofrece trabajo en equipo, su peso se reparte y el máximo sigue siendo el mismo. ¿Es aceptable que dos partidas midan combinaciones distintas?
+**Evidencia:** ejemplos de partida perfecta. **Bloquea:** sí.
+
+Decisión: ☐ ACEPTAR ☐ AJUSTAR ☐ RECHAZAR ☐ DIFERIR
+
+Alternativa preferida, si AJUSTAR: ☐ exigir cobertura ☐ dejar la componente afuera ☐ otra: ______
+
+Comentario: ______________________________________________
+
+Prioridad: ☐ alta ☐ media ☐ baja   Responsable: __________
+
+---
+
+## TG1-08 · Bonificación por dificultad
+
+**Pregunta:** ¿resolver una situación más compleja debería dar una ventaja chica en el puntaje?
+**Evidencia:** comparación con y sin bonificación. **Bloquea:** no.
+
+Decisión: ☐ ACEPTAR ☐ AJUSTAR ☐ RECHAZAR ☐ DIFERIR
+
+Comentario: ______________________________________________
+
+Prioridad: ☐ alta ☐ media ☐ baja   Responsable: __________
+
+---
+
+## TG1-09 · Cuánto vale cada resultado
+
+**Pregunta:** ¿100 / 75 / 40 / 10 representa bien el mérito matemático? ¿Una resolución inválida merece algo?
+**Evidencia:** tabla de calidades. **Bloquea:** no.
+
+Decisión: ☐ ACEPTAR ☐ AJUSTAR ☐ RECHAZAR ☐ DIFERIR
+
+Valores propuestos: ______________________________________
+
+Comentario: ______________________________________________
+
+Prioridad: ☐ alta ☐ media ☐ baja   Responsable: __________
+
+---
+
+## TG1-10 · Intentos
+
+**Pregunta:** ¿qué filosofía de intentos prefieren?
+**Evidencia:** ficha en [06-preguntas.md](06-delivery/teacher-gate-1/06-preguntas.md). **Bloquea:** no.
+
+Decisión: ☐ ACEPTAR ☐ AJUSTAR ☐ RECHAZAR ☐ DIFERIR
+
+Filosofía: ☐ ilimitados con mejor intento ☐ límite fijo ☐ una sola partida ☐ otra: ______
+
+Comentario: ______________________________________________
+
+---
+
+## TG1-11 · Empates
+
+**Pregunta:** ¿qué filosofía de empate prefieren?
+**Evidencia:** ficha en [06-preguntas.md](06-delivery/teacher-gate-1/06-preguntas.md). **Bloquea:** no.
+
+Decisión: ☐ ACEPTAR ☐ AJUSTAR ☐ RECHAZAR ☐ DIFERIR
+
+Filosofía: ☐ puesto compartido ☐ criterio matemático secundario ☐ otra: ______
+
+Comentario: ______________________________________________
+
+---
+
+## TG1-12 · Duración de una partida
+
+**Pregunta:** ¿qué duración es razonable para una partida completa en una feria?
+**Evidencia:** explicación en [06-preguntas.md](06-delivery/teacher-gate-1/06-preguntas.md). **Bloquea:** no.
+
+Decisión: ☐ ACEPTAR ☐ AJUSTAR ☐ RECHAZAR ☐ DIFERIR
+
+Duración sugerida: _______________________________________
+
+Comentario: ______________________________________________
+
+---
+
+## TG1-13 · El acto del 25 de Mayo
+
+**Pregunta:** ¿entra a producción como situación de 7.º?
+**Evidencia:** caso TG1-C. **Bloquea:** sí.
+
+Decisión: ☐ ACEPTAR ☐ AJUSTAR ☐ RECHAZAR ☐ DIFERIR
+
+Pedagogía: ☐ ok ☐ ajustar: ______   Narrativa: ☐ ok ☐ ajustar: ______
+
+Comentario: ______________________________________________
+
+Prioridad: ☐ alta ☐ media ☐ baja   Responsable: __________
+
+---
+
+## TG1-14 · Recuperación y egreso
+
+**Pregunta:** ¿es aceptable que toda partida terminada llegue al egreso? ¿Qué palabras usar?
+**Evidencia:** explicación en [06-preguntas.md](06-delivery/teacher-gate-1/06-preguntas.md). **Bloquea:** no.
+
+Decisión: ☐ ACEPTAR ☐ AJUSTAR ☐ RECHAZAR ☐ DIFERIR
+
+Vocabulario preferido: ___________________________________
+
+Comentario: ______________________________________________
+
+---
+
+## Desacuerdos
+
+Si no hubo acuerdo en algún punto, va acá. **No se resuelve promediando opiniones.**
+
+| ID | Postura A | Postura B | Cómo se resuelve | Responsable |
+|---|---|---|---|---|
+| | | | | |
+| | | | | |
+
+## Lo que hay que hacer después
+
+| # | Qué | De qué decisión sale | Responsable | ¿Bloquea la etapa siguiente? |
+|---|---|---|---|---|
+| 1 | | | | |
+| 2 | | | | |
+| 3 | | | | |
+
+---
+
+# FILE: 06-delivery/teacher-gate-1/08-resumen-docente.md
+
+# Egresado · resumen para la reunión
+
+*Una página para leer antes o durante. Sin tecnicismos.*
+
+## Qué es Egresado
+
+Un juego web de partidas cortas donde un estudiante recorre la secundaria — de 7.º a 5.º año — resolviendo situaciones escolares que requieren matemática: llegar a horario, comprar la pintura de un mural, repartir un trabajo grupal, armar el stand de la feria.
+
+La intención es que se sienta un juego de decisiones y consecuencias, no un examen con animaciones. Un principio de diseño gobierna todo el contenido: **si sacar los números dejara la misma decisión, la matemática es decorativa** y la situación está mal construida.
+
+Está pensado para una feria de matemática, donde juegan estudiantes de distintas edades, docentes y familias. Por eso las situaciones tienen **piso bajo y techo alto**: entender de qué se trata no requiere conocimiento previo especial, y aun así encontrar la *mejor* solución puede seguir siendo un desafío para un adulto.
+
+## Qué les pedimos hoy
+
+Cuatro cosas:
+
+1. **¿La matemática es apropiada?** Conceptos, terminología, ambigüedad, credibilidad del contexto.
+2. **¿Los niveles están bien puestos?** Clasificamos cada situación en tres niveles y necesitamos que lo revisen.
+3. **¿Cómo debería armarse el puntaje de la competencia?**
+4. **¿Qué hay que cambiar antes de producir el resto del juego?**
+
+**Lo que no les pedimos:** nada de colores, tipografías ni pantallas. Eso ya está decidido.
+
+## Cómo va a ser
+
+Van a jugar dos situaciones **sin que nadie les explique cómo antes**. Es a propósito: lo más útil de esta reunión es ver dónde alguien que sabe matemática se traba solo.
+
+Después conversamos sobre niveles y puntaje. Son quince minutos.
+
+## Los niveles que proponemos
+
+| Nivel | Qué significa |
+|---|---|
+| **CORE** | una relación principal, poco que combinar |
+| **STANDARD** | dos relaciones o restricciones, una comparación |
+| **STRETCH** | varias restricciones a la vez, u optimizar |
+
+La distinción que nos importa: **la dificultad tiene que venir del razonamiento**, no de números más grandes ni decimales más incómodos. Confundir «difícil» con «cuentas molestas» produce un examen disfrazado y castiga a quien razona bien y calcula lento.
+
+## El puntaje que proponemos
+
+Separamos dos cosas que se parecen y no son iguales:
+
+- **La carrera del personaje** — promedio, equipo, aura, estilo — cuenta qué recorrido escolar armó ese chico.
+- **El puntaje de competencia** decide el orden en el ranking.
+
+La propuesta: **la matemática pesa claramente más que todo lo demás junto.** Y dos cosas quedan afuera a propósito:
+
+- **el promedio**, porque ya sale del desempeño matemático que estamos midiendo, y sumarlo aparte lo contaría dos veces;
+- **el estilo**, porque aplicado, estratega e improvisador son formas distintas de resolver y ninguna es mejor.
+
+También: si una partida no incluye una situación de trabajo en equipo, **el estudiante no pierde esos puntos** por algo que no eligió. El máximo posible es el mismo para todos.
+
+## Las palabras que vamos a usar
+
+Al final de la reunión necesitamos una de estas cuatro por cada punto:
+
+| | |
+|---|---|
+| **ACEPTAR** | queda como está |
+| **AJUSTAR** | la idea sirve, hay que cambiar algo concreto |
+| **RECHAZAR** | no sirve, hay que pensarlo de nuevo |
+| **DIFERIR** | no se decide hoy |
+
+Un «se ve bien» no nos sirve para cerrar un punto, aunque se agradece.
+
+## Lo que esta reunión no puede validar
+
+Que un chico de 12 años entienda la pantalla sin ayuda, o que quiera volver a jugar. Eso no lo sabremos hasta que haya estudiantes jugando, y no queremos presentarlo de otra manera.
+
+## Preguntas que nos ayudan más
+
+- ¿Qué se sintió demasiado fácil o demasiado difícil?
+- ¿Alguna consigna se puede entender de dos maneras?
+- ¿Las palabras y los contextos suenan naturales para estudiantes?
+- ¿Algún resultado se siente injusto?
+- ¿Qué situación sacarían, cambiarían o agregarían?
+
+---
+
+# FILE: 06-delivery/teacher-gate-1/09-acta.md
+
+# Acta del Teacher Gate 1
+
+**PLANTILLA SIN EJECUTAR.** El gate todavía no se dio. Nada de este documento está completado, y no debe completarse con información supuesta.
+
+---
+
+## Sesión
+
+| | |
+|---|---|
+| Fecha | *(sin completar)* |
+| Duración real | *(sin completar)* |
+| Facilitador | *(sin completar)* |
+| Participantes | *(sin completar)* |
+| Modalidad | *(presencial / remota)* |
+
+## Versiones que se mostraron
+
+Se completa **antes** de la reunión, con lo que imprime `pnpm teacher-gate --validate`. Sin esto, dentro de seis meses nadie va a poder saber qué fue lo que los docentes efectivamente vieron.
+
+| | |
+|---|---|
+| Commit | *(sin completar)* |
+| Versión del pack | *(sin completar)* |
+| Versión de contenido | *(sin completar)* |
+| Versión de reglas | *(sin completar)* |
+| Catálogo de situaciones | *(sin completar)* |
+| Política de dificultad | *(sin completar)* |
+| Política de composición | *(sin completar)* |
+| Política de puntaje | *(sin completar)* |
+
+## Casos mostrados
+
+| Caso | ¿Se mostró? | Quién jugó | Observaciones |
+|---|---|---|---|
+| TG1-A · colectivo, elegir | | | |
+| TG1-B · colectivo, construir | | | |
+| TG1-C · acto del 25 | | | |
+| TG1-D · trabajo grupal | | | |
+
+## Decisiones
+
+Se transcribe desde [07-planilla-decisiones.md](06-delivery/teacher-gate-1/07-planilla-decisiones.md).
+
+| ID | Tema | Decisión | Comentario | ¿Bloquea? | Responsable |
+|---|---|---|---|---|---|
+| TG1-01 | Nivel matemático general | | | | |
+| TG1-02 | Situaciones y consignas | | | | |
+| TG1-03 | Clasificación de dificultad | | | | |
+| TG1-04 | Dominancia de la matemática | | | | |
+| TG1-05 | Equipo en la competencia | | | | |
+| TG1-06 | Aura en la competencia | | | | |
+| TG1-07 | Reparto del peso | | | | |
+| TG1-08 | Bonificación por dificultad | | | | |
+| TG1-09 | Valor de cada resultado | | | | |
+| TG1-10 | Intentos | | | | |
+| TG1-11 | Empates | | | | |
+| TG1-12 | Duración de una partida | | | | |
+| TG1-13 | Acto del 25 de Mayo | | | | |
+| TG1-14 | Recuperación y egreso | | | | |
+
+## Ajustes bloqueantes
+
+Los que hay que resolver antes de seguir con la etapa siguiente.
+
+| # | Qué | De qué decisión sale | Responsable |
+|---|---|---|---|
+| | | | |
+
+## Diferidos
+
+| ID | Por qué se difirió | Cuándo se retoma |
+|---|---|---|
+| | | |
+
+## Desacuerdos
+
+**No se resuelven promediando opiniones ni se colapsan en «los docentes aprobaron».**
+
+| ID | Postura A | Postura B | Cómo se resuelve |
+|---|---|---|---|
+| | | | |
+
+## Próximos pasos
+
+| # | Acción | Responsable | Fecha |
+|---|---|---|---|
+| | | | |
+
+## Resultado del gate
+
+Marcar **una**:
+
+- ☐ **APROBADO** — sin ajustes bloqueantes.
+- ☐ **APROBADO CON AJUSTES REQUERIDOS** — se puede seguir, y hay cambios comprometidos con responsable.
+- ☐ **NO APROBADO / REQUIERE REVISIÓN** — hay desacuerdo bloqueante o material insuficiente.
+
+**Firma del facilitador:** ____________________
+
+---
+
+## Después de completar esta acta
+
+1. Pasar lo cerrado al [registro de decisiones](07-reference/decision-register.md).
+2. Pasar lo abierto a [preguntas abiertas](07-reference/open-questions.md).
+3. Recién entonces actualizar el [roadmap](06-delivery/implementation-sequence.md) y la [etapa actual](06-delivery/current-stage.md).
+4. Si alguna calibración cambia, publicarla como **versión nueva**; no editar la que los docentes vieron.
+
+---
+
+# FILE: 06-delivery/teacher-gate-1/10-anexo.md
+
+# Anexo · para el facilitador y el equipo
+
+Nada de esto se muestra en la reunión salvo que alguien pregunte. Está acá para que el facilitador pueda responder en una frase y seguir.
+
+## Respuestas de una frase, si preguntan
+
+**«¿Los ejercicios son siempre los mismos?»**
+No: cada situación tiene decenas de versiones verificadas, y el juego elige una. Lo que se elige está validado de antemano, no generado en el momento.
+
+**«¿Cómo saben que no le tocó una partida más difícil que a otro?»**
+El juego arma cada partida contra un presupuesto de dificultad, así que dos partidas distintas llevan una carga parecida antes de puntuar.
+
+**«¿Se puede hacer trampa?»**
+El resultado oficial lo recalcula el servidor reproduciendo la partida. Lo que el navegador diga sobre su propio puntaje no se lee.
+
+**«¿Por qué esta situación y no otra?»**
+Las siete de 7.º son las que existen hoy. Cuál va en qué año todavía no está decidido, y es parte de lo que queremos que nos digan.
+
+## Los seis rasgos detrás de cada nivel
+
+**Candidato de ingeniería. Ningún docente lo validó.** No se muestra en la reunión salvo que pidan el detalle.
+
+Cada situación declara seis rasgos de su estructura, y el nivel sale de su suma. No se elige: se deriva.
+
+| Rasgo | Qué mide | Rango |
+|---|---|---|
+| pasos | pasos encadenados antes de que exista una respuesta | 1–4 |
+| restricciones | condiciones que tienen que valer **a la vez** | 0–3 |
+| selección | cuánto del trabajo es decidir qué dato importa | 0–3 |
+| optimización | si alcanza con una respuesta que funcione o hay que buscar la mejor | 0–2 |
+| incertidumbre | lectura estadística o estimación | 0–2 |
+| construcción | si la respuesta hay que **producirla** en vez de reconocerla | 0–1 |
+
+CORE hasta 4, STANDARD hasta 7, STRETCH de 8 en adelante.
+
+| Situación | Rasgos | Carga | Nivel |
+|---|---|---|---|
+| acto del 25 | 1·0·2·0·0·1 | 4 | CORE |
+| colectivo, elegir | 2·1·1·1·0·0 | 5 | STANDARD |
+| cuaderno en oferta | 2·1·1·1·0·0 | 5 | STANDARD |
+| colectivo, construir | 2·1·1·1·0·1 | 6 | STANDARD |
+| mural | 3·1·1·1·0·0 | 6 | STANDARD |
+| stand de la feria | 2·2·1·2·0·1 | 8 | STRETCH |
+| trabajo grupal | 2·2·2·2·0·1 | 9 | STRETCH |
+
+**Cuatro situaciones no coinciden con el nivel que tenían autorado** antes de este modelo: el colectivo (elegir), el mural, el stand y el trabajo grupal. Eso no es un error del motor: el número viejo se escribió como perilla de ajuste en tiempo de juego y no como clasificación estructural. Cada divergencia es una pregunta concreta para el gate.
+
+El detalle completo está en [dificultad y jugabilidad](01-game-design/difficulty-and-playability.md).
+
+## Qué alimenta cada componente del puntaje
+
+| Situación | Matemática | Equipo | Aura | Por qué |
+|---|---|---|---|---|
+| colectivo, elegir | calidad | — | — | elegir la salida correcta es su único hecho |
+| colectivo, construir | calidad | — | — | el número producido es su único hecho |
+| mural | calidad | — | — | la eficiencia que mide *es* el óptimo de compra |
+| cuaderno | calidad | — | — | una sola comparación |
+| stand | calidad | — | — | su eficiencia es el costo mínimo, o sea la misma optimización |
+| trabajo grupal | calidad | afinidad del reparto | — | factibilidad y afinidad son dos hechos que el evaluador mide por separado |
+| acto del 25 | precisión y cobertura | — | — | la clasificación es su único hecho |
+
+El criterio que gobierna la tabla: **un mismo hecho no puede pagarse dos veces con otro nombre.** Ver [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md).
+
+## Marco de revisión matemática
+
+Para el facilitador, si la conversación da para más. Por situación:
+
+- validez matemática de todos los caminos de solución y del feedback;
+- pertinencia curricular para la etapa;
+- concepto contra cálculo: ¿la dificultad es de razonamiento o aritmética accidental?;
+- pasos de razonamiento involucrados;
+- estrategias válidas alternativas;
+- ambigüedad: ¿hay dos lecturas razonables que cambien la respuesta?;
+- supuestos ocultos;
+- unidades y notación;
+- exactitud y redondeo;
+- si las opciones incorrectas revelan errores conceptuales típicos.
+
+Las ocho preguntas canónicas por plantilla están en [gates docentes](06-delivery/teacher-gates.md).
+
+## Marco de revisión psicopedagógica
+
+Práctico, no diagnóstico. **No se evalúa a nadie en esta reunión.**
+
+- **Carga cognitiva:** ¿cuánto hay que sostener en la cabeza que no sea el problema?
+- **Claridad de la consigna:** ¿se entiende qué se pide sin releer?
+- **Lectura innecesaria:** ¿hay texto que no aporta a la decisión?
+- **Representaciones múltiples:** ¿hay más de una forma de llegar?
+- **Conocimiento previo:** ¿qué se asume que ya saben?
+- **Interpretación del error:** ¿el resultado explica la consecuencia o sólo marca mal?
+- **Motivación sin premio excesivo:** ¿la recompensa acompaña o reemplaza al contenido?
+- **Equidad entre estrategias:** ¿una forma válida de resolver queda castigada?
+- **Accesibilidad:** ¿algún estado se distingue sólo por color? ¿se puede jugar con teclado?
+
+## Marco de diseño de juego
+
+Ayuda a separar «matemáticamente correcto» de «buena interacción educativa»:
+
+- ¿La decisión se siente significativa?
+- **Si sacáramos los números, ¿quedaría la misma decisión?** Si sí, la matemática es decorativa.
+- ¿El resultado explica una consecuencia o sólo marca correcto/incorrecto?
+- ¿Quien juega tiene agencia real?
+- ¿La repetición sigue siendo interesante?
+
+## Evidencia de ingeniería
+
+Para trazabilidad, no para la reunión.
+
+| Qué | Estado |
+|---|---|
+| Casos del pack reproducibles | `pnpm teacher-gate --validate` en verde |
+| Composición de partidas | 20.000 sorteos, 1.404 combinaciones distintas, carga total idéntica |
+| Techo del puntaje | partida perfecta = máximo de la escala en 23.000 planes, sin dispersión |
+| Una situación contra dos | mismo techo; más situaciones no da más puntaje |
+| Sin oportunidad de equipo o Aura | mismo techo que con ella |
+| Puntaje en el servidor | recalculado reproduciendo; lo que el cliente afirme no se lee |
+| Políticas oficiales | ninguna: dificultad, composición y puntaje llevan `official: false` |
+| Tests y build | `pnpm verify` en verde |
+
+Los comandos que producen esta evidencia: `pnpm game:compose`, `pnpm game:score`, `pnpm game:score -- --compare`, `pnpm verify`.
+
+## Buenas prácticas externas que informaron el diseño
+
+**Distinguir claramente:** lo de abajo es contexto externo, no decisión del proyecto. Las decisiones del proyecto están en el [registro de decisiones](07-reference/decision-register.md).
+
+- **Diseño Universal para el Aprendizaje (UDL):** la distinción entre una barrera de acceso y el objetivo real de la tarea. Si el objetivo es elegir la mejor alternativa, permitir calculadora saca una barrera que no era el objetivo. Por eso «¿qué apoyos deberían estar disponibles?» es una pregunta del gate y no una decisión tomada.
+- **Tareas de piso bajo y techo alto** (*low floor, high ceiling*): la idea de que una misma tarea admita entrada sin conocimiento previo especial y siga ofreciendo profundidad. Es lo que permite que en una feria jueguen 7.º, 5.º año y adultos con el mismo contenido.
+- **Teoría de la carga cognitiva:** la dificultad debería venir de la carga intrínseca de la tarea, no de cómo está presentada. Es el fundamento de derivar el nivel de la estructura y no del tamaño de los números.
+- **Evaluación con precisión y cobertura juntas:** marcar de más y marcar de menos son errores distintos y ambos cuentan. Es lo que usa el acto del 25.
+
+Las referencias completas están en [base teórica](07-reference/research-basis.md). Nada de esto anula una decisión del repositorio.
+
+## Limitaciones conocidas del pack
+
+1. **Los cuatro casos salen del recorrido de demostración**, que juega las seis situaciones del año seguidas. Una partida normal jugaría una o dos por año. Se puede mostrar una partida normal, pero no es lo que conviene mostrar primero: los docentes tienen que poder revisar todas las situaciones.
+2. **Ninguna situación de producción alimenta Aura competitiva.** No es un olvido: es la consecuencia de no pagar el mismo hecho dos veces, y está sobre la mesa como decisión TG1-06.
+3. **Sólo una situación alimenta trabajo en equipo.** Si el gate decide que el equipo debe pesar en el ranking, hace falta autorar contenido específico.
+4. **No se buscó ningún caso espectacular.** Los seeds se eligieron por representatividad, no por rareza estadística.
+5. **La ruta de revisión con sorteo fijo vive bajo `/dev`** y está cerrada fuera de desarrollo. Elegir el propio sorteo es exactamente lo que una competencia no puede permitir.
+
+---
+
+# FILE: 06-delivery/teacher-gate-1/README.md
+
+# Pack del Teacher Gate 1
+
+Todo lo necesario para dar la reunión de revisión con el Departamento de Matemática. **Este pack prepara el gate; no lo da por aprobado.**
+
+- **Duración de la sesión central:** 15 minutos.
+- **Qué se decide:** nivel matemático, situaciones, niveles de dificultad y filosofía del puntaje de competencia.
+- **Qué NO se decide:** tipografías, colores, espaciados ni nada del sistema de diseño. Eso ya está cerrado.
+- **Estado del gate:** pendiente. Nadie lo revisó todavía.
+
+El contrato canónico de qué se pide decidir está en [gates docentes](06-delivery/teacher-gates.md) y en el [roadmap](06-delivery/implementation-sequence.md). Este pack lo operacionaliza.
+
+## Antes de convocar a nadie
+
+```bash
+pnpm dev                          # levanta la aplicación
+pnpm teacher-gate --validate      # confirma que los casos reproducen
+pnpm teacher-gate --prepare       # imprime el plan de la sesión
+```
+
+Si `--validate` falla, **no des la reunión**: significa que el contenido cambió y los casos ya no muestran lo que este pack promete. Buscá seeds nuevos y actualizá el manifiesto antes de convocar.
+
+## Qué abrir el día de la reunión
+
+| Para | Documento |
+|---|---|
+| Conducir minuto a minuto | [01-guion.md](06-delivery/teacher-gate-1/01-guion.md) |
+| No olvidarse de nada | [02-checklist-facilitador.md](06-delivery/teacher-gate-1/02-checklist-facilitador.md) |
+| Saber qué mostrar en cada caso | [03-casos.md](06-delivery/teacher-gate-1/03-casos.md) |
+| Conversar sobre niveles | [04-dificultad.md](06-delivery/teacher-gate-1/04-dificultad.md) |
+| Conversar sobre puntaje | [05-puntaje.md](06-delivery/teacher-gate-1/05-puntaje.md) |
+| Preguntar lo que hay que preguntar | [06-preguntas.md](06-delivery/teacher-gate-1/06-preguntas.md) |
+| Registrar lo que se decidió | [07-planilla-decisiones.md](06-delivery/teacher-gate-1/07-planilla-decisiones.md) |
+
+Para imprimir y repartir: [08-resumen-docente.md](06-delivery/teacher-gate-1/08-resumen-docente.md), una o dos carillas escritas para los docentes.
+
+Después de la reunión: [09-acta.md](06-delivery/teacher-gate-1/09-acta.md).
+
+Para quien quiera ir más al fondo: [10-anexo.md](06-delivery/teacher-gate-1/10-anexo.md).
+
+## Vocabulario de decisión
+
+Cuatro palabras, y sólo cuatro. Se usan igual en todo el pack y en la planilla:
+
+| Palabra | Significa |
+|---|---|
+| **ACEPTAR** | queda como está |
+| **AJUSTAR** | la idea sirve, hay que cambiar algo concreto |
+| **RECHAZAR** | no sirve, hay que pensarlo de nuevo |
+| **DIFERIR** | no se decide hoy, y no bloquea seguir |
+
+**«Se ve bien» no cierra un ítem.** Si no hay una de las cuatro palabras, el ítem queda abierto.
+
+## Cuándo se puede dar el gate por cerrado
+
+La lista está en [02-checklist-facilitador.md](06-delivery/teacher-gate-1/02-checklist-facilitador.md), al final, y **empieza vacía a propósito**. Se completa después de la reunión real, con lo que los docentes hayan dicho, y recién entonces se actualizan el roadmap y el registro de decisiones.
+
+## Una advertencia sobre qué valida esta reunión
+
+Los docentes validan matemática, terminología, ambigüedad, credibilidad del contexto y la aceptabilidad de la filosofía de competencia.
+
+**No validan** que un chico de 12 años entienda la pantalla sin ayuda ni que quiera volver a jugar. Eso no tiene evidencia hasta la feria y no se puede presentar de otra manera.
+
+---
+
 # FILE: 06-delivery/teacher-gates.md
 
 # Gates docentes
@@ -7776,6 +9108,8 @@ Con invariantes robustos, los docentes no necesitan inspeccionar cada variante d
 
 ## Teacher Gate 1 — revisión de la demo de 7.º
 
+**El material para dar esta sesión está preparado en [el pack del Teacher Gate 1](06-delivery/teacher-gate-1/README.md):** guion de quince minutos, casos con sorteo fijo que reproducen, planilla de decisiones y acta. Este documento sigue siendo la autoridad sobre *qué* se pide decidir; el pack es *cómo* se conduce la reunión.
+
 ### Qué se demuestra
 
 - el recorrido completo de 7.º;
@@ -7791,7 +9125,7 @@ Con invariantes robustos, los docentes no necesitan inspeccionar cada variante d
 1. El docente juega una primera run **sin explicación previa**. Se anota dónde pregunta qué hacer.
 2. Vuelve a jugar y observa la variación.
 3. Recién ahí se explican el modelo de carrera y la arquitectura de variantes.
-4. Se muestra la propuesta de score: matemática dominante, mejor intento, velocidad sólo como desempate.
+4. Se muestra la propuesta de score: matemática dominante, con Equipo y Aura acotados. La velocidad **no** entra al puntaje; si alguna vez desempatara, es una decisión aparte y con sus propios problemas de equidad.
 5. Se recorre la lista de decisiones abiertas y se pide decisión explícita.
 
 No se usa la reunión para elegir tipografías, espaciados ni tokens: eso ya está cerrado por el sistema de diseño.
@@ -7836,6 +9170,8 @@ No se usa la reunión para elegir tipografías, espaciados ni tokens: eso ya est
 ### Salida
 
 Una lista acotada de correcciones y una decisión por cada ítem anterior. **No se acepta un «se ve bien» libre como cierre de un ítem.**
+
+Se registra en el [acta del gate](06-delivery/teacher-gate-1/09-acta.md), que además guarda qué versiones vieron los docentes: sin eso, dentro de seis meses nadie puede saber sobre qué material se pronunciaron.
 
 ---
 
@@ -9184,6 +10520,7 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 - `implementation-sequence.md`: roadmap canónico — etapas, estado, alcance, dependencias, gates y criterios de aceptación.
 - `current-stage.md`: vista corta de la etapa activa, su alcance y qué no implementar todavía.
 - `teacher-gates.md`: qué decide el Departamento de Matemática en cada gate.
+- `teacher-gate-1/`: el pack completo para dar el Teacher Gate 1 — guion de quince minutos, casos reproducibles, planilla de decisiones y acta.
 - `definition-of-done.md`: DoD global y por tipo de cambio.
 - `repository-conventions.md`: estructura implementada, fronteras, comandos y reglas de dependencia.
 - `vertical-slice-grade-7.md`: alcance, contenido y criterios del primer slice jugable (7.º grado).
@@ -9224,12 +10561,7 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 - `contribution.md`: cuándo promover un patrón y cómo se hace cumplir.
 - `migration-7-grade.md`: qué cambió al migrar el slice a v0.2, y qué no.
 - `assets.md`: qué arte existe, qué está briefeado sin producir y qué es texto a propósito.
-- `apertura.png`: referencia visual del beat narrativo de apertura.
-- `colectivo-sin-resolver.png`: referencia visual de una situación con la decisión pendiente.
-- `colectivo-resuelto.png`: referencia visual de una situación resuelta como Parcial.
-- `mural-resuelto.png`: referencia visual de una situación académica resuelta como Óptimo.
-- `grilla-25-de-mayo.png`: referencia visual del patrón de grilla y del bloque de Aura.
-- `cierre-de-etapa.png`: referencia visual del cierre de año completo.
+- `reference/`: capturas de referencia visual — apertura, una situación sin resolver y resuelta, una académica en Óptimo, la grilla del acto y el cierre de etapa.
 
 ### audits
 

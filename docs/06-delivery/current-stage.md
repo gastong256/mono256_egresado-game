@@ -43,12 +43,27 @@ Lo que sigue no es implementar más: es que alguien que enseña matemática mire
 - [ ] **No se presentó la validación docente como playtest con estudiantes.**
 - [ ] Este documento y el [roadmap](implementation-sequence.md) actualizados antes de empezar STAGE-07.
 
+## El pack está preparado
+
+Todo el material para dar la reunión está en [el pack del Teacher Gate 1](teacher-gate-1/README.md): guion minuto a minuto, cuatro casos con sorteo fijo que reproducen la misma situación en cualquier máquina, tabla de niveles y de puntaje escritas para leer en voz alta, planilla de decisiones y acta.
+
+Antes de convocar a nadie:
+
+```bash
+pnpm dev
+pnpm teacher-gate --validate
+pnpm teacher-gate --prepare
+```
+
+Si `--validate` falla, el contenido cambió y los casos ya no muestran lo que el pack promete. **No se da la reunión con casos obsoletos.**
+
 ## Herramientas para conducir la sesión
 
 - `pnpm game:score` — qué hace la calibración candidata sobre 23.000 planes.
 - `pnpm game:score -- --compare` — las mismas runs bajo 80/15/5, 85/10/5, 90/10/0 y sin recompensa por dificultad. Mover el dial deja de ser una discusión abstracta.
 - `pnpm game:compose` — la distribución de composición: 20.000 años de 7.º, 1.404 planes distintos, carga idéntica.
-- El juego en `/jugar`, que sigue jugando el arco completo de la demostración.
+- `pnpm teacher-gate --case TG1-A` — la ficha de un caso, con la URL para jugarlo.
+- El juego en `/jugar`, que sigue jugando el arco completo de la demostración con un sorteo al azar.
 
 ## Qué NO se hace mientras el Gate está pendiente
 

@@ -97,6 +97,7 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 - `implementation-sequence.md`: roadmap canónico — etapas, estado, alcance, dependencias, gates y criterios de aceptación.
 - `current-stage.md`: vista corta de la etapa activa, su alcance y qué no implementar todavía.
 - `teacher-gates.md`: qué decide el Departamento de Matemática en cada gate.
+- `teacher-gate-1/`: el pack completo para dar el Teacher Gate 1 — guion de quince minutos, casos reproducibles, planilla de decisiones y acta.
 - `definition-of-done.md`: DoD global y por tipo de cambio.
 - `repository-conventions.md`: estructura implementada, fronteras, comandos y reglas de dependencia.
 - `vertical-slice-grade-7.md`: alcance, contenido y criterios del primer slice jugable (7.º grado).
@@ -137,12 +138,7 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 - `contribution.md`: cuándo promover un patrón y cómo se hace cumplir.
 - `migration-7-grade.md`: qué cambió al migrar el slice a v0.2, y qué no.
 - `assets.md`: qué arte existe, qué está briefeado sin producir y qué es texto a propósito.
-- `apertura.png`: referencia visual del beat narrativo de apertura.
-- `colectivo-sin-resolver.png`: referencia visual de una situación con la decisión pendiente.
-- `colectivo-resuelto.png`: referencia visual de una situación resuelta como Parcial.
-- `mural-resuelto.png`: referencia visual de una situación académica resuelta como Óptimo.
-- `grilla-25-de-mayo.png`: referencia visual del patrón de grilla y del bloque de Aura.
-- `cierre-de-etapa.png`: referencia visual del cierre de año completo.
+- `reference/`: capturas de referencia visual — apertura, una situación sin resolver y resuelta, una académica en Óptimo, la grilla del acto y el cierre de etapa.
 
 ### audits
 

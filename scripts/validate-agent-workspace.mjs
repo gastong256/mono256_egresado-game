@@ -200,9 +200,14 @@ for (const category of [
     ...new Set(
       categoryFiles.map((file) => {
         const nestedPath = file.slice(category.length + 1)
-        return nestedPath.startsWith('adr/')
-          ? 'adr/'
-          : path.posix.basename(nestedPath)
+        // A subdirectory is mapped as a whole. Listing its files by basename
+        // would put generic names like `README.md` in a category map that is
+        // meant to say what each entry *is*, and the map would grow a line every
+        // time a set of related documents gained one.
+        const separator = nestedPath.indexOf('/')
+        return separator === -1
+          ? path.posix.basename(nestedPath)
+          : `${nestedPath.slice(0, separator)}/`
       }),
     ),
   ].sort()

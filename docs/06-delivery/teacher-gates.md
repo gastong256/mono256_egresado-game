@@ -29,6 +29,8 @@ Con invariantes robustos, los docentes no necesitan inspeccionar cada variante d
 
 ## Teacher Gate 1 — revisión de la demo de 7.º
 
+**El material para dar esta sesión está preparado en [el pack del Teacher Gate 1](teacher-gate-1/README.md):** guion de quince minutos, casos con sorteo fijo que reproducen, planilla de decisiones y acta. Este documento sigue siendo la autoridad sobre *qué* se pide decidir; el pack es *cómo* se conduce la reunión.
+
 ### Qué se demuestra
 
 - el recorrido completo de 7.º;
@@ -44,7 +46,7 @@ Con invariantes robustos, los docentes no necesitan inspeccionar cada variante d
 1. El docente juega una primera run **sin explicación previa**. Se anota dónde pregunta qué hacer.
 2. Vuelve a jugar y observa la variación.
 3. Recién ahí se explican el modelo de carrera y la arquitectura de variantes.
-4. Se muestra la propuesta de score: matemática dominante, mejor intento, velocidad sólo como desempate.
+4. Se muestra la propuesta de score: matemática dominante, con Equipo y Aura acotados. La velocidad **no** entra al puntaje; si alguna vez desempatara, es una decisión aparte y con sus propios problemas de equidad.
 5. Se recorre la lista de decisiones abiertas y se pide decisión explícita.
 
 No se usa la reunión para elegir tipografías, espaciados ni tokens: eso ya está cerrado por el sistema de diseño.
@@ -89,6 +91,8 @@ No se usa la reunión para elegir tipografías, espaciados ni tokens: eso ya est
 ### Salida
 
 Una lista acotada de correcciones y una decisión por cada ítem anterior. **No se acepta un «se ve bien» libre como cierre de un ítem.**
+
+Se registra en el [acta del gate](teacher-gate-1/09-acta.md), que además guarda qué versiones vieron los docentes: sin eso, dentro de seis meses nadie puede saber sobre qué material se pronunciaron.
 
 ---
 

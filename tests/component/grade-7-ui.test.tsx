@@ -340,6 +340,60 @@ describe('la familia colectivo en pantalla', () => {
   })
 })
 
+/**
+ * La ruta de revisión del Teacher Gate.
+ *
+ * El pack promete que dos personas, en dos días distintos, ven la misma
+ * situación. Eso descansa en que la partida arranque con el sorteo que se le
+ * pide, y ésta es la prueba de que lo hace.
+ */
+describe('la partida con sorteo fijo', () => {
+  it('muestra la misma situación cada vez que se juega el mismo caso', async () => {
+    const titles: string[] = []
+
+    for (const attempt of [0, 1]) {
+      const user = userEvent.setup()
+      globalThis.localStorage.clear()
+      const { unmount } = render(<GameContainer initialSeed="tg1-aa" />)
+
+      await user.type(
+        await screen.findByLabelText('¿Cómo te decimos?'),
+        `Docente ${String(attempt)}`,
+      )
+      await user.click(
+        screen.getByRole('button', { name: 'Empezar 7.º grado' }),
+      )
+      await user.click(await screen.findByRole('button', { name: 'Seguir' }))
+
+      titles.push(screen.getByRole('heading', { level: 2 }).textContent ?? '')
+      unmount()
+    }
+
+    expect(titles[0]).toBe(titles[1])
+    // El caso TG1-A existe para mostrar la versión del colectivo que se
+    // resuelve eligiendo entre salidas.
+    expect(titles[0]).toBe('El colectivo de siempre')
+  })
+
+  it('otro caso muestra otra situación', async () => {
+    const user = userEvent.setup()
+    globalThis.localStorage.clear()
+    render(<GameContainer initialSeed="tg1-ac" />)
+
+    await user.type(
+      await screen.findByLabelText('¿Cómo te decimos?'),
+      'Docente',
+    )
+    await user.click(screen.getByRole('button', { name: 'Empezar 7.º grado' }))
+    await user.click(await screen.findByRole('button', { name: 'Seguir' }))
+
+    // TG1-B: la misma familia, la pregunta dada vuelta.
+    expect(screen.getByRole('heading', { level: 2 }).textContent).toBe(
+      'La pregunta del grupo',
+    )
+  })
+})
+
 describe('el juego completo en pantalla', () => {
   beforeEach(() => {
     globalThis.localStorage.clear()
