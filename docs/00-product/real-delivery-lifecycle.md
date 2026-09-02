@@ -27,11 +27,11 @@ Un slice jugable y pulido de 7.º grado, representativo de la arquitectura y la 
 
 ### Fase B — Teacher Gate 1
 
-Los docentes aceptan la dirección o piden cambios acotados. La lista de lo que se les pide decidir está en [los gates docentes](../06-delivery/teacher-gates.md). Salida esperada: correcciones de contenido, guía de dificultad y una decisión explícita sobre la filosofía de score.
+**Completada el 1 de septiembre de 2026:** `PASSED_WITH_REQUIRED_ADJUSTMENTS`. La evidencia, acta y mapeo están en el [pack](../06-delivery/teacher-gate-1/README.md). La salida aceptó la dirección y convirtió ajustes en requisitos de las fases siguientes.
 
 ### Fase C — Congelamiento de fundaciones
 
-Con las correcciones aceptadas se congela el comportamiento fundacional y el sistema visual. Después de este punto, reabrir arquitectura o identidad requiere un defecto real, no una preferencia.
+**Actual:** las correcciones de autoridad y score están integradas; STAGE-07 está `READY`. Con egreso/recuperación implementados se podrán apoyar los años siguientes en una gramática común. Reabrir arquitectura o identidad requiere evidencia de defecto, no preferencia.
 
 ### Fase D — Producción del juego completo
 

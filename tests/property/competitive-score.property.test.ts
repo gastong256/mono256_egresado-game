@@ -160,7 +160,7 @@ describe('el score sobre evidencia arbitraria', () => {
           })
 
         const gap = score(setSecondary('top')) - score(setSecondary('floor'))
-        // Con equipo y aura presentes, su peso efectivo es 2000/10000 de la
+        // Con equipo y aura presentes, su peso efectivo es 1500/10000 de la
         // escala; sin ellos el hueco es cero. Nunca puede ser más.
         expect(gap).toBeLessThanOrEqual(
           policy.weights.team + policy.weights.aura,
@@ -209,6 +209,33 @@ describe('el score sobre evidencia arbitraria', () => {
       fc.property(runArbitrary, (evidence) => {
         expect(score(evidence)).toBe(score(evidence))
       }),
+      { numRuns: 200 },
+    )
+  })
+
+  it('Promedio y Estilo no pueden alterar el score de la misma evidencia', () => {
+    const scoreWithCareer = (
+      evidence: readonly BeatEvidence[],
+      career: { readonly promedio: number; readonly estilo: string },
+    ) => {
+      void career
+      return score(evidence)
+    }
+
+    fc.assert(
+      fc.property(
+        runArbitrary,
+        fc.integer({ min: 1, max: 10 }),
+        fc.constantFrom('aplicado', 'estratega', 'improvisador'),
+        (evidence, promedio, estilo) => {
+          expect(scoreWithCareer(evidence, { promedio, estilo })).toBe(
+            scoreWithCareer(evidence, {
+              promedio: promedio === 10 ? 1 : 10,
+              estilo: estilo === 'aplicado' ? 'improvisador' : 'aplicado',
+            }),
+          )
+        },
+      ),
       { numRuns: 200 },
     )
   })

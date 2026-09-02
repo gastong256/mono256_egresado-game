@@ -126,4 +126,4 @@ Un resultado académico insuficiente no crea un estado terminal global. Cuando e
 ### FR-T07 Cierre de carrera completa
 El producto completo termina en `EGRESADO`, deriva el arquetipo final y produce el resumen de run. El slice de 7.º termina en el hito de año.
 
-Estos requisitos **no cierran** las decisiones que dependen del Departamento de Matemática: los coeficientes de score, la política de intentos y la política de empate siguen en [preguntas abiertas](../07-reference/open-questions.md).
+TG1 cerró la dirección 85/10/5, normalización de oportunidades e intentos ilimitados con mejor resultado verificado. Siguen abiertos la política oficial/freeze, la implementación de emisión y personal best, y el desempate exacto; ver [preguntas abiertas](../07-reference/open-questions.md).

@@ -191,7 +191,7 @@ No se puede llamar «dinámico» a un cambio de orden de las opciones.
 
 ### El acto del 25 de Mayo
 
-Está implementado y jugable, y demuestra matemática, situación social, Aura y una familia de interacción distinta al mismo tiempo. **Su inclusión en producción sigue siendo una decisión docente** ([pregunta 42](../07-reference/open-questions.md)).
+Está implementado y jugable. TG1-13 lo aceptó pedagógicamente (`KEEP`) y pidió enriquecer su narrativa y ampliar la variedad futura de contextos, incluidos deportes y competencias cuando la matemática lo justifique. La narrativa actual no fue rechazada y no se reescribió en esta integración. Su F1 sigue alimentando sólo Matemática: Aura competitiva requiere evidencia social independiente y pertenece a STAGE-08.
 
 ### Score en la demo
 

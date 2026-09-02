@@ -4,6 +4,12 @@
 
 Este documento explica *cómo debe subir* la dificultad. Qué matemática se usa en cada año está en el [marco matemático](math-design-framework.md); qué factores hacen difícil un desafío concreto está en el [sistema de desafíos](challenge-system.md).
 
+## Decisión post-Teacher-Gate-1
+
+TG1-01 y TG1-03 fijan una regla de producto: toda etapa conserva un piso de prerrequisitos matemáticos ampliamente accesible desde aproximadamente 7.º, mientras `CORE / STANDARD / STRETCH` describen complejidad estructural. **`AcademicStage ≠ DifficultyBand`.** 5.º no significa matemática curricular inaccesible para un jugador de 7.º; puede significar más relaciones, planificación, información y consecuencias dentro de un contexto narrativo posterior.
+
+Accesibilidad universal es **piso bajo, techo alto y paredes anchas**, no contenido trivial. Cada etapa puede y debe contener las tres bandas.
+
 ## El problema de audiencia
 
 En la feria juegan estudiantes de 7.º, estudiantes de 5.º, docentes, familias y visitantes adultos. Un único “nivel medio de currículo” es demasiado difícil para unos y trivial para otros, y no hay forma de preguntar la edad sin pedir datos que el producto decidió no pedir.
@@ -47,7 +53,7 @@ Qué desafíos deben ofrecer qué apoyo es **TEACHER GATE**; si se permite calcu
 
 ## Bandas de dificultad
 
-**Implementadas** como metadata de autoría y scheduling; su interpretación y calibración exactas siguen **RECOMENDADAS / TEACHER GATE**. No se muestran al jugador.
+**Implementadas y aceptadas conceptualmente en TG1-03** como metadata de autoría y scheduling. Los umbrales/costos exactos siguen siendo datos versionados calibrables. No se muestran al jugador.
 
 | Banda | Estructura |
 |---|---|
@@ -88,7 +94,7 @@ Un autor que quiere que su plantilla se agende como más exigente tiene que nomb
 
 ## Clasificación del contenido actual
 
-**Calibración candidata de ingeniería, no verdad pedagógica.** El Teacher Gate puede mover cualquier fila sin que cambie nada de la arquitectura. Los rasgos van en el orden de la tabla de arriba.
+**Clasificación revisada y aceptada en TG1-03; no equivale a medición psicométrica.** Los rasgos van en el orden de la tabla de arriba.
 
 | Plantilla | Dominio | Rasgos | Carga | Banda | Costo | Nivel autorado | Por qué |
 |---|---|---|---|---|---|---|---|
@@ -100,7 +106,7 @@ Un autor que quiere que su plantilla se agende como más exigente tiene que nomb
 | `g7.stand-supplies` | optimización | 2·2·1·2·0·1 | 8 | STRETCH | 2,10 | 3 ✗ | porciones mínimas y presupuesto a la vez, sobre una combinación que se arma |
 | `g7.group-tasks` | optimización | 2·2·2·2·0·1 | 9 | STRETCH | 2,10 | 3 ✗ | repartir todo sin pasarse de las horas de nadie, leyendo afinidad y disponibilidad |
 
-**Las cuatro divergencias con el nivel autorado son el resultado más útil de la tabla.** `baseDifficulty` se escribió como perilla de runtime y no como clasificación estructural, y donde las dos no coinciden hay una pregunta concreta para el Gate: ¿el mural es realmente más liviano que el colectivo? ¿El stand y el trabajo grupal son `STRETCH` para un chico de 7.º, o el año entero está calibrado alto? Un test fija la clasificación, así que moverla es una decisión visible en un diff.
+**Las cuatro divergencias con el nivel autorado fueron una evidencia útil del Gate.** `baseDifficulty` se escribió como perilla de runtime y no como clasificación estructural. TG1-03 aceptó la tabla sin pedir reclasificaciones; esto valida la lectura docente, no equivalencia psicométrica. Un test fija la clasificación, así que una recalibración futura seguirá siendo visible y versionada.
 
 ## Presupuesto de dificultad
 
@@ -115,9 +121,9 @@ La evidencia post-STAGE-05: 20.000 seeds de la partida normal de 7.º producen 1
 
 Los costos de scheduling son **metadata de armado de run** y están separados del multiplicador de score. El compositor necesita distinguir fuerte entre CORE y STRETCH para balancear; el score necesita multiplicadores chicos para que la suerte del sorteo no domine sobre la habilidad. El estado implementado está en [game engine](../03-architecture/game-engine.md) y la brecha restante en [arquitectura objetivo](../03-architecture/target-engine-architecture.md).
 
-### Valores candidatos
+### Valores post-Gate
 
-Provisionales, **no oficiales**, sujetos a Teacher Gate:
+TG1-08 aceptó el principio de una recompensa pequeña. Los factores exactos siguen **candidatos y no oficiales**:
 
 | Banda | Costo de scheduling | Multiplicador de score |
 |---|---|---|

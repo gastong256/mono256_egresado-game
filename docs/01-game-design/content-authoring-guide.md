@@ -30,6 +30,18 @@ Reformular:
 - “¿Cuánto es 20% de 800000?” → “¿Qué oferta realmente cuesta menos?”
 - “¿Cuál es la media?” → “¿Qué grupo tuvo mejor rendimiento considerando tamaño?”
 
+## Accesibilidad matemática universal
+
+TG1-01 convierte el piso bajo/techo alto en requisito para todos los años. Antes de aprobar una plantilla, responder:
+
+1. ¿Un jugador capaz a nivel aproximado de 7.º entiende los conceptos necesarios?
+2. ¿La dificultad viene del razonamiento y no de currículo avanzado?
+3. ¿Unidades y términos se introducen con claridad?
+4. ¿El año académico cambia el contexto y la responsabilidad, no el prerrequisito?
+5. ¿La situación se entiende sin fórmulas especializadas de años posteriores?
+
+Accesible no significa trivial: el techo puede subir mediante restricciones, optimización, planificación, información irrelevante y consecuencias.
+
 ## Longitud
 
 - Título: 2–6 palabras.
@@ -88,7 +100,22 @@ Promedio se mueve sólo si el evento es genuinamente académico. Aura se mueve s
 
 ### Efectos de competencia: separados de las stats visibles
 
-Cuando exista modo competitivo, cada evaluador declarará su calidad matemática normalizada y, si corresponde, una contribución acotada de Equipo o de Aura, **aparte** de los efectos de carrera visibles. Ver [score competitivo y ranking](competitive-scoring-and-ranking.md).
+Cada evaluador declara su calidad matemática normalizada y, si corresponde, una contribución acotada de Equipo o de Aura, **aparte** de los efectos de carrera visibles. TG1-05/TG1-06 permiten multi-evaluación, con esta regla canónica:
+
+> Una misma escena puede evaluar más de una dimensión, pero no puede otorgar crédito competitivo dos veces por la misma evidencia.
+
+Checklist obligatorio:
+
+1. ¿Qué propiedad matemática se mide?
+2. ¿Qué propiedad de Equipo se mide, si existe?
+3. ¿Qué propiedad de Aura se mide, si existe?
+4. ¿Son hechos genuinamente diferentes?
+5. ¿Se puede quitar una componente sin cambiar el significado de otra?
+6. ¿Alguna señal se está contando dos veces?
+
+Válido: factibilidad matemática y calidad independiente del reparto de responsabilidades. Inválido: copiar el mismo F1 del acto del 25 de Mayo a Matemática y Aura. Si no existe evidencia independiente, la componente es `none`; no se fuerza Equipo/Aura por plantilla.
+
+La idea docente del colectivo —varios márgenes matemáticamente válidos con consecuencias sociales distintas— es un ejemplo futuro de autoría, no una regla runtime actual. Del mismo modo, May-25 sólo podrá aportar Aura competitiva si incorpora una decisión pública/social distinta de la clasificación numérica.
 
 ### Ocultos: dominio y flags
 

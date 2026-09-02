@@ -22,6 +22,8 @@ import {
   toRunSeed,
   verifyScoreClaim,
   candidateFairScorePolicy,
+  fairScoreDev1Policy,
+  resolveCompetitiveScorePolicy,
   AUDIT_PROFILES,
   MAX_DIFFICULTY_REWARD,
   PERFORMANCE_SCALE,
@@ -83,13 +85,13 @@ function scoreOf(events: readonly ScoredEvent[], use = policy): number {
 describe('la política candidata', () => {
   it('es candidata y lo dice', () => {
     expect(policy.official).toBe(false)
-    expect(policy.id).toBe('fair-score-dev-1')
+    expect(policy.id).toBe('fair-score-dev-2')
     expect(policy.id).not.toBe('current')
     expect(policy.id).not.toBe('latest')
   })
 
-  it('lleva los pesos 80/15/5 del documento de diseño', () => {
-    expect(policy.weights).toEqual({ math: 8_000, team: 1_500, aura: 500 })
+  it('lleva los pesos 85/10/5 aceptados en Teacher Gate 1', () => {
+    expect(policy.weights).toEqual({ math: 8_500, team: 1_000, aura: 500 })
     expect(
       SCORE_COMPONENTS.reduce((sum, key) => sum + policy.weights[key], 0),
     ).toBe(SCORE_SCALE)
@@ -127,6 +129,26 @@ describe('la política candidata', () => {
 
   it('la valida sin problemas', () => {
     expect(competitiveScorePolicyIssues(policy)).toEqual([])
+  })
+
+  it('preserva dev-1 y resuelve ambas identidades sin fallback', () => {
+    expect(fairScoreDev1Policy).toMatchObject({
+      id: 'fair-score-dev-1',
+      version: '1.0.0-candidate',
+      weights: { math: 8_000, team: 1_500, aura: 500 },
+    })
+    expect(resolveCompetitiveScorePolicy('fair-score-dev-1')).toEqual({
+      ok: true,
+      value: fairScoreDev1Policy,
+    })
+    expect(resolveCompetitiveScorePolicy(policy.version)).toEqual({
+      ok: true,
+      value: policy,
+    })
+    expect(resolveCompetitiveScorePolicy('latest')).toMatchObject({
+      ok: false,
+      error: { code: 'unknown-score-policy', requested: 'latest' },
+    })
   })
 })
 
@@ -235,8 +257,8 @@ describe('el desglose cierra', () => {
       policy,
     )
     if (!isOk(result)) throw new Error('no se pudo puntuar')
-    expect(result.value.scorePolicyId).toBe('fair-score-dev-1')
-    expect(result.value.scorePolicyVersion).toBe('1.0.0-candidate')
+    expect(result.value.scorePolicyId).toBe('fair-score-dev-2')
+    expect(result.value.scorePolicyVersion).toBe('2.0.0-post-tg1-candidate')
     expect(result.value.official).toBe(false)
   })
 
@@ -258,7 +280,7 @@ describe('el desglose cierra', () => {
 
 describe('la matemática manda', () => {
   it('el techo de lo no matemático es el que la política declara', () => {
-    expect(secondaryInfluence(policy)).toBe(2_000)
+    expect(secondaryInfluence(policy)).toBe(1_500)
     expect(policy.weights.math).toBeGreaterThan(secondaryInfluence(policy))
   })
 
@@ -303,7 +325,7 @@ describe('la matemática manda', () => {
     if (!isOk(withSecondary) || !isOk(mathOnly)) throw new Error('no puntuó')
 
     // Con la mitad de la matemática, tener equipo y aura perfectos mueve el
-    // score exactamente lo que los pesos permiten: 20 % × (10000 − 5000).
+    // score exactamente lo que los pesos permiten: 15 % × (10000 − 5000).
     expect(withSecondary.value.fairScore - mathOnly.value.fairScore).toBe(
       Math.round((secondaryInfluence(policy) * 5_000) / SCORE_SCALE),
     )
@@ -352,7 +374,7 @@ describe('la oportunidad ausente no cuesta puntos', () => {
     if (!isOk(result)) throw new Error('no se pudo puntuar')
 
     const math = result.value.components.find((c) => c.component === 'math')
-    expect(math?.declaredWeight).toBe(8_000)
+    expect(math?.declaredWeight).toBe(8_500)
     // Sin equipo ni aura en el plan, la matemática se lleva la escala entera.
     expect(math?.effectiveWeight).toBe(SCORE_SCALE)
   })

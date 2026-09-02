@@ -1,6 +1,6 @@
 # Egreso, recuperación y fail-forward
 
-**Estado: PRODUCT DIRECTION.** La dirección —el error cambia el camino, no termina la partida— está decidida. La forma concreta de la recuperación, el lenguaje de las previas y qué años la ofrecen son **OPEN**, y el tono de esa recuperación es **TEACHER GATE**.
+**Estado: TG1-ACCEPTED PRODUCT REQUIREMENT; implementación pendiente en STAGE-07.** La dirección —el error cambia el camino, no termina la partida— y el egreso garantizado fueron aceptados en TG1-14. La forma concreta de la recuperación, el lenguaje de las previas y qué años la ofrecen siguen **OPEN**; la evidencia no suministró vocabulario.
 
 ## Invariante buscado
 
@@ -67,4 +67,4 @@ La simulación masiva vigente (`pnpm game:simulate`) ya busca callejones sin sal
 
 ## Estado de implementación
 
-El slice de 7.º termina en un hito de año, no en el egreso. La carrera completa `7.º → 1.º → 2.º → 3.º → 4.º → 5.º → Egreso`, el arco de recuperación y el arquetipo final son **contenido futuro**; ver [la secuencia de implementación](../06-delivery/implementation-sequence.md).
+El slice de 7.º termina en un hito de año, no en el egreso. El requisito está aceptado, pero el estado `GRADUATED`, la carrera completa `7.º → 1.º → 2.º → 3.º → 4.º → 5.º → Egreso` y el arco de recuperación **no existen todavía**; son el alcance de STAGE-07/08. Ver [la secuencia de implementación](../06-delivery/implementation-sequence.md).

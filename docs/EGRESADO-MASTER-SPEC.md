@@ -67,7 +67,7 @@ Agrega desafíos y reglas.
 ## Contextos de uso
 
 ### Feria escolar
-- Sesiones de 4–7 min.
+- Carreras completas con objetivo UX de 8–10 min (TG1-12).
 - Teléfonos personales y algunas PCs/tablets.
 - Posible Wi-Fi saturado.
 - Ranking en pantalla grande.
@@ -266,11 +266,11 @@ Un slice jugable y pulido de 7.º grado, representativo de la arquitectura y la 
 
 ### Fase B — Teacher Gate 1
 
-Los docentes aceptan la dirección o piden cambios acotados. La lista de lo que se les pide decidir está en [los gates docentes](06-delivery/teacher-gates.md). Salida esperada: correcciones de contenido, guía de dificultad y una decisión explícita sobre la filosofía de score.
+**Completada el 1 de septiembre de 2026:** `PASSED_WITH_REQUIRED_ADJUSTMENTS`. La evidencia, acta y mapeo están en el [pack](06-delivery/teacher-gate-1/README.md). La salida aceptó la dirección y convirtió ajustes en requisitos de las fases siguientes.
 
 ### Fase C — Congelamiento de fundaciones
 
-Con las correcciones aceptadas se congela el comportamiento fundacional y el sistema visual. Después de este punto, reabrir arquitectura o identidad requiere un defecto real, no una preferencia.
+**Actual:** las correcciones de autoridad y score están integradas; STAGE-07 está `READY`. Con egreso/recuperación implementados se podrán apoyar los años siguientes en una gramática común. Reabrir arquitectura o identidad requiere evidencia de defecto, no preferencia.
 
 ### Fase D — Producción del juego completo
 
@@ -532,20 +532,20 @@ Ver [alcance objetivo del motor](03-architecture/target-engine-architecture.md) 
 
 ## Escalamiento temático por año
 
-Dirección de escalada **lúdica**, no currículo oficial: la pertinencia curricular la deciden los docentes, y la progresión matemática vigente está en el [marco matemático](01-game-design/math-design-framework.md).
+Dirección de escalada **lúdica y narrativa**, no currículo-gate. TG1-01 exige que todos los años conserven un piso matemático accesible desde aproximadamente 7.º. Los dominios de la tabla son contextos posibles: cualquier concepto debe presentarse con apoyos suficientes y la dificultad viene de la estructura.
 
 | Etapa | Qué se agrega como desafío |
 |---|---|
 | 7.º | aprender la gramática: tiempo, porcentajes, área, presupuesto, asignación simple, divisibilidad |
-| 1.º | adaptación y organización: horarios, proporcionalidad, primeras evaluaciones fuertes, dinámica de grupo |
-| 2.º | autonomía: trade-offs de recursos, primeras probabilidades, comparación financiera |
-| 3.º | interpretación: estadística, muestras, incertidumbre, pedir información, elecciones multivariable |
-| 4.º | responsabilidad: proyectos grandes, restricciones, planificación, optimización |
-| 5.º | cierre: proyecto final, previas y recuperación, egreso, decisiones de futuro |
+| 1.º | adaptación y organización: horarios, repartos, evaluaciones y dinámica de grupo |
+| 2.º | autonomía: trade-offs de recursos, lectura de chances y comparación de opciones |
+| 3.º | interpretación: datos, incertidumbre explicada, pedir información y decisiones multivariable |
+| 4.º | responsabilidad: proyectos grandes, restricciones, planificación y optimización accesible |
+| 5.º | cierre: proyecto final, previas, recuperación, egreso y decisiones de futuro |
 
 ### Producción de contenido después del Teacher Gate 1
 
-No se autoran los años en secuencia sin catálogo. Primero se arma la matriz completa de 1.º–5.º —una fila por plantilla, no por variante— y el Departamento de Matemática revisa **la matriz**, no sólo pantallas terminadas. Recién después se implementa año por año. Ver [secuencia de implementación](06-delivery/implementation-sequence.md).
+No se autoran los años en secuencia sin catálogo. Primero se arma la matriz completa de 1.º–5.º —una fila por plantilla, no por variante— y se audita universalidad, banda estructural, evidencia competitiva independiente y duración; Matemática revisa **la matriz**, no sólo pantallas terminadas. Recién después se implementa año por año. Ver [secuencia de implementación](06-delivery/implementation-sequence.md).
 
 La referencia histórica de seis a ocho situaciones significativas por año describe **profundidad posible del catálogo**, no beats obligatorios en una run. No fija un requisito ni una cantidad final: cada run normal selecciona uno o dos beats por etapa, mientras el catálogo debe ofrecer más opciones para sostener la rejugabilidad. La profundidad definitiva sigue abierta ([pregunta 46](07-reference/open-questions.md)).
 
@@ -1201,9 +1201,9 @@ Además de `DifficultyLevel` 1–5, la autoría y la competencia usan tres banda
 
 # Score competitivo y ranking
 
-**Estado: RECOMENDADO / TEACHER GATE, y desde STAGE-06 implementado como política candidata.** Nada de este documento es una regla cerrada. La separación entre identidad de carrera y score competitivo es una recomendación fuerte de arquitectura; **todos los coeficientes, topes y calibraciones son candidatos** y requieren aprobación del Departamento de Matemática antes del congelamiento de competencia. Los valores exactos siguen **OPEN** ([pregunta 24](07-reference/open-questions.md)).
+**Estado post-TG1:** mecanismo implementado; filosofía y ponderación 85/10/5 aceptadas como dirección docente; política todavía candidata y no oficial. Teacher Gate 1 no prueba equidad psicométrica ni reemplaza el congelamiento de competencia. La fórmula oficial final sigue **OPEN** ([pregunta 24](07-reference/open-questions.md)).
 
-El score por evento vigente —`base × calidad × dificultad + bonus − penalizaciones`— está en [reglas, scoring y progresión](01-game-design/rules-scoring-and-progression.md) y sigue siendo la capa de carrera. La capa **competitiva** que este documento describe está implementada desde STAGE-06 como `fair-score-dev-1`, con `official: false`; ver [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md).
+El score por evento vigente —`base × calidad × dificultad + bonus − penalizaciones`— está en [reglas, scoring y progresión](01-game-design/rules-scoring-and-progression.md) y sigue siendo la capa de carrera. La capa **competitiva** conserva `fair-score-dev-1@1.0.0-candidate` como calibración histórica pre-Gate 80/15/5; las runs nuevas usan `fair-score-dev-2@2.0.0-post-tg1-candidate`, 85/10/5 y `official: false`. Ver [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md).
 
 ## Tres capas que no son la misma cosa
 
@@ -1234,7 +1234,7 @@ Cada evaluador devuelve, además de sus efectos de carrera, una medida de desemp
 
 `q_i ∈ [0,1]`
 
-Calibración discreta de partida, **candidata y sujeta a Teacher Gate**:
+Calibración discreta **aceptada en TG1-09 como candidato de desarrollo**:
 
 | Calidad | `q` candidato |
 |---|---|
@@ -1266,23 +1266,23 @@ Si se decide que “toda la carrera cuenta”, la contribución competitiva es *
 
 Aura cruda sigue siendo con signo y sin techo para uso narrativo. Aura competitiva tiene que estar topeada: un solo momento espectacular no puede ganarle a una run matemáticamente superior.
 
-### FairScore candidato
+### FairScore post-TG1 candidato
 
-**RECOMENDADO / TEACHER GATE — no es la fórmula oficial.**
+**TEACHER-INFORMED CANDIDATE — no es la fórmula oficial.**
 
 ```text
-FairScore = round(0,80 × MathPerformance + 0,15 × TeamPerformance + 0,05 × AuraPerformance)
+FairScore = round(0,85 × MathPerformance + 0,10 × TeamPerformance + 0,05 × AuraPerformance)
 ```
 
-La ponderación 80/15/5 es un **candidato defendible**, no una decisión tomada. Una intuición previa de `10:5:1` normaliza a 62,5 % / 31,25 % / 6,25 %, que probablemente le da demasiado peso competitivo a la conducta de equipo en una feria de matemática individual.
+TG1-04 eligió 85/10/5 y reafirmó que matemática debe pesar más que Equipo y Aura juntos. Es una dirección de producto informada por docente, no una afirmación de superioridad empírica.
 
-La implementación lo expresa como política versionada y configurable, no como constantes anónimas. `fair-score-dev-1` es el id de la política y `1.0.0-candidate` su versión actual; ambas aparecen en el desglose, mientras el `scoreVersion` del descriptor guarda la versión de la calibración. Ver [ejemplo de política de score](07-reference/score-policy.example.json).
+La implementación lo expresa como políticas inmutables resolubles por identidad o versión exacta, sin fallback `latest`. `dev-1` permanece reproducible; `dev-2` es la candidata actual. El desglose guarda id y versión, y `RunDescriptor.scoreVersion` guarda la versión exacta. Ver [ejemplo de política de score](07-reference/score-policy.example.json).
 
 ### Qué pasa cuando una run no tiene la oportunidad
 
 Los planes difieren en qué contienen: una partida compuesta de 7.º son dos beats de pura matemática y no ofrece ni equipo ni aura. Puntuarla sobre 8.000 mientras otra se puntúa sobre 10.000 castigaría a alguien por un sorteo que no hizo.
 
-**Una componente sin oportunidad sale, y su peso se reparte entre las que quedaron.** El juego perfecto vale 10.000 en toda run válida, y sacar una secundaria sólo puede aumentar la proporción de la matemática. Las alternativas y por qué se descartaron están en [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md).
+**Una componente sin oportunidad sale, y su peso se reparte entre las que quedaron.** TG1-07 aceptó esta filosofía. El juego perfecto vale 10.000 en toda run válida, y sacar una secundaria sólo puede aumentar la proporción de la matemática. No se fuerza cobertura de Equipo/Aura desde el compositor.
 
 ### Qué componente lee cada plantilla
 
@@ -1291,20 +1291,22 @@ Cada plantilla declara qué hecho suyo alimenta cada componente, y por qué es u
 - **el stand mueve Equipo en la carrera y no aporta equipo competitivo**, porque su eficiencia es el costo mínimo que la matemática ya cobró;
 - **ninguna plantilla de producción aporta aura competitiva**, porque el acto —el único evento que mueve Aura— sólo mide el F1 que la matemática ya usa. La componente existe, está topeada y la ejercitan los fixtures. Una componente honestamente vacía es mejor que una señal inventada para llenarla.
 
+TG1-05/TG1-06 aceptaron escenas multi-eje con una condición: cada eje debe leer un hecho semánticamente independiente. Es válido separar factibilidad matemática de calidad de colaboración. Es inválido copiar el mismo F1 del acto a Matemática y Aura. La sugerencia sobre May-25 se conserva como intención para STAGE-08; antes de aportar Aura necesita una decisión pública/social distinta.
+
 ### Evidencia de la calibración candidata
 
-Sobre 23.000 planes compuestos —20.000 años reales de 7.º más planes de uno, ocho y doce beats de fixtures— la política candidata da:
+Sobre 23.000 planes compuestos —20.000 años reales de 7.º más planes de uno, ocho y doce beats de fixtures— `fair-score-dev-2` da:
 
 | Perfil sintético | Score |
 |---|---|
 | juego perfecto | 10.000 en **todos** los planes, sin dispersión |
-| matemática fuerte, secundarias mínimas | 7.400 – 9.000 |
-| matemática floja, secundarias perfectas | 2.000 – 3.600 |
+| matemática fuerte, secundarias mínimas | 7.800 – 9.000 |
+| matemática floja, secundarias perfectas | 2.000 – 3.200 |
 | peor juego posible | 0 |
 
-Las dos franjas del medio **no se cruzan**: es la dominancia de la matemática medida, no afirmada. `pnpm game:score` reproduce la tabla y `pnpm game:score -- --compare` corre las mismas runs bajo calibraciones alternativas, que es la herramienta para discutir 80/15/5 en el Gate.
+Las dos franjas del medio **no se cruzan**. `pnpm game:score` reproduce la tabla y `--compare` incluye la comparación histórica `dev-1`/`dev-2` con contribuciones por componente.
 
-Nada de esto dice que 80/15/5 sea la respuesta correcta. Dice que el mecanismo es justo en las formas en que se le pidió serlo.
+Nada de esto demuestra que 85/10/5 sea psicométricamente justo. Demuestra que el mecanismo cumple las invariantes que se le pidieron bajo esa candidata.
 
 ## Qué no entra al score
 
@@ -1322,11 +1324,11 @@ No es desempate en ninguna dirección. Premiar más intentos premia tiempo libre
 
 ## Intentos y personal best
 
-**RECOMENDADO / TEACHER GATE.** Política sugerida: intentos ilimitados o configurables, y el leaderboard guarda el **mejor intento**, no la suma.
+**TG1 ACCEPTED PRODUCT DIRECTION.** Los intentos son lógicamente ilimitados y el ranking futuro conserva el **mejor resultado verificado**, no la suma.
 
 Sumar intentos convierte el ranking en una medida de tiempo disponible. El mejor intento premia la mejora sin castigar a quien llegó tarde a la feria. La guía de GameKit para desafíos repetibles apunta en la misma dirección; ver [base teórica](07-reference/research-basis.md).
 
-La decisión entre ilimitado y N intentos es del evento y sigue abierta. La operación está en [modo feria y congelamiento](05-operations/fair-mode-and-competition-freeze.md).
+STAGE-09 implementará emisión autoritativa, identidad y persistencia. Ilimitado no significa elegir una seed fácil: la infraestructura asigna cada `RunPlan`/seed. La operación está en [modo feria y congelamiento](05-operations/fair-mode-and-competition-freeze.md).
 
 ## Desempate
 
@@ -1345,7 +1347,7 @@ La matemática decide antes que la velocidad, y la velocidad sólo aparece al fi
 
 No se puede prometer que un score con significado nunca empate: garantizar unicidad exige una clave arbitraria. Para premios hace falta una **política de organizador escrita antes de la feria**: puesto compartido, premio compartido o un desempate anunciado. Un `run_id` puede dar orden de visualización estable, pero no puede decidir un premio en secreto.
 
-Esa política es **OPEN**.
+Esa política es **OPEN**. TG1-11 pidió ajustarla y propuso Hitos aleatorios para reducir empates. La integración separa dos problemas: los Hitos son una oportunidad futura de reconocimiento narrativo/carrera; no agregan puntos aleatorios ni garantizan un puesto único. Empates legítimos pueden existir y STAGE-09/TG2 decidirán el criterio anunciado.
 
 ### Tiempo
 
@@ -1362,7 +1364,7 @@ Las reglas publicadas tienen que poder explicarse en tres frases: la matemática
 | Score por evento determinista, con política nombrada y versionada | **implementado**, marcado `production: false` |
 | Separación entre stats visibles y métricas ocultas de razonamiento | **implementado** |
 | `MathPerformance` / `TeamPerformance` / `AuraPerformance` normalizados | **implementado**, en puntos básicos enteros |
-| `FairScore` y desglose competitivo | **implementado** como `fair-score-dev-1`, `official: false` |
+| `FairScore` y desglose competitivo | **implementado**; `fair-score-dev-1` histórico y `fair-score-dev-2` actual, ambos `official: false` |
 | Recomputación y verificación autoritativa del score en servidor | **implementado**: el servidor puntúa reproduciendo, y `verifyScoreClaim` contradice un reclamo campo por campo |
 | Comparador lexicográfico versionado | **no implementado**; sin ranking no tiene a qué ordenar, y el desglose ya reporta el primer criterio que va a necesitar |
 | Personal best transaccional en servidor | **no implementado** |
@@ -1405,6 +1407,18 @@ Reformular:
 - “¿Cuál es el área?” → “¿Qué pack de pintura alcanza?”
 - “¿Cuánto es 20% de 800000?” → “¿Qué oferta realmente cuesta menos?”
 - “¿Cuál es la media?” → “¿Qué grupo tuvo mejor rendimiento considerando tamaño?”
+
+## Accesibilidad matemática universal
+
+TG1-01 convierte el piso bajo/techo alto en requisito para todos los años. Antes de aprobar una plantilla, responder:
+
+1. ¿Un jugador capaz a nivel aproximado de 7.º entiende los conceptos necesarios?
+2. ¿La dificultad viene del razonamiento y no de currículo avanzado?
+3. ¿Unidades y términos se introducen con claridad?
+4. ¿El año académico cambia el contexto y la responsabilidad, no el prerrequisito?
+5. ¿La situación se entiende sin fórmulas especializadas de años posteriores?
+
+Accesible no significa trivial: el techo puede subir mediante restricciones, optimización, planificación, información irrelevante y consecuencias.
 
 ## Longitud
 
@@ -1464,7 +1478,22 @@ Promedio se mueve sólo si el evento es genuinamente académico. Aura se mueve s
 
 ### Efectos de competencia: separados de las stats visibles
 
-Cuando exista modo competitivo, cada evaluador declarará su calidad matemática normalizada y, si corresponde, una contribución acotada de Equipo o de Aura, **aparte** de los efectos de carrera visibles. Ver [score competitivo y ranking](01-game-design/competitive-scoring-and-ranking.md).
+Cada evaluador declara su calidad matemática normalizada y, si corresponde, una contribución acotada de Equipo o de Aura, **aparte** de los efectos de carrera visibles. TG1-05/TG1-06 permiten multi-evaluación, con esta regla canónica:
+
+> Una misma escena puede evaluar más de una dimensión, pero no puede otorgar crédito competitivo dos veces por la misma evidencia.
+
+Checklist obligatorio:
+
+1. ¿Qué propiedad matemática se mide?
+2. ¿Qué propiedad de Equipo se mide, si existe?
+3. ¿Qué propiedad de Aura se mide, si existe?
+4. ¿Son hechos genuinamente diferentes?
+5. ¿Se puede quitar una componente sin cambiar el significado de otra?
+6. ¿Alguna señal se está contando dos veces?
+
+Válido: factibilidad matemática y calidad independiente del reparto de responsabilidades. Inválido: copiar el mismo F1 del acto del 25 de Mayo a Matemática y Aura. Si no existe evidencia independiente, la componente es `none`; no se fuerza Equipo/Aura por plantilla.
+
+La idea docente del colectivo —varios márgenes matemáticamente válidos con consecuencias sociales distintas— es un ejemplo futuro de autoría, no una regla runtime actual. Del mismo modo, May-25 sólo podrá aportar Aura competitiva si incorpora una decisión pública/social distinta de la clasificación numérica.
 
 ### Ocultos: dominio y flags
 
@@ -1533,6 +1562,12 @@ Es un ejemplo documental: no se importa desde runtime ni reemplaza al [schema de
 
 Este documento explica *cómo debe subir* la dificultad. Qué matemática se usa en cada año está en el [marco matemático](01-game-design/math-design-framework.md); qué factores hacen difícil un desafío concreto está en el [sistema de desafíos](01-game-design/challenge-system.md).
 
+## Decisión post-Teacher-Gate-1
+
+TG1-01 y TG1-03 fijan una regla de producto: toda etapa conserva un piso de prerrequisitos matemáticos ampliamente accesible desde aproximadamente 7.º, mientras `CORE / STANDARD / STRETCH` describen complejidad estructural. **`AcademicStage ≠ DifficultyBand`.** 5.º no significa matemática curricular inaccesible para un jugador de 7.º; puede significar más relaciones, planificación, información y consecuencias dentro de un contexto narrativo posterior.
+
+Accesibilidad universal es **piso bajo, techo alto y paredes anchas**, no contenido trivial. Cada etapa puede y debe contener las tres bandas.
+
 ## El problema de audiencia
 
 En la feria juegan estudiantes de 7.º, estudiantes de 5.º, docentes, familias y visitantes adultos. Un único “nivel medio de currículo” es demasiado difícil para unos y trivial para otros, y no hay forma de preguntar la edad sin pedir datos que el producto decidió no pedir.
@@ -1576,7 +1611,7 @@ Qué desafíos deben ofrecer qué apoyo es **TEACHER GATE**; si se permite calcu
 
 ## Bandas de dificultad
 
-**Implementadas** como metadata de autoría y scheduling; su interpretación y calibración exactas siguen **RECOMENDADAS / TEACHER GATE**. No se muestran al jugador.
+**Implementadas y aceptadas conceptualmente en TG1-03** como metadata de autoría y scheduling. Los umbrales/costos exactos siguen siendo datos versionados calibrables. No se muestran al jugador.
 
 | Banda | Estructura |
 |---|---|
@@ -1617,7 +1652,7 @@ Un autor que quiere que su plantilla se agende como más exigente tiene que nomb
 
 ## Clasificación del contenido actual
 
-**Calibración candidata de ingeniería, no verdad pedagógica.** El Teacher Gate puede mover cualquier fila sin que cambie nada de la arquitectura. Los rasgos van en el orden de la tabla de arriba.
+**Clasificación revisada y aceptada en TG1-03; no equivale a medición psicométrica.** Los rasgos van en el orden de la tabla de arriba.
 
 | Plantilla | Dominio | Rasgos | Carga | Banda | Costo | Nivel autorado | Por qué |
 |---|---|---|---|---|---|---|---|
@@ -1629,7 +1664,7 @@ Un autor que quiere que su plantilla se agende como más exigente tiene que nomb
 | `g7.stand-supplies` | optimización | 2·2·1·2·0·1 | 8 | STRETCH | 2,10 | 3 ✗ | porciones mínimas y presupuesto a la vez, sobre una combinación que se arma |
 | `g7.group-tasks` | optimización | 2·2·2·2·0·1 | 9 | STRETCH | 2,10 | 3 ✗ | repartir todo sin pasarse de las horas de nadie, leyendo afinidad y disponibilidad |
 
-**Las cuatro divergencias con el nivel autorado son el resultado más útil de la tabla.** `baseDifficulty` se escribió como perilla de runtime y no como clasificación estructural, y donde las dos no coinciden hay una pregunta concreta para el Gate: ¿el mural es realmente más liviano que el colectivo? ¿El stand y el trabajo grupal son `STRETCH` para un chico de 7.º, o el año entero está calibrado alto? Un test fija la clasificación, así que moverla es una decisión visible en un diff.
+**Las cuatro divergencias con el nivel autorado fueron una evidencia útil del Gate.** `baseDifficulty` se escribió como perilla de runtime y no como clasificación estructural. TG1-03 aceptó la tabla sin pedir reclasificaciones; esto valida la lectura docente, no equivalencia psicométrica. Un test fija la clasificación, así que una recalibración futura seguirá siendo visible y versionada.
 
 ## Presupuesto de dificultad
 
@@ -1644,9 +1679,9 @@ La evidencia post-STAGE-05: 20.000 seeds de la partida normal de 7.º producen 1
 
 Los costos de scheduling son **metadata de armado de run** y están separados del multiplicador de score. El compositor necesita distinguir fuerte entre CORE y STRETCH para balancear; el score necesita multiplicadores chicos para que la suerte del sorteo no domine sobre la habilidad. El estado implementado está en [game engine](03-architecture/game-engine.md) y la brecha restante en [arquitectura objetivo](03-architecture/target-engine-architecture.md).
 
-### Valores candidatos
+### Valores post-Gate
 
-Provisionales, **no oficiales**, sujetos a Teacher Gate:
+TG1-08 aceptó el principio de una recompensa pequeña. Los factores exactos siguen **candidatos y no oficiales**:
 
 | Banda | Costo de scheduling | Multiplicador de score |
 |---|---|---|
@@ -1722,19 +1757,19 @@ flowchart TD
 - Onboarding: <30 s.
 - Evento normal: 15–35 s.
 - Minijuego especial: 20–60 s.
-- Run completa: 4–7 min.
+- Run completa: objetivo UX aproximado de 8–10 min (TG1-12), sin timeout.
 
 ## 7. Estructura sugerida por run
 
-- 7.º: 2 eventos.
-- 1.º: 2–3 eventos.
-- 2.º: 2–3 eventos.
-- 3.º: 2–3 eventos.
-- 4.º: 2–3 eventos.
-- 5.º: 2–3 eventos.
+- 7.º: 1–2 beats ordinarios.
+- 1.º: 1–2 beats ordinarios.
+- 2.º: 1–2 beats ordinarios.
+- 3.º: 1–2 beats ordinarios.
+- 4.º: 1–2 beats ordinarios.
+- 5.º: 1–2 beats ordinarios.
 - Final: 1 evento combinado.
 
-El número exacto puede variar por modo.
+Con seis etapas, el rango teórico es 6–12 beats ordinarios. STAGE-08 debe medirlo contra el target de 8–10 minutos; no se congela una cantidad final todavía.
 
 ## 8. Estadísticas de carrera
 
@@ -1881,7 +1916,7 @@ No introducir:
 
 # Egreso, recuperación y fail-forward
 
-**Estado: PRODUCT DIRECTION.** La dirección —el error cambia el camino, no termina la partida— está decidida. La forma concreta de la recuperación, el lenguaje de las previas y qué años la ofrecen son **OPEN**, y el tono de esa recuperación es **TEACHER GATE**.
+**Estado: TG1-ACCEPTED PRODUCT REQUIREMENT; implementación pendiente en STAGE-07.** La dirección —el error cambia el camino, no termina la partida— y el egreso garantizado fueron aceptados en TG1-14. La forma concreta de la recuperación, el lenguaje de las previas y qué años la ofrecen siguen **OPEN**; la evidencia no suministró vocabulario.
 
 ## Invariante buscado
 
@@ -1948,7 +1983,7 @@ La simulación masiva vigente (`pnpm game:simulate`) ya busca callejones sin sal
 
 ## Estado de implementación
 
-El slice de 7.º termina en un hito de año, no en el egreso. La carrera completa `7.º → 1.º → 2.º → 3.º → 4.º → 5.º → Egreso`, el arco de recuperación y el arquetipo final son **contenido futuro**; ver [la secuencia de implementación](06-delivery/implementation-sequence.md).
+El slice de 7.º termina en un hito de año, no en el egreso. El requisito está aceptado, pero el estado `GRADUATED`, la carrera completa `7.º → 1.º → 2.º → 3.º → 4.º → 5.º → Egreso` y el arco de recuperación **no existen todavía**; son el alcance de STAGE-07/08. Ver [la secuencia de implementación](06-delivery/implementation-sequence.md).
 
 ---
 
@@ -1989,18 +2024,13 @@ Tasas, crecimiento, secuencias, funciones.
 ### Incertidumbre y datos
 Probabilidad, muestras, gráficos, porcentajes, evidencia.
 
-## Progresión orientativa
+## Progresión por carrera, no por barrera curricular
 
-| Etapa | Foco dominante | Ejemplos |
-|---|---|---|
-| 7.º | operaciones, tiempo, dinero, área simple | compras, horarios, mural |
-| 1.º | porcentajes, proporciones, escalas | descuentos, repartos |
-| 2.º | tasas y restricciones | consumo, velocidad, presupuesto |
-| 3.º | problemas multietapa, optimización | recaudación, asignación |
-| 4.º | estadística, probabilidad, funciones | encuestas, tendencias |
-| 5.º | integración e incertidumbre | proyecto final, trade-offs |
+Teacher Gate 1 fijó que toda la carrera sea matemáticamente entendible y jugable desde aproximadamente 7.º. `7.º → 1.º → … → 5.º` representa crecimiento escolar, narrativo y de responsabilidad; **no** una secuencia de prerrequisitos curriculares cada vez más excluyentes.
 
-La progresión real debe adaptarse al currículo de la institución si se usa pedagógicamente de forma formal.
+Las etapas se distinguen mediante contextos, responsabilidades, interacción entre restricciones, planificación, selección de información, consecuencias y continuidad de carrera. En cualquiera puede haber `CORE`, `STANDARD` y `STRETCH`. El piso de conocimiento permanece bajo y el techo cognitivo puede crecer.
+
+Si Egresado se usa curricularmente en una institución, puede mapear dominios a su programa sin convertir ese mapeo en barrera del juego general.
 
 ## Niveles de variante de un mismo escenario
 
@@ -2334,12 +2364,12 @@ Lo anterior describe el **score por evento y por run** que ve el jugador. Es una
 | Score de run | ¿cuántos puntos hizo esta partida? | implementado, política de desarrollo |
 | Identidad de carrera | ¿qué recorrido escolar construí? | implementado |
 | Desempeño competitivo | ¿qué evidencia matemática, de equipo o de aura produjo cada beat? | implementado; Promedio y Estilo no son componentes |
-| `FairScore` competitivo | ¿qué tan fuerte fue esta run bajo una `ScorePolicy` concreta? | **implementado** como `fair-score-dev-1`, `official: false`; coeficientes abiertos |
+| `FairScore` competitivo | ¿qué tan fuerte fue esta run bajo una `ScorePolicy` concreta? | **implementado**; `fair-score-dev-1` histórico y `fair-score-dev-2` post-TG1 actual, ambos `official: false` |
 | Ranking | ¿cómo se ordenan runs verificadas y cuál es el personal best? | no implementado |
 
 La cadena vigente mantiene límites explícitos: resultado de desafío ≠ efecto de carrera ≠ desempeño competitivo ≠ `FairScore` ≠ ranking. `MathPerformance` domina; `TeamPerformance` y `AuraPerformance` son secundarias y acotadas; Promedio y Estilo no puntúan directamente. Cuando el `RunPlan` no ofrece una componente, ésta sale del cálculo y los pesos activos se renormalizan, de modo que una ejecución perfecta conserva el máximo de 10.000.
 
-La arquitectura y el mecanismo ya existen, incluida la aritmética entera y la recomputación en servidor. La calibración 80/15/5, los escalones de calidad y las recompensas de dificultad siguen siendo **candidatos sujetos a Teacher Gate**, y ranking, personal best y desempate siguen futuros. Ver [score competitivo y ranking](01-game-design/competitive-scoring-and-ranking.md) y [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md).
+La arquitectura y el mecanismo ya existen, incluida la aritmética entera y la recomputación en servidor. TG1 aceptó 85/10/5, los escalones de calidad, la normalización de oportunidades y el principio de recompensa pequeña; `fair-score-dev-2` los publica como candidato no oficial. Los factores exactos de dificultad, el ranking, la persistencia del personal best y el desempate siguen abiertos/futuros. Ver [score competitivo y ranking](01-game-design/competitive-scoring-and-ranking.md) y [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md).
 
 ---
 
@@ -2571,7 +2601,7 @@ Un resultado académico insuficiente no crea un estado terminal global. Cuando e
 ### FR-T07 Cierre de carrera completa
 El producto completo termina en `EGRESADO`, deriva el arquetipo final y produce el resumen de run. El slice de 7.º termina en el hito de año.
 
-Estos requisitos **no cierran** las decisiones que dependen del Departamento de Matemática: los coeficientes de score, la política de intentos y la política de empate siguen en [preguntas abiertas](07-reference/open-questions.md).
+TG1 cerró la dirección 85/10/5, normalización de oportunidades e intentos ilimitados con mejor resultado verificado. Siguen abiertos la política oficial/freeze, la implementación de emisión y personal best, y el desempate exacto; ver [preguntas abiertas](07-reference/open-questions.md).
 
 ---
 
@@ -2609,12 +2639,12 @@ De requisito de producto a capacidad de motor y a estado real. Esta tabla cubre 
 |---|---|---|---|---|
 | Escenarios que no se memorizan | [familias y variantes](01-game-design/challenge-families-and-variants.md) | `ScenarioFamily`/`Template`/`Variant` + fuentes híbridas | primera variación cognitiva de producción **implementada** en `bus`; profundidad del resto del catálogo abierta | STAGE-04 / STAGE-08 |
 | Competencia sin variantes defectuosas | [validación de variantes](04-quality/variant-validation-and-audit.md) | validador transversal + catálogo aprobado | **implementado para desarrollo y consumido por gameplay** en `grade-7-dev-4`; catálogo justo oficial pendiente | FREEZE |
-| Runs comparables entre sí | [dificultad](01-game-design/difficulty-and-playability.md) | bandas + scheduler por presupuesto | **implementado estructuralmente** bajo una policy candidata; calibración docente y equivalencia empírica pendientes | STAGE-05 (`DONE`) / Teacher Gate |
-| Ranking dominado por matemática | [score competitivo](01-game-design/competitive-scoring-and-ranking.md) | `ScorePolicy` competitiva versionada | `FairScore` candidato implementado y auditable; ranking pendiente | STAGE-06 (`DONE`) / STAGE-09 |
-| Premiar mejora y no volumen de intentos | [modo feria](05-operations/fair-mode-and-competition-freeze.md) | comparador versionado + personal best | no implementado | STAGE-09 |
-| El error no expulsa al jugador | [fail-forward](01-game-design/graduation-and-fail-forward.md) | invariante de egreso + recuperación | sin contenido de recuperación | STAGE-07 |
+| Runs comparables entre sí | [dificultad](01-game-design/difficulty-and-playability.md) | bandas + scheduler por presupuesto | mecanismo implementado; bandas aceptadas en TG1, equivalencia empírica pendiente | STAGE-05 (`DONE`) / STAGE-08 |
+| Ranking dominado por matemática | [score competitivo](01-game-design/competitive-scoring-and-ranking.md) | `ScorePolicy` competitiva versionada | `fair-score-dev-2` 85/10/5 implementada y auditada; ranking pendiente | STAGE-06 (`DONE`) / STAGE-09 |
+| Premiar mejora y no volumen de intentos | [modo feria](05-operations/fair-mode-and-competition-freeze.md) | emisión autoritativa + mejor resultado verificado | dirección TG1 aceptada; persistencia no implementada | STAGE-09 |
+| El error no expulsa al jugador | [fail-forward](01-game-design/graduation-and-fail-forward.md) | invariante de egreso + recuperación | requisito TG1 aceptado; motor no implementado | STAGE-07 (`READY`) |
 | Identidad de carrera legible | [ADR-016](03-architecture/adr/ADR-016-career-player-model.md) | `CareerState` v0.2 | **implementado** | — |
-| Auditoría de una run oficial | [ADR-003](03-architecture/adr/ADR-003-deterministic-seeded-engine.md) | seed + versiones + action log | base implementada y `variantCatalogVersion` opcional; falta `scoreVersion` y emisión oficial | STAGE-06 y STAGE-09 |
+| Auditoría de una run oficial | [ADR-003](03-architecture/adr/ADR-003-deterministic-seeded-engine.md) | seed + versiones + action log | `variantCatalogVersion` y `scoreVersion` implementadas; falta emisión oficial | STAGE-06 y STAGE-09 |
 
 Las etapas son las del [roadmap de implementación](06-delivery/implementation-sequence.md); el estado vigente de cada una está en [la etapa actual](06-delivery/current-stage.md).
 
@@ -4235,6 +4265,14 @@ Score competitivo, `FairScore`, multiplicadores y `scoreVersion` siguen siendo S
 - Estado: Aceptado
 - Fecha: 2026-08-29
 
+## Reconciliación post-Teacher-Gate-1 — 2026-09-02
+
+TG1 no cambia esta arquitectura; usa el camino de calibración versionada que el ADR diseñó. Se conserva inmutable `fair-score-dev-1@1.0.0-candidate` (80/15/5) y se publica `fair-score-dev-2@2.0.0-post-tg1-candidate` (85/10/5) como candidata actual, `official: false`. Ambas resuelven por identidad o versión exacta y una referencia desconocida falla: nunca existe fallback `latest`.
+
+TG1-07 eleva la normalización de pesos activos de decisión arquitectónica implementada a filosofía de producto aceptada. TG1-05/TG1-06 aceptan evaluación multi-eje, sin relajar la auditoría de doble conteo: cada componente debe leer evidencia semánticamente independiente. Por eso no se copia el F1 de May-25 a Aura ni se cambian perfiles de contenido actuales.
+
+No se requiere ADR nuevo: la coexistencia de calibraciones ya estaba decidida aquí. Tampoco cambian engine, ruleset, contenido, catálogo, snapshot, action log, dificultad ni composición; `scoreVersion` es la frontera de compatibilidad específica.
+
 ## Contexto
 
 [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) dejó runs **comparables antes de puntuar**: el contenido de una partida se compone una sola vez dentro de un presupuesto de dificultad, y 20.000 seeds de 7.º producen 1.404 planes distintos con carga total idéntica. Lo que no existía es qué vale lo que el jugador hizo con ese contenido.
@@ -4347,9 +4385,9 @@ Es opcional: una partida de práctica no está compitiendo, y ausente es una res
 
 ## Lo que esto no decide
 
-Los coeficientes. 80/15/5, los cuatro escalones de calidad y las recompensas por dificultad son **candidatos** y van al Teacher Gate 1 ([preguntas 24, 38 y 39](07-reference/open-questions.md)). La política se llama `fair-score-dev-1`, lleva `official: false`, y `createRuleset` se niega a construir un ruleset oficial con una calibración de desarrollo.
+La política oficial. TG1 aceptó 85/10/5, los cuatro escalones y el principio de recompensa pequeña como dirección, pero `fair-score-dev-2` sigue `official: false`; los factores exactos de recompensa y el congelamiento final esperan datos/Teacher Gate 2 ([preguntas 24 y 44](07-reference/open-questions.md)). `createRuleset` se niega a construir un ruleset oficial con una calibración de desarrollo.
 
-Que 23.000 runs se comporten como se espera dice que el mecanismo es justo en las formas en que se le pidió serlo. **No dice que 80/15/5 sea la respuesta correcta para una feria de matemática**, y ninguna barrida puede decirlo.
+Que 23.000 runs se comporten como se espera dice que el mecanismo preserva sus invariantes. **No dice que 85/10/5 esté psicométricamente probado**, y ninguna barrida sintética puede decirlo.
 
 ## No objetivos
 
@@ -5221,7 +5259,7 @@ Un ruleset **oficial** exige que las tres políticas estén marcadas `production
 
 La capa competitiva es independiente: cada plantilla declara qué hecho alimenta `MathPerformance`, `TeamPerformance` y `AuraPerformance`; Promedio y Estilo no son componentes. `scoreRun` normaliza la evidencia del `RunPlan`, retira componentes sin oportunidad, redistribuye proporcionalmente sus pesos y calcula un `FairScore` de 0 a 10.000 con racionales exactos, un solo redondeo y un desglose que cierra. El máximo perfecto es el mismo para todo plan válido.
 
-La política vigente tiene id `fair-score-dev-1`, versión `1.0.0-candidate` y `official: false`. La arquitectura está implementada; 80/15/5, el mapeo de calidad y las recompensas de dificultad siguen sujetos a Teacher Gate. Ver [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md).
+El registro resuelve exactamente `fair-score-dev-1@1.0.0-candidate` (histórica, 80/15/5) y `fair-score-dev-2@2.0.0-post-tg1-candidate` (actual post-TG1, 85/10/5); ambas tienen `official: false` y una referencia desconocida falla. TG1 aceptó el mapeo de calidad y el principio de recompensa pequeña; los factores exactos siguen candidatos. Ver [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md).
 
 El tiempo **no** participa: la pregunta abierta 27 no definió qué señal temporal puede considerar autoritativa el servidor, y las reglas advierten que un score dominado por velocidad perjudica accesibilidad.
 
@@ -5464,7 +5502,7 @@ Esto ya es lo que hay: núcleo funcional con función de transición explícita 
 | 16 | Bandas `CORE / STANDARD / STRETCH` como metadata de autoría | **implementado**: la banda se deriva de seis rasgos cognitivos declarados por plantilla; `DifficultyLevel` 1–5 sigue siendo la perilla del runtime y las dos pueden discrepar | `src/game/difficulty/cognitive.ts`, [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) |
 | 17 | Scheduler por presupuesto de dificultad | **implementado**: compositor determinista por enumeración, con presupuesto y tolerancia por etapa, validador independiente y verificación en servidor | `src/game/plan/`, [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) |
 | 18 | `MathPerformance` / `TeamPerformance` / `AuraPerformance` normalizados | **implementado**: en puntos básicos enteros, y cada plantilla declara qué hecho suyo alimenta cada una | `src/game/scoring/`, [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md) |
-| 19 | `ScorePolicy` competitiva con pesos, topes y recompensas | **implementada como candidata**: `fair-score-dev-1`, versión `1.0.0-candidate`, `official: false`; el desempate no pertenece al contrato implementado y espera al ranking | `src/game/scoring/competitive-policy.ts`, [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md) |
+| 19 | `ScorePolicy` competitiva con pesos, topes y recompensas | **implementada y versionada**: `fair-score-dev-1` histórica y `fair-score-dev-2` post-TG1 actual; ambas `official: false`; el desempate espera al ranking | `src/game/scoring/competitive-policy.ts`, [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md) |
 | 20 | `RunDescriptor` emitido por servidor | **TARGET**; el descriptor ya lleva la huella del plan que un servidor tendría que emitir y verificar | este documento, [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) |
 | 21 | `scoreVersion` y `variantCatalogVersion` | **implementado**: los tres —catálogo, huella del plan y versión de score— viajan en descriptor, snapshot y action log, y `createRun` los comprueba | `src/game/runs/state.ts`, [ADR-021](03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md), [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md), [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md) |
 | 22 | Verificación autoritativa por replay en servidor | **TARGET** para endpoints y sesión; el caso de uso ya reproduce la run, recompone y valida su plan, y **calcula su propio score competitivo** sin leer nada que el cliente afirme | `src/server/game/validate-run.ts`, [ADR-004](03-architecture/adr/ADR-004-server-authoritative-scoring.md), [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md) |
@@ -5562,7 +5600,7 @@ Los cinco ejes existen en los contratos actuales. `variantCatalogVersion` y `sco
 
 # Auditoría de equidad competitiva
 
-**Estado: auditoría reducida ejecutable / auditoría completa RECOMENDADA · TEACHER GATE.** STAGE-05 y STAGE-06 implementaron evidencia de ingeniería sobre composición y score; eso no convierte en ejecutable ni en aprobada la auditoría completa de una competencia todavía inexistente.
+**Estado: auditoría reducida post-TG1 ejecutada / auditoría completa pendiente.** STAGE-05/STAGE-06 implementaron el mecanismo y la [auditoría post-Gate](04-quality/post-teacher-gate-1-score-audit.md) verificó `fair-score-dev-2`. Esto no reemplaza evidencia con estudiantes ni una auditoría de competencia real.
 
 Un ranking con premios es una afirmación sobre personas. Esta auditoría existe para poder defender esa afirmación con evidencia, no con intención.
 
@@ -5572,7 +5610,7 @@ Lo que se audita está definido en [score competitivo y ranking](01-game-design/
 
 - `pnpm game:compose` compone, valida, serializa y recompone planes, y mide distribución y carga estructural.
 - `pnpm game:score` ejecuta la política candidata sobre 23.000 planes y comprueba techo perfecto, normalización de oportunidades, dominancia matemática y recomputación determinista.
-- `pnpm game:score -- --compare` repite las mismas runs con 80/15/5, 85/10/5, 90/10/0 y sin recompensa de dificultad. Son políticas de comparación para el Teacher Gate, no alternativas oficiales.
+- `pnpm game:score -- --compare` compara la histórica `fair-score-dev-1` 80/15/5 con la candidata post-TG1 `fair-score-dev-2` 85/10/5, además de controles 90/10/0 y sin recompensa.
 
 Esta evidencia prueba invariantes del mecanismo y exhibe el efecto de candidatos concretos. No prueba que la calibración sea pedagógicamente correcta, que las bandas sean psicométricamente equivalentes ni que un ranking real sea justo.
 
@@ -5764,6 +5802,72 @@ Game core con alta cobertura lógica y sin dependencia de framework UI.
 
 ## NFR-11 Contenido
 Un nuevo desafío sobre interaction existente no debería exigir modificar routing/infraestructura.
+
+---
+
+# FILE: 04-quality/post-teacher-gate-1-score-audit.md
+
+# Auditoría de score post-Teacher-Gate-1
+
+**Fecha:** 2026-09-02
+
+**Política principal:** `fair-score-dev-2@2.0.0-post-tg1-candidate`, `official: false`
+
+**Comando:** `pnpm game:score -- --runs=20000 --compare`
+
+Esta es evidencia determinista de invariantes del mecanismo, no prueba psicométrica ni evidencia de equidad entre estudiantes.
+
+## Población
+
+Se auditaron 23.000 planes: 20.000 `RunPlan` reales compuestos de 7.º, 1.000 de un beat, 1.000 carreras de desarrollo de ocho beats y 1.000 carreras sintéticas de doce beats/seis etapas. Todos los inputs compusieron y validaron.
+
+## Resultado dev-2
+
+| Invariante | Resultado |
+|---|---|
+| Score perfecto | min/mean/max 10.000; spread 0 |
+| Un beat | máximo 10.000; spread 0 |
+| Dos beats | máximo 10.000; spread 0 |
+| Ocho/doce beats | máximo 10.000; spread 0 |
+| Con/sin oportunidad de Equipo | máximo 10.000; penalidad 0 |
+| Con/sin oportunidad de Aura | máximo 10.000; penalidad 0 |
+| Matemática fuerte/secundarias bajas | 7.800–9.000 |
+| Matemática débil/secundarias perfectas | 2.000–3.200 |
+| Perfil medio | 5.000; spread 0 |
+| Piso | 0; spread 0 |
+| Empates introducidos por redondeo en la barrida | 0 |
+| Hallazgos hard | 0 |
+
+La validación ejecutable exige `math > team + aura`: 8.500 > 1.500. Equipo y Aura suman como máximo nominal 15 % cuando las tres componentes están activas. Sólo Matemática recibe el factor de dificultad y la normalización conserva el máximo.
+
+## Comparación determinista
+
+Con evidencia sintética idéntica en ambas policies; columnas finales son contribuciones Matemática/Equipo/Aura:
+
+| Caso | Policy | FairScore | M | E | A |
+|---|---|---:|---:|---:|---:|
+| Math-only | dev-1 / dev-2 | 7.500 / 7.500 | 7.500 / 7.500 | 0 / 0 | 0 / 0 |
+| Math + Team | dev-1 / dev-2 | 7.105 / 7.237 | 6.316 / 6.711 | 789 / 526 | 0 / 0 |
+| Math + Team + Aura | dev-1 / dev-2 | 6.875 / 7.000 | 6.000 / 6.375 | 750 / 500 | 125 / 125 |
+| Math fuerte / secundarias bajas | dev-1 / dev-2 | 7.400 / 7.800 | 7.200 / 7.650 | 150 / 100 | 50 / 50 |
+| Math débil / secundarias altas | dev-1 / dev-2 | 5.200 / 4.900 | 3.200 / 3.400 | 1.500 / 1.000 | 500 / 500 |
+
+El efecto esperado se observa: `dev-2` aumenta el énfasis matemático y reduce Equipo; no se afirma que sea empíricamente superior.
+
+## Replay, manipulación y compatibilidad
+
+Los 117 tests focalizados pasaron. Incluyen dos submissions competitivas reproducidas por servidor (`comp-a` canónica y `comp-b` manipulada), con **0 mismatches** entre score autoritativo y recomputación; el score/breakdown aportado por cliente se ignora o contradice campo por campo. `scoreVersion` sobrevive action log y snapshot. Una misma run mantiene historial y carrera idénticos bajo `dev-1`/`dev-2`; sólo cambia el desglose competitivo. Una versión desconocida se rechaza.
+
+Los goldens históricos de `dev-1` permanecen: 7.651, 3.645, 10.000 y 7.484. Para los mismos cuatro fixtures, `dev-2` da 8.005, 3.247, 10.000 y 7.484.
+
+Estilo y Promedio no son inputs de `scoreRun`; sus deltas directos son 0. Los tests de cobertura fijan además que May-25 usa su F1 sólo para Matemática.
+
+## Advertencias
+
+- Ninguna plantilla de producción ofrece hoy evidencia Aura competitiva independiente; la normalización la deja inactiva.
+- Los factores 1,00/1,08/1,15 siguen candidatos.
+- La política final, el desempate, el inventario y la configuración de evento siguen abiertos.
+- La barrida prueba invariantes de ingeniería, no equidad observada con estudiantes.
 
 ---
 
@@ -6152,7 +6256,7 @@ Se congelan:
 - `rulesetVersion`;
 - `contentVersion`;
 - `variantCatalogVersion` del catálogo oficial cuando el evento lo defina —el campo técnico ya existe, pero ninguno de los catálogos de desarrollo `grade-7-dev-1` a `dev-4` es un freeze de feria—;
-- `scoreVersion` de la política competitiva aprobada —el campo técnico y la versión candidata ya existen, pero `fair-score-dev-1` lleva `official: false`—;
+- `scoreVersion` de la política competitiva aprobada —el campo técnico y dos versiones resolubles ya existen, pero `fair-score-dev-2` sigue `official: false`—;
 - el comparador del leaderboard;
 - la política de intentos.
 
@@ -6459,106 +6563,58 @@ Ni dominio matemático oculto, ni métricas de razonamiento, ni identificadores 
 
 # Etapa actual
 
-Vista corta del estado de ejecución. El detalle completo, los contratos de todas las etapas y el protocolo de actualización están en el [roadmap de implementación](06-delivery/implementation-sequence.md), que es la autoridad.
+Vista corta del estado de ejecución. El contrato completo y el protocolo de actualización están en el [roadmap](06-delivery/implementation-sequence.md).
 
 ---
 
-## GATE-TG1 — Teacher Gate 1
+## STAGE-07 — Invariante de egreso, fail-forward y recuperaciones
 
-**Estado:** `TEACHER_GATE`, pendiente. Es el hito actual, y **no es una etapa de ingeniería**: lo que falta es una decisión externa del Departamento de Matemática, no código.
+**Estado:** `READY` · **etapa actual**. No está iniciada ni implementada.
 
-## Por qué es el hito actual
+## Por qué está lista
 
-Sus dos dependencias están `DONE`. STAGE-04 dejó una Demo Candidate jugable de 7.º; STAGE-06 dejó el score competitivo implementado, medido y **sin un solo coeficiente cerrado**. Ver [ADR-021](03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md), [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) y [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md).
+Teacher Gate 1 fue ejecutado el 1 de septiembre de 2026 y cerró como `PASSED_WITH_REQUIRED_ADJUSTMENTS`. La [evidencia docente](06-delivery/teacher-gate-1/11-evidencia-docente-2026-09-01.md), el [acta](06-delivery/teacher-gate-1/09-acta.md) y la [integración de producto](06-delivery/teacher-gate-1/12-integracion-post-gate.md) distinguen respuesta original, interpretación y requisito futuro. Los ajustes bloqueantes ya están integrados o asignados a una etapa posterior.
 
-Lo que sigue no es implementar más: es que alguien que enseña matemática mire lo que hay y decida. Seguir construyendo sobre calibraciones que ningún docente aprobó es cómo un proyecto llega a una feria con un ranking que no puede defender.
+## Baseline autoritativa post-TG1
 
-## Qué se lleva al Gate
+- Toda run válida completada debe terminar en `GRADUATED`; el motor todavía no lo implementa.
+- Recuperación significa fail-forward, no game over, repetición completa de año ni exclusión.
+- El vocabulario concreto de recuperación sigue abierto y se calibra en esta etapa; TG1 no aportó palabras.
+- La matemática mantiene un piso de prerrequisitos accesible desde aproximadamente 7.º en toda la carrera. El año académico expresa crecimiento narrativo y contextual, no una barrera curricular.
+- `AcademicStage` y `DifficultyBand` son ejes independientes. Cada año puede contener `CORE`, `STANDARD` y `STRETCH`; el techo sube por estructura del razonamiento.
+- Identidad de carrera y `FairScore` siguen separados. La política de desarrollo actual es `fair-score-dev-2@2.0.0-post-tg1-candidate`, 85/10/5 y `official: false`.
+- La duración de 8–10 minutos es un objetivo UX de la carrera completa, no timeout, bonus ni criterio de desempate.
 
-- **La Demo Candidate de 7.º**: siete plantillas, seis interacciones, seis dominios y las cuatro dimensiones de carrera, en un recorrido jugable.
-- **La partida normal compuesta**: uno o dos beats por año, para que la diferencia entre demostración y partida se vea en pantalla.
-- **La clasificación de dificultad candidata** de las siete plantillas, con las cuatro divergencias respecto del nivel autorado que son preguntas concretas: ¿el mural es realmente más liviano que el colectivo? ¿El stand y el trabajo grupal son `STRETCH` para 7.º?
-- **La calibración competitiva candidata**: 80/15/5, los cuatro escalones de calidad, las recompensas por dificultad y los topes, con la evidencia de qué hacen sobre 23.000 planes.
-- **La tabla de doble conteo**: qué componente lee cada plantilla y por qué, incluida la decisión de que ninguna plantilla de producción aporte aura competitiva.
+## Scope IN
 
-## Preguntas que el Gate tiene que responder
+- estado terminal `GRADUATED` y transición explícita;
+- separación de desempeño y progresión;
+- recuperaciones deterministas, comprimidas y convergentes;
+- estructura oculta de materias pendientes y callbacks;
+- lenguaje y feedback de recuperación;
+- pruebas de propiedad de convergencia, replay y serialización.
 
-- [ ] Nivel matemático y terminología de las siete situaciones.
-- [ ] Duración objetivo de una run y densidad de la demostración.
-- [ ] Ponderación del score competitivo: ¿80/15/5, u otra?
-- [ ] Calibración de los cuatro escalones de calidad.
-- [ ] Bandas y costos de dificultad ([pregunta 44](07-reference/open-questions.md)).
-- [ ] Política de intentos y de empate.
-- [ ] Lenguaje de recuperación y de egreso.
-- [ ] Si el acto del 25 de Mayo entra a producción ([pregunta 42](07-reference/open-questions.md)).
+## Scope OUT
 
-## Criterios de aceptación
+- contenido de 1.º–5.º, enriquecimiento del acto, deportes/competencias e Hitos → STAGE-08;
+- intentos, emisión autoritativa, personal best, tie-break, ranking y leaderboard → STAGE-09;
+- congelar `fair-score-dev-2` como oficial → Teacher Gate 2 / FREEZE;
+- cambiar score, catálogo, composer o inventario de contenido.
 
-- [ ] Feedback registrado ítem por ítem.
-- [ ] Cada comentario clasificado como aceptado, rechazado o diferido.
-- [ ] Las decisiones cerradas actualizan el [registro de decisiones](07-reference/decision-register.md).
-- [ ] Las que siguen abiertas quedan en [preguntas abiertas](07-reference/open-questions.md).
-- [ ] La ScorePolicy candidata fue revisada por los docentes.
-- [ ] **No se presentó la validación docente como playtest con estudiantes.**
-- [ ] Este documento y el [roadmap](06-delivery/implementation-sequence.md) actualizados antes de empezar STAGE-07.
+## Exit gate
 
-## El pack está preparado
+¿Toda secuencia válida completa converge en `GRADUATED`, con consecuencias y recuperaciones deterministas pero sin callejones sin salida?
 
-Todo el material para dar la reunión está en [el pack del Teacher Gate 1](06-delivery/teacher-gate-1/README.md): guion minuto a minuto, cuatro casos con sorteo fijo que reproducen la misma situación en cualquier máquina, tabla de niveles y de puntaje escritas para leer en voz alta, planilla de decisiones y acta.
+## Evidencia de entrada
 
-Antes de convocar a nadie:
-
-```bash
-pnpm dev
-pnpm teacher-gate --validate
-pnpm teacher-gate --prepare
-```
-
-Si `--validate` falla, el contenido cambió y los casos ya no muestran lo que el pack promete. **No se da la reunión con casos obsoletos.**
-
-## Herramientas para conducir la sesión
-
-- `pnpm game:score` — qué hace la calibración candidata sobre 23.000 planes.
-- `pnpm game:score -- --compare` — las mismas runs bajo 80/15/5, 85/10/5, 90/10/0 y sin recompensa por dificultad. Mover el dial deja de ser una discusión abstracta.
-- `pnpm game:compose` — la distribución de composición: 20.000 años de 7.º, 1.404 planes distintos, carga idéntica.
-- `pnpm teacher-gate --case TG1-A` — la ficha de un caso, con la URL para jugarlo.
-- El juego en `/jugar`, que sigue jugando el arco completo de la demostración con un sorteo al azar.
-
-## Qué NO se hace mientras el Gate está pendiente
-
-- Cerrar coeficientes de score o de dificultad por decisión de ingeniería.
-- Ranking, leaderboard, personal best, endpoints o persistencia → STAGE-09.
-- Egreso, recuperaciones o contenido de 1.º–5.º → STAGE-07 y STAGE-08.
-- Congelar el catálogo oficial de la feria: es una decisión de evento.
-- Declarar oficial cualquier política: `createRuleset` lo impide por diseño, y las tres calibraciones vigentes llevan `official: false`.
-
-## Bloqueos
-
-**Externo, y es el punto.** El gate depende de la disponibilidad del Departamento de Matemática. Ninguna tarea de ingeniería lo desbloquea.
-
-## Si el Gate se demora
-
-STAGE-07 depende de él y no debería empezar. Lo que sí puede avanzar sin comprometer decisiones docentes es trabajo de infraestructura de STAGE-09 que no fije reglas —sesión, límites de tasa, persistencia— siempre que no congele un coeficiente ni implemente ranking. Esa decisión es de producto y no está tomada.
-
-## Evidencia disponible
-
-- Score competitivo — [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md); `fair-score-dev-1`, `official: false`; juego perfecto = 10.000 en los 23.000 planes auditados, y las franjas de matemática fuerte y floja no se cruzan.
-- Modelo de dificultad y compositor — [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md); 20.000 seeds, 1.404 planes distintos, carga total idéntica.
-- Catálogo aprobado dentro del juego — [ADR-021](03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md); catálogos `grade-7-dev-1` a `dev-4`, inmutables.
-- Pipeline de variantes — [ADR-020](03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md).
-- Modelo de contenido — [ADR-019](03-architecture/adr/ADR-019-scenario-family-template-variant.md).
-- Career Model v2 — [ADR-016](03-architecture/adr/ADR-016-career-player-model.md).
-- Sistema de diseño v0.2 — [ADR-017](03-architecture/adr/ADR-017-paper-visual-identity.md).
-- Verificación autoritativa — el servidor reproduce la run, valida su plan y **calcula** su propio score competitivo.
-- Versionado — `ENGINE_VERSION 5.1.0`, `SNAPSHOT_SCHEMA_VERSION 6`, `ACTION_LOG_VERSION 4`, contenido `0.8.0-grade-7` y `0.6.0-dev`.
-
-## Siguiente etapa
-
-STAGE-07 — invariante de egreso, fail-forward y recuperaciones, que depende de este gate.
+- GATE-TG1: `PASSED_WITH_REQUIRED_ADJUSTMENTS`.
+- STAGE-04 y STAGE-06: `DONE`.
+- Auditoría post-Gate: 23.000 planes totales, incluidos 20.000 planes reales compuestos de 7.º; máximo perfecto 10.000 y spread 0 bajo `fair-score-dev-2`.
+- Versiones sin cambio salvo la nueva identidad de ScorePolicy: engine `5.1.0`, ruleset `0.3.0-grade-7`, contenido `0.8.0-grade-7`, catálogo `grade-7-dev-4`, snapshot `6`, action log `4`.
 
 ## Última reconciliación
 
-29 de agosto de 2026, al cerrar STAGE-06, con `pnpm verify` en verde.
+2 de septiembre de 2026, integración formal post-Teacher-Gate-1.
 
 ---
 
@@ -6669,7 +6725,7 @@ Si el roadmap y el código difieren, **el código gana** y el roadmap se corrige
 - Fases de validación externa y congelamiento: [ciclo de entrega real](00-product/real-delivery-lifecycle.md).
 - Qué se construye por capas de alcance: [alcance y roadmap](00-product/scope-and-roadmap.md) y [backlog](06-delivery/mvp-backlog.md).
 
-**Última reconciliación contra el código:** 29 de agosto de 2026, al cerrar STAGE-06.
+**Última reconciliación contra el código:** 2 de septiembre de 2026, integración formal post-Teacher-Gate-1.
 
 ---
 
@@ -6683,6 +6739,7 @@ Si el roadmap y el código difieren, **el código gana** y el roadmap se corrige
 | `PARTIAL` | parte del alcance está terminada con evidencia y el resto sigue pendiente o bloqueado |
 | `BLOCKED` | no puede avanzar por una dependencia o decisión externa |
 | `TEACHER_GATE` | espera aprobación del Departamento de Matemática |
+| `PASSED_WITH_REQUIRED_ADJUSTMENTS` | gate aprobado; ajustes integrados o asignados con autoridad y dueño |
 | `VALIDATING` | implementada, corriendo su validación requerida |
 | `DONE` | criterios de aceptación satisfechos **con evidencia** |
 | `DEFERRED` | fuera de alcance a propósito |
@@ -6707,8 +6764,8 @@ Tabla de navegación. Los contratos de cada etapa, más abajo, son la autoridad.
 | [STAGE-04](#stage-04-enriquecimiento-de-7º-y-demo-candidate) | Enriquecimiento de 7.º y Demo Candidate | `DONE` | STAGE-02, STAGE-03 | — |
 | [STAGE-05](#stage-05-modelo-de-dificultad-y-run-composer) | Modelo de dificultad y Run Composer | `DONE` | STAGE-03, STAGE-04 | — |
 | [STAGE-06](#stage-06-scorepolicy-competitiva) | ScorePolicy competitiva | `DONE` | STAGE-05 | — |
-| [GATE-TG1](#gate-tg1-teacher-gate-1) | **Teacher Gate 1** | `TEACHER_GATE` · **actual** | STAGE-04, STAGE-06 | externo |
-| [STAGE-07](#stage-07-invariante-de-egreso-fail-forward-y-recuperaciones) | Egreso, fail-forward y recuperaciones | `NOT_STARTED` | GATE-TG1 | — |
+| [GATE-TG1](#gate-tg1-teacher-gate-1) | **Teacher Gate 1** | `PASSED_WITH_REQUIRED_ADJUSTMENTS` | STAGE-04, STAGE-06 | externo |
+| [STAGE-07](#stage-07-invariante-de-egreso-fail-forward-y-recuperaciones) | Egreso, fail-forward y recuperaciones | `READY` · **actual** | GATE-TG1 | — |
 | [STAGE-08](#stage-08-contenido-incremental-de-1º-a-5º) | Contenido incremental 1.º → 5.º | `NOT_STARTED` | STAGE-07 | auditoría tras 1.º |
 | [STAGE-09](#stage-09-fair-mode-servidor-autoritativo-y-ranking) | Fair mode, servidor autoritativo y ranking | `NOT_STARTED` | STAGE-06, STAGE-08 | — |
 | [GATE-TG2](#gate-tg2-teacher-gate-2) | **Teacher Gate 2** | `TEACHER_GATE` | STAGE-09 | externo |
@@ -6783,7 +6840,7 @@ Estado real contra el código al 29 de agosto de 2026, tras cerrar STAGE-06. Es 
 | Plan concreto ejecutado por el motor, sin recomposición en runtime | `DONE` | `RunState.plan`, `beginEvent` consume el beat pinchado, el snapshot lo persiste y el action log lleva su huella | STAGE-05 |
 | Validador de plan independiente del compositor | `DONE` | `src/game/plan/plan-validator.ts`; recalcula rol, banda y costo en vez de creerle al plan | STAGE-05 |
 | Verificación de composición en servidor | `DONE` para el alcance actual | `src/server/game/validate-run.ts` recompone, compara la huella y valida el plan | STAGE-05 |
-| `ScorePolicy` versionada | `DONE` | dos capas separadas: el score por evento (`scoring/policy.ts`, `production: false`) y el competitivo (`scoring/competitive-policy.ts`, `fair-score-dev-1`, `official: false`) | STAGE-06 |
+| `ScorePolicy` versionada | `DONE` | `fair-score-dev-1` histórica y `fair-score-dev-2` post-TG1 actual; ambas `official: false` | STAGE-06 + integración TG1 |
 | `MathPerformance` · `TeamPerformance` · `AuraPerformance` | `DONE` | normalizados en puntos básicos enteros; la plantilla declara qué hecho suyo alimenta cada uno | STAGE-06 |
 | `FairScore` y desglose competitivo | `DONE` | `src/game/scoring/fair-score.ts`; el desglose cierra exactamente y dice qué calibración lo produjo | STAGE-06 |
 | Verificación autoritativa del score en servidor | `DONE` para el alcance actual | el servidor puntúa reproduciendo, y `verifyScoreClaim` contradice un reclamo campo por campo | STAGE-06 |
@@ -7208,7 +7265,9 @@ Criterios que la etapa sumó sobre el contrato original:
 
 - **Estado:** `DONE`
 - **Depende de:** STAGE-05 (`DONE`)
-- **Desbloquea:** GATE-TG1 (ahora el hito actual), STAGE-09
+- **Desbloqueó:** GATE-TG1; también habilita la futura STAGE-09
+
+> **Nota post-TG1:** lo que sigue registra el alcance y la evidencia con que cerró STAGE-06. La autoridad actual publica `fair-score-dev-2` 85/10/5; ver [acta](06-delivery/teacher-gate-1/09-acta.md) y [auditoría post-Gate](04-quality/post-teacher-gate-1-score-audit.md).
 
 **Punto de partida.** STAGE-05 dejó runs comparables **antes** de puntuar: el contenido de una partida se compone una vez, dentro de un presupuesto de dificultad, y el motor lo ejecuta. Lo que faltaba es qué vale lo que el jugador hizo con ese contenido: el score que existía es el de la capa de carrera, que suma puntos por evento y por lo tanto suma más a quien jugó más beats.
 
@@ -7288,34 +7347,33 @@ Las dos franjas del medio no se cruzan: la dominancia de la matemática está me
 
 ### GATE-TG1 — Teacher Gate 1
 
-- **Estado:** `TEACHER_GATE` — **es el hito actual**, y **no es una etapa de ingeniería**. Ver [etapa actual](06-delivery/current-stage.md).
+- **Estado:** `PASSED_WITH_REQUIRED_ADJUSTMENTS` — ejecutado el 1 de septiembre de 2026.
 - **Depende de:** STAGE-04 (`DONE`), STAGE-06 (`DONE`)
 - **Desbloquea:** STAGE-07
 
-**Punto de partida.** Las dos etapas de las que depende están cerradas, y con ellas llega lo que el Gate necesita para poder decidir en vez de opinar: una Demo Candidate jugable de 7.º, y una calibración competitiva completa y medida cuyos coeficientes nadie cerró. `pnpm game:score -- --compare` corre las mismas runs bajo calibraciones alternativas, que es la forma de discutir 80/15/5 con números.
+**Resultado.** La [evidencia original](06-delivery/teacher-gate-1/11-evidencia-docente-2026-09-01.md) y el [acta](06-delivery/teacher-gate-1/09-acta.md) aceptan la base y requieren ajustes: accesibilidad matemática universal, 85/10/5, multi-evaluación con evidencia independiente, 8–10 minutos y egreso garantizado. La [integración post-Gate](06-delivery/teacher-gate-1/12-integracion-post-gate.md) asigna lo que no corresponde implementar ahora.
 
-Aprobación externa del Departamento de Matemática sobre la Demo Candidate de 7.º. Qué se pide decidir está en [gates docentes](06-delivery/teacher-gates.md); **el material para conducir la sesión está preparado en [el pack del Teacher Gate 1](06-delivery/teacher-gate-1/README.md)** —guion de quince minutos, casos reproducibles, planilla y acta— y se valida con `pnpm teacher-gate --validate`.
+El pack histórico sigue reproducible con `pnpm teacher-gate --validate` y permanece fijado a `fair-score-dev-1`; no se reescribe lo que el docente vio.
 
 **Se valida:** nivel matemático, terminología, situaciones, dificultad, ponderación de score, política de intentos, política de empate, duración de la run, lenguaje de recuperación.
 
 **Criterios de aceptación.**
 
-- [ ] Feedback registrado ítem por ítem.
-- [ ] Cada comentario clasificado como aceptado, rechazado o diferido.
-- [ ] Las decisiones cerradas actualizan el [registro de decisiones](07-reference/decision-register.md).
-- [ ] Las que siguen abiertas quedan en [preguntas abiertas](07-reference/open-questions.md).
-- [ ] La ScorePolicy candidata fue revisada por los docentes.
-- [ ] **No se presentó la validación docente como playtest con estudiantes.**
-- [ ] Este roadmap y la [etapa actual](06-delivery/current-stage.md) actualizados antes de empezar STAGE-07.
-- [ ] El [acta](06-delivery/teacher-gate-1/09-acta.md) registra qué versiones vieron los docentes.
+- [x] Feedback TG1-01…TG1-14 preservado y clasificado.
+- [x] Registro de decisiones y preguntas abiertas reconciliados.
+- [x] `fair-score-dev-2` 85/10/5 publicado sin mutar `dev-1`.
+- [x] Ajustes restantes asignados a STAGE-07/08/09 y TG2.
+- [x] La validación docente no se presenta como playtest con estudiantes.
+- [x] Roadmap y etapa actual actualizados.
+- [x] El [acta](06-delivery/teacher-gate-1/09-acta.md) distingue contexto reconstruible de datos efectivamente suministrados.
 
-**Exit gate.** ¿Están cerradas o explícitamente diferidas las decisiones docentes que bloquean la producción de contenido?
+**Exit gate.** ¿Están cerradas o explícitamente diferidas las decisiones docentes que bloquean la producción de contenido? — **Sí, con ajustes requeridos integrados/asignados.**
 
 ---
 
 ### STAGE-07 — Invariante de egreso, fail-forward y recuperaciones
 
-- **Estado:** `NOT_STARTED`
+- **Estado:** `READY` — **etapa actual; implementación no iniciada**
 - **Depende de:** GATE-TG1
 - **Desbloquea:** STAGE-08
 
@@ -7342,7 +7400,7 @@ Aprobación externa del Departamento de Matemática sobre la Demo Candidate de 7
 
 **Riesgos.** Un invariante de egreso mal formulado puede esconder un bucle infinito de recuperaciones. La property test tiene que acotar la cantidad de eventos, no sólo la convergencia.
 
-**Decisiones.** `PRODUCT_DIRECTION` (D-005): sin game over global. `TEACHER_GATE`: lenguaje de recuperación y de previas.
+**Decisiones.** `TG1 ACCEPTED`: toda run válida completada llega a `GRADUATED`; sin game over global. El vocabulario concreto de recuperación/previas sigue `OPEN` porque TG1-14 no aportó palabras. Matemática universal y score/carrera separados son baseline, no alcance a rediseñar.
 
 **Exit gate.** ¿Pueden los años futuros apoyarse en este sistema de progresión sin inventar el suyo?
 
@@ -7372,6 +7430,12 @@ Aprobación externa del Departamento de Matemática sobre la Demo Candidate de 7
 
 **Criterios de aceptación, por año.**
 
+- [ ] La matemática conserva un piso de prerrequisitos accesible desde aproximadamente 7.º; el año cambia contexto, responsabilidad y narrativa, no funciona como barrera curricular.
+- [ ] Cada año puede combinar `CORE / STANDARD / STRETCH`; la complejidad sube por estructura, planificación e información.
+- [ ] Toda contribución multi-eje declara evidencia independiente para Matemática, Equipo y Aura; nunca copia la misma señal y no fuerza secundarias inexistentes.
+- [ ] El pacing de la carrera completa se mide contra 8–10 minutos sobre el rango de 6–12 beats ordinarios, sin puntuar velocidad.
+- [ ] May-25 se conserva y su narrativa puede enriquecerse; deportes/competencias son contextos candidatos, no contenido ya decidido.
+- [ ] Hitos se exploran como reconocimiento narrativo/carrera determinista, nunca bonus competitivo aleatorio.
 - [ ] Matemática revisada por el Departamento de Matemática.
 - [ ] Variantes validadas, cero inválidas desplegadas.
 - [ ] Presupuesto de dificultad consistente con los demás años.
@@ -7435,7 +7499,7 @@ El navegador **nunca** es autoridad de score. El precursor ya existe: `src/serve
 
 **Riesgos.** Implementar leaderboard antes de que el score sea reproducible. Por eso STAGE-06 es dependencia dura.
 
-**Decisiones.** `RECOMENDADA` (D-009, D-013): personal best y desempate profundo. `TEACHER_GATE` ([preguntas 40 y 41](07-reference/open-questions.md)): intentos y empate exacto. `OPEN` ([preguntas 27 y 51](07-reference/open-questions.md)): qué señal de tiempo puede verificar el servidor.
+**Decisiones.** `TG1 ACCEPTED`: intentos ilimitados y mejor resultado verificado; la emisión autoritativa controla plan/seed. `OPEN` ([pregunta 41](07-reference/open-questions.md)): empate exacto; no se adopta bonus aleatorio ni unicidad obligatoria. También `OPEN` ([preguntas 27 y 51](07-reference/open-questions.md)): qué señal de tiempo puede verificar el servidor.
 
 **Exit gate.** ¿Se puede correr una competencia simulada completa con score autoritativo en servidor?
 
@@ -8757,111 +8821,139 @@ Que un chico de 12 años entienda la pantalla sin ayuda, o que quiera volver a j
 
 # Acta del Teacher Gate 1
 
-**PLANTILLA SIN EJECUTAR.** El gate todavía no se dio. Nada de este documento está completado, y no debe completarse con información supuesta.
+**Gate ejecutado. Resultado formal: `PASSED_WITH_REQUIRED_ADJUSTMENTS` — APROBADO CON AJUSTES REQUERIDOS.**
 
----
+Esta acta separa la [evidencia docente raw](06-delivery/teacher-gate-1/11-evidencia-docente-2026-09-01.md)
+de la [interpretación de producto post-Gate](06-delivery/teacher-gate-1/12-integracion-post-gate.md). Un
+comentario docente no se reescribe como si fuera una decisión técnica.
 
 ## Sesión
 
-| | |
+| Dato | Registro |
 |---|---|
-| Fecha | *(sin completar)* |
-| Duración real | *(sin completar)* |
-| Facilitador | *(sin completar)* |
-| Participantes | *(sin completar)* |
-| Modalidad | *(presencial / remota)* |
+| Fecha | 1 de septiembre de 2026 |
+| Duración real | No consignada en la evidencia recibida |
+| Facilitador | Dev |
+| Participantes | Docente |
+| Modalidad | No consignada en la evidencia recibida |
 
-## Versiones que se mostraron
+No se inventan nombres, institución, duración ni modalidad que la planilla no
+registró.
 
-Se completa **antes** de la reunión, con lo que imprime `pnpm teacher-gate --validate`. Sin esto, dentro de seis meses nadie va a poder saber qué fue lo que los docentes efectivamente vieron.
+## Versiones revisadas
 
-| | |
+La planilla raw no consignó la tupla técnica mostrada. El único pack versionado
+del repositorio para esa sesión es `tg1-pack-1`, agregado por el commit
+`8fea512`, y sus casos se reproducen hoy con el siguiente contexto. Esto queda
+registrado como **contexto reproducible del material**, no como una afirmación
+retroactiva de que la planilla anotó esos valores.
+
+| Dato | Contexto reproducible |
 |---|---|
-| Commit | *(sin completar)* |
-| Versión del pack | *(sin completar)* |
-| Versión de contenido | *(sin completar)* |
-| Versión de reglas | *(sin completar)* |
-| Catálogo de situaciones | *(sin completar)* |
-| Política de dificultad | *(sin completar)* |
-| Política de composición | *(sin completar)* |
-| Política de puntaje | *(sin completar)* |
+| Commit del pack | `8fea512` |
+| Versión del pack | `tg1-pack-1` |
+| Motor | `5.1.0` |
+| Contenido | `0.8.0-grade-7` |
+| Reglas | `0.3.0-grade-7` |
+| Catálogo de situaciones | `grade-7-dev-4` |
+| Política de dificultad | `candidate@1.0.0-candidate`, `official: false` |
+| Política de composición | `grade-7-composed@1.0.0-candidate`, `official: false` |
+| Política de puntaje revisada | `fair-score-dev-1@1.0.0-candidate`, `official: false` |
 
-## Casos mostrados
+`pnpm teacher-gate --validate` reproduce TG1-A…TG1-D contra ese contexto. La
+nueva `fair-score-dev-2` se publica **después** del Gate; no se atribuye a lo que
+estaba ejecutándose durante la sesión.
 
-| Caso | ¿Se mostró? | Quién jugó | Observaciones |
-|---|---|---|---|
-| TG1-A · colectivo, elegir | | | |
-| TG1-B · colectivo, construir | | | |
-| TG1-C · acto del 25 | | | |
-| TG1-D · trabajo grupal | | | |
+## Casos revisados
 
-## Decisiones
+La planilla registró decisiones contra los cuatro casos. No consignó duración
+por caso, dispositivo ni observaciones de la hoja del facilitador.
 
-Se transcribe desde [07-planilla-decisiones.md](06-delivery/teacher-gate-1/07-planilla-decisiones.md).
-
-| ID | Tema | Decisión | Comentario | ¿Bloquea? | Responsable |
-|---|---|---|---|---|---|
-| TG1-01 | Nivel matemático general | | | | |
-| TG1-02 | Situaciones y consignas | | | | |
-| TG1-03 | Clasificación de dificultad | | | | |
-| TG1-04 | Dominancia de la matemática | | | | |
-| TG1-05 | Equipo en la competencia | | | | |
-| TG1-06 | Aura en la competencia | | | | |
-| TG1-07 | Reparto del peso | | | | |
-| TG1-08 | Bonificación por dificultad | | | | |
-| TG1-09 | Valor de cada resultado | | | | |
-| TG1-10 | Intentos | | | | |
-| TG1-11 | Empates | | | | |
-| TG1-12 | Duración de una partida | | | | |
-| TG1-13 | Acto del 25 de Mayo | | | | |
-| TG1-14 | Recuperación y egreso | | | | |
-
-## Ajustes bloqueantes
-
-Los que hay que resolver antes de seguir con la etapa siguiente.
-
-| # | Qué | De qué decisión sale | Responsable |
-|---|---|---|---|
-| | | | |
-
-## Diferidos
-
-| ID | Por qué se difirió | Cuándo se retoma |
+| Caso | Evidencia de revisión | Registro disponible |
 |---|---|---|
-| | | |
+| TG1-A · colectivo, elegir | Sí | TG1-01/TG1-02 |
+| TG1-B · colectivo, construir | Sí | TG1-01/TG1-03 |
+| TG1-C · acto del 25 | Sí | TG1-06/TG1-13 |
+| TG1-D · trabajo grupal | Sí | TG1-05 |
+
+## Decisiones docentes
+
+La columna “Respuesta docente” transcribe la palabra marcada. “Integración” es
+la decisión de producto posterior y enlaza su desarrollo completo.
+
+| ID | Respuesta docente | Comentario o cambio pedido | ¿Bloqueaba? | Integración post-Gate |
+|---|---|---|---|---|
+| TG1-01 | **AJUSTAR** | La matemática mostrada es apropiada; todo el juego debe seguir siendo universalmente jugable desde 7.º y la dificultad no debe subir por año/edad | Sí | Regla universal y `AcademicStage ≠ DifficultyBand`, integrada |
+| TG1-02 | **ACEPTAR** | Sin comentario adicional | Sí | Situaciones y consignas mostradas aceptadas |
+| TG1-03 | **ACEPTAR** | Sin reclasificaciones pedidas | Sí | CORE/STANDARD/STRETCH aceptado como dificultad estructural |
+| TG1-04 | **ACEPTAR** | Preferencia B: 85/10/5 | Sí | `fair-score-dev-2`, no oficial |
+| TG1-05 | **ACEPTAR** | Incorporar decisiones sociales; “hacerlo todo yo” puede resolver matemática y ser socialmente pobre | Sí | Equipo legítimo con evidencia independiente; contenido futuro |
+| TG1-06 | **ACEPTAR** | Permitir escenas multievaluadas; se propusieron el acto y márgenes del colectivo | Sí | Se acepta la intención multi-eje; se rechaza duplicar el mismo F1 como Math y Aura |
+| TG1-07 | **ACEPTAR** | Sin alternativa pedida | Sí | Normalización de pesos activos aceptada |
+| TG1-08 | **ACEPTAR** | Sin comentario adicional | No | Recompensa pequeña por dificultad aceptada en principio; factores exactos siguen candidatos |
+| TG1-09 | **ACEPTAR** | Sin valores alternativos | No | 100/75/40/10 aceptado para resultados discretos |
+| TG1-10 | **ACEPTAR** | Intentos ilimitados con mejor intento | No | Requisito futuro: mejor resultado verificado y emisión autoritativa |
+| TG1-11 | **AJUSTAR** | Hitos aleatorios con reconocimiento/puntos para reducir empates y buscar un Tier | No | Se separan Hitos narrativos de desempate; no se adopta bonus competitivo aleatorio; desempate queda OPEN |
+| TG1-12 | **ACEPTAR** | 8–10 minutos | No | Target UX de run completa, no timeout ni señal de score |
+| TG1-13 | **ACEPTAR** | Pedagogía OK; narrativa a enriquecer con alternativas como deportes y competencias | Sí | KEEP pedagógico + ENRICH narrativo en STAGE-08 |
+| TG1-14 | **ACEPTAR** | Sin vocabulario preferido | No | Egreso garantizado aceptado; vocabulario de recuperación queda OPEN para STAGE-07 |
+
+## Ajustes requeridos
+
+### Integrados antes de declarar STAGE-07 READY
+
+| # | Ajuste | Origen | Resultado |
+|---|---|---|---|
+| 1 | Accesibilidad matemática universal y separación año/dificultad | TG1-01 | Regla canónica de producto, matemática y autoría |
+| 2 | Nueva ponderación competitiva 85/10/5 | TG1-04 | `fair-score-dev-2`, `official: false`, con auditoría profunda |
+| 3 | Multi-evaluación sin doble conteo | TG1-05/TG1-06 | Guardarraíl canónico y checklist de autoría |
+| 4 | Normalización, recompensa y calidad con madurez docente | TG1-07/TG1-08/TG1-09 | Documentación y tests reconciliados |
+| 5 | Intentos, duración y egreso como requisitos futuros | TG1-10/TG1-12/TG1-14 | Handoffs STAGE-09, STAGE-08 y STAGE-07 |
+| 6 | Separar Hitos de desempate competitivo | TG1-11 | Hitos futuros; política de empate OPEN y sin RNG competitivo |
+| 7 | Mantener el acto y enriquecer su narrativa | TG1-13 | KEEP + ENRICH asignado a STAGE-08 |
+
+### Asignados a etapas futuras
+
+| Trabajo | Etapa propietaria |
+|---|---|
+| Implementar egreso, fail-forward y recuperaciones deterministas | STAGE-07 |
+| Producir evidencia independiente de Equipo/Aura y enriquecer narrativas | STAGE-08 |
+| Explorar deportes/competencias e Hitos narrativos | STAGE-08, con revisión de producto |
+| Emitir intentos autoritativos, guardar personal best y operar ranking | STAGE-09 |
+| Cerrar desempate, configuración final y política oficial | STAGE-09 / Teacher Gate 2 / FREEZE |
+
+Asignar trabajo a una etapa no significa que el runtime ya lo implemente.
+
+## Diferidos y abiertos
+
+Ningún ítem fue marcado `DIFERIR` por el docente. La integración conserva
+abiertas las partes para las que la respuesta no definió una semántica completa:
+
+- política final y determinista de empate;
+- diseño exacto de Hitos;
+- calibración exacta de los factores de recompensa por dificultad;
+- vocabulario de recuperación;
+- oficialización final de la ScorePolicy;
+- inventario final de contenido y configuración final de competencia.
 
 ## Desacuerdos
 
-**No se resuelven promediando opiniones ni se colapsan en «los docentes aprobaron».**
+La planilla no consignó desacuerdos. TG1-11 fue `AJUSTAR`, no consenso sobre un
+algoritmo de desempate.
 
-| ID | Postura A | Postura B | Cómo se resuelve |
-|---|---|---|---|
-| | | | |
-
-## Próximos pasos
-
-| # | Acción | Responsable | Fecha |
-|---|---|---|---|
-| | | | |
-
-## Resultado del gate
-
-Marcar **una**:
+## Resultado del Gate
 
 - ☐ **APROBADO** — sin ajustes bloqueantes.
-- ☐ **APROBADO CON AJUSTES REQUERIDOS** — se puede seguir, y hay cambios comprometidos con responsable.
-- ☐ **NO APROBADO / REQUIERE REVISIÓN** — hay desacuerdo bloqueante o material insuficiente.
+- ☒ **APROBADO CON AJUSTES REQUERIDOS** — equivalente canónico:
+  `PASSED_WITH_REQUIRED_ADJUSTMENTS`.
+- ☐ **NO APROBADO / REQUIERE REVISIÓN**.
 
-**Firma del facilitador:** ____________________
+El fundamento pedagógico/producto permite continuar: los ajustes bloqueantes
+quedaron integrados como decisiones canónicas o requisitos con etapa
+propietaria. Esto no constituye playtest con estudiantes ni prueba
+psicométrica de que 85/10/5 sea una calibración final.
 
----
-
-## Después de completar esta acta
-
-1. Pasar lo cerrado al [registro de decisiones](07-reference/decision-register.md).
-2. Pasar lo abierto a [preguntas abiertas](07-reference/open-questions.md).
-3. Recién entonces actualizar el [roadmap](06-delivery/implementation-sequence.md) y la [etapa actual](06-delivery/current-stage.md).
-4. Si alguna calibración cambia, publicarla como **versión nueva**; no editar la que los docentes vieron.
+**Firma del facilitador:** no consignada en la evidencia recibida.
 
 ---
 
@@ -9009,20 +9101,403 @@ Las referencias completas están en [base teórica](07-reference/research-basis.
 
 ---
 
+# FILE: 06-delivery/teacher-gate-1/11-evidencia-docente-2026-09-01.md
+
+# Planilla de decisiones · Teacher Gate 1
+
+> **EVIDENCIA DOCENTE RAW · INMUTABLE.** Transcripción de la planilla recibida
+> después de la sesión del 1 de septiembre de 2026. Se conservan las respuestas,
+> formulaciones, mayúsculas y campos vacíos tal como fueron suministrados. Las
+> interpretaciones de producto viven en
+> [la integración post-Gate](06-delivery/teacher-gate-1/12-integracion-post-gate.md), no en esta evidencia.
+
+Una fila por decisión. Se completa **durante** la reunión.
+
+**Fecha:** 1/09/2026  **Facilitador:** Dev
+
+**Participantes:** Docente
+
+Una de cuatro palabras por fila. **«Se ve bien» no cierra un ítem.**
+
+| | |
+|---|---|
+| **ACEPTAR** | queda como está |
+| **AJUSTAR** | la idea sirve, hay que cambiar algo concreto |
+| **RECHAZAR** | no sirve, hay que pensarlo de nuevo |
+| **DIFERIR** | no se decide hoy, y no bloquea seguir |
+
+---
+
+## TG1-01 · Nivel matemático general
+
+**Pregunta:** ¿la matemática de las situaciones mostradas es apropiada para 7.º?
+
+**Evidencia:** casos TG1-A y TG1-B jugados. **Bloquea:** sí.
+
+Decisión: ☐ ACEPTAR **X** AJUSTAR ☐ RECHAZAR ☐ DIFERIR
+
+Comentario: Es apropiada.______________________________________________
+
+Cambio pedido: Todo el juego debe ser de jugabilidad universal (de 7° en adelante debe poder jugar y entender todo el mundo). La dificultad no es por nivel (es decir, 7° para chicos de 12 - 1° para chicos de 13-)___________________________________________
+
+Prioridad: **X** alta ☐ media ☐ baja   Responsable: __________
+
+---
+
+## TG1-02 · Situaciones y consignas
+
+**Pregunta:** ¿son claras, creíbles y sin ambigüedad?
+
+**Evidencia:** los casos jugados y lo que se observó. **Bloquea:** sí.
+
+Decisión: **X** ACEPTAR ☐ AJUSTAR ☐ RECHAZAR ☐ DIFERIR
+
+Comentario: ______________________________________________
+
+Cambio pedido: ___________________________________________
+
+Prioridad: ☐ alta ☐ media ☐ baja   Responsable: __________
+
+---
+
+## TG1-03 · Clasificación de dificultad
+
+**Pregunta:** ¿los niveles CORE / STANDARD / STRETCH están bien puestos?
+
+**Evidencia:** tabla de [04-dificultad.md](06-delivery/teacher-gate-1/04-dificultad.md). **Bloquea:** sí.
+
+Decisión: **X** ACEPTAR ☐ AJUSTAR ☐ RECHAZAR ☐ DIFERIR
+
+Situaciones a reclasificar: ______________________________
+
+Comentario: ______________________________________________
+
+Prioridad: ☐ alta ☐ media ☐ baja   Responsable: __________
+
+---
+
+## TG1-04 · Dominancia de la matemática
+
+**Pregunta:** ¿se acepta un puntaje donde la matemática pesa más que todo lo demás junto?
+
+**Evidencia:** ejemplos y comparación de ponderaciones. **Bloquea:** sí.
+
+Decisión: **X** ACEPTAR ☐ AJUSTAR ☐ RECHAZAR ☐ DIFERIR
+
+Ponderación preferida: ☐ A 80/15/5 **X** B 85/10/5 ☐ C 90/10/0 ☐ otra: ______
+
+Comentario: qUE______________________________________________
+
+Prioridad: ☐ alta ☐ media ☐ baja   Responsable: __________
+
+---
+
+## TG1-05 · Trabajo en equipo en la competencia
+
+**Pregunta:** ¿el ranking debería medir también trabajo en equipo? ¿Con qué evidencia?
+
+**Evidencia:** caso TG1-D. **Bloquea:** sí.
+
+Decisión: **X** ACEPTAR ☐ AJUSTAR ☐ RECHAZAR ☐ DIFERIR
+
+Qué sería evidencia válida: Se propone agregar decisiones sociales o algun componente social por ejemplo: el trabajo en equipo una opcion de "hacerlo todo yo" y que eso baje el puntaje social porque expone a los compañeros y a lo mejor que se evalue la matematica desde otro punto en esas escenas.______________________________
+
+Comentario: ______________________________________________
+
+Prioridad: ☐ alta ☐ media ☐ baja   Responsable: __________
+
+---
+
+## TG1-06 · Aura en la competencia
+
+**Pregunta:** ¿un momento público debería influir en el ranking? Hoy ninguna situación lo alimenta sin repetir la matemática.
+
+**Evidencia:** explicación del acto en [05-puntaje.md](06-delivery/teacher-gate-1/05-puntaje.md). **Bloquea:** sí.
+
+Decisión: **X** ACEPTAR ☐ AJUSTAR ☐ RECHAZAR ☐ DIFERIR
+
+Qué sería evidencia válida: Esta propuesta tambien abarca a "Trabajo en equipo" y es que haya ciertos escenarios (los que admita este criterio) en los que se pueda multievaluar. En el caso de aura en el 25 de mayo podria sumar 2 veces y dependiendo del porcentaje de respuestas correctas sumar mas o menos aura (el aura es un porcentaje muy chico de la "ponderacion" y en ese caso no modificaria mucho el desempeño final). Pero tambien la propuesta es tener escenas donde se pueda evaluar ademas del criterio matematico: componente social, compañerismo, etc sin perder el foco en la matematica (es decir que haya respuestas que matematicamente sean correctas pero que en otro aspecto pueda significar otra cosa... por ejemplo en el caso del colectivo: si alguien llega con cierto margen suma aura, si alguien llega muy temprano resta aura porque "abrio la escuela" y si llega muy tarde tambien puede restar porque se perdio las novedades de las vacaciones.______________________________
+
+Comentario: ______________________________________________
+
+Prioridad: ☐ alta ☐ media ☐ baja   Responsable: __________
+
+---
+
+## TG1-07 · Reparto del peso cuando falta una componente
+
+**Pregunta:** si una partida no ofrece trabajo en equipo, su peso se reparte y el máximo sigue siendo el mismo. ¿Es aceptable que dos partidas midan combinaciones distintas?
+
+**Evidencia:** ejemplos de partida perfecta. **Bloquea:** sí.
+
+Decisión: **X** ACEPTAR ☐ AJUSTAR ☐ RECHAZAR ☐ DIFERIR
+
+Alternativa preferida, si AJUSTAR: ☐ exigir cobertura ☐ dejar la componente afuera ☐ otra: ______
+
+Comentario: ______________________________________________
+
+Prioridad: ☐ alta ☐ media ☐ baja   Responsable: __________
+
+---
+
+## TG1-08 · Bonificación por dificultad
+
+**Pregunta:** ¿resolver una situación más compleja debería dar una ventaja chica en el puntaje?
+
+**Evidencia:** comparación con y sin bonificación. **Bloquea:** no.
+
+Decisión: **X** ACEPTAR ☐ AJUSTAR ☐ RECHAZAR ☐ DIFERIR
+
+Comentario: ______________________________________________
+
+Prioridad: ☐ alta ☐ media ☐ baja   Responsable: __________
+
+---
+
+## TG1-09 · Cuánto vale cada resultado
+
+**Pregunta:** ¿100 / 75 / 40 / 10 representa bien el mérito matemático? ¿Una resolución inválida merece algo?
+
+**Evidencia:** tabla de calidades. **Bloquea:** no.
+
+Decisión: **X** ACEPTAR ☐ AJUSTAR ☐ RECHAZAR ☐ DIFERIR
+
+Valores propuestos: ______________________________________
+
+Comentario: ______________________________________________
+
+Prioridad: ☐ alta ☐ media ☐ baja   Responsable: __________
+
+---
+
+## TG1-10 · Intentos
+
+**Pregunta:** ¿qué filosofía de intentos prefieren?
+
+**Evidencia:** ficha en [06-preguntas.md](06-delivery/teacher-gate-1/06-preguntas.md). **Bloquea:** no.
+
+Decisión: **X** ACEPTAR ☐ AJUSTAR ☐ RECHAZAR ☐ DIFERIR
+
+Filosofía: **X** ilimitados con mejor intento ☐ límite fijo ☐ una sola partida ☐ otra: ______
+
+Comentario: ______________________________________________
+
+---
+
+## TG1-11 · Empates
+
+**Pregunta:** ¿qué filosofía de empate prefieren?
+
+**Evidencia:** ficha en [06-preguntas.md](06-delivery/teacher-gate-1/06-preguntas.md). **Bloquea:** no.
+
+Decisión: ☐ ACEPTAR **X** AJUSTAR ☐ RECHAZAR ☐ DIFERIR
+
+Filosofía: ☐ puesto compartido ☐ criterio matemático secundario **X** otra: Hitos______
+
+Comentario: Propuesta de hitos aleatorios (dadas ciertas condiciones puede darse aleatoriamente durante la run) que vayan sucediendo durante la run por ejemplo: si alguien llega a 4° con desempeño alto (probablemente tambien con promedio alto), aleatoriamente puede salir Hito "te eligieron abanderado", "sos 1er escolta", etc y que eso sume puntaje extra. Tratar de evitar el empate en puntaje. Pensar estrategias para que haya siempre un Tier.______________________________________________
+
+---
+
+## TG1-12 · Duración de una partida
+
+**Pregunta:** ¿qué duración es razonable para una partida completa en una feria?
+
+**Evidencia:** explicación en [06-preguntas.md](06-delivery/teacher-gate-1/06-preguntas.md). **Bloquea:** no.
+
+Decisión: **X** ACEPTAR ☐ AJUSTAR ☐ RECHAZAR ☐ DIFERIR
+
+Duración sugerida: 8-10 minutos_______________________________________
+
+Comentario: ______________________________________________
+
+---
+
+## TG1-13 · El acto del 25 de Mayo
+
+**Pregunta:** ¿entra a producción como situación de 7.º?
+
+**Evidencia:** caso TG1-C. **Bloquea:** sí.
+
+Decisión: **X** ACEPTAR ☐ AJUSTAR ☐ RECHAZAR ☐ DIFERIR
+
+Pedagogía: **X** ok ☐ ajustar: ______   Narrativa: ☐ ok **X** ajustar: Mejorar las situaciones y proponer narrativas alternativas como deportes y competencias______
+
+Comentario: ______________________________________________
+
+Prioridad: ☐ alta ☐ media ☐ baja   Responsable: __________
+
+---
+
+## TG1-14 · Recuperación y egreso
+
+**Pregunta:** ¿es aceptable que toda partida terminada llegue al egreso? ¿Qué palabras usar?
+
+**Evidencia:** explicación en [06-preguntas.md](06-delivery/teacher-gate-1/06-preguntas.md). **Bloquea:** no.
+
+Decisión: **X** ACEPTAR ☐ AJUSTAR ☐ RECHAZAR ☐ DIFERIR
+
+Vocabulario preferido: ___________________________________
+
+Comentario: ______________________________________________
+
+---
+
+## Desacuerdos
+
+Si no hubo acuerdo en algún punto, va acá. **No se resuelve promediando opiniones.**
+
+| ID | Postura A | Postura B | Cómo se resuelve | Responsable |
+|---|---|---|---|---|
+| | | | | |
+| | | | | |
+
+## Lo que hay que hacer después
+
+| # | Qué | De qué decisión sale | Responsable | ¿Bloquea la etapa siguiente? |
+|---|---|---|---|---|
+| 1 | | | | |
+| 2 | | | | |
+
+---
+
+# FILE: 06-delivery/teacher-gate-1/12-integracion-post-gate.md
+
+# Integración de producto post-Teacher-Gate 1
+
+**Estado:** integración canónica del Gate del 1 de septiembre de 2026.
+**Resultado:** `PASSED_WITH_REQUIRED_ADJUSTMENTS`.
+
+Este documento hace explícita la cadena de trazabilidad:
+
+```text
+respuesta docente raw
+        ↓
+interpretación de producto
+        ↓
+decisión canónica y madurez
+        ↓
+implementación actual o requisito de etapa futura
+```
+
+La [planilla completada](06-delivery/teacher-gate-1/11-evidencia-docente-2026-09-01.md) conserva lo que
+dijo el docente. Este documento registra lo que el producto decide hacer con
+esa evidencia.
+
+## Decisiones promovidas
+
+| Decisión | Fuente | Decisión canónica | Madurez | Destino |
+|---|---|---|---|---|
+| D-TG1-01 | TG1-01 | Toda etapa conserva un piso de prerrequisitos matemáticos comprensible desde aproximadamente 7.º; el año expresa carrera y contexto, no una barrera curricular creciente | PRODUCT DIRECTION · TG1 ACCEPTED | Marco matemático, dificultad, autoría y STAGE-08 |
+| D-TG1-02 | TG1-03 | `AcademicStage ≠ DifficultyBand`; cada etapa puede contener CORE, STANDARD y STRETCH, cuya complejidad sigue siendo estructural | PRODUCT DIRECTION · TG1 ACCEPTED | Dificultad y composición |
+| D-TG1-03 | TG1-04 | Ponderación post-TG1 candidata 85 % Math / 10 % Team / 5 % Aura | IMPLEMENTED CANDIDATE · TEACHER-INFORMED · `official: false` | `fair-score-dev-2` |
+| D-TG1-04 | TG1-05/TG1-06 | Una escena puede alimentar varios ejes sólo cuando cada eje mide una propiedad semánticamente distinta | PRODUCT DIRECTION · TG1 ACCEPTED | Autoría STAGE-08 |
+| D-TG1-05 | TG1-07 | Las componentes competitivas sin oportunidad salen del cálculo y los pesos activos se renormalizan | PRODUCT DIRECTION · TG1 ACCEPTED · IMPLEMENTED | ADR-023 y scorer |
+| D-TG1-06 | TG1-08 | Una situación estructuralmente más exigente puede recibir una recompensa competitiva pequeña, separada del costo de scheduling | PRODUCT DIRECTION · TG1 ACCEPTED; factores RECOMENDADOS | Score/dificultad |
+| D-TG1-07 | TG1-09 | El mapeo discreto `optimal/efficient/functional/invalid = 100/75/40/10` queda aceptado para plantillas que no tienen métrica continua más honesta | TG1 ACCEPTED CANDIDATE | ScorePolicy |
+| D-TG1-08 | TG1-10 | Los intentos competitivos son lógicamente ilimitados y el ranking conserva el mejor resultado verificado | PRODUCT DIRECTION · TG1 ACCEPTED · NOT IMPLEMENTED | STAGE-09 |
+| D-TG1-09 | TG1-12 | Una carrera completa apunta a aproximadamente 8–10 minutos | PRODUCT TARGET · TG1 ACCEPTED | Calibración STAGE-08; no es score ni timeout |
+| D-TG1-10 | TG1-14 | Toda run válida completada converge a `GRADUATED` | PRODUCT DIRECTION · TG1 ACCEPTED · NOT IMPLEMENTED | STAGE-07 |
+
+TG1-02 acepta las situaciones y consignas revisadas. TG1-13 mantiene el acto del
+25 de Mayo por su valor pedagógico y exige enriquecer/diversificar su narrativa
+en producción futura.
+
+## Accesibilidad universal: piso bajo, techo alto
+
+La secuencia `7.º → 1.º → 2.º → 3.º → 4.º → 5.º` sigue siendo una carrera
+escolar real. Cambian responsabilidades, situaciones, consecuencias, densidad
+social, información a filtrar, planificación y combinaciones de restricciones.
+No se transforma en una escalera donde cada año exige fórmulas curriculares que
+impidan jugar a alguien capaz de comprender matemática de 7.º.
+
+La regla es **piso de prerrequisitos bajo, no techo cognitivo bajo**. CORE,
+STANDARD y STRETCH permanecen en cada año. La dificultad puede crecer por
+estructura y estrategia sin crecer por conocimiento curricular inaccesible.
+
+## Multi-evaluación e independencia de evidencia
+
+Una escena puede producir Math, Team y Aura al mismo tiempo si responde tres
+preguntas diferentes:
+
+1. ¿Qué propiedad matemática se midió?
+2. ¿Qué propiedad de colaboración se midió, si existe?
+3. ¿Qué propiedad social/pública se midió, si existe?
+
+**Una misma escena puede evaluar más de una dimensión, pero no puede otorgar
+crédito competitivo dos veces por la misma evidencia.**
+
+- Válido: factibilidad matemática del reparto + calidad independiente de la
+  distribución de responsabilidades.
+- Inválido: copiar el mismo F1 del acto a Math y Aura.
+
+Si falta evidencia independiente, la componente declara `none`. No se obliga a
+que toda plantilla ofrezca Team o Aura, y la normalización aceptada por TG1-07
+evita penalizar al jugador por esa ausencia.
+
+### Interpretación del acto y el colectivo
+
+El docente propuso que el acto del 25 de Mayo pudiera sumar Aura según el
+porcentaje correcto. Producto acepta la intención —una escena con varias
+consecuencias— pero no adopta el mecanismo literal: ese porcentaje/F1 ya es
+`MathPerformance`. Para aportar Aura, una futura versión de la escena necesita
+otra decisión o medida, por ejemplo liderazgo, coordinación o reacción social.
+
+La idea del colectivo se conserva como **ejemplo de autoría futura**, no regla
+del template actual: varias horas matemáticamente válidas podrían tener
+consecuencias sociales diferentes —llegar exageradamente temprano, con margen
+adecuado o tarde para enterarse de las novedades— si un diseño posterior define
+una señal social independiente.
+
+## Intentos, seeds y personal best
+
+“Ilimitados” no significa que el participante elige un seed fácil. La
+infraestructura futura emite autoritativamente cada `RunPlan`/seed. El
+participante puede pedir otra run válida, y el ranking conserva su mejor
+`FairScore` verificado bajo la política activa. Persistencia, identidad y
+emisión pertenecen a STAGE-09.
+
+## Empates e Hitos
+
+TG1-11 pidió `AJUSTAR` y propuso Hitos aleatorios con puntos para reducir
+empates. La integración separa dos problemas:
+
+- **Hitos:** oportunidad futura de reconocimiento narrativo/carrera —por
+  ejemplo Abanderado o Primer escolta—, preferentemente derivada de condiciones
+  deterministas o de un seed con efecto competitivo equiparado.
+- **Empate de ranking:** permanece `OPEN`; dos FairScores iguales pueden empatar
+  legítimamente.
+
+No se adopta `RNG → puntos competitivos → desempate`. Un hito aleatorio no puede
+otorgar ventaja arbitraria. STAGE-09 y Teacher Gate 2 deben cerrar una política
+determinista y anunciada.
+
+## Alcance de esta integración
+
+Se publica `fair-score-dev-2` y se actualizan autoridad, tests y auditorías. No
+se cambia contenido actual, perfiles de score de templates, composición,
+progresión, catálogo ni gameplay. En particular, el F1 del acto y el margen del
+colectivo no alimentan Aura en esta integración.
+
+---
+
 # FILE: 06-delivery/teacher-gate-1/README.md
 
 # Pack del Teacher Gate 1
 
-Todo lo necesario para dar la reunión de revisión con el Departamento de Matemática. **Este pack prepara el gate; no lo da por aprobado.**
+Registro reproducible de la reunión de revisión con Matemática. El material de preparación se conserva como artefacto histórico: describe lo que se mostró, no la autoridad vigente posterior.
 
 - **Duración de la sesión central:** 15 minutos.
 - **Qué se decide:** nivel matemático, situaciones, niveles de dificultad y filosofía del puntaje de competencia.
 - **Qué NO se decide:** tipografías, colores, espaciados ni nada del sistema de diseño. Eso ya está cerrado.
-- **Estado del gate:** pendiente. Nadie lo revisó todavía.
+- **Ejecución:** 1 de septiembre de 2026.
+- **Estado del gate:** `PASSED_WITH_REQUIRED_ADJUSTMENTS`.
+- **Resultado canónico:** [acta](06-delivery/teacher-gate-1/09-acta.md).
+- **Evidencia sin reinterpretar:** [planilla completada](06-delivery/teacher-gate-1/11-evidencia-docente-2026-09-01.md).
+- **Integración de producto:** [mapeo post-Gate](06-delivery/teacher-gate-1/12-integracion-post-gate.md).
 
 El contrato canónico de qué se pide decidir está en [gates docentes](06-delivery/teacher-gates.md) y en el [roadmap](06-delivery/implementation-sequence.md). Este pack lo operacionaliza.
 
-## Antes de convocar a nadie
+## Reproducir el contexto que se mostró
 
 ```bash
 pnpm dev                          # levanta la aplicación
@@ -9063,9 +9538,9 @@ Cuatro palabras, y sólo cuatro. Se usan igual en todo el pack y en la planilla:
 
 **«Se ve bien» no cierra un ítem.** Si no hay una de las cuatro palabras, el ítem queda abierto.
 
-## Cuándo se puede dar el gate por cerrado
+## Cierre del gate
 
-La lista está en [02-checklist-facilitador.md](06-delivery/teacher-gate-1/02-checklist-facilitador.md), al final, y **empieza vacía a propósito**. Se completa después de la reunión real, con lo que los docentes hayan dicho, y recién entonces se actualizan el roadmap y el registro de decisiones.
+La evidencia se registró ítem por ítem y las respuestas `AJUSTAR` se transformaron en requisitos o trabajo diferido con dueño. El gate no afirma playtest con estudiantes ni convierte la política de score en oficial.
 
 ## Una advertencia sobre qué valida esta reunión
 
@@ -9079,7 +9554,7 @@ Los docentes validan matemática, terminología, ambigüedad, credibilidad del c
 
 # Gates docentes
 
-**Estado: TEACHER GATE.** Este documento define qué se le pide decidir al Departamento de Matemática y cuándo. **No decide nada por ellos.** Cada ítem cerrado en una de estas sesiones se anota en el [registro de decisiones](07-reference/decision-register.md); cada ítem que queda abierto, en [preguntas abiertas](07-reference/open-questions.md).
+**Estado:** Teacher Gate 1 `PASSED_WITH_REQUIRED_ADJUSTMENTS`; Teacher Gate 2 pendiente. Este documento define qué se pide decidir y conserva el contrato histórico. El resultado TG1 está en su [acta](06-delivery/teacher-gate-1/09-acta.md).
 
 Ubicación en el ciclo: [ciclo de entrega real](00-product/real-delivery-lifecycle.md).
 
@@ -9107,6 +9582,8 @@ Con invariantes robustos, los docentes no necesitan inspeccionar cada variante d
 ---
 
 ## Teacher Gate 1 — revisión de la demo de 7.º
+
+**Ejecutado:** 1 de septiembre de 2026. **Resultado:** `PASSED_WITH_REQUIRED_ADJUSTMENTS`. La [planilla original](06-delivery/teacher-gate-1/11-evidencia-docente-2026-09-01.md) se conserva separada de la [interpretación de producto](06-delivery/teacher-gate-1/12-integracion-post-gate.md).
 
 **El material para dar esta sesión está preparado en [el pack del Teacher Gate 1](06-delivery/teacher-gate-1/README.md):** guion de quince minutos, casos con sorteo fijo que reproducen, planilla de decisiones y acta. Este documento sigue siendo la autoridad sobre *qué* se pide decidir; el pack es *cómo* se conduce la reunión.
 
@@ -9167,9 +9644,9 @@ No se usa la reunión para elegir tipografías, espaciados ni tokens: eso ya est
 - ¿La filosofía de score es apropiada para repartir premios?
 - ¿Qué situaciones de 7.º se mantienen, se sacan o se agregan?
 
-### Salida
+### Salida obtenida
 
-Una lista acotada de correcciones y una decisión por cada ítem anterior. **No se acepta un «se ve bien» libre como cierre de un ítem.**
+Se registraron decisiones TG1-01…TG1-14. La base fue aceptada con ajustes obligatorios: universalidad matemática, 85/10/5, evidencia multi-eje independiente, target de 8–10 minutos y egreso garantizado. Desempate/Hitos, vocabulario de recuperación, factores exactos y freeze final siguen abiertos o asignados.
 
 Se registra en el [acta del gate](06-delivery/teacher-gate-1/09-acta.md), que además guarda qué versiones vieron los docentes: sin eso, dentro de seis meses nadie puede saber sobre qué material se pronunciaron.
 
@@ -9409,7 +9886,7 @@ No se puede llamar «dinámico» a un cambio de orden de las opciones.
 
 ### El acto del 25 de Mayo
 
-Está implementado y jugable, y demuestra matemática, situación social, Aura y una familia de interacción distinta al mismo tiempo. **Su inclusión en producción sigue siendo una decisión docente** ([pregunta 42](07-reference/open-questions.md)).
+Está implementado y jugable. TG1-13 lo aceptó pedagógicamente (`KEEP`) y pidió enriquecer su narrativa y ampliar la variedad futura de contextos, incluidos deportes y competencias cuando la matemática lo justifique. La narrativa actual no fue rechazada y no se reescribió en esta integración. Su F1 sigue alimentando sólo Matemática: Aura competitiva requiere evidencia social independiente y pertenece a STAGE-08.
 
 ### Score en la demo
 
@@ -9705,17 +10182,27 @@ Estas decisiones vienen del [Project Blueprint v0.2.0](07-reference/blueprint-v0
 | D-006 | Jerarquía `ScenarioFamily → Template → Variant` | RECOMENDADA | **implementada** ([ADR-019](03-architecture/adr/ADR-019-scenario-family-template-variant.md)) y **ejercida en producción**: la familia `bus` aloja dos plantillas con razonamientos distintos ([ADR-021](03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md)); el inventario de contenido sigue abierto |
 | D-007 | Variantes deterministas por seed | LOCKED como dirección de arquitectura | implementado ([ADR-003](03-architecture/adr/ADR-003-deterministic-seeded-engine.md), [ADR-012](03-architecture/adr/ADR-012-seeded-prng-and-substreams.md)) |
 | D-008 | Catálogo de variantes prevalidado y desplegado para competencia | RECOMENDADA | **implementado y consumido por la partida** ([ADR-020](03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md), [ADR-021](03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md)); las versiones publicadas son inmutables y el catálogo oficial de la feria sigue sin congelar |
-| D-009 | Intentos ilimitados con personal best en el ranking | RECOMENDADA · TEACHER GATE | no implementado ([modo feria](05-operations/fair-mode-and-competition-freeze.md)) |
+| D-009 | Intentos ilimitados con mejor resultado verificado | TG1 ACCEPTED · PRODUCT DIRECTION | no implementado; emisión autoritativa, persistencia y ranking pertenecen a STAGE-09 ([modo feria](05-operations/fair-mode-and-competition-freeze.md)) |
 | D-010 | `FairScore` separado de las stats de carrera | RECOMENDADA | **implementado** ([ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md)): el score no recibe la carrera, así que no hay por dónde filtrarla |
-| D-011 | La matemática domina el `FairScore` | RECOMENDADA · TEACHER GATE | **implementado como regla ejecutable**: la validación rechaza una política donde la matemática no supere a la suma del resto; los pesos exactos siguen en el Gate |
+| D-011 | La matemática domina el `FairScore` | TG1 ACCEPTED | **implementado como regla ejecutable**; el candidato post-Gate `fair-score-dev-2` usa 85/10/5 y sigue `official: false` |
 | D-012 | Estilo no puntúa directamente | RECOMENDADA | **implementado**: Estilo y Promedio no son componentes de score, así que no existe el peso que alguien podría subir ([ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md)) |
-| D-013 | Desempate lexicográfico determinista y profundo | RECOMENDADA · TEACHER GATE | no implementado; sin ranking no tiene a qué ordenar, y el desglose ya reporta el primer criterio que necesita |
-| D-014 | Presupuesto de dificultad por run competitiva | RECOMENDADA | **implementado** ([ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md)) como política versionada; la calibración sigue en Teacher Gate |
+| D-013 | Desempate competitivo final | OPEN tras TG1-11 `AJUSTAR` | no implementado; Hitos se separan del desempate y una bonificación aleatoria no decide orden competitivo |
+| D-014 | Presupuesto de dificultad por run competitiva | RECOMENDADA; bandas aceptadas en TG1 | **implementado** ([ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md)); los costos/umbrales exactos siguen calibrables |
 | D-015 | Diseño de tareas de piso bajo y techo alto | RECOMENDADA como principio | vigente en el contenido de 7.º, y ahora **ejecutable**: la banda de una plantilla se deriva de su estructura, no de sus números ([ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md)) |
 | D-016 | No hay playtest real con estudiantes antes de la feria | RESTRICCIÓN EXTERNA | declarada ([ciclo de entrega real](00-product/real-delivery-lifecycle.md)) |
 | D-017 | Congelamiento de reglas y score durante el evento oficial | RECOMENDADA como regla de operación | política escrita, sin evento oficial todavía |
+| D-TG1-01 | Accesibilidad matemática universal: cada etapa conserva piso de prerrequisitos aproximadamente de 7.º; el año expresa progresión narrativa/contextual, no gating curricular | TG1 ACCEPTED · PRODUCT DIRECTION | requisito canónico para STAGE-08; fuente TG1-01 |
+| D-TG1-02 | `AcademicStage ≠ DifficultyBand`; cada etapa puede contener CORE/STANDARD/STRETCH y la dificultad sigue siendo estructural | TG1 ACCEPTED | mecanismo existente preservado; fuente TG1-01/TG1-03 |
+| D-TG1-03 | Candidato post-Gate 85 Math / 10 Team / 5 Aura | TG1 ACCEPTED · IMPLEMENTED CANDIDATE | `fair-score-dev-2@2.0.0-post-tg1-candidate`, `official: false`; fuente TG1-04 |
+| D-TG1-04 | Una escena puede evaluar varios ejes sólo con evidencia semánticamente independiente; el mismo hecho no se cobra dos veces | TG1 ACCEPTED · PRODUCT DIRECTION | guardrail de autoría; no se duplicó el F1 de May-25 en Aura; fuente TG1-05/TG1-06 |
+| D-TG1-05 | Componentes competitivas ausentes salen y los pesos activos se normalizan | TG1 ACCEPTED · IMPLEMENTED | invariante y auditoría conservadas; fuente TG1-07 |
+| D-TG1-06 | Una dificultad estructural mayor puede recibir una recompensa competitiva pequeña | TG1 ACCEPTED PRINCIPLE | factores 1,00/1,08/1,15 siguen calibración candidata; fuente TG1-08 |
+| D-TG1-07 | Mapeo discreto óptimo/eficiente/funcional/inválido = 100/75/40/10 | TG1 ACCEPTED CANDIDATE | implementado en ambas policies; métricas continuas conservan su señal; fuente TG1-09 |
+| D-TG1-08 | Intentos competitivos ilimitados y mejor resultado verificado | TG1 ACCEPTED · PRODUCT DIRECTION | STAGE-09; la infraestructura asigna seed/plan y evita selección manual; fuente TG1-10 |
+| D-TG1-09 | Carrera completa con objetivo UX aproximado de 8–10 minutos | TG1 ACCEPTED TARGET | se medirá en STAGE-08; no es timeout ni input de score; fuente TG1-12 |
+| D-TG1-10 | Toda run válida completada termina en `GRADUATED` | TG1 ACCEPTED REQUIREMENT | entrada de STAGE-07; todavía no implementado; fuente TG1-14 |
 
-Los valores exactos de D-009, D-011 y D-013 —coeficientes, topes, política de intentos y de empate— siguen en [preguntas abiertas](07-reference/open-questions.md). Cerrar uno de esos ítems en una sesión docente actualiza **esta tabla**, no un registro nuevo.
+La [integración post-Gate](06-delivery/teacher-gate-1/12-integracion-post-gate.md) es la trazabilidad completa. Siguen abiertos la oficialización final del score, los factores exactos de recompensa, el desempate, el diseño de Hitos, el vocabulario de recuperación, el inventario de contenido y la configuración final de competencia.
 
 ---
 
@@ -9925,9 +10412,9 @@ Los archivos siguientes son **documentación**: muestran la forma de un contrato
 
 **FairScore:** score competitivo determinista de una run entera, producido por una `ScorePolicy` versionada a partir de evidencia de desempeño normalizada para su `RunPlan`. Distinto del score por evento y del ranking. Está implementado en [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md); la política vigente es candidata y no oficial.
 
-**ScorePolicy competitiva:** contrato versionado de pesos, escalones de calidad, recompensas de dificultad y topes con los que se calcula `FairScore`. La implementación candidata tiene id `fair-score-dev-1`, versión `1.0.0-candidate` y `official: false`; que exista no vuelve finales sus coeficientes.
+**ScorePolicy competitiva:** contrato versionado de pesos, escalones de calidad, recompensas de dificultad y topes con los que se calcula `FairScore`. `fair-score-dev-1@1.0.0-candidate` preserva 80/15/5 pre-TG1; `fair-score-dev-2@2.0.0-post-tg1-candidate` es la candidata actual 85/10/5. Ambas tienen `official: false`.
 
-**scoreVersion:** campo opcional del `RunDescriptor` que identifica la versión de la calibración competitiva usada. Hoy guarda `1.0.0-candidate` cuando se inyecta `fair-score-dev-1`; se omite en una run de práctica sin política competitiva y viaja en snapshot y action log.
+**scoreVersion:** campo opcional del `RunDescriptor` que identifica la versión exacta de la calibración competitiva. Una run nueva competitiva guarda `2.0.0-post-tg1-candidate`; una histórica puede conservar `1.0.0-candidate`; una run de práctica lo omite. Viaja en snapshot y action log.
 
 **MathPerformance · TeamPerformance · AuraPerformance:** las tres componentes normalizadas del score competitivo, cada una de 0 a 10.000. La matemática pondera por la recompensa de dificultad; las otras dos no. Su existencia arquitectónica no implica que todo `RunPlan` ofrezca oportunidades de las tres.
 
@@ -9980,7 +10467,7 @@ Estas decisiones requieren evidencia de prototipo, playtest, implementación u o
 
 ## Producto
 
-1. ¿Run objetivo de 4, 5 o 7 minutos?
+1. ~~¿Run objetivo de 4, 5 o 7 minutos?~~ **Cerrada por TG1-12:** la carrera completa apunta a aproximadamente **8–10 minutos**. Queda abierta la calibración empírica de pacing, no el objetivo.
 2. Dentro del presupuesto ya fijado de uno o dos beats normales, ¿qué combinación con storylets y recuperaciones condicionales mantiene el ritmo sin sentirse repetitiva? Esta pregunta de pacing no reabre el presupuesto ni define la profundidad del catálogo.
 3. ¿El nickname se pide antes o después de la primera run en modo libre?
 4. ¿Qué tan visible debe ser el score durante la carrera?
@@ -10050,15 +10537,15 @@ Estas decisiones requieren evidencia de prototipo, playtest, implementación u o
 
 ## Teacher Gate — decisiones del Departamento de Matemática
 
-Incorporadas desde el [Project Blueprint v0.2](07-reference/blueprint-v0.2-integration.md). **Ninguna se cierra desde el código.** Su gate es una sesión con los docentes; la forma de esa sesión está en [gates docentes](06-delivery/teacher-gates.md), y lo que se cierre se anota en el [registro de decisiones](07-reference/decision-register.md).
+Incorporadas desde el [Project Blueprint v0.2](07-reference/blueprint-v0.2-integration.md). Se cierran sólo con la autoridad indicada, nunca por conveniencia del código. Teacher Gate 1 ya resolvió o acotó varias; la trazabilidad vive en el [registro de decisiones](07-reference/decision-register.md).
 
-38. ¿Cuáles son los coeficientes y topes exactos del score competitivo, y deben Equipo y Aura participar? La ponderación candidata es `0,80` matemática / `0,15` equipo / `0,05` Aura, y **es un candidato, no una decisión**. Está implementada como `fair-score-dev-1` con `official: false`, y `pnpm game:score -- --compare` corre las mismas runs bajo 85/10/5 y 90/10/0 para que el Gate discuta con números en vez de con intuiciones. La evidencia actual también deja abiertas dos preguntas de producto: sólo `g7.group-tasks` ofrece Equipo competitivo independiente, ninguna plantilla de producción ofrece Aura competitiva independiente, y distintos `RunPlan` pueden exponer conjuntos distintos de oportunidades. El mecanismo vigente renormaliza los pesos activos; el Gate debe decidir si eso es aceptable, si la composición futura debe exigir cobertura o si corresponde otro modelo. *Gate: Teacher Gate 1; se cruza con la pregunta 24, que cubre el score por evento.*
-39. ¿Qué valor de calidad matemática corresponde a cada resultado? La calibración candidata es `1,00 / 0,75 / 0,40 / 0,10` sobre `optimal / efficient / functional / invalid`. Implementada como dato de la política, y las plantillas cuyo evaluador midió algo más fino —el acto y su F1— la sobrescriben con su propia medida en vez de redondearse a cuatro cajas. *Gate: Teacher Gate 1.*
-40. ¿Los intentos en la feria son ilimitados o limitados a N? La recomendación es ilimitados con personal best; la decisión es del evento. *Gate: Teacher Gate 1; configuración del evento antes del congelamiento.* Se cruza con la pregunta 11.
+38. ~~¿Deben Equipo y Aura participar, qué ponderación usar y cómo tratar oportunidades ausentes?~~ **Cerrada en dirección por TG1-04/TG1-05/TG1-06/TG1-07:** las tres participan, el candidato post-Gate es `fair-score-dev-2` 85/10/5 y se normalizan sólo los pesos activos. Sigue **OPEN** su oficialización/freeze en la pregunta 24 y la cobertura independiente de contenido en STAGE-08.
+39. ~~¿Qué valor de calidad matemática corresponde a cada resultado?~~ **Cerrada por TG1-09:** `1,00 / 0,75 / 0,40 / 0,10` sobre `optimal / efficient / functional / invalid`; una métrica continua honesta, como F1, no se aplana a cuatro cajas.
+40. ~~¿Los intentos en la feria son ilimitados o limitados a N?~~ **Cerrada en producto por TG1-10:** ilimitados y se conserva el mejor resultado verificado. Emisión autoritativa, identidad y persistencia siguen en STAGE-09; el jugador no elige seed.
 41. ¿Qué pasa ante un empate exacto en el ranking: puesto compartido, premio compartido o desempate anunciado? Un identificador interno **no** puede decidir un premio en silencio. *Gate: aprobación del organizador antes de repartir premios.* Se cruza con la pregunta 13.
-42. ¿El acto del 25 de Mayo entra a producción como desafío de 7.º o queda como ejemplar de diseño? Está implementado y jugable; lo que falta es la aprobación de contenido. *Gate: Teacher Gate 1.*
-43. ¿Cuál es la duración objetivo real de una run completa, y de la demo de 7.º? *Gate: Teacher Gate 1.* Se cruza con la pregunta 1.
-44. ¿Cómo se calibran las bandas `CORE / STANDARD / STRETCH` y sus costos de scheduling frente a las recompensas de score? *Gate: Teacher Gate 1; auditoría de equidad antes del congelamiento.* STAGE-05 construyó el mecanismo de bandas, costos y presupuestos; STAGE-06 implementó por separado la recompensa competitiva candidata `1,00 / 1,08 / 1,15`. Que el presupuesto ya equipare estructuralmente una run no demuestra que esa recompensa adicional sea necesaria. Hay una [clasificación candidata de las siete plantillas de 7.º](01-game-design/difficulty-and-playability.md) con cuatro divergencias respecto del nivel autorado que son preguntas concretas para el Gate. Las auditorías de composición y score no encontraron violaciones estructurales, pero no aportan evidencia psicométrica ni docente. Mover cualquiera de esos números es un cambio de datos versionados. Ver [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) y [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md).
+42. ~~¿El acto del 25 de Mayo entra a producción?~~ **Cerrada por TG1-13:** `KEEP` pedagógico; su narrativa debe enriquecerse y diversificarse en STAGE-08. No se agregó Aura competitiva porque hoy no existe una evidencia independiente del F1 matemático.
+43. ~~¿Cuál es la duración objetivo real?~~ **Cerrada por TG1-12:** 8–10 minutos para la carrera completa, como target UX sin timer ni score de velocidad.
+44. **Narrowed por TG1-03/TG1-08:** las bandas `CORE / STANDARD / STRETCH` y el principio de una recompensa competitiva pequeña están aceptados. Sigue **OPEN** la calibración exacta de factores; 1,00/1,08/1,15 permanece candidata y separada de los costos de scheduling 1,00/1,50/2,10.
 45. ¿Qué desafíos deben ofrecer fórmula, calculadora o material de referencia, y esa disponibilidad cambia en modo competitivo? *Gate: Teacher Gate 1.* Se cruza con la pregunta 7.
 
 ## Contenido y producto, sin gate docente inmediato
@@ -10085,6 +10572,7 @@ Que la familia `bus` haya pasado a tener dos plantillas en STAGE-04 ([ADR-021](0
 49. ¿Se produce el pack raster de ocho imágenes o el producto sale confirmando que la UI sola alcanza? Todas las pantallas corren hoy con cero imágenes. *Gate: alcance de la v0.3 del sistema de diseño.*
 50. ¿Cuánto tiempo se conservan action logs, ranking público y datos del evento después de la feria, y qué se archiva o anonimiza? *Gate: persistir datos reales de participantes.* Se cruza con la pregunta 31.
 51. ¿Qué señal de tiempo activo puede verificar el servidor si el tiempo participa del desempate? *Gate: usar tiempo en el ranking oficial.* Es la pregunta 27 vista desde el ranking competitivo.
+52. ¿Qué condiciones, efectos y presentación tendrá el sistema de Hitos de carrera? TG1-11 propuso reconocimientos como abanderado o primer escolta. Deben ser deterministas desde estado/seed y preferentemente narrativos; **no** otorgan bonus competitivo aleatorio ni resuelven por sí solos un empate. *Gate: diseño de carrera/narrativa en STAGE-07/08; implicaciones de ranking en STAGE-09/TG2.*
 
 ## Diferidas a propósito
 
@@ -10307,8 +10795,8 @@ Implicación: el cliente no publica un score final; el servidor valida y reprodu
 - [x] UX/interacciones.
 - [x] Familias de escenario, plantillas y variantes deterministas.
 - [x] Dificultad de piso bajo y techo alto, bandas y presupuesto.
-- [x] Dirección de score competitivo y ranking, marcada como recomendación.
-- [x] Egreso, recuperación y fail-forward.
+- [x] Score competitivo post-TG1 85/10/5 como candidato no oficial, con historia dev-1 preservada.
+- [x] Egreso garantizado aceptado; recuperación/fail-forward listo para STAGE-07.
 
 ## Funcional
 - [x] Requisitos funcionales.
@@ -10395,7 +10883,7 @@ Implicación: el cliente no publica un score final; el servidor valida y reprodu
 ## Gaps intencionales que requieren evidencia del proyecto
 
 No son omisiones documentales; son decisiones que no deben fijarse sin evidencia, y varias sólo las puede cerrar el Departamento de Matemática. El playtest con estudiantes **no está garantizado antes de la feria**; ver [ciclo de entrega real](00-product/real-delivery-lifecycle.md):
-- duración exacta de run;
+- calibración empírica del target de run 8–10 minutos;
 - fórmula final de scoring;
 - distribución final de eventos por año;
 - política final de dificultad/adaptación;
@@ -10405,12 +10893,9 @@ No son omisiones documentales; son decisiones que no deben fijarse sin evidencia
 - proveedor final de analytics/error tracking.
 
 Se agregan, desde la integración del Project Blueprint v0.2:
-- coeficientes y topes exactos del score competitivo;
-- calibración de calidad matemática por resultado;
-- política de intentos en la feria;
-- política de empate exacto y de premios;
-- inclusión en producción del acto del 25 de Mayo;
-- calibración de bandas de dificultad;
+- oficialización/freeze de los coeficientes y topes del score competitivo;
+- política de empate exacto/premios y diseño de Hitos;
+- factores exactos de recompensa por dificultad;
 - qué desafíos ofrecen fórmula o calculadora;
 - cantidad de familias y plantillas por año;
 - acento visual por año y producción del pack raster, ambos diferidos al sistema de diseño.
@@ -10430,7 +10915,7 @@ Este directorio define la referencia funcional, lúdica, pedagógica y técnica 
 1. **La matemática es gameplay.** Los números y relaciones deben afectar decisiones; no se agregan ejercicios desconectados como “peaje educativo”.
 2. **La secundaria es la narrativa.** El jugador recorre desde 7.º grado hasta 5.º año y construye una historia personal de egreso.
 3. **Consecuencias antes que “correcto/incorrecto”.** El feedback explica qué ocurrió y por qué.
-4. **Partidas cortas y repetibles.** El objetivo de diseño es una run de aproximadamente 4–7 minutos.
+4. **Partidas cortas y repetibles.** TG1-12 fijó un objetivo UX de aproximadamente 8–10 minutos para la carrera completa; no es timeout ni señal de score.
 5. **Mobile-first y browser-first.** Debe funcionar sin instalación en teléfono, tablet y desktop.
 6. **Motor determinista y desacoplado de UI.** La lógica del juego debe poder reproducirse por `seed` y ejecutarse en cliente, servidor y tests.
 7. **Contenido como datos.** Nuevos desafíos no deben requerir nuevos componentes salvo que introduzcan una interacción nueva.
@@ -10504,6 +10989,7 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 ### 04-quality
 - `content-validation.md`: pipeline de schema, matemática, generación, UI y playtest.
 - `competition-fairness-audit.md`: preguntas de equidad que un ranking con premios debe poder contestar.
+- `post-teacher-gate-1-score-audit.md`: barrida reproducible de `fair-score-dev-2` sobre 23.000 planes y comparación histórica.
 - `variant-validation-and-audit.md`: invariantes de variante y auditoría estadística del catálogo.
 - `testing-strategy.md`: unit, property-based, integration, E2E y pruebas de contenido.
 - `non-functional-requirements.md`: performance, resiliencia, accesibilidad y compatibilidad.
@@ -10520,7 +11006,7 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 - `implementation-sequence.md`: roadmap canónico — etapas, estado, alcance, dependencias, gates y criterios de aceptación.
 - `current-stage.md`: vista corta de la etapa activa, su alcance y qué no implementar todavía.
 - `teacher-gates.md`: qué decide el Departamento de Matemática en cada gate.
-- `teacher-gate-1/`: el pack completo para dar el Teacher Gate 1 — guion de quince minutos, casos reproducibles, planilla de decisiones y acta.
+- `teacher-gate-1/`: pack histórico, evidencia docente original, acta y trazabilidad de integración del Teacher Gate 1 ejecutado.
 - `definition-of-done.md`: DoD global y por tipo de cambio.
 - `repository-conventions.md`: estructura implementada, fronteras, comandos y reglas de dependencia.
 - `vertical-slice-grade-7.md`: alcance, contenido y criterios del primer slice jugable (7.º grado).
@@ -10611,6 +11097,6 @@ Una decisión integrada declara su nivel, y **el nivel es parte de la decisión*
 
 Un documento no describe en presente una capacidad que no existe. Lo implementado vive en los documentos de arquitectura actuales; lo que falta, en [arquitectura objetivo del motor](03-architecture/target-engine-architecture.md), con el estado real de cada capacidad.
 
-Los documentos describen la **baseline de producto** al cierre de STAGE-06, el 29 de agosto de 2026. Lo implementado incluye el shell Next.js, toolchain reproducible, fronteras de módulos, Supabase opcional, Docker, gates de calidad, el motor determinista con replay y snapshots versionados, el modelo de carrera `Promedio · Equipo · Aura · Estilo`, el slice jugable de 7.º, composición por presupuesto y `FairScore` candidato con recomputación server-only. Todavía **no** incluye los años 1.º a 5.º, Auth, schema de producto, endpoints/sesión/persistencia de competencia, ranking ni un despliegue público.
+Los documentos describen la **baseline post-Teacher-Gate-1** al 2 de septiembre de 2026. Lo implementado incluye el shell Next.js, toolchain reproducible, fronteras de módulos, Supabase opcional, Docker, gates de calidad, el motor determinista con replay y snapshots versionados, el modelo de carrera `Promedio · Equipo · Aura · Estilo`, el slice jugable de 7.º, composición por presupuesto y `FairScore` candidato con recomputación server-only. `fair-score-dev-2` es teacher-informed pero no oficial. Todavía **no** incluye egreso/recuperación, los años 1.º a 5.º, Auth, schema de producto, endpoints/sesión/persistencia de competencia, ranking ni despliegue público.
 
 Las versiones exactas están fijadas en `package.json` y `pnpm-lock.yaml` bajo [ADR-010](03-architecture/adr/ADR-010-reproducible-node-pnpm-container-toolchain.md). Next.js `16.3.1` se conserva sólo como base local transitoria: `pnpm release:check` bloquea cualquier release público hasta actualizar a `>=16.3.2`, regenerar el lockfile y verificar el cambio completo.

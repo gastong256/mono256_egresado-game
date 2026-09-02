@@ -1,6 +1,6 @@
 # Auditoría de equidad competitiva
 
-**Estado: auditoría reducida ejecutable / auditoría completa RECOMENDADA · TEACHER GATE.** STAGE-05 y STAGE-06 implementaron evidencia de ingeniería sobre composición y score; eso no convierte en ejecutable ni en aprobada la auditoría completa de una competencia todavía inexistente.
+**Estado: auditoría reducida post-TG1 ejecutada / auditoría completa pendiente.** STAGE-05/STAGE-06 implementaron el mecanismo y la [auditoría post-Gate](post-teacher-gate-1-score-audit.md) verificó `fair-score-dev-2`. Esto no reemplaza evidencia con estudiantes ni una auditoría de competencia real.
 
 Un ranking con premios es una afirmación sobre personas. Esta auditoría existe para poder defender esa afirmación con evidencia, no con intención.
 
@@ -10,7 +10,7 @@ Lo que se audita está definido en [score competitivo y ranking](../01-game-desi
 
 - `pnpm game:compose` compone, valida, serializa y recompone planes, y mide distribución y carga estructural.
 - `pnpm game:score` ejecuta la política candidata sobre 23.000 planes y comprueba techo perfecto, normalización de oportunidades, dominancia matemática y recomputación determinista.
-- `pnpm game:score -- --compare` repite las mismas runs con 80/15/5, 85/10/5, 90/10/0 y sin recompensa de dificultad. Son políticas de comparación para el Teacher Gate, no alternativas oficiales.
+- `pnpm game:score -- --compare` compara la histórica `fair-score-dev-1` 80/15/5 con la candidata post-TG1 `fair-score-dev-2` 85/10/5, además de controles 90/10/0 y sin recompensa.
 
 Esta evidencia prueba invariantes del mecanismo y exhibe el efecto de candidatos concretos. No prueba que la calibración sea pedagógicamente correcta, que las bandas sean psicométricamente equivalentes ni que un ranking real sea justo.
 

@@ -3,6 +3,14 @@
 - Estado: Aceptado
 - Fecha: 2026-08-29
 
+## Reconciliación post-Teacher-Gate-1 — 2026-09-02
+
+TG1 no cambia esta arquitectura; usa el camino de calibración versionada que el ADR diseñó. Se conserva inmutable `fair-score-dev-1@1.0.0-candidate` (80/15/5) y se publica `fair-score-dev-2@2.0.0-post-tg1-candidate` (85/10/5) como candidata actual, `official: false`. Ambas resuelven por identidad o versión exacta y una referencia desconocida falla: nunca existe fallback `latest`.
+
+TG1-07 eleva la normalización de pesos activos de decisión arquitectónica implementada a filosofía de producto aceptada. TG1-05/TG1-06 aceptan evaluación multi-eje, sin relajar la auditoría de doble conteo: cada componente debe leer evidencia semánticamente independiente. Por eso no se copia el F1 de May-25 a Aura ni se cambian perfiles de contenido actuales.
+
+No se requiere ADR nuevo: la coexistencia de calibraciones ya estaba decidida aquí. Tampoco cambian engine, ruleset, contenido, catálogo, snapshot, action log, dificultad ni composición; `scoreVersion` es la frontera de compatibilidad específica.
+
 ## Contexto
 
 [ADR-022](ADR-022-difficulty-model-and-run-composer.md) dejó runs **comparables antes de puntuar**: el contenido de una partida se compone una sola vez dentro de un presupuesto de dificultad, y 20.000 seeds de 7.º producen 1.404 planes distintos con carga total idéntica. Lo que no existía es qué vale lo que el jugador hizo con ese contenido.
@@ -115,9 +123,9 @@ Es opcional: una partida de práctica no está compitiendo, y ausente es una res
 
 ## Lo que esto no decide
 
-Los coeficientes. 80/15/5, los cuatro escalones de calidad y las recompensas por dificultad son **candidatos** y van al Teacher Gate 1 ([preguntas 24, 38 y 39](../../07-reference/open-questions.md)). La política se llama `fair-score-dev-1`, lleva `official: false`, y `createRuleset` se niega a construir un ruleset oficial con una calibración de desarrollo.
+La política oficial. TG1 aceptó 85/10/5, los cuatro escalones y el principio de recompensa pequeña como dirección, pero `fair-score-dev-2` sigue `official: false`; los factores exactos de recompensa y el congelamiento final esperan datos/Teacher Gate 2 ([preguntas 24 y 44](../../07-reference/open-questions.md)). `createRuleset` se niega a construir un ruleset oficial con una calibración de desarrollo.
 
-Que 23.000 runs se comporten como se espera dice que el mecanismo es justo en las formas en que se le pidió serlo. **No dice que 80/15/5 sea la respuesta correcta para una feria de matemática**, y ninguna barrida puede decirlo.
+Que 23.000 runs se comporten como se espera dice que el mecanismo preserva sus invariantes. **No dice que 85/10/5 esté psicométricamente probado**, y ninguna barrida sintética puede decirlo.
 
 ## No objetivos
 

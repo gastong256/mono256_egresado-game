@@ -7,7 +7,7 @@ Este directorio define la referencia funcional, lúdica, pedagógica y técnica 
 1. **La matemática es gameplay.** Los números y relaciones deben afectar decisiones; no se agregan ejercicios desconectados como “peaje educativo”.
 2. **La secundaria es la narrativa.** El jugador recorre desde 7.º grado hasta 5.º año y construye una historia personal de egreso.
 3. **Consecuencias antes que “correcto/incorrecto”.** El feedback explica qué ocurrió y por qué.
-4. **Partidas cortas y repetibles.** El objetivo de diseño es una run de aproximadamente 4–7 minutos.
+4. **Partidas cortas y repetibles.** TG1-12 fijó un objetivo UX de aproximadamente 8–10 minutos para la carrera completa; no es timeout ni señal de score.
 5. **Mobile-first y browser-first.** Debe funcionar sin instalación en teléfono, tablet y desktop.
 6. **Motor determinista y desacoplado de UI.** La lógica del juego debe poder reproducirse por `seed` y ejecutarse en cliente, servidor y tests.
 7. **Contenido como datos.** Nuevos desafíos no deben requerir nuevos componentes salvo que introduzcan una interacción nueva.
@@ -81,6 +81,7 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 ### 04-quality
 - `content-validation.md`: pipeline de schema, matemática, generación, UI y playtest.
 - `competition-fairness-audit.md`: preguntas de equidad que un ranking con premios debe poder contestar.
+- `post-teacher-gate-1-score-audit.md`: barrida reproducible de `fair-score-dev-2` sobre 23.000 planes y comparación histórica.
 - `variant-validation-and-audit.md`: invariantes de variante y auditoría estadística del catálogo.
 - `testing-strategy.md`: unit, property-based, integration, E2E y pruebas de contenido.
 - `non-functional-requirements.md`: performance, resiliencia, accesibilidad y compatibilidad.
@@ -97,7 +98,7 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 - `implementation-sequence.md`: roadmap canónico — etapas, estado, alcance, dependencias, gates y criterios de aceptación.
 - `current-stage.md`: vista corta de la etapa activa, su alcance y qué no implementar todavía.
 - `teacher-gates.md`: qué decide el Departamento de Matemática en cada gate.
-- `teacher-gate-1/`: el pack completo para dar el Teacher Gate 1 — guion de quince minutos, casos reproducibles, planilla de decisiones y acta.
+- `teacher-gate-1/`: pack histórico, evidencia docente original, acta y trazabilidad de integración del Teacher Gate 1 ejecutado.
 - `definition-of-done.md`: DoD global y por tipo de cambio.
 - `repository-conventions.md`: estructura implementada, fronteras, comandos y reglas de dependencia.
 - `vertical-slice-grade-7.md`: alcance, contenido y criterios del primer slice jugable (7.º grado).
@@ -188,6 +189,6 @@ Una decisión integrada declara su nivel, y **el nivel es parte de la decisión*
 
 Un documento no describe en presente una capacidad que no existe. Lo implementado vive en los documentos de arquitectura actuales; lo que falta, en [arquitectura objetivo del motor](03-architecture/target-engine-architecture.md), con el estado real de cada capacidad.
 
-Los documentos describen la **baseline de producto** al cierre de STAGE-06, el 29 de agosto de 2026. Lo implementado incluye el shell Next.js, toolchain reproducible, fronteras de módulos, Supabase opcional, Docker, gates de calidad, el motor determinista con replay y snapshots versionados, el modelo de carrera `Promedio · Equipo · Aura · Estilo`, el slice jugable de 7.º, composición por presupuesto y `FairScore` candidato con recomputación server-only. Todavía **no** incluye los años 1.º a 5.º, Auth, schema de producto, endpoints/sesión/persistencia de competencia, ranking ni un despliegue público.
+Los documentos describen la **baseline post-Teacher-Gate-1** al 2 de septiembre de 2026. Lo implementado incluye el shell Next.js, toolchain reproducible, fronteras de módulos, Supabase opcional, Docker, gates de calidad, el motor determinista con replay y snapshots versionados, el modelo de carrera `Promedio · Equipo · Aura · Estilo`, el slice jugable de 7.º, composición por presupuesto y `FairScore` candidato con recomputación server-only. `fair-score-dev-2` es teacher-informed pero no oficial. Todavía **no** incluye egreso/recuperación, los años 1.º a 5.º, Auth, schema de producto, endpoints/sesión/persistencia de competencia, ranking ni despliegue público.
 
 Las versiones exactas están fijadas en `package.json` y `pnpm-lock.yaml` bajo [ADR-010](03-architecture/adr/ADR-010-reproducible-node-pnpm-container-toolchain.md). Next.js `16.3.1` se conserva sólo como base local transitoria: `pnpm release:check` bloquea cualquier release público hasta actualizar a `>=16.3.2`, regenerar el lockfile y verificar el cambio completo.

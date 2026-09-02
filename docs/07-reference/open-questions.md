@@ -4,7 +4,7 @@ Estas decisiones requieren evidencia de prototipo, playtest, implementación u o
 
 ## Producto
 
-1. ¿Run objetivo de 4, 5 o 7 minutos?
+1. ~~¿Run objetivo de 4, 5 o 7 minutos?~~ **Cerrada por TG1-12:** la carrera completa apunta a aproximadamente **8–10 minutos**. Queda abierta la calibración empírica de pacing, no el objetivo.
 2. Dentro del presupuesto ya fijado de uno o dos beats normales, ¿qué combinación con storylets y recuperaciones condicionales mantiene el ritmo sin sentirse repetitiva? Esta pregunta de pacing no reabre el presupuesto ni define la profundidad del catálogo.
 3. ¿El nickname se pide antes o después de la primera run en modo libre?
 4. ¿Qué tan visible debe ser el score durante la carrera?
@@ -74,15 +74,15 @@ Estas decisiones requieren evidencia de prototipo, playtest, implementación u o
 
 ## Teacher Gate — decisiones del Departamento de Matemática
 
-Incorporadas desde el [Project Blueprint v0.2](blueprint-v0.2-integration.md). **Ninguna se cierra desde el código.** Su gate es una sesión con los docentes; la forma de esa sesión está en [gates docentes](../06-delivery/teacher-gates.md), y lo que se cierre se anota en el [registro de decisiones](decision-register.md).
+Incorporadas desde el [Project Blueprint v0.2](blueprint-v0.2-integration.md). Se cierran sólo con la autoridad indicada, nunca por conveniencia del código. Teacher Gate 1 ya resolvió o acotó varias; la trazabilidad vive en el [registro de decisiones](decision-register.md).
 
-38. ¿Cuáles son los coeficientes y topes exactos del score competitivo, y deben Equipo y Aura participar? La ponderación candidata es `0,80` matemática / `0,15` equipo / `0,05` Aura, y **es un candidato, no una decisión**. Está implementada como `fair-score-dev-1` con `official: false`, y `pnpm game:score -- --compare` corre las mismas runs bajo 85/10/5 y 90/10/0 para que el Gate discuta con números en vez de con intuiciones. La evidencia actual también deja abiertas dos preguntas de producto: sólo `g7.group-tasks` ofrece Equipo competitivo independiente, ninguna plantilla de producción ofrece Aura competitiva independiente, y distintos `RunPlan` pueden exponer conjuntos distintos de oportunidades. El mecanismo vigente renormaliza los pesos activos; el Gate debe decidir si eso es aceptable, si la composición futura debe exigir cobertura o si corresponde otro modelo. *Gate: Teacher Gate 1; se cruza con la pregunta 24, que cubre el score por evento.*
-39. ¿Qué valor de calidad matemática corresponde a cada resultado? La calibración candidata es `1,00 / 0,75 / 0,40 / 0,10` sobre `optimal / efficient / functional / invalid`. Implementada como dato de la política, y las plantillas cuyo evaluador midió algo más fino —el acto y su F1— la sobrescriben con su propia medida en vez de redondearse a cuatro cajas. *Gate: Teacher Gate 1.*
-40. ¿Los intentos en la feria son ilimitados o limitados a N? La recomendación es ilimitados con personal best; la decisión es del evento. *Gate: Teacher Gate 1; configuración del evento antes del congelamiento.* Se cruza con la pregunta 11.
+38. ~~¿Deben Equipo y Aura participar, qué ponderación usar y cómo tratar oportunidades ausentes?~~ **Cerrada en dirección por TG1-04/TG1-05/TG1-06/TG1-07:** las tres participan, el candidato post-Gate es `fair-score-dev-2` 85/10/5 y se normalizan sólo los pesos activos. Sigue **OPEN** su oficialización/freeze en la pregunta 24 y la cobertura independiente de contenido en STAGE-08.
+39. ~~¿Qué valor de calidad matemática corresponde a cada resultado?~~ **Cerrada por TG1-09:** `1,00 / 0,75 / 0,40 / 0,10` sobre `optimal / efficient / functional / invalid`; una métrica continua honesta, como F1, no se aplana a cuatro cajas.
+40. ~~¿Los intentos en la feria son ilimitados o limitados a N?~~ **Cerrada en producto por TG1-10:** ilimitados y se conserva el mejor resultado verificado. Emisión autoritativa, identidad y persistencia siguen en STAGE-09; el jugador no elige seed.
 41. ¿Qué pasa ante un empate exacto en el ranking: puesto compartido, premio compartido o desempate anunciado? Un identificador interno **no** puede decidir un premio en silencio. *Gate: aprobación del organizador antes de repartir premios.* Se cruza con la pregunta 13.
-42. ¿El acto del 25 de Mayo entra a producción como desafío de 7.º o queda como ejemplar de diseño? Está implementado y jugable; lo que falta es la aprobación de contenido. *Gate: Teacher Gate 1.*
-43. ¿Cuál es la duración objetivo real de una run completa, y de la demo de 7.º? *Gate: Teacher Gate 1.* Se cruza con la pregunta 1.
-44. ¿Cómo se calibran las bandas `CORE / STANDARD / STRETCH` y sus costos de scheduling frente a las recompensas de score? *Gate: Teacher Gate 1; auditoría de equidad antes del congelamiento.* STAGE-05 construyó el mecanismo de bandas, costos y presupuestos; STAGE-06 implementó por separado la recompensa competitiva candidata `1,00 / 1,08 / 1,15`. Que el presupuesto ya equipare estructuralmente una run no demuestra que esa recompensa adicional sea necesaria. Hay una [clasificación candidata de las siete plantillas de 7.º](../01-game-design/difficulty-and-playability.md) con cuatro divergencias respecto del nivel autorado que son preguntas concretas para el Gate. Las auditorías de composición y score no encontraron violaciones estructurales, pero no aportan evidencia psicométrica ni docente. Mover cualquiera de esos números es un cambio de datos versionados. Ver [ADR-022](../03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) y [ADR-023](../03-architecture/adr/ADR-023-competitive-score-policy.md).
+42. ~~¿El acto del 25 de Mayo entra a producción?~~ **Cerrada por TG1-13:** `KEEP` pedagógico; su narrativa debe enriquecerse y diversificarse en STAGE-08. No se agregó Aura competitiva porque hoy no existe una evidencia independiente del F1 matemático.
+43. ~~¿Cuál es la duración objetivo real?~~ **Cerrada por TG1-12:** 8–10 minutos para la carrera completa, como target UX sin timer ni score de velocidad.
+44. **Narrowed por TG1-03/TG1-08:** las bandas `CORE / STANDARD / STRETCH` y el principio de una recompensa competitiva pequeña están aceptados. Sigue **OPEN** la calibración exacta de factores; 1,00/1,08/1,15 permanece candidata y separada de los costos de scheduling 1,00/1,50/2,10.
 45. ¿Qué desafíos deben ofrecer fórmula, calculadora o material de referencia, y esa disponibilidad cambia en modo competitivo? *Gate: Teacher Gate 1.* Se cruza con la pregunta 7.
 
 ## Contenido y producto, sin gate docente inmediato
@@ -109,6 +109,7 @@ Que la familia `bus` haya pasado a tener dos plantillas en STAGE-04 ([ADR-021](.
 49. ¿Se produce el pack raster de ocho imágenes o el producto sale confirmando que la UI sola alcanza? Todas las pantallas corren hoy con cero imágenes. *Gate: alcance de la v0.3 del sistema de diseño.*
 50. ¿Cuánto tiempo se conservan action logs, ranking público y datos del evento después de la feria, y qué se archiva o anonimiza? *Gate: persistir datos reales de participantes.* Se cruza con la pregunta 31.
 51. ¿Qué señal de tiempo activo puede verificar el servidor si el tiempo participa del desempate? *Gate: usar tiempo en el ranking oficial.* Es la pregunta 27 vista desde el ranking competitivo.
+52. ¿Qué condiciones, efectos y presentación tendrá el sistema de Hitos de carrera? TG1-11 propuso reconocimientos como abanderado o primer escolta. Deben ser deterministas desde estado/seed y preferentemente narrativos; **no** otorgan bonus competitivo aleatorio ni resuelven por sí solos un empate. *Gate: diseño de carrera/narrativa en STAGE-07/08; implicaciones de ranking en STAGE-09/TG2.*
 
 ## Diferidas a propósito
 

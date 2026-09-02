@@ -6,14 +6,13 @@
  * `competitive-scoring-and-ranking.md` describes and the engine did not have:
  * what a whole run is worth when two people's runs are compared.
  *
- * ## Everything here is a candidate
+ * ## Versioned, teacher-informed candidates
  *
- * 80/15/5, the four quality steps, the difficulty rewards — every number is
- * `RECOMENDADA` and needs the Mathematics Department before a competition freeze
- * ([open question 24](../../../docs/07-reference/open-questions.md)). They live
- * in a versioned object with `official: false` so that recalibrating is a data
- * change and so that nothing can quietly become the official ruleset by being
- * the constant that happened to be deployed.
+ * Teacher Gate 1 accepted 85/10/5, the four quality steps, opportunity
+ * normalisation, and the principle of a small difficulty reward. The exact
+ * reward factors and competition freeze remain candidates. Every calibration
+ * therefore lives in its own object with `official: false`: recalibrating is a
+ * versioned data change, never an in-place rewrite of historical results.
  *
  * ## Why the weights cannot be free
  *
@@ -37,6 +36,7 @@ import { DIFFICULTY_BANDS } from '../difficulty/cognitive'
 import type { SolutionQuality } from '../challenges/taxonomy'
 import { SOLUTION_QUALITIES } from '../challenges/taxonomy'
 import { PERFORMANCE_SCALE } from '../challenges/scoring-profile'
+import { err, ok, type Result } from '../core/result'
 import { fromInteger, type Rational } from '../math/rational'
 
 /** The scale of a normalised performance and of the final score: 0..10000. */
@@ -86,16 +86,13 @@ export interface CompetitiveScorePolicy {
 /** How far the difficulty reward may go before it starts deciding rankings. */
 export const MAX_DIFFICULTY_REWARD = 15_000
 
-/**
- * The candidate policy from `competitive-scoring-and-ranking.md`.
- *
- * 80/15/5, the four documented quality steps, and the 1,00 / 1,08 / 1,15
- * difficulty rewards of the reference policy example. Not official, and the
- * `id` says which calibration produced any score computed under it.
- */
-export const candidateFairScorePolicy: CompetitiveScorePolicy = {
+export const FAIR_SCORE_DEV_1_VERSION = '1.0.0-candidate'
+export const FAIR_SCORE_DEV_2_VERSION = '2.0.0-post-tg1-candidate'
+
+/** Historical pre-Teacher-Gate-1 calibration. Never edit in place. */
+export const fairScoreDev1Policy: CompetitiveScorePolicy = {
   id: 'fair-score-dev-1',
-  version: '1.0.0-candidate',
+  version: FAIR_SCORE_DEV_1_VERSION,
   official: false,
   weights: { math: 8_000, team: 1_500, aura: 500 },
   discreteQuality: {
@@ -106,6 +103,58 @@ export const candidateFairScorePolicy: CompetitiveScorePolicy = {
   },
   difficultyReward: { core: 10_000, standard: 10_800, stretch: 11_500 },
   componentCaps: { math: 10_000, team: 10_000, aura: 10_000 },
+}
+
+/** Teacher-informed post-TG1 development candidate. It is not competition-final. */
+export const fairScoreDev2Policy: CompetitiveScorePolicy = {
+  id: 'fair-score-dev-2',
+  version: FAIR_SCORE_DEV_2_VERSION,
+  official: false,
+  weights: { math: 8_500, team: 1_000, aura: 500 },
+  discreteQuality: {
+    optimal: 10_000,
+    efficient: 7_500,
+    functional: 4_000,
+    invalid: 1_000,
+  },
+  difficultyReward: { core: 10_000, standard: 10_800, stretch: 11_500 },
+  componentCaps: { math: 10_000, team: 10_000, aura: 10_000 },
+}
+
+/** Version written by new competitive run descriptors. */
+export const SCORE_POLICY_VERSION = FAIR_SCORE_DEV_2_VERSION
+
+/** Backwards-compatible name for the current development candidate. */
+export const candidateFairScorePolicy = fairScoreDev2Policy
+
+export const competitiveScorePolicies: readonly CompetitiveScorePolicy[] = [
+  fairScoreDev1Policy,
+  fairScoreDev2Policy,
+]
+
+export interface ScorePolicyResolutionFailure {
+  readonly code: 'unknown-score-policy'
+  readonly requested: string
+  readonly knownIds: readonly string[]
+  readonly knownVersions: readonly string[]
+}
+
+/** Resolves only an exact immutable id or version. There is no `latest` fallback. */
+export function resolveCompetitiveScorePolicy(
+  reference: string,
+): Result<CompetitiveScorePolicy, ScorePolicyResolutionFailure> {
+  const policy = competitiveScorePolicies.find(
+    (entry) => entry.id === reference || entry.version === reference,
+  )
+  if (policy !== undefined) {
+    return ok(policy)
+  }
+  return err({
+    code: 'unknown-score-policy',
+    requested: reference,
+    knownIds: competitiveScorePolicies.map((entry) => entry.id),
+    knownVersions: competitiveScorePolicies.map((entry) => entry.version),
+  })
 }
 
 /**

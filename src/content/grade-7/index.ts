@@ -22,6 +22,7 @@ import {
   toRunId,
   toRunSeed,
   candidateFairScorePolicy,
+  resolveCompetitiveScorePolicy,
   composeRun,
   type ChallengeDefinition,
   type CompositionFailure,
@@ -184,17 +185,27 @@ export function createGrade7ComposedDependencies(): EngineDependencies {
  * Está acá para que una run pueda declarar bajo qué calibración se jugó, que es
  * lo que después permite verificar el score que reclame.
  */
-export function createGrade7CompetitiveDependencies(): EngineDependencies {
+export function createGrade7CompetitiveDependencies(
+  scoreReference: string = candidateFairScorePolicy.version,
+): EngineDependencies {
+  const policy = resolveCompetitiveScorePolicy(scoreReference)
+  if (!policy.ok) {
+    throw new EngineInvariantError(
+      `la política de score competitivo no existe: ${scoreReference}`,
+    )
+  }
   return {
     ...createGrade7ComposedDependencies(),
-    competitiveScore: candidateFairScorePolicy,
+    competitiveScore: policy.value,
   }
 }
 
 /** El descriptor de una partida competitiva de 7.º, con su `scoreVersion`. */
 export function createGrade7CompetitiveRunDescriptor(
   seed: string,
-  overrides: Partial<Pick<RunDescriptor, 'runId' | 'mode' | 'difficulty'>> = {},
+  overrides: Partial<
+    Pick<RunDescriptor, 'runId' | 'mode' | 'difficulty' | 'scoreVersion'>
+  > = {},
 ): Result<RunDescriptor, CompositionFailure> {
   const composed = createGrade7ComposedRunDescriptor(seed, overrides)
   if (!composed.ok) {
@@ -202,7 +213,7 @@ export function createGrade7CompetitiveRunDescriptor(
   }
   return ok({
     ...composed.value,
-    scoreVersion: candidateFairScorePolicy.version,
+    scoreVersion: overrides.scoreVersion ?? candidateFairScorePolicy.version,
   })
 }
 

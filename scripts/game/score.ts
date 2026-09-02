@@ -11,20 +11,24 @@
  *     pnpm game:score -- --runs=20000
  *     pnpm game:score -- --compare         candidate weights against alternatives
  *
- * The comparison exists for Teacher Gate 1: the same authoritative runs, scored
- * under different weightings, so a calibration can be argued about with numbers.
- * It is not a ranking and it does not pick a winner.
+ * The comparison preserves Teacher Gate 1 traceability: the same authoritative
+ * evidence under historical dev-1 and post-Gate dev-2, plus useful controls. It
+ * is not a ranking and it does not pick a winner.
  */
 
 import {
   auditScorePolicy,
+  aggregate,
   composeRun,
   hasNoErrors,
+  isOk,
   toRunSeed,
   candidateFairScorePolicy,
+  fairScoreDev1Policy,
   AUDIT_PROFILES,
   SCORE_COMPONENTS,
   type AuditedPlan,
+  type BeatEvidence,
   type CompetitiveScorePolicy,
   type ScoreAuditReport,
   type StageId,
@@ -141,16 +145,11 @@ collect(
 /**
  * Alternative weightings, for comparison only.
  *
- * None of these is proposed. They exist so a Teacher Gate can see what moving
- * the dial does to the same runs instead of arguing about it in the abstract.
+ * dev-1 is historical; the others are controls. They show what moving the dial
+ * does to the same runs without claiming an empirical winner.
  */
 const ALTERNATIVES: readonly CompetitiveScorePolicy[] = [
-  {
-    ...candidateFairScorePolicy,
-    id: 'fair-score-alt-math-85',
-    version: '1.0.0-comparison',
-    weights: { math: 8_500, team: 1_000, aura: 500 },
-  },
+  fairScoreDev1Policy,
   {
     ...candidateFairScorePolicy,
     id: 'fair-score-alt-math-90',
@@ -164,6 +163,64 @@ const ALTERNATIVES: readonly CompetitiveScorePolicy[] = [
     difficultyReward: { core: 10_000, standard: 10_000, stretch: 10_000 },
   },
 ]
+
+const COMPARISON_EVIDENCE: readonly {
+  readonly label: string
+  readonly math: number
+  readonly team?: number
+  readonly aura?: number
+}[] = [
+  { label: 'math-only', math: 7_500 },
+  { label: 'math-and-team', math: 7_500, team: 5_000 },
+  { label: 'math-team-aura', math: 7_500, team: 5_000, aura: 2_500 },
+  { label: 'strong-math-low-secondary', math: 9_000, team: 1_000, aura: 1_000 },
+  {
+    label: 'weak-math-high-secondary',
+    math: 4_000,
+    team: 10_000,
+    aura: 10_000,
+  },
+]
+
+function comparisonEvidence(
+  entry: (typeof COMPARISON_EVIDENCE)[number],
+): BeatEvidence {
+  const part = (value: number | undefined) =>
+    value === undefined
+      ? { achieved: 0, available: 0 }
+      : { achieved: value * 10_000, available: 10_000 * 10_000 }
+  return {
+    templateId: 'audit.policy-comparison' as BeatEvidence['templateId'],
+    band: 'core',
+    difficultyReward: 10_000,
+    math: part(entry.math),
+    team: part(entry.team),
+    aura: part(entry.aura),
+  }
+}
+
+function comparisonLines(): string[] {
+  const lines = [
+    'Representative dev-1 vs dev-2 comparison',
+    '  case                           policy             score   math   team   aura',
+  ]
+  for (const entry of COMPARISON_EVIDENCE) {
+    for (const policy of [fairScoreDev1Policy, candidateFairScorePolicy]) {
+      const result = aggregate([comparisonEvidence(entry)], policy)
+      if (!isOk(result)) {
+        lines.push(`  ${entry.label} ${policy.id} ERROR ${result.error.code}`)
+        continue
+      }
+      const contribution = (component: 'math' | 'team' | 'aura') =>
+        result.value.components.find((part) => part.component === component)
+          ?.contribution ?? 0
+      lines.push(
+        `  ${entry.label.padEnd(30)} ${policy.id.padEnd(18)} ${String(result.value.fairScore).padStart(5)} ${String(contribution('math')).padStart(6)} ${String(contribution('team')).padStart(6)} ${String(contribution('aura')).padStart(6)}`,
+      )
+    }
+  }
+  return lines
+}
 
 function bar(value: {
   min: number
@@ -252,6 +309,9 @@ if (argv.includes('--compare')) {
 const out: string[] = ['Egresado competitive score audit']
 for (const audit of audits) {
   out.push(...report(audit), '')
+}
+if (argv.includes('--compare')) {
+  out.push(...comparisonLines(), '')
 }
 
 process.stdout.write(`${out.join('\n')}\n`)

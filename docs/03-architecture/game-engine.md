@@ -194,7 +194,7 @@ Un ruleset **oficial** exige que las tres políticas estén marcadas `production
 
 La capa competitiva es independiente: cada plantilla declara qué hecho alimenta `MathPerformance`, `TeamPerformance` y `AuraPerformance`; Promedio y Estilo no son componentes. `scoreRun` normaliza la evidencia del `RunPlan`, retira componentes sin oportunidad, redistribuye proporcionalmente sus pesos y calcula un `FairScore` de 0 a 10.000 con racionales exactos, un solo redondeo y un desglose que cierra. El máximo perfecto es el mismo para todo plan válido.
 
-La política vigente tiene id `fair-score-dev-1`, versión `1.0.0-candidate` y `official: false`. La arquitectura está implementada; 80/15/5, el mapeo de calidad y las recompensas de dificultad siguen sujetos a Teacher Gate. Ver [ADR-023](adr/ADR-023-competitive-score-policy.md).
+El registro resuelve exactamente `fair-score-dev-1@1.0.0-candidate` (histórica, 80/15/5) y `fair-score-dev-2@2.0.0-post-tg1-candidate` (actual post-TG1, 85/10/5); ambas tienen `official: false` y una referencia desconocida falla. TG1 aceptó el mapeo de calidad y el principio de recompensa pequeña; los factores exactos siguen candidatos. Ver [ADR-023](adr/ADR-023-competitive-score-policy.md).
 
 El tiempo **no** participa: la pregunta abierta 27 no definió qué señal temporal puede considerar autoritativa el servidor, y las reglas advierten que un score dominado por velocidad perjudica accesibilidad.
 

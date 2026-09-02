@@ -1,15 +1,19 @@
 # Pack del Teacher Gate 1
 
-Todo lo necesario para dar la reunión de revisión con el Departamento de Matemática. **Este pack prepara el gate; no lo da por aprobado.**
+Registro reproducible de la reunión de revisión con Matemática. El material de preparación se conserva como artefacto histórico: describe lo que se mostró, no la autoridad vigente posterior.
 
 - **Duración de la sesión central:** 15 minutos.
 - **Qué se decide:** nivel matemático, situaciones, niveles de dificultad y filosofía del puntaje de competencia.
 - **Qué NO se decide:** tipografías, colores, espaciados ni nada del sistema de diseño. Eso ya está cerrado.
-- **Estado del gate:** pendiente. Nadie lo revisó todavía.
+- **Ejecución:** 1 de septiembre de 2026.
+- **Estado del gate:** `PASSED_WITH_REQUIRED_ADJUSTMENTS`.
+- **Resultado canónico:** [acta](09-acta.md).
+- **Evidencia sin reinterpretar:** [planilla completada](11-evidencia-docente-2026-09-01.md).
+- **Integración de producto:** [mapeo post-Gate](12-integracion-post-gate.md).
 
 El contrato canónico de qué se pide decidir está en [gates docentes](../teacher-gates.md) y en el [roadmap](../implementation-sequence.md). Este pack lo operacionaliza.
 
-## Antes de convocar a nadie
+## Reproducir el contexto que se mostró
 
 ```bash
 pnpm dev                          # levanta la aplicación
@@ -50,9 +54,9 @@ Cuatro palabras, y sólo cuatro. Se usan igual en todo el pack y en la planilla:
 
 **«Se ve bien» no cierra un ítem.** Si no hay una de las cuatro palabras, el ítem queda abierto.
 
-## Cuándo se puede dar el gate por cerrado
+## Cierre del gate
 
-La lista está en [02-checklist-facilitador.md](02-checklist-facilitador.md), al final, y **empieza vacía a propósito**. Se completa después de la reunión real, con lo que los docentes hayan dicho, y recién entonces se actualizan el roadmap y el registro de decisiones.
+La evidencia se registró ítem por ítem y las respuestas `AJUSTAR` se transformaron en requisitos o trabajo diferido con dueño. El gate no afirma playtest con estudiantes ni convierte la política de score en oficial.
 
 ## Una advertencia sobre qué valida esta reunión
 

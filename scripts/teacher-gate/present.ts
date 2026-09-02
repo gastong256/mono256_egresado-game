@@ -17,7 +17,7 @@
 
 import {
   bandOf,
-  candidateFairScorePolicy,
+  fairScoreDev1Policy,
   createContentCatalog,
   formatCost,
   isOk,
@@ -79,7 +79,7 @@ function context(): void {
     `  composición      ${grade7CompositionPolicy.id}@${grade7CompositionPolicy.version} (oficial=${String(grade7CompositionPolicy.official)})`,
   )
   say(
-    `  puntaje          ${candidateFairScorePolicy.id}@${candidateFairScorePolicy.version} (oficial=${String(candidateFairScorePolicy.official)})`,
+    `  puntaje          ${fairScoreDev1Policy.id}@${fairScoreDev1Policy.version} (oficial=${String(fairScoreDev1Policy.official)})`,
   )
   say()
   say('  Ninguna calibración está aprobada. Eso es lo que esta reunión decide.')
@@ -290,15 +290,15 @@ function scoreExamples(): readonly {
 }
 
 const COMPARISON: readonly CompetitiveScorePolicy[] = [
-  candidateFairScorePolicy,
+  fairScoreDev1Policy,
   {
-    ...candidateFairScorePolicy,
+    ...fairScoreDev1Policy,
     id: 'comparación-85-10-5',
     version: '1.0.0-comparison',
     weights: { math: 8_500, team: 1_000, aura: 500 },
   },
   {
-    ...candidateFairScorePolicy,
+    ...fairScoreDev1Policy,
     id: 'comparación-90-10-0',
     version: '1.0.0-comparison',
     weights: { math: 9_000, team: 1_000, aura: 0 },
@@ -310,7 +310,7 @@ function scores(): void {
   say()
 
   for (const example of scoreExamples()) {
-    const result = scoreRun(example.events, catalog, candidateFairScorePolicy)
+    const result = scoreRun(example.events, catalog, fairScoreDev1Policy)
     if (!isOk(result)) {
       say(`  ${example.label}: no se pudo calcular (${result.error.code})`)
       continue

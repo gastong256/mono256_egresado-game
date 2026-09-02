@@ -1,6 +1,6 @@
 # Gates docentes
 
-**Estado: TEACHER GATE.** Este documento define qué se le pide decidir al Departamento de Matemática y cuándo. **No decide nada por ellos.** Cada ítem cerrado en una de estas sesiones se anota en el [registro de decisiones](../07-reference/decision-register.md); cada ítem que queda abierto, en [preguntas abiertas](../07-reference/open-questions.md).
+**Estado:** Teacher Gate 1 `PASSED_WITH_REQUIRED_ADJUSTMENTS`; Teacher Gate 2 pendiente. Este documento define qué se pide decidir y conserva el contrato histórico. El resultado TG1 está en su [acta](teacher-gate-1/09-acta.md).
 
 Ubicación en el ciclo: [ciclo de entrega real](../00-product/real-delivery-lifecycle.md).
 
@@ -28,6 +28,8 @@ Con invariantes robustos, los docentes no necesitan inspeccionar cada variante d
 ---
 
 ## Teacher Gate 1 — revisión de la demo de 7.º
+
+**Ejecutado:** 1 de septiembre de 2026. **Resultado:** `PASSED_WITH_REQUIRED_ADJUSTMENTS`. La [planilla original](teacher-gate-1/11-evidencia-docente-2026-09-01.md) se conserva separada de la [interpretación de producto](teacher-gate-1/12-integracion-post-gate.md).
 
 **El material para dar esta sesión está preparado en [el pack del Teacher Gate 1](teacher-gate-1/README.md):** guion de quince minutos, casos con sorteo fijo que reproducen, planilla de decisiones y acta. Este documento sigue siendo la autoridad sobre *qué* se pide decidir; el pack es *cómo* se conduce la reunión.
 
@@ -88,9 +90,9 @@ No se usa la reunión para elegir tipografías, espaciados ni tokens: eso ya est
 - ¿La filosofía de score es apropiada para repartir premios?
 - ¿Qué situaciones de 7.º se mantienen, se sacan o se agregan?
 
-### Salida
+### Salida obtenida
 
-Una lista acotada de correcciones y una decisión por cada ítem anterior. **No se acepta un «se ve bien» libre como cierre de un ítem.**
+Se registraron decisiones TG1-01…TG1-14. La base fue aceptada con ajustes obligatorios: universalidad matemática, 85/10/5, evidencia multi-eje independiente, target de 8–10 minutos y egreso garantizado. Desempate/Hitos, vocabulario de recuperación, factores exactos y freeze final siguen abiertos o asignados.
 
 Se registra en el [acta del gate](teacher-gate-1/09-acta.md), que además guarda qué versiones vieron los docentes: sin eso, dentro de seis meses nadie puede saber sobre qué material se pronunciaron.
 

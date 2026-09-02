@@ -49,19 +49,19 @@ flowchart TD
 - Onboarding: <30 s.
 - Evento normal: 15–35 s.
 - Minijuego especial: 20–60 s.
-- Run completa: 4–7 min.
+- Run completa: objetivo UX aproximado de 8–10 min (TG1-12), sin timeout.
 
 ## 7. Estructura sugerida por run
 
-- 7.º: 2 eventos.
-- 1.º: 2–3 eventos.
-- 2.º: 2–3 eventos.
-- 3.º: 2–3 eventos.
-- 4.º: 2–3 eventos.
-- 5.º: 2–3 eventos.
+- 7.º: 1–2 beats ordinarios.
+- 1.º: 1–2 beats ordinarios.
+- 2.º: 1–2 beats ordinarios.
+- 3.º: 1–2 beats ordinarios.
+- 4.º: 1–2 beats ordinarios.
+- 5.º: 1–2 beats ordinarios.
 - Final: 1 evento combinado.
 
-El número exacto puede variar por modo.
+Con seis etapas, el rango teórico es 6–12 beats ordinarios. STAGE-08 debe medirlo contra el target de 8–10 minutos; no se congela una cantidad final todavía.
 
 ## 8. Estadísticas de carrera
 

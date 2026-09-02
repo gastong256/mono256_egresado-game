@@ -58,7 +58,7 @@ Agrega desafíos y reglas.
 ## Contextos de uso
 
 ### Feria escolar
-- Sesiones de 4–7 min.
+- Carreras completas con objetivo UX de 8–10 min (TG1-12).
 - Teléfonos personales y algunas PCs/tablets.
 - Posible Wi-Fi saturado.
 - Ranking en pantalla grande.

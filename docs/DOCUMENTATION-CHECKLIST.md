@@ -23,8 +23,8 @@
 - [x] UX/interacciones.
 - [x] Familias de escenario, plantillas y variantes deterministas.
 - [x] Dificultad de piso bajo y techo alto, bandas y presupuesto.
-- [x] Dirección de score competitivo y ranking, marcada como recomendación.
-- [x] Egreso, recuperación y fail-forward.
+- [x] Score competitivo post-TG1 85/10/5 como candidato no oficial, con historia dev-1 preservada.
+- [x] Egreso garantizado aceptado; recuperación/fail-forward listo para STAGE-07.
 
 ## Funcional
 - [x] Requisitos funcionales.
@@ -111,7 +111,7 @@
 ## Gaps intencionales que requieren evidencia del proyecto
 
 No son omisiones documentales; son decisiones que no deben fijarse sin evidencia, y varias sólo las puede cerrar el Departamento de Matemática. El playtest con estudiantes **no está garantizado antes de la feria**; ver [ciclo de entrega real](00-product/real-delivery-lifecycle.md):
-- duración exacta de run;
+- calibración empírica del target de run 8–10 minutos;
 - fórmula final de scoring;
 - distribución final de eventos por año;
 - política final de dificultad/adaptación;
@@ -121,12 +121,9 @@ No son omisiones documentales; son decisiones que no deben fijarse sin evidencia
 - proveedor final de analytics/error tracking.
 
 Se agregan, desde la integración del Project Blueprint v0.2:
-- coeficientes y topes exactos del score competitivo;
-- calibración de calidad matemática por resultado;
-- política de intentos en la feria;
-- política de empate exacto y de premios;
-- inclusión en producción del acto del 25 de Mayo;
-- calibración de bandas de dificultad;
+- oficialización/freeze de los coeficientes y topes del score competitivo;
+- política de empate exacto/premios y diseño de Hitos;
+- factores exactos de recompensa por dificultad;
 - qué desafíos ofrecen fórmula o calculadora;
 - cantidad de familias y plantillas por año;
 - acento visual por año y producción del pack raster, ambos diferidos al sistema de diseño.

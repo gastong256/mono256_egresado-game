@@ -1,6 +1,6 @@
 {
-  "scorePolicyId": "fair-score-dev-1",
-  "scorePolicyVersion": "1.0.0-candidate",
+  "scorePolicyId": "fair-score-dev-2",
+  "scorePolicyVersion": "2.0.0-post-tg1-candidate",
   "official": false,
   "fairScore": 10000,
   "components": [
@@ -8,7 +8,7 @@
       "component": "math",
       "opportunities": 2,
       "performance": 10000,
-      "declaredWeight": 8000,
+      "declaredWeight": 8500,
       "effectiveWeight": 10000,
       "contribution": 10000
     },
@@ -16,7 +16,7 @@
       "component": "team",
       "opportunities": 0,
       "performance": 0,
-      "declaredWeight": 1500,
+      "declaredWeight": 1000,
       "effectiveWeight": 0,
       "contribution": 0
     },

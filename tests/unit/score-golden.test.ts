@@ -6,6 +6,7 @@ import {
   metrics,
   scoreRun,
   candidateFairScorePolicy,
+  fairScoreDev1Policy,
   type ScoredEvent,
 } from '@/game'
 import { grade7Challenges, grade7Families } from '@/content/grade-7'
@@ -54,7 +55,7 @@ interface Golden {
   readonly effectiveMathWeight: number
 }
 
-const GOLDENS: readonly Golden[] = [
+const DEV_1_GOLDENS: readonly Golden[] = [
   {
     // Óptimo en el colectivo y un reparto grupal correcto pero torpe: la
     // matemática casi entera, el equipo casi nada.
@@ -116,24 +117,54 @@ const GOLDENS: readonly Golden[] = [
   },
 ]
 
+const DEV_2_GOLDENS: readonly Golden[] = DEV_1_GOLDENS.map((golden) => {
+  if (golden.label === 'matemática fuerte, secundario flojo') {
+    return {
+      ...golden,
+      fairScore: 8_005,
+      mathContribution: 7_794,
+      teamContribution: 211,
+      effectiveMathWeight: 8_947,
+    }
+  }
+  if (golden.label === 'matemática floja, secundario perfecto') {
+    return {
+      ...golden,
+      fairScore: 3_247,
+      mathContribution: 2_195,
+      teamContribution: 1_052,
+      effectiveMathWeight: 8_947,
+    }
+  }
+  return golden
+})
+
+function expectGolden(golden: Golden, scorePolicy = policy): void {
+  const result = scoreRun(golden.events, catalog, scorePolicy)
+  if (!isOk(result)) throw new Error(`no puntuó: ${result.error.code}`)
+
+  const math = result.value.components.find((c) => c.component === 'math')
+  const team = result.value.components.find((c) => c.component === 'team')
+
+  expect(result.value.fairScore).toBe(golden.fairScore)
+  expect(math?.performance).toBe(golden.mathPerformance)
+  expect(math?.contribution).toBe(golden.mathContribution)
+  expect(math?.effectiveWeight).toBe(golden.effectiveMathWeight)
+  expect(team?.performance).toBe(golden.teamPerformance)
+  expect(team?.contribution).toBe(golden.teamContribution)
+}
+
 describe('golden del score competitivo', () => {
-  it.each(GOLDENS)('reproduce «$label»', (golden) => {
-    const result = scoreRun(golden.events, catalog, policy)
-    if (!isOk(result)) throw new Error(`no puntuó: ${result.error.code}`)
+  it.each(DEV_1_GOLDENS)('preserva dev-1 para «$label»', (golden) => {
+    expectGolden(golden, fairScoreDev1Policy)
+  })
 
-    const math = result.value.components.find((c) => c.component === 'math')
-    const team = result.value.components.find((c) => c.component === 'team')
-
-    expect(result.value.fairScore).toBe(golden.fairScore)
-    expect(math?.performance).toBe(golden.mathPerformance)
-    expect(math?.contribution).toBe(golden.mathContribution)
-    expect(math?.effectiveWeight).toBe(golden.effectiveMathWeight)
-    expect(team?.performance).toBe(golden.teamPerformance)
-    expect(team?.contribution).toBe(golden.teamContribution)
+  it.each(DEV_2_GOLDENS)('reproduce dev-2 para «$label»', (golden) => {
+    expectGolden(golden)
   })
 
   it('cada golden cierra: las partes suman el total', () => {
-    for (const golden of GOLDENS) {
+    for (const golden of DEV_2_GOLDENS) {
       const result = scoreRun(golden.events, catalog, policy)
       if (!isOk(result)) throw new Error('no puntuó')
       expect(
@@ -148,9 +179,9 @@ describe('golden del score competitivo', () => {
   it('fija la calibración que los produjo', () => {
     // Si alguien cambia un peso o un factor sin publicar una política nueva,
     // los golden de arriba se caen y este test dice por qué.
-    expect(policy.id).toBe('fair-score-dev-1')
-    expect(policy.version).toBe('1.0.0-candidate')
-    expect(policy.weights).toEqual({ math: 8_000, team: 1_500, aura: 500 })
+    expect(policy.id).toBe('fair-score-dev-2')
+    expect(policy.version).toBe('2.0.0-post-tg1-candidate')
+    expect(policy.weights).toEqual({ math: 8_500, team: 1_000, aura: 500 })
     expect(policy.difficultyReward).toEqual({
       core: 10_000,
       standard: 10_800,

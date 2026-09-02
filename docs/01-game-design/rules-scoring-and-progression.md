@@ -121,9 +121,9 @@ Lo anterior describe el **score por evento y por run** que ve el jugador. Es una
 | Score de run | ¿cuántos puntos hizo esta partida? | implementado, política de desarrollo |
 | Identidad de carrera | ¿qué recorrido escolar construí? | implementado |
 | Desempeño competitivo | ¿qué evidencia matemática, de equipo o de aura produjo cada beat? | implementado; Promedio y Estilo no son componentes |
-| `FairScore` competitivo | ¿qué tan fuerte fue esta run bajo una `ScorePolicy` concreta? | **implementado** como `fair-score-dev-1`, `official: false`; coeficientes abiertos |
+| `FairScore` competitivo | ¿qué tan fuerte fue esta run bajo una `ScorePolicy` concreta? | **implementado**; `fair-score-dev-1` histórico y `fair-score-dev-2` post-TG1 actual, ambos `official: false` |
 | Ranking | ¿cómo se ordenan runs verificadas y cuál es el personal best? | no implementado |
 
 La cadena vigente mantiene límites explícitos: resultado de desafío ≠ efecto de carrera ≠ desempeño competitivo ≠ `FairScore` ≠ ranking. `MathPerformance` domina; `TeamPerformance` y `AuraPerformance` son secundarias y acotadas; Promedio y Estilo no puntúan directamente. Cuando el `RunPlan` no ofrece una componente, ésta sale del cálculo y los pesos activos se renormalizan, de modo que una ejecución perfecta conserva el máximo de 10.000.
 
-La arquitectura y el mecanismo ya existen, incluida la aritmética entera y la recomputación en servidor. La calibración 80/15/5, los escalones de calidad y las recompensas de dificultad siguen siendo **candidatos sujetos a Teacher Gate**, y ranking, personal best y desempate siguen futuros. Ver [score competitivo y ranking](competitive-scoring-and-ranking.md) y [ADR-023](../03-architecture/adr/ADR-023-competitive-score-policy.md).
+La arquitectura y el mecanismo ya existen, incluida la aritmética entera y la recomputación en servidor. TG1 aceptó 85/10/5, los escalones de calidad, la normalización de oportunidades y el principio de recompensa pequeña; `fair-score-dev-2` los publica como candidato no oficial. Los factores exactos de dificultad, el ranking, la persistencia del personal best y el desempate siguen abiertos/futuros. Ver [score competitivo y ranking](competitive-scoring-and-ranking.md) y [ADR-023](../03-architecture/adr/ADR-023-competitive-score-policy.md).

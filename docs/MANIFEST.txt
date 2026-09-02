@@ -55,6 +55,7 @@
 04-quality/competition-fairness-audit.md
 04-quality/content-validation.md
 04-quality/non-functional-requirements.md
+04-quality/post-teacher-gate-1-score-audit.md
 04-quality/testing-strategy.md
 04-quality/threat-model.md
 04-quality/variant-validation-and-audit.md
@@ -77,6 +78,8 @@
 06-delivery/teacher-gate-1/08-resumen-docente.md
 06-delivery/teacher-gate-1/09-acta.md
 06-delivery/teacher-gate-1/10-anexo.md
+06-delivery/teacher-gate-1/11-evidencia-docente-2026-09-01.md
+06-delivery/teacher-gate-1/12-integracion-post-gate.md
 06-delivery/teacher-gate-1/README.md
 06-delivery/teacher-gates.md
 06-delivery/vertical-slice-grade-7.md

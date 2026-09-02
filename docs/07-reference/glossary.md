@@ -84,9 +84,9 @@
 
 **FairScore:** score competitivo determinista de una run entera, producido por una `ScorePolicy` versionada a partir de evidencia de desempeño normalizada para su `RunPlan`. Distinto del score por evento y del ranking. Está implementado en [ADR-023](../03-architecture/adr/ADR-023-competitive-score-policy.md); la política vigente es candidata y no oficial.
 
-**ScorePolicy competitiva:** contrato versionado de pesos, escalones de calidad, recompensas de dificultad y topes con los que se calcula `FairScore`. La implementación candidata tiene id `fair-score-dev-1`, versión `1.0.0-candidate` y `official: false`; que exista no vuelve finales sus coeficientes.
+**ScorePolicy competitiva:** contrato versionado de pesos, escalones de calidad, recompensas de dificultad y topes con los que se calcula `FairScore`. `fair-score-dev-1@1.0.0-candidate` preserva 80/15/5 pre-TG1; `fair-score-dev-2@2.0.0-post-tg1-candidate` es la candidata actual 85/10/5. Ambas tienen `official: false`.
 
-**scoreVersion:** campo opcional del `RunDescriptor` que identifica la versión de la calibración competitiva usada. Hoy guarda `1.0.0-candidate` cuando se inyecta `fair-score-dev-1`; se omite en una run de práctica sin política competitiva y viaja en snapshot y action log.
+**scoreVersion:** campo opcional del `RunDescriptor` que identifica la versión exacta de la calibración competitiva. Una run nueva competitiva guarda `2.0.0-post-tg1-candidate`; una histórica puede conservar `1.0.0-candidate`; una run de práctica lo omite. Viaja en snapshot y action log.
 
 **MathPerformance · TeamPerformance · AuraPerformance:** las tres componentes normalizadas del score competitivo, cada una de 0 a 10.000. La matemática pondera por la recompensa de dificultad; las otras dos no. Su existencia arquitectónica no implica que todo `RunPlan` ofrezca oportunidades de las tres.
 

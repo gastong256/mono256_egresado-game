@@ -34,7 +34,7 @@ Se congelan:
 - `rulesetVersion`;
 - `contentVersion`;
 - `variantCatalogVersion` del catálogo oficial cuando el evento lo defina —el campo técnico ya existe, pero ninguno de los catálogos de desarrollo `grade-7-dev-1` a `dev-4` es un freeze de feria—;
-- `scoreVersion` de la política competitiva aprobada —el campo técnico y la versión candidata ya existen, pero `fair-score-dev-1` lleva `official: false`—;
+- `scoreVersion` de la política competitiva aprobada —el campo técnico y dos versiones resolubles ya existen, pero `fair-score-dev-2` sigue `official: false`—;
 - el comparador del leaderboard;
 - la política de intentos.
 

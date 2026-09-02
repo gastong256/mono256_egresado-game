@@ -17,6 +17,7 @@ import {
   transition,
   verifyScoreClaim,
   candidateFairScorePolicy,
+  fairScoreDev1Policy,
   ACTION_LOG_VERSION,
   SCORE_SCALE,
   type GameCommand,
@@ -43,8 +44,13 @@ import {
 
 const dependencies = createGrade7CompetitiveDependencies()
 
-function descriptorFor(seed: string): RunDescriptor {
-  const descriptor = createGrade7CompetitiveRunDescriptor(seed)
+function descriptorFor(
+  seed: string,
+  scoreVersion = candidateFairScorePolicy.version,
+): RunDescriptor {
+  const descriptor = createGrade7CompetitiveRunDescriptor(seed, {
+    scoreVersion,
+  })
   if (!isOk(descriptor)) {
     throw new Error(`no se pudo componer: ${descriptor.error.code}`)
   }
@@ -104,7 +110,9 @@ interface Played {
 }
 
 function play(seed: string, best = true, deps = dependencies): Played {
-  const created = createRun(descriptorFor(seed), deps)
+  const scoreVersion = deps.competitiveScore?.version
+  if (scoreVersion === undefined) throw new Error('sin política competitiva')
+  const created = createRun(descriptorFor(seed, scoreVersion), deps)
   if (!created.ok) throw new Error(`no se pudo crear: ${created.error.kind}`)
 
   let state = created.value.state
@@ -156,6 +164,26 @@ describe('la identidad de una run competitiva', () => {
     expect(created.error).toMatchObject({ field: 'scoreVersion' })
   })
 
+  it('dev-1 y dev-2 coexisten con resolución explícita', () => {
+    const historical = createGrade7CompetitiveDependencies(
+      fairScoreDev1Policy.version,
+    )
+    const oldRun = createRun(
+      descriptorFor('comp-a', fairScoreDev1Policy.version),
+      historical,
+    )
+    const newRun = createRun(descriptorFor('comp-a'), dependencies)
+
+    expect(isOk(oldRun)).toBe(true)
+    expect(isOk(newRun)).toBe(true)
+  })
+
+  it('una versión desconocida falla de forma explícita', () => {
+    expect(() => createGrade7CompetitiveDependencies('9.9.9')).toThrow(
+      'la política de score competitivo no existe: 9.9.9',
+    )
+  })
+
   it('rechaza una calibración declarada donde no hay política', () => {
     const created = createRun(
       descriptorFor('comp-a'),
@@ -193,6 +221,28 @@ describe('la identidad de una run competitiva', () => {
 })
 
 describe('el score sale del historial autoritativo', () => {
+  it('la política cambia sólo el desglose competitivo, no la run', () => {
+    const historical = createGrade7CompetitiveDependencies(
+      fairScoreDev1Policy.version,
+    )
+    const oldPlayed = play('comp-b', true, historical)
+    const newPlayed = play('comp-b', true, dependencies)
+
+    expect(newPlayed.state.history).toEqual(oldPlayed.state.history)
+    expect(newPlayed.state.career).toEqual(oldPlayed.state.career)
+
+    const events = scoredEventsOf(newPlayed.state.history)
+    const oldScore = scoreRun(events, dependencies.catalog, fairScoreDev1Policy)
+    const newScore = scoreRun(
+      events,
+      dependencies.catalog,
+      candidateFairScorePolicy,
+    )
+    if (!isOk(oldScore) || !isOk(newScore)) throw new Error('no puntuó')
+    expect(newScore.value.scorePolicyId).toBe('fair-score-dev-2')
+    expect(oldScore.value.scorePolicyId).toBe('fair-score-dev-1')
+  })
+
   it('puntúa cada run compuesta y se queda dentro de la escala', () => {
     for (const seed of SEEDS) {
       const played = play(seed)

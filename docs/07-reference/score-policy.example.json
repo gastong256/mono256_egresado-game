@@ -1,10 +1,10 @@
 {
-  "id": "fair-score-dev-1",
-  "version": "1.0.0-candidate",
+  "id": "fair-score-dev-2",
+  "version": "2.0.0-post-tg1-candidate",
   "official": false,
   "weights": {
-    "math": 8000,
-    "team": 1500,
+    "math": 8500,
+    "team": 1000,
     "aura": 500
   },
   "discreteQuality": {

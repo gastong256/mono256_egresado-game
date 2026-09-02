@@ -33,18 +33,13 @@ Tasas, crecimiento, secuencias, funciones.
 ### Incertidumbre y datos
 Probabilidad, muestras, gráficos, porcentajes, evidencia.
 
-## Progresión orientativa
+## Progresión por carrera, no por barrera curricular
 
-| Etapa | Foco dominante | Ejemplos |
-|---|---|---|
-| 7.º | operaciones, tiempo, dinero, área simple | compras, horarios, mural |
-| 1.º | porcentajes, proporciones, escalas | descuentos, repartos |
-| 2.º | tasas y restricciones | consumo, velocidad, presupuesto |
-| 3.º | problemas multietapa, optimización | recaudación, asignación |
-| 4.º | estadística, probabilidad, funciones | encuestas, tendencias |
-| 5.º | integración e incertidumbre | proyecto final, trade-offs |
+Teacher Gate 1 fijó que toda la carrera sea matemáticamente entendible y jugable desde aproximadamente 7.º. `7.º → 1.º → … → 5.º` representa crecimiento escolar, narrativo y de responsabilidad; **no** una secuencia de prerrequisitos curriculares cada vez más excluyentes.
 
-La progresión real debe adaptarse al currículo de la institución si se usa pedagógicamente de forma formal.
+Las etapas se distinguen mediante contextos, responsabilidades, interacción entre restricciones, planificación, selección de información, consecuencias y continuidad de carrera. En cualquiera puede haber `CORE`, `STANDARD` y `STRETCH`. El piso de conocimiento permanece bajo y el techo cognitivo puede crecer.
+
+Si Egresado se usa curricularmente en una institución, puede mapear dominios a su programa sin convertir ese mapeo en barrera del juego general.
 
 ## Niveles de variante de un mismo escenario
 

@@ -10,7 +10,7 @@ import {
 } from '@/game/testing'
 import {
   candidateDifficultyCostPolicy,
-  candidateFairScorePolicy,
+  fairScoreDev1Policy,
   createContentCatalog,
   isOk,
   metrics,
@@ -191,7 +191,7 @@ describe('el contexto que el pack declara', () => {
   it('ninguna calibración está aprobada', () => {
     // Si alguna se declarara oficial, el pack estaría presentando como cerrado
     // algo que la reunión existe para decidir.
-    expect(candidateFairScorePolicy.official).toBe(false)
+    expect(fairScoreDev1Policy.official).toBe(false)
     expect(candidateDifficultyCostPolicy.official).toBe(false)
     expect(grade7CompositionPolicy.official).toBe(false)
   })
@@ -228,7 +228,7 @@ describe('los ejemplos de puntaje que el pack imprime', () => {
   })
 
   function fairScore(events: readonly ScoredEvent[]): number {
-    const result = scoreRun(events, catalog, candidateFairScorePolicy)
+    const result = scoreRun(events, catalog, fairScoreDev1Policy)
     if (!isOk(result)) throw new Error(`no puntuó: ${result.error.code}`)
     return result.value.fairScore
   }
@@ -271,7 +271,7 @@ describe('los ejemplos de puntaje que el pack imprime', () => {
     ]
     const under = (math: number, team: number, aura: number): number => {
       const result = scoreRun(events, catalog, {
-        ...candidateFairScorePolicy,
+        ...fairScoreDev1Policy,
         id: 'comparación',
         weights: { math, team, aura },
       })

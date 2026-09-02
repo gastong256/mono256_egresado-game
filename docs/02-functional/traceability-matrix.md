@@ -30,11 +30,11 @@ De requisito de producto a capacidad de motor y a estado real. Esta tabla cubre 
 |---|---|---|---|---|
 | Escenarios que no se memorizan | [familias y variantes](../01-game-design/challenge-families-and-variants.md) | `ScenarioFamily`/`Template`/`Variant` + fuentes híbridas | primera variación cognitiva de producción **implementada** en `bus`; profundidad del resto del catálogo abierta | STAGE-04 / STAGE-08 |
 | Competencia sin variantes defectuosas | [validación de variantes](../04-quality/variant-validation-and-audit.md) | validador transversal + catálogo aprobado | **implementado para desarrollo y consumido por gameplay** en `grade-7-dev-4`; catálogo justo oficial pendiente | FREEZE |
-| Runs comparables entre sí | [dificultad](../01-game-design/difficulty-and-playability.md) | bandas + scheduler por presupuesto | **implementado estructuralmente** bajo una policy candidata; calibración docente y equivalencia empírica pendientes | STAGE-05 (`DONE`) / Teacher Gate |
-| Ranking dominado por matemática | [score competitivo](../01-game-design/competitive-scoring-and-ranking.md) | `ScorePolicy` competitiva versionada | `FairScore` candidato implementado y auditable; ranking pendiente | STAGE-06 (`DONE`) / STAGE-09 |
-| Premiar mejora y no volumen de intentos | [modo feria](../05-operations/fair-mode-and-competition-freeze.md) | comparador versionado + personal best | no implementado | STAGE-09 |
-| El error no expulsa al jugador | [fail-forward](../01-game-design/graduation-and-fail-forward.md) | invariante de egreso + recuperación | sin contenido de recuperación | STAGE-07 |
+| Runs comparables entre sí | [dificultad](../01-game-design/difficulty-and-playability.md) | bandas + scheduler por presupuesto | mecanismo implementado; bandas aceptadas en TG1, equivalencia empírica pendiente | STAGE-05 (`DONE`) / STAGE-08 |
+| Ranking dominado por matemática | [score competitivo](../01-game-design/competitive-scoring-and-ranking.md) | `ScorePolicy` competitiva versionada | `fair-score-dev-2` 85/10/5 implementada y auditada; ranking pendiente | STAGE-06 (`DONE`) / STAGE-09 |
+| Premiar mejora y no volumen de intentos | [modo feria](../05-operations/fair-mode-and-competition-freeze.md) | emisión autoritativa + mejor resultado verificado | dirección TG1 aceptada; persistencia no implementada | STAGE-09 |
+| El error no expulsa al jugador | [fail-forward](../01-game-design/graduation-and-fail-forward.md) | invariante de egreso + recuperación | requisito TG1 aceptado; motor no implementado | STAGE-07 (`READY`) |
 | Identidad de carrera legible | [ADR-016](../03-architecture/adr/ADR-016-career-player-model.md) | `CareerState` v0.2 | **implementado** | — |
-| Auditoría de una run oficial | [ADR-003](../03-architecture/adr/ADR-003-deterministic-seeded-engine.md) | seed + versiones + action log | base implementada y `variantCatalogVersion` opcional; falta `scoreVersion` y emisión oficial | STAGE-06 y STAGE-09 |
+| Auditoría de una run oficial | [ADR-003](../03-architecture/adr/ADR-003-deterministic-seeded-engine.md) | seed + versiones + action log | `variantCatalogVersion` y `scoreVersion` implementadas; falta emisión oficial | STAGE-06 y STAGE-09 |
 
 Las etapas son las del [roadmap de implementación](../06-delivery/implementation-sequence.md); el estado vigente de cada una está en [la etapa actual](../06-delivery/current-stage.md).
