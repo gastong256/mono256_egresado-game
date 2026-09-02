@@ -31,6 +31,7 @@ import type { SelectionState } from '../narrative/selection'
 import type { ProfileResult } from '../profiles/policy'
 import type { StageId } from '../progression/stages'
 import type { ComposedRunPlan } from '../plan/composer'
+import type { ProgressionState } from '../progression/recovery'
 import type { CareerChange, CareerState } from '../progression/career'
 import type { ScoreBreakdown } from '../scoring/policy'
 
@@ -120,6 +121,13 @@ export interface ActiveEvent {
    * for it. Keeping the report in state means a resume redraws the same chip.
    */
   readonly careerChange: CareerChange
+  /**
+   * True when this beat is remediating what the year owes.
+   *
+   * The engine needs it to know that resolving this beat closes obligations
+   * rather than creating one, and the screen needs it to say so in words.
+   */
+  readonly recovery?: boolean
 }
 
 /** Feedback awaiting acknowledgement, kept in state so a resume can restore it. */
@@ -150,9 +158,31 @@ export interface ResolvedEvent {
   readonly metrics: ReasoningMetrics | undefined
   readonly points: number
   readonly revealedCount: number
+  /**
+   * True when the beat was remediating what the year owed.
+   *
+   * The history has to be able to tell the two apart after the fact: an
+   * ordinary beat is competitive evidence and a remediation beat is not, and a
+   * record that could not distinguish them would make «did failing buy extra
+   * score» a question nobody could answer from the run itself.
+   */
+  readonly recovery?: boolean
 }
 
 export interface RunCompletion {
+  /**
+   * Whether the run reached the end of the career.
+   *
+   * True for every run that played its final stage out with nothing owed —
+   * which, by the progression rules, is every valid completed run. False only
+   * when a run ended early because content could not serve it, which is a
+   * defect and not an outcome a player can reach.
+   */
+  readonly graduated: boolean
+  /** Years that closed owing something. Hidden history, never a visible stat. */
+  readonly previas: number
+  /** Remediation beats the run played. */
+  readonly recoveries: number
   readonly totalScore: number
   readonly profile: ProfileResult
   readonly career: CareerState
@@ -169,6 +199,14 @@ export interface RunState {
    * the engine can quietly deviate from is not a plan.
    */
   readonly plan?: ComposedRunPlan
+  /**
+   * What the run owes and how it has closed what it owed.
+   *
+   * Separate from `history`, which records what was played. This records what
+   * playing it *committed the year to*, and it is the state graduation is
+   * decided from — never from «every visible event happened».
+   */
+  readonly progression: ProgressionState
   readonly descriptor: RunDescriptor
   readonly phase: RunPhase
   readonly status: 'active' | 'completed' | 'abandoned'

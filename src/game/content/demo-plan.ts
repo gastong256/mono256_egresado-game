@@ -259,6 +259,10 @@ export function validateDemoPlan(
 
   const uncovered = catalog
     .forStage(plan.stageId)
+    // Remediation content is not part of a demonstration: it only exists when a
+    // year went badly, and a demo that had to include it would be showing a
+    // consequence nobody had earned.
+    .filter((template) => isOrdinaryBeatRole(template.placement))
     .filter((template) => !shown.has(template.id))
   if (uncovered.length > 0) {
     issues.push(

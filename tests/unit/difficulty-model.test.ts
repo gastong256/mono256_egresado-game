@@ -186,6 +186,9 @@ describe('la clasificación del contenido de 7.º', () => {
       'g7.notebook-offer': 'standard',
       'g7.stand-supplies': 'stretch',
       'g7.group-tasks': 'stretch',
+      // El repaso del colectivo: un solo paso, sin restricciones simultáneas.
+      // Una recuperación baja el piso, no sube el techo.
+      'g7.bus-travel-review': 'core',
     })
   })
 

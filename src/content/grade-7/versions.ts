@@ -6,7 +6,20 @@
  */
 
 /*
- * El contenido sube a 0.8.0 con el perfil de score: cada plantilla declara ahora
+ * El contenido sube a 0.9.0 y **el ruleset también**, por primera vez desde que
+ * existe el modelo de contenido.
+ *
+ * El contenido, porque el año gana una plantilla: `g7.bus-travel-review`, con
+ * rol `recovery`. No se compone nunca y no gasta un beat ordinario, pero existe
+ * y se puede jugar, así que es identidad de contenido.
+ *
+ * El ruleset, porque ahora declara una política de recuperación: qué resultado
+ * deja algo por cerrar y cuántos beats de repaso puede jugar un año son reglas
+ * de progresión, y dos jugadores bajo políticas distintas no están jugando al
+ * mismo juego.
+ *
+ * El contexto anterior, de cuando el contenido subió a 0.8.0 con el perfil de
+ * score: cada plantilla declara ahora
  * qué hecho suyo lee cada componente competitiva —y cuál no lee ninguna—. No
  * cambia qué produce un seed, pero sí cuánto vale una run, así que es identidad
  * de contenido y la huella lo cubre.
@@ -35,8 +48,8 @@
  * configuración de la etapa son las mismas. Subirlo también habría dicho que
  * cambió algo que no cambió.
  */
-export const GRADE_7_RULESET_VERSION = '0.3.0-grade-7'
-export const GRADE_7_CONTENT_VERSION = '0.8.0-grade-7'
+export const GRADE_7_RULESET_VERSION = '0.4.0-grade-7'
+export const GRADE_7_CONTENT_VERSION = '0.9.0-grade-7'
 
 /**
  * El ruleset de una partida **compuesta** de 7.º.
@@ -46,7 +59,7 @@ export const GRADE_7_CONTENT_VERSION = '0.8.0-grade-7'
  * jugaría dentro de una carrera de seis. Comparten contenido y motor; no
  * comparten qué es una run, y por eso no comparten identidad.
  */
-export const GRADE_7_COMPOSED_RULESET_VERSION = '0.1.0-grade-7-composed'
+export const GRADE_7_COMPOSED_RULESET_VERSION = '0.2.0-grade-7-composed'
 
 /**
  * Versión del catálogo de variantes aprobadas que la partida usa hoy.
@@ -54,6 +67,9 @@ export const GRADE_7_COMPOSED_RULESET_VERSION = '0.1.0-grade-7-composed'
  * Identifica un conjunto estable de variantes validadas. **No es el catálogo de
  * la feria**: es el de desarrollo, y el nombre lo dice. Congelar el catálogo
  * oficial de una competencia es una decisión de evento que todavía no se tomó.
+ *
+ * `grade-7-dev-5` agrega las direcciones de la plantilla de recuperación; las
+ * de `dev-4` siguen ahí con la misma huella, porque ningún generador se movió.
  *
  * Una versión publicada no se edita. `grade-7-dev-2` existió porque la familia
  * colectivo ganó una segunda plantilla, y `grade-7-dev-3` existe porque el
@@ -67,4 +83,4 @@ export const GRADE_7_COMPOSED_RULESET_VERSION = '0.1.0-grade-7-composed'
  * «chicas»— y hay un test que comprueba que la única diferencia entre versiones
  * consecutivas es contra qué contenido se construyeron.
  */
-export const GRADE_7_VARIANT_CATALOG_VERSION = 'grade-7-dev-4'
+export const GRADE_7_VARIANT_CATALOG_VERSION = 'grade-7-dev-5'

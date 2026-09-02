@@ -211,6 +211,10 @@ describe('el contexto que el pack declara', () => {
       'g7.notebook-offer': 'standard',
       'g7.stand-supplies': 'stretch',
       'g7.group-tasks': 'stretch',
+      // El repaso del colectivo no está en la tabla que leen los docentes: no
+      // es contenido que se componga, y el pack habla de lo que una partida
+      // puede traer.
+      'g7.bus-travel-review': 'core',
     })
   })
 })

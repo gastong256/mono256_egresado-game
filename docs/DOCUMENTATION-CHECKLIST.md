@@ -24,7 +24,7 @@
 - [x] Familias de escenario, plantillas y variantes deterministas.
 - [x] Dificultad de piso bajo y techo alto, bandas y presupuesto.
 - [x] Score competitivo post-TG1 85/10/5 como candidato no oficial, con historia dev-1 preservada.
-- [x] Egreso garantizado aceptado; recuperación/fail-forward listo para STAGE-07.
+- [x] Egreso garantizado **implementado** en STAGE-07: la recuperación converge por construcción y no puntúa ([ADR-024](03-architecture/adr/ADR-024-progression-recovery-and-graduation.md)); el vocabulario sigue abierto.
 
 ## Funcional
 - [x] Requisitos funcionales.

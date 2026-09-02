@@ -101,7 +101,7 @@ Esto prueba ocho tipos de razonamiento sin necesitar contenido definitivo para t
 
 ## Implementado
 
-Contenido de producto que existe en el repositorio, en `src/content/grade-7/`. **Siete plantillas** y nueve storylets; una partida juega seis situaciones, porque el slot del colectivo aloja dos plantillas y el seed elige cuál sale. El resto del catálogo sigue siendo backlog.
+Contenido de producto que existe en el repositorio, en `src/content/grade-7/`. **Ocho plantillas** y diez storylets; una partida juega seis situaciones, porque el slot del colectivo aloja dos plantillas y el seed elige cuál sale. La octava plantilla es de **repaso** y no entra en esa cuenta: no la elige la selección ordinaria, la juega un año que quedó debiendo. El resto del catálogo sigue siendo backlog.
 
 | ID en código | Entrada del catálogo | Interacción | Matemática | Escenario implementado |
 |---|---|---|---|---|
@@ -112,6 +112,7 @@ Contenido de producto que existe en el repositorio, en `src/content/grade-7/`. *
 | `g7.notebook-offer` | C08 | Decision Card | descuento porcentual contra descuento fijo | elegir la oferta que entra en el presupuesto |
 | `g7.group-tasks` | C13 | Assignment Board | asignación con horas disponibles y habilidad | repartir el trabajo grupal |
 | `g7.stand-supplies` | C09 | Budget Builder | costo unitario por pack, mínimo que alcanza | comprar insumos para el stand de la feria |
+| `g7.bus-travel-review` | — | Numeric Input | el paso intermedio solo: la demora aplicada a la duración | **repaso** del colectivo, cuando el año quedó debiéndolo |
 
 ### Con cuánto tiempo hay que salir
 

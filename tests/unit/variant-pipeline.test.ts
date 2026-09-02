@@ -375,6 +375,7 @@ describe('every production template participates', () => {
     expect(strategy).toEqual({
       'g7.bus-latest-departure': 'generated',
       'g7.bus-timing': 'generated',
+      'g7.bus-travel-review': 'generated',
       'g7.group-tasks': 'authored',
       'g7.may-25-act': 'generated',
       'g7.mural-paint': 'generated',

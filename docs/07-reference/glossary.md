@@ -112,6 +112,12 @@
 
 **Fail forward:** el error cambia las consecuencias y el contenido siguiente en vez de terminar la partida.
 
+**Repaso:** el beat que cierra lo que un año dejó pendiente. No es un reintento —no devuelve la misma pregunta ni borra el resultado original—, se agenda fuera del presupuesto ordinario y **no puntúa**. Ver [ADR-024](../03-architecture/adr/ADR-024-progression-recovery-and-graduation.md).
+
+**Previa:** año que cerró con lo justo. Es historia oculta que el contenido futuro puede retomar, nunca deuda que bloquee el egreso ni una quinta dimensión del HUD.
+
+**Egreso:** estado terminal de una carrera. Lo decide la progresión —haber jugado el último año sin deber nada—, no un umbral de score ni de Promedio. Toda run válida completada lo alcanza.
+
 **Golden seed:** seed conocida que se conserva para tests deterministas de regresión.
 
 **Teacher Gate:** revisión formal del Departamento de Matemática que cierra decisiones de contenido, dificultad y competencia. Ver [gates docentes](../06-delivery/teacher-gates.md).

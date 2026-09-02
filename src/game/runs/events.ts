@@ -114,6 +114,16 @@ export type DomainEvent =
     }
   | { readonly type: 'run.abandoned' }
   | {
+      /** An ordinary result left the year something to close before it can end. */
+      readonly type: 'recovery.required'
+      readonly stage: StageId
+    }
+  | {
+      /** The year closed what it owed. It closes either way; this says it did. */
+      readonly type: 'recovery.resolved'
+      readonly stage: StageId
+    }
+  | {
       /** Content ran out of eligible storylets; surfaced, never silently ignored. */
       readonly type: 'narrative.exhausted'
       readonly stage: StageId

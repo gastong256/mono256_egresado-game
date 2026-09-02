@@ -51,6 +51,7 @@ export {
   materializeChallenge,
   transition,
   type EngineDependencies,
+  type RecoveryContent,
 } from './runs/transition'
 export { parseCommand, type GameCommand } from './runs/commands'
 export type {
@@ -372,6 +373,29 @@ export {
   type ScoreAuditReport,
   type ScoreDistribution,
 } from './scoring/score-audit'
+export {
+  emptyProgression,
+  obligationFor,
+  obligationId,
+  orderObligations,
+  owesRecovery,
+  pendingForStage,
+  previasOf,
+  progressionIssues,
+  recoveriesPlayedInStage,
+  recoveryPolicyIssues,
+  withGraduation,
+  withObligation,
+  withRecovery,
+  developmentRecoveryPolicy,
+  RECOVERY_REASONS,
+  type ProgressionState,
+  type RecoveryObligation,
+  type RecoveryPolicy,
+  type RecoveryReason,
+  type RecoveryRecord,
+} from './progression/recovery'
+export { SOLUTION_QUALITIES } from './challenges/taxonomy'
 export { canonicalize } from './core/canonical'
 export {
   hasNoErrors,

@@ -123,6 +123,32 @@ function composition(ruleset: Ruleset): string {
   ].join(';')
 }
 
+/**
+ * The recovery policy, flattened.
+ *
+ * Which results owe remediation and how many beats a year may spend closing
+ * them both change how a run progresses, so both are in the digest. A
+ * recalibration that moved a trigger without moving a version would otherwise
+ * change what a stored run does on replay.
+ */
+function recovery(ruleset: Ruleset): string {
+  const policy = ruleset.recovery
+  if (policy === undefined) {
+    return 'none'
+  }
+
+  const triggers = Object.entries(policy.triggers)
+    .sort(([left], [right]) => (left < right ? -1 : 1))
+    .map(([quality, reason]) => `${quality}=${reason}`)
+    .join(',')
+
+  return [
+    `${policy.id}@${policy.version}:${String(policy.official)}`,
+    `triggers:${triggers}`,
+    `max:${String(policy.maxRecoveriesPerStage)}`,
+  ].join(';')
+}
+
 export function rulesetFingerprint(ruleset: Ruleset): string {
   const stages = ruleset.stages
     .map((stage) =>
@@ -144,6 +170,7 @@ export function rulesetFingerprint(ruleset: Ruleset): string {
       `profile:${ruleset.profile.id}:${String(ruleset.profile.production)}`,
       `pacing:${String(ruleset.narrative.cooldownEvents)}:${String(ruleset.narrative.allowRepeats)}`,
       `composition:${composition(ruleset)}`,
+      `recovery:${recovery(ruleset)}`,
       `official:${String(ruleset.official)}`,
       `stages:${stages}`,
     ].join('|'),

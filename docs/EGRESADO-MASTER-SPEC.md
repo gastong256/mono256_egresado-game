@@ -270,7 +270,7 @@ Un slice jugable y pulido de 7.º grado, representativo de la arquitectura y la 
 
 ### Fase C — Congelamiento de fundaciones
 
-**Actual:** las correcciones de autoridad y score están integradas; STAGE-07 está `READY`. Con egreso/recuperación implementados se podrán apoyar los años siguientes en una gramática común. Reabrir arquitectura o identidad requiere evidencia de defecto, no preferencia.
+**Actual:** las correcciones de autoridad y score están integradas y STAGE-07 cerró: el egreso es un estado terminal alcanzable y la recuperación converge por construcción, así que los años siguientes ya se apoyan en una gramática común en vez de inventar la suya. STAGE-08 está `READY`. Reabrir arquitectura o identidad requiere evidencia de defecto, no preferencia.
 
 ### Fase D — Producción del juego completo
 
@@ -752,7 +752,7 @@ Esto prueba ocho tipos de razonamiento sin necesitar contenido definitivo para t
 
 ## Implementado
 
-Contenido de producto que existe en el repositorio, en `src/content/grade-7/`. **Siete plantillas** y nueve storylets; una partida juega seis situaciones, porque el slot del colectivo aloja dos plantillas y el seed elige cuál sale. El resto del catálogo sigue siendo backlog.
+Contenido de producto que existe en el repositorio, en `src/content/grade-7/`. **Ocho plantillas** y diez storylets; una partida juega seis situaciones, porque el slot del colectivo aloja dos plantillas y el seed elige cuál sale. La octava plantilla es de **repaso** y no entra en esa cuenta: no la elige la selección ordinaria, la juega un año que quedó debiendo. El resto del catálogo sigue siendo backlog.
 
 | ID en código | Entrada del catálogo | Interacción | Matemática | Escenario implementado |
 |---|---|---|---|---|
@@ -763,6 +763,7 @@ Contenido de producto que existe en el repositorio, en `src/content/grade-7/`. *
 | `g7.notebook-offer` | C08 | Decision Card | descuento porcentual contra descuento fijo | elegir la oferta que entra en el presupuesto |
 | `g7.group-tasks` | C13 | Assignment Board | asignación con horas disponibles y habilidad | repartir el trabajo grupal |
 | `g7.stand-supplies` | C09 | Budget Builder | costo unitario por pack, mínimo que alcanza | comprar insumos para el stand de la feria |
+| `g7.bus-travel-review` | — | Numeric Input | el paso intermedio solo: la demora aplicada a la duración | **repaso** del colectivo, cuando el año quedó debiéndolo |
 
 ### Con cuánto tiempo hay que salir
 
@@ -976,7 +977,7 @@ El principio viene de STACK, que recomienda pregenerar, testear y desplegar vari
 
 **Implementado.** `ApprovedVariantCatalog` guarda la dirección, el origen `authored`/`generated` y el fingerprint de cada variante aprobada. No guarda parámetros ni posiciones: los parámetros se reconstruyen desde la dirección y la huella comprueba que siguen siendo los mismos.
 
-El artefacto vigente es `grade-7-dev-4`, con 159 entradas para las siete plantillas de producción. `dev-1`, con 133, y `dev-2`/`dev-3`, con 159, siguen publicados sin cambios. **Una versión publicada no se edita**: cuando el contenido cambia se construye la siguiente y la anterior queda tal cual, porque una run tiene que poder resolverse contra el conjunto que realmente jugó. Los cuatro son reproducibles byte a byte y `pnpm game:variants check` verifica la integridad del vigente dentro de `pnpm verify`.
+El artefacto vigente es `grade-7-dev-5`, con 185 entradas para las ocho plantillas de producción — las 159 de `dev-4` intactas más las 26 de `g7.bus-travel-review`. `dev-1`, con 133, y `dev-2`/`dev-3`/`dev-4`, con 159, siguen publicados sin cambios. **Una versión publicada no se edita**: cuando el contenido cambia se construye la siguiente y la anterior queda tal cual, porque una run tiene que poder resolverse contra el conjunto que realmente jugó. Los cuatro son reproducibles byte a byte y `pnpm game:variants check` verifica la integridad del vigente dentro de `pnpm verify`.
 
 `grade-7-dev-2` no es un superconjunto **semántico exacto** de `dev-1`: las plantillas cuyo contrato de generación no cambió conservan direcciones y huellas, pero el generador del acto del 25 de Mayo pasó a versión `2` y puede materializar otro contenido en una misma dirección bajo el contrato nuevo. `dev-1` conserva la versión anterior; no se reescribe. Ver [ADR-021](03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md).
 
@@ -1656,6 +1657,7 @@ Un autor que quiere que su plantilla se agende como más exigente tiene que nomb
 
 | Plantilla | Dominio | Rasgos | Carga | Banda | Costo | Nivel autorado | Por qué |
 |---|---|---|---|---|---|---|---|
+| `g7.bus-travel-review` | tiempo · porcentajes | 1·0·0·0·0·1 | 2 | CORE | 1,00 | 1 ✓ | **repaso**: el paso intermedio solo, con el primer término nombrado; deliberadamente más liviana que lo que remedia |
 | `g7.may-25-act` | patrones · cantidad | 1·0·2·0·0·1 | 4 | CORE | 1,00 | 2 ✓ | una regla por celda, escrita en pantalla; lo que pesa son tres reglas y veinticuatro celdas |
 | `g7.bus-timing` | tiempo · porcentajes | 2·1·1·1·0·0 | 5 | STANDARD | 1,50 | 2 ✗ | demora aplicada a cuatro salidas y comparadas contra la entrada |
 | `g7.notebook-offer` | porcentajes | 2·1·1·1·0·0 | 5 | STANDARD | 1,50 | 3 ✓ | dos ofertas que hay que llevar a la misma unidad, con el efectivo como límite |
@@ -1663,6 +1665,8 @@ Un autor que quiere que su plantilla se agende como más exigente tiene que nomb
 | `g7.mural-paint` | espacio y forma | 3·1·1·1·0·0 | 6 | STANDARD | 1,50 | 2 ✗ | área, litros y envases enteros: cadena de tres donde perder el intermedio pierde el problema |
 | `g7.stand-supplies` | optimización | 2·2·1·2·0·1 | 8 | STRETCH | 2,10 | 3 ✗ | porciones mínimas y presupuesto a la vez, sobre una combinación que se arma |
 | `g7.group-tasks` | optimización | 2·2·2·2·0·1 | 9 | STRETCH | 2,10 | 3 ✗ | repartir todo sin pasarse de las horas de nadie, leyendo afinidad y disponibilidad |
+
+El repaso baja el piso sin bajar el techo del concepto, y esa asimetría es intencional: [ADR-024](03-architecture/adr/ADR-024-progression-recovery-and-graduation.md) explica por qué una recuperación no puede escalar el currículo. Su costo de scheduling figura por completitud; un beat de repaso se agenda **fuera** del presupuesto ordinario y no lo consume.
 
 **Las cuatro divergencias con el nivel autorado fueron una evidencia útil del Gate.** `baseDifficulty` se escribió como perilla de runtime y no como clasificación estructural. TG1-03 aceptó la tabla sin pedir reclasificaciones; esto valida la lectura docente, no equivalencia psicométrica. Un test fija la clasificación, así que una recalibración futura seguirá siendo visible y versionada.
 
@@ -1916,15 +1920,46 @@ No introducir:
 
 # Egreso, recuperación y fail-forward
 
-**Estado: TG1-ACCEPTED PRODUCT REQUIREMENT; implementación pendiente en STAGE-07.** La dirección —el error cambia el camino, no termina la partida— y el egreso garantizado fueron aceptados en TG1-14. La forma concreta de la recuperación, el lenguaje de las previas y qué años la ofrecen siguen **OPEN**; la evidencia no suministró vocabulario.
+**Estado: IMPLEMENTADO en STAGE-07** (2 de septiembre de 2026). La dirección —el error cambia el camino, no termina la partida— y el egreso garantizado fueron aceptados en TG1-14 y hoy son una propiedad de la máquina de estados, no una promesa del roadmap. La decisión completa está en [ADR-024](03-architecture/adr/ADR-024-progression-recovery-and-graduation.md).
 
-## Invariante buscado
+Sigue **OPEN** el vocabulario: qué palabras usa el juego para contar que quedó algo por cerrar ([pregunta 53](07-reference/open-questions.md)). TG1-14 aceptó la dirección y no aportó lenguaje.
+
+## Invariante
 
 > Toda run completada válida llega a `EGRESADO`.
 
 El jugador compite por calidad y construye un recorrido distinguible, pero no queda afuera del resto del juego por haberse equivocado.
 
 Esto no es indulgencia: es la consecuencia de que el producto trate el error como información. Una feria en la que el juego te expulsa a los noventa segundos no es una feria en la que alguien juegue dos veces.
+
+**No es indulgencia de otra manera tampoco:** equivocarse sigue costando. Baja el Promedio, baja el score, cambia la historia y deja rastro en cómo se egresa. Lo único que no hace es terminar la partida.
+
+## Cómo funciona
+
+Un beat que sale mal deja **algo por cerrar**. El año no puede terminar debiéndolo, y cerrarlo es un **repaso**: una escena nueva, más chica, que aísla el paso donde estuvo el error.
+
+Un repaso no es un reintento. No devuelve la misma pregunta ni borra lo que pasó: el resultado original sigue en la historia y sigue siendo parte de cómo egresó ese jugador. Permite progresar; no deshace.
+
+### Por qué no se puede quedar dando vueltas
+
+Dos hechos estructurales, y ninguno es configurable:
+
+1. **Sólo un beat ordinario deja algo por cerrar.** Un repaso no es ordinario, así que no puede dejar nada. La recursión no es representable.
+2. **Un repaso siempre cierra lo que el año debía**, salga como salga. Qué tan bien salió cambia la carrera y la historia, nunca si el año cierra.
+
+El techo es un repaso por año, y una run nunca necesita un segundo para arreglar el primero. Por eso «toda run válida egresa» es un hecho sobre el sistema y no una esperanza sobre el jugador.
+
+### El repaso no puntúa
+
+Ni en el numerador ni en el denominador del [score competitivo](01-game-design/competitive-scoring-and-ranking.md). La evidencia competitiva sigue siendo el beat ordinario que salió mal.
+
+Si puntuara, fallar a propósito sería una forma de comprarse una oportunidad extra de puntuar, y toda la comparabilidad entre runs se caería por esa puerta. **Fallar y recuperarse perfecto siempre puntúa menos que jugar bien de entrada.** Hay un test que lo comprueba.
+
+### El repaso no le come el año al jugador
+
+Se agenda **después** de los beats ordinarios y fuera del presupuesto de uno o dos que fija [ADR-019](03-architecture/adr/ADR-019-scenario-family-template-variant.md). Contarlo adentro le costaría una de las decisiones que el año fue compuesto para darle, que es lo contrario de lo que corresponde cuando algo salió mal.
+
+Todas las obligaciones de un año se cierran en **un solo** repaso: de a una, un mal año costaría tantos beats extra como errores tuvo, y seis años lo multiplican por seis.
 
 ## Progresión separada de desempeño
 
@@ -1937,28 +1972,17 @@ El desempeño cambia:
 - arquetipo final;
 - Aura, Equipo y Estilo donde tenga sentido contextual.
 
-El desempeño **no** produce por sí solo un estado terminal de “no podés seguir”.
+El desempeño **no** produce por sí solo un estado terminal de «no podés seguir». **No hay umbral de score ni de Promedio para egresar**: el desempeño cambia *cómo* se egresa, nunca *si*.
 
-## Qué dice hoy la documentación vigente
+## Qué dice la documentación vigente
 
 [Reglas, scoring y progresión](01-game-design/rules-scoring-and-progression.md) declara que en el MVP no hay repetición automática de año por bajo desempeño: la fantasía es una carrera comprimida, no un simulador administrativo de promoción escolar. **Eso sigue vigente y no se contradice.**
 
 Lo que agrega esta dirección es el otro lado: no repetir el año tampoco significa que el bajo desempeño no tenga consecuencia. La consecuencia es narrativa y de score, comprimida en eventos, no en volver a jugar doce meses.
 
-## Patrón de cierre de año
-
-Estados comprimidos sugeridos, **no implementados**:
-
-- promoción directa;
-- cierre normal;
-- recuperación requerida;
-- promoción «con lo justo» con materia pendiente que vuelve después.
-
-Una recuperación también puede salir mal. El sistema converge igual, con otra consecuencia comprimida, en vez de encerrar al jugador en un bucle.
-
 ## Previas
 
-Una estructura oculta de materias pendientes permite callbacks:
+Un año que cierra con lo justo deja una **previa**: estructura oculta que el contenido futuro puede retomar.
 
 ```text
 1.º: te quedó una previa → 2.º/3.º: esa previa sigue ahí → 5.º: arco final de recuperación
@@ -1966,24 +1990,40 @@ Una estructura oculta de materias pendientes permite callbacks:
 
 Es estado narrativo oculto, no una quinta stat en el HUD. El modelo visible sigue siendo el de [ADR-016](03-architecture/adr/ADR-016-career-player-model.md): Promedio, Equipo, Aura y Estilo, y nada más es permanente.
 
+Una previa **no bloquea**. Es historia, no deuda: si arrastrar obligaciones entre años pudiera impedir el egreso, el invariante se rompería para el jugador que más lo necesita. Los callbacks que las retoman son contenido de STAGE-08.
+
 ## Sin sistema de vidas
 
-Ni corazones, ni intentos limitados, ni tres strikes. El error genera consecuencia y contenido adicional, no menos minutos de juego.
+Ni corazones, ni intentos limitados, ni tres strikes, ni reintentar hasta acertar. El error genera consecuencia y contenido adicional: **más** juego, no menos minutos.
 
-## Requisito de verificación
+## Lenguaje
 
-Cuando esta dirección se implemente, la simulación y los property tests tienen que establecer que:
+El juego no dice que fracasaste. Dice que quedó algo dando vueltas y te da la oportunidad de cerrarlo antes de que termine el año.
 
-- toda run completable llega a `EGRESADO`;
-- ningún estado de fracaso académico es terminal;
-- la recuperación no puede crear un callejón sin salida;
-- el estado sigue siendo serializable y reproducible por replay.
+«Repaso», «quedó algo dando vueltas» y «previa» son el copy candidato: elegido para sonar a escuela y no a castigo, y **pendiente de validación docente**. No son arquitectura; cambiarlos es editar contenido.
 
-La simulación masiva vigente (`pnpm game:simulate`) ya busca callejones sin salida y divergencia de replay; el invariante de egreso se suma a esa capa cuando exista contenido de recuperación. Ver [estrategia de testing](04-quality/testing-strategy.md).
+## Verificación
+
+Lo que la etapa tenía que establecer, y con qué quedó establecido:
+
+| Requisito | Evidencia |
+|---|---|
+| Toda run completable llega a `EGRESADO` | 20.000 carreras sintéticas de seis años, **20.000 egresadas, 0 hallazgos** |
+| Ningún estado de fracaso académico es terminal | el espacio de estados de la progresión, recorrido entero: un único estado terminal alcanzable |
+| La recuperación no crea callejones sin salida | la misma auditoría exhaustiva: sin ciclos y sin estados sin salida |
+| El estado sigue siendo serializable y reproducible | snapshot v7 con la progresión adentro; replay y reanudación a través de un repaso |
+| El repaso no crea oportunidad competitiva | descartado por rol en el scorer, más un test de anti-farmeo |
+| El servidor no le cree al cliente | recalcula egreso, repasos y previas reproduciendo; un `graduated` adjunto no cambia nada |
+
+`pnpm game:simulate` reporta egresos, repasos y previas, y trata como hallazgo toda run que complete sin egresar. Ver [estrategia de testing](04-quality/testing-strategy.md).
 
 ## Estado de implementación
 
-El slice de 7.º termina en un hito de año, no en el egreso. El requisito está aceptado, pero el estado `GRADUATED`, la carrera completa `7.º → 1.º → 2.º → 3.º → 4.º → 5.º → Egreso` y el arco de recuperación **no existen todavía**; son el alcance de STAGE-07/08. Ver [la secuencia de implementación](06-delivery/implementation-sequence.md).
+El motor está completo. Lo que falta es **contenido**: el slice de 7.º termina en un hito de año, y la carrera `7.º → 1.º → 2.º → 3.º → 4.º → 5.º → Egreso` se juega hoy entera sólo en el fixture sintético que existe para probar que la estructura la sostiene. Los años 1.º a 5.º son el alcance de STAGE-08. Ver [la secuencia de implementación](06-delivery/implementation-sequence.md).
+
+Del contenido de producción, hoy repasa la familia colectivo: `g7.bus-travel-review` aísla la duración del viaje con demora, que es el paso que las dos plantillas del colectivo dan por sabido. Las otras declaran `none`, que es una decisión explícita: el error del mural es de redondeo de compra, el de la oferta es leer cuál quedó más barata, y el acto ocurre una vez y en público. Una recuperación inventada para completar una tabla sería peor contenido que ninguna.
+
+El repaso que aparece es siempre el de la situación que salió mal, nunca el del año: equivocarse con el mural y recibir una cuenta de colectivos sería remediación en la forma y un disparate en el contenido. Cuando la plantilla no tiene repaso, el mal resultado simplemente queda — con su consecuencia en la nota, el score y la historia.
 
 ---
 
@@ -2642,7 +2682,7 @@ De requisito de producto a capacidad de motor y a estado real. Esta tabla cubre 
 | Runs comparables entre sí | [dificultad](01-game-design/difficulty-and-playability.md) | bandas + scheduler por presupuesto | mecanismo implementado; bandas aceptadas en TG1, equivalencia empírica pendiente | STAGE-05 (`DONE`) / STAGE-08 |
 | Ranking dominado por matemática | [score competitivo](01-game-design/competitive-scoring-and-ranking.md) | `ScorePolicy` competitiva versionada | `fair-score-dev-2` 85/10/5 implementada y auditada; ranking pendiente | STAGE-06 (`DONE`) / STAGE-09 |
 | Premiar mejora y no volumen de intentos | [modo feria](05-operations/fair-mode-and-competition-freeze.md) | emisión autoritativa + mejor resultado verificado | dirección TG1 aceptada; persistencia no implementada | STAGE-09 |
-| El error no expulsa al jugador | [fail-forward](01-game-design/graduation-and-fail-forward.md) | invariante de egreso + recuperación | requisito TG1 aceptado; motor no implementado | STAGE-07 (`READY`) |
+| El error no expulsa al jugador | [fail-forward](01-game-design/graduation-and-fail-forward.md) | invariante de egreso + recuperación | **implementado**: 20.000 carreras de seis años, 20.000 egresadas; el vocabulario sigue abierto | STAGE-07 (`DONE`) |
 | Identidad de carrera legible | [ADR-016](03-architecture/adr/ADR-016-career-player-model.md) | `CareerState` v0.2 | **implementado** | — |
 | Auditoría de una run oficial | [ADR-003](03-architecture/adr/ADR-003-deterministic-seeded-engine.md) | seed + versiones + action log | `variantCatalogVersion` y `scoreVersion` implementadas; falta emisión oficial | STAGE-06 y STAGE-09 |
 
@@ -4395,6 +4435,138 @@ Ranking, leaderboard, personal best, endpoints, persistencia e inscripción a un
 
 ---
 
+# FILE: 03-architecture/adr/ADR-024-progression-recovery-and-graduation.md
+
+# ADR-024 — Progresión, recuperación y egreso
+
+- Estado: Aceptado
+- Fecha: 2026-09-02
+
+## Contexto
+
+El Teacher Gate 1 aceptó una regla corta y absoluta: **toda run válida completada llega al egreso** (D-TG1-10). El jugador no está averiguando *si* egresa. Está averiguando *cómo*.
+
+Aceptarla no la hacía cierta. El motor no tenía estado terminal de egreso, un mal resultado no tenía más consecuencia que su score y su efecto de carrera, y la estructura de previas que [egreso y fail-forward](01-game-design/graduation-and-fail-forward.md) describe no existía. Este ADR la vuelve ejecutable **antes** de construir 1.º a 5.º, para que ningún año tenga que inventar su propio sistema de fracaso y promoción.
+
+La regla sólo significa algo si equivocarse sigue costando. Un juego donde el error no tiene consecuencia no es indulgente: es aburrido, y no es lo que la dirección de producto pidió.
+
+## Decisión
+
+### 1. Un mal resultado deja algo por cerrar
+
+Un beat ordinario que sale mal crea una **obligación**: algo que el año tiene que cerrar antes de poder terminar. Cerrarla es un beat de **repaso**, no un reintento.
+
+La obligación se direcciona semánticamente —año, beat de origen, contenido— y nunca por posición en una lista, así que una reproducción la reconstruye en el mismo orden porque el orden es una propiedad de la run.
+
+### 2. Por qué no puede entrar en bucle
+
+Dos hechos estructurales, y ninguno de los dos es configurable:
+
+1. **Sólo un beat ordinario crea obligaciones.** Un repaso no es ordinario, así que no puede crear una. No hay regla que salga mal ni bandera que quede mal puesta: la recursión es irrepresentable.
+2. **Un repaso siempre cierra lo que el año debía**, salga como salga. Qué tan bien salió cambia la carrera y la historia —un año cerrado *con lo justo* deja una **previa**, que el contenido futuro puede retomar— pero nunca si el año cierra.
+
+El peor caso es un repaso por año, y una run nunca necesita un segundo para arreglar el primero. Ese techo es lo que convierte «toda run válida egresa» en un hecho sobre la máquina de estados y no en una esperanza sobre el jugador.
+
+**No es un sistema de vidas.** Ni corazones, ni tres strikes, ni reintentar hasta acertar. Equivocarse compra **más** juego, no menos, y la consecuencia viaja con el jugador en vez de terminarlo.
+
+### 3. Un año no puede terminar debiendo
+
+El repaso se agenda después de los beats ordinarios y antes de que el año cierre, **fuera del presupuesto de uno o dos beats** de [ADR-019](03-architecture/adr/ADR-019-scenario-family-template-variant.md). Contarlo adentro le costaría al jugador una de las decisiones que el año fue compuesto para darle, que es lo contrario de lo que corresponde cuando algo salió mal.
+
+Todas las obligaciones de un año se cierran en **un solo** repaso. Cerrarlas de a una haría que un mal año costara tantos beats extra como errores tuvo, y una carrera son seis años; el objetivo de 8 a 10 minutos que el Gate fijó no lo sostendría.
+
+### 4. El egreso lo decide la progresión
+
+`GRADUATED` es terminal y lo decide el estado de progresión, no «pasaron todos los eventos visibles». Una run egresa cuando jugó su último año sin deber nada — que, por las reglas de arriba, es toda run válida completada. Una que terminó antes porque el contenido no pudo servirla **no** egresa, y decirlo es cómo ese defecto queda a la vista en vez de disfrazarse de final.
+
+**El egreso no tiene umbral de score ni de Promedio.** El desempeño cambia *cómo* se egresa, nunca *si*.
+
+### 5. La recuperación no es evidencia competitiva
+
+Ésta es la frontera con [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md), y es la más importante de esta etapa.
+
+Los beats ordinarios de una run fueron compuestos para ser comparables con los de cualquier otra. Un repaso existe sólo porque uno de ellos salió mal. Puntuarlo convertiría fallar a propósito en una forma de comprarse una oportunidad extra, y toda la comparabilidad que el compositor construye se caería por esa puerta.
+
+Así que **un repaso no puntúa**: ni en el numerador ni en el denominador. La evidencia competitiva sigue siendo el beat ordinario que salió mal.
+
+Se aplica en dos lugares a propósito. El perfil de score de la plantilla lo documenta; el agregador lo descarta **por su rol**, no por una bandera en el historial, de modo que un llamador que arme evidencia de otra manera tampoco pueda esquivarlo.
+
+Recuperarse tampoco borra lo que pasó. El resultado original sigue en la historia y sigue siendo parte de cómo egresó ese jugador: un repaso permite progresar, no deshace.
+
+### 6. El contenido del repaso es determinista y aprobado
+
+Se deriva de la identidad semántica de la obligación sobre un substream fijo. La misma run, el mismo error y la misma política llegan al mismo repaso en una reproducción meses después y en un servidor que nunca vio la primera partida.
+
+Sale del catálogo aprobado, exactamente como un beat ordinario: lo juega la misma persona bajo las mismas reglas y no le corresponde un catálogo más laxo. Y prefiere una variante que el jugador no haya visto — devolverle la pregunta que acaba de errar no es remediar, es reintentar.
+
+**El ruteo es por plantilla, no por año.** El content set declara qué repasa qué, y la obligación recuerda cuál situación salió mal, así que el repaso que aparece es el de *esa* situación. La primera versión de este diseño elegía el repaso del año, y era un error: un jugador que se equivocaba con el mural recibía una cuenta de colectivos. Es remediación en la forma y un disparate en el contenido.
+
+De ahí sale la consecuencia que importa: **una plantilla sin repaso declarado no deja nada por cerrar.** `none` es una decisión escrita e inspeccionable, no un silencio que el motor rellena con lo que el año tenga a mano. El mal resultado tiene consecuencia —nota, score, carrera, historia— y no deuda. Y como una obligación sólo existe cuando hay contenido que la cierra, la rama «el año debe algo que no puede cerrar» deja de ser alcanzable con contenido bien declarado, en vez de quedar como un final ruidoso a la espera.
+
+Se eligió derivarlo de la obligación en vez de meter contingencias en el `RunPlan` porque es la solución más chica que cumple todo: determinista, reproducible, verificable por servidor, y **sin tocar el esquema ni la huella del plan**. Un plan con ramas condicionales habría hecho participar de la identidad de la run a contenido que la mayoría de las runs nunca juega.
+
+### 7. Qué repasa 7.º, y por qué eso
+
+`g7.bus-travel-review`, una plantilla nueva con rol `recovery`, y **sólo** para las dos plantillas del colectivo. Piden lo mismo por caminos opuestos y las dos apoyan sobre un paso intermedio: cuánto dura el viaje una vez aplicada la demora. Ahí vive el error más común, y el enunciado completo lo esconde detrás de la decisión.
+
+Las otras seis declaran `none`, y cada una por su motivo: el error del mural es de redondeo de compra y aislarlo daría una cuenta trivial; el de la oferta es leer cuál quedó más barata, sin paso intermedio; el stand y el trabajo grupal miden decisiones de reparto, no media cuenta; y el acto del 25 de Mayo ocurre una vez y en público, así que repetirlo aparte lo volvería un trámite. Inventarles un repaso para llenar la tabla sería peor contenido que no tenerlo.
+
+El repaso aísla ese paso. No es la misma pregunta más fácil ni otra pregunta distinta: es la cuenta que la anterior daba por sabida, sola y a la vista, con el primer término nombrado como andamio.
+
+**No escala el currículo.** El Gate separó el año escolar del prerrequisito matemático (D-TG1-01), y eso vale también acá: una recuperación que exigiera matemática más avanzada convertiría el error en una barrera. Es `core`, más liviana que lo que remedia, y esa asimetría es intencional — baja el piso sin bajar el techo del concepto.
+
+### 8. La progresión es genérica
+
+Ni el motor ni la política conocen un id de contenido. Qué se repasa y cómo se lo cuenta lo declara el content set; la progresión sólo sabe que un año debe algo y que hay contenido con rol `recovery` para cerrarlo.
+
+La prueba de que alcanza es una carrera sintética de seis años —`7.º · 1.º · 2.º · 3.º · 4.º · 5.º`— que se juega entera con el mismo código y sin un solo `if (stage === …)`. Si un año futuro tuviera que ser un caso especial para converger, ese fixture es donde aparecería primero.
+
+## Alternativas consideradas
+
+**Repetir el año.** Es lo que la escuela real hace y lo que [reglas, scoring y progresión](01-game-design/rules-scoring-and-progression.md) ya había descartado: la fantasía es una carrera comprimida, no un simulador administrativo de promoción.
+
+**Un repaso por obligación.** Pedagógicamente más prolijo y aritméticamente insostenible: dos errores en un año costarían dos beats extra, seis años los multiplican, y el objetivo de duración no sobrevive.
+
+**Arrastrar obligaciones entre años como bloqueo.** Es la lectura literal de «previas», y rompe el invariante: un jugador que acumulara más obligaciones que capacidad de repaso no podría egresar nunca. Las previas quedan como **historia**, no como deuda que bloquea, que es lo que el documento de diseño pedía —estado narrativo oculto, no una quinta barra.
+
+**Contingencias de recuperación dentro del `RunPlan`.** Habría metido en la identidad de la run contenido que la mayoría de las runs no juega, y habría movido el esquema y la huella del plan para eso.
+
+**Que el repaso puntúe.** Descartado en §5. Habría hecho de equivocarse una estrategia.
+
+## Consecuencias
+
+- `ENGINE_VERSION` pasa a `6.0.0` y `SNAPSHOT_SCHEMA_VERSION` a `7`: el estado de una run lleva ahora qué debe, cómo lo cerró y si egresó. **El action log no se movió**: un repaso se responde como cualquier otro beat y no necesita un comando nuevo; subirle la versión por un cambio que no codifica habría hecho ver incompatibles todos los logs guardados con un formato que siguen cumpliendo.
+- **El ruleset sube por primera vez desde que existe el modelo de contenido**: `0.4.0-grade-7`. Qué resultado deja algo por cerrar y cuántos repasos puede jugar un año son reglas de progresión, y dos jugadores bajo políticas distintas no están jugando al mismo juego. La huella del ruleset las cubre número por número.
+- El contenido de 7.º sube a `0.9.0-grade-7` por la plantilla de repaso, y el catálogo aprobado a `grade-7-dev-5` — 185 variantes, 0 rechazos—, publicado al lado de `dev-4` sin editarlo.
+- Las runs golden reproducen el mismo recorrido, el mismo score por evento, el mismo perfil y la misma cantidad de comandos — y ahora terminan en egreso.
+- `pnpm game:simulate` reporta egresos, repasos y previas, y trata como hallazgo toda run que complete sin egresar.
+- Ninguna calibración es oficial: `recovery-dev-1` lleva `official: false` como las de dificultad, composición y score.
+
+## Evidencia
+
+| Qué | Resultado |
+|---|---|
+| Carreras sintéticas de seis años | **20.000 simuladas, 20.000 egresadas, 0 hallazgos** |
+| Peor caso de repasos | **6 en una carrera de seis años** — el techo de la política, uno por año |
+| Espacio de estados de la progresión | recorrido **entero**: 64 años posibles y 64 carreras; un único estado terminal alcanzable |
+| Convergencia sobre formas de jugar | property tests sobre 300 seeds × tres estilos, incluida la peor forma posible |
+| 7.º real | una situación sin resolver dispara el repaso, el repaso cierra el año y la partida egresa |
+| `none` de verdad | fallar el acto —que no declara repaso— no deja nada por cerrar, y el año cierra igual |
+| Sin farmeo | fallar y recuperarse perfecto siempre puntúa menos que jugar bien de entrada |
+| Servidor | recalcula egreso y repasos reproduciendo; un reclamo adjunto no cambia nada |
+
+## Lo que esto no decide
+
+El **vocabulario**. TG1-14 aceptó el egreso garantizado y no aportó palabras: «repaso», «quedó algo dando vueltas» y «previa» son candidatos, y la pregunta sigue abierta. Cambiarlos es copy, no arquitectura.
+
+Los **umbrales**. Que `invalid` deje algo por cerrar y `functional` no es una decisión de política, no de motor, y va al Teacher Gate 2 con el resto de la calibración.
+
+## No objetivos
+
+Ranking, personal best, intentos y persistencia siguen siendo STAGE-09. El contenido de 1.º a 5.º y el arquetipo final de carrera completa, STAGE-08. Los Hitos y el desempate siguen sin implementarse, y ningún bonus aleatorio entró por esta puerta.
+
+---
+
 # FILE: 03-architecture/analytics-observability.md
 
 # Analytics y observabilidad
@@ -4770,6 +4942,8 @@ Lo que la tabla prueba:
 
 STAGE-04 sumó una séptima, `g7.bus-latest-departure`, en la familia `bus`: misma situación, otra pregunta, interacción `numeric-input`, rol `anchor`, Estilo. Es la primera vez que dos plantillas de producción comparten familia. Ver [ADR-021](03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md).
 
+STAGE-07 sumó una octava, `g7.bus-travel-review`, en la misma familia y con rol `recovery`: es la primera plantilla de producción que **no** participa de la selección ordinaria — la juega un año que quedó debiendo el colectivo, y ninguna otra plantilla la referencia. Ver [ADR-024](03-architecture/adr/ADR-024-progression-recovery-and-graduation.md).
+
 ## Qué cambió en cada desafío
 
 Exactamente dos cosas por archivo:
@@ -5101,7 +5275,7 @@ El motor devuelve estado, eventos y **descripciones** de efecto. Nunca ejecuta u
 | `random/` | interfaz `Rng`, adaptador `pure-rand`, derivación de seeds por namespace |
 | `challenges/` | contratos, modelo familia/plantilla/variante, fuentes, validadores, interacciones y registry |
 | `narrative/` | storylets, condiciones, efectos, selección determinista |
-| `progression/` | etapas canónicas y el modelo de carrera visible |
+| `progression/` | etapas canónicas, el modelo de carrera visible y la progresión —qué queda por cerrar, cómo se cierra y cuándo se egresa— |
 | `difficulty/`, `scoring/`, `profiles/` | rasgos cognitivos, costos de scheduling y contratos de política + implementaciones de desarrollo |
 | `plan/` | política y compositor de runs, `RunPlan` concreto, serialización, fingerprint, validación independiente y auditoría |
 | `ruleset/` | ensamblado y validación del ruleset versionado |
@@ -5130,7 +5304,7 @@ interface RunDescriptor {
 
 ## Estado
 
-`RunState` es JSON-compatible: no contiene `Date`, `Map`, `Set`, instancias de clase ni funciones. Guarda descriptor, fase, etapa, índices de evento, carrera, flags, dificultad, estado de selección, historial, `scorePreview`, racha, completion y, cuando corresponde, el `RunPlan` concreto compuesto antes de empezar.
+`RunState` es JSON-compatible: no contiene `Date`, `Map`, `Set`, instancias de clase ni funciones. Guarda descriptor, fase, etapa, índices de evento, carrera, flags, dificultad, estado de selección, historial, `scorePreview`, racha, progresión —lo que la run debe, cómo lo cerró y si egresó—, completion y, cuando corresponde, el `RunPlan` concreto compuesto antes de empezar.
 
 El desafío activo se guarda como **dirección**, no como modelo:
 
@@ -5249,15 +5423,25 @@ El compositor enumera todas las combinaciones de uno o dos beats que cumplen las
 
 ## Progresión y ruleset
 
-Las siete etapas canónicas son configuración del ruleset, no `if (year === 3)` repartidos por el motor. El ruleset reúne etapas, política de scoring, de dificultad, de perfil, de composición y pacing narrativo, y se valida al construirse. Un content set sin política de composición conserva su flujo explícito; la demo amplia de 7.º es ese caso.
+Las siete etapas canónicas son configuración del ruleset, no `if (year === 3)` repartidos por el motor. El ruleset reúne etapas, política de scoring, de dificultad, de perfil, de composición, de recuperación y pacing narrativo, y se valida al construirse. Un content set sin política de composición conserva su flujo explícito; la demo amplia de 7.º es ese caso.
 
-Un ruleset **oficial** exige que las tres políticas estén marcadas `production`. Como las preguntas abiertas 5 y 24 siguen sin cerrarse, hoy no existe ninguna política de producción y `createRuleset({ official: true })` falla a propósito.
+### Recuperación y egreso
+
+Un beat ordinario que sale mal deja una **obligación**, y el año no puede cerrar debiéndola. Cerrarla es un **repaso**, que se agenda después del presupuesto ordinario y cierra de una vez todo lo que el año debía.
+
+La convergencia es estructural, no configurada: sólo un beat ordinario crea obligaciones —así que un repaso no puede crear otra— y un repaso siempre cierra lo que aborda, salga como salga. El techo es un repaso por año, y `GRADUATED` es el estado terminal que toda run válida completada alcanza. El contenido del repaso se deriva de la identidad semántica de la obligación sobre un substream propio, dentro del catálogo aprobado, así que una reproducción llega al mismo repaso.
+
+El motor no conoce un solo id de contenido de recuperación: el content set declara **qué repasa qué**, por plantilla, y una plantilla ausente de esa declaración no deja nada por cerrar — `none` es una decisión escrita, no un silencio que el motor rellene con lo que el año tenga a mano. La política —`recovery-dev-1@1.0.0-candidate`, `official: false`— declara qué calidad deja algo por cerrar y cuántos repasos tolera un año; el validador rechaza un techo mayor a dos y una política que dispare con `optimal`. Ver [ADR-024](03-architecture/adr/ADR-024-progression-recovery-and-graduation.md).
+
+Un ruleset **oficial** exige que las tres políticas estén marcadas `production`, y rechaza una política de recuperación que no sea oficial. Como las preguntas abiertas 5 y 24 siguen sin cerrarse, hoy no existe ninguna política de producción y `createRuleset({ official: true })` falla a propósito.
 
 ## Scoring y perfil
 
 `score_evento = base × calidad × dificultad + bonus - penalizaciones`, calculado sobre racionales y redondeado una sola vez al final. El resultado incluye un desglose explicable.
 
 La capa competitiva es independiente: cada plantilla declara qué hecho alimenta `MathPerformance`, `TeamPerformance` y `AuraPerformance`; Promedio y Estilo no son componentes. `scoreRun` normaliza la evidencia del `RunPlan`, retira componentes sin oportunidad, redistribuye proporcionalmente sus pesos y calcula un `FairScore` de 0 a 10.000 con racionales exactos, un solo redondeo y un desglose que cierra. El máximo perfecto es el mismo para todo plan válido.
+
+Un beat de **repaso** no aporta evidencia competitiva: el scorer lo descarta por su rol, así que no entra al numerador ni al denominador. Si puntuara, fallar a propósito sería una forma de comprarse una oportunidad extra. Ver [ADR-024](03-architecture/adr/ADR-024-progression-recovery-and-graduation.md).
 
 El registro resuelve exactamente `fair-score-dev-1@1.0.0-candidate` (histórica, 80/15/5) y `fair-score-dev-2@2.0.0-post-tg1-candidate` (actual post-TG1, 85/10/5); ambas tienen `official: false` y una referencia desconocida falla. TG1 aceptó el mapeo de calidad y el principio de recompensa pequeña; los factores exactos siguen candidatos. Ver [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md).
 
@@ -5279,7 +5463,7 @@ La comparación usa una forma JSON canónica con claves ordenadas, así que el o
 
 ## Snapshots
 
-Los snapshots son una **optimización para reanudar** (FR-009/FR-010), no un artefacto autoritativo. El codec valida agresivamente y rechaza lo que no reconoce; una versión incompatible produce un error explícito, nunca una migración silenciosa. Desde [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) el snapshot guarda además el **plan concreto** de una run compuesta, en vez de la forma de recalcularlo: reanudar tiene que jugar el año que el jugador empezó, no el que la calibración de hoy compondría. `SNAPSHOT_SCHEMA_VERSION` es `6`; no existe un registro de migraciones porque las versiones anteriores se rechazan y la aplicación ofrece una partida nueva.
+Los snapshots son una **optimización para reanudar** (FR-009/FR-010), no un artefacto autoritativo. El codec valida agresivamente y rechaza lo que no reconoce; una versión incompatible produce un error explícito, nunca una migración silenciosa. Desde [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) el snapshot guarda además el **plan concreto** de una run compuesta, en vez de la forma de recalcularlo: reanudar tiene que jugar el año que el jugador empezó, no el que la calibración de hoy compondría. Desde [ADR-024](03-architecture/adr/ADR-024-progression-recovery-and-graduation.md) guarda también la **progresión**, porque reanudar tiene que seguir debiendo lo que la run debía. `SNAPSHOT_SCHEMA_VERSION` es `7`; no existe un registro de migraciones porque las versiones anteriores se rechazan y la aplicación ofrece una partida nueva.
 
 ### Invariantes estructurales
 
@@ -5290,7 +5474,10 @@ Validar cada campo por separado no alcanza: un estado sólo es coherente cuando 
 - el historial es un log contiguo desde cero y no puede exceder el evento alcanzado;
 - `scorePreview` debe ser exactamente la suma de los puntos otorgados —un total manipulado se detecta sin reproducir nada—;
 - el historial de calidades y la racha deben corresponderse con los eventos resueltos;
-- todo storylet jugado debe figurar como visto, o el cooldown se comportaría distinto tras reanudar.
+- todo storylet jugado debe figurar como visto, o el cooldown se comportaría distinto tras reanudar;
+- una run no puede egresar debiendo algo, ni egresar con un beat abierto, ni declarar en su `completion` un egreso que la progresión contradice;
+- una obligación no puede venir de un evento que la run no alcanzó, ni estar pendiente y resuelta a la vez, ni resolverse dos veces;
+- un repaso abierto tiene que tener algo que cerrar.
 
 Se evaluó convertir `phase` en unión discriminada que lleve su payload, lo que haría irrepresentables esos estados. Se descartó por ahora: cambia el formato persistido y se propaga a transición, selectores y UI, mientras que el defecto sólo entra por esta frontera. Queda como evolución razonable.
 
@@ -5312,7 +5499,7 @@ Para que esa regla no dependa de la disciplina de quien edita, `tests/unit/engin
 
 ## Frontera con servidor
 
-El motor corre igual en browser y en Node. `src/server/game/validate-run.ts` es el caso de uso `server-only` que materializa ADR-004: recibe una submission no confiable, la parsea, verifica compatibilidad de versiones, la reproduce y devuelve score por evento, perfil y carrera **recalculados**. En una run compuesta recompone desde el seed y las políticas del servidor, compara `planFingerprint` y pasa el resultado por el validador independiente. Si el descriptor declara `scoreVersion` y el servidor tiene esa política, calcula además el `FairScore` canónico desde el historial reproducido. Nada que el cliente afirme sobre el resultado se lee.
+El motor corre igual en browser y en Node. `src/server/game/validate-run.ts` es el caso de uso `server-only` que materializa ADR-004: recibe una submission no confiable, la parsea, verifica compatibilidad de versiones, la reproduce y devuelve score por evento, perfil y carrera **recalculados**. En una run compuesta recompone desde el seed y las políticas del servidor, compara `planFingerprint` y pasa el resultado por el validador independiente. Si el descriptor declara `scoreVersion` y el servidor tiene esa política, calcula además el `FairScore` canónico desde el historial reproducido. Recalcula por separado la **progresión**: si la run egresó, cuántos repasos jugó y cuántas previas dejó — que son preguntas distintas del score y no se mezclan con él. Una run completada que quede debiendo algo se rechaza. Nada que el cliente afirme sobre el resultado se lee, `graduated` incluido.
 
 Rechaza con tipo una submission malformada, una acción insertada, una secuencia rota, una run truncada, un ruleset incompatible y un seed fuera del charset. Endpoints, sesión, rate limiting y persistencia siguen siendo trabajo aparte.
 
@@ -5498,20 +5685,21 @@ Esto ya es lo que hay: núcleo funcional con función de transición explícita 
 | 12 | Jerarquía `ScenarioFamily → Template → Variant` | **implementado** | [ADR-019](03-architecture/adr/ADR-019-scenario-family-template-variant.md), `src/game/challenges/content-model.ts` |
 | 13 | `VariantGenerator` por restricción, reutilizable entre plantillas | **implementado** | [ADR-020](03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md), `src/game/challenges/variant-source.ts` |
 | 14 | `VariantValidator` con invariantes de dominio ejecutables | **implementado**: genéricas más las de cada plantilla, con oráculos independientes | `src/game/challenges/variant-validation.ts` |
-| 15 | Catálogo de variantes aprobado y versionado | **implementado para desarrollo y consumido por la partida** — `ApprovedVariantCatalog` con `grade-7-dev-1` a `dev-4` inmutables; `dev-4` es el vigente y conserva la población semántica de `dev-3`; el catálogo oficial de feria no está congelado | `src/game/content/variant-catalog.ts`, [ADR-020](03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md), [ADR-021](03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md), [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md), [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md) |
+| 15 | Catálogo de variantes aprobado y versionado | **implementado para desarrollo y consumido por la partida** — `ApprovedVariantCatalog` con `grade-7-dev-1` a `dev-5` inmutables; `dev-5` es el vigente y suma la plantilla de repaso sobre la población de `dev-4`; el catálogo oficial de feria no está congelado | `src/game/content/variant-catalog.ts`, [ADR-020](03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md), [ADR-021](03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md), [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md), [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md) |
 | 16 | Bandas `CORE / STANDARD / STRETCH` como metadata de autoría | **implementado**: la banda se deriva de seis rasgos cognitivos declarados por plantilla; `DifficultyLevel` 1–5 sigue siendo la perilla del runtime y las dos pueden discrepar | `src/game/difficulty/cognitive.ts`, [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) |
 | 17 | Scheduler por presupuesto de dificultad | **implementado**: compositor determinista por enumeración, con presupuesto y tolerancia por etapa, validador independiente y verificación en servidor | `src/game/plan/`, [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) |
 | 18 | `MathPerformance` / `TeamPerformance` / `AuraPerformance` normalizados | **implementado**: en puntos básicos enteros, y cada plantilla declara qué hecho suyo alimenta cada una | `src/game/scoring/`, [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md) |
 | 19 | `ScorePolicy` competitiva con pesos, topes y recompensas | **implementada y versionada**: `fair-score-dev-1` histórica y `fair-score-dev-2` post-TG1 actual; ambas `official: false`; el desempate espera al ranking | `src/game/scoring/competitive-policy.ts`, [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md) |
 | 20 | `RunDescriptor` emitido por servidor | **TARGET**; el descriptor ya lleva la huella del plan que un servidor tendría que emitir y verificar | este documento, [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) |
 | 21 | `scoreVersion` y `variantCatalogVersion` | **implementado**: los tres —catálogo, huella del plan y versión de score— viajan en descriptor, snapshot y action log, y `createRun` los comprueba | `src/game/runs/state.ts`, [ADR-021](03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md), [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md), [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md) |
-| 22 | Verificación autoritativa por replay en servidor | **TARGET** para endpoints y sesión; el caso de uso ya reproduce la run, recompone y valida su plan, y **calcula su propio score competitivo** sin leer nada que el cliente afirme | `src/server/game/validate-run.ts`, [ADR-004](03-architecture/adr/ADR-004-server-authoritative-scoring.md), [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md) |
+| 22 | Verificación autoritativa por replay en servidor | **TARGET** para endpoints y sesión; el caso de uso ya reproduce la run, recompone y valida su plan, **calcula su propio score competitivo** y **recalcula progresión y egreso** —dos cosas distintas que no se mezclan— sin leer nada que el cliente afirme | `src/server/game/validate-run.ts`, [ADR-004](03-architecture/adr/ADR-004-server-authoritative-scoring.md), [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md), [ADR-024](03-architecture/adr/ADR-024-progression-recovery-and-graduation.md) |
 | 23 | Ranking con personal best transaccional | **TARGET** | [modo feria](05-operations/fair-mode-and-competition-freeze.md) |
-| 24 | Invariante de egreso y recuperación fail-forward | **TARGET**; el modelo de contenido ya puede declarar un beat `recovery` condicional | [egreso y fail-forward](01-game-design/graduation-and-fail-forward.md) |
+| 24 | Invariante de egreso y recuperación fail-forward | **implementado**: el egreso es un estado terminal que decide la progresión, y la recuperación converge por construcción —sólo un beat ordinario deja algo por cerrar y un repaso siempre lo cierra—, con un repaso por año como techo. No aporta evidencia competitiva | `src/game/progression/recovery.ts`, [ADR-024](03-architecture/adr/ADR-024-progression-recovery-and-graduation.md), [egreso y fail-forward](01-game-design/graduation-and-fail-forward.md) |
 | 25 | Catálogo de contenido disponible separado del plan de la run | **implementado** | `ContentCatalog`, `RunPlan`, [ADR-019](03-architecture/adr/ADR-019-scenario-family-template-variant.md) |
 | 26 | Elegibilidad por etapa y roles de colocación declarativos | **implementado** | ídem |
 | 27 | Presupuesto de beats por año validable | **implementado y ejercido**: el compositor produce años de uno o dos beats ordinarios y el motor los ejecuta; `grade-7-composed` juega tres eventos contra los ocho de la demo | `src/game/plan/composer.ts`, [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) |
 | 28 | Auditoría estadística de una población de variantes | **implementado** | `src/game/content/variant-audit.ts`, `pnpm game:variants audit` |
+| 29 | `RecoveryPolicy` nombrada, versionada y no oficial por defecto | **implementada**: `recovery-dev-1@1.0.0-candidate`, `official: false`; el validador rechaza un techo mayor a dos y una política que dispare con `optimal`, y la huella del ruleset la cubre | `src/game/progression/recovery.ts`, [ADR-024](03-architecture/adr/ADR-024-progression-recovery-and-graduation.md) |
 
 ## Lo que la migración de carrera ya cerró
 
@@ -5887,11 +6075,12 @@ La suite actual demuestra la infraestructura, no el comportamiento futuro del ju
 
 Vitest mide los archivos enumerados en `vitest.config.ts`, que incluyen todo `src/game`, con thresholds de 85 % para statements, lines y functions, y 75 % para branches. El porcentaje no es el objetivo: la prioridad de cobertura es transiciones, replay, generadores, evaluadores, matemática, scoring, selección de storylets y serialización.
 
-El motor suma tres capas que no son unit tests convencionales:
+El motor suma cuatro capas que no son unit tests convencionales:
 
 - **property tests** (`tests/property/`): determinismo por seed, equivalencia entre run y replay, round-trip de serialización, rangos del RNG, selección ponderada que nunca elige peso cero, stats acotadas, score finito y no negativo, instancias generadas que cumplen sus invariantes, y estabilidad de evaluación;
 - **golden replays** (`tests/unit/engine-golden.test.ts`): fijan la salida determinista exacta de seeds conocidas. Detectan un cambio accidental de protocolo; regenerarlos exige el bump de versión correspondiente;
-- **simulación masiva** (`pnpm game:simulate`): miles de runs deterministas que buscan callejones sin salida, scores inválidos, divergencia de replay y deriva de snapshot. `pnpm verify` corre 200 runs; la simulación profunda queda local.
+- **simulación masiva** (`pnpm game:simulate`): miles de runs deterministas que buscan callejones sin salida, scores inválidos, divergencia de replay, deriva de snapshot y **runs que completan sin egresar**. `pnpm verify` corre 200 runs; la simulación profunda queda local, y `--content=six-stage` juega la carrera de seis años;
+- **auditoría exhaustiva del espacio de estados** (`tests/unit/progression-reachability.test.ts`): donde el espacio es finito y chico, no se muestrea — se recorre entero. La progresión de un año y de una carrera de seis se enumeran completas para establecer que hay un único estado terminal alcanzable, sin ciclos ni callejones. Un muestreo puede no encontrar el bucle; una enumeración prueba que no existe.
 
 ## Verificación local
 
@@ -6011,7 +6200,7 @@ La auditoría actual incluye juego perfecto, matemática fuerte con secundarias 
 
 La pregunta que la simulación tiene que contestar: **¿el ranking ordena por lo que dijimos que iba a ordenar?** Si un perfil orientado a Aura le gana a uno de alta precisión matemática, la ponderación está mal, no el jugador.
 
-Antes de la feria, sobre contenido y política aprobados, la auditoría completa debe mirar distribución de score, resultados inalcanzables, estrategias dominantes, empates, repetición de variantes, distribución de dificultad, extremos de estado de carrera y alcanzabilidad del egreso. También debe incorporar intentos, personal best, señal temporal si se aprueba y comportamiento del fair mode real.
+La **alcanzabilidad del egreso** ya está establecida: 20.000 carreras de seis años egresan sin hallazgos, con un peor caso de un repaso por año, y la enumeración exhaustiva del espacio de progresión lo confirma sin depender del muestreo. Antes de la feria, sobre contenido y política aprobados, la auditoría completa debe mirar distribución de score, resultados inalcanzables, estrategias dominantes, empates, repetición de variantes, distribución de dificultad y extremos de estado de carrera. También debe incorporar intentos, personal best, señal temporal si se aprueba y comportamiento del fair mode real.
 
 La simulación captura lógica y equidad. **No captura diversión**, y un resultado sintético favorable no es validación con usuarios. Ver [ciclo de entrega real](00-product/real-delivery-lifecycle.md).
 
@@ -6021,7 +6210,7 @@ La automatización no reemplaza abrir la aplicación en un teléfono. Antes de u
 
 **Viewports:** 360, 390 y 430 px; tablet en vertical; desktop centrado contra la hoja.
 
-**Estados de juego:** tira de carrera vacía; primera aparición de Promedio; primera aparición de Equipo; Aura positiva y negativa; Estilo compacto y expandido; los cuatro resultados; opción elegida y todavía sin confirmar; hito de año; y —cuando existan— camino de recuperación, envío pendiente, personal best verificado y run completada que no supera la mejor.
+**Estados de juego:** tira de carrera vacía; primera aparición de Promedio; primera aparición de Equipo; Aura positiva y negativa; Estilo compacto y expandido; los cuatro resultados; opción elegida y todavía sin confirmar; hito de año; **camino de recuperación** —un año que sale mal, pide un repaso y cierra igual—; y —cuando existan— envío pendiente, personal best verificado y run completada que no supera la mejor.
 
 **Condiciones adversas:** refresh en medio de la run; sin red antes y después de terminar; doble click en confirmar; respuesta lenta del leaderboard; nickname inválido o bloqueado; movimiento reducido; sólo teclado; zoom del navegador al 200 %.
 
@@ -6567,54 +6756,69 @@ Vista corta del estado de ejecución. El contrato completo y el protocolo de act
 
 ---
 
-## STAGE-07 — Invariante de egreso, fail-forward y recuperaciones
+## STAGE-08 — Contenido incremental de 1.º a 5.º
 
 **Estado:** `READY` · **etapa actual**. No está iniciada ni implementada.
 
 ## Por qué está lista
 
-Teacher Gate 1 fue ejecutado el 1 de septiembre de 2026 y cerró como `PASSED_WITH_REQUIRED_ADJUSTMENTS`. La [evidencia docente](06-delivery/teacher-gate-1/11-evidencia-docente-2026-09-01.md), el [acta](06-delivery/teacher-gate-1/09-acta.md) y la [integración de producto](06-delivery/teacher-gate-1/12-integracion-post-gate.md) distinguen respuesta original, interpretación y requisito futuro. Los ajustes bloqueantes ya están integrados o asignados a una etapa posterior.
+STAGE-07 cerró el 2 de septiembre de 2026. El egreso dejó de ser una promesa del roadmap: es un estado terminal que toda run válida completada alcanza, y la recuperación converge **por construcción** —sólo un beat ordinario deja algo por cerrar, y un repaso siempre cierra lo que el año debía—, no por una configuración que alguien podría poner mal. La decisión está en [ADR-024](03-architecture/adr/ADR-024-progression-recovery-and-graduation.md).
 
-## Baseline autoritativa post-TG1
+La consecuencia para esta etapa es concreta: **ningún año nuevo tiene que inventar su sistema de fracaso y promoción.** Declara sus plantillas, su elegibilidad por etapa y, si corresponde, su contenido de repaso. La carrera sintética de seis años (`src/game/testing/fixtures/six-stage-progression.ts`) prueba que `7.º · 1.º · 2.º · 3.º · 4.º · 5.º` se juega entera con el mismo código y sin un solo caso especial por año.
 
-- Toda run válida completada debe terminar en `GRADUATED`; el motor todavía no lo implementa.
-- Recuperación significa fail-forward, no game over, repetición completa de año ni exclusión.
-- El vocabulario concreto de recuperación sigue abierto y se calibra en esta etapa; TG1 no aportó palabras.
-- La matemática mantiene un piso de prerrequisitos accesible desde aproximadamente 7.º en toda la carrera. El año académico expresa crecimiento narrativo y contextual, no una barrera curricular.
+## Baseline autoritativa
+
+- Toda run válida completada termina en `GRADUATED`. **Implementado y medido:** 20.000 carreras de seis años, 20.000 egresadas, 0 hallazgos.
+- El techo de recuperación es un repaso por año. En 20.000 carreras, el peor caso fueron exactamente 6 — y no existe una que juegue 19 beats.
+- Un repaso **no** puntúa: ni numerador ni denominador. La evidencia competitiva sigue siendo el beat ordinario que salió mal.
+- Recuperación significa fail-forward, no game over, repetición completa de año ni exclusión. No hay sistema de vidas.
+- El vocabulario de recuperación sigue `OPEN` ([pregunta 53](07-reference/open-questions.md)); «repaso» y «quedó algo dando vueltas» son copy candidato validable en TG2, no arquitectura.
+- Los umbrales de disparo y el techo por año siguen `TEACHER_GATE` ([pregunta 54](07-reference/open-questions.md)); `recovery-dev-1` es candidata y `official: false`.
+- La matemática mantiene un piso de prerrequisitos accesible desde aproximadamente 7.º en toda la carrera. El año académico expresa crecimiento narrativo y contextual, no una barrera curricular. Vale también para el contenido de repaso.
 - `AcademicStage` y `DifficultyBand` son ejes independientes. Cada año puede contener `CORE`, `STANDARD` y `STRETCH`; el techo sube por estructura del razonamiento.
 - Identidad de carrera y `FairScore` siguen separados. La política de desarrollo actual es `fair-score-dev-2@2.0.0-post-tg1-candidate`, 85/10/5 y `official: false`.
-- La duración de 8–10 minutos es un objetivo UX de la carrera completa, no timeout, bonus ni criterio de desempate.
+- La duración de 8–10 minutos es un objetivo UX de la carrera completa, no timeout, bonus ni criterio de desempate. La estructura sobre la que se va a calibrar ya tiene techo conocido: 12 beats ordinarios y hasta 18 con repasos.
 
 ## Scope IN
 
-- estado terminal `GRADUATED` y transición explícita;
-- separación de desempeño y progresión;
-- recuperaciones deterministas, comprimidas y convergentes;
-- estructura oculta de materias pendientes y callbacks;
-- lenguaje y feedback de recuperación;
-- pruebas de propiedad de convergencia, replay y serialización.
+- por año: contenido, plantillas, variantes validadas, storylets y hito de etapa;
+- contenido de repaso donde una plantilla tenga un paso intermedio aislable —`none` es una respuesta válida;
+- matriz de contenido previa a la implementación;
+- la auditoría de escalabilidad obligatoria al terminar 1.º;
+- enriquecimiento narrativo del acto del 25 de Mayo (TG1-13);
+- Hitos, si se diseñan como reconocimiento determinista y narrativo.
+
+## Orden obligatorio
+
+```text
+1.º → auditoría de escalabilidad → 2.º → 3.º → 4.º → 5.º
+```
+
+**1.º es la prueba crítica.** Al terminarlo hay que contestar: *¿qué fundaciones nuevas tuvimos que inventar?* Si la respuesta incluye otro modelo de carrera, otro motor de score, otra gramática de progreso o otra paleta, se revisa antes de seguir.
 
 ## Scope OUT
 
-- contenido de 1.º–5.º, enriquecimiento del acto, deportes/competencias e Hitos → STAGE-08;
+- rediseño visual, otro Career Model, otro motor de scoring, otra gramática de progreso → no son alcance de contenido;
 - intentos, emisión autoritativa, personal best, tie-break, ranking y leaderboard → STAGE-09;
-- congelar `fair-score-dev-2` como oficial → Teacher Gate 2 / FREEZE;
-- cambiar score, catálogo, composer o inventario de contenido.
+- congelar `fair-score-dev-2` o `recovery-dev-1` como oficiales → Teacher Gate 2 / FREEZE;
+- rediseñar el compositor, el modelo de dificultad o la progresión que STAGE-07 acaba de cerrar.
 
 ## Exit gate
 
-¿Toda secuencia válida completa converge en `GRADUATED`, con consecuencias y recuperaciones deterministas pero sin callejones sin salida?
+¿Una run completa recorre `7.º → 1.º → 2.º → 3.º → 4.º → 5.º → EGRESADO` con contenido real?
 
 ## Evidencia de entrada
 
-- GATE-TG1: `PASSED_WITH_REQUIRED_ADJUSTMENTS`.
-- STAGE-04 y STAGE-06: `DONE`.
-- Auditoría post-Gate: 23.000 planes totales, incluidos 20.000 planes reales compuestos de 7.º; máximo perfecto 10.000 y spread 0 bajo `fair-score-dev-2`.
-- Versiones sin cambio salvo la nueva identidad de ScorePolicy: engine `5.1.0`, ruleset `0.3.0-grade-7`, contenido `0.8.0-grade-7`, catálogo `grade-7-dev-4`, snapshot `6`, action log `4`.
+- STAGE-07: `DONE`. GATE-TG1: `PASSED_WITH_REQUIRED_ADJUSTMENTS`.
+- 20.000 carreras sintéticas de seis años, 20.000 egresadas, 0 hallazgos; peor caso 6 repasos.
+- Espacio de estados de la progresión recorrido entero: un único estado terminal alcanzable, sin ciclos ni callejones.
+- 898 tests en 50 archivos y 70 E2E, en verde.
+- Versiones: engine `6.0.0`, snapshot `7`, action log `4`, ruleset `0.4.0-grade-7`, contenido `0.9.0-grade-7`, catálogo `grade-7-dev-5`.
+- Huellas: motor `a0ed168d`, ruleset `5b9b0bc5`, contenido `dbaf5094`.
 
 ## Última reconciliación
 
-2 de septiembre de 2026, integración formal post-Teacher-Gate-1.
+2 de septiembre de 2026, cierre de STAGE-07.
 
 ---
 
@@ -6725,7 +6929,7 @@ Si el roadmap y el código difieren, **el código gana** y el roadmap se corrige
 - Fases de validación externa y congelamiento: [ciclo de entrega real](00-product/real-delivery-lifecycle.md).
 - Qué se construye por capas de alcance: [alcance y roadmap](00-product/scope-and-roadmap.md) y [backlog](06-delivery/mvp-backlog.md).
 
-**Última reconciliación contra el código:** 2 de septiembre de 2026, integración formal post-Teacher-Gate-1.
+**Última reconciliación contra el código:** 2 de septiembre de 2026, cierre de STAGE-07 — egreso, fail-forward y recuperaciones.
 
 ---
 
@@ -6765,8 +6969,8 @@ Tabla de navegación. Los contratos de cada etapa, más abajo, son la autoridad.
 | [STAGE-05](#stage-05-modelo-de-dificultad-y-run-composer) | Modelo de dificultad y Run Composer | `DONE` | STAGE-03, STAGE-04 | — |
 | [STAGE-06](#stage-06-scorepolicy-competitiva) | ScorePolicy competitiva | `DONE` | STAGE-05 | — |
 | [GATE-TG1](#gate-tg1-teacher-gate-1) | **Teacher Gate 1** | `PASSED_WITH_REQUIRED_ADJUSTMENTS` | STAGE-04, STAGE-06 | externo |
-| [STAGE-07](#stage-07-invariante-de-egreso-fail-forward-y-recuperaciones) | Egreso, fail-forward y recuperaciones | `READY` · **actual** | GATE-TG1 | — |
-| [STAGE-08](#stage-08-contenido-incremental-de-1º-a-5º) | Contenido incremental 1.º → 5.º | `NOT_STARTED` | STAGE-07 | auditoría tras 1.º |
+| [STAGE-07](#stage-07-invariante-de-egreso-fail-forward-y-recuperaciones) | Egreso, fail-forward y recuperaciones | `DONE` | GATE-TG1 | — |
+| [STAGE-08](#stage-08-contenido-incremental-de-1º-a-5º) | Contenido incremental 1.º → 5.º | `READY` · **actual** | STAGE-07 | auditoría tras 1.º |
 | [STAGE-09](#stage-09-fair-mode-servidor-autoritativo-y-ranking) | Fair mode, servidor autoritativo y ranking | `NOT_STARTED` | STAGE-06, STAGE-08 | — |
 | [GATE-TG2](#gate-tg2-teacher-gate-2) | **Teacher Gate 2** | `TEACHER_GATE` | STAGE-09 | externo |
 | [FREEZE](#freeze-congelamiento-de-competencia) | Congelamiento de competencia | `NOT_STARTED` | GATE-TG2 | — |
@@ -6802,7 +7006,7 @@ flowchart TD
 
 ## Matriz de capacidades
 
-Estado real contra el código al 29 de agosto de 2026, tras cerrar STAGE-06. Es la base de la que salen los estados de etapa de arriba, y lo que hay que reverificar antes de planificar.
+Estado real contra el código al 2 de septiembre de 2026, tras cerrar STAGE-07. Es la base de la que salen los estados de etapa de arriba, y lo que hay que reverificar antes de planificar.
 
 | Capacidad | Estado | Evidencia | Etapa |
 |---|---|---|---|
@@ -6828,7 +7032,7 @@ Estado real contra el código al 29 de agosto de 2026, tras cerrar STAGE-06. Es 
 | `ChallengeVariant` | `DONE` | `ChallengeVariantRef` con dirección `familia/plantilla/variante`, round-trip y substream propio | STAGE-02 |
 | `VariantGenerator` reutilizable | `DONE` | contrato de fuente de variantes + generadores por restricción en seis plantillas de producción | STAGE-03/STAGE-04 |
 | `VariantValidator` transversal | `DONE` | genéricas + por plantilla con oráculos independientes, diagnósticos tipados | STAGE-03 |
-| Catálogo de variantes aprobado y versionado | `DONE` | `ApprovedVariantCatalog`; `grade-7-dev-1` a `dev-4` comprometidos, verificados en `pnpm verify`; las versiones publicadas son inmutables y `dev-4` es el vigente | STAGE-03/STAGE-06 |
+| Catálogo de variantes aprobado y versionado | `DONE` | `ApprovedVariantCatalog`; `grade-7-dev-1` a `dev-5` comprometidos, verificados en `pnpm verify`; las versiones publicadas son inmutables y `dev-5` es el vigente | STAGE-03/STAGE-06 |
 | Catálogo aprobado consumido por la partida real | `DONE` | `ApprovedVariantLookup` en `EngineDependencies`, `tests/integration/grade-7-catalog-selection.test.ts` | STAGE-04 |
 | Dos plantillas de producción en una familia | `DONE` | familia `bus` con `g7.bus-timing` y `g7.bus-latest-departure`, interacciones y razonamientos distintos | STAGE-04 |
 | Plan de demo docente, distinto del plan de una run | `DONE` | `src/game/content/demo-plan.ts`, `src/content/grade-7/demo-plan.ts`, `tests/unit/demo-plan.test.ts` | STAGE-04 |
@@ -6841,19 +7045,22 @@ Estado real contra el código al 29 de agosto de 2026, tras cerrar STAGE-06. Es 
 | Validador de plan independiente del compositor | `DONE` | `src/game/plan/plan-validator.ts`; recalcula rol, banda y costo en vez de creerle al plan | STAGE-05 |
 | Verificación de composición en servidor | `DONE` para el alcance actual | `src/server/game/validate-run.ts` recompone, compara la huella y valida el plan | STAGE-05 |
 | `ScorePolicy` versionada | `DONE` | `fair-score-dev-1` histórica y `fair-score-dev-2` post-TG1 actual; ambas `official: false` | STAGE-06 + integración TG1 |
+| `RecoveryPolicy` versionada | `DONE` | `recovery-dev-1@1.0.0-candidate`, `official: false`, validada y cubierta por la huella del ruleset | STAGE-07 |
 | `MathPerformance` · `TeamPerformance` · `AuraPerformance` | `DONE` | normalizados en puntos básicos enteros; la plantilla declara qué hecho suyo alimenta cada uno | STAGE-06 |
 | `FairScore` y desglose competitivo | `DONE` | `src/game/scoring/fair-score.ts`; el desglose cierra exactamente y dice qué calibración lo produjo | STAGE-06 |
 | Verificación autoritativa del score en servidor | `DONE` para el alcance actual | el servidor puntúa reproduciendo, y `verifyScoreClaim` contradice un reclamo campo por campo | STAGE-06 |
-| Invariante de egreso | `NOT_STARTED` | `STAGE_ORDER` llega a `graduation`, pero no hay estado terminal `GRADUATED`; el único `run.graduated` vive en un fixture de test | STAGE-07 |
-| Recuperaciones y fail-forward | `NOT_STARTED` | — | STAGE-07 |
+| Invariante de egreso | `DONE` | `withGraduation` en `src/game/progression/recovery.ts`, `RunCompletion.graduated`, invariantes tipados, servidor autoritativo; **20.000 carreras de seis años, 20.000 egresadas** | STAGE-07 |
+| Recuperaciones y fail-forward | `DONE` | [ADR-024](03-architecture/adr/ADR-024-progression-recovery-and-graduation.md), `recovery-dev-1`, `g7.bus-travel-review`, `tests/unit/progression-reachability.test.ts` (espacio de estados recorrido entero) | STAGE-07 |
+| Recuperación fuera del score competitivo | `DONE` | `fair-score.ts` descarta la evidencia por rol; test de anti-farmeo en `tests/integration/recovery-run.test.ts` | STAGE-07 |
+| Carrera completa jugable de seis años | `PARTIAL` | la estructura la ejerce el fixture `six-stage-progression`; el **contenido** de 1.º–5.º no existe | STAGE-08 |
 | Contenido 1.º · 2.º · 3.º · 4.º · 5.º | `NOT_STARTED` | sólo existe `src/content/grade-7/` | STAGE-08 |
 | Verificación autoritativa por replay | `PARTIAL` | `src/server/game/validate-run.ts`: replaya, valida el plan compuesto y **calcula su propio score competitivo**; nada de lo que el cliente afirme se lee. Faltan endpoints, sesión, rate limit y persistencia | STAGE-09 |
 | Ranking con personal best | `NOT_STARTED` | — | STAGE-09 |
 | Desempate lexicográfico | `NOT_STARTED` | — | STAGE-09 |
 | Fair mode operativo | `PARTIAL` | `GameMode` ya declara `'fair'` como literal; no hay comportamiento asociado | STAGE-09 |
 | Configuración de competencia | `NOT_STARTED` | — | FREEZE |
-| Simulación determinista masiva | `DONE` para el alcance actual | `src/game/testing/simulation.ts`, `pnpm game:simulate`, 200 runs en `pnpm verify` | transversal |
-| E2E y accesibilidad automatizada | `DONE` para el alcance actual | `tests/e2e/`, `@axe-core/playwright`, 68 tests | transversal |
+| Simulación determinista masiva | `DONE` para el alcance actual | `src/game/testing/simulation.ts`, `pnpm game:simulate`, 200 runs en `pnpm verify`; reporta egresos, repasos y previas, y `not-graduated` es hallazgo | transversal |
+| E2E y accesibilidad automatizada | `DONE` para el alcance actual | `tests/e2e/`, `@axe-core/playwright`, 70 tests | transversal |
 | Catálogo de contenido separado del plan de la run | `DONE` | `ContentCatalog`, `RunPlan`, `tests/unit/content-model.test.ts` | STAGE-02 |
 | Elegibilidad por etapa y roles de colocación | `DONE` | declarativos por plantilla; elegibilidad no contigua probada | STAGE-02 |
 | Presupuesto de beats por año | `DONE` como contrato validable | `DEFAULT_STAGE_BEAT_BUDGET`, `validateStagePlan` | STAGE-02 |
@@ -6861,7 +7068,7 @@ Estado real contra el código al 29 de agosto de 2026, tras cerrar STAGE-06. Es 
 
 ### Discrepancias registradas
 
-- `STAGE_ORDER` incluye las siete etapas hasta `graduation`, pero sólo `grade-7` tiene contenido y ruleset. La estructura de progresión existe; **el egreso, no**. Documentación que hable de la carrera completa describe objetivo, no presente.
+- `STAGE_ORDER` incluye las siete etapas hasta `graduation`, y **el egreso ya existe**: STAGE-07 lo volvió un estado terminal que toda run válida completada alcanza. Lo que sigue faltando es el **contenido** de 1.º a 5.º; hoy la carrera de seis años se juega entera sólo en el fixture `six-stage-progression`, que existe para probar que el motor la sostiene. Documentación que hable de la carrera completa **jugable** sigue describiendo objetivo, no presente.
 - El presupuesto de uno a dos beats por año era un contrato de **plan** que ningún código construía. STAGE-04 lo reconcilió por escrito con el `DemoPlan`; **STAGE-05 lo cerró por código**: existe una partida normal de 7.º de un anchor más un secundario, el motor la ejecuta y un validador independiente la comprueba. El arco de ocho eventos sigue existiendo y es el demo.
 - `GameMode` admite `'fair'` y `'practice'`, y `DifficultySetting` admite `'adaptive'`. Son literales que el motor acepta; ninguno tiene todavía la semántica competitiva que el roadmap describe a partir de STAGE-06.
 - **7.º tiene dos rulesets y juega de dos formas.** `grade-7` es el arco completo de ocho eventos, que es el demo docente; `grade-7-composed` es la partida normal de tres. La pantalla del juego sigue usando el primero: cuál corresponde a un jugador es una decisión de producto que tiene sentido cuando existan los años 1.º a 5.º. Ver [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md).
@@ -7373,11 +7580,15 @@ El pack histórico sigue reproducible con `pnpm teacher-gate --validate` y perma
 
 ### STAGE-07 — Invariante de egreso, fail-forward y recuperaciones
 
-- **Estado:** `READY` — **etapa actual; implementación no iniciada**
-- **Depende de:** GATE-TG1
+- **Estado:** `DONE` — cerrada el 2 de septiembre de 2026
+- **Depende de:** GATE-TG1 (`PASSED_WITH_REQUIRED_ADJUSTMENTS`)
 - **Desbloquea:** STAGE-08
 
 **Propósito.** Formalizar la progresión **antes** de construir 1.º–5.º, para que ningún año tenga que inventar su propio sistema de fracaso y promoción.
+
+**Resultado.** El egreso dejó de ser una promesa del roadmap y pasó a ser una propiedad de la máquina de estados. Un beat ordinario que sale mal deja algo por cerrar; el año no puede terminar debiéndolo; cerrarlo es un **repaso**, no un reintento; y toda run válida completada termina en egreso. La decisión completa —incluidas las alternativas descartadas— está en [ADR-024](03-architecture/adr/ADR-024-progression-recovery-and-graduation.md).
+
+**Por qué no puede entrar en bucle.** Por construcción, no por configuración: sólo un beat **ordinario** crea una obligación, así que un repaso no puede crear otra; y un repaso **siempre** cierra lo que el año debía, salga como salga. La recursión es irrepresentable, y el techo —un repaso por año— es un hecho estructural que la auditoría exhaustiva confirma en vez de asumir.
 
 **Scope IN.** Estado terminal `GRADUATED` y transición explícita hacia él; separación de desempeño y progresión; eventos de recuperación deterministas y comprimidos; estructura oculta de materias pendientes con callbacks; property tests de convergencia.
 
@@ -7387,32 +7598,87 @@ El pack histórico sigue reproducible con `pnpm teacher-gate --validate` y perma
 
 **Criterios de aceptación.**
 
-- [ ] **Toda run válida completada llega a `GRADUATED`**, probado por property test sobre miles de secuencias de comandos válidas.
-- [ ] No existe game over global.
-- [ ] Un desempeño bajo activa recuperación o consecuencia, nunca un estado terminal de fracaso.
-- [ ] Las recuperaciones son deterministas y reproducibles por seed.
-- [ ] Ninguna recuperación puede crear un callejón sin salida.
-- [ ] Los estados imposibles se rechazan de forma tipada.
-- [ ] El replay atraviesa recuperaciones sin divergencia.
-- [ ] El estado sigue siendo serializable y reanudable a través de una recuperación.
+- [x] **Toda run válida completada llega a `GRADUATED`**, probado por property test sobre miles de secuencias de comandos válidas.
+- [x] No existe game over global.
+- [x] Un desempeño bajo activa recuperación o consecuencia, nunca un estado terminal de fracaso.
+- [x] Las recuperaciones son deterministas y reproducibles por seed.
+- [x] Ninguna recuperación puede crear un callejón sin salida.
+- [x] Los estados imposibles se rechazan de forma tipada.
+- [x] El replay atraviesa recuperaciones sin divergencia.
+- [x] El estado sigue siendo serializable y reanudable a través de una recuperación.
+
+**Qué se construyó.**
+
+| Qué | Dónde |
+|---|---|
+| Modelo de progresión | `src/game/progression/recovery.ts`: obligación, repaso, estado de progresión y política, con las razones de convergencia escritas en el módulo |
+| Política versionada | `recovery-dev-1@1.0.0-candidate`, `official: false`; el validador rechaza un techo mayor a dos y una política que dispare con `optimal` |
+| Estado de la run | `RunState.progression`, `ActiveEvent.recovery`, `RunCompletion` con `graduated`, `previas` y `recoveries` |
+| Invariantes tipados | `src/game/runs/invariants.ts`: egresar debiendo, egresar con un beat abierto, obligación de un evento no alcanzado, doble resolución y un repaso abierto sin nada que cerrar |
+| Agenda del repaso | `src/game/runs/transition.ts`: **después** del presupuesto ordinario y antes de que el año cierre, así el jugador no pierde una de las decisiones que el año fue compuesto para darle |
+| Contenido determinista | derivado de la identidad semántica de la obligación sobre `['recovery', año, 'obligation', id]`, dentro del catálogo aprobado y prefiriendo una variante no vista |
+| Ruteo por plantilla | el content set declara **qué repasa qué**; una plantilla sin repaso declarado no deja nada por cerrar. Así `none` es una decisión escrita e inspeccionable, y nadie recibe el repaso de una situación con la que no se equivocó |
+| Contenido de 7.º | `g7.bus-travel-review` aísla el paso intermedio —la duración del viaje con demora— con el primer término nombrado como andamio; `core`, más liviana que lo que remedia |
+| Marco narrativo | storylet `g7.review` con la condición nueva `{ kind: 'never' }`: existe para enmarcar un beat que agenda otra cosa, y el selector no puede tomarlo por accidente |
+| Frontera con el score | `fair-score.ts` descarta la evidencia de un repaso **por su rol**, no por una bandera del historial, así que ni entra al numerador ni al denominador |
+| Servidor autoritativo | `src/server/game/validate-run.ts` recalcula egreso, repasos y previas reproduciendo, y rechaza una run completada que deba algo |
+| Carrera sintética de seis años | `src/game/testing/fixtures/six-stage-progression.ts`: `7.º · 1.º · 2.º · 3.º · 4.º · 5.º` jugables con el mismo código y sin un solo caso especial por año |
+| Simulación | `pnpm game:simulate -- --content=six-stage`; egresos, repasos y previas reportados, y `not-graduated` es un hallazgo |
+| Tests | `tests/unit/progression.test.ts` (31), `tests/unit/progression-reachability.test.ts` (4, exhaustivos), `tests/property/progression.property.test.ts` (8), `tests/integration/recovery-run.test.ts` (19) |
+| Versionado | `ENGINE_VERSION 6.0.0`, `SNAPSHOT_SCHEMA_VERSION 7`, ruleset `0.4.0-grade-7`, contenido `0.9.0-grade-7`, catálogo `grade-7-dev-5`; **`ACTION_LOG_VERSION` se queda en 4** |
+
+**Evidencia.**
+
+| Qué se midió | Resultado |
+|---|---|
+| Carreras sintéticas de seis años | **20.000 simuladas, 20.000 egresadas, 0 hallazgos** |
+| Peor caso de repasos | **6 en una carrera de seis años** — el techo de la política, uno por año |
+| Espacio de estados de la progresión | recorrido **entero**: 64 formas posibles de un año y 64 de una carrera; un único estado terminal alcanzable, sin ciclos ni callejones |
+| Convergencia sobre formas de jugar | property tests sobre 300 seeds × mejor juego, peor juego y alternancia |
+| 7.º real, extremo a extremo | una situación sin resolver dispara el repaso, el repaso cierra el año, la partida egresa y el E2E lo ve en pantalla |
+| Sin farmeo | fallar y recuperarse perfecto siempre puntúa menos que jugar bien de entrada |
+| Servidor | recalcula egreso y repasos reproduciendo; un `graduated` adjunto por el cliente no cambia nada |
+| Barridos de 7.º y desarrollo | 3.000 runs por content set —demo, compuesto y desarrollo—, 3.000/3.000 egresadas, 0 hallazgos en cada uno |
+| Suite completa | 898 tests en 50 archivos y 70 E2E, en verde |
+
+**Auditoría estructural de duración.** Sobre 20.000 carreras de seis años, los beats ordinarios son **siempre 12** —dos por año, el presupuesto de STAGE-05— y los totales van de **12 a 18**: el peor caso es exactamente un repaso por año, y no existe una carrera que juegue 19. Los eventos totales van de 18 a 24. El objetivo de 8–10 minutos de D-TG1-09 se calibra en STAGE-08 con contenido real, pero la estructura sobre la que se va a calibrar ya tiene techo conocido y no lo mueve un mal jugador. En un año suelto: 7.º compuesto juega 2 beats ordinarios y 2–3 totales; el demo docente, 6 y 6–7.
+
+**Cobertura de recuperación por plantilla.** El ruteo es por plantilla, no por año: la obligación recuerda qué situación salió mal, y el repaso que aparece es el de esa situación. Una plantilla ausente de la tabla no crea obligación, así que `none` es una decisión escrita y no un silencio que el motor rellene con lo que el año tenga a mano.
+
+| Plantilla | Rol | ¿Qué repasa? |
+|---|---|---|
+| `g7.bus-timing` | anchor | **`g7.bus-travel-review`** — el paso intermedio que el enunciado esconde: cuánto dura el viaje una vez aplicada la demora |
+| `g7.bus-latest-departure` | anchor | **`g7.bus-travel-review`** — la misma cuenta, a la que se llega por el camino inverso |
+| `g7.bus-travel-review` | recovery | — es el repaso, y por rol no puede crear otro |
+| `g7.mural-paint` | checkpoint | `none`: el error típico es de redondeo de compra —envases enteros—, y aislarlo daría una cuenta trivial que no enseña nada |
+| `g7.notebook-offer` | anchor | `none`: comparar dos ofertas no tiene paso intermedio que aislar; el error se corrige leyendo cuál quedó más barata |
+| `g7.stand-supplies` | anchor | `none`: optimización con restricciones; su remediación honesta es otra decisión, no media cuenta |
+| `g7.group-tasks` | anchor | `none`: mide reparto y equipo, no un paso matemático aislable |
+| `g7.may-25-act` | special | `none`: el acto ocurre una vez y en público; repetirlo aparte lo volvería un trámite y le sacaría lo que lo hace memorable |
+
+Que hoy sólo la familia colectivo tenga repaso es una decisión de alcance, no un olvido: el motor no exige que toda plantilla lo tenga, `none` es una respuesta explícita y válida, y una recuperación inventada para completar una tabla sería peor contenido que ninguna. Un año que salga mal en una plantilla sin repaso cierra igual: el mal resultado tiene consecuencia —nota, score, carrera, historia— y no deuda. Sobre el 7.º compuesto, eso significa que fallar el acto no dispara nada y fallar el colectivo sí, y hay un test para cada uno de los dos casos.
 
 **Validación requerida.** `pnpm test`, `tests/property/`, `pnpm game:simulate:deep`, `pnpm verify`.
 
-**Riesgos.** Un invariante de egreso mal formulado puede esconder un bucle infinito de recuperaciones. La property test tiene que acotar la cantidad de eventos, no sólo la convergencia.
+**Riesgos.** Un invariante de egreso mal formulado puede esconder un bucle infinito de recuperaciones. La property test tiene que acotar la cantidad de eventos, no sólo la convergencia. — **Mitigado por construcción**: el bucle no es representable, y la auditoría exhaustiva de estados alcanzables lo comprueba en lugar de confiar en un muestreo.
 
-**Decisiones.** `TG1 ACCEPTED`: toda run válida completada llega a `GRADUATED`; sin game over global. El vocabulario concreto de recuperación/previas sigue `OPEN` porque TG1-14 no aportó palabras. Matemática universal y score/carrera separados son baseline, no alcance a rediseñar.
+**Lo que no entró, y por qué.** No se publicó `fair-score-dev-3` ni se tocó la ScorePolicy: la frontera con el score es una exclusión, no una recalibración. No hay ranking, desempate, intentos, personal best ni persistencia —siguen en STAGE-09—, ni Hitos, ni contenido de 1.º a 5.º. El acto del 25 de Mayo no se reescribió. Y ningún umbral de recuperación quedó cerrado: que `invalid` deje algo por cerrar y `functional` no es un candidato de política que va al Teacher Gate 2.
 
-**Exit gate.** ¿Pueden los años futuros apoyarse en este sistema de progresión sin inventar el suyo?
+**Decisiones.** `TG1 ACCEPTED` (D-TG1-10): toda run válida completada llega a `GRADUATED`; sin game over global — **implementada**. `OPEN` ([pregunta 53](07-reference/open-questions.md)): el vocabulario de recuperación y previas, porque TG1-14 no aportó palabras; «repaso» y «quedó algo dando vueltas» son candidatos de copy, no arquitectura. `TEACHER_GATE` ([pregunta 54](07-reference/open-questions.md)): los umbrales de disparo y el techo por año.
+
+**Exit gate.** ¿Pueden los años futuros apoyarse en este sistema de progresión sin inventar el suyo? — **Sí.** La carrera sintética de seis años se juega entera con el mismo código, sin un solo `if` por etapa, y el content set declara qué se repasa sin que el motor conozca un solo id de contenido.
 
 ---
 
 ### STAGE-08 — Contenido incremental de 1.º a 5.º
 
-- **Estado:** `NOT_STARTED`
-- **Depende de:** STAGE-07
+- **Estado:** `READY` — **etapa actual; implementación no iniciada**
+- **Depende de:** STAGE-07 (`DONE`)
 - **Desbloquea:** STAGE-09
 
 **Propósito.** Construir la carrera completa reutilizando fundaciones, no reinventándolas.
+
+**Qué la habilita.** STAGE-07 cerró la progresión: el egreso es un estado terminal alcanzable, la recuperación converge por construcción y el content set declara qué se repasa sin que el motor conozca un solo id de contenido. La carrera sintética de seis años prueba que la estructura aguanta `7.º · 1.º · 2.º · 3.º · 4.º · 5.º` sin un caso especial por año, así que **ningún año nuevo tiene que inventar su sistema de fracaso y promoción**: declara sus plantillas, su elegibilidad y, si corresponde, su contenido de repaso.
 
 **Orden obligatorio.** No es una tarea paralela.
 
@@ -9736,9 +10002,9 @@ Ocho eventos: dos narrativos y seis desafíos. Duración objetivo histórica del
 
 ## Contenido de 7.º grado
 
-Vive en `src/content/grade-7/`, no en fixtures de desarrollo. Es contenido de producto versionado (`contentVersion` `0.7.0-grade-7`).
+Vive en `src/content/grade-7/`, no en fixtures de desarrollo. Es contenido de producto versionado (`contentVersion` `0.9.0-grade-7`).
 
-Son **siete plantillas** y seis situaciones por partida: el slot del colectivo aloja dos plantillas de la misma familia y el seed elige cuál sale.
+Son **ocho plantillas** y seis situaciones por partida: el slot del colectivo aloja dos plantillas de la misma familia y el seed elige cuál sale. La octava, `g7.bus-travel-review`, tiene rol `recovery` y no entra en la selección ordinaria: aparece sólo cuando el año quedó debiendo el colectivo. Ver [ADR-024](03-architecture/adr/ADR-024-progression-recovery-and-graduation.md).
 
 | Id | Situación | Matemática | Interacción | Razonamiento |
 |---|---|---|---|---|
@@ -9750,7 +10016,7 @@ Son **siete plantillas** y seis situaciones por partida: el slot del colectivo a
 | `g7.group-tasks` | Repartir el trabajo grupal entre cuatro personas | asignación con restricciones | `assignment-board` | horas disponibles contra horas requeridas, más afinidad |
 | `g7.stand-supplies` | Comprar la merienda del stand sin pasarse del presupuesto | combinación y costo unitario | `budget-builder` | cubrir las porciones necesarias al menor costo |
 
-Ambos rulesets seleccionan **dentro del catálogo aprobado de desarrollo** vigente `grade-7-dev-4`: 26 o 27 direcciones por plantilla generada, y las dos autoradas de `g7.group-tasks`. Seis plantillas declaran generadores por restricción y `g7.group-tasks` es autorada; las dos estrategias pasan por validación, fingerprint y deduplicación, y ninguna produce azar procedural libre en runtime. El seed de la run elige **cuál** variante sale; qué contiene esa dirección no depende de la run. `dev-4` conserva la misma población semántica de `dev-3` y existe como versión inmutable nueva para `contentVersion 0.8.0-grade-7`, que incorpora los perfiles declarativos de score sin agregar variantes matemáticas. Ver [ADR-021](03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md), [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) y [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md).
+Ambos rulesets seleccionan **dentro del catálogo aprobado de desarrollo** vigente `grade-7-dev-5`: 26 o 27 direcciones por plantilla generada, y las dos autoradas de `g7.group-tasks`. Siete plantillas declaran generadores por restricción y `g7.group-tasks` es autorada; las dos estrategias pasan por validación, fingerprint y deduplicación, y ninguna produce azar procedural libre en runtime. El seed de la run elige **cuál** variante sale; qué contiene esa dirección no depende de la run. El repaso sale del **mismo** catálogo aprobado: lo juega la misma persona bajo las mismas reglas y no le corresponde uno más laxo. `dev-5` conserva intactas las 159 entradas de `dev-4` y suma las 26 de `g7.bus-travel-review` para `contentVersion 0.9.0-grade-7`. Ver [ADR-021](03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md), [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) y [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md).
 
 ### Calidades de resolución
 
@@ -9878,7 +10144,7 @@ Tiene que probar ocho cosas:
 
 ### Variación: qué demostró STAGE-04 y qué sigue abierto
 
-La diversidad **paramétrica** ya llega al gameplay desde el catálogo vigente `grade-7-dev-4`, con la misma población matemática aprobada que `dev-3`. La diversidad **cognitiva** tiene su primera prueba de producción en la familia `bus`: `g7.bus-timing` pide elegir una salida en un timeline y `g7.bus-latest-departure` pide producir una anticipación numérica recorriendo la relación al revés. Seeds distintas pueden elegir cualquiera de las dos dentro del slot del colectivo.
+La diversidad **paramétrica** ya llega al gameplay desde el catálogo vigente `grade-7-dev-5`, que conserva la población de `dev-4` y le suma la de la plantilla de repaso. La diversidad **cognitiva** tiene su primera prueba de producción en la familia `bus`: `g7.bus-timing` pide elegir una salida en un timeline y `g7.bus-latest-departure` pide producir una anticipación numérica recorriendo la relación al revés. Seeds distintas pueden elegir cualquiera de las dos dentro del slot del colectivo.
 
 Eso demuestra la capacidad, no completa el inventario. Las otras cinco familias siguen con una plantilla cada una, y cuántas familias y plantillas necesita el juego final permanece **OPEN**. Ver [la migración](03-architecture/content-model-migration.md), [familias y variantes](01-game-design/challenge-families-and-variants.md) y [ADR-021](03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md).
 
@@ -10106,7 +10372,7 @@ De requisito de producto a estado de implementación. La columna de estado es un
 | Premiar mejora y no volumen | [modo feria](05-operations/fair-mode-and-competition-freeze.md) | comparador versionado + personal best | no implementado | STAGE-09 |
 | El navegador no decide el premio | [ADR-004](03-architecture/adr/ADR-004-server-authoritative-scoring.md) | verificación por replay en servidor | base en `src/server/game/validate-run.ts` | STAGE-09 |
 | Reproducibilidad y auditoría de una run | [ADR-003](03-architecture/adr/ADR-003-deterministic-seeded-engine.md) | seed + versiones + action log | **implementado**, con `variantCatalogVersion`, huella de plan y `scoreVersion` opcionales | emisión oficial en STAGE-09 |
-| El error no expulsa al jugador | [egreso y fail-forward](01-game-design/graduation-and-fail-forward.md) | invariante de egreso + recuperación comprimida | sin contenido de recuperación | STAGE-07 |
+| El error no expulsa al jugador | [egreso y fail-forward](01-game-design/graduation-and-fail-forward.md) | invariante de egreso + recuperación comprimida | **implementado** en STAGE-07; hoy repasa la familia colectivo y el resto declara `none` | contenido de 1.º–5.º en STAGE-08 |
 | Datos mínimos de menores | [ADR-008](03-architecture/adr/ADR-008-anonymous-identity.md) | identidad pseudónima | **implementado** en la base | retención abierta, STAGE-10 |
 
 ## Qué NO hizo esta integración
@@ -10200,9 +10466,11 @@ Estas decisiones vienen del [Project Blueprint v0.2.0](07-reference/blueprint-v0
 | D-TG1-07 | Mapeo discreto óptimo/eficiente/funcional/inválido = 100/75/40/10 | TG1 ACCEPTED CANDIDATE | implementado en ambas policies; métricas continuas conservan su señal; fuente TG1-09 |
 | D-TG1-08 | Intentos competitivos ilimitados y mejor resultado verificado | TG1 ACCEPTED · PRODUCT DIRECTION | STAGE-09; la infraestructura asigna seed/plan y evita selección manual; fuente TG1-10 |
 | D-TG1-09 | Carrera completa con objetivo UX aproximado de 8–10 minutos | TG1 ACCEPTED TARGET | se medirá en STAGE-08; no es timeout ni input de score; fuente TG1-12 |
-| D-TG1-10 | Toda run válida completada termina en `GRADUATED` | TG1 ACCEPTED REQUIREMENT | entrada de STAGE-07; todavía no implementado; fuente TG1-14 |
+| D-TG1-10 | Toda run válida completada termina en `GRADUATED` | TG1 ACCEPTED · **IMPLEMENTED** | cerrada en STAGE-07 ([ADR-024](03-architecture/adr/ADR-024-progression-recovery-and-graduation.md)): la convergencia es estructural, no configurada, y 20.000 carreras de seis años egresan sin hallazgos; fuente TG1-14 |
+| D-018 | Un beat de recuperación no aporta evidencia competitiva | RECOMENDADA | **implementada** ([ADR-024](03-architecture/adr/ADR-024-progression-recovery-and-graduation.md)): descartada por rol en el scorer, así que fallar a propósito no compra una oportunidad extra de puntuar |
+| D-019 | Las previas son historia oculta, nunca deuda que bloquee | RECOMENDADA | **implementada**: un año que cierra con lo justo deja rastro para callbacks futuros y no puede impedir el egreso; los callbacks son contenido de STAGE-08 |
 
-La [integración post-Gate](06-delivery/teacher-gate-1/12-integracion-post-gate.md) es la trazabilidad completa. Siguen abiertos la oficialización final del score, los factores exactos de recompensa, el desempate, el diseño de Hitos, el vocabulario de recuperación, el inventario de contenido y la configuración final de competencia.
+La [integración post-Gate](06-delivery/teacher-gate-1/12-integracion-post-gate.md) es la trazabilidad completa. Siguen abiertos la oficialización final del score, los factores exactos de recompensa, el desempate, el diseño de Hitos, el **vocabulario** de recuperación y sus umbrales de disparo —el mecanismo sí está cerrado—, el inventario de contenido y la configuración final de competencia.
 
 ---
 
@@ -10440,6 +10708,12 @@ Los archivos siguientes son **documentación**: muestran la forma de un contrato
 
 **Fail forward:** el error cambia las consecuencias y el contenido siguiente en vez de terminar la partida.
 
+**Repaso:** el beat que cierra lo que un año dejó pendiente. No es un reintento —no devuelve la misma pregunta ni borra el resultado original—, se agenda fuera del presupuesto ordinario y **no puntúa**. Ver [ADR-024](03-architecture/adr/ADR-024-progression-recovery-and-graduation.md).
+
+**Previa:** año que cerró con lo justo. Es historia oculta que el contenido futuro puede retomar, nunca deuda que bloquee el egreso ni una quinta dimensión del HUD.
+
+**Egreso:** estado terminal de una carrera. Lo decide la progresión —haber jugado el último año sin deber nada—, no un umbral de score ni de Promedio. Toda run válida completada lo alcanza.
+
 **Golden seed:** seed conocida que se conserva para tests deterministas de regresión.
 
 **Teacher Gate:** revisión formal del Departamento de Matemática que cierra decisiones de contenido, dificultad y competencia. Ver [gates docentes](06-delivery/teacher-gates.md).
@@ -10562,7 +10836,7 @@ El modelo de contenido de [ADR-019](03-architecture/adr/ADR-019-scenario-family-
 - en qué año va cada cosa;
 - si cada uno de los escenarios actuales se clasifica como **KEEP**, **MOVE**, **REWORK**, **MERGE**, **REPLACE** o **REMOVE**.
 
-Las siete plantillas actuales son **contenido vigente y sondas de arquitectura**, no el inventario completo del juego, y su ubicación en 7.º es consecuencia del primer slice vertical, no una decisión de producto. Las familias declaradas hoy —`bus`, `mural`, `notebook`, `group-project`, `school-fair`, `may-25`— son **CANDIDATAS**, no un catálogo cerrado.
+Las ocho plantillas actuales —siete ordinarias y un repaso— son **contenido vigente y sondas de arquitectura**, no el inventario completo del juego, y su ubicación en 7.º es consecuencia del primer slice vertical, no una decisión de producto. Qué plantillas de los años futuros merecen repaso es parte de esta misma pregunta abierta: hoy sólo lo tiene la familia colectivo, y `none` es una respuesta legítima. Las familias declaradas hoy —`bus`, `mural`, `notebook`, `group-project`, `school-fair`, `may-25`— son **CANDIDATAS**, no un catálogo cerrado.
 
 Que la familia `bus` haya pasado a tener dos plantillas en STAGE-04 ([ADR-021](03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md)) **no responde nada de esto**: demuestra que el modelo aloja varias plantillas por familia, y no dice cuántas debería tener ninguna.
 
@@ -10572,7 +10846,9 @@ Que la familia `bus` haya pasado a tener dos plantillas en STAGE-04 ([ADR-021](0
 49. ¿Se produce el pack raster de ocho imágenes o el producto sale confirmando que la UI sola alcanza? Todas las pantallas corren hoy con cero imágenes. *Gate: alcance de la v0.3 del sistema de diseño.*
 50. ¿Cuánto tiempo se conservan action logs, ranking público y datos del evento después de la feria, y qué se archiva o anonimiza? *Gate: persistir datos reales de participantes.* Se cruza con la pregunta 31.
 51. ¿Qué señal de tiempo activo puede verificar el servidor si el tiempo participa del desempate? *Gate: usar tiempo en el ranking oficial.* Es la pregunta 27 vista desde el ranking competitivo.
-52. ¿Qué condiciones, efectos y presentación tendrá el sistema de Hitos de carrera? TG1-11 propuso reconocimientos como abanderado o primer escolta. Deben ser deterministas desde estado/seed y preferentemente narrativos; **no** otorgan bonus competitivo aleatorio ni resuelven por sí solos un empate. *Gate: diseño de carrera/narrativa en STAGE-07/08; implicaciones de ranking en STAGE-09/TG2.*
+52. ¿Qué condiciones, efectos y presentación tendrá el sistema de Hitos de carrera? TG1-11 propuso reconocimientos como abanderado o primer escolta. Deben ser deterministas desde estado/seed y preferentemente narrativos; **no** otorgan bonus competitivo aleatorio ni resuelven por sí solos un empate. STAGE-07 no los implementó ni abrió una puerta por donde puedan entrar: la recuperación no puntúa. *Gate: diseño de carrera/narrativa en STAGE-08; implicaciones de ranking en STAGE-09/TG2.*
+53. ¿Con qué palabras se le cuenta al jugador que le quedó algo por cerrar? TG1-14 aceptó el egreso garantizado y **no aportó vocabulario**. STAGE-07 implementó el sistema con copy candidato —«repaso», «quedó algo dando vueltas», «previa»— elegido para no humillar, y ninguna de esas palabras es arquitectura: cambiarlas es editar contenido. Falta validar con el docente que sean las que la escuela usa y que un chico las entienda sin explicación. *Gate: Teacher Gate 2.* Ver [egreso, recuperación y fail-forward](01-game-design/graduation-and-fail-forward.md).
+54. ¿Qué resultado debe dejar algo por cerrar, y cuántos repasos puede jugar un año? Hoy `recovery-dev-1` dispara sólo con `invalid` y tolera un repaso por año; el validador rechaza un techo mayor a dos y una política que dispare con `optimal`, pero los umbrales exactos son calibración, no motor. *Gate: Teacher Gate 2.* Se cruza con la pregunta 39.
 
 ## Diferidas a propósito
 
@@ -10796,7 +11072,7 @@ Implicación: el cliente no publica un score final; el servidor valida y reprodu
 - [x] Familias de escenario, plantillas y variantes deterministas.
 - [x] Dificultad de piso bajo y techo alto, bandas y presupuesto.
 - [x] Score competitivo post-TG1 85/10/5 como candidato no oficial, con historia dev-1 preservada.
-- [x] Egreso garantizado aceptado; recuperación/fail-forward listo para STAGE-07.
+- [x] Egreso garantizado **implementado** en STAGE-07: la recuperación converge por construcción y no puntúa ([ADR-024](03-architecture/adr/ADR-024-progression-recovery-and-graduation.md)); el vocabulario sigue abierto.
 
 ## Funcional
 - [x] Requisitos funcionales.

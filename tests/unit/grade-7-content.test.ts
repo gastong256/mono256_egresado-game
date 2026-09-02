@@ -734,9 +734,20 @@ describe('el acto · marcar todo nunca alcanza', () => {
 })
 
 describe('el content set', () => {
-  it('declara siete plantillas y nueve storylets', () => {
-    expect(grade7Challenges).toHaveLength(7)
-    expect(dependencies.storylets).toHaveLength(9)
+  it('declara ocho plantillas y diez storylets', () => {
+    // Siete ordinarias más una de recuperación; nueve storylets del arco más el
+    // marco del repaso, que la narrativa nunca elige por su cuenta.
+    expect(grade7Challenges).toHaveLength(8)
+    expect(dependencies.storylets).toHaveLength(10)
+  })
+
+  it('sólo una plantilla lleva el rol de recuperación', () => {
+    const recovery = grade7Challenges.filter(
+      (template) => template.placement === 'recovery',
+    )
+    expect(recovery.map((template) => template.id)).toEqual([
+      'g7.bus-travel-review',
+    ])
   })
 
   it('ejercita seis tipos de interacción distintos', () => {

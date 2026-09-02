@@ -17,6 +17,15 @@ export {
 } from './fixtures/development-ruleset'
 export { developmentStorylets } from './fixtures/storylets'
 export {
+  createSixStageDependencies,
+  createSixStageRuleset,
+  sixStageCompositionPolicy,
+  sixStageRecoveryContent,
+  sixStageRecoveryPolicy,
+  SIX_STAGE_IDS,
+  SIX_STAGE_RULESET_VERSION,
+} from './fixtures/six-stage-progression'
+export {
   orderedTeacherGateCases,
   teacherGateCase,
   teacherGateCaseIssues,

@@ -32,6 +32,7 @@ const projectLead = toStoryletId('g7.project-lead')
 const projectSupport = toStoryletId('g7.project-support')
 const groupWork = toStoryletId('g7.group-work')
 const fairStand = toStoryletId('g7.fair-stand')
+const review = toStoryletId('g7.review')
 
 export const grade7Storylets: readonly Storylet[] = [
   {
@@ -214,6 +215,33 @@ export const grade7Storylets: readonly Storylet[] = [
     effects: [],
     followUps: [],
   },
+  {
+    /*
+     * El repaso de fin de año.
+     *
+     * No se elige: lo agenda la progresión cuando el año quedó debiendo algo, y
+     * por eso su condición es `never`. Está en el content set para que ese beat
+     * tenga palabras alrededor —un beat que aparece sin motivo se lee como un
+     * error, no como una consecuencia— y no para que el selector narrativo lo
+     * pueda sacar por su cuenta.
+     *
+     * El tono es el de la escuela, no el de un castigo: quedó algo dando
+     * vueltas, se repasa, el año sigue.
+     */
+    id: review,
+    kind: 'callback',
+    stages: ['grade-7'],
+    weight: 1,
+    priority: 0,
+    requires: { kind: 'never' },
+    tags: ['repaso'],
+    eyebrow: 'Antes de cerrar el año',
+    title: 'Quedó algo dando vueltas',
+    text: 'La profe te para en el pasillo: «Che, esa cuenta del colectivo la dejamos por la mitad. Sentate cinco minutos y la sacamos, así cerrás bien el año.»',
+    challengePool: [],
+    effects: [],
+    followUps: [],
+  },
 ]
 
 /** Ids expuestos para tests y para el resumen del año. */
@@ -227,4 +255,5 @@ export const grade7StoryletIds = {
   projectSupport,
   groupWork,
   fairStand,
+  review,
 } as const

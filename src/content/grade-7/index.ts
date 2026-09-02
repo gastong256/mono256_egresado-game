@@ -24,9 +24,12 @@ import {
   candidateFairScorePolicy,
   resolveCompetitiveScorePolicy,
   composeRun,
+  developmentRecoveryPolicy,
+  toChallengeId,
   type ChallengeDefinition,
   type CompositionFailure,
   type EngineDependencies,
+  type RecoveryContent,
   type Result,
   type RunDescriptor,
   type Ruleset,
@@ -46,18 +49,26 @@ import {
 import { grade7CompositionPolicy } from './composition'
 import { busLatestDeparture } from './challenges/bus-latest-departure'
 import { busTiming } from './challenges/bus-timing'
+import { busTravelReview } from './challenges/bus-travel-review'
 import { groupTasks } from './challenges/group-tasks'
 import { may25Act } from './challenges/may-25-act'
 import { muralPaint } from './challenges/mural-paint'
 import { notebookOffer } from './challenges/notebook-offer'
 import { standSupplies } from './challenges/stand-supplies'
-import { grade7Storylets } from './storylets'
+import { grade7Storylets, grade7StoryletIds } from './storylets'
 import { grade7ApprovedVariants } from './variant-catalogs'
 
-/** Los siete desafíos jugables de 7.º grado. */
+/**
+ * El contenido jugable de 7.º grado.
+ *
+ * Ocho plantillas: siete ordinarias y una de recuperación. La última no se
+ * compone nunca y no gasta un beat del año; sólo la agenda la progresión cuando
+ * el año quedó debiendo algo.
+ */
 export const grade7Challenges: readonly ChallengeDefinition[] = [
   busLatestDeparture,
   busTiming,
+  busTravelReview,
   may25Act,
   muralPaint,
   notebookOffer,
@@ -101,6 +112,7 @@ export function createGrade7Ruleset(): Ruleset {
     profile: developmentProfilePolicy,
     // El arco es una secuencia autorada, así que ningún evento se repite.
     narrative: { cooldownEvents: 0, allowRepeats: false },
+    recovery: developmentRecoveryPolicy,
   })
 
   if (!result.ok) {
@@ -136,6 +148,7 @@ export function createGrade7ComposedRuleset(): Ruleset {
     profile: developmentProfilePolicy,
     narrative: { cooldownEvents: 0, allowRepeats: false },
     composition: grade7CompositionPolicy,
+    recovery: developmentRecoveryPolicy,
   })
 
   if (!result.ok) {
@@ -147,6 +160,33 @@ export function createGrade7ComposedRuleset(): Ruleset {
   return result.value
 }
 
+/**
+ * Cómo 7.º cierra un año que quedó debiendo algo.
+ *
+ * El storylet pone las palabras y la plantilla pone la cuenta. Las dos son
+ * contenido: qué se repasa y cómo se lo cuenta es autoría, no motor.
+ */
+/**
+ * Qué repasa qué en 7.º.
+ *
+ * Sólo la familia colectivo tiene repaso, y es una decisión, no un olvido: sus
+ * dos plantillas apoyan sobre el mismo paso intermedio —cuánto dura el viaje
+ * una vez aplicada la demora— y ese paso se puede aislar sin volverse trivial.
+ *
+ * Las demás plantillas no figuran acá, y eso es `none`: el error del mural es
+ * de redondeo de compra, el de la oferta es leer cuál quedó más barata, y el
+ * acto ocurre una vez y en público. Inventarles un repaso para llenar la tabla
+ * sería peor contenido que no tenerlo, y darles el del colectivo sería un
+ * disparate: nadie se equivocó con un colectivo.
+ */
+export const grade7RecoveryContent: RecoveryContent = {
+  storyletId: grade7StoryletIds.review,
+  reviews: {
+    'g7.bus-timing': [toChallengeId('g7.bus-travel-review')],
+    'g7.bus-latest-departure': [toChallengeId('g7.bus-travel-review')],
+  },
+}
+
 /** Todo lo que el motor necesita para jugar 7.º grado. */
 export function createGrade7Dependencies(): EngineDependencies {
   return {
@@ -156,6 +196,7 @@ export function createGrade7Dependencies(): EngineDependencies {
     // La partida elige dentro de lo aprobado, no dentro de lo que un generador
     // puede alcanzar. Ésa es la diferencia entre tener un pipeline y usarlo.
     approvedVariants: grade7ApprovedVariants,
+    recoveryContent: grade7RecoveryContent,
   }
 }
 
@@ -173,6 +214,7 @@ export function createGrade7ComposedDependencies(): EngineDependencies {
     storylets: grade7Storylets,
     approvedVariants: grade7ApprovedVariants,
     composition: grade7CompositionPolicy,
+    recoveryContent: grade7RecoveryContent,
   }
 }
 

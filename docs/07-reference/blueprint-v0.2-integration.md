@@ -204,7 +204,7 @@ De requisito de producto a estado de implementación. La columna de estado es un
 | Premiar mejora y no volumen | [modo feria](../05-operations/fair-mode-and-competition-freeze.md) | comparador versionado + personal best | no implementado | STAGE-09 |
 | El navegador no decide el premio | [ADR-004](../03-architecture/adr/ADR-004-server-authoritative-scoring.md) | verificación por replay en servidor | base en `src/server/game/validate-run.ts` | STAGE-09 |
 | Reproducibilidad y auditoría de una run | [ADR-003](../03-architecture/adr/ADR-003-deterministic-seeded-engine.md) | seed + versiones + action log | **implementado**, con `variantCatalogVersion`, huella de plan y `scoreVersion` opcionales | emisión oficial en STAGE-09 |
-| El error no expulsa al jugador | [egreso y fail-forward](../01-game-design/graduation-and-fail-forward.md) | invariante de egreso + recuperación comprimida | sin contenido de recuperación | STAGE-07 |
+| El error no expulsa al jugador | [egreso y fail-forward](../01-game-design/graduation-and-fail-forward.md) | invariante de egreso + recuperación comprimida | **implementado** en STAGE-07; hoy repasa la familia colectivo y el resto declara `none` | contenido de 1.º–5.º en STAGE-08 |
 | Datos mínimos de menores | [ADR-008](../03-architecture/adr/ADR-008-anonymous-identity.md) | identidad pseudónima | **implementado** en la base | retención abierta, STAGE-10 |
 
 ## Qué NO hizo esta integración

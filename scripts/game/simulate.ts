@@ -11,9 +11,10 @@
  *     --seed=<prefix>  seed prefix, so a sweep is reproducible (default "sim")
  *     --verify=<n>     run the replay/snapshot check every n runs (default 25)
  *     --verbose        print the per-run seed of every finding
-     --content=<grade-7|grade-7-composed|development|development-composed>
-                      content set (default grade-7). The composed sets play runs
-                      whose content the composer pinned before they started.
+ *     --content=<grade-7|grade-7-composed|development|development-composed|six-stage>
+ *                      content set (default grade-7). The composed sets play
+ *                      runs whose content the composer pinned before they
+ *                      started.
  *
  * This lives outside `src/game` on purpose: the deterministic core may not read
  * `process`, argv or stdout, so the tooling that drives it stays out here where
@@ -22,6 +23,7 @@
 
 import { createDevelopmentDependencies } from '../../src/game/testing/fixtures/development-ruleset'
 import { createComposedDevelopmentDependencies } from '../../src/game/testing/fixtures/composed-ruleset'
+import { createSixStageDependencies } from '../../src/game/testing/fixtures/six-stage-progression'
 import {
   createGrade7ComposedDependencies,
   createGrade7Dependencies,
@@ -48,6 +50,9 @@ function selectDependencies(argv: readonly string[]): EngineDependencies {
   }
   if (requested === 'development-composed') {
     return createComposedDevelopmentDependencies()
+  }
+  if (requested === 'six-stage') {
+    return createSixStageDependencies()
   }
   if (requested === 'grade-7-composed') {
     return createGrade7ComposedDependencies()
@@ -118,6 +123,9 @@ function main(): void {
       `  score min/avg/max ${String(summary.minScore)} / ${String(summary.averageScore)} / ${String(summary.maxScore)}`,
       `  qualities      ${formatCounts(summary.qualityCounts)}`,
       `  profiles       ${formatCounts(summary.profileCounts)}`,
+      `  graduated      ${String(summary.graduated)} / ${String(summary.completed)}`,
+      `  recoveries     ${String(summary.recoveries)} total, ${String(summary.maxRecoveriesPerRun)} worst run`,
+      `  previas        ${String(summary.previas)}`,
       `  duration       ${elapsedMs.toFixed(0)} ms`,
       `  findings       ${String(summary.findings.length)}`,
       '',

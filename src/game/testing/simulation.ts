@@ -41,6 +41,13 @@ export interface SimulationSummary {
   readonly profileCounts: Readonly<Record<string, number>>
   /** How often each quality was reached across every answered challenge. */
   readonly qualityCounts: Readonly<Record<string, number>>
+  /** Runs that reached graduation. Should equal `completed` where progression exists. */
+  readonly graduated: number
+  /** Remediation beats played across the sweep, and the worst single run. */
+  readonly recoveries: number
+  readonly maxRecoveriesPerRun: number
+  /** Years that closed owing something. Hidden career history. */
+  readonly previas: number
 }
 
 /**
@@ -99,6 +106,10 @@ export function simulateMany(
 
   let completed = 0
   let totalEvents = 0
+  let graduated = 0
+  let recoveries = 0
+  let maxRecoveries = 0
+  let previas = 0
   let totalScore = 0
   let minScore = Number.POSITIVE_INFINITY
   let maxScore = Number.NEGATIVE_INFINITY
@@ -175,13 +186,36 @@ export function simulateMany(
      * composer promised. That is the failure mode a plan exists to prevent, so
      * it is worth a finding rather than a shrug.
      */
+    /*
+     * A completed run that did not graduate.
+     *
+     * The product rule is absolute: every valid completed run reaches
+     * graduation. The only way to finish without it is content failing to serve
+     * the run, so a finding here is a content defect wearing an outcome's
+     * clothes — and worth the same noise as a dead end.
+     */
+    if (
+      dependencies.ruleset.recovery !== undefined &&
+      state.status === 'completed' &&
+      state.completion?.graduated !== true
+    ) {
+      findings.push({
+        seed,
+        code: 'not-graduated',
+        detail: `the run completed owing ${String(state.progression.pending.length)} obligations`,
+      })
+    }
+
     if (state.plan !== undefined) {
       const planned = state.plan.stages.reduce(
         (sum, stage) => sum + stage.beats.length,
         0,
       )
+      // Ordinary beats only. A remediation beat is conditional content that
+      // lives outside the plan, so counting it here would report every run that
+      // had a bad year as having played content it was never given.
       const played = state.history.filter(
-        (entry) => entry.challengeId !== undefined,
+        (entry) => entry.challengeId !== undefined && entry.recovery !== true,
       ).length
       if (played !== planned) {
         findings.push({
@@ -191,6 +225,11 @@ export function simulateMany(
         })
       }
     }
+
+    graduated += state.completion?.graduated === true ? 1 : 0
+    recoveries += state.progression.history.length
+    maxRecoveries = Math.max(maxRecoveries, state.progression.history.length)
+    previas += state.completion?.previas ?? 0
 
     const profile = state.completion?.profile.profileId
     if (profile !== undefined) {
@@ -283,5 +322,9 @@ export function simulateMany(
     averageEvents: completed === 0 ? 0 : totalEvents / completed,
     profileCounts,
     qualityCounts,
+    graduated,
+    recoveries,
+    maxRecoveriesPerRun: maxRecoveries,
+    previas,
   }
 }

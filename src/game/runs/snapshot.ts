@@ -43,6 +43,7 @@ import type { MathCategory } from '../challenges/taxonomy'
 import type { ChallengeFeedback } from '../challenges/contracts'
 import { PROFILE_IDS } from '../profiles/policy'
 import { parseRunPlan, serializeRunPlan } from '../plan/plan-codec'
+import { RECOVERY_REASONS } from '../progression/recovery'
 import type { ComposedRunPlan } from '../plan/composer'
 import { runStateIssues } from './invariants'
 import type { RunState } from './state'
@@ -61,7 +62,7 @@ import type { RunState } from './state'
  * discarding the checkpoint and offering a fresh run; that is a better outcome
  * than resuming into numbers nobody earned.
  */
-export const SNAPSHOT_SCHEMA_VERSION = 6
+export const SNAPSHOT_SCHEMA_VERSION = 7
 
 // Built from the canonical tuples, so each schema infers the exact literal
 // union. That is what lets the restore path below be cast-free.
@@ -170,6 +171,11 @@ const activeEventSchema = z.object({
     .array(z.enum(['calculator', 'notepad', 'table', 'ruler']))
     .max(8),
   careerChange: careerChangeSchema,
+  // Whether the beat is remediating what the year owes. Resuming into a
+  // remediation beat that had forgotten it was one would let it create a new
+  // obligation instead of closing the old, which is the recursion this design
+  // makes unrepresentable everywhere else.
+  recovery: z.boolean(),
 })
 
 const resolvedEventSchema = z.object({
@@ -184,6 +190,7 @@ const resolvedEventSchema = z.object({
   metrics: metricsSchema.nullable(),
   points: z.number().int().min(0),
   revealedCount: z.number().int().min(0),
+  recovery: z.boolean(),
 })
 
 const stateSchema = z.object({
@@ -238,8 +245,55 @@ const stateSchema = z.object({
   history: z.array(resolvedEventSchema).max(256),
   scorePreview: z.number().int().min(0),
   optimalStreak: z.number().int().min(0),
+  /**
+   * What the run owes and how it closed what it owed.
+   *
+   * Stored, not recomputed. A resume has to continue the year the player was
+   * actually in the middle of — including the remediation it already owed — and
+   * a state that had to be derived again from the history would be a second
+   * implementation of the progression rules waiting to disagree with the first.
+   */
+  progression: z.object({
+    pending: z
+      .array(
+        z.object({
+          id: z.string().min(1).max(160),
+          stageId: stageSchema,
+          sourceEventIndex: z.number().int().min(0),
+          source: z.object({
+            familyId: z.string().min(1).max(64),
+            templateId: z.string().min(1).max(64),
+            variantId: z.string().min(1).max(64),
+          }),
+          reason: z.enum(RECOVERY_REASONS),
+          quality: qualitySchema,
+        }),
+      )
+      .max(16),
+    history: z
+      .array(
+        z.object({
+          stageId: stageSchema,
+          resolved: z.array(z.string().min(1).max(160)).min(1).max(16),
+          content: z
+            .object({
+              familyId: z.string().min(1).max(64),
+              templateId: z.string().min(1).max(64),
+              variantId: z.string().min(1).max(64),
+            })
+            .nullable(),
+          quality: qualitySchema,
+          previa: z.boolean(),
+        }),
+      )
+      .max(16),
+    graduated: z.boolean(),
+  }),
   completion: z
     .object({
+      graduated: z.boolean(),
+      previas: z.number().int().min(0).max(16),
+      recoveries: z.number().int().min(0).max(16),
       totalScore: z.number().int().min(0),
       profile: z.object({
         profileId: profileSchema,
@@ -398,6 +452,7 @@ export function serializeSnapshot(state: RunState): RunSnapshot {
               revealed: [...active.revealed],
               toolsUsed: [...active.toolsUsed],
               careerChange: careerChangeToJson(active.careerChange),
+              recovery: active.recovery === true,
             },
       pendingFeedback:
         feedback === undefined
@@ -411,6 +466,7 @@ export function serializeSnapshot(state: RunState): RunSnapshot {
             },
       history: state.history.map((entry) => ({
         ...entry,
+        recovery: entry.recovery === true,
         challengeId: orNull(entry.challengeId),
         instanceId: orNull(entry.instanceId),
         quality: orNull(entry.quality),
@@ -418,10 +474,27 @@ export function serializeSnapshot(state: RunState): RunSnapshot {
       })),
       scorePreview: state.scorePreview,
       optimalStreak: state.optimalStreak,
+      progression: {
+        pending: state.progression.pending.map((entry) => ({
+          ...entry,
+          source: { ...entry.source },
+        })),
+        history: state.progression.history.map((entry) => ({
+          stageId: entry.stageId,
+          resolved: [...entry.resolved],
+          content: entry.content === undefined ? null : { ...entry.content },
+          quality: entry.quality,
+          previa: entry.previa,
+        })),
+        graduated: state.progression.graduated,
+      },
       completion:
         completion === undefined
           ? null
           : {
+              graduated: completion.graduated,
+              previas: completion.previas,
+              recoveries: completion.recoveries,
               totalScore: completion.totalScore,
               profile: {
                 ...completion.profile,
@@ -554,6 +627,7 @@ export function restoreSnapshot(
             revealed: raw.activeEvent.revealed,
             toolsUsed: raw.activeEvent.toolsUsed,
             careerChange: restoreCareerChange(raw.activeEvent.careerChange),
+            recovery: raw.activeEvent.recovery,
           },
     pendingFeedback:
       raw.pendingFeedback === null
@@ -583,13 +657,46 @@ export function restoreSnapshot(
       metrics: entry.metrics ?? undefined,
       points: entry.points,
       revealedCount: entry.revealedCount,
+      ...(entry.recovery ? { recovery: true } : {}),
     })),
     scorePreview: raw.scorePreview,
     optimalStreak: raw.optimalStreak,
+    progression: {
+      pending: raw.progression.pending.map((entry) => ({
+        id: entry.id,
+        stageId: entry.stageId,
+        sourceEventIndex: entry.sourceEventIndex,
+        source: {
+          familyId: toScenarioFamilyId(entry.source.familyId),
+          templateId: toChallengeId(entry.source.templateId),
+          variantId: toVariantId(entry.source.variantId),
+        },
+        reason: entry.reason,
+        quality: entry.quality,
+      })),
+      history: raw.progression.history.map((entry) => ({
+        stageId: entry.stageId,
+        resolved: entry.resolved,
+        content:
+          entry.content === null
+            ? undefined
+            : {
+                familyId: toScenarioFamilyId(entry.content.familyId),
+                templateId: toChallengeId(entry.content.templateId),
+                variantId: toVariantId(entry.content.variantId),
+              },
+        quality: entry.quality,
+        previa: entry.previa,
+      })),
+      graduated: raw.progression.graduated,
+    },
     completion:
       raw.completion === null
         ? undefined
         : {
+            graduated: raw.completion.graduated,
+            previas: raw.completion.previas,
+            recoveries: raw.completion.recoveries,
             totalScore: raw.completion.totalScore,
             profile: {
               profileId: raw.completion.profile.profileId,

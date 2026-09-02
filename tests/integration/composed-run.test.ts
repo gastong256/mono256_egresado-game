@@ -146,7 +146,9 @@ describe('el motor ejecuta el plan, no lo vuelve a componer', () => {
         .flatMap((stage) => stage.beats)
         .map((beat) => formatVariantAddress(beat.variant))
       const actual = played.state.history
-        .filter((entry) => entry.challengeId !== undefined)
+        .filter(
+          (entry) => entry.challengeId !== undefined && entry.recovery !== true,
+        )
         .map((entry) => entry.challengeId)
 
       expect(actual).toEqual(planned.map((address) => address.split('/')[1]))
@@ -158,7 +160,11 @@ describe('el motor ejecuta el plan, no lo vuelve a componer', () => {
     const stage = played.state.plan?.stages[0]
     if (stage === undefined) throw new Error('sin etapa')
 
-    expect(played.state.history).toHaveLength(stage.eventCount)
+    // Los eventos ordinarios son los que el plan dura. Un repaso, si el año lo
+    // debió, se suma afuera de esa cuenta: es contenido condicional.
+    expect(
+      played.state.history.filter((entry) => entry.recovery !== true),
+    ).toHaveLength(stage.eventCount)
     // La demo declara ocho eventos para el mismo año. Una partida normal juega
     // tres, y ésa es la reconciliación con el presupuesto de ADR-019.
     expect(stage.eventCount).toBe(3)
@@ -176,7 +182,7 @@ describe('el motor ejecuta el plan, no lo vuelve a componer', () => {
   it('respeta el presupuesto de uno a dos beats ordinarios', () => {
     for (const seed of SEEDS) {
       const answered = play(seed).state.history.filter(
-        (entry) => entry.challengeId !== undefined,
+        (entry) => entry.challengeId !== undefined && entry.recovery !== true,
       )
       expect(answered.length).toBeGreaterThanOrEqual(1)
       expect(answered.length).toBeLessThanOrEqual(2)
@@ -394,9 +400,13 @@ describe('la demo amplia sigue jugándose igual', () => {
       state = result.value.state
     }
 
-    expect(state.history).toHaveLength(8)
     expect(
-      state.history.filter((entry) => entry.challengeId !== undefined),
+      state.history.filter((entry) => entry.recovery !== true),
+    ).toHaveLength(8)
+    expect(
+      state.history.filter(
+        (entry) => entry.challengeId !== undefined && entry.recovery !== true,
+      ),
     ).toHaveLength(6)
   })
 })

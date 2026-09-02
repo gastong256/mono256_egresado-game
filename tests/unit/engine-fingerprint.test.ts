@@ -31,7 +31,26 @@ import { createDevelopmentDependencies } from '@/game/testing'
 const dependencies = createDevelopmentDependencies()
 
 /*
- * Regenerados para el score competitivo (`ENGINE_VERSION` 5.1.0).
+ * Regenerados para la progresión (`ENGINE_VERSION` 6.0.0).
+ *
+ * Dos se movieron y **la que no lo hizo vuelve a ser la evidencia**:
+ *
+ * - **motor**: la versión y el codec de snapshot (7). Una run guarda ahora qué
+ *   quedó debiendo y si egresó. El action log **no** se movió: una recuperación
+ *   se responde como cualquier otro beat y no necesita un comando nuevo.
+ * - **ruleset**: el digest cubre ahora la política de recuperación. El content
+ *   set de desarrollo no recupera y su entrada dice `recovery:none`; la huella
+ *   igual se mueve, porque el digest ganó un campo, y eso es preferible a un
+ *   digest ciego a una regla que decide cómo progresa una run.
+ * - **contenido**: idéntico en `dbaf5094`. La plantilla de recuperación es de
+ *   7.º y el contenido de desarrollo no la tiene, así que no cambió nada de lo
+ *   que un seed produce acá.
+ *
+ * Las runs golden reproducen el mismo recorrido, el mismo score por evento, el
+ * mismo perfil y la misma cantidad de comandos — y ahora terminan en egreso,
+ * que es el invariante que esta etapa vuelve ejecutable.
+ *
+ * El contexto anterior, del score competitivo (`ENGINE_VERSION` 5.1.0):
  *
  * Se movieron dos de las tres, y **la que no se movió es la evidencia**:
  *
@@ -110,14 +129,14 @@ const dependencies = createDevelopmentDependencies()
  * golden quedaron **idénticos**.
  */
 const EXPECTED = {
-  engine: 'b9489cf4',
-  ruleset: 'da245c60',
+  engine: 'a0ed168d',
+  ruleset: '5b9b0bc5',
   content: 'dbaf5094',
 } as const
 
 describe('version fingerprints', () => {
   it('pins the deterministic kernel to its engine version', () => {
-    expect(ENGINE_VERSION).toBe('5.1.0')
+    expect(ENGINE_VERSION).toBe('6.0.0')
     expect(engineFingerprint()).toBe(EXPECTED.engine)
   })
 

@@ -23,6 +23,19 @@ import { err, ok, type Result } from './result'
 /**
  * Engine/game version of this build. Also serialized as `gameVersion`.
  *
+ * `6.0.0` is progression: a run now knows what a bad year owes and whether it
+ * graduated. A poor ordinary result leaves an obligation the year must close
+ * before it can end, closing it is a remediation beat scheduled outside the
+ * ordinary budget, and a run that plays its final year out owing nothing
+ * reaches `GRADUATED` — which, by construction, is every valid completed run.
+ * Run state grew a progression field and the snapshot codec moved with it
+ * (`SNAPSHOT_SCHEMA_VERSION` 7).
+ *
+ * The action log did **not** move: remediation needs no new command, because a
+ * remediation beat is answered exactly like any other. Bumping its version for
+ * a change it does not encode would have made every stored log look
+ * incompatible with a format it still matches.
+ *
  * `5.1.0` adds the competitive layer's identity to a run. A run may now declare
  * the `scoreVersion` it is played under, so a submitted score says which
  * calibration it is a claim about; the snapshot codec moved to carry it
@@ -70,7 +83,7 @@ import { err, ok, type Result } from './result'
  * reproduce its original result under this engine, and that is exactly what the
  * version triple exists to say out loud instead of discovering it in a replay.
  */
-export const ENGINE_VERSION = '5.1.0'
+export const ENGINE_VERSION = '6.0.0'
 
 export interface VersionTriple {
   readonly gameVersion: string

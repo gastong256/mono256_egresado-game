@@ -23,6 +23,7 @@ import catalogDev1 from './variant-catalog.grade-7-dev-1.json'
 import catalogDev2 from './variant-catalog.grade-7-dev-2.json'
 import catalogDev3 from './variant-catalog.grade-7-dev-3.json'
 import catalogDev4 from './variant-catalog.grade-7-dev-4.json'
+import catalogDev5 from './variant-catalog.grade-7-dev-5.json'
 import { GRADE_7_VARIANT_CATALOG_VERSION } from './versions'
 
 /**
@@ -49,6 +50,7 @@ export const grade7VariantCatalogs: Readonly<
   'grade-7-dev-2': published(catalogDev2),
   'grade-7-dev-3': published(catalogDev3),
   'grade-7-dev-4': published(catalogDev4),
+  'grade-7-dev-5': published(catalogDev5),
 }
 
 /** El catálogo del que sale el contenido de una partida nueva. */

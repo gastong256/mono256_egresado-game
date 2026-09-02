@@ -18,6 +18,10 @@ import { err, ok, type Result } from '../core/result'
 import type { EngineRejection } from '../core/errors'
 import type { DifficultyPolicy } from '../difficulty/policy'
 import type { CompositionPolicy } from '../plan/composition-policy'
+import {
+  recoveryPolicyIssues,
+  type RecoveryPolicy,
+} from '../progression/recovery'
 import { compositionPolicyIssues } from '../plan/composition-policy'
 import type { ProfilePolicy } from '../profiles/policy'
 import type { ScoringPolicy } from '../scoring/policy'
@@ -53,6 +57,15 @@ export interface Ruleset {
    * is what the broad teacher demo is.
    */
   readonly composition?: CompositionPolicy
+  /**
+   * How this ruleset turns a poor result into remediation.
+   *
+   * A rule, not content: it decides what a year owes before it can end and how
+   * a run reaches graduation, and two players under different recovery policies
+   * are not playing the same game. Absent means the ruleset does not remediate
+   * — a poor result has its score and career consequence and nothing else.
+   */
+  readonly recovery?: RecoveryPolicy
   readonly narrative: NarrativePacing
   /**
    * True when this ruleset may produce official, ranked results.
@@ -101,6 +114,15 @@ export interface RulesetInput {
    * is what the broad teacher demo is.
    */
   readonly composition?: CompositionPolicy
+  /**
+   * How this ruleset turns a poor result into remediation.
+   *
+   * A rule, not content: it decides what a year owes before it can end and how
+   * a run reaches graduation, and two players under different recovery policies
+   * are not playing the same game. Absent means the ruleset does not remediate
+   * — a poor result has its score and career consequence and nothing else.
+   */
+  readonly recovery?: RecoveryPolicy
   readonly narrative: NarrativePacing
   /** Request an official ruleset; refused unless every policy is production. */
   readonly official?: boolean
@@ -182,6 +204,16 @@ export function createRuleset(
     }
   }
 
+  if (input.recovery !== undefined) {
+    const issues = recoveryPolicyIssues(input.recovery)
+    if (issues.length > 0) {
+      return err({
+        kind: 'invalid-ruleset',
+        detail: `recovery policy ${input.recovery.id}: ${issues.join('; ')}`,
+      })
+    }
+  }
+
   if (input.narrative.cooldownEvents < 0) {
     return err({
       kind: 'invalid-ruleset',
@@ -207,6 +239,9 @@ export function createRuleset(
       input.composition === undefined || input.composition.costPolicy.official
         ? undefined
         : `difficulty cost policy ${input.composition.costPolicy.id}`,
+      input.recovery === undefined || input.recovery.official
+        ? undefined
+        : `recovery policy ${input.recovery.id}`,
     ].filter((entry): entry is string => entry !== undefined)
 
     if (development.length > 0) {
@@ -230,6 +265,7 @@ export function createRuleset(
     ...(input.composition === undefined
       ? {}
       : { composition: input.composition }),
+    ...(input.recovery === undefined ? {} : { recovery: input.recovery }),
     official,
   })
 }

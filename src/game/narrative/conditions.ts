@@ -51,6 +51,17 @@ export type CareerDimension = (typeof CAREER_DIMENSIONS)[number]
 
 export type StoryletCondition =
   | { readonly kind: 'always' }
+  | {
+      /**
+       * Never eligible through narrative selection.
+       *
+       * For a storylet that exists to frame a beat something *else* schedules —
+       * a remediation, for instance. Without it the frame would have to be
+       * either reachable by accident or kept outside the content set, and both
+       * are worse than saying plainly that the selector may not have it.
+       */
+      readonly kind: 'never'
+    }
   | { readonly kind: 'stage-in'; readonly stages: readonly StageId[] }
   | {
       readonly kind: 'career-at-least'
@@ -111,6 +122,8 @@ export function evaluateCondition(
   switch (condition.kind) {
     case 'always':
       return true
+    case 'never':
+      return false
     case 'stage-in':
       return condition.stages.includes(context.stage)
     case 'career-at-least': {
@@ -170,6 +183,9 @@ export function validateCondition(
   path = 'condition',
 ): readonly string[] {
   switch (condition.kind) {
+    // `never` is deliberately unmatchable, so the usual «this can never fire»
+    // warning would be reporting the author's intention back to them.
+    case 'never':
     case 'always':
     case 'flag-set':
     case 'flag-not-set':

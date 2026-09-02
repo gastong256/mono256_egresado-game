@@ -34,6 +34,8 @@ Lo que la tabla prueba:
 
 STAGE-04 sumó una séptima, `g7.bus-latest-departure`, en la familia `bus`: misma situación, otra pregunta, interacción `numeric-input`, rol `anchor`, Estilo. Es la primera vez que dos plantillas de producción comparten familia. Ver [ADR-021](adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md).
 
+STAGE-07 sumó una octava, `g7.bus-travel-review`, en la misma familia y con rol `recovery`: es la primera plantilla de producción que **no** participa de la selección ordinaria — la juega un año que quedó debiendo el colectivo, y ninguna otra plantilla la referencia. Ver [ADR-024](adr/ADR-024-progression-recovery-and-graduation.md).
+
 ## Qué cambió en cada desafío
 
 Exactamente dos cosas por archivo:

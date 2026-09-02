@@ -133,7 +133,10 @@ test('un estudiante juega 7.º grado de principio a fin', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'Seguir' })).toHaveCount(1)
 
   const answered = await playYear(page, 'primera')
-  expect(answered).toBe(5)
+  // Cinco situaciones más la primera. Si alguna salió mal, el año agrega un
+  // repaso antes de cerrar: contenido condicional, fuera del presupuesto.
+  expect(answered).toBeGreaterThanOrEqual(5)
+  expect(answered).toBeLessThanOrEqual(6)
 
   // Cierre del año.
   await expect(page.getByTestId('milestone')).toBeVisible()
@@ -155,10 +158,37 @@ test('decidir mal no corta la partida', async ({ page }) => {
 
   const answered = await playYear(page, 'ultima')
 
-  // Seis situaciones respondidas eligiendo siempre la última opción.
-  expect(answered).toBe(6)
+  // Seis situaciones respondidas eligiendo siempre la última opción, más el
+  // repaso que el año pide cuando alguna quedó sin resolver.
+  expect(answered).toBeGreaterThanOrEqual(6)
+  expect(answered).toBeLessThanOrEqual(7)
   await expect(page.getByTestId('milestone')).toBeVisible()
   // El año termina igual: un error nunca es game over.
+  await expect(page.getByTestId('year-record')).toBeVisible()
+
+  expect(problems).toEqual([])
+})
+
+test('un año que sale mal pide un repaso y cierra igual', async ({ page }) => {
+  const problems = watchConsole(page)
+  await startRun(page, 'Nico')
+
+  const answered = await playYear(page, 'ultima')
+
+  /*
+   * Eligiendo siempre la última opción, casi todo sale mal y el año pide su
+   * repaso. Casi: qué variante toca lo decide el sorteo, y en alguna la última
+   * opción puede ser la buena. El rango es honesto sobre eso en vez de fingir
+   * una certeza que el contenido no da.
+   */
+  expect(answered).toBeGreaterThanOrEqual(6)
+  expect(answered).toBeLessThanOrEqual(7)
+
+  // Y se anuncia con palabras de escuela, no con un cartel de fracaso.
+  await expect(page.getByText(/perdiste|game over|fracasaste/iu)).toHaveCount(0)
+
+  // El año cierra igual. No hay forma de quedar afuera.
+  await expect(page.getByTestId('milestone')).toBeVisible()
   await expect(page.getByTestId('year-record')).toBeVisible()
 
   expect(problems).toEqual([])

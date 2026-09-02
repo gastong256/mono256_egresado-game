@@ -120,5 +120,69 @@ export function runStateIssues(state: RunState): readonly string[] {
     issues.push(`active event references unseen storylet ${active.storyletId}`)
   }
 
+  /*
+   * Progression states that must not exist.
+   *
+   * A graduated run owing something is the one state the whole recovery design
+   * exists to make unreachable, so a snapshot claiming it is refused rather than
+   * restored — a client that could assert it would be asserting that it
+   * graduated without closing its year.
+   */
+  if (state.progression.graduated && state.progression.pending.length > 0) {
+    issues.push(
+      `the run is graduated with ${String(state.progression.pending.length)} obligations still open`,
+    )
+  }
+  if (state.progression.graduated && state.status === 'active') {
+    issues.push('the run is graduated and still active')
+  }
+  if (
+    state.completion !== undefined &&
+    state.completion.graduated !== state.progression.graduated
+  ) {
+    issues.push(
+      'the completion disagrees with the progression about graduating',
+    )
+  }
+
+  const pendingIds = new Set<string>()
+  for (const obligation of state.progression.pending) {
+    if (pendingIds.has(obligation.id)) {
+      issues.push(`obligation ${obligation.id} is pending twice`)
+    }
+    pendingIds.add(obligation.id)
+    if (obligation.sourceEventIndex > state.eventIndex) {
+      issues.push(
+        `obligation ${obligation.id} came from an event the run has not reached`,
+      )
+    }
+  }
+
+  const resolvedIds = new Set<string>()
+  for (const record of state.progression.history) {
+    for (const id of record.resolved) {
+      if (resolvedIds.has(id)) {
+        issues.push(`obligation ${id} was resolved twice`)
+      }
+      if (pendingIds.has(id)) {
+        issues.push(`obligation ${id} is both pending and resolved`)
+      }
+      resolvedIds.add(id)
+    }
+  }
+
+  // Only while the beat is still waiting for an answer. Once it has been
+  // answered the obligations are closed and the beat is showing its result,
+  // which is exactly the state this would otherwise flag as impossible.
+  if (
+    state.phase === 'challenge' &&
+    state.activeEvent?.recovery === true &&
+    state.progression.pending.every(
+      (obligation) => obligation.stageId !== state.stage,
+    )
+  ) {
+    issues.push('a remediation beat is open with nothing for it to close')
+  }
+
   return issues
 }

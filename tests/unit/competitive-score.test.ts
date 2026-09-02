@@ -459,6 +459,9 @@ describe('cada plantilla de producción declara cómo puntúa', () => {
       'g7.stand-supplies': 'm--',
       'g7.group-tasks': 'mt-',
       'g7.may-25-act': 'm--',
+      // Contenido de recuperación. Declara `m--` como cualquier otra, y aun así
+      // no puntúa nunca: el scorer lo excluye por su rol, no por su perfil.
+      'g7.bus-travel-review': 'm--',
     })
   })
 

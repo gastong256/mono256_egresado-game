@@ -60,6 +60,19 @@ export interface AuthoritativeRunResult {
   /** Total scheduling load of the composed plan. Never a score. */
   readonly difficultyCost?: number
   /**
+   * Whether the run reached the end of the career, decided here.
+   *
+   * Recomputed from the replayed progression, never read from the submission.
+   * A client that could assert its own graduation could assert it while still
+   * owing a year, which is the one state the progression rules exist to make
+   * unreachable.
+   */
+  readonly graduated: boolean
+  /** Remediation beats the run played. Progression evidence, never score. */
+  readonly recoveries: number
+  /** Years that closed owing something. Hidden career history. */
+  readonly previas: number
+  /**
    * The competitive score, recomputed here.
    *
    * Present only when the run declared a policy and the server holds it. Like
@@ -192,7 +205,27 @@ export function validateSubmittedRun(
     competitiveScore = scored.value
   }
 
-  // 6. Only a finished run has an official result.
+  /*
+   * 6. Refuse a run that finished owing something.
+   *
+   * Not a defensive check against a hostile client — a client cannot reach this
+   * state, because the transition will not produce it. It is a check against
+   * *us*: if a future change ever let a run complete with an open obligation,
+   * this is where the server notices instead of ranking it.
+   */
+  if (state.progression.pending.length > 0) {
+    return {
+      ok: false,
+      error: {
+        kind: 'invalid-content',
+        issues: [
+          `the replayed run completed with ${String(state.progression.pending.length)} obligations still open`,
+        ],
+      },
+    }
+  }
+
+  // 7. Only a finished run has an official result.
   if (state.status !== 'completed' || state.completion === undefined) {
     return {
       ok: false,
@@ -217,6 +250,9 @@ export function validateSubmittedRun(
           planFingerprint: planFingerprint(plan),
           difficultyCost: plan.difficultyCost,
         }),
+    graduated: state.progression.graduated,
+    recoveries: state.progression.history.length,
+    previas: state.progression.history.filter((entry) => entry.previa).length,
     ...(competitiveScore === undefined ? {} : { competitiveScore }),
   })
 }

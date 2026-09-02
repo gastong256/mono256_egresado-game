@@ -277,7 +277,11 @@ describe('la run de 7.º grado', () => {
     expect(state.status).toBe('completed')
     expect(state.stage).toBe('grade-7')
     // Ocho eventos: seis desafíos y dos beats narrativos.
-    expect(state.history).toHaveLength(8)
+    // Ocho eventos ordinarios. Un año que sale mal agrega el repaso, que vive
+    // fuera del presupuesto y por eso se cuenta aparte.
+    expect(
+      state.history.filter((entry) => entry.recovery !== true),
+    ).toHaveLength(8)
     expect(
       state.history.filter((entry) => entry.challengeId !== undefined),
     ).toHaveLength(6)
@@ -306,7 +310,11 @@ describe('la run de 7.º grado', () => {
 
       // Ninguna decisión equivocada corta la run: siempre se llega al final.
       expect(state.status).toBe('completed')
-      expect(state.history).toHaveLength(8)
+      // Ocho eventos ordinarios. Un año que sale mal agrega el repaso, que vive
+      // fuera del presupuesto y por eso se cuenta aparte.
+      expect(
+        state.history.filter((entry) => entry.recovery !== true),
+      ).toHaveLength(8)
       expect(state.completion?.totalScore).toBeGreaterThanOrEqual(0)
     },
   )

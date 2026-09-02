@@ -40,10 +40,25 @@ import {
   type MaterializedChallenge,
   type PublicChallengeView,
 } from '../challenges/contracts'
-import { createVariantRng } from '../challenges/content-model'
+import {
+  createVariantRng,
+  isEligibleForStage,
+  type ChallengeVariantRef,
+} from '../challenges/content-model'
 import type { ContentCatalog } from '../challenges/content-catalog'
-import type { DifficultyLevel } from '../challenges/taxonomy'
+import type { DifficultyLevel, SolutionQuality } from '../challenges/taxonomy'
 import { initialDifficultyState } from '../difficulty/policy'
+import {
+  emptyProgression,
+  obligationFor,
+  owesRecovery,
+  pendingForStage,
+  previasOf,
+  withGraduation,
+  withObligation,
+  withRecovery,
+  type RecoveryPolicy,
+} from '../progression/recovery'
 import { applyEffects } from '../narrative/effects'
 import type { NarrativeContext } from '../narrative/conditions'
 import {
@@ -108,6 +123,35 @@ export interface EngineDependencies {
    * score the run was played under.
    */
   readonly competitiveScore?: CompetitiveScorePolicy
+  /**
+   * The storylet that frames a remediation beat, and the content it may play.
+   *
+   * A remediation beat is not selected by the narrative layer — the year owes
+   * it, so it is scheduled rather than drawn — but it still needs words around
+   * it. The content set supplies both the frame and which of its templates may
+   * serve as remediation, because deciding that is authoring, not engine work.
+   */
+  readonly recoveryContent?: RecoveryContent
+}
+
+/** How a content set answers a year that owes something. */
+export interface RecoveryContent {
+  /** Storylet used to frame the remediation beat. */
+  readonly storyletId: StoryletId
+  /**
+   * Which template reviews which, in authored preference order.
+   *
+   * Keyed by the **ordinary** template whose failure is being remediated, so
+   * `none` is a real per-template decision: a template absent from this map
+   * leaves nothing to close, and its bad result simply stands. That is the
+   * honest answer for a template with no isolable intermediate step — handing
+   * the player a review of some *other* situation would be worse content than
+   * no review at all.
+   *
+   * Every value must carry the `recovery` placement role: remediation content
+   * is never part of ordinary selection and never spends an ordinary slot.
+   */
+  readonly reviews: Readonly<Record<string, readonly ChallengeId[]>>
 }
 
 /**
@@ -344,6 +388,231 @@ function hostingStorylets(
       storylet.challengePool.includes(beat.variant.templateId)
     )
   })
+}
+
+/** Records what an ordinary result owes the year, if anything. */
+function applyObligation(
+  state: RunState,
+  dependencies: EngineDependencies,
+  policy: RecoveryPolicy,
+  source: ChallengeVariantRef,
+  quality: SolutionQuality,
+): RunState['progression'] {
+  const config = dependencies.recoveryContent
+  // A year may only owe what it can close. If the content set declares no
+  // review for this template — the honest answer when the mistake has no
+  // isolable step — the bad result stands and the year closes normally, which
+  // is a consequence rather than a debt.
+  if (
+    config === undefined ||
+    reviewsFor(config, source.templateId).length === 0
+  ) {
+    return state.progression
+  }
+
+  const obligation = obligationFor(
+    policy,
+    state.stage,
+    state.eventIndex,
+    source,
+    quality,
+  )
+  return obligation === undefined
+    ? state.progression
+    : withObligation(state.progression, obligation)
+}
+
+/**
+ * The recovery templates a content set declares for one ordinary template.
+ *
+ * An empty list is the answer for a template whose author decided it has no
+ * honest review, and it is what keeps `none` a real decision rather than a
+ * silent fallback to whatever else the year happens to carry.
+ */
+function reviewsFor(
+  config: RecoveryContent,
+  templateId: string,
+): readonly ChallengeId[] {
+  return config.reviews[templateId] ?? []
+}
+
+/**
+ * Which content a year plays to close what it owes.
+ *
+ * Derived from the obligation's own semantic identity on a fixed substream, not
+ * drawn at runtime: the same run, the same mistake and the same policy must
+ * reach the same remediation on a replay months later, and on a server that
+ * never saw the first play.
+ *
+ * It prefers a variant the player has not already seen. Handing back the exact
+ * question they just got wrong is not remediation, it is a retry.
+ */
+function recoveryContentFor(
+  state: RunState,
+  dependencies: EngineDependencies,
+): Result<ChallengeVariantRef, EngineRejection> {
+  const config = dependencies.recoveryContent
+  const owed = pendingForStage(state.progression, state.stage)
+  const obligation = owed[0]
+
+  if (config === undefined || obligation === undefined) {
+    return err({
+      kind: 'invalid-content',
+      issues: [
+        `stage ${state.stage} owes remediation and the content set offers none`,
+      ],
+    })
+  }
+
+  // What reviews *this* mistake, not what reviews this year. A player who got
+  // the mural wrong is owed the mural's review or nothing at all; handing them
+  // some other situation's review would be a non sequitur wearing remediation's
+  // clothes.
+  const eligible = reviewsFor(config, obligation.source.templateId)
+    .map((templateId) => dependencies.catalog.template(templateId))
+    .filter((template) => template !== undefined)
+    .filter(
+      (template) =>
+        template.placement === 'recovery' &&
+        isEligibleForStage(template, state.stage),
+    )
+
+  const template = eligible[0]
+  if (template === undefined) {
+    return err({
+      kind: 'invalid-content',
+      issues: [
+        `no recovery template reviews ${obligation.source.templateId} in ${state.stage}`,
+      ],
+    })
+  }
+
+  // Approved content only, exactly as ordinary beats. Remediation is played by
+  // the same person under the same rules; it does not get a looser catalog.
+  const approved = dependencies.approvedVariants?.variantsFor(template.id) ?? []
+  const pool = approved.length > 0 ? approved : template.variants
+  const played = new Set(
+    state.history.flatMap((entry) =>
+      entry.challengeId === template.id && entry.instanceId !== undefined
+        ? [entry.instanceId as string]
+        : [],
+    ),
+  )
+  const fresh = pool.filter(
+    (variantId) => !played.has(`${state.stage}:recovery:${variantId}`),
+  )
+  const candidates = fresh.length > 0 ? fresh : pool
+
+  const variantId = selectVariantId(
+    createRng(state.descriptor.seed, [
+      'recovery',
+      state.stage,
+      'obligation',
+      obligation.id,
+    ]),
+    candidates,
+  )
+
+  return ok({
+    familyId: template.family,
+    templateId: template.id,
+    variantId,
+  })
+}
+
+/**
+ * Opens the remediation beat a year owes.
+ *
+ * Not a storylet selection: the year owes this, so it is scheduled. The
+ * narrative layer still supplies the words, because a beat that arrives without
+ * a reason reads as a bug rather than as a consequence.
+ */
+function beginRecovery(
+  state: RunState,
+  dependencies: EngineDependencies,
+): TransitionResult {
+  const config = dependencies.recoveryContent
+  const storylet = dependencies.storylets.find(
+    (candidate) => candidate.id === config?.storyletId,
+  )
+  const content = recoveryContentFor(state, dependencies)
+
+  if (config === undefined || storylet === undefined || !content.ok) {
+    // A year that owes something and cannot close it would be a dead end, which
+    // is the one outcome this whole design exists to make impossible. The run
+    // ends loudly instead of silently graduating with a debt.
+    const events: readonly DomainEvent[] = [
+      { type: 'narrative.exhausted', stage: state.stage },
+    ]
+    return completeRun(state, dependencies, events)
+  }
+
+  const template = dependencies.catalog.template(content.value.templateId)
+  if (template === undefined) {
+    throw new EngineInvariantError(
+      `recovery template ${content.value.templateId} vanished between selection and use`,
+    )
+  }
+
+  const instanceId: ChallengeInstanceId = toChallengeInstanceId(
+    `${state.stage}:recovery:${content.value.variantId}`,
+  )
+  const ref: ChallengeInstanceRef = {
+    instanceId,
+    familyId: content.value.familyId,
+    templateId: content.value.templateId,
+    variantId: content.value.variantId,
+    stageId: state.stage,
+    eventIndex: state.eventIndex,
+    difficulty: state.difficulty.current,
+  }
+
+  const events: DomainEvent[] = [
+    {
+      type: 'storylet.selected',
+      storyletId: storylet.id,
+      stage: state.stage,
+      eventIndex: state.eventIndex,
+    },
+    {
+      type: 'challenge.generated',
+      challengeId: ref.templateId,
+      instanceId,
+      difficulty: ref.difficulty,
+    },
+    { type: 'challenge.presented', instanceId },
+  ]
+
+  return {
+    state: {
+      ...state,
+      // The frame counts as played, exactly like any other storylet: the run
+      // invariants require every storylet in the history to appear as seen, and
+      // a beat that skipped that bookkeeping would restore as a corrupt run.
+      seenStorylets: state.seenStorylets.includes(storylet.id)
+        ? state.seenStorylets
+        : [...state.seenStorylets, storylet.id],
+      selection: recordSelection(
+        state.selection,
+        storylet.id,
+        state.eventIndex,
+      ),
+      phase: 'challenge',
+      activeEvent: {
+        storyletId: storylet.id,
+        eyebrow: storylet.eyebrow,
+        title: storylet.title,
+        text: storylet.text,
+        challenge: ref,
+        revealed: [],
+        toolsUsed: [],
+        careerChange: {},
+        recovery: true,
+      },
+    },
+    events,
+    effects: events.map((event) => ({ type: 'track' as const, event })),
+  }
 }
 
 /**
@@ -618,13 +887,28 @@ function completeRun(
     state.career,
   )
 
+  /*
+   * Graduation, decided by progression and not by «everything happened».
+   *
+   * A run graduates when it played its final year out owing nothing. Every
+   * valid completed run does — that is the product rule Teacher Gate 1
+   * accepted, and the transition is what makes it true rather than hoped for.
+   * A run that ended early because content could not serve it does not
+   * graduate, and saying so is how that defect stays visible.
+   */
+  const progression = withGraduation(state.progression)
+
   const completed: RunState = {
     ...state,
+    progression,
     phase: 'completed',
     status: 'completed',
     activeEvent: undefined,
     pendingFeedback: undefined,
     completion: {
+      graduated: progression.graduated,
+      previas: previasOf(progression),
+      recoveries: progression.history.length,
       totalScore: state.scorePreview,
       profile,
       career: state.career,
@@ -670,6 +954,39 @@ function advance(
 
   if (nextStageEventIndex < stageEventCount(state, stage)) {
     const opened = beginEvent(
+      {
+        ...state,
+        eventIndex: state.eventIndex + 1,
+        stageEventIndex: nextStageEventIndex,
+        activeEvent: undefined,
+        pendingFeedback: undefined,
+      },
+      dependencies,
+    )
+    return {
+      state: opened.state,
+      events: [...events, ...opened.events],
+      effects: [
+        ...events.map((event) => ({ type: 'track' as const, event })),
+        ...opened.effects,
+      ],
+    }
+  }
+
+  /*
+   * A year cannot end owing something.
+   *
+   * The remediation beat is scheduled here, after the ordinary beats and before
+   * the year closes, and it lives outside the one-to-two ordinary budget: it is
+   * conditional content, so counting it against the budget would let a mistake
+   * cost the player one of the decisions the year was composed to give them.
+   */
+  const recoveryPolicy = dependencies.ruleset.recovery
+  if (
+    recoveryPolicy !== undefined &&
+    owesRecovery(state.progression, state.stage, recoveryPolicy)
+  ) {
+    const opened = beginRecovery(
       {
         ...state,
         eventIndex: state.eventIndex + 1,
@@ -836,6 +1153,7 @@ export function createRun(
 
   const seeded: RunState = {
     ...(plan === undefined ? {} : { plan }),
+    progression: emptyProgression(),
     descriptor,
     phase: 'narrative',
     status: 'active',
@@ -1002,11 +1320,47 @@ function handleAnswer(
     metrics: result.metrics,
     points: score.totalPoints,
     revealedCount: active.revealed.length,
+    ...(active.recovery === true ? { recovery: true } : {}),
+  }
+
+  /*
+   * What this result committed the year to.
+   *
+   * Only an ordinary beat can leave something to close. A remediation beat
+   * closes what the year owed — however it went — and cannot owe anything
+   * itself, which is why remediation cannot recurse: the recursion has nowhere
+   * to be written down.
+   */
+  const recoveryPolicy = dependencies.ruleset.recovery
+  const progression =
+    recoveryPolicy === undefined
+      ? state.progression
+      : active.recovery === true
+        ? withRecovery(
+            state.progression,
+            state.stage,
+            variantRefOf(active.challenge),
+            result.quality,
+            recoveryPolicy,
+          )
+        : applyObligation(
+            state,
+            dependencies,
+            recoveryPolicy,
+            variantRefOf(active.challenge),
+            result.quality,
+          )
+
+  if (progression !== state.progression && active.recovery === true) {
+    events.push({ type: 'recovery.resolved', stage: state.stage })
+  } else if (progression !== state.progression) {
+    events.push({ type: 'recovery.required', stage: state.stage })
   }
 
   return ok({
     state: {
       ...state,
+      progression,
       phase: 'feedback',
       career: applied.career,
       flags,

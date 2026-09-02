@@ -98,6 +98,7 @@ Un autor que quiere que su plantilla se agende como más exigente tiene que nomb
 
 | Plantilla | Dominio | Rasgos | Carga | Banda | Costo | Nivel autorado | Por qué |
 |---|---|---|---|---|---|---|---|
+| `g7.bus-travel-review` | tiempo · porcentajes | 1·0·0·0·0·1 | 2 | CORE | 1,00 | 1 ✓ | **repaso**: el paso intermedio solo, con el primer término nombrado; deliberadamente más liviana que lo que remedia |
 | `g7.may-25-act` | patrones · cantidad | 1·0·2·0·0·1 | 4 | CORE | 1,00 | 2 ✓ | una regla por celda, escrita en pantalla; lo que pesa son tres reglas y veinticuatro celdas |
 | `g7.bus-timing` | tiempo · porcentajes | 2·1·1·1·0·0 | 5 | STANDARD | 1,50 | 2 ✗ | demora aplicada a cuatro salidas y comparadas contra la entrada |
 | `g7.notebook-offer` | porcentajes | 2·1·1·1·0·0 | 5 | STANDARD | 1,50 | 3 ✓ | dos ofertas que hay que llevar a la misma unidad, con el efectivo como límite |
@@ -105,6 +106,8 @@ Un autor que quiere que su plantilla se agende como más exigente tiene que nomb
 | `g7.mural-paint` | espacio y forma | 3·1·1·1·0·0 | 6 | STANDARD | 1,50 | 2 ✗ | área, litros y envases enteros: cadena de tres donde perder el intermedio pierde el problema |
 | `g7.stand-supplies` | optimización | 2·2·1·2·0·1 | 8 | STRETCH | 2,10 | 3 ✗ | porciones mínimas y presupuesto a la vez, sobre una combinación que se arma |
 | `g7.group-tasks` | optimización | 2·2·2·2·0·1 | 9 | STRETCH | 2,10 | 3 ✗ | repartir todo sin pasarse de las horas de nadie, leyendo afinidad y disponibilidad |
+
+El repaso baja el piso sin bajar el techo del concepto, y esa asimetría es intencional: [ADR-024](../03-architecture/adr/ADR-024-progression-recovery-and-graduation.md) explica por qué una recuperación no puede escalar el currículo. Su costo de scheduling figura por completitud; un beat de repaso se agenda **fuera** del presupuesto ordinario y no lo consume.
 
 **Las cuatro divergencias con el nivel autorado fueron una evidencia útil del Gate.** `baseDifficulty` se escribió como perilla de runtime y no como clasificación estructural. TG1-03 aceptó la tabla sin pedir reclasificaciones; esto valida la lectura docente, no equivalencia psicométrica. Un test fija la clasificación, así que una recalibración futura seguirá siendo visible y versionada.
 

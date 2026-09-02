@@ -31,7 +31,7 @@ Un slice jugable y pulido de 7.º grado, representativo de la arquitectura y la 
 
 ### Fase C — Congelamiento de fundaciones
 
-**Actual:** las correcciones de autoridad y score están integradas; STAGE-07 está `READY`. Con egreso/recuperación implementados se podrán apoyar los años siguientes en una gramática común. Reabrir arquitectura o identidad requiere evidencia de defecto, no preferencia.
+**Actual:** las correcciones de autoridad y score están integradas y STAGE-07 cerró: el egreso es un estado terminal alcanzable y la recuperación converge por construcción, así que los años siguientes ya se apoyan en una gramática común en vez de inventar la suya. STAGE-08 está `READY`. Reabrir arquitectura o identidad requiere evidencia de defecto, no preferencia.
 
 ### Fase D — Producción del juego completo
 

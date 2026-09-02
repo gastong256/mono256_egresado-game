@@ -188,7 +188,9 @@ describe('toda seed produce un año jugable', () => {
 
         // Ninguna seed puede dejar el año sin terminar.
         expect(state.status).toBe('completed')
-        expect(state.history).toHaveLength(8)
+        expect(
+          state.history.filter((entry) => entry.recovery !== true),
+        ).toHaveLength(8)
         expect(state.seenStorylets).toContain(grade7StoryletIds.fairStand)
       }),
       { numRuns: 40 },

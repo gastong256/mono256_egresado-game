@@ -334,7 +334,11 @@ export function scoreRun(
   return aggregate(
     evidence.value,
     policy,
-    events.filter((event) => event.quality === 'optimal').length,
+    events.filter(
+      (event) =>
+        event.quality === 'optimal' &&
+        catalog.template(event.templateId)?.placement !== 'recovery',
+    ).length,
   )
 }
 
@@ -370,6 +374,21 @@ export function resolveEvidence(
           'the catalog does not hold this template, so its result cannot be scored',
         ),
       )
+    }
+
+    /*
+     * Remediation is not competitive evidence.
+     *
+     * A run's ordinary beats were composed to be comparable with everyone
+     * else's; a remediation beat exists only because one of them went badly.
+     * Scoring it would make failing on purpose a way to buy an extra scoring
+     * opportunity, and the composer's whole guarantee would be worth nothing.
+     *
+     * Enforced on the content's role rather than on a flag in the history, so
+     * a caller that assembles evidence some other way cannot route around it.
+     */
+    if (template.placement === 'recovery') {
+      continue
     }
 
     const beat = evidenceFor(template, policy, event)

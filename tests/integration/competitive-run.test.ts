@@ -255,9 +255,12 @@ describe('el score sale del historial autoritativo', () => {
 
       expect(result.value.fairScore).toBeGreaterThanOrEqual(0)
       expect(result.value.fairScore).toBeLessThanOrEqual(SCORE_SCALE)
+      // Sólo los beats ordinarios son evidencia competitiva. Un repaso se juega
+      // y no se puntúa, que es lo que impide que equivocarse pague.
       expect(result.value.scoredBeats).toBe(
-        played.state.history.filter((entry) => entry.challengeId !== undefined)
-          .length,
+        played.state.history.filter(
+          (entry) => entry.challengeId !== undefined && entry.recovery !== true,
+        ).length,
       )
     }
   })
