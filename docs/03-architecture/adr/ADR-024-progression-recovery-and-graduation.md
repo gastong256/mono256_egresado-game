@@ -70,7 +70,7 @@ Se eligió derivarlo de la obligación en vez de meter contingencias en el `RunP
 
 `g7.bus-travel-review`, una plantilla nueva con rol `recovery`, y **sólo** para las dos plantillas del colectivo. Piden lo mismo por caminos opuestos y las dos apoyan sobre un paso intermedio: cuánto dura el viaje una vez aplicada la demora. Ahí vive el error más común, y el enunciado completo lo esconde detrás de la decisión.
 
-Las otras seis declaran `none`, y cada una por su motivo: el error del mural es de redondeo de compra y aislarlo daría una cuenta trivial; el de la oferta es leer cuál quedó más barata, sin paso intermedio; el stand y el trabajo grupal miden decisiones de reparto, no media cuenta; y el acto del 25 de Mayo ocurre una vez y en público, así que repetirlo aparte lo volvería un trámite. Inventarles un repaso para llenar la tabla sería peor contenido que no tenerlo.
+Las otras cinco plantillas ordinarias declaran `none`, y cada una por su motivo: el error del mural es de redondeo de compra y aislarlo daría una cuenta trivial; el de la oferta es leer cuál quedó más barata, sin paso intermedio; el stand y el trabajo grupal miden decisiones de reparto, no media cuenta; y el acto del 25 de Mayo ocurre una vez y en público, así que repetirlo aparte lo volvería un trámite. Inventarles un repaso para llenar la tabla sería peor contenido que no tenerlo.
 
 El repaso aísla ese paso. No es la misma pregunta más fácil ni otra pregunta distinta: es la cuenta que la anterior daba por sabida, sola y a la vista, con el primer término nombrado como andamio.
 
@@ -97,7 +97,7 @@ La prueba de que alcanza es una carrera sintética de seis años —`7.º · 1.�
 ## Consecuencias
 
 - `ENGINE_VERSION` pasa a `6.0.0` y `SNAPSHOT_SCHEMA_VERSION` a `7`: el estado de una run lleva ahora qué debe, cómo lo cerró y si egresó. **El action log no se movió**: un repaso se responde como cualquier otro beat y no necesita un comando nuevo; subirle la versión por un cambio que no codifica habría hecho ver incompatibles todos los logs guardados con un formato que siguen cumpliendo.
-- **El ruleset sube por primera vez desde que existe el modelo de contenido**: `0.4.0-grade-7`. Qué resultado deja algo por cerrar y cuántos repasos puede jugar un año son reglas de progresión, y dos jugadores bajo políticas distintas no están jugando al mismo juego. La huella del ruleset las cubre número por número.
+- **El ruleset sube por primera vez desde que existe el modelo de contenido**: `0.4.0-grade-7`. Qué resultado deja algo por cerrar es calibración de progresión, y dos jugadores bajo triggers distintos no están jugando al mismo juego. La huella conserva además el campo `maxRecoveriesPerStage: 1` como declaración inspeccionable del techo estructural; no es una perilla que una policy válida pueda mover.
 - El contenido de 7.º sube a `0.9.0-grade-7` por la plantilla de repaso, y el catálogo aprobado a `grade-7-dev-5` — 185 variantes, 0 rechazos—, publicado al lado de `dev-4` sin editarlo.
 - Las runs golden reproducen el mismo recorrido, el mismo score por evento, el mismo perfil y la misma cantidad de comandos — y ahora terminan en egreso.
 - `pnpm game:simulate` reporta egresos, repasos y previas, y trata como hallazgo toda run que complete sin egresar.
@@ -108,7 +108,7 @@ La prueba de que alcanza es una carrera sintética de seis años —`7.º · 1.�
 | Qué | Resultado |
 |---|---|
 | Carreras sintéticas de seis años | **20.000 simuladas, 20.000 egresadas, 0 hallazgos** |
-| Peor caso de repasos | **6 en una carrera de seis años** — el techo de la política, uno por año |
+| Peor caso de repasos | **6 en una carrera de seis años** — el techo estructural, uno por año |
 | Espacio de estados de la progresión | recorrido **entero**: 64 años posibles y 64 carreras; un único estado terminal alcanzable |
 | Convergencia sobre formas de jugar | property tests sobre 300 seeds × tres estilos, incluida la peor forma posible |
 | 7.º real | una situación sin resolver dispara el repaso, el repaso cierra el año y la partida egresa |
@@ -121,6 +121,8 @@ La prueba de que alcanza es una carrera sintética de seis años —`7.º · 1.�
 El **vocabulario**. TG1-14 aceptó el egreso garantizado y no aportó palabras: «repaso», «quedó algo dando vueltas» y «previa» son candidatos, y la pregunta sigue abierta. Cambiarlos es copy, no arquitectura.
 
 Los **umbrales**. Que `invalid` deje algo por cerrar y `functional` no es una decisión de política, no de motor, y va al Teacher Gate 2 con el resto de la calibración.
+
+El techo de un repaso por etapa no es parte de esa calibración. Bajo esta decisión aceptada queda fijo en uno; cambiarlo exige reconsiderar este ADR y volver a demostrar boundedness, pacing y egreso, no editar un número de `RecoveryPolicy`.
 
 ## No objetivos
 

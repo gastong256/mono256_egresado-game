@@ -11,6 +11,7 @@ import {
   withObligation,
   withRecovery,
   developmentRecoveryPolicy,
+  MAX_RECOVERIES_PER_STAGE,
   SOLUTION_QUALITIES,
   type ChallengeVariantRef,
   type ProgressionState,
@@ -86,7 +87,7 @@ function playYear(
   let recoveries = 0
   // The bound, asserted by running against it: if the year could ever owe a
   // second remediation, this loop would spin and the cap would catch it.
-  while (owesRecovery(state, stageId, policy) && recoveries < 8) {
+  while (owesRecovery(state, stageId) && recoveries < 8) {
     state = withRecovery(
       state,
       stageId,
@@ -95,14 +96,14 @@ function playYear(
       policy,
     )
     recoveries += 1
-    issues.push(...progressionIssues(state, policy))
+    issues.push(...progressionIssues(state))
   }
 
   if (pendingForStage(state, stageId).length > 0) {
     issues.push(`${stageId} ended owing something`)
   }
-  if (recoveriesPlayedInStage(state, stageId) > policy.maxRecoveriesPerStage) {
-    issues.push(`${stageId} played more remediations than the policy allows`)
+  if (recoveriesPlayedInStage(state, stageId) > MAX_RECOVERIES_PER_STAGE) {
+    issues.push(`${stageId} played more remediations than the structure allows`)
   }
 
   return { state, recoveries, issues }
@@ -133,7 +134,7 @@ describe('el espacio de estados de la progresión, recorrido entero', () => {
     // 4 × 4 resultados ordinarios × 4 del repaso: sesenta y cuatro años
     // distintos, y ninguno termina debiendo.
     expect(problems).toEqual([])
-    expect(worstRecoveries).toBeLessThanOrEqual(policy.maxRecoveriesPerStage)
+    expect(worstRecoveries).toBeLessThanOrEqual(MAX_RECOVERIES_PER_STAGE)
     // Dos formas de cerrar un año: sin repaso, o con uno.
     expect([...seen].sort()).toEqual(['0/0', '0/1'])
   })
@@ -169,7 +170,7 @@ describe('el espacio de estados de la progresión, recorrido entero', () => {
       })
 
       const graduated = withGraduation(state)
-      problems.push(...progressionIssues(graduated, policy))
+      problems.push(...progressionIssues(graduated))
       if (!graduated.graduated) {
         problems.push(`career ${String(mask)} did not graduate`)
       }
@@ -208,7 +209,7 @@ describe('el espacio de estados de la progresión, recorrido entero', () => {
     // ausencia de ciclo, comprobada y no supuesta.
     state = withRecovery(state, 'grade-7', undefined, 'invalid', policy)
     expect(state).toBe(afterFirst)
-    expect(owesRecovery(state, 'grade-7', policy)).toBe(false)
+    expect(owesRecovery(state, 'grade-7')).toBe(false)
   })
 
   it('no hay callejones sin salida: todo estado alcanzable puede seguir', () => {
@@ -220,7 +221,7 @@ describe('el espacio de estados de la progresión, recorrido entero', () => {
       const walk = playYear(emptyProgression(), 'grade-7', outcomes, 'invalid')
       const stuck =
         pendingForStage(walk.state, 'grade-7').length > 0 &&
-        !owesRecovery(walk.state, 'grade-7', policy)
+        !owesRecovery(walk.state, 'grade-7')
       expect(stuck).toBe(false)
     }
   })

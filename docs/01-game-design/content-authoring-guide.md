@@ -146,9 +146,9 @@ dominio paramétrico + generador constraint-first → materializar
 
 `AUTHORED` no significa «confiable sin validar»: cada registro pasa por los chequeos genéricos y específicos, la huella y la deduplicación. Es la estrategia deliberada para contenido cuyo valor está en nombres, entidades o escritura curada; `g7.group-tasks` es el ejemplo actual.
 
-`GENERATED` no significa producir números arbitrarios durante una partida. Bajo un contrato versionado de contenido y generador, cada candidato es una función pura de su dirección y del seed fijo del espacio de contenido; sólo una variante aprobada puede entrar al catálogo. Los seis generadores actuales se ejecutan y auditan con tooling offline. El browser materializa una dirección conocida, no improvisa contenido sin validar.
+`GENERATED` no significa producir números arbitrarios durante una partida. Bajo un contrato versionado de contenido y generador, cada candidato es una función pura de su dirección y del seed fijo del espacio de contenido; sólo una variante aprobada puede entrar al catálogo. Los siete generadores actuales se ejecutan y auditan con tooling offline. El browser materializa una dirección conocida, no improvisa contenido sin validar.
 
-Cambiar el contrato de un generador exige una versión nueva de generador, contenido y catálogo. La versión publicada anterior permanece reconstruible: no se la regenera para adoptar la semántica nueva. El acto del 25 de Mayo, versión `1` en `grade-7-dev-1` y versión `2` desde `grade-7-dev-2`, es el caso vigente; `dev-3` conservó direcciones y huellas de `dev-2` al alinear `contentVersion 0.7.0-grade-7`, y el catálogo actual `dev-4` conserva las de `dev-3` al alinear `0.8.0-grade-7` con los perfiles de score.
+Cambiar el contrato de un generador exige una versión nueva de generador, contenido y catálogo. La versión publicada anterior permanece reconstruible: no se la regenera para adoptar la semántica nueva. El acto del 25 de Mayo, versión `1` en `grade-7-dev-1` y versión `2` desde `grade-7-dev-2`, es el caso vigente; `dev-3` y `dev-4` preservaron las direcciones previas al alinear nuevas identidades de contenido, y el catálogo actual `dev-5` conserva las 159 entradas de `dev-4` y suma 26 de `g7.bus-travel-review` bajo `contentVersion 0.9.0-grade-7`.
 
 La estrategia matemática no obliga a proceduralizar la escena. Una plantilla puede mantener autorados narrativa, personajes, copy y estructura de interacción mientras genera sus parámetros concretos. El acto del 25 de Mayo conserva autoradas la coreografía y sus tres reglas; las grillas numéricas son la parte generada.
 
@@ -165,6 +165,12 @@ Desde [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.
 También declara su **elegibilidad por etapa**, que es permiso y no selección: una plantilla elegible para 7.º no aparece en toda run de 7.º. Si una cadena narrativa corta sólo puede alojar un subconjunto, el content set lo explicita en `hostableTemplates`; esa restricción no se esconde en el compositor.
 
 Un año aporta **uno o dos beats ordinarios**, con exactamente un `anchor`. Un `checkpoint` o un `special` gasta uno de esos dos; no es un beat extra. La recuperación es condicional y queda afuera del presupuesto. Ver [la migración del modelo de contenido](../03-architecture/content-model-migration.md) para el procedimiento completo.
+
+## Autoría de recuperación
+
+El ruteo se declara por **plantilla ordinaria de origen**, no sólo por año. Para cada plantilla, el content set elige una de dos respuestas explícitas: una o más plantillas con rol `recovery` que aíslen un paso relevante, o `none` con una razón editorial. No toda plantilla necesita repaso y usar el de otra situación sólo para completar cobertura es contenido incoherente.
+
+El techo de un repaso por etapa es estructural bajo [ADR-024](../03-architecture/adr/ADR-024-progression-recovery-and-graduation.md); no es una perilla de authoring ni de `RecoveryPolicy`. La policy calibra qué calidades dejan obligación. Si un año futuro tiene dos plantillas distintas con recovery y ambas fallan en la misma run, la auditoría obligatoria posterior a 1.º debe comprobar la selección, la resolución semántica, la relevancia matemática, el rastro narrativo, el pacing, el egreso y la exclusión de `FairScore` antes de continuar con 2.º. Esa auditoría reúne evidencia: no prescribe hoy cómo resolver el caso.
 
 No confundir los cuatro artefactos: `ContentCatalog` registra familias y plantillas disponibles; `ApprovedVariantCatalog` contiene direcciones concretas que pasaron el pipeline bajo una versión; `DemoPlan` enumera lo que muestra una demostración; `RunPlan` fija lo que una run normal efectivamente juega. El `RunComposer` construye ese último artefacto una vez, antes de ejecutar. Aprobar una variante no la agenda, elegibilidad no garantiza selección y un demo no es un run plan con más presupuesto.
 

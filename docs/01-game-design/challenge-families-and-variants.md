@@ -92,7 +92,7 @@ El principio viene de STACK, que recomienda pregenerar, testear y desplegar vari
 
 **Implementado.** `ApprovedVariantCatalog` guarda la dirección, el origen `authored`/`generated` y el fingerprint de cada variante aprobada. No guarda parámetros ni posiciones: los parámetros se reconstruyen desde la dirección y la huella comprueba que siguen siendo los mismos.
 
-El artefacto vigente es `grade-7-dev-5`, con 185 entradas para las ocho plantillas de producción — las 159 de `dev-4` intactas más las 26 de `g7.bus-travel-review`. `dev-1`, con 133, y `dev-2`/`dev-3`/`dev-4`, con 159, siguen publicados sin cambios. **Una versión publicada no se edita**: cuando el contenido cambia se construye la siguiente y la anterior queda tal cual, porque una run tiene que poder resolverse contra el conjunto que realmente jugó. Los cuatro son reproducibles byte a byte y `pnpm game:variants check` verifica la integridad del vigente dentro de `pnpm verify`.
+El artefacto vigente es `grade-7-dev-5`, con 185 entradas para las ocho plantillas de producción — las 159 de `dev-4` intactas más las 26 de `g7.bus-travel-review`. `dev-1`, con 133, y `dev-2`/`dev-3`/`dev-4`, con 159, siguen publicados sin cambios. **Una versión publicada no se edita**: cuando el contenido cambia se construye la siguiente y la anterior queda tal cual, porque una run tiene que poder resolverse contra el conjunto que realmente jugó. Los cinco catálogos son reproducibles byte a byte y `pnpm game:variants check` verifica la integridad del vigente dentro de `pnpm verify`.
 
 `grade-7-dev-2` no es un superconjunto **semántico exacto** de `dev-1`: las plantillas cuyo contrato de generación no cambió conservan direcciones y huellas, pero el generador del acto del 25 de Mayo pasó a versión `2` y puede materializar otro contenido en una misma dirección bajo el contrato nuevo. `dev-1` conserva la versión anterior; no se reescribe. Ver [ADR-021](../03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md).
 
@@ -127,10 +127,10 @@ Los criterios de aceptación de estos controles están en [validación y auditor
 | Catálogo de contenido disponible, separado del plan de la run | **implementado** — `ContentCatalog` y `RunPlan` |
 | Elegibilidad por etapa declarativa, incluso no contigua | **implementada** |
 | Roles de colocación y presupuesto de beats por año | **implementados** como contrato de plan validable |
-| Fuentes híbridas `authored` / `generated`, ambas validadas | **implementadas** — seis plantillas generadas y `g7.group-tasks` autorada |
+| Fuentes híbridas `authored` / `generated`, ambas validadas | **implementadas** — siete plantillas generadas y `g7.group-tasks` autorada |
 | Generador por restricción como abstracción reutilizable | **implementado** — [ADR-020](../03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md) |
 | Validación, fingerprint, deduplicación y auditoría de población | **implementados** para el catálogo de desarrollo |
-| Catálogo aprobado y versionado de variantes | **implementado** con `dev-1` a `dev-4` inmutables; `grade-7-dev-4` es el vigente y el oficial de la feria sigue sin congelar |
+| Catálogo aprobado y versionado de variantes | **implementado** con `dev-1` a `dev-5` inmutables; `grade-7-dev-5` es el vigente y el oficial de la feria sigue sin congelar |
 | `variantCatalogVersion` en la identidad de la run | **implementado** como campo opcional: una run que juega variantes curadas no salió de ningún catálogo y lo dice omitiéndolo |
 | Perfil cognitivo, banda derivada y costo de scheduling | **implementados**; la calibración exacta sigue en Teacher Gate |
 | Compositor normal por presupuesto y `RunPlan` concreto | **implementados**; `grade-7-composed` prueba el camino real y la genericidad de seis etapas se prueba sólo con fixtures sintéticos |

@@ -57,6 +57,15 @@ export const RECOVERY_REASONS = [
 export type RecoveryReason = (typeof RECOVERY_REASONS)[number]
 
 /**
+ * Structural recovery bound.
+ *
+ * This is deliberately not policy calibration: one compressed remediation beat
+ * closes every obligation a stage owes. Making the bound configurable would
+ * contradict the state-machine proof that a stage can recover at most once.
+ */
+export const MAX_RECOVERIES_PER_STAGE = 1 as const
+
+/**
  * Something a year has to close before it can end.
  *
  * Addressed semantically — stage, the beat that produced it, the content it came
@@ -138,7 +147,7 @@ export interface RecoveryPolicy {
    * day. The field exists so the number is inspectable and testable, not so it
    * can grow.
    */
-  readonly maxRecoveriesPerStage: number
+  readonly maxRecoveriesPerStage: typeof MAX_RECOVERIES_PER_STAGE
 }
 
 /**
@@ -173,17 +182,9 @@ export function recoveryPolicyIssues(
   if (policy.id.trim() === '' || policy.version.trim() === '') {
     issues.push('a recovery policy must be identified and versioned')
   }
-  if (
-    !Number.isSafeInteger(policy.maxRecoveriesPerStage) ||
-    policy.maxRecoveriesPerStage < 1
-  ) {
-    issues.push('a stage must be able to play at least one remediation beat')
-  }
-  // A year that could remediate without bound is a year that could not be
-  // guaranteed to end, and the graduation invariant rests on it ending.
-  if (policy.maxRecoveriesPerStage > 2) {
+  if (policy.maxRecoveriesPerStage !== MAX_RECOVERIES_PER_STAGE) {
     issues.push(
-      `a stage may play at most two remediation beats; ${String(policy.maxRecoveriesPerStage)} would let a bad year outgrow the career it belongs to`,
+      `a recovery policy must declare exactly one remediation beat per stage; received ${String(policy.maxRecoveriesPerStage)}`,
     )
   }
   if (
@@ -291,11 +292,10 @@ export function recoveriesPlayedInStage(
 export function owesRecovery(
   progression: ProgressionState,
   stageId: StageId,
-  policy: RecoveryPolicy,
 ): boolean {
   return (
     pendingForStage(progression, stageId).length > 0 &&
-    recoveriesPlayedInStage(progression, stageId) < policy.maxRecoveriesPerStage
+    recoveriesPlayedInStage(progression, stageId) < MAX_RECOVERIES_PER_STAGE
   )
 }
 
@@ -372,7 +372,6 @@ export function previasOf(progression: ProgressionState): number {
  */
 export function progressionIssues(
   progression: ProgressionState,
-  policy: RecoveryPolicy,
 ): readonly string[] {
   const issues: string[] = []
 
@@ -411,9 +410,9 @@ export function progressionIssues(
   }
 
   for (const [stageId, count] of perStage) {
-    if (count > policy.maxRecoveriesPerStage) {
+    if (count > MAX_RECOVERIES_PER_STAGE) {
       issues.push(
-        `${stageId} played ${String(count)} remediation beats and the policy allows ${String(policy.maxRecoveriesPerStage)}`,
+        `${stageId} played ${String(count)} remediation beats and the structural bound allows ${String(MAX_RECOVERIES_PER_STAGE)}`,
       )
     }
   }

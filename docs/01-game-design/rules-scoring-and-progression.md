@@ -109,7 +109,9 @@ La run termina al completar el evento final o al abandonar explícitamente.
 
 No hay repetición automática de año por bajo desempeño en el MVP. La fantasía es una carrera comprimida, no un simulador administrativo de promoción escolar.
 
-Eso no significa que el bajo desempeño no tenga consecuencia. La dirección de producto es **fail-forward**: el error cambia el camino, el contenido de recuperación y el perfil final, sin producir un estado terminal ni obligar a volver a jugar un año entero. Esa dirección todavía no tiene contenido implementado; ver [egreso, recuperación y fail-forward](graduation-and-fail-forward.md).
+Eso no significa que el bajo desempeño no tenga consecuencia. El **fail-forward está implementado**: un resultado ordinario alcanzado por la política puede dejar una obligación; el año la cierra con un repaso fuera de su presupuesto ordinario, y toda run válida completada alcanza `GRADUATED`. El repaso no aporta evidencia a `FairScore`, no borra el resultado original y nunca se repite en bucle.
+
+El máximo de **un repaso por etapa** es estructura aceptada en [ADR-024](../03-architecture/adr/ADR-024-progression-recovery-and-graduation.md), no una calibración ordinaria. `RecoveryPolicy` conserva el campo como literal inspeccionable `1` y calibra qué calidades disparan una obligación; el content set declara el ruteo por plantilla. Una plantilla puede declarar `none` de manera intencional. 7.º ya prueba el recorrido real: las dos plantillas del colectivo rutean a `g7.bus-travel-review`; las otras cinco plantillas ordinarias declaran `none`. Ver [egreso, recuperación y fail-forward](graduation-and-fail-forward.md).
 
 ## Este score no es el score de la competencia
 

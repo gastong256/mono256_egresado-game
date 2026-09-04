@@ -17,32 +17,34 @@ La consecuencia para esta etapa es concreta: **ningún año nuevo tiene que inve
 ## Baseline autoritativa
 
 - Toda run válida completada termina en `GRADUATED`. **Implementado y medido:** 20.000 carreras de seis años, 20.000 egresadas, 0 hallazgos.
-- El techo de recuperación es un repaso por año. En 20.000 carreras, el peor caso fueron exactamente 6 — y no existe una que juegue 19 beats.
+- El techo estructural de recuperación es un repaso por año. En 20.000 carreras sintéticas de seis años, el peor caso fueron exactamente 6 — y no existe una que juegue 19 beats.
 - Un repaso **no** puntúa: ni numerador ni denominador. La evidencia competitiva sigue siendo el beat ordinario que salió mal.
 - Recuperación significa fail-forward, no game over, repetición completa de año ni exclusión. No hay sistema de vidas.
 - El vocabulario de recuperación sigue `OPEN` ([pregunta 53](../07-reference/open-questions.md)); «repaso» y «quedó algo dando vueltas» son copy candidato validable en TG2, no arquitectura.
-- Los umbrales de disparo y el techo por año siguen `TEACHER_GATE` ([pregunta 54](../07-reference/open-questions.md)); `recovery-dev-1` es candidata y `official: false`.
+- Los umbrales de disparo siguen `TEACHER_GATE` ([pregunta 54](../07-reference/open-questions.md)); `recovery-dev-1` dispara sólo con `invalid`, es candidata y `official: false`. El techo no es calibración: [ADR-024](../03-architecture/adr/ADR-024-progression-recovery-and-graduation.md) fija estructuralmente un repaso por etapa y tipo, runtime y ruleset lo hacen cumplir.
 - La matemática mantiene un piso de prerrequisitos accesible desde aproximadamente 7.º en toda la carrera. El año académico expresa crecimiento narrativo y contextual, no una barrera curricular. Vale también para el contenido de repaso.
 - `AcademicStage` y `DifficultyBand` son ejes independientes. Cada año puede contener `CORE`, `STANDARD` y `STRETCH`; el techo sube por estructura del razonamiento.
 - Identidad de carrera y `FairScore` siguen separados. La política de desarrollo actual es `fair-score-dev-2@2.0.0-post-tg1-candidate`, 85/10/5 y `official: false`.
-- La duración de 8–10 minutos es un objetivo UX de la carrera completa, no timeout, bonus ni criterio de desempate. La estructura sobre la que se va a calibrar ya tiene techo conocido: 12 beats ordinarios y hasta 18 con repasos.
+- La duración de 8–10 minutos es un objetivo UX de la carrera completa, no timeout, bonus ni criterio de desempate, y todavía no está validada con contenido real. Las 12 decisiones ordinarias más 0–6 repasos de la carrera sintética son una prueba de capacidad estructural, no la forma final de producto: la arquitectura vigente permite uno o dos beats ordinarios por etapa, es decir 6–12 en seis años.
 
 ## Scope IN
 
 - por año: contenido, plantillas, variantes validadas, storylets y hito de etapa;
 - contenido de repaso donde una plantilla tenga un paso intermedio aislable —`none` es una respuesta válida;
 - matriz de contenido previa a la implementación;
-- la auditoría de escalabilidad obligatoria al terminar 1.º;
+- la auditoría de escalabilidad obligatoria al terminar 1.º, incluido el caso de dos plantillas recovery-capable que fallen en una misma etapa;
 - enriquecimiento narrativo del acto del 25 de Mayo (TG1-13);
 - Hitos, si se diseñan como reconocimiento determinista y narrativo.
 
 ## Orden obligatorio
 
 ```text
-1.º → auditoría de escalabilidad → 2.º → 3.º → 4.º → 5.º
+matriz de carrera → 1.º real → auditoría de escalabilidad → 2.º → 3.º → 4.º → 5.º
 ```
 
 **1.º es la prueba crítica.** Al terminarlo hay que contestar: *¿qué fundaciones nuevas tuvimos que inventar?* Si la respuesta incluye otro modelo de carrera, otro motor de score, otra gramática de progreso o otra paleta, se revisa antes de seguir.
+
+La auditoría es obligatoria y debe incluir una etapa con dos beats ordinarios de dos plantillas distintas que tengan recovery, ambos disparados y un único repaso estructural. Debe auditar selección, obligaciones resueltas, pertinencia matemática, rastro narrativo, hacks específicos, vigencia del techo, pacing, egreso y exclusión de `FairScore`, sin elegir una solución antes de obtener evidencia con 1.º real.
 
 ## Scope OUT
 
@@ -60,10 +62,11 @@ La consecuencia para esta etapa es concreta: **ningún año nuevo tiene que inve
 - STAGE-07: `DONE`. GATE-TG1: `PASSED_WITH_REQUIRED_ADJUSTMENTS`.
 - 20.000 carreras sintéticas de seis años, 20.000 egresadas, 0 hallazgos; peor caso 6 repasos.
 - Espacio de estados de la progresión recorrido entero: un único estado terminal alcanzable, sin ciclos ni callejones.
-- 898 tests en 50 archivos y 70 E2E, en verde.
+- 908 tests en 50 archivos y 70 E2E, en verde.
 - Versiones: engine `6.0.0`, snapshot `7`, action log `4`, ruleset `0.4.0-grade-7`, contenido `0.9.0-grade-7`, catálogo `grade-7-dev-5`.
 - Huellas: motor `a0ed168d`, ruleset `5b9b0bc5`, contenido `dbaf5094`.
+- Hardening posterior a STAGE-07: `RecoveryPolicy` sólo expresa el literal `1`, el validador runtime y `createRuleset` rechazan cualquier otro máximo, y la lógica de progresión usa el límite estructural.
 
 ## Última reconciliación
 
-2 de septiembre de 2026, cierre de STAGE-07.
+4 de septiembre de 2026, hardening del invariante de recuperación sin reabrir STAGE-07.

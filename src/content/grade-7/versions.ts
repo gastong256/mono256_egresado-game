@@ -14,9 +14,9 @@
  * y se puede jugar, así que es identidad de contenido.
  *
  * El ruleset, porque ahora declara una política de recuperación: qué resultado
- * deja algo por cerrar y cuántos beats de repaso puede jugar un año son reglas
- * de progresión, y dos jugadores bajo políticas distintas no están jugando al
- * mismo juego.
+ * deja algo por cerrar es calibración de progresión, y dos jugadores bajo
+ * triggers distintos no están jugando al mismo juego. El campo de máximo deja
+ * inspeccionable el techo estructural de un repaso; no es una calibración válida.
  *
  * El contexto anterior, de cuando el contenido subió a 0.8.0 con el perfil de
  * score: cada plantilla declara ahora

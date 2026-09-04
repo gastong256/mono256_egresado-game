@@ -984,7 +984,7 @@ function advance(
   const recoveryPolicy = dependencies.ruleset.recovery
   if (
     recoveryPolicy !== undefined &&
-    owesRecovery(state.progression, state.stage, recoveryPolicy)
+    owesRecovery(state.progression, state.stage)
   ) {
     const opened = beginRecovery(
       {

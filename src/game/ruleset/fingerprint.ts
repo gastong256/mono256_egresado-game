@@ -126,10 +126,10 @@ function composition(ruleset: Ruleset): string {
 /**
  * The recovery policy, flattened.
  *
- * Which results owe remediation and how many beats a year may spend closing
- * them both change how a run progresses, so both are in the digest. A
- * recalibration that moved a trigger without moving a version would otherwise
- * change what a stored run does on replay.
+ * Which results owe remediation changes how a run progresses, so the triggers
+ * are in the digest. The structural maximum remains there too as an inspectable
+ * literal, even though a valid policy cannot tune it away from one. A trigger
+ * recalibration without a version change would otherwise alter replay silently.
  */
 function recovery(ruleset: Ruleset): string {
   const policy = ruleset.recovery

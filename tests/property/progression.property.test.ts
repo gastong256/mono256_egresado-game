@@ -3,7 +3,11 @@ import { describe, expect, it } from 'vitest'
 
 import {
   activeChallengeView,
+  createRuleset,
   createRun,
+  developmentRecoveryPolicy,
+  MAX_RECOVERIES_PER_STAGE,
+  recoveryPolicyIssues,
   runStateIssues,
   toRunId,
   toRunSeed,
@@ -13,6 +17,7 @@ import {
   type GameCommand,
   type InteractionAnswer,
   type PublicChallengeView,
+  type RecoveryPolicy,
   type RunState,
 } from '@/game'
 import {
@@ -159,6 +164,51 @@ const seedArbitrary = fc
   .filter((value) => value.length > 0)
 
 const styleArbitrary = fc.constantFrom<Style>('best', 'worst', 'alternating')
+
+const recoveryMaximumArbitrary = fc.oneof(
+  fc.constant(MAX_RECOVERIES_PER_STAGE),
+  fc.integer({ min: -10, max: 10 }),
+  fc.constant(1.5),
+  fc.string(),
+  fc.boolean(),
+  fc.constant(null),
+  fc.constant(undefined),
+)
+
+const policyWithUnsafeMaximum = (maximum: unknown): RecoveryPolicy =>
+  ({
+    ...developmentRecoveryPolicy,
+    maxRecoveriesPerStage: maximum,
+  }) as unknown as RecoveryPolicy
+
+describe('todo contrato de recuperación válido conserva el techo estructural', () => {
+  it('ninguna RecoveryPolicy validada puede declarar algo distinto de uno', () => {
+    fc.assert(
+      fc.property(recoveryMaximumArbitrary, (maximum) => {
+        const policy = policyWithUnsafeMaximum(maximum)
+        if (recoveryPolicyIssues(policy).length === 0) {
+          expect(policy.maxRecoveriesPerStage).toBe(MAX_RECOVERIES_PER_STAGE)
+        }
+      }),
+    )
+  })
+
+  it('ningún ruleset validado puede contener un máximo distinto de uno', () => {
+    fc.assert(
+      fc.property(recoveryMaximumArbitrary, (maximum) => {
+        const result = createRuleset({
+          ...dependencies.ruleset,
+          recovery: policyWithUnsafeMaximum(maximum),
+        })
+        if (result.ok) {
+          expect(result.value.recovery?.maxRecoveriesPerStage).toBe(
+            MAX_RECOVERIES_PER_STAGE,
+          )
+        }
+      }),
+    )
+  })
+})
 
 describe('toda carrera válida termina en egreso', () => {
   it('converge para cualquier seed y cualquier forma de jugar', () => {

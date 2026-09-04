@@ -8,6 +8,7 @@ import {
   createRuleset,
   createRun,
   currentStage,
+  developmentRecoveryPolicy,
   EngineInvariantError,
   describeRejection,
   isErr,
@@ -290,6 +291,48 @@ describe('ruleset construction', () => {
     expect(isErr(result)).toBe(true)
     if (result.ok) return
     expect(result.error.kind).toBe('invalid-ruleset')
+  })
+
+  it('accepts a ruleset with the structural one-beat recovery bound', () => {
+    const result = createRuleset({
+      id: toRulesetId('valid-recovery-bound'),
+      version: '0.0.1',
+      contentSetId: toContentSetId('development'),
+      contentVersion: '0.0.1',
+      stages: base.stages,
+      scoring: developmentScoringPolicy,
+      difficulty: developmentDifficultyPolicy,
+      profile: developmentProfilePolicy,
+      narrative: base.narrative,
+      recovery: developmentRecoveryPolicy,
+    })
+
+    expect(result.ok).toBe(true)
+    if (!result.ok) return
+    expect(result.value.recovery?.maxRecoveriesPerStage).toBe(1)
+  })
+
+  it('rejects a ruleset whose recovery policy permits two beats per stage', () => {
+    const result = createRuleset({
+      id: toRulesetId('broken-recovery-bound'),
+      version: '0.0.1',
+      contentSetId: toContentSetId('development'),
+      contentVersion: '0.0.1',
+      stages: base.stages,
+      scoring: developmentScoringPolicy,
+      difficulty: developmentDifficultyPolicy,
+      profile: developmentProfilePolicy,
+      narrative: base.narrative,
+      recovery: {
+        ...developmentRecoveryPolicy,
+        maxRecoveriesPerStage: 2,
+      } as unknown as typeof developmentRecoveryPolicy,
+    })
+
+    expect(isErr(result)).toBe(true)
+    if (result.ok) return
+    expect(result.error.kind).toBe('invalid-ruleset')
+    expect(describeRejection(result.error)).toContain('exactly one')
   })
 })
 

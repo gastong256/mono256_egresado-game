@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, expectTypeOf, it } from 'vitest'
 
 import {
   emptyProgression,
@@ -16,6 +16,7 @@ import {
   withRecovery,
   developmentRecoveryPolicy,
   isOrdinaryBeatRole,
+  MAX_RECOVERIES_PER_STAGE,
   type ChallengeVariantRef,
   type ProgressionState,
   type RecoveryPolicy,
@@ -32,6 +33,12 @@ import { grade7Challenges } from '@/content/grade-7'
  */
 
 const policy = developmentRecoveryPolicy
+
+const unsafePolicyWithMaximum = (maximum: unknown): RecoveryPolicy =>
+  ({
+    ...policy,
+    maxRecoveriesPerStage: maximum,
+  }) as unknown as RecoveryPolicy
 
 const source = (templateId: string): ChallengeVariantRef => ({
   familyId: 'bus' as ChallengeVariantRef['familyId'],
@@ -74,15 +81,29 @@ describe('la política de recuperación', () => {
   it('acota cuántos repasos puede jugar un año', () => {
     // Uno. Es lo que impide que un mal año le gane en largo a la carrera que
     // integra, y está en la política para que el número sea inspeccionable.
-    expect(policy.maxRecoveriesPerStage).toBe(1)
+    expect(policy.maxRecoveriesPerStage).toBe(MAX_RECOVERIES_PER_STAGE)
+    expect(recoveryPolicyIssues(policy)).toEqual([])
   })
 
-  it('rechaza una política que dejaría de converger', () => {
-    const runaway: RecoveryPolicy = { ...policy, maxRecoveriesPerStage: 9 }
+  it('expresa el techo estructural como el literal 1', () => {
+    expectTypeOf<RecoveryPolicy['maxRecoveriesPerStage']>().toEqualTypeOf<1>()
+  })
+
+  it('rechaza una política que permitiría dos repasos en un año', () => {
+    const runaway = unsafePolicyWithMaximum(2)
     expect(recoveryPolicyIssues(runaway)).toContainEqual(
-      expect.stringContaining('outgrow the career'),
+      expect.stringContaining('exactly one'),
     )
   })
+
+  it.each([0, -1, 1.5, '1', undefined])(
+    'rechaza un máximo inválido: %s',
+    (maximum) => {
+      expect(
+        recoveryPolicyIssues(unsafePolicyWithMaximum(maximum)),
+      ).toContainEqual(expect.stringContaining('exactly one'))
+    },
+  )
 
   it('rechaza una política donde lo óptimo necesitaría repaso', () => {
     expect(
@@ -155,8 +176,8 @@ describe('un año no puede terminar debiendo', () => {
       emptyProgression(),
       obligation('grade-7', 1, 'a'),
     )
-    expect(owesRecovery(owing, 'grade-7', policy)).toBe(true)
-    expect(owesRecovery(owing, 'year-1', policy)).toBe(false)
+    expect(owesRecovery(owing, 'grade-7')).toBe(true)
+    expect(owesRecovery(owing, 'year-1')).toBe(false)
   })
 
   it('un repaso cierra todas las del año, no una', () => {
@@ -180,7 +201,7 @@ describe('un año no puede terminar debiendo', () => {
       obligation('grade-7', 1, 'a'),
     )
     const closed = withRecovery(owing, 'grade-7', undefined, 'invalid', policy)
-    expect(owesRecovery(closed, 'grade-7', policy)).toBe(false)
+    expect(owesRecovery(closed, 'grade-7')).toBe(false)
   })
 
   it('un repaso que sale mal cierra igual, y deja una previa', () => {
@@ -194,7 +215,7 @@ describe('un año no puede terminar debiendo', () => {
     expect(previasOf(closed)).toBe(1)
     // Y no genera una obligación nueva: la recursión no tiene dónde escribirse.
     expect(recoveriesPlayedInStage(closed, 'grade-7')).toBe(1)
-    expect(owesRecovery(closed, 'grade-7', policy)).toBe(false)
+    expect(owesRecovery(closed, 'grade-7')).toBe(false)
   })
 
   it('un repaso que sale bien no deja previa', () => {
@@ -240,7 +261,7 @@ describe('el egreso', () => {
 })
 
 describe('los estados imposibles se rechazan', () => {
-  const broken = (state: ProgressionState) => progressionIssues(state, policy)
+  const broken = (state: ProgressionState) => progressionIssues(state)
 
   it('egresado debiendo algo', () => {
     expect(
@@ -324,7 +345,7 @@ describe('los estados imposibles se rechazan', () => {
         graduated: false,
       }),
     ).toContainEqual(
-      expect.stringContaining('remediation beats and the policy'),
+      expect.stringContaining('remediation beats and the structural bound'),
     )
   })
 })

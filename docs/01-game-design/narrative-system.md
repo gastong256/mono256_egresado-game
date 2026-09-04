@@ -113,6 +113,8 @@ Las condiciones de un storylet se expresan como datos versionados, no como JavaS
 
 ## Callbacks de fail-forward
 
-Un mal resultado debería **crear** contenido, no quitarlo: recuperación, storylets incómodos y oportunidades alternativas hacen que equivocarse sea interesante. Cuando exista contenido de recuperación, las materias pendientes son estado narrativo oculto que habilita callbacks a lo largo de los años, no una quinta stat en el HUD. Ver [egreso, recuperación y fail-forward](graduation-and-fail-forward.md).
+Un mal resultado puede **crear** contenido, no quitarlo. La infraestructura, el historial de recuperación y el primer contenido real de 7.º ya están implementados: el repaso cierra el año y una resolución baja deja una `previa` como historia oculta, nunca como quinta stat ni bloqueo de egreso.
+
+Los callbacks ricos entre años todavía no existen. STAGE-08 debe decidir, con contenido real, cómo las previas y otros rastros reaparecen de forma significativa en años posteriores y cómo se amplía el contenido de recuperación sin inventar consecuencias que el historial no justifica. Ver [egreso, recuperación y fail-forward](graduation-and-fail-forward.md) y la [etapa actual](../06-delivery/current-stage.md).
 
 Los branches especiales tienen que ser escasos: si se disparan todo el tiempo, dejan de tener peso narrativo.

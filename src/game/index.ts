@@ -388,6 +388,7 @@ export {
   withObligation,
   withRecovery,
   developmentRecoveryPolicy,
+  MAX_RECOVERIES_PER_STAGE,
   RECOVERY_REASONS,
   type ProgressionState,
   type RecoveryObligation,

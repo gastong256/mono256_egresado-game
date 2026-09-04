@@ -17,7 +17,7 @@ Si el roadmap y el código difieren, **el código gana** y el roadmap se corrige
 - Fases de validación externa y congelamiento: [ciclo de entrega real](../00-product/real-delivery-lifecycle.md).
 - Qué se construye por capas de alcance: [alcance y roadmap](../00-product/scope-and-roadmap.md) y [backlog](mvp-backlog.md).
 
-**Última reconciliación contra el código:** 2 de septiembre de 2026, cierre de STAGE-07 — egreso, fail-forward y recuperaciones.
+**Última reconciliación contra el código:** 4 de septiembre de 2026, hardening posterior a STAGE-07 del techo estructural de recuperación.
 
 ---
 
@@ -133,7 +133,7 @@ Estado real contra el código al 2 de septiembre de 2026, tras cerrar STAGE-07. 
 | Validador de plan independiente del compositor | `DONE` | `src/game/plan/plan-validator.ts`; recalcula rol, banda y costo en vez de creerle al plan | STAGE-05 |
 | Verificación de composición en servidor | `DONE` para el alcance actual | `src/server/game/validate-run.ts` recompone, compara la huella y valida el plan | STAGE-05 |
 | `ScorePolicy` versionada | `DONE` | `fair-score-dev-1` histórica y `fair-score-dev-2` post-TG1 actual; ambas `official: false` | STAGE-06 + integración TG1 |
-| `RecoveryPolicy` versionada | `DONE` | `recovery-dev-1@1.0.0-candidate`, `official: false`, validada y cubierta por la huella del ruleset | STAGE-07 |
+| `RecoveryPolicy` versionada | `DONE` | `recovery-dev-1@1.0.0-candidate`, `official: false`, triggers calibrables; techo estructural literal `1`, validado y cubierto por la huella del ruleset | STAGE-07 |
 | `MathPerformance` · `TeamPerformance` · `AuraPerformance` | `DONE` | normalizados en puntos básicos enteros; la plantilla declara qué hecho suyo alimenta cada uno | STAGE-06 |
 | `FairScore` y desglose competitivo | `DONE` | `src/game/scoring/fair-score.ts`; el desglose cierra exactamente y dice qué calibración lo produjo | STAGE-06 |
 | Verificación autoritativa del score en servidor | `DONE` para el alcance actual | el servidor puntúa reproduciendo, y `verifyScoreClaim` contradice un reclamo campo por campo | STAGE-06 |
@@ -700,7 +700,7 @@ El pack histórico sigue reproducible con `pnpm teacher-gate --validate` y perma
 | Qué | Dónde |
 |---|---|
 | Modelo de progresión | `src/game/progression/recovery.ts`: obligación, repaso, estado de progresión y política, con las razones de convergencia escritas en el módulo |
-| Política versionada | `recovery-dev-1@1.0.0-candidate`, `official: false`; el validador rechaza un techo mayor a dos y una política que dispare con `optimal` |
+| Política versionada | `recovery-dev-1@1.0.0-candidate`, `official: false`; calibra triggers y rechaza una política que dispare con `optimal`; el campo de techo conserva el literal estructural `1` y runtime/ruleset rechazan cualquier otro valor |
 | Estado de la run | `RunState.progression`, `ActiveEvent.recovery`, `RunCompletion` con `graduated`, `previas` y `recoveries` |
 | Invariantes tipados | `src/game/runs/invariants.ts`: egresar debiendo, egresar con un beat abierto, obligación de un evento no alcanzado, doble resolución y un repaso abierto sin nada que cerrar |
 | Agenda del repaso | `src/game/runs/transition.ts`: **después** del presupuesto ordinario y antes de que el año cierre, así el jugador no pierde una de las decisiones que el año fue compuesto para darle |
@@ -712,7 +712,7 @@ El pack histórico sigue reproducible con `pnpm teacher-gate --validate` y perma
 | Servidor autoritativo | `src/server/game/validate-run.ts` recalcula egreso, repasos y previas reproduciendo, y rechaza una run completada que deba algo |
 | Carrera sintética de seis años | `src/game/testing/fixtures/six-stage-progression.ts`: `7.º · 1.º · 2.º · 3.º · 4.º · 5.º` jugables con el mismo código y sin un solo caso especial por año |
 | Simulación | `pnpm game:simulate -- --content=six-stage`; egresos, repasos y previas reportados, y `not-graduated` es un hallazgo |
-| Tests | `tests/unit/progression.test.ts` (31), `tests/unit/progression-reachability.test.ts` (4, exhaustivos), `tests/property/progression.property.test.ts` (8), `tests/integration/recovery-run.test.ts` (19) |
+| Tests | `tests/unit/progression.test.ts` (37), `tests/unit/progression-reachability.test.ts` (4, exhaustivos), `tests/property/progression.property.test.ts` (10), `tests/integration/recovery-run.test.ts` (19), más rechazo de ruleset inválido en `engine-modules.test.ts` |
 | Versionado | `ENGINE_VERSION 6.0.0`, `SNAPSHOT_SCHEMA_VERSION 7`, ruleset `0.4.0-grade-7`, contenido `0.9.0-grade-7`, catálogo `grade-7-dev-5`; **`ACTION_LOG_VERSION` se queda en 4** |
 
 **Evidencia.**
@@ -720,16 +720,16 @@ El pack histórico sigue reproducible con `pnpm teacher-gate --validate` y perma
 | Qué se midió | Resultado |
 |---|---|
 | Carreras sintéticas de seis años | **20.000 simuladas, 20.000 egresadas, 0 hallazgos** |
-| Peor caso de repasos | **6 en una carrera de seis años** — el techo de la política, uno por año |
+| Peor caso de repasos | **6 en una carrera de seis años** — el techo estructural, uno por año |
 | Espacio de estados de la progresión | recorrido **entero**: 64 formas posibles de un año y 64 de una carrera; un único estado terminal alcanzable, sin ciclos ni callejones |
 | Convergencia sobre formas de jugar | property tests sobre 300 seeds × mejor juego, peor juego y alternancia |
 | 7.º real, extremo a extremo | una situación sin resolver dispara el repaso, el repaso cierra el año, la partida egresa y el E2E lo ve en pantalla |
 | Sin farmeo | fallar y recuperarse perfecto siempre puntúa menos que jugar bien de entrada |
 | Servidor | recalcula egreso y repasos reproduciendo; un `graduated` adjunto por el cliente no cambia nada |
 | Barridos de 7.º y desarrollo | 3.000 runs por content set —demo, compuesto y desarrollo—, 3.000/3.000 egresadas, 0 hallazgos en cada uno |
-| Suite completa | 898 tests en 50 archivos y 70 E2E, en verde |
+| Suite completa | 908 tests en 50 archivos y 70 E2E, en verde tras el hardening |
 
-**Auditoría estructural de duración.** Sobre 20.000 carreras de seis años, los beats ordinarios son **siempre 12** —dos por año, el presupuesto de STAGE-05— y los totales van de **12 a 18**: el peor caso es exactamente un repaso por año, y no existe una carrera que juegue 19. Los eventos totales van de 18 a 24. El objetivo de 8–10 minutos de D-TG1-09 se calibra en STAGE-08 con contenido real, pero la estructura sobre la que se va a calibrar ya tiene techo conocido y no lo mueve un mal jugador. En un año suelto: 7.º compuesto juega 2 beats ordinarios y 2–3 totales; el demo docente, 6 y 6–7.
+**Auditoría estructural de duración.** Sobre 20.000 carreras del fixture sintético de seis años, los beats ordinarios son **siempre 12** —dos por año en esa prueba— y los totales van de **12 a 18**: el peor caso es exactamente un repaso por año, y no existe una carrera sintética que juegue 19. Esto demuestra capacidad y boundedness; **no decide** que toda run final tenga 12 beats ordinarios. La arquitectura de producto sigue admitiendo uno o dos por etapa —6–12 en seis años— y el objetivo de 8–10 minutos de D-TG1-09 todavía debe medirse en STAGE-08 con contenido real. En un año suelto: 7.º compuesto juega 2 beats ordinarios y 2–3 totales; el demo docente, 6 y 6–7.
 
 **Cobertura de recuperación por plantilla.** El ruteo es por plantilla, no por año: la obligación recuerda qué situación salió mal, y el repaso que aparece es el de esa situación. Una plantilla ausente de la tabla no crea obligación, así que `none` es una decisión escrita y no un silencio que el motor rellene con lo que el año tenga a mano.
 
@@ -752,7 +752,7 @@ Que hoy sólo la familia colectivo tenga repaso es una decisión de alcance, no 
 
 **Lo que no entró, y por qué.** No se publicó `fair-score-dev-3` ni se tocó la ScorePolicy: la frontera con el score es una exclusión, no una recalibración. No hay ranking, desempate, intentos, personal best ni persistencia —siguen en STAGE-09—, ni Hitos, ni contenido de 1.º a 5.º. El acto del 25 de Mayo no se reescribió. Y ningún umbral de recuperación quedó cerrado: que `invalid` deje algo por cerrar y `functional` no es un candidato de política que va al Teacher Gate 2.
 
-**Decisiones.** `TG1 ACCEPTED` (D-TG1-10): toda run válida completada llega a `GRADUATED`; sin game over global — **implementada**. `OPEN` ([pregunta 53](../07-reference/open-questions.md)): el vocabulario de recuperación y previas, porque TG1-14 no aportó palabras; «repaso» y «quedó algo dando vueltas» son candidatos de copy, no arquitectura. `TEACHER_GATE` ([pregunta 54](../07-reference/open-questions.md)): los umbrales de disparo y el techo por año.
+**Decisiones.** `TG1 ACCEPTED` (D-TG1-10): toda run válida completada llega a `GRADUATED`; sin game over global — **implementada**. `OPEN` ([pregunta 53](../07-reference/open-questions.md)): el vocabulario de recuperación y previas, porque TG1-14 no aportó palabras; «repaso» y «quedó algo dando vueltas» son candidatos de copy, no arquitectura. `TEACHER_GATE` ([pregunta 54](../07-reference/open-questions.md)): los umbrales de disparo. El techo de un repaso por etapa es estructura de ADR-024; revisarlo exige reabrir esa decisión y sus pruebas, no calibrar la policy.
 
 **Exit gate.** ¿Pueden los años futuros apoyarse en este sistema de progresión sin inventar el suyo? — **Sí.** La carrera sintética de seis años se juega entera con el mismo código, sin un solo `if` por etapa, y el content set declara qué se repasa sin que el motor conozca un solo id de contenido.
 
@@ -771,10 +771,25 @@ Que hoy sólo la familia colectivo tenga repaso es una decisión de alcance, no 
 **Orden obligatorio.** No es una tarea paralela.
 
 ```text
-1.º → auditoría de escalabilidad → 2.º → 3.º → 4.º → 5.º
+matriz completa de carrera → 1.º real → STOP → auditoría de escalabilidad → 2.º → 3.º → 4.º → 5.º
 ```
 
 **1.º es la prueba crítica.** Al terminarlo hay que contestar: *¿qué fundaciones nuevas tuvimos que inventar?* Si la respuesta incluye un sistema fundamental —otro modelo de carrera, otro motor de score, otra gramática de progreso, otra paleta—, se revisa antes de seguir.
+
+**Caso obligatorio de la auditoría posterior a 1.º.** Antes de autorizar 2.º, una prueba debe ejercer **una etapa + dos beats ordinarios + dos plantillas distintas con recovery + ambos resultados disparan obligación + un único repaso estructural**. La auditoría debe observar, sin preseleccionar hoy una solución:
+
+1. qué recovery se selecciona;
+2. qué obligaciones resuelve semánticamente;
+3. si el repaso es matemáticamente pertinente a lo que salió mal;
+4. si otro concepto queda sólo como historia o previa;
+5. si ese resultado es aceptable;
+6. si fue necesario un hack de motor específico de contenido;
+7. si el techo estructural de ADR-024 sigue siendo apropiado;
+8. si el pacing sigue acotado;
+9. si el egreso continúa garantizado;
+10. si recovery permanece fuera de `FairScore`.
+
+Las hipótesis posibles se comparan con evidencia de 1.º real. Esta etapa no decide por adelantado si limitar cobertura, agregar una recuperación compuesta, priorizar una obligación, convertir el resto en historia o reconsiderar ADR-024.
 
 **Scope IN.** Por año: contenido, plantillas, variantes validadas, storylets, hito de etapa y, si hace falta de verdad, un renderer de interacción genuinamente nuevo. Matriz de contenido previa a la implementación.
 
@@ -798,6 +813,7 @@ Que hoy sólo la familia colectivo tenga repaso es una decisión de alcance, no 
 - [ ] Accesibilidad y móvil verificados.
 - [ ] Replay, snapshot y reanudación correctos.
 - [ ] E2E y simulación del año en verde.
+- [ ] Tras 1.º, el caso obligatorio de dos plantillas recovery-capable que fallan en una etapa pasa la auditoría de selección, coherencia, pacing, egreso y `FairScore` antes de empezar 2.º.
 - [ ] **Ningún sistema fundamental duplicado.**
 - [ ] Documentación del año actualizada.
 
