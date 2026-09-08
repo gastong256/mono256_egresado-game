@@ -63,7 +63,7 @@ Estas decisiones vienen del [Project Blueprint v0.2.0](blueprint-v0.2-integratio
 | D-010 | `FairScore` separado de las stats de carrera | RECOMENDADA | **implementado** ([ADR-023](../03-architecture/adr/ADR-023-competitive-score-policy.md)): el score no recibe la carrera, así que no hay por dónde filtrarla |
 | D-011 | La matemática domina el `FairScore` | TG1 ACCEPTED | **implementado como regla ejecutable**; el candidato post-Gate `fair-score-dev-2` usa 85/10/5 y sigue `official: false` |
 | D-012 | Estilo no puntúa directamente | RECOMENDADA | **implementado**: Estilo y Promedio no son componentes de score, así que no existe el peso que alguien podría subir ([ADR-023](../03-architecture/adr/ADR-023-competitive-score-policy.md)) |
-| D-013 | Desempate competitivo final | OPEN tras TG1-11 `AJUSTAR` | no implementado; Hitos se separan del desempate y una bonificación aleatoria no decide orden competitivo |
+| D-013 | Criterio competitivo posterior a `FairScore DESC → PrestigeScore DESC` | OPEN tras TG1-11 `AJUSTAR` | no implementado; Hitos no dan bonus por aparecer y un empate legítimo puede compartir puesto |
 | D-014 | Presupuesto de dificultad por run competitiva | RECOMENDADA; bandas aceptadas en TG1 | **implementado** ([ADR-022](../03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md)); los costos/umbrales exactos siguen calibrables |
 | D-015 | Diseño de tareas de piso bajo y techo alto | RECOMENDADA como principio | vigente en el contenido de 7.º, y ahora **ejecutable**: la banda de una plantilla se deriva de su estructura, no de sus números ([ADR-022](../03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md)) |
 | D-016 | No hay playtest real con estudiantes antes de la feria | RESTRICCIÓN EXTERNA | declarada ([ciclo de entrega real](../00-product/real-delivery-lifecycle.md)) |
@@ -81,4 +81,32 @@ Estas decisiones vienen del [Project Blueprint v0.2.0](blueprint-v0.2-integratio
 | D-018 | Un beat de recuperación no aporta evidencia competitiva | RECOMENDADA | **implementada** ([ADR-024](../03-architecture/adr/ADR-024-progression-recovery-and-graduation.md)): descartada por rol en el scorer, así que fallar a propósito no compra una oportunidad extra de puntuar |
 | D-019 | Las previas son historia oculta, nunca deuda que bloquee | RECOMENDADA | **implementada**: un año que cierra con lo justo deja rastro para callbacks futuros y no puede impedir el egreso; los callbacks son contenido de STAGE-08 |
 
-La [integración post-Gate](../06-delivery/teacher-gate-1/12-integracion-post-gate.md) es la trazabilidad completa. Siguen abiertos la oficialización final del score, los factores exactos de recompensa, el desempate, el diseño de Hitos, el **vocabulario** de recuperación y sus umbrales de disparo —el mecanismo sí está cerrado—, el inventario de contenido y la configuración final de competencia.
+## Decisiones de STAGE-08 / Phase 0
+
+Son decisiones de producto y contenido, no ADRs ni evidencia de implementación. La
+[envolvente](../01-game-design/stage-08-product-design-envelope.md) y los documentos
+especializados conservan el detalle; este registro sólo las indexa. `CANDIDATE` y
+`DESIGN-CANDIDATE-APPROVED` preservan calibración/madurez y no equivalen a runtime
+congelado.
+
+| ID | Decisión | Madurez | Estado / fuente canónica |
+|---|---|---|---|
+| D-S08-001 | La carrera progresa adaptación → consolidación → pertenencia → autonomía → responsabilidad → cierre; 7.º y 1.º comparten escuela | LOCKED | [sistema narrativo](../01-game-design/narrative-system.md) |
+| D-S08-002 | Año y dificultad son ejes independientes; el piso matemático sigue accesible desde aproximadamente 7.º | LOCKED | [envolvente](../01-game-design/stage-08-product-design-envelope.md) |
+| D-S08-003 | Narrativa braided-linear con elenco relacional, voz argentina legible, callbacks medios y previas como memoria | ACCEPTED; previas LOCKED | callbacks multianuales no implementados; [sistema narrativo](../01-game-design/narrative-system.md) |
+| D-S08-004 | Proyecto del Curso recurre narrativamente y su Template no es obligatoria en toda run | LOCKED | [envolvente](../01-game-design/stage-08-product-design-envelope.md) |
+| D-S08-005 | Pacing 9–10 beats y QUICK/MEDIUM/DEEP son candidatos; primeras tres runs distintas es el goal | ACCEPTED CANDIDATE + LOCKED GOAL | duración sin validar; [envolvente](../01-game-design/stage-08-product-design-envelope.md) |
+| D-S08-006 | Team/Aura/Estilo usan evidencia propia y una interacción nueva no se esconde como contenido | LOCKED | [envolvente](../01-game-design/stage-08-product-design-envelope.md) |
+| D-S08-007 | RNG raro seeded se aplica después de elegibilidad; aparición no da Prestige ni aumenta techos competitivos | ACCEPTED + LOCKED GUARDRAILS | arquitectura no congelada; [eventos raros](../01-game-design/rare-events-and-prestige.md) |
+| D-S08-008 | FairScore sigue primario; Prestige es segundo criterio lexicográfico sin doble conteo | ACCEPTED + LOCKED GUARDRAILS | runtime no implementado; 25×4/cap/premios son `CANDIDATE`; [Prestige](../01-game-design/rare-events-and-prestige.md) |
+| D-S08-009 | Career Epilogue v1 y diseño de Milestones forman parte de STAGE-08 | ACCEPTED | no implementados; catálogo/elegibilidad abiertos |
+| D-S08-010 | Matriz v0.2 de 25 Templates es la candidata auditada vigente | CANDIDATE_APPROVED_AFTER_CONTENT_AUDIT | 1.º detallado; 2.º–5.º esperan su pass; [matriz](../01-game-design/full-career-content-matrix.md) |
+| D-S08-011 | Las cinco Templates de consolidación de 1.º, su placement, Team/Aura y pacing están aprobados a nivel de diseño | DESIGN-CANDIDATE-APPROVED | implementación no iniciada; [diseño de 1.º](../01-game-design/grade-1-template-design.md) |
+| D-S08-012 | Rutas candidatas `rehearsal-schedule → schedule-review` y `classroom-layout → scale-fit-review` | ACCEPTED DESIGN | no implementadas; Aura ordinaria de 1.º ausente |
+| D-S08-013 | La auditoría de ambas obligaciones bajo máximo un recovery es obligatoria después de implementar 1.º | LOCKED PROCESS | `REQUIRED · PLANNED`; [contrato](../04-quality/post-grade-1-scalability-audit.md) |
+
+La semántica de eventos raros/Prestige todavía no justifica un ADR: es dirección
+de producto con implementación abierta. Cuando se congele una arquitectura que
+cruce RNG, replay, score, ranking o versionado deberá aplicarse la política de ADR.
+
+La [integración post-Gate](../06-delivery/teacher-gate-1/12-integracion-post-gate.md) es la trazabilidad completa de TG1. Siguen abiertos la oficialización final del score, calibraciones exactas, tercer criterio de empate, catálogo de Hitos, vocabulario y triggers de recuperación, profundidad final de contenido y configuración de competencia.

@@ -1,72 +1,117 @@
 # Etapa actual
 
-Vista corta del estado de ejecución. El contrato completo y el protocolo de actualización están en el [roadmap](implementation-sequence.md).
-
----
+Vista corta del estado de ejecución. El contrato completo y el protocolo de
+actualización están en el [roadmap](implementation-sequence.md).
 
 ## STAGE-08 — Contenido incremental de 1.º a 5.º
 
-**Estado:** `READY` · **etapa actual**. No está iniciada ni implementada.
+**Estado:** `IN_PROGRESS` · **etapa actual**.
 
-## Por qué está lista
+```text
+STAGE-07                                      DONE
 
-STAGE-07 cerró el 2 de septiembre de 2026. El egreso dejó de ser una promesa del roadmap: es un estado terminal que toda run válida completada alcanza, y la recuperación converge **por construcción** —sólo un beat ordinario deja algo por cerrar, y un repaso siempre cierra lo que el año debía—, no por una configuración que alguien podría poner mal. La decisión está en [ADR-024](../03-architecture/adr/ADR-024-progression-recovery-and-graduation.md).
+STAGE-08                                      IN_PROGRESS · CURRENT
+└── Phase 0 — Full-Career Content Design      IN_PROGRESS
+    ├── Product Design Envelope               COMPLETE
+    ├── Full-Career Matrix v0.2 audit         COMPLETE
+    ├── Grade 1 Template Design Pass          COMPLETE
+    ├── Documentation checkpoint              COMPLETE
+    └── NEXT: Grade 2 Template Design Pass
+```
 
-La consecuencia para esta etapa es concreta: **ningún año nuevo tiene que inventar su sistema de fracaso y promoción.** Declara sus plantillas, su elegibilidad por etapa y, si corresponde, su contenido de repaso. La carrera sintética de seis años (`src/game/testing/fixtures/six-stage-progression.ts`) prueba que `7.º · 1.º · 2.º · 3.º · 4.º · 5.º` se juega entera con el mismo código y sin un solo caso especial por año.
+Phase 0 no está terminada: faltan los Template Design Passes detallados de
+2.º–5.º y la auditoría final de diseño. El diseño de 1.º está aprobado a nivel
+`DESIGN-CANDIDATE-APPROVED`; su implementación no empezó ni fue autorizada por
+este checkpoint.
 
 ## Baseline autoritativa
 
-- Toda run válida completada termina en `GRADUATED`. **Implementado y medido:** 20.000 carreras de seis años, 20.000 egresadas, 0 hallazgos.
-- El techo estructural de recuperación es un repaso por año. En 20.000 carreras sintéticas de seis años, el peor caso fueron exactamente 6 — y no existe una que juegue 19 beats.
-- Un repaso **no** puntúa: ni numerador ni denominador. La evidencia competitiva sigue siendo el beat ordinario que salió mal.
-- Recuperación significa fail-forward, no game over, repetición completa de año ni exclusión. No hay sistema de vidas.
-- El vocabulario de recuperación sigue `OPEN` ([pregunta 53](../07-reference/open-questions.md)); «repaso» y «quedó algo dando vueltas» son copy candidato validable en TG2, no arquitectura.
-- Los umbrales de disparo siguen `TEACHER_GATE` ([pregunta 54](../07-reference/open-questions.md)); `recovery-dev-1` dispara sólo con `invalid`, es candidata y `official: false`. El techo no es calibración: [ADR-024](../03-architecture/adr/ADR-024-progression-recovery-and-graduation.md) fija estructuralmente un repaso por etapa y tipo, runtime y ruleset lo hacen cumplir.
-- La matemática mantiene un piso de prerrequisitos accesible desde aproximadamente 7.º en toda la carrera. El año académico expresa crecimiento narrativo y contextual, no una barrera curricular. Vale también para el contenido de repaso.
-- `AcademicStage` y `DifficultyBand` son ejes independientes. Cada año puede contener `CORE`, `STANDARD` y `STRETCH`; el techo sube por estructura del razonamiento.
-- Identidad de carrera y `FairScore` siguen separados. La política de desarrollo actual es `fair-score-dev-2@2.0.0-post-tg1-candidate`, 85/10/5 y `official: false`.
-- La duración de 8–10 minutos es un objetivo UX de la carrera completa, no timeout, bonus ni criterio de desempate, y todavía no está validada con contenido real. Las 12 decisiones ordinarias más 0–6 repasos de la carrera sintética son una prueba de capacidad estructural, no la forma final de producto: la arquitectura vigente permite uno o dos beats ordinarios por etapa, es decir 6–12 en seis años.
+STAGE-07 cerró el 2 de septiembre de 2026 y permanece `DONE`. El egreso es un
+estado terminal que toda run válida completada alcanza, y la recuperación converge
+por construcción según
+[ADR-024](../03-architecture/adr/ADR-024-progression-recovery-and-graduation.md):
 
-## Scope IN
+- sólo un beat ordinario puede crear una obligación;
+- un repaso cierra todas las obligaciones de la etapa y no puede crear otra;
+- el techo estructural es exactamente un repaso por etapa;
+- el repaso queda fuera del presupuesto ordinario y de numerador/denominador de `FairScore`;
+- ruteo por Template y `none` explícito evitan remediaciones irrelevantes;
+- el servidor/replay recalcula progresión y egreso.
 
-- por año: contenido, plantillas, variantes validadas, storylets y hito de etapa;
-- contenido de repaso donde una plantilla tenga un paso intermedio aislable —`none` es una respuesta válida;
-- matriz de contenido previa a la implementación;
-- la auditoría de escalabilidad obligatoria al terminar 1.º, incluido el caso de dos plantillas recovery-capable que fallen en una misma etapa;
-- enriquecimiento narrativo del acto del 25 de Mayo (TG1-13);
-- Hitos, si se diseñan como reconocimiento determinista y narrativo.
+El hardening posterior a STAGE-07 fijó `RecoveryPolicy.maxRecoveriesPerStage` al
+literal `1`; validación y `createRuleset` rechazan `2` u otro valor, y progresión
+usa `MAX_RECOVERIES_PER_STAGE`, no una calibración libre. No cambió engine,
+ruleset, contenido ni catálogo.
 
-## Orden obligatorio
+La carrera sintética de seis años prueba que la estructura sostiene
+`7.º · 1.º · 2.º · 3.º · 4.º · 5.º` sin casos especiales. No prueba que exista
+contenido real de 1.º–5.º ni valida el target UX de 8–10 minutos.
+
+## Resultado actual de Phase 0
+
+- [Envolvente de diseño](../01-game-design/stage-08-product-design-envelope.md): `COMPLETE · ACCEPTED`.
+- [Matriz de carrera v0.2](../01-game-design/full-career-content-matrix.md): 25 Templates, `CANDIDATE_APPROVED_AFTER_CONTENT_AUDIT`; 24/52/24 CORE/STANDARD/STRETCH y 9/25 recoveries candidatos.
+- [Sistema narrativo](../01-game-design/narrative-system.md): arco, elenco relacional, callbacks, Proyecto del Curso y epílogo aceptados; runtime multianual no implementado.
+- [Eventos raros y Prestige](../01-game-design/rare-events-and-prestige.md): semántica de producto aceptada, calibración candidata y arquitectura/runtime abiertos.
+- [Diseño de 1.º](../01-game-design/grade-1-template-design.md): cinco Templates `DESIGN-CANDIDATE-APPROVED`; Equipo sólo en expo, Aura ordinaria ausente y dos rutas candidatas de recuperación.
+- [Auditoría posterior a 1.º](../04-quality/post-grade-1-scalability-audit.md): contrato `REQUIRED · PLANNED`, todavía no ejecutado.
+
+## Scope IN de la fase actual
+
+- diseño detallado de Templates de 2.º, 3.º, 4.º y 5.º;
+- cierre de pacing, señales independientes y decisiones `none`/recovery por Template;
+- continuidad narrativa, Hitos, eventos raros/Prestige a nivel de producto;
+- auditoría final de diseño de carrera;
+- preservación explícita de calibraciones y preguntas abiertas.
+
+## Siguiente tarea canónica
 
 ```text
-matriz de carrera → 1.º real → auditoría de escalabilidad → 2.º → 3.º → 4.º → 5.º
+STAGE-08 / Phase 0 / Grade 2 — Belonging Template Design Pass
 ```
 
-**1.º es la prueba crítica.** Al terminarlo hay que contestar: *¿qué fundaciones nuevas tuvimos que inventar?* Si la respuesta incluye otro modelo de carrera, otro motor de score, otra gramática de progreso o otra paleta, se revisa antes de seguir.
+Debe partir de los cinco candidatos de 2.º de la matriz, cerrar su detalle de
+autoría y pacing sin producir runtime todavía.
 
-La auditoría es obligatoria y debe incluir una etapa con dos beats ordinarios de dos plantillas distintas que tengan recovery, ambos disparados y un único repaso estructural. Debe auditar selección, obligaciones resueltas, pertinencia matemática, rastro narrativo, hacks específicos, vigencia del techo, pacing, egreso y exclusión de `FairScore`, sin elegir una solución antes de obtener evidencia con 1.º real.
+## Flujo posterior obligatorio
+
+```text
+terminar Phase 0
+→ Phase 1: implementar 1.º real
+→ STOP: auditoría de escalabilidad posterior a 1.º
+→ PASS: implementar 2.º–5.º
+→ auditoría de carrera completa
+→ STAGE-08 DONE
+```
+
+La auditoría fuerza `classroom-layout` y `rehearsal-schedule` fallidas en una
+misma etapa, dos obligaciones conceptuales y un único repaso. No existe una
+solución preseleccionada.
 
 ## Scope OUT
 
-- rediseño visual, otro Career Model, otro motor de scoring, otra gramática de progreso → no son alcance de contenido;
-- intentos, emisión autoritativa, personal best, tie-break, ranking y leaderboard → STAGE-09;
-- congelar `fair-score-dev-2` o `recovery-dev-1` como oficiales → Teacher Gate 2 / FREEZE;
-- rediseñar el compositor, el modelo de dificultad o la progresión que STAGE-07 acaba de cerrar.
+- implementar Templates/Variants de 1.º–5.º durante Phase 0;
+- afirmar que el audit posterior a 1.º ya pasó;
+- rediseñar UI, Career Model, score, dificultad, compositor o progresión;
+- implementar Prestige, RNG raro, ranking, intentos, personal best o servidor de competencia;
+- congelar `fair-score-dev-2`, `recovery-dev-1` o calibraciones candidatas;
+- validar 8–10 minutos antes de tener carrera real jugable.
 
-## Exit gate
+## Exit gate de STAGE-08
 
-¿Una run completa recorre `7.º → 1.º → 2.º → 3.º → 4.º → 5.º → EGRESADO` con contenido real?
+¿Una run completa recorre
+`7.º → 1.º → 2.º → 3.º → 4.º → 5.º → EGRESADO` con contenido real, auditado y
+sin duplicar sistemas fundamentales?
 
-## Evidencia de entrada
+## Evidencia de entrada preservada
 
-- STAGE-07: `DONE`. GATE-TG1: `PASSED_WITH_REQUIRED_ADJUSTMENTS`.
-- 20.000 carreras sintéticas de seis años, 20.000 egresadas, 0 hallazgos; peor caso 6 repasos.
-- Espacio de estados de la progresión recorrido entero: un único estado terminal alcanzable, sin ciclos ni callejones.
-- 908 tests en 50 archivos y 70 E2E, en verde.
-- Versiones: engine `6.0.0`, snapshot `7`, action log `4`, ruleset `0.4.0-grade-7`, contenido `0.9.0-grade-7`, catálogo `grade-7-dev-5`.
-- Huellas: motor `a0ed168d`, ruleset `5b9b0bc5`, contenido `dbaf5094`.
-- Hardening posterior a STAGE-07: `RecoveryPolicy` sólo expresa el literal `1`, el validador runtime y `createRuleset` rechazan cualquier otro máximo, y la lógica de progresión usa el límite estructural.
+- 20.000 carreras sintéticas de seis años: 20.000 egresadas, 0 hallazgos; peor caso, 6 repasos.
+- Espacio de estados de progresión recorrido entero: único terminal, sin ciclos ni callejones.
+- Baseline verificada tras hardening: 908 tests en 50 archivos y 70 E2E.
+- Versiones sin cambios: engine `6.0.0`, snapshot `7`, action log `4`, ruleset `0.4.0-grade-7`, contenido `0.9.0-grade-7`, catálogo `grade-7-dev-5`.
+- Huellas sin cambios: motor `a0ed168d`, ruleset `5b9b0bc5`, contenido `dbaf5094`.
 
 ## Última reconciliación
 
-4 de septiembre de 2026, hardening del invariante de recuperación sin reabrir STAGE-07.
+8 de septiembre de 2026, checkpoint documental de STAGE-08 / Phase 0 después del
+Template Design Pass de 1.º.

@@ -25,6 +25,11 @@
 - [x] Dificultad de piso bajo y techo alto, bandas y presupuesto.
 - [x] Score competitivo post-TG1 85/10/5 como candidato no oficial, con historia dev-1 preservada.
 - [x] Egreso garantizado **implementado** en STAGE-07: la recuperación converge por construcción y no puntúa ([ADR-024](03-architecture/adr/ADR-024-progression-recovery-and-graduation.md)); el vocabulario sigue abierto.
+- [x] Envolvente de producto de STAGE-08 / Phase 0 completa, sin confundir diseño con runtime.
+- [x] Matriz de carrera v0.2 auditada con 25 Templates candidatas, cobertura y reemplazos trazables.
+- [x] Sistema narrativo de carrera reconciliado: consolidación en 1.º, elenco relacional, callbacks, Proyecto del Curso y epílogo.
+- [x] Eventos raros y Prestige documentados con semántica aceptada, calibración candidata y arquitectura abierta.
+- [x] Diseño detallado de las cinco Templates de 1.º en estado `DESIGN-CANDIDATE-APPROVED`.
 
 ## Funcional
 - [x] Requisitos funcionales.
@@ -57,6 +62,7 @@
 - [x] Gates reales de la base, cobertura acotada y checks contextuales de DB/Docker.
 - [x] Invariantes y auditoría estadística de variantes desplegadas.
 - [x] Auditoría de equidad competitiva.
+- [x] Contrato de auditoría de escalabilidad posterior a 1.º, marcado requerido y todavía no ejecutado.
 
 ## Operación
 - [x] Runbook de feria.
@@ -114,6 +120,7 @@ No son omisiones documentales; son decisiones que no deben fijarse sin evidencia
 - calibración empírica del target de run 8–10 minutos;
 - fórmula final de scoring;
 - distribución final de eventos por año;
+- detalle de Templates y pacing de 2.º–5.º;
 - política final de dificultad/adaptación;
 - cantidad esperada de concurrentes;
 - política legal/retención aplicable a la institución anfitriona;
@@ -126,6 +133,9 @@ Se agregan, desde la integración del Project Blueprint v0.2:
 - factores exactos de recompensa por dificultad;
 - qué desafíos ofrecen fórmula o calculadora;
 - cantidad de familias y plantillas por año;
+- semántica del único recovery ante dos obligaciones conceptuales, reservada al audit posterior a 1.º;
+- probabilidades de rareza, calibración de Prestige y tercer criterio de empate;
+- catálogo exacto de Career Milestones y posible Aura rara de 1.º;
 - acento visual por año y producción del pack raster, ambos diferidos al sistema de diseño.
 
 Estas preguntas están registradas en [preguntas abiertas](07-reference/open-questions.md) y deben cerrarse en la fuente autoritativa correspondiente cuando exista evidencia o decisión docente, actualizando el [registro de decisiones](07-reference/decision-register.md), la trazabilidad y el ADR cuando aplique.

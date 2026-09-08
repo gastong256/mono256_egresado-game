@@ -2,7 +2,7 @@
 
 **Estado post-TG1:** mecanismo implementado; filosofía y ponderación 85/10/5 aceptadas como dirección docente; política todavía candidata y no oficial. Teacher Gate 1 no prueba equidad psicométrica ni reemplaza el congelamiento de competencia. La fórmula oficial final sigue **OPEN** ([pregunta 24](../07-reference/open-questions.md)).
 
-El score por evento vigente —`base × calidad × dificultad + bonus − penalizaciones`— está en [reglas, scoring y progresión](rules-scoring-and-progression.md) y sigue siendo la capa de carrera. La capa **competitiva** conserva `fair-score-dev-1@1.0.0-candidate` como calibración histórica pre-Gate 80/15/5; las runs nuevas usan `fair-score-dev-2@2.0.0-post-tg1-candidate`, 85/10/5 y `official: false`. Ver [ADR-023](../03-architecture/adr/ADR-023-competitive-score-policy.md).
+El score por evento vigente —`base × calidad × dificultad + bonus − penalizaciones`— está en [reglas, scoring y progresión](rules-scoring-and-progression.md) y sigue siendo la capa de carrera. La capa **competitiva** conserva `fair-score-dev-1@1.0.0-candidate` como calibración histórica pre-Gate 80/15/5; las runs nuevas usan `fair-score-dev-2@2.0.0-post-tg1-candidate`, 85/10/5 y `official: false`. Ver [ADR-023](../03-architecture/adr/ADR-023-competitive-score-policy.md). STAGE-08 aceptó además la semántica de producto de [Prestige](rare-events-and-prestige.md) como segundo criterio lexicográfico futuro; no existe todavía en runtime.
 
 ## Tres capas que no son la misma cosa
 
@@ -131,22 +131,29 @@ STAGE-09 implementará emisión autoritativa, identidad y persistencia. Ilimitad
 
 ## Desempate
 
-Sin ruido aleatorio y sin decimales inventados para forzar unicidad. Tupla lexicográfica **recomendada**:
+Sin ruido aleatorio ni decimales inventados para forzar unicidad. La dirección de
+producto aceptada en STAGE-08 comienza con:
 
-1. `FairScore` desc;
-2. `MathPerformance` / `MathRaw` desc;
-3. cantidad de resultados óptimos desc;
-4. precisión desc;
-5. dificultad resuelta desc;
-6. tiempo activo asc.
+1. `FairScore` descendente;
+2. `PrestigeScore` descendente;
+3. política futura de STAGE-09 o puesto compartido.
 
-La matemática decide antes que la velocidad, y la velocidad sólo aparece al final. El desempate vigente y más simple del leaderboard está en [leaderboard y moderación](../05-operations/leaderboard-and-moderation.md); esta tupla lo extiende y todavía no lo reemplaza.
+Prestige no se suma a `FairScore`: sólo ordena runs con el mismo valor primario y
+jamás permite que `9.999 + 100 Prestige` supere a `10.000 + 0 Prestige`. Su cap,
+tracks y premios exactos siguen candidatos; comparador, persistencia y ranking no
+están implementados. La tupla histórica basada en Math/óptimos/precisión/dificultad/
+tiempo queda supersedida como dirección vigente, aunque sus señales pueden volver
+a evaluarse para el tercer criterio si STAGE-09 lo justifica y anuncia.
 
 ### Empate exacto
 
 No se puede prometer que un score con significado nunca empate: garantizar unicidad exige una clave arbitraria. Para premios hace falta una **política de organizador escrita antes de la feria**: puesto compartido, premio compartido o un desempate anunciado. Un `run_id` puede dar orden de visualización estable, pero no puede decidir un premio en secreto.
 
-Esa política es **OPEN**. TG1-11 pidió ajustarla y propuso Hitos aleatorios para reducir empates. La integración separa dos problemas: los Hitos son una oportunidad futura de reconocimiento narrativo/carrera; no agregan puntos aleatorios ni garantizan un puesto único. Empates legítimos pueden existir y STAGE-09/TG2 decidirán el criterio anunciado.
+Esa política posterior a FairScore/Prestige es **OPEN**. TG1-11 pidió ajustarla y
+propuso Hitos aleatorios para reducir empates. La integración separa los problemas:
+un Hito sólo puede aportar Prestige mediante acción o trayectoria independiente;
+su aparición aleatoria vale cero y la oportunidad máxima debe normalizarse. Los
+empates legítimos pueden existir y STAGE-09/TG2 decidirán el criterio anunciado.
 
 ### Tiempo
 
@@ -165,7 +172,8 @@ Las reglas publicadas tienen que poder explicarse en tres frases: la matemática
 | `MathPerformance` / `TeamPerformance` / `AuraPerformance` normalizados | **implementado**, en puntos básicos enteros |
 | `FairScore` y desglose competitivo | **implementado**; `fair-score-dev-1` histórico y `fair-score-dev-2` actual, ambos `official: false` |
 | Recomputación y verificación autoritativa del score en servidor | **implementado**: el servidor puntúa reproduciendo, y `verifyScoreClaim` contradice un reclamo campo por campo |
-| Comparador lexicográfico versionado | **no implementado**; sin ranking no tiene a qué ordenar, y el desglose ya reporta el primer criterio que va a necesitar |
+| Semántica de `PrestigeScore` como segundo criterio lexicográfico | **diseño de producto aceptado**, calibración candidata; no implementado |
+| Comparador lexicográfico versionado | **no implementado**; deberá comenzar por FairScore y Prestige y resolver su tercer criterio en STAGE-09 |
 | Personal best transaccional en servidor | **no implementado** |
 | `scoreVersion` en la identidad de la run | **implementado**, opcional: una partida de práctica no está compitiendo |
 

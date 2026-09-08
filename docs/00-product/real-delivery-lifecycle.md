@@ -31,11 +31,19 @@ Un slice jugable y pulido de 7.º grado, representativo de la arquitectura y la 
 
 ### Fase C — Congelamiento de fundaciones
 
-**Actual:** las correcciones de autoridad y score están integradas y STAGE-07 cerró: el egreso es un estado terminal alcanzable y la recuperación converge por construcción, así que los años siguientes ya se apoyan en una gramática común en vez de inventar la suya. STAGE-08 está `READY`. Reabrir arquitectura o identidad requiere evidencia de defecto, no preferencia.
+**Completada:** las correcciones de autoridad y score están integradas y STAGE-07
+cerró: el egreso es un estado terminal alcanzable y la recuperación converge por
+construcción. STAGE-08 ya comenzó con Phase 0 de diseño de carrera; reabrir
+arquitectura o identidad requiere evidencia de defecto, no preferencia.
 
 ### Fase D — Producción del juego completo
 
 `7.º → 1.º → 2.º → 3.º → 4.º → 5.º → Egreso`, más catálogo completo de escenarios, variantes desplegadas, ranking, backend de evento, verificación autoritativa y herramientas de operación.
+
+**Actual:** STAGE-08 / Phase 0 está `IN_PROGRESS`. La envolvente, matriz v0.2 y
+diseño candidato de 1.º están completos; siguen los pases detallados de 2.º–5.º.
+Después se implementa 1.º real y se ejecuta la auditoría de escalabilidad antes de
+producir ampliamente el resto. Ver [etapa actual](../06-delivery/current-stage.md).
 
 ### Fase E — Teacher Gate 2
 

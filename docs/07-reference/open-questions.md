@@ -5,7 +5,7 @@ Estas decisiones requieren evidencia de prototipo, playtest, implementación u o
 ## Producto
 
 1. ~~¿Run objetivo de 4, 5 o 7 minutos?~~ **Cerrada por TG1-12:** la carrera completa apunta a aproximadamente **8–10 minutos**. Queda abierta la calibración empírica de pacing, no el objetivo.
-2. Dentro del presupuesto ya fijado de uno o dos beats normales, ¿qué combinación con storylets y recuperaciones condicionales mantiene el ritmo sin sentirse repetitiva? Esta pregunta de pacing no reabre el presupuesto ni define la profundidad del catálogo.
+2. Dentro del presupuesto ya fijado de uno o dos beats normales, ¿qué combinación con storylets y recuperaciones condicionales mantiene el ritmo sin sentirse repetitiva? Phase 0 usa como candidato una carrera típica de 9–10 beats y clases `QUICK / MEDIUM / DEEP`; falta medirlas con contenido real. Esta pregunta no reabre el presupuesto ni define la profundidad del catálogo.
 3. ¿El nickname se pide antes o después de la primera run en modo libre?
 4. ¿Qué tan visible debe ser el score durante la carrera?
 
@@ -18,14 +18,14 @@ Estas decisiones requieren evidencia de prototipo, playtest, implementación u o
 ## Narrativa
 
 8. ¿Stats visibles exactas o tendencias cualitativas?
-9. ¿Cuántos callbacks son necesarios para percibir continuidad?
-10. ¿Qué tono humorístico valida mejor el público real?
+9. ¿Cuántos callbacks son necesarios para percibir continuidad dentro del modelo braided-linear de intensidad media ya aceptado?
+10. ¿Qué tono dentro de la dirección aceptada —realismo escolar, humor frecuente y absurdo ocasional— valida mejor el público real?
 
 ## Ranking
 
 11. ¿Mejor run por nickname/session o todas? ¿El default de operaciones es sólo una propuesta de playtest?
-12. ¿Seed idéntica para todos o pool equivalente?
-13. ¿Tiempo debe servir de desempate? ¿La sugerencia de usarlo como último criterio debe aceptarse o descartarse?
+12. ¿Seed idéntica para todos o pool equivalente, y qué política server-issued evita seed farming bajo intentos ilimitados y oportunidades raras normalizadas?
+13. Después de ordenar por `FairScore DESC` y `PrestigeScore DESC`, ¿tiempo debe servir como criterio terciario? ¿La sugerencia de usarlo al final debe aceptarse o descartarse?
 
 ## Feria
 
@@ -79,7 +79,7 @@ Incorporadas desde el [Project Blueprint v0.2](blueprint-v0.2-integration.md). S
 38. ~~¿Deben Equipo y Aura participar, qué ponderación usar y cómo tratar oportunidades ausentes?~~ **Cerrada en dirección por TG1-04/TG1-05/TG1-06/TG1-07:** las tres participan, el candidato post-Gate es `fair-score-dev-2` 85/10/5 y se normalizan sólo los pesos activos. Sigue **OPEN** su oficialización/freeze en la pregunta 24 y la cobertura independiente de contenido en STAGE-08.
 39. ~~¿Qué valor de calidad matemática corresponde a cada resultado?~~ **Cerrada por TG1-09:** `1,00 / 0,75 / 0,40 / 0,10` sobre `optimal / efficient / functional / invalid`; una métrica continua honesta, como F1, no se aplana a cuatro cajas.
 40. ~~¿Los intentos en la feria son ilimitados o limitados a N?~~ **Cerrada en producto por TG1-10:** ilimitados y se conserva el mejor resultado verificado. Emisión autoritativa, identidad y persistencia siguen en STAGE-09; el jugador no elige seed.
-41. ¿Qué pasa ante un empate exacto en el ranking: puesto compartido, premio compartido o desempate anunciado? Un identificador interno **no** puede decidir un premio en silencio. *Gate: aprobación del organizador antes de repartir premios.* Se cruza con la pregunta 13.
+41. Después de `FairScore DESC` y `PrestigeScore DESC`, ¿qué pasa ante un empate exacto: puesto compartido, premio compartido o desempate anunciado? Un identificador interno **no** puede decidir un premio en silencio. *Gate: STAGE-09 y aprobación del organizador antes de repartir premios.* Se cruza con la pregunta 13.
 42. ~~¿El acto del 25 de Mayo entra a producción?~~ **Cerrada por TG1-13:** `KEEP` pedagógico; su narrativa debe enriquecerse y diversificarse en STAGE-08. No se agregó Aura competitiva porque hoy no existe una evidencia independiente del F1 matemático.
 43. ~~¿Cuál es la duración objetivo real?~~ **Cerrada por TG1-12:** 8–10 minutos para la carrera completa, como target UX sin timer ni score de velocidad.
 44. **Narrowed por TG1-03/TG1-08:** las bandas `CORE / STANDARD / STRETCH` y el principio de una recompensa competitiva pequeña están aceptados. Sigue **OPEN** la calibración exacta de factores; 1,00/1,08/1,15 permanece candidata y separada de los costos de scheduling 1,00/1,50/2,10.
@@ -87,33 +87,41 @@ Incorporadas desde el [Project Blueprint v0.2](blueprint-v0.2-integration.md). S
 
 ## Contenido y producto, sin gate docente inmediato
 
-46. ¿Qué profundidad de `ScenarioFamily`, `ChallengeTemplate` y `ChallengeVariant` debe ofrecer el **catálogo de contenido disponible** por etapa académica para sostener una rejugabilidad significativa, dado que una run individual normalmente selecciona sólo uno o dos beats de esa etapa? Las opciones disponibles en el catálogo **no son** la cantidad de beats jugados por año. La referencia histórica de seis a ocho situaciones era planificación de inventario, no una respuesta ni el presupuesto de una run, y la cantidad final sigue **OPEN**. *Gate: congelar la matriz de contenido de 1.º–5.º.*
+46. ¿Qué profundidad final de `ScenarioFamily`, `ChallengeTemplate` y `ChallengeVariant` debe ofrecer el **catálogo de contenido disponible** por etapa para sostener rejugabilidad? La [matriz v0.2](../01-game-design/full-career-content-matrix.md) acepta 25 Templates como arquitectura candidata auditada y detalla 1.º, pero no vuelve 25 una cuota ni congela cantidad de Variants. Las opciones del catálogo no son los uno o dos beats jugados por año. *Gate: diseño detallado 2.º–5.º, auditoría final de Phase 0 y luego catálogo real validado.*
 
 ### 46-bis. El inventario final de escenarios sigue ABIERTO
 
-El modelo de contenido de [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md) construyó el **mecanismo** para tener familias, plantillas y variantes. **No decidió el inventario.** Siguen sin resolver, todos juntos:
+El modelo de contenido de [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md) construyó el **mecanismo**. Phase 0 agregó una arquitectura candidata de 25 Templates y aprobó el diseño candidato de cinco para 1.º; no produjo ni congeló el inventario runtime. Siguen sin resolver:
 
 - cuántas familias de escenario tiene Egresado y cuáles son;
-- cuántas plantillas tiene cada familia;
+- cuántas plantillas termina teniendo cada familia más allá de la matriz candidata;
 - cuántas variantes tiene cada plantilla;
-- en qué año va cada cosa;
+- si los candidatos de 2.º–5.º conservan su ubicación después del diseño detallado;
 - si cada uno de los escenarios actuales se clasifica como **KEEP**, **MOVE**, **REWORK**, **MERGE**, **REPLACE** o **REMOVE**.
 
-Las ocho plantillas actuales —siete ordinarias y un repaso— son **contenido vigente y sondas de arquitectura**, no el inventario completo del juego, y su ubicación en 7.º es consecuencia del primer slice vertical, no una decisión de producto. Qué plantillas de los años futuros merecen repaso es parte de esta misma pregunta abierta: hoy sólo lo tiene la familia colectivo, y `none` es una respuesta legítima. Las familias declaradas hoy —`bus`, `mural`, `notebook`, `group-project`, `school-fair`, `may-25`— son **CANDIDATAS**, no un catálogo cerrado.
+Las ocho plantillas actuales —siete ordinarias y un repaso— son **contenido vigente y sondas de arquitectura**, no el inventario completo. La matriz propone 9/25 recoveries candidatos; sólo las dos rutas de 1.º tienen diseño aprobado y ninguna está implementada. `none` sigue siendo respuesta legítima. Las familias runtime actuales —`bus`, `mural`, `notebook`, `group-project`, `school-fair`, `may-25`— tampoco forman un catálogo final cerrado.
 
 Que la familia `bus` haya pasado a tener dos plantillas en STAGE-04 ([ADR-021](../03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md)) **no responde nada de esto**: demuestra que el modelo aloja varias plantillas por familia, y no dice cuántas debería tener ninguna.
 
-*Gate: la auditoría de ubicación de contenido, posterior al Teacher Gate 1 y a la matriz de 1.º–5.º.* Ver [la migración del modelo de contenido](../03-architecture/content-model-migration.md).
+*Gate: Template Design Passes 2.º–5.º, auditoría final de Phase 0 e implementación/validación del catálogo.* Ver [matriz v0.2](../01-game-design/full-career-content-matrix.md) y [migración del modelo](../03-architecture/content-model-migration.md).
 47. ¿Cuáles son los pesos exactos con los que cada resultado empuja Estilo? Hoy son valores de desarrollo dentro del presupuesto declarado por el motor. *Gate: congelar el ruleset de perfiles.* Se cruza con la pregunta 24.
 48. ¿Qué acento visual mínimo distingue cada año? Es una decisión del sistema de diseño, prevista para v0.4 y **explícitamente diferida**. No la resuelve un documento de producto. *Gate: alcance de la v0.4 del sistema de diseño.*
 49. ¿Se produce el pack raster de ocho imágenes o el producto sale confirmando que la UI sola alcanza? Todas las pantallas corren hoy con cero imágenes. *Gate: alcance de la v0.3 del sistema de diseño.*
 50. ¿Cuánto tiempo se conservan action logs, ranking público y datos del evento después de la feria, y qué se archiva o anonimiza? *Gate: persistir datos reales de participantes.* Se cruza con la pregunta 31.
 51. ¿Qué señal de tiempo activo puede verificar el servidor si el tiempo participa del desempate? *Gate: usar tiempo en el ranking oficial.* Es la pregunta 27 vista desde el ranking competitivo.
-52. ¿Qué condiciones, efectos y presentación tendrá el sistema de Hitos de carrera? TG1-11 propuso reconocimientos como abanderado o primer escolta. Deben ser deterministas desde estado/seed y preferentemente narrativos; **no** otorgan bonus competitivo aleatorio ni resuelven por sí solos un empate. STAGE-07 no los implementó ni abrió una puerta por donde puedan entrar: la recuperación no puntúa. *Gate: diseño de carrera/narrativa en STAGE-08; implicaciones de ranking en STAGE-09/TG2.*
+52. ¿Qué nombres, condiciones, efectos, rareza visible y presentación tendrá el catálogo de Hitos de carrera? STAGE-08 aceptó diseñarlos y permite que sean display-only, Prestige-eligible o badges raros, pero toda elegibilidad competitiva debe usar evidencia independiente y presupuesto normalizado. La aparición por RNG vale cero. STAGE-07 no los implementó: la recuperación no puntúa. *Gate: diseño de catálogo en STAGE-08; calibración/ranking en STAGE-09/TG2.*
 53. ¿Con qué palabras se le cuenta al jugador que le quedó algo por cerrar? TG1-14 aceptó el egreso garantizado y **no aportó vocabulario**. STAGE-07 implementó el sistema con copy candidato —«repaso», «quedó algo dando vueltas», «previa»— elegido para no humillar, y ninguna de esas palabras es arquitectura: cambiarlas es editar contenido. Falta validar con el docente que sean las que la escuela usa y que un chico las entienda sin explicación. *Gate: Teacher Gate 2.* Ver [egreso, recuperación y fail-forward](../01-game-design/graduation-and-fail-forward.md).
 54. ¿Qué resultado debe dejar algo por cerrar? Hoy `recovery-dev-1` dispara sólo con `invalid`: queda por validar si `functional` debería disparar en algún caso y si el umbral debe variar por plantilla o dominio. Ésta es calibración legítima de `RecoveryPolicy`, sigue `TEACHER_GATE` y no oficial. *Gate: Teacher Gate 2.* Se cruza con la pregunta 39.
 
 La **capacidad** no forma parte de esta pregunta abierta: bajo [ADR-024](../03-architecture/adr/ADR-024-progression-recovery-and-graduation.md), una etapa juega como máximo un repaso estructural. Cambiar ese límite requeriría reconsiderar explícitamente el ADR y repetir sus pruebas de boundedness, pacing y egreso; no alcanza con calibrar una policy.
+
+55. Con `y1.classroom-layout` y `y1.rehearsal-schedule` fallidas en una misma etapa, ¿qué recovery selecciona el sistema, qué obligación cierra semánticamente y cómo representa la otra bajo un máximo estructural de uno? No hay solución preseleccionada. *Gate: [auditoría obligatoria posterior a implementar 1.º](../04-quality/post-grade-1-scalability-audit.md), antes de producción amplia de 2.º–5.º.*
+56. ¿Cuál es la calibración exacta de Prestige —cap, tracks, pesos y premios— dentro de la dirección secundaria lexicográfica aceptada? El presupuesto 25×4 y las magnitudes +5…+25 son candidatos. *Gate: contenido real, auditoría competitiva y STAGE-09/TG2.*
+57. ¿Qué probabilidades y límites de densidad corresponden a `UNCOMMON / RARE / VERY_RARE`? Bandas, elegibilidad previa y RNG seeded están aceptados; porcentajes y topes no. *Gate: catálogo raro, simulación y calibración.*
+58. ¿Qué regla versionada normaliza el techo de oportunidades Prestige entre runs normales y reemplazos raros? Está bloqueado que RNG no aumente el máximo, pero la arquitectura ejecutable no fue elegida. *Gate: implementación de eventos raros/Prestige; requiere revisión de ADR por cruzar RNG, replay, score y ranking.*
+59. ¿Qué pacing final, evaluadores, señales Team/Aura y recovery/`none` tendrá cada Template candidata de 2.º–5.º? La matriz no cierra el detalle. *Gate: Template Design Pass de cada año; el siguiente es 2.º — Belonging.*
+60. ¿Se justifica una oportunidad rara/ultra-rara de Aura en 1.º con evidencia independiente? Aura ordinaria está decidida como ausente; no hay obligación de llenar el hueco. *Gate: diseño raro posterior, si surge una situación legítima.*
+61. ¿La escuela adquiere una marca ficticia/paródica y el jugador una personalización liviana más allá del nickname? Ambas son stretch, no core STAGE-08. *Gate: disponibilidad de alcance y revisión de portabilidad/privacidad.*
 
 ## Diferidas a propósito
 

@@ -1,6 +1,13 @@
 # Catálogo semilla de desafíos
 
-Este catálogo es backlog de **contenido disponible**, no un `RunPlan` ni un compromiso de implementar todos sus ítems en MVP. Las filas por año son candidatas de planificación, no ubicaciones finales: su auditoría sigue **OPEN** en las [preguntas 46 y 46-bis](../07-reference/open-questions.md). Cada entrada debe pasar por la guía de autoría y validación antes de producción.
+Este documento conserva el catálogo semilla que originó el primer slice y el
+contenido de 7.º. No es un `RunPlan` ni compromiso de implementar todos sus ítems.
+Para 1.º–5.º, las tablas históricas de abajo quedaron **supersedidas** por la
+[Matriz de carrera completa v0.2](full-career-content-matrix.md), auditada como
+`CANDIDATE_APPROVED_AFTER_CONTENT_AUDIT`; se preservan para trazabilidad, no para
+planificar implementación. La cantidad final de Templates/Variants sigue abierta
+en las [preguntas 46 y 46-bis](../07-reference/open-questions.md), y cada diseño
+vigente debe pasar guía de autoría y validación antes de producción.
 
 ## 7.º grado
 
@@ -15,7 +22,7 @@ Este catálogo es backlog de **contenido disponible**, no un `RunPlan` ni un com
 | C06 | Educación física | distancia/fracciones | Numeric Input | calcular vueltas de pista |
 | C41 | Acto del 25 de Mayo | clasificación: paridad, múltiplos, primos | Number Grid | seguir la coreografía marcando los números que cumplen cada regla |
 
-## 1.º año
+## 1.º año — propuesta semilla histórica supersedida
 
 | ID | Escenario | Matemática | Interacción | Decisión/objetivo |
 |---|---|---|---|---|
@@ -26,7 +33,7 @@ Este catálogo es backlog de **contenido disponible**, no un `RunPlan` ni un com
 | C11 | Entradas para acto | porcentajes/capacidad | Numeric/Decision | decidir si se pueden vender más |
 | C12 | Recreo compartido | proporción/costo unitario | Decision Card | comparar packs |
 
-## 2.º año
+## 2.º año — propuesta semilla histórica supersedida
 
 | ID | Escenario | Matemática | Interacción | Decisión/objetivo |
 |---|---|---|---|---|
@@ -37,7 +44,7 @@ Este catálogo es backlog de **contenido disponible**, no un `RunPlan` ni un com
 | C17 | Comprar remeras | descuentos escalonados | Budget Builder | elegir proveedor según cantidad |
 | C18 | Campaña de reciclaje | razones | Chart | comparar kg/alumno entre cursos |
 
-## 3.º año
+## 3.º año — propuesta semilla histórica supersedida
 
 | ID | Escenario | Matemática | Interacción | Decisión/objetivo |
 |---|---|---|---|---|
@@ -48,7 +55,7 @@ Este catálogo es backlog de **contenido disponible**, no un `RunPlan` ni un com
 | C23 | Cableado del stand | distancia/geometría | Spatial Grid | elegir recorrido suficiente/corto |
 | C24 | Batería para exposición | consumo/tasa | Decision Card | elegir batería según duración |
 
-## 4.º año
+## 4.º año — propuesta semilla histórica supersedida
 
 | ID | Escenario | Matemática | Interacción | Decisión/objetivo |
 |---|---|---|---|---|
@@ -60,7 +67,7 @@ Este catálogo es backlog de **contenido disponible**, no un `RunPlan` ni un com
 | C30 | Promedio engañoso | media/mediana | Chart | elegir medida representativa |
 | C31 | Encuestas incompatibles | tamaño de muestra | Request Info | decidir qué evidencia pesa más |
 
-## 5.º año
+## 5.º año — propuesta semilla histórica supersedida
 
 | ID | Escenario | Matemática | Interacción | Decisión/objetivo |
 |---|---|---|---|---|
@@ -74,7 +81,7 @@ Este catálogo es backlog de **contenido disponible**, no un `RunPlan` ni un com
 | C39 | Encuesta final | estadística/intervalos | Chart | detectar conclusión excesiva |
 | C40 | Fondo de egresados | porcentajes/crecimiento | Decision Card | comparar planes de ahorro simples |
 
-## Eventos especiales / bosses
+## Eventos especiales / bosses — propuesta semilla histórica
 
 | ID | Evento | Combinación |
 |---|---|---|
@@ -85,9 +92,9 @@ Este catálogo es backlog de **contenido disponible**, no un `RunPlan` ni un com
 | B05 | Feria final | geometría + presupuesto + asignación + riesgo |
 | B06 | Reactor 42 cameo | aritmética/composición de expresiones |
 
-## Plantillas recomendadas para el primer vertical slice
+## Plantillas recomendadas para el primer vertical slice — antecedente
 
-Implementar primero una muestra deliberadamente diversa:
+Esta fue la recomendación histórica que dio origen al slice; no es trabajo actual:
 - C02 Timeline.
 - C04 Decision Card/geometry.
 - C08 porcentajes.

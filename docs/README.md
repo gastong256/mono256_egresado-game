@@ -27,14 +27,15 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 6. [vertical slice de 7.º](06-delivery/vertical-slice-grade-7.md) — el alcance de la demo candidata.
 7. [GDD](01-game-design/game-design-document.md) — core loop y modelo de carrera.
 8. [familias y variantes](01-game-design/challenge-families-and-variants.md) y [dificultad](01-game-design/difficulty-and-playability.md) — por qué el contenido se repite sin memorizarse.
-9. [score competitivo y ranking](01-game-design/competitive-scoring-and-ranking.md) — la dirección de la competencia de feria.
-10. [game engine](03-architecture/game-engine.md) — el motor que existe.
-11. [arquitectura objetivo del motor](03-architecture/target-engine-architecture.md) — lo que falta y en qué estado está.
-12. [sistema de diseño](09-design-system/README.md) — la autoridad visual.
-13. [testing](04-quality/testing-strategy.md) y [modo feria y congelamiento](05-operations/fair-mode-and-competition-freeze.md) — calidad y operación.
-14. [preguntas abiertas](07-reference/open-questions.md) — lo que **no** se decide desde el código.
-15. [etapa actual](06-delivery/current-stage.md) — dónde estamos y qué se puede implementar ahora.
-16. [roadmap de implementación](06-delivery/implementation-sequence.md) — el contrato completo de cada etapa.
+9. [envolvente de STAGE-08](01-game-design/stage-08-product-design-envelope.md) y [matriz de carrera](01-game-design/full-career-content-matrix.md) — dirección de Phase 0 e inventario candidato vigente.
+10. [score competitivo y ranking](01-game-design/competitive-scoring-and-ranking.md) — la dirección de la competencia de feria.
+11. [game engine](03-architecture/game-engine.md) — el motor que existe.
+12. [arquitectura objetivo del motor](03-architecture/target-engine-architecture.md) — lo que falta y en qué estado está.
+13. [sistema de diseño](09-design-system/README.md) — la autoridad visual.
+14. [testing](04-quality/testing-strategy.md) y [modo feria y congelamiento](05-operations/fair-mode-and-competition-freeze.md) — calidad y operación.
+15. [preguntas abiertas](07-reference/open-questions.md) — lo que **no** se decide desde el código.
+16. [etapa actual](06-delivery/current-stage.md) — dónde estamos y qué se puede implementar ahora.
+17. [roadmap de implementación](06-delivery/implementation-sequence.md) — el contrato completo de cada etapa.
 
 ## Mapa documental
 
@@ -51,6 +52,10 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 - `challenge-families-and-variants.md`: familias de escenario, plantillas y variantes deterministas.
 - `competitive-scoring-and-ranking.md`: dirección propuesta del score competitivo y del ranking de feria.
 - `difficulty-and-playability.md`: piso bajo y techo alto, bandas y presupuesto de dificultad.
+- `stage-08-product-design-envelope.md`: decisiones de producto y frontera de Phase 0 para la carrera completa.
+- `full-career-content-matrix.md`: matriz auditada v0.2 de 25 Templates candidatas para 1.º–5.º.
+- `grade-1-template-design.md`: diseño detallado candidato de las cinco Templates de consolidación de 1.º.
+- `rare-events-and-prestige.md`: semántica aceptada, calibración candidata y guardrails de eventos raros/Prestige.
 - `graduation-and-fail-forward.md`: egreso, recuperación y por qué el error no expulsa al jugador.
 - `rules-scoring-and-progression.md`: reglas, estados, scoring y progresión.
 - `narrative-system.md`: carrera escolar, storylets, eventos y perfiles finales.
@@ -82,6 +87,7 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 - `content-validation.md`: pipeline de schema, matemática, generación, UI y playtest.
 - `competition-fairness-audit.md`: preguntas de equidad que un ranking con premios debe poder contestar.
 - `post-teacher-gate-1-score-audit.md`: barrida reproducible de `fair-score-dev-2` sobre 23.000 planes y comparación histórica.
+- `post-grade-1-scalability-audit.md`: contrato obligatorio para dos obligaciones conceptuales bajo un recovery máximo después de implementar 1.º.
 - `variant-validation-and-audit.md`: invariantes de variante y auditoría estadística del catálogo.
 - `testing-strategy.md`: unit, property-based, integration, E2E y pruebas de contenido.
 - `non-functional-requirements.md`: performance, resiliencia, accesibilidad y compatibilidad.
@@ -189,6 +195,17 @@ Una decisión integrada declara su nivel, y **el nivel es parte de la decisión*
 
 Un documento no describe en presente una capacidad que no existe. Lo implementado vive en los documentos de arquitectura actuales; lo que falta, en [arquitectura objetivo del motor](03-architecture/target-engine-architecture.md), con el estado real de cada capacidad.
 
-Los documentos describen la **baseline post-Teacher-Gate-1** al 4 de septiembre de 2026. Lo implementado incluye el shell Next.js, toolchain reproducible, fronteras de módulos, Supabase opcional, Docker, gates de calidad, el motor determinista con replay y snapshots versionados, el modelo de carrera `Promedio · Equipo · Aura · Estilo`, el slice jugable de 7.º, composición por presupuesto, egreso garantizado con recuperación fail-forward y `FairScore` candidato con recomputación server-only. `fair-score-dev-2` es teacher-informed pero no oficial. Todavía **no** incluye los años 1.º a 5.º, callbacks narrativos entre años, Auth, schema de producto, endpoints/sesión/persistencia de competencia, ranking ni despliegue público.
+Los documentos describen la **baseline de código post-Teacher-Gate-1** al 4 de
+septiembre de 2026 y el **checkpoint de diseño STAGE-08 / Phase 0** al 8 de
+septiembre. Lo implementado incluye el shell Next.js, toolchain reproducible,
+fronteras de módulos, Supabase opcional, Docker, gates de calidad, motor
+determinista con replay/snapshots, `Promedio · Equipo · Aura · Estilo`, slice de
+7.º, composición por presupuesto, egreso garantizado con recuperación fail-forward
+y `FairScore` candidato con recomputación server-only. `fair-score-dev-2` es
+teacher-informed pero no oficial. La envolvente, matriz v0.2, narrativa de carrera,
+eventos raros/Prestige y cinco Templates de 1.º son **diseño**, no runtime. Todavía
+no existen los años 1.º–5.º, callbacks multianuales, Prestige, Auth, schema de
+producto, endpoints/sesión/persistencia de competencia, ranking ni despliegue
+público.
 
 Las versiones exactas están fijadas en `package.json` y `pnpm-lock.yaml` bajo [ADR-010](03-architecture/adr/ADR-010-reproducible-node-pnpm-container-toolchain.md). Next.js `16.3.1` se conserva sólo como base local transitoria: `pnpm release:check` bloquea cualquier release público hasta actualizar a `>=16.3.2`, regenerar el lockfile y verificar el cambio completo.

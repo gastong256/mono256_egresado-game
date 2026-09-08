@@ -17,7 +17,9 @@ Si el roadmap y el código difieren, **el código gana** y el roadmap se corrige
 - Fases de validación externa y congelamiento: [ciclo de entrega real](../00-product/real-delivery-lifecycle.md).
 - Qué se construye por capas de alcance: [alcance y roadmap](../00-product/scope-and-roadmap.md) y [backlog](mvp-backlog.md).
 
-**Última reconciliación contra el código:** 4 de septiembre de 2026, hardening posterior a STAGE-07 del techo estructural de recuperación.
+**Última reconciliación:** 8 de septiembre de 2026, checkpoint documental de
+STAGE-08 / Phase 0 posterior al diseño de 1.º. La baseline de código sigue siendo
+el hardening post-STAGE-07 del 4 de septiembre.
 
 ---
 
@@ -58,7 +60,7 @@ Tabla de navegación. Los contratos de cada etapa, más abajo, son la autoridad.
 | [STAGE-06](#stage-06-scorepolicy-competitiva) | ScorePolicy competitiva | `DONE` | STAGE-05 | — |
 | [GATE-TG1](#gate-tg1-teacher-gate-1) | **Teacher Gate 1** | `PASSED_WITH_REQUIRED_ADJUSTMENTS` | STAGE-04, STAGE-06 | externo |
 | [STAGE-07](#stage-07-invariante-de-egreso-fail-forward-y-recuperaciones) | Egreso, fail-forward y recuperaciones | `DONE` | GATE-TG1 | — |
-| [STAGE-08](#stage-08-contenido-incremental-de-1º-a-5º) | Contenido incremental 1.º → 5.º | `READY` · **actual** | STAGE-07 | auditoría tras 1.º |
+| [STAGE-08](#stage-08-contenido-incremental-de-1º-a-5º) | Contenido incremental 1.º → 5.º | `IN_PROGRESS` · **actual** · Phase 0 | STAGE-07 | auditoría tras 1.º |
 | [STAGE-09](#stage-09-fair-mode-servidor-autoritativo-y-ranking) | Fair mode, servidor autoritativo y ranking | `NOT_STARTED` | STAGE-06, STAGE-08 | — |
 | [GATE-TG2](#gate-tg2-teacher-gate-2) | **Teacher Gate 2** | `TEACHER_GATE` | STAGE-09 | externo |
 | [FREEZE](#freeze-congelamiento-de-competencia) | Congelamiento de competencia | `NOT_STARTED` | GATE-TG2 | — |
@@ -141,7 +143,8 @@ Estado real contra el código al 2 de septiembre de 2026, tras cerrar STAGE-07. 
 | Recuperaciones y fail-forward | `DONE` | [ADR-024](../03-architecture/adr/ADR-024-progression-recovery-and-graduation.md), `recovery-dev-1`, `g7.bus-travel-review`, `tests/unit/progression-reachability.test.ts` (espacio de estados recorrido entero) | STAGE-07 |
 | Recuperación fuera del score competitivo | `DONE` | `fair-score.ts` descarta la evidencia por rol; test de anti-farmeo en `tests/integration/recovery-run.test.ts` | STAGE-07 |
 | Carrera completa jugable de seis años | `PARTIAL` | la estructura la ejerce el fixture `six-stage-progression`; el **contenido** de 1.º–5.º no existe | STAGE-08 |
-| Contenido 1.º · 2.º · 3.º · 4.º · 5.º | `NOT_STARTED` | sólo existe `src/content/grade-7/` | STAGE-08 |
+| Diseño de contenido 1.º · 2.º · 3.º · 4.º · 5.º | `PARTIAL` | matriz v0.2 auditada y 1.º detallado; 2.º–5.º esperan su Design Pass | STAGE-08 / Phase 0 |
+| Contenido runtime 1.º · 2.º · 3.º · 4.º · 5.º | `NOT_STARTED` | sólo existe `src/content/grade-7/` | STAGE-08 / Phase 1+ |
 | Verificación autoritativa por replay | `PARTIAL` | `src/server/game/validate-run.ts`: replaya, valida el plan compuesto y **calcula su propio score competitivo**; nada de lo que el cliente afirme se lee. Faltan endpoints, sesión, rate limit y persistencia | STAGE-09 |
 | Ranking con personal best | `NOT_STARTED` | — | STAGE-09 |
 | Desempate lexicográfico | `NOT_STARTED` | — | STAGE-09 |
@@ -760,23 +763,48 @@ Que hoy sólo la familia colectivo tenga repaso es una decisión de alcance, no 
 
 ### STAGE-08 — Contenido incremental de 1.º a 5.º
 
-- **Estado:** `READY` — **etapa actual; implementación no iniciada**
+- **Estado:** `IN_PROGRESS` — **etapa actual; Phase 0 de diseño**
 - **Depende de:** STAGE-07 (`DONE`)
 - **Desbloquea:** STAGE-09
 
-**Propósito.** Construir la carrera completa reutilizando fundaciones, no reinventándolas.
+**Propósito.** Diseñar y construir la carrera completa reutilizando fundaciones,
+no reinventándolas. El diseño precede a la producción y no se presenta como
+runtime existente.
 
 **Qué la habilita.** STAGE-07 cerró la progresión: el egreso es un estado terminal alcanzable, la recuperación converge por construcción y el content set declara qué se repasa sin que el motor conozca un solo id de contenido. La carrera sintética de seis años prueba que la estructura aguanta `7.º · 1.º · 2.º · 3.º · 4.º · 5.º` sin un caso especial por año, así que **ningún año nuevo tiene que inventar su sistema de fracaso y promoción**: declara sus plantillas, su elegibilidad y, si corresponde, su contenido de repaso.
 
-**Orden obligatorio.** No es una tarea paralela.
+**Estado interno actual.** La
+[envolvente de producto](../01-game-design/stage-08-product-design-envelope.md), la
+[matriz v0.2](../01-game-design/full-career-content-matrix.md), el
+[diseño de 1.º](../01-game-design/grade-1-template-design.md) y este checkpoint
+documental están completos. Phase 0 sigue `IN_PROGRESS`: faltan los pases
+detallados de 2.º–5.º y la auditoría final de diseño. No empezó implementación.
+
+**Orden obligatorio.** No es una tarea paralela ni autoriza producir 1.º antes de
+terminar Phase 0.
 
 ```text
-matriz completa de carrera → 1.º real → STOP → auditoría de escalabilidad → 2.º → 3.º → 4.º → 5.º
+Phase 0 — diseño completo de carrera
+  → matriz v0.2 auditada
+  → Template Design Passes 1.º, 2.º, 3.º, 4.º y 5.º
+  → auditoría final de diseño
+Phase 1 — implementar 1.º real
+  → STOP
+  → auditoría de escalabilidad posterior a 1.º
+  → PASS: implementar 2.º → 3.º → 4.º → 5.º
+  → auditoría de carrera completa
+  → STAGE-08 DONE
 ```
 
 **1.º es la prueba crítica.** Al terminarlo hay que contestar: *¿qué fundaciones nuevas tuvimos que inventar?* Si la respuesta incluye un sistema fundamental —otro modelo de carrera, otro motor de score, otra gramática de progreso, otra paleta—, se revisa antes de seguir.
 
-**Caso obligatorio de la auditoría posterior a 1.º.** Antes de autorizar 2.º, una prueba debe ejercer **una etapa + dos beats ordinarios + dos plantillas distintas con recovery + ambos resultados disparan obligación + un único repaso estructural**. La auditoría debe observar, sin preseleccionar hoy una solución:
+**Caso obligatorio de la auditoría posterior a 1.º.** Antes de autorizar la
+implementación amplia de 2.º–5.º, una prueba debe ejercer específicamente
+`y1.classroom-layout → y1.scale-fit-review` y
+`y1.rehearsal-schedule → y1.schedule-review`, ambos resultados disparando
+obligación en una etapa y un único repaso estructural. El contrato completo está
+en la [auditoría de escalabilidad](../04-quality/post-grade-1-scalability-audit.md).
+Debe observar, sin preseleccionar hoy una solución:
 
 1. qué recovery se selecciona;
 2. qué obligaciones resuelve semánticamente;
@@ -791,13 +819,28 @@ matriz completa de carrera → 1.º real → STOP → auditoría de escalabilida
 
 Las hipótesis posibles se comparan con evidencia de 1.º real. Esta etapa no decide por adelantado si limitar cobertura, agregar una recuperación compuesta, priorizar una obligación, convertir el resto en historia o reconsiderar ADR-024.
 
-**Scope IN.** Por año: contenido, plantillas, variantes validadas, storylets, hito de etapa y, si hace falta de verdad, un renderer de interacción genuinamente nuevo. Matriz de contenido previa a la implementación.
+**Scope IN.** Phase 0: diseño de la matriz, narrativa, matemática, dificultad,
+interacciones, evidencia Team/Aura, recovery, pacing, callbacks, eventos raros,
+Prestige, fichas por año y auditoría final de diseño. Phase 1+: por año, contenido,
+plantillas, variantes validadas, storylets, hito y, si hace falta de verdad y existe
+decisión aparte, una interacción genuinamente nueva.
 
-**Scope OUT.** Otra paleta o rediseño visual. Otro Career Model. Otro motor de scoring. Otra gramática de progreso. Otro tratamiento de Aura. Ranking. **Un item de roadmap del tipo «rediseñar la UI para 1.º» no es válido** salvo decisión de producto aprobada.
+**Scope OUT.** Producir runtime durante Phase 0. Otra paleta o rediseño visual.
+Otro Career Model, motor de scoring, gramática de progreso o tratamiento de Aura.
+Implementar Prestige/RNG raro antes de congelar su arquitectura. Ranking. **Un item
+de roadmap del tipo «rediseñar la UI para 1.º» no es válido** salvo decisión de
+producto aprobada.
 
 **Lectura requerida.** [Alcance y roadmap](../00-product/scope-and-roadmap.md) · [marco matemático](../01-game-design/math-design-framework.md) · [guía de autoría](../01-game-design/content-authoring-guide.md) · [ficha de autoría](../07-reference/challenge-authoring.example.yaml) · [sistema de diseño](../09-design-system/README.md).
 
 **Criterios de aceptación, por año.**
+
+- [x] Product Design Envelope completo.
+- [x] Matriz de carrera v0.2 auditada: 25 candidatos y distribución 24/52/24.
+- [x] Template Design Pass de 1.º completo a nivel `DESIGN-CANDIDATE-APPROVED`.
+- [x] Checkpoint documental de Phase 0 integrado.
+- [ ] Template Design Passes de 2.º, 3.º, 4.º y 5.º completos.
+- [ ] Auditoría final de diseño de carrera completa.
 
 - [ ] La matemática conserva un piso de prerrequisitos accesible desde aproximadamente 7.º; el año cambia contexto, responsabilidad y narrativa, no funciona como barrera curricular.
 - [ ] Cada año puede combinar `CORE / STANDARD / STRETCH`; la complejidad sube por estructura, planificación e información.
@@ -819,7 +862,13 @@ Las hipótesis posibles se comparan con evidencia de 1.º real. Esta etapa no de
 
 **Validación requerida.** `pnpm verify`, `pnpm game:validate-content`, `pnpm game:simulate:deep`, `pnpm test:e2e:only`.
 
-**Decisiones.** `OPEN` ([pregunta 46](../07-reference/open-questions.md)): profundidad del catálogo de contenido disponible por etapa, no longitud de la run. `DEFERRED` ([pregunta 48](../07-reference/open-questions.md)): acento visual por año — es alcance del sistema de diseño v0.4, no de esta etapa.
+**Decisiones.** La matriz v0.2 es el candidato auditado vigente, no una cuota ni
+un catálogo runtime. Sigue `OPEN` la profundidad final de familias/Templates/
+Variants ([pregunta 46](../07-reference/open-questions.md)), la semántica de dos
+obligaciones bajo un único recovery y las calibraciones exactas de Prestige/eventos
+raros. El acento visual por año permanece `DEFERRED` ([pregunta 48](../07-reference/open-questions.md)).
+
+**Siguiente tarea.** `STAGE-08 / Phase 0 / Grade 2 — Belonging Template Design Pass`.
 
 **Exit gate.** ¿Una run completa recorre `7.º → 1.º → 2.º → 3.º → 4.º → 5.º → EGRESADO`?
 

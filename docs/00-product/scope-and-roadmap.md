@@ -135,15 +135,24 @@ Dirección de escalada **lúdica y narrativa**, no currículo-gate. TG1-01 exige
 
 | Etapa | Qué se agrega como desafío |
 |---|---|
-| 7.º | aprender la gramática: tiempo, porcentajes, área, presupuesto, asignación simple, divisibilidad |
-| 1.º | adaptación y organización: horarios, repartos, evaluaciones y dinámica de grupo |
-| 2.º | autonomía: trade-offs de recursos, lectura de chances y comparación de opciones |
-| 3.º | interpretación: datos, incertidumbre explicada, pedir información y decisiones multivariable |
-| 4.º | responsabilidad: proyectos grandes, restricciones, planificación y optimización accesible |
-| 5.º | cierre: proyecto final, previas, recuperación, egreso y decisiones de futuro |
+| 7.º | **adaptación / entrada:** aprender la escuela y la gramática del juego con tiempo, porcentajes, área, presupuesto, asignación simple y divisibilidad |
+| 1.º | **consolidación:** rutinas y vínculos ya conocidos; asignación, agenda, autogestión, probabilidad y construcción espacial |
+| 2.º | **pertenencia / identidad:** grupos, cooperación, competencia, reputación y lugar propio |
+| 3.º | **autonomía:** tiempo, recursos, tecnología, movilidad y trade-offs más autodirigidos |
+| 4.º | **responsabilidad:** coordinación, liderazgo y consecuencias públicas con restricciones y optimización accesible |
+| 5.º | **cierre / futuro:** proyecto y eventos finales, callbacks, egreso y síntesis del recorrido |
+
+Esta progresión narrativa está aceptada en la
+[envolvente de diseño de STAGE-08](../01-game-design/stage-08-product-design-envelope.md).
+7.º y 1.º ocurren en la misma escuela: 1.º no repite la adaptación institucional.
 
 ### Producción de contenido después del Teacher Gate 1
 
-No se autoran los años en secuencia sin catálogo. Primero se arma la matriz completa de 1.º–5.º —una fila por plantilla, no por variante— y se audita universalidad, banda estructural, evidencia competitiva independiente y duración; Matemática revisa **la matriz**, no sólo pantallas terminadas. Recién después se implementa año por año. Ver [secuencia de implementación](../06-delivery/implementation-sequence.md).
+No se autoran los años en secuencia sin catálogo. La
+[matriz completa v0.2](../01-game-design/full-career-content-matrix.md) ya fue
+auditada como candidata: 25 Templates, con 1.º aprobado en detalle y 2.º–5.º aún a
+nivel de matriz. Phase 0 completa esos Template Design Passes antes de implementar;
+después se implementa 1.º real, se ejecuta la auditoría obligatoria y sólo si pasa
+se escala 2.º–5.º. Ver [secuencia de implementación](../06-delivery/implementation-sequence.md).
 
 La referencia histórica de seis a ocho situaciones significativas por año describe **profundidad posible del catálogo**, no beats obligatorios en una run. No fija un requisito ni una cantidad final: cada run normal selecciona uno o dos beats por etapa, mientras el catálogo debe ofrecer más opciones para sostener la rejugabilidad. La profundidad definitiva sigue abierta ([pregunta 46](../07-reference/open-questions.md)).

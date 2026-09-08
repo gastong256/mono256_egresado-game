@@ -4,6 +4,11 @@
 
 Egresado es un **run-based narrative math game** para navegador. Cada run comprime seis etapas escolares, desde 7.º grado hasta 5.º año. El jugador resuelve problemas cotidianos mediante interacciones variadas y sus resultados modifican estadísticas, oportunidades narrativas, score y perfil de egreso.
 
+La progresión narrativa aceptada para STAGE-08 es adaptación → consolidación →
+pertenencia/identidad → autonomía → responsabilidad → cierre/futuro. Su detalle y
+madurez están en la
+[envolvente de diseño de carrera](stage-08-product-design-envelope.md).
+
 ## 2. Género
 
 - Juego de decisiones.
@@ -128,12 +133,19 @@ El humor nunca debe ridiculizar a un estudiante por fallar.
 ## 12. Rejugabilidad
 
 - Seeds diferentes.
-- Variación numérica de problemas.
+- Composición diferente desde un catálogo de Templates.
+- Variantes aprobadas, no sólo números cambiados.
 - Eventos condicionales.
+- Eventos raros deterministas con oportunidad competitiva normalizada.
+- Callbacks entre años.
 - Perfiles de egreso.
 - Logros.
 - Ranking por evento.
 - Seed diaria/feria compartida.
+
+Objetivo aceptado: las primeras tres runs deben sentirse perceptiblemente
+diferentes. Ver [matriz de carrera](full-career-content-matrix.md) y
+[eventos raros y Prestige](rare-events-and-prestige.md).
 
 ## 13. Modos previstos
 
@@ -166,7 +178,9 @@ Un año puede culminar con un desafío combinado: viaje, feria, proyecto grupal,
 
 ## 16. Final de run
 
-La tarjeta final contiene:
+STAGE-08 requiere un Career Epilogue v1 narrativo que sintetice trayectoria,
+Estilo, previas, flags e Hitos sin reducir al jugador a un único tipo. La tarjeta
+final puede contener:
 - nickname;
 - promoción/año del evento;
 - score;

@@ -10,11 +10,15 @@
 01-game-design/competitive-scoring-and-ranking.md
 01-game-design/content-authoring-guide.md
 01-game-design/difficulty-and-playability.md
+01-game-design/full-career-content-matrix.md
 01-game-design/game-design-document.md
+01-game-design/grade-1-template-design.md
 01-game-design/graduation-and-fail-forward.md
 01-game-design/math-design-framework.md
 01-game-design/narrative-system.md
+01-game-design/rare-events-and-prestige.md
 01-game-design/rules-scoring-and-progression.md
+01-game-design/stage-08-product-design-envelope.md
 01-game-design/ux-interaction-design.md
 02-functional/functional-specification.md
 02-functional/traceability-matrix.md
@@ -56,6 +60,7 @@
 04-quality/competition-fairness-audit.md
 04-quality/content-validation.md
 04-quality/non-functional-requirements.md
+04-quality/post-grade-1-scalability-audit.md
 04-quality/post-teacher-gate-1-score-audit.md
 04-quality/testing-strategy.md
 04-quality/threat-model.md
