@@ -23,6 +23,12 @@ El servidor devuelve como mínimo:
 ## FR-003 Generación de carrera
 A partir de seed y configuración, el motor debe producir una secuencia reproducible de años, desafíos y storylets.
 
+**Diseño objetivo STAGE-08, no implementado:** la composición de carrera debe
+respetar los [clusters y arcos](../01-game-design/full-career-content-matrix.md#políticas-de-composición)
+y la madurez declarada de cada política. Los callbacks enriquecen la escena sin
+requerir historia previa para comprenderla o resolverla, ni cambiar por sí mismos
+el máximo de FairScore.
+
 ## FR-004 Presentación de etapa
 El jugador debe conocer siempre la etapa escolar actual.
 
@@ -38,6 +44,15 @@ Cada acción debe generar un `ChallengeResult` determinista con:
 - flags;
 - datos de telemetría no sensibles.
 
+**Diseño objetivo de contenido STAGE-08:** cada contribución de Math, Equipo,
+Aura o Prestige requiere evidencia propia. En `y4.represent-class`, una propuesta
+Math-valid, su comunicación pública y un logro histórico para Prestige son
+hechos distintos; la aparición vale 0. En `y5.next-step-options`, FairScore sólo
+evalúa viabilidad de escenarios hipotéticos: una preferencia personal opcional
+alimenta Estilo/epílogo, nunca se califica como correcta o incorrecta. Ver las
+fichas de [4.º](../01-game-design/grade-4-template-design.md) y
+[5.º](../01-game-design/grade-5-template-design.md).
+
 ## FR-007 Feedback
 Después de confirmar, el juego debe explicar la consecuencia antes de avanzar.
 
@@ -52,6 +67,11 @@ Si existe checkpoint compatible con la versión actual, ofrecer reanudar.
 
 ## FR-011 Finalización
 Al completar la carrera, generar tarjeta de egreso con score, perfil y resumen.
+
+**Diseño objetivo de Career Epilogue v1:** convergencia visible del recorrido y
+aproximadamente 3–5 hechos significativos; la selección exacta queda diferida.
+El [sistema narrativo](../01-game-design/narrative-system.md) declara los insumos
+y evita una descarga cruda del historial. Su pase detallado todavía está pendiente.
 
 ## FR-012 Ranking
 En un evento competitivo, el sistema debe consultar y mostrar leaderboard según reglas del evento.

@@ -38,3 +38,17 @@ De requisito de producto a capacidad de motor y a estado real. Esta tabla cubre 
 | Auditoría de una run oficial | [ADR-003](../03-architecture/adr/ADR-003-deterministic-seeded-engine.md) | seed + versiones + action log | `variantCatalogVersion` y `scoreVersion` implementadas; falta emisión oficial | STAGE-06 y STAGE-09 |
 
 Las etapas son las del [roadmap de implementación](../06-delivery/implementation-sequence.md); el estado vigente de cada una está en [la etapa actual](../06-delivery/current-stage.md).
+
+## Diseño de STAGE-08 / Phase 0 — checkpoint #2
+
+Trazabilidad de diseño al 9 de septiembre de 2026. Ninguna fila declara
+implementación de los años futuros ni reemplaza las evidencias runtime anteriores.
+
+| Requisito / objetivo | Fuente canónica | Estado / siguiente evidencia |
+|---|---|---|
+| FR-003/005: carrera variada con 25 Templates de 1.º–5.º | [matriz y cinco fichas](../01-game-design/full-career-content-matrix.md) | `DESIGN-CANDIDATE-APPROVED`; Full-Career Cross-Content Audit siguiente |
+| FR-003: clusters, arco recurrente y diversidad cognitiva | [políticas de composición](../01-game-design/full-career-content-matrix.md#políticas-de-composición) | límites de cluster `LOCKED`, frecuencia de arco con máximo candidato y diversidad soft; runtime pendiente |
+| FR-006/018: independencia de evidencia y FairScore de viabilidad | [4.º](../01-game-design/grade-4-template-design.md), [5.º](../01-game-design/grade-5-template-design.md), [Prestige](../01-game-design/rare-events-and-prestige.md) | invariantes `LOCKED`; futura autoría, revisión de equidad y replay |
+| FR-003/007/011: callbacks independientes, externalidad, convergencia y salience | [sistema narrativo](../01-game-design/narrative-system.md) | reglas aceptadas; algoritmo de salience y pase de epílogo pendientes |
+| Egreso con remediación relevante: nueve rutas futuras | [cobertura](../01-game-design/full-career-content-matrix.md#cobertura-futura-de-recuperación) | diseño aprobado bajo ADR-024 intacto; único audit de escalabilidad posterior a 1.º |
+| FR-013: primeras tres runs perceptiblemente distintas | [envolvente](../01-game-design/stage-08-product-design-envelope.md), [auditoría cruzada](../04-quality/content-validation.md#full-career-cross-content-audit) | goal aceptado; diseño conjunto y pacing real aún por validar |

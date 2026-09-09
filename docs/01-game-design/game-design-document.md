@@ -9,6 +9,16 @@ pertenencia/identidad → autonomía → responsabilidad → cierre/futuro. Su d
 madurez están en la
 [envolvente de diseño de carrera](stage-08-product-design-envelope.md).
 
+Los cinco pases de 1.º–5.º están `DESIGN-CANDIDATE-APPROVED` en la
+[matriz v0.3](full-career-content-matrix.md). Sus
+[políticas de composición](full-career-content-matrix.md#políticas-de-composición)
+fijan máximo una Template puntuable por cluster Intercurso/School Event/Egreso,
+arcos recurrentes sin desafío obligatorio, target 1–2 del Proyecto con máximo 2
+candidato y diversidad cognitiva soft. Son diseño de producto pendiente de
+implementación. El [sistema narrativo](narrative-system.md) gobierna callbacks
+independientes, externalidad de 4.º, convergencia de 5.º y selección de hechos
+significativos del cierre. La auditoría cruzada es el siguiente paso de Phase 0.
+
 ## 2. Género
 
 - Juego de decisiones.

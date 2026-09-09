@@ -94,19 +94,37 @@ congelado.
 | D-S08-001 | La carrera progresa adaptación → consolidación → pertenencia → autonomía → responsabilidad → cierre; 7.º y 1.º comparten escuela | LOCKED | [sistema narrativo](../01-game-design/narrative-system.md) |
 | D-S08-002 | Año y dificultad son ejes independientes; el piso matemático sigue accesible desde aproximadamente 7.º | LOCKED | [envolvente](../01-game-design/stage-08-product-design-envelope.md) |
 | D-S08-003 | Narrativa braided-linear con elenco relacional, voz argentina legible, callbacks medios y previas como memoria | ACCEPTED; previas LOCKED | callbacks multianuales no implementados; [sistema narrativo](../01-game-design/narrative-system.md) |
-| D-S08-004 | Proyecto del Curso recurre narrativamente y su Template no es obligatoria en toda run | LOCKED | [envolvente](../01-game-design/stage-08-product-design-envelope.md) |
+| D-S08-004 | Recurring Arc Policy: presencia narrativa recurrente no exige desafío puntuable; Proyecto del Curso persiste cada año | LOCKED | [política de arco](../01-game-design/full-career-content-matrix.md#recurring-arc-policy); frecuencia candidata en D-S08-019 |
 | D-S08-005 | Pacing 9–10 beats y QUICK/MEDIUM/DEEP son candidatos; primeras tres runs distintas es el goal | ACCEPTED CANDIDATE + LOCKED GOAL | duración sin validar; [envolvente](../01-game-design/stage-08-product-design-envelope.md) |
 | D-S08-006 | Team/Aura/Estilo usan evidencia propia y una interacción nueva no se esconde como contenido | LOCKED | [envolvente](../01-game-design/stage-08-product-design-envelope.md) |
 | D-S08-007 | RNG raro seeded se aplica después de elegibilidad; aparición no da Prestige ni aumenta techos competitivos | ACCEPTED + LOCKED GUARDRAILS | arquitectura no congelada; [eventos raros](../01-game-design/rare-events-and-prestige.md) |
 | D-S08-008 | FairScore sigue primario; Prestige es segundo criterio lexicográfico sin doble conteo | ACCEPTED + LOCKED GUARDRAILS | runtime no implementado; 25×4/cap/premios son `CANDIDATE`; [Prestige](../01-game-design/rare-events-and-prestige.md) |
 | D-S08-009 | Career Epilogue v1 y diseño de Milestones forman parte de STAGE-08 | ACCEPTED | no implementados; catálogo/elegibilidad abiertos |
-| D-S08-010 | Matriz v0.2 de 25 Templates es la candidata auditada vigente | CANDIDATE_APPROVED_AFTER_CONTENT_AUDIT | 1.º detallado; 2.º–5.º esperan su pass; [matriz](../01-game-design/full-career-content-matrix.md) |
+| D-S08-010 | Matriz v0.3 conserva 25 Templates y 6/13/6, con los cinco pases aprobados | DESIGN-CANDIDATE-APPROVED | deriva de la auditoría v0.2; auditoría cruzada pendiente; [matriz](../01-game-design/full-career-content-matrix.md) |
 | D-S08-011 | Las cinco Templates de consolidación de 1.º, su placement, Team/Aura y pacing están aprobados a nivel de diseño | DESIGN-CANDIDATE-APPROVED | implementación no iniciada; [diseño de 1.º](../01-game-design/grade-1-template-design.md) |
 | D-S08-012 | Rutas candidatas `rehearsal-schedule → schedule-review` y `classroom-layout → scale-fit-review` | ACCEPTED DESIGN | no implementadas; Aura ordinaria de 1.º ausente |
 | D-S08-013 | La auditoría de ambas obligaciones bajo máximo un recovery es obligatoria después de implementar 1.º | LOCKED PROCESS | `REQUIRED · PLANNED`; [contrato](../04-quality/post-grade-1-scalability-audit.md) |
+| D-S08-014 | Pase de 2.º aprobado: pertenencia, placement, pacing, señales y ruta de encuesta | DESIGN-CANDIDATE-APPROVED | no implementado; [diseño de 2.º](../01-game-design/grade-2-template-design.md) |
+| D-S08-015 | Pase de 3.º aprobado: autonomía, riqueza de Estilo y dos rutas de recuperación | DESIGN-CANDIDATE-APPROVED | no implementado; [diseño de 3.º](../01-game-design/grade-3-template-design.md) |
+| D-S08-016 | Pase de 4.º aprobado: responsabilidad, cluster, reemplazo raro y dos rutas | DESIGN-CANDIDATE-APPROVED | no implementado; [diseño de 4.º](../01-game-design/grade-4-template-design.md) |
+| D-S08-017 | Pase de 5.º aprobado: cierre/futuro, síntesis, señales y dos rutas | DESIGN-CANDIDATE-APPROVED | no implementado; [diseño de 5.º](../01-game-design/grade-5-template-design.md) |
+| D-S08-018 | Event Cluster Policy: Intercurso de 2.º, School Event de 4.º y Egreso de 5.º admiten máximo una Template puntuable de cada cluster por run normal | LOCKED | política de producto, sin campos/runtime nuevos; [clusters](../01-game-design/full-career-content-matrix.md#event-cluster-policy) |
+| D-S08-019 | Project Arc apunta a 1–2 Templates puntuables por carrera; máximo 2 candidato y preferencia no consecutiva | ACCEPTED TARGET / CANDIDATE MAX | no implementado; [frecuencia](../01-game-design/full-career-content-matrix.md#frecuencia-del-project-arc) |
+| D-S08-020 | Callback Independence: historia enriquece contexto sin condicionar comprensión, resolución ni techo de FairScore | LOCKED | [callbacks](../01-game-design/narrative-system.md#callback-independence) |
+| D-S08-021 | Responsibility Externality: 4.º muestra efectos sobre terceros/sistemas sin Equipo automático | LOCKED | [externalidad](../01-game-design/narrative-system.md#responsibility-externality) |
+| D-S08-022 | Career Convergence: 5.º recupera historia visiblemente manteniendo Templates autocontenidas | LOCKED | [convergencia](../01-game-design/narrative-system.md#career-convergence) |
+| D-S08-023 | Narrative Salience: priorizar aproximadamente 3–5 hechos de cierre/epílogo | ACCEPTED DIRECTION | algoritmo diferido, sin runtime; [salience](../01-game-design/narrative-system.md#narrative-salience) |
+| D-S08-024 | `represent-class`: Math, acción pública de Aura y logro histórico de Prestige usan evidencia distinta; aparición vale 0 | LOCKED | [diseño de 4.º](../01-game-design/grade-4-template-design.md#y4represent-class) |
+| D-S08-025 | `next-step-options`: FairScore de viabilidad, preferencia opcional sólo Estilo/epílogo, sin orientación vocacional | LOCKED | [diseño de 5.º](../01-game-design/grade-5-template-design.md#y5next-step-options) |
+| D-S08-026 | Los cinco pases están completos; Phase 0 sigue abierta y continúa con Full-Career Cross-Content Audit | ACCEPTED PROCESS | [etapa actual](../06-delivery/current-stage.md), [alcance de auditoría](../04-quality/content-validation.md#full-career-cross-content-audit); no autoriza implementar 1.º |
+| D-S08-027 | Preferir diversidad cognitiva entre planes válidos; evitar semana + recorrido de 3.º sólo cuando haya alternativa equivalente más diversa | ACCEPTED · SOFT | [composición](../01-game-design/full-career-content-matrix.md#diversidad-cognitiva); no exclusión dura |
 
 La semántica de eventos raros/Prestige todavía no justifica un ADR: es dirección
 de producto con implementación abierta. Cuando se congele una arquitectura que
 cruce RNG, replay, score, ranking o versionado deberá aplicarse la política de ADR.
+
+El checkpoint #2 también conserva esta frontera para clusters, frecuencia de
+arcos y Narrative Salience: las reglas de producto están indexadas, pero todavía
+no se eligieron nuevos contratos ejecutables. No modifica ni supersede ADR-024.
 
 La [integración post-Gate](../06-delivery/teacher-gate-1/12-integracion-post-gate.md) es la trazabilidad completa de TG1. Siguen abiertos la oficialización final del score, calibraciones exactas, tercer criterio de empate, catálogo de Hitos, vocabulario y triggers de recuperación, profundidad final de contenido y configuración de competencia.

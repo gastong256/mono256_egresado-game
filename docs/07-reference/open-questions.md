@@ -87,23 +87,23 @@ Incorporadas desde el [Project Blueprint v0.2](blueprint-v0.2-integration.md). S
 
 ## Contenido y producto, sin gate docente inmediato
 
-46. ¿Qué profundidad final de `ScenarioFamily`, `ChallengeTemplate` y `ChallengeVariant` debe ofrecer el **catálogo de contenido disponible** por etapa para sostener rejugabilidad? La [matriz v0.2](../01-game-design/full-career-content-matrix.md) acepta 25 Templates como arquitectura candidata auditada y detalla 1.º, pero no vuelve 25 una cuota ni congela cantidad de Variants. Las opciones del catálogo no son los uno o dos beats jugados por año. *Gate: diseño detallado 2.º–5.º, auditoría final de Phase 0 y luego catálogo real validado.*
+46. ¿Qué profundidad final de `ScenarioFamily`, `ChallengeTemplate` y `ChallengeVariant` debe ofrecer el **catálogo de contenido disponible** por etapa para sostener rejugabilidad? La [matriz v0.3](../01-game-design/full-career-content-matrix.md) reúne 25 Templates con los cinco pases `DESIGN-CANDIDATE-APPROVED`, pero no vuelve 25 una cuota ni congela cantidad de Variants. Las opciones del catálogo no son los uno o dos beats jugados por año. *Gate: Full-Career Cross-Content Audit, reconciliación final de Phase 0 y luego catálogo real validado.*
 
 ### 46-bis. El inventario final de escenarios sigue ABIERTO
 
-El modelo de contenido de [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md) construyó el **mecanismo**. Phase 0 agregó una arquitectura candidata de 25 Templates y aprobó el diseño candidato de cinco para 1.º; no produjo ni congeló el inventario runtime. Siguen sin resolver:
+El modelo de contenido de [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md) construyó el **mecanismo**. Phase 0 aprobó el diseño candidato de las 25 Templates de 1.º–5.º; no produjo ni congeló el inventario runtime. Siguen sin resolver:
 
 - cuántas familias de escenario tiene Egresado y cuáles son;
 - cuántas plantillas termina teniendo cada familia más allá de la matriz candidata;
 - cuántas variantes tiene cada plantilla;
-- si los candidatos de 2.º–5.º conservan su ubicación después del diseño detallado;
+- qué ajustes justificados por evidencia necesitará el conjunto después de la auditoría cruzada, conservando como baseline el placement y los invariantes ya aprobados;
 - si cada uno de los escenarios actuales se clasifica como **KEEP**, **MOVE**, **REWORK**, **MERGE**, **REPLACE** o **REMOVE**.
 
-Las ocho plantillas actuales —siete ordinarias y un repaso— son **contenido vigente y sondas de arquitectura**, no el inventario completo. La matriz propone 9/25 recoveries candidatos; sólo las dos rutas de 1.º tienen diseño aprobado y ninguna está implementada. `none` sigue siendo respuesta legítima. Las familias runtime actuales —`bus`, `mural`, `notebook`, `group-project`, `school-fair`, `may-25`— tampoco forman un catálogo final cerrado.
+Las ocho plantillas actuales —siete ordinarias y un repaso— son **contenido vigente y sondas de arquitectura**, no el inventario completo. La matriz registra nueve fuentes recovery-capable entre 25 futuras: las nueve rutas tienen aprobación de diseño y ninguna está implementada. Las otras Templates declaran `none`. Las familias runtime actuales —`bus`, `mural`, `notebook`, `group-project`, `school-fair`, `may-25`— tampoco forman un catálogo final cerrado.
 
 Que la familia `bus` haya pasado a tener dos plantillas en STAGE-04 ([ADR-021](../03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md)) **no responde nada de esto**: demuestra que el modelo aloja varias plantillas por familia, y no dice cuántas debería tener ninguna.
 
-*Gate: Template Design Passes 2.º–5.º, auditoría final de Phase 0 e implementación/validación del catálogo.* Ver [matriz v0.2](../01-game-design/full-career-content-matrix.md) y [migración del modelo](../03-architecture/content-model-migration.md).
+*Gate: Full-Career Cross-Content Audit, reconciliación final de Phase 0 e implementación/validación del catálogo.* Ver [matriz v0.3](../01-game-design/full-career-content-matrix.md) y [migración del modelo](../03-architecture/content-model-migration.md).
 47. ¿Cuáles son los pesos exactos con los que cada resultado empuja Estilo? Hoy son valores de desarrollo dentro del presupuesto declarado por el motor. *Gate: congelar el ruleset de perfiles.* Se cruza con la pregunta 24.
 48. ¿Qué acento visual mínimo distingue cada año? Es una decisión del sistema de diseño, prevista para v0.4 y **explícitamente diferida**. No la resuelve un documento de producto. *Gate: alcance de la v0.4 del sistema de diseño.*
 49. ¿Se produce el pack raster de ocho imágenes o el producto sale confirmando que la UI sola alcanza? Todas las pantallas corren hoy con cero imágenes. *Gate: alcance de la v0.3 del sistema de diseño.*
@@ -119,9 +119,18 @@ La **capacidad** no forma parte de esta pregunta abierta: bajo [ADR-024](../03-a
 56. ¿Cuál es la calibración exacta de Prestige —cap, tracks, pesos y premios— dentro de la dirección secundaria lexicográfica aceptada? El presupuesto 25×4 y las magnitudes +5…+25 son candidatos. *Gate: contenido real, auditoría competitiva y STAGE-09/TG2.*
 57. ¿Qué probabilidades y límites de densidad corresponden a `UNCOMMON / RARE / VERY_RARE`? Bandas, elegibilidad previa y RNG seeded están aceptados; porcentajes y topes no. *Gate: catálogo raro, simulación y calibración.*
 58. ¿Qué regla versionada normaliza el techo de oportunidades Prestige entre runs normales y reemplazos raros? Está bloqueado que RNG no aumente el máximo, pero la arquitectura ejecutable no fue elegida. *Gate: implementación de eventos raros/Prestige; requiere revisión de ADR por cruzar RNG, replay, score y ranking.*
-59. ¿Qué pacing final, evaluadores, señales Team/Aura y recovery/`none` tendrá cada Template candidata de 2.º–5.º? La matriz no cierra el detalle. *Gate: Template Design Pass de cada año; el siguiente es 2.º — Belonging.*
+59. **Cerrada en diseño por el checkpoint #2:** los pases de 2.º–5.º fijan placement, clases de pacing, intención de evaluación, señales Team/Aura y rutas recovery/`none`, todos `DESIGN-CANDIDATE-APPROVED`. No se reabren esos acuerdos como preguntas pendientes. Los parámetros/evaluadores ejecutables aún requieren producción bajo la guía de autoría y la duración real sigue abierta en la pregunta 2. *Siguiente trabajo: Full-Career Cross-Content Audit de la [matriz v0.3](../01-game-design/full-career-content-matrix.md).*
 60. ¿Se justifica una oportunidad rara/ultra-rara de Aura en 1.º con evidencia independiente? Aura ordinaria está decidida como ausente; no hay obligación de llenar el hueco. *Gate: diseño raro posterior, si surge una situación legítima.*
 61. ¿La escuela adquiere una marca ficticia/paródica y el jugador una personalización liviana más allá del nickname? Ambas son stretch, no core STAGE-08. *Gate: disponibilidad de alcance y revisión de portabilidad/privacidad.*
+62. ¿Qué algoritmo selecciona los hechos narrativos significativos del cierre/epílogo? **Narrative Salience está aceptada como dirección**, aproximadamente 3–5 hechos; queda diferida la selección exacta, no la convergencia de 5.º ni la independencia de callbacks. *Gate: pase de Career Epilogue v1.* Ver [sistema narrativo](../01-game-design/narrative-system.md#narrative-salience).
+
+El checkpoint #2 preserva además las aperturas ya indexadas: vocabulario y
+triggers de recuperación (53–54), semántica multiobligación después de 1.º (55),
+rareza/densidad y coeficientes/normalización Prestige (56–58), desempate terciario
+(13/41), seeds server-issued y anti-farming (12), pacing real (2) e identidad
+opcional (61). Máximo 2 del Project Arc permanece **candidato** en la
+[política de frecuencia](../01-game-design/full-career-content-matrix.md#frecuencia-del-project-arc);
+no se convierte silenciosamente en regla congelada.
 
 ## Diferidas a propósito
 

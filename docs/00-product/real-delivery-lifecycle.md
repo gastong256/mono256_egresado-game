@@ -40,10 +40,12 @@ arquitectura o identidad requiere evidencia de defecto, no preferencia.
 
 `7.º → 1.º → 2.º → 3.º → 4.º → 5.º → Egreso`, más catálogo completo de escenarios, variantes desplegadas, ranking, backend de evento, verificación autoritativa y herramientas de operación.
 
-**Actual:** STAGE-08 / Phase 0 está `IN_PROGRESS`. La envolvente, matriz v0.2 y
-diseño candidato de 1.º están completos; siguen los pases detallados de 2.º–5.º.
-Después se implementa 1.º real y se ejecuta la auditoría de escalabilidad antes de
-producir ampliamente el resto. Ver [etapa actual](../06-delivery/current-stage.md).
+**Actual:** STAGE-08 / Phase 0 está `IN_PROGRESS`. La envolvente, matriz v0.3 y
+los cinco pases de 1.º–5.º están completos a nivel `DESIGN-CANDIDATE-APPROVED`.
+Sigue Full-Career Cross-Content Audit; luego los pases de Rare Events / Milestones
+/ Prestige, Career Epilogue v1 y la reconciliación final de Phase 0. Después se
+implementa 1.º real y se ejecuta la auditoría de escalabilidad antes de producir
+ampliamente el resto. Ver [etapa actual](../06-delivery/current-stage.md).
 
 ### Fase E — Teacher Gate 2
 

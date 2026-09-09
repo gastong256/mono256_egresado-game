@@ -13,16 +13,24 @@ STAGE-07                                      DONE
 STAGE-08                                      IN_PROGRESS · CURRENT
 └── Phase 0 — Full-Career Content Design      IN_PROGRESS
     ├── Product Design Envelope               COMPLETE
-    ├── Full-Career Matrix v0.2 audit         COMPLETE
+    ├── Full-Career Matrix v0.3               COMPLETE · diseño
     ├── Grade 1 Template Design Pass          COMPLETE
-    ├── Documentation checkpoint              COMPLETE
-    └── NEXT: Grade 2 Template Design Pass
+    ├── Grade 2 Template Design Pass          COMPLETE
+    ├── Grade 3 Template Design Pass          COMPLETE
+    ├── Grade 4 Template Design Pass          COMPLETE
+    ├── Grade 5 Template Design Pass          COMPLETE
+    ├── Documentation checkpoint #2           COMPLETE
+    ├── Full-Career Cross-Content Audit       NEXT
+    ├── Rare Events / Milestones / Prestige   PLANNED · pase detallado
+    ├── Career Epilogue v1                    PLANNED · pase detallado
+    └── Final Phase-0 reconciliation          PLANNED
 ```
 
-Phase 0 no está terminada: faltan los Template Design Passes detallados de
-2.º–5.º y la auditoría final de diseño. El diseño de 1.º está aprobado a nivel
-`DESIGN-CANDIDATE-APPROVED`; su implementación no empezó ni fue autorizada por
-este checkpoint.
+Phase 0 no está terminada: faltan la auditoría cruzada, los pases detallados de
+eventos raros/Hitos/Prestige y epílogo, y la reconciliación final. Los diseños de
+1.º–5.º están `DESIGN-CANDIDATE-APPROVED`; su implementación no empezó ni fue
+autorizada por este checkpoint. La auditoría inicial de la matriz v0.2 y el
+checkpoint #1 siguen completos como antecedentes.
 
 ## Baseline autoritativa
 
@@ -50,33 +58,43 @@ contenido real de 1.º–5.º ni valida el target UX de 8–10 minutos.
 ## Resultado actual de Phase 0
 
 - [Envolvente de diseño](../01-game-design/stage-08-product-design-envelope.md): `COMPLETE · ACCEPTED`.
-- [Matriz de carrera v0.2](../01-game-design/full-career-content-matrix.md): 25 Templates, `CANDIDATE_APPROVED_AFTER_CONTENT_AUDIT`; 24/52/24 CORE/STANDARD/STRETCH y 9/25 recoveries candidatos.
+- [Matriz de carrera v0.3](../01-game-design/full-career-content-matrix.md): 25 Templates `DESIGN-CANDIDATE-APPROVED`; 24/52/24 CORE/STANDARD/STRETCH, nueve rutas futuras y políticas de clusters/arco/callbacks.
 - [Sistema narrativo](../01-game-design/narrative-system.md): arco, elenco relacional, callbacks, Proyecto del Curso y epílogo aceptados; runtime multianual no implementado.
 - [Eventos raros y Prestige](../01-game-design/rare-events-and-prestige.md): semántica de producto aceptada, calibración candidata y arquitectura/runtime abiertos.
 - [Diseño de 1.º](../01-game-design/grade-1-template-design.md): cinco Templates `DESIGN-CANDIDATE-APPROVED`; Equipo sólo en expo, Aura ordinaria ausente y dos rutas candidatas de recuperación.
+- [Diseño de 2.º](../01-game-design/grade-2-template-design.md): pertenencia; cluster Intercurso, encuesta, distancias y comunicación pública independiente.
+- [Diseño de 3.º](../01-game-design/grade-3-template-design.md): autonomía; mayor riqueza de Estilo, recursos compartidos, umbral de usos y recorridos.
+- [Diseño de 4.º](../01-game-design/grade-4-template-design.md): responsabilidad; externalidad sin Equipo automático y reemplazo raro `represent-class` con triple evidencia.
+- [Diseño de 5.º](../01-game-design/grade-5-template-design.md): convergencia; proyecto de contingencia y `next-step-options` con FairScore de viabilidad solamente.
 - [Auditoría posterior a 1.º](../04-quality/post-grade-1-scalability-audit.md): contrato `REQUIRED · PLANNED`, todavía no ejecutado.
 
 ## Scope IN de la fase actual
 
-- diseño detallado de Templates de 2.º, 3.º, 4.º y 5.º;
-- cierre de pacing, señales independientes y decisiones `none`/recovery por Template;
-- continuidad narrativa, Hitos, eventos raros/Prestige a nivel de producto;
-- auditoría final de diseño de carrera;
+- Full-Career Cross-Content Audit de 7.º existente y las 25 Templates futuras;
+- pase detallado de Rare Events / Milestones / Prestige;
+- pase de Career Epilogue v1 y selección de hechos narrativos significativos;
+- reconciliación final de diseño de carrera;
 - preservación explícita de calibraciones y preguntas abiertas.
 
 ## Siguiente tarea canónica
 
 ```text
-STAGE-08 / Phase 0 / Grade 2 — Belonging Template Design Pass
+STAGE-08 / Phase 0 / Full-Career Cross-Content Audit
 ```
 
-Debe partir de los cinco candidatos de 2.º de la matriz, cerrar su detalle de
-autoría y pacing sin producir runtime todavía.
+El [alcance canónico de la auditoría](../04-quality/content-validation.md#full-career-cross-content-audit)
+cubre matemática, duplicación, interacciones, señales sociales/Estilo, recovery,
+clusters, Project Arc, neutralidad rara/Prestige, callbacks, pacing, primeras tres
+runs, riesgos de autoría y convergencia de 5.º. No fue ejecutada en este checkpoint.
 
 ## Flujo posterior obligatorio
 
 ```text
-terminar Phase 0
+Full-Career Cross-Content Audit
+→ Rare Events / Milestones / Prestige detailed pass
+→ Career Epilogue v1 pass
+→ Final Phase-0 reconciliation
+→ Phase 0 DONE
 → Phase 1: implementar 1.º real
 → STOP: auditoría de escalabilidad posterior a 1.º
 → PASS: implementar 2.º–5.º
@@ -113,5 +131,6 @@ sin duplicar sistemas fundamentales?
 
 ## Última reconciliación
 
-8 de septiembre de 2026, checkpoint documental de STAGE-08 / Phase 0 después del
-Template Design Pass de 1.º.
+9 de septiembre de 2026, checkpoint documental #2 de STAGE-08 / Phase 0 después
+de los cinco Template Design Passes. El checkpoint #1 del 8 de septiembre quedó
+integrado en `1dea7e5`; esta reconciliación es incremental y sólo documental.

@@ -1,45 +1,62 @@
-# Matriz de contenido de carrera completa v0.2
+# Matriz de contenido de carrera completa v0.3
 
 - **Alcance:** 1.º–5.º
-- **Estado:** `CANDIDATE_APPROVED_AFTER_CONTENT_AUDIT`
-- **Detalle de 1.º:** `DESIGN-CANDIDATE-APPROVED`
-- **Detalle de 2.º–5.º:** candidatos de matriz; falta el Template Design Pass de cada año
+- **Estado de las 25 Templates:** `DESIGN-CANDIDATE-APPROVED`
+- **Auditoría inicial de contenido:** completada en v0.2; preserva su trazabilidad
+- **Full-Career Cross-Content Audit:** siguiente tarea, todavía no ejecutada
+- **Revisión documental:** v0.3, checkpoint #2 del 9 de septiembre de 2026; no es una versión runtime
 
 Esta es la arquitectura de contenido candidata vigente para los cinco años que
 faltan. Contiene 25 Templates —cinco por año— porque hoy dan cobertura y margen
 de composición suficientes, no porque 25 sea una cuota contractual. El diseño
-detallado de 1.º está en [su ficha canónica](grade-1-template-design.md); ningún
-ítem de esta matriz es todavía contenido runtime.
+detallado de los cinco años está aprobado a nivel candidato; ningún ítem de esta
+matriz es todavía contenido runtime.
+
+Fuentes de intención matemática, interacción, evidencia e invariantes:
+[1.º — Consolidación](grade-1-template-design.md),
+[2.º — Pertenencia](grade-2-template-design.md),
+[3.º — Autonomía](grade-3-template-design.md),
+[4.º — Responsabilidad](grade-4-template-design.md) y
+[5.º — Cierre y futuro](grade-5-template-design.md).
 
 ## Matriz auditada
 
-| Año | Template | Banda | Interacción principal | Matemática principal | Señal secundaria | Recovery candidato | Pacing | Estado |
+Todas las filas tienen estado `DESIGN-CANDIDATE-APPROVED`. Los IDs se completan
+con `y1.`…`y5.` según el año; un recovery usa el mismo prefijo de su fuente.
+`—` indica que no hay pertenencia declarada al cluster/arco de composición;
+compartir un contexto narrativo no crea automáticamente un cluster.
+
+| Año | Template | Colocación | Banda | Pacing | Equipo | Aura | Recovery de diseño | Cluster / arco |
 |---|---|---|---|---|---|---|---|---|
-| 1.º | `student-day-challenge-wheel` | CORE | Grid / Spinner Builder | fracciones, proporciones, probabilidad intuitiva | ninguna | `none` | QUICK | `DESIGN-CANDIDATE-APPROVED` |
-| 1.º | `course-project-expo` | STANDARD | Allocation Board | asignación, capacidad, restricciones | Equipo + Estilo | `none` | MEDIUM | `DESIGN-CANDIDATE-APPROVED` |
-| 1.º | `mobile-data` | CORE | Constraint Builder | tasas, capacidad, planificación proporcional | Estilo | `none` | QUICK | `DESIGN-CANDIDATE-APPROVED` |
-| 1.º | `rehearsal-schedule` | STANDARD | Timeline / Schedule | ventanas, secuencia, planificación hacia atrás | Estilo | `schedule-review` | MEDIUM | `DESIGN-CANDIDATE-APPROVED` |
-| 1.º | `classroom-layout` | STRETCH | Geometry / Spatial | escala, encastre, área, restricciones espaciales | ninguna | `scale-fit-review` | DEEP | `DESIGN-CANDIDATE-APPROVED` |
-| 2.º | `intercurso-plan` | STANDARD | Timeline + Allocation | agenda, asignación, optimización | Equipo | a decidir | a decidir | `MATRIX-CANDIDATE` |
-| 2.º | `course-project-survey` | STANDARD | Selection / Data | muestra, porcentajes, inferencia válida | ninguna | sí, candidato | a decidir | `MATRIX-CANDIDATE` |
-| 2.º | `team-kit-order` | CORE | Constraint Builder | proporciones, porcentajes, redondeo, stock | ninguna | `none`, candidato | a decidir | `MATRIX-CANDIDATE` |
-| 2.º | `standings-claim` | STANDARD | Comparison / Selection | puntos, cotas, resultados restantes, incertidumbre | Aura candidata | `none`, candidato | a decidir | `MATRIX-CANDIDATE` |
-| 2.º | `court-zones` | STRETCH | Geometry / Spatial | zonas, coordenadas/distancias, restricciones | ninguna | `none`, candidato | a decidir | `MATRIX-CANDIDATE` |
-| 3.º | `friend-day` | STANDARD | Constraint Builder | preferencias, disponibilidad, optimización pequeña | Equipo + Estilo | `none`, candidato | a decidir | `MATRIX-CANDIDATE` |
-| 3.º | `course-project-tech` | STANDARD | Allocation + Constraint Builder | tasas, capacidad, recursos | Equipo | sí, candidato | a decidir | `MATRIX-CANDIDATE` |
-| 3.º | `week-planner` | STANDARD | Timeline | tiempo, secuencia, deadlines | Estilo | `none` | a decidir | `MATRIX-CANDIDATE` |
-| 3.º | `transport-pass` | CORE | Comparison / Constraint Builder | costo fijo/variable, relación lineal simple | Estilo | sí, candidato | a decidir | `MATRIX-CANDIDATE` |
-| 3.º | `route-plan` | STRETCH | Map / Timeline | distancia, tiempo, optimización de recorrido | ninguna | `none`, candidato | a decidir | `MATRIX-CANDIDATE` |
-| 4.º | `school-event-flow` | STANDARD | Constraint Builder | tasas, capacidad, cuellos de botella | Aura sólo con evidencia pública independiente | `none`, candidato | a decidir | `MATRIX-CANDIDATE` |
-| 4.º | `course-project-fundraiser` | STANDARD | Constraint Builder | costo, margen, objetivo, equilibrio intuitivo | Estilo posible | sí, candidato | a decidir | `MATRIX-CANDIDATE` |
-| 4.º | `shift-coverage` | CORE | Allocation Board | cobertura, horarios, restricciones | Equipo + Estilo | `none`, candidato | a decidir | `MATRIX-CANDIDATE` |
-| 4.º | `event-floor-plan` | STRETCH | Geometry / Spatial | área, capacidad, densidad, circulación | ninguna | sí, candidato | a decidir | `MATRIX-CANDIDATE` |
-| 4.º | `represent-class` | STANDARD / RARE | a decidir | planificación de presentación, datos, tiempo | Aura + Prestige candidatos si son independientes | no asumido | a decidir | `MATRIX-CANDIDATE / RARE` |
-| 5.º | `final-trip-or-event` | STRETCH | Comparison + Constraint Builder | costo total, porcentajes, restricciones múltiples | Equipo sólo si es independiente | sí, candidato | a decidir | `MATRIX-CANDIDATE` |
-| 5.º | `course-project-final` | STANDARD | Allocation + Timeline / contingencia | síntesis de restricciones, planificación, optimización | Equipo + Aura candidatos con evidencia estrictamente independiente | `none`, candidato | a decidir | `MATRIX-CANDIDATE` |
-| 5.º | `stage-screen` | STRETCH | Geometry / Spatial | razón, escala, dimensiones, recorte/encastre | ninguna | `none` | a decidir | `MATRIX-CANDIDATE` |
-| 5.º | `yearbook` | STANDARD | Allocation / Constraint Builder | proporciones, capacidad, páginas, datos | Equipo sólo si es independiente | sí, candidato | a decidir | `MATRIX-CANDIDATE` |
-| 5.º | `next-step-options` | CORE | Comparison / Constraint Builder | viabilidad multicriterio con tiempo/viaje | Estilo | `none` | a decidir | `MATRIX-CANDIDATE` |
+| 1.º | `student-day-challenge-wheel` | anchor | CORE | QUICK | no | no | `none` | — |
+| 1.º | `course-project-expo` | anchor | STANDARD | MEDIUM | sí | no | `none` | Project Arc |
+| 1.º | `mobile-data` | secondary | CORE | QUICK | no | no | `none` | — |
+| 1.º | `rehearsal-schedule` | secondary | STANDARD | MEDIUM | no | no | `schedule-review` | — |
+| 1.º | `classroom-layout` | anchor | STRETCH | DEEP | no | no | `scale-fit-review` | — |
+| 2.º | `intercurso-plan` | anchor | STANDARD | MEDIUM | sí | no | `none` | Intercurso |
+| 2.º | `course-project-survey` | anchor | STANDARD | MEDIUM | no | no | `data-claim-review` | Project Arc |
+| 2.º | `team-kit-order` | secondary | CORE | QUICK | no | no | `none` | — |
+| 2.º | `standings-claim` | secondary | STANDARD | QUICK | no | sí | `none` | Intercurso |
+| 2.º | `court-zones` | anchor | STRETCH | DEEP | no | no | `none` | Intercurso |
+| 3.º | `friend-day` | anchor | STANDARD | MEDIUM | sí | no | `none` | — |
+| 3.º | `course-project-tech` | anchor | STANDARD | MEDIUM | sí | no | `rate-capacity-review` | Project Arc |
+| 3.º | `week-planner` | secondary | STANDARD | MEDIUM | no | no | `none` | — |
+| 3.º | `transport-pass` | secondary | CORE | QUICK | no | no | `fixed-variable-review` | — |
+| 3.º | `route-plan` | anchor | STRETCH | DEEP | no | no | `none` | — |
+| 4.º | `school-event-flow` | anchor | STANDARD | MEDIUM | no | no | `none` | School Event |
+| 4.º | `course-project-fundraiser` | anchor | STANDARD | MEDIUM | no | no | `margin-review` | Project Arc |
+| 4.º | `shift-coverage` | secondary | CORE | QUICK | sí | no | `none` | School Event |
+| 4.º | `event-floor-plan` | anchor | STRETCH | DEEP | no | no | `spatial-capacity-review` | School Event |
+| 4.º | `represent-class` | rare replacement | STANDARD | MEDIUM | no | sí, si aparece | `none` | — |
+| 5.º | `final-trip-or-event` | anchor | STRETCH | MEDIUM | no | no | `multi-option-comparison-review` | Egreso |
+| 5.º | `course-project-final` | anchor | STANDARD | DEEP | sí | sí | `none` | Project Arc |
+| 5.º | `stage-screen` | anchor | STRETCH | QUICK | no | no | `none` | Egreso |
+| 5.º | `yearbook` | secondary | STANDARD | MEDIUM | no | no | `proportion-capacity-review` | Egreso |
+| 5.º | `next-step-options` | secondary | CORE | MEDIUM | no | no | `none` | — |
+
+La rareza de `represent-class` es distinta de su banda STANDARD. Cuenta entre
+las 25 Templates del inventario y reemplaza una oportunidad equivalente; no es
+un beat extra ni una oportunidad presente en toda run.
 
 ## Resultado cuantitativo de la auditoría
 
@@ -78,50 +95,70 @@ salón”. La progresión semántica vigente es:
 
 La primitiva de UI puede repetirse; el razonamiento no.
 
-## Cobertura inicial de Equipo y Aura
+## Cobertura aprobada de Equipo, Aura y Estilo
 
-Los candidatos fuertes de **Equipo** son `y1.course-project-expo`,
+Las oportunidades de **Equipo** aprobadas son `y1.course-project-expo`,
 `y2.intercurso-plan`, `y3.friend-day`, `y3.course-project-tech`,
-`y4.shift-coverage` y `y5.course-project-final`: aproximadamente 6/25. Un séptimo
-caso sólo entra con evidencia semántica independiente; un contexto grupal no
-alcanza.
+`y4.shift-coverage` y `y5.course-project-final`: **6/25**. Las demás declaran
+ausencia de Equipo en este diseño; un contexto grupal o una externalidad de 4.º
+no son evidencia social por sí mismos.
 
-Los candidatos fuertes de **Aura** son `y2.standings-claim`,
-`y4.represent-class` y `y5.course-project-final`. `y4.school-event-flow` es
-condicional a encontrar una decisión pública independiente. El contenido ordinario
-de 1.º no tiene Aura competitiva; no es un hueco a rellenar.
+Las oportunidades de **Aura** son `y2.standings-claim`, `y4.represent-class`
+cuando aparece y `y5.course-project-final`. `school-event-flow` es Math-only.
+1.º y 3.º no tienen Aura ordinaria; no se fuerza cuota por año.
 
-## Cobertura candidata de recuperación
+**Estilo** tiene evidencia fuerte/candidata en `mobile-data`, `rehearsal-schedule`
+y en planes válidos de `course-project-expo`; diferencias de planes en
+`intercurso-plan`; señal fuerte en `friend-day`, `week-planner` y
+`course-project-final`; consecuencias de reparto en `shift-coverage`.
+`transport-pass` sólo admite Estilo entre elecciones racionales bajo incertidumbre
+explícita; `course-project-fundraiser` conserva una posibilidad candidata.
+`next-step-options` puede registrar una preferencia opcional para Estilo/epílogo,
+sin puntuarla. `course-project-survey` no usa Estilo. El detalle y los límites
+de cada señal están en las fichas de año; no son pesos congelados.
 
-| Año | Templates candidatas |
+## Cobertura futura de recuperación
+
+| Año | Rutas aprobadas a nivel de diseño |
 |---|---|
 | 1.º | `rehearsal-schedule → schedule-review`; `classroom-layout → scale-fit-review` |
-| 2.º | `course-project-survey` |
-| 3.º | `course-project-tech`; `transport-pass` |
-| 4.º | `course-project-fundraiser`; `event-floor-plan` |
-| 5.º | `final-trip-or-event`; `yearbook` |
+| 2.º | `course-project-survey → data-claim-review` |
+| 3.º | `course-project-tech → rate-capacity-review`; `transport-pass → fixed-variable-review` |
+| 4.º | `course-project-fundraiser → margin-review`; `event-floor-plan → spatial-capacity-review` |
+| 5.º | `final-trip-or-event → multi-option-comparison-review`; `yearbook → proportion-capacity-review` |
 
-Total: `9 / 25 = 36 %`. La asimetría es deliberada. Durante autoría, cada Template
-restante debe declarar `none` y su razón; no se inventa recuperación para completar
-una cuota. Las dos de 1.º alimentan el
-[caso obligatorio de auditoría](../04-quality/post-grade-1-scalability-audit.md).
+Total: `9 / 25 = 36 %`. Son nueve Templates fuente futuras, no nueve beats de
+repaso por run. Las restantes declaran `none` y deben conservar su justificación
+editorial; no se inventa recuperación para completar una cuota. Ninguna de estas
+rutas está implementada. ADR-024 mantiene **un recovery máximo por etapa**, fuera
+del presupuesto ordinario y del score. El único gate de escalabilidad sigue
+siendo el [audit posterior a 1.º](../04-quality/post-grade-1-scalability-audit.md),
+con ambas obligaciones de ese año; no se agrega un gate por cada año o ruta.
 
 ## Pacing
 
-1.º ya tiene pacing de diseño fijado: QUICK para `student-day-challenge-wheel` y
-`mobile-data`; MEDIUM para `course-project-expo` y `rehearsal-schedule`; DEEP para
-`classroom-layout`. 2.º–5.º lo definirán en sus pases detallados.
+Los cinco pases aprobaron las clases de pacing que muestra la tabla. STRETCH no
+equivale a DEEP: `stage-screen` es STRETCH/QUICK y `course-project-final` es
+STANDARD/DEEP. Son intenciones de diseño pendientes de validación real.
 
-La composición candidata de carrera usa 3–4 QUICK, 4–5 MEDIUM y 1–2 DEEP. No se
-debe componer una carrera de 9–10 beats todos profundos.
+La composición candidata de carrera usa 3–4 QUICK, 4–5 MEDIUM y 1–2 DEEP; apunta
+a 9–10 beats ordinarios típicos y un rango preferido aproximado de 8–10. Son
+presupuestos UX, no timers ni reglas de score. El objetivo temporal de 8–10
+minutos requiere contenido real. No se compone una carrera de nueve beats todos
+profundos.
 
 ## Riesgos de autoría
 
 - `student-day-challenge-wheel`: debe construir/evaluar una distribución; no preguntar un porcentaje aislado.
 - `mobile-data`: debe construir un plan sostenible con demandas obligatorias/opcionales; no ser regla de tres.
 - `course-project-survey`: selección de información e inferencia defendible, no examen de estadística.
-- `transport-pass`: incluir supuestos de uso y viabilidad; no sólo comparar dos precios.
-- `next-step-options`: matemática sobre viabilidad bajo prioridades explícitas, nunca orientación vocacional ni juicio sobre una vida correcta.
+- `transport-pass`: el umbral de usos tiene que cambiar la decisión; no sólo comparar dos precios.
+- `course-project-final` — **VERY HIGH**: contingencia real y separación Math/Equipo/Aura, con callbacks que no alteren el techo competitivo.
+- `next-step-options` — **VERY HIGH**: FairScore sólo de viabilidad de escenarios; preferencia personal opcional sólo en Estilo/epílogo, nunca orientación vocacional ni juicio sobre una vida correcta.
+
+Los demás invariantes duros —múltiples soluciones, cuellos de botella,
+capacidad/flujo, recorrido, márgenes, información geométrica completa— se
+conservan en las fichas. Su revisión conjunta es parte de la siguiente auditoría.
 
 ## Línea del Proyecto del Curso
 
@@ -133,8 +170,62 @@ debe componer una carrera de 9–10 beats todos profundos.
 5.º Proyecto final   → síntesis / callbacks / contingencia
 ```
 
-La línea persiste narrativamente, pero ninguna de estas Templates es obligatoria
-en toda run.
+La línea persiste narrativamente en cada año, según el
+[sistema narrativo](narrative-system.md).
+Su frecuencia puntuable se rige por las políticas siguientes.
+
+## Políticas de composición
+
+Son políticas de **producto/contenido**, todavía sin implementación de clusters
+ni frecuencia del arco en el RunComposer. No agregan campos al schema ni cambian
+el presupuesto de uno o dos beats ordinarios y un anchor por etapa.
+
+### Event Cluster Policy
+
+**Madurez: `LOCKED`.**
+
+Un evento narrativo puede ofrecer varias lecturas matemáticas. Una run normal
+juega como máximo **una Template puntuable de cada cluster** para conservar
+variedad. Las membresías son explícitas:
+
+| Año / cluster | Miembros | Máximo puntuable por run normal |
+|---|---|---|
+| 2.º / Intercurso | `intercurso-plan`, `standings-claim`, `court-zones` | 1 |
+| 4.º / School Event | `school-event-flow`, `shift-coverage`, `event-floor-plan` | 1 |
+| 5.º / Egreso | `final-trip-or-event`, `stage-screen`, `yearbook` | 1 |
+
+### Recurring Arc Policy
+
+**Madurez: `LOCKED`.**
+
+Presencia narrativa recurrente no equivale a desafío puntuable obligatorio. El
+Proyecto del Curso puede mantenerse mediante storylets aun si no se seleccionó
+su Template matemática ese año.
+
+### Frecuencia del Project Arc
+
+**Madurez: `ACCEPTED / CANDIDATE`.**
+
+- Target de diseño aceptado: **1–2 Templates puntuables por carrera completa**.
+- Máximo duro **2**: candidato, no límite runtime ni calibración congelada.
+- Preferir años no consecutivos cuando las composiciones sean igualmente válidas.
+
+### Callback Independence
+
+**Madurez: `LOCKED`.**
+
+El contexto previo enriquece texto/opciones limitadas sin condicionar comprensión,
+posibilidad de resolver la situación ni el máximo de FairScore. Ninguna Template
+exige haber jugado un Proyecto puntuable previo. Autoridad narrativa:
+[independencia de callbacks](narrative-system.md#callback-independence).
+
+### Diversidad cognitiva
+
+**Madurez: preferencia `ACCEPTED · SOFT`.**
+
+Entre planes válidos, preferir el más diverso cognitivamente. En particular,
+evitar `y3.week-planner + y3.route-plan` si existe una alternativa igualmente
+válida y más diversa. No convertir la preferencia en una exclusión dura.
 
 ## Reemplazos de la auditoría — historia preservada
 
@@ -155,14 +246,12 @@ No reintroducir estas propuestas sin nueva evidencia:
 El [catálogo semilla](challenge-catalog.md) conserva propuestas aún más tempranas
 como antecedente explícitamente supersedido; esta matriz es la candidata vigente.
 
-## Pool raro v0.1 — contexto candidato
+## Pool raro de diseño
 
-- 1.º: corte de luz antes de presentar.
-- 2.º: falta alguien antes del intercurso.
-- 3.º: se cae internet durante el proyecto tecnológico.
-- 4.º: el jugador debe representar al curso.
-- 5.º: algo falla poco antes del evento final o egreso.
-
-La mayoría debe ser `NARRATIVE_ONLY` o `PRESTIGE_REPLACEMENT`, no beats ordinarios
-extra. `represent-class` es el primer gran candidato condicional/raro para ejercer
-el futuro sistema.
+Los contratos de `rare.y1.power-outage`, `rare.y2.missing-player`,
+`rare.y3.offline-project`, `y4.represent-class` y
+`rare.y5.five-minutes-before-act` están en
+[eventos raros y Prestige](rare-events-and-prestige.md#diseños-raros-aprobados-por-año).
+Incluyen narrativa, modificadores y reemplazo puntuable neutral; no son todos
+narrativos ni agregan beats. Las probabilidades, los Hitos exactos y la
+normalización ejecutable siguen abiertos.

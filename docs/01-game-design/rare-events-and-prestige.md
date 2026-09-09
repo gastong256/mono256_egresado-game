@@ -68,8 +68,13 @@ El RNG cambia la historia, no el techo competitivo.
 Puede habilitar Prestige si el jugador realiza una acción especial con evidencia
 independiente, dentro del presupuesto global/de track. Debe usarse poco.
 
-Si alguna vez existe gameplay raro con `FairScore`, reemplaza una oportunidad
-equivalente en vez de agregar un beat puntuable.
+### Modificador o reemplazo de gameplay neutral
+
+El diseño de 2.º y 3.º incluye modificadores de una Template existente;
+`y4.represent-class` es un reemplazo raro puntuable y 5.º admite modificador o
+narrativa. Ninguno agrega un beat puntuable ni techo adicional de FairScore o
+Prestige. La arquitectura y la normalización ejecutable siguen abiertas; los
+nombres de tratamiento son diseño de producto, no enums runtime nuevos.
 
 ## Guardrails competitivos — `LOCKED`
 
@@ -134,6 +139,13 @@ evidencia. Si la respuesta es sí, puede existir como badge display-only pero
 
 La misma regla separa Math, Team, Aura y Prestige en cada Template.
 
+En `y4.represent-class` la separación es triple: propuesta matemática viable,
+acción pública de Aura y logro independiente del historial para eventual
+Prestige. Ni aparecer ni resolver/comunicar correctamente generan Prestige por
+sí mismos. Si una evidencia ya pagó Math, Equipo o Aura, su Prestige competitivo
+es **0**. `y5.course-project-final` tampoco paga Prestige directo por esas tres
+señales; sólo puede aportar evidencia independiente a un futuro Hito de Career Arc.
+
 ## RNG y normalización — `LOCKED DIRECTION`
 
 La forma válida es:
@@ -164,15 +176,27 @@ TG1 aceptó intentos ilimitados y mejor resultado verificado. Normalizar el tech
 de oportunidad reduce la búsqueda de seeds; emisión de seeds/run descriptors y
 su política de equidad quedan abiertas para STAGE-09.
 
-## Ejemplos actuales de diseño
+## Diseños raros aprobados por año
 
-| Año | Evento | Estado/tratamiento |
+| Año | Evento | Tratamiento aprobado de diseño |
 |---|---|---|
-| 1.º | `power-outage` antes de la exposición | `RARE / CONDITIONAL / NARRATIVE_ONLY / Prestige 0` |
-| 2.º | falta alguien antes del intercurso | contexto candidato; diseño detallado pendiente |
-| 3.º | caída de internet durante el proyecto tecnológico | contexto candidato; diseño detallado pendiente |
-| 4.º | `represent-class` | Template rara/condicional candidata; aparecer vale 0, una acción independiente podría ofrecer Prestige acotado |
-| 5.º | falla de último minuto antes del evento final/egreso | contexto candidato con potencial narrativo; detalle pendiente |
+| 1.º | `rare.y1.power-outage` | `RARE / CONDITIONAL / NARRATIVE_ONLY / Prestige 0`; conserva el contrato inicial antes de la expo, sin challenge puntuable adicional. |
+| 2.º | `rare.y2.missing-player` | Modificador condicional + seeded de `intercurso-plan`, neutral en oportunidades; sin beat, FairScore ni Prestige extra. |
+| 3.º | `rare.y3.offline-project` | Modificador condicional + seeded del proyecto tecnológico, neutral en oportunidades; sin beat, FairScore ni Prestige extra. |
+| 4.º | `y4.represent-class` | Reemplazo raro condicional + seeded, neutral en oportunidades, STANDARD/MEDIUM; Aura sí, Equipo no, recovery `none`; aparición Prestige 0. |
+| 5.º | `rare.y5.five-minutes-before-act` | Condicional + seeded, modificador neutral o `NARRATIVE_ONLY`; sin beat, FairScore ni recovery extra; aparición Prestige 0; sólo crisis escolares de baja gravedad. |
+
+`represent-class` debe admitir varios caminos de elegibilidad y evitar el efecto
+«sólo accede quien ya viene ganando». La viabilidad de la propuesta alimenta Math,
+una acción pública independiente alimenta Aura y un logro independiente del
+historial podría alimentar Prestige raro bajo su presupuesto. La presencia de
+Aura no otorga automáticamente Prestige ni amplía oportunidades por RNG.
+
+Estos contratos completan la definición dentro de los pases de año; no afirman
+que exista el motor raro. El siguiente pase detallado de Rare Events / Milestones
+/ Prestige ocurre tras la **Full-Career Cross-Content Audit** y conserva los
+guardrails ya aceptados. Catálogo de logros, probabilidades y normalización
+requieren ese trabajo posterior.
 
 ## Decisiones que siguen abiertas
 

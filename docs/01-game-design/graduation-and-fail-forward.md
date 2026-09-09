@@ -104,3 +104,13 @@ El motor está completo. Lo que falta es **contenido**: el slice de 7.º termina
 Del contenido de producción, hoy repasa la familia colectivo: `g7.bus-travel-review` aísla la duración del viaje con demora, que es el paso que las dos plantillas del colectivo dan por sabido. Las otras declaran `none`, que es una decisión explícita: el error del mural es de redondeo de compra, el de la oferta es leer cuál quedó más barata, y el acto ocurre una vez y en público. Una recuperación inventada para completar una tabla sería peor contenido que ninguna.
 
 El repaso que aparece es siempre el de la situación que salió mal, nunca el del año: equivocarse con el mural y recibir una cuenta de colectivos sería remediación en la forma y un disparate en el contenido. Cuando la plantilla no tiene repaso, el mal resultado simplemente queda — con su consecuencia en la nota, el score y la historia.
+
+## Cobertura futura aprobada de diseño
+
+Los cinco pases de Phase 0 fijan **9/25 Templates fuente recovery-capable** y sus
+rutas, registradas en la
+[matriz de carrera](full-career-content-matrix.md#cobertura-futura-de-recuperación).
+Son diseños futuros: no agregan contenido runtime, no modifican ADR-024 ni
+permiten un segundo repaso. La semántica de dos obligaciones sigue reservada al
+[audit posterior a implementar 1.º](../04-quality/post-grade-1-scalability-audit.md).
+No se agregan gates de escalabilidad de recuperación por año.

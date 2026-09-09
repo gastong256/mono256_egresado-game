@@ -82,6 +82,28 @@ Resume o consume flags acumulados.
 7.º y 1.º ocurren en la misma escuela. Describir 1.º como una segunda adaptación
 a una institución nueva quedó supersedido por esta decisión.
 
+Las preguntas de los pases aprobados hacen operativa esa progresión:
+
+| Año | Pregunta narrativa |
+|---|---|
+| 2.º | ¿Qué lugar tengo entre los demás? |
+| 3.º | ¿Cómo organizo mis propias decisiones? |
+| 4.º | ¿Qué pasa cuando otras personas dependen de mis decisiones? |
+| 5.º | ¿Qué dice de mí todo el recorrido que hice? |
+
+3.º es deliberadamente el año con más riqueza de Estilo hasta ese punto, por las
+decisiones de organización propia. La matemática sigue naciendo de la situación;
+no aparece porque la profe formule un quiz.
+
+## Responsibility Externality
+
+**Madurez: `LOCKED`.**
+
+4.º hace visible cómo una decisión matemática afecta a personas o sistemas:
+flujo, capacidad, turnos, recaudación y circulación. Esa consecuencia externa no
+otorga Equipo automáticamente. En el [diseño de 4.º](grade-4-template-design.md),
+Equipo se evalúa sólo en `shift-coverage`; `school-event-flow` es Math-only.
+
 ## Elenco relacional — `ACCEPTED`
 
 El elenco persiste por relaciones, sin nombres obligatorios:
@@ -150,8 +172,8 @@ consumen un beat.
 | 4.º | Feria, peña o evento solidario escolar |
 | 5.º | Viaje o evento final + egreso |
 
-El detalle puede cambiar en cada Template Design Pass sin borrar la identidad
-diferenciada del año.
+Los cinco Template Design Passes están aprobados. Los detalles editoriales y
+variantes deben conservar la identidad diferenciada del año y sus invariantes.
 
 ## Proyecto del Curso — línea recurrente `LOCKED`
 
@@ -162,6 +184,12 @@ permite callbacks del elenco.
 Su presencia es narrativa; la Template matemática no es obligatoria en toda run.
 Cuando el compositor no la selecciona, un storylet breve puede mencionarla. Esto
 evita que una línea recurrente se convierta en contenido fijo repetitivo.
+
+La **Recurring Arc Policy** extiende ese principio a la composición. El target
+aceptado del Proyecto es 1–2 Templates puntuables por carrera; máximo 2 sigue
+candidato y se prefieren años no consecutivos entre planes igualmente válidos.
+Membresía, frecuencia y clusters de eventos se mantienen en las
+[políticas de la matriz](full-career-content-matrix.md#políticas-de-composición).
 
 ## Modelo braided-linear y callbacks
 
@@ -182,14 +210,57 @@ opción de contingencia; una previa puede reaparecer en humor o síntesis final.
 historia del colectivo de 7.º puede alterar el copy del ensayo de 1.º sin volver
 la cuenta más fácil.
 
+## Callback Independence
+
+**Madurez: `LOCKED`.**
+
+Un callback puede enriquecer copy, contexto, personajes y opciones limitadas,
+pero nunca es un prerrequisito para comprender o resolver la situación. La escena
+debe proporcionar la información necesaria y mantener el máximo de FairScore
+aunque ese jugador no tenga el historial previo.
+
+La consecuencia narrativa puede recuperarse años después: el elenco recuerda
+cómo se repartió una tarea, una previa vuelve en un comentario o el proyecto
+final retoma una historia. Ese payoff diferido no exige haber jugado cada
+Template del arco ni añade una recompensa matemática por acumular callbacks.
+
+## Career Convergence
+
+**Madurez: `LOCKED`.**
+
+5.º reutiliza visiblemente un subconjunto de la historia para que el cierre
+pertenezca a esa carrera, con más densidad de callbacks y sin perder autonomía
+de cada Template. `course-project-final` admite contexto previo sin requerir
+Projects puntuables anteriores; `yearbook` cambia contenido narrativo, no su
+matemática central. Ver [diseño de 5.º](grade-5-template-design.md).
+
+## Narrative Salience
+
+**Madurez: dirección `ACCEPTED`.**
+
+El cierre y el epílogo priorizan aproximadamente **3–5 hechos significativos**,
+en lugar de volcar todo el historial. El número es orientación de presentación,
+no límite runtime ni coeficiente congelado. El algoritmo de selección queda
+diferido al pase de Career Epilogue v1 y no está implementado.
+
 ## Quinto año y Career Epilogue v1
 
 5.º concentra callbacks en proyecto final, viaje/evento, anuario y egreso, pero
 sin multiplicar ramas. El epílogo v1 es requerido dentro de STAGE-08 y sintetiza
 Estilo, Promedio, Equipo, Aura, previas/recuperaciones, flags y Hitos.
 
+El contrato de entrada futuro admite estadísticas de carrera, distribución de
+Estilo, historial de recuperaciones/previas, Project Arc, callbacks significativos,
+eventos raros, Hitos de display y de Prestige, y elecciones de cierre. Una
+preferencia opcional de `next-step-options` puede alimentar Estilo/epílogo;
+FairScore evalúa únicamente la viabilidad de los escenarios hipotéticos.
+
 No termina sólo en una tabla ni asigna una personalidad total. Debe contar “cómo
 atravesaste la escuela”, con resumen narrativo, recorrido y estadísticas.
+
+El pase detallado de epílogo sigue `PLANNED`: sucede después de la auditoría
+cruzada y del pase de Rare Events / Milestones / Prestige, antes de la
+reconciliación final de Phase 0. Aprobar estos insumos no implementa el epílogo.
 
 ## Career Milestones
 

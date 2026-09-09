@@ -3,8 +3,8 @@
 Este documento conserva el catálogo semilla que originó el primer slice y el
 contenido de 7.º. No es un `RunPlan` ni compromiso de implementar todos sus ítems.
 Para 1.º–5.º, las tablas históricas de abajo quedaron **supersedidas** por la
-[Matriz de carrera completa v0.2](full-career-content-matrix.md), auditada como
-`CANDIDATE_APPROVED_AFTER_CONTENT_AUDIT`; se preservan para trazabilidad, no para
+[Matriz de carrera completa v0.3](full-career-content-matrix.md), con los cinco
+pases `DESIGN-CANDIDATE-APPROVED`; se preservan para trazabilidad, no para
 planificar implementación. La cantidad final de Templates/Variants sigue abierta
 en las [preguntas 46 y 46-bis](../07-reference/open-questions.md), y cada diseño
 vigente debe pasar guía de autoría y validación antes de producción.

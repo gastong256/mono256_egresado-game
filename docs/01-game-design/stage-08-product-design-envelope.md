@@ -9,8 +9,8 @@
 Este documento fija la envolvente de producto para diseñar la carrera desde 1.º
 hasta 5.º antes de producirla. La [matriz de carrera](full-career-content-matrix.md)
 concreta el inventario candidato; el [sistema narrativo](narrative-system.md),
-[eventos raros y Prestige](rare-events-and-prestige.md) y el
-[diseño detallado de 1.º](grade-1-template-design.md) desarrollan sus áreas sin
+[eventos raros y Prestige](rare-events-and-prestige.md) y los
+[diseños detallados de 1.º–5.º](full-career-content-matrix.md) desarrollan sus áreas sin
 convertirlas en comportamiento ya implementado.
 
 ## Propósito y frontera
@@ -30,8 +30,10 @@ Produce diseño, no contenido ejecutable. Incluye:
 - auditoría final de diseño de carrera.
 
 No incluye producción masiva de variantes o años, ranking/backend, grandes sets
-de assets ni una arquitectura nueva de motor. Phase 0 sigue abierta hasta que los
-diseños detallados de 2.º–5.º y la auditoría final de diseño estén completos.
+de assets ni una arquitectura nueva de motor. Los cinco pases por año ya están
+aprobados. Phase 0 sigue abierta hasta completar la Full-Career Cross-Content
+Audit, el pase detallado de Rare Events / Milestones / Prestige, Career Epilogue
+v1 y la reconciliación final de diseño.
 
 ## Arco de carrera — `LOCKED`
 
@@ -172,6 +174,18 @@ proyecto tecnológico, recaudación/evento y proyecto final. Su continuidad es
 narrativa; su Template matemática no es obligatoria en toda run. Cuando no es
 seleccionada, un storylet corto puede mantenerla presente sin consumir un beat.
 
+La [matriz](full-career-content-matrix.md#políticas-de-composición) fija Event
+Cluster Policy, Recurring Arc Policy y Callback Independence como `LOCKED`.
+Intercurso de 2.º, School Event de 4.º y Egreso de 5.º admiten como máximo una
+Template puntuable de cada cluster por run normal. Para Project Arc, el target
+aceptado es 1–2 por carrera, máximo 2 candidato y preferencia por años no
+consecutivos. La diversidad cognitiva es una preferencia soft, no otro límite.
+
+El [sistema narrativo](narrative-system.md) fija Responsibility Externality para
+4.º —consecuencias externas sin Equipo automático— y Career Convergence para
+5.º —historia visible sin prerrequisitos de callbacks—. Narrative Salience
+prioriza aproximadamente 3–5 hechos de cierre; su algoritmo queda diferido.
+
 Deportes, dinero cotidiano/colectivo, tecnología, transporte, proyectos y eventos
 son contextos aceptados. Los presupuestos deben ser ficticios o colectivos y no
 inferir poder adquisitivo familiar.
@@ -207,6 +221,9 @@ automáticamente ni duplica evidencia ya puntuada.
 ## Estado y siguiente paso
 
 La envolvente está completa y aceptada, pero Phase 0 sigue `IN_PROGRESS`. La
-matriz v0.2 está auditada y 1.º tiene diseño detallado aprobado a nivel candidato.
-El siguiente trabajo canónico es **STAGE-08 / Phase 0 / Grade 2 — Belonging
-Template Design Pass**; todavía no se autorizó implementar 1.º.
+matriz v0.3 integra los cinco pases de 1.º–5.º, todos
+`DESIGN-CANDIDATE-APPROVED`. El siguiente trabajo canónico es
+**STAGE-08 / Phase 0 / Full-Career Cross-Content Audit**. Su
+[alcance de auditoría](../04-quality/content-validation.md#full-career-cross-content-audit)
+es documental/de diseño; la implementación de 1.º sigue después del cierre
+completo de Phase 0 y conserva el audit posterior a 1.º ya previsto.

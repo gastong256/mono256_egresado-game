@@ -53,8 +53,12 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 - `competitive-scoring-and-ranking.md`: dirección propuesta del score competitivo y del ranking de feria.
 - `difficulty-and-playability.md`: piso bajo y techo alto, bandas y presupuesto de dificultad.
 - `stage-08-product-design-envelope.md`: decisiones de producto y frontera de Phase 0 para la carrera completa.
-- `full-career-content-matrix.md`: matriz auditada v0.2 de 25 Templates candidatas para 1.º–5.º.
+- `full-career-content-matrix.md`: matriz v0.3 de 25 diseños aprobados candidatos, cobertura y políticas de composición para 1.º–5.º.
 - `grade-1-template-design.md`: diseño detallado candidato de las cinco Templates de consolidación de 1.º.
+- `grade-2-template-design.md`: cinco diseños aprobados de pertenencia, cluster Intercurso y ruta de encuesta.
+- `grade-3-template-design.md`: cinco diseños aprobados de autonomía, Estilo, recursos y movilidad.
+- `grade-4-template-design.md`: cinco diseños aprobados de responsabilidad, cluster School Event y reemplazo raro.
+- `grade-5-template-design.md`: cinco diseños aprobados de cierre/futuro, cluster Egreso y convergencia.
 - `rare-events-and-prestige.md`: semántica aceptada, calibración candidata y guardrails de eventos raros/Prestige.
 - `graduation-and-fail-forward.md`: egreso, recuperación y por qué el error no expulsa al jugador.
 - `rules-scoring-and-progression.md`: reglas, estados, scoring y progresión.
@@ -196,14 +200,16 @@ Una decisión integrada declara su nivel, y **el nivel es parte de la decisión*
 Un documento no describe en presente una capacidad que no existe. Lo implementado vive en los documentos de arquitectura actuales; lo que falta, en [arquitectura objetivo del motor](03-architecture/target-engine-architecture.md), con el estado real de cada capacidad.
 
 Los documentos describen la **baseline de código post-Teacher-Gate-1** al 4 de
-septiembre de 2026 y el **checkpoint de diseño STAGE-08 / Phase 0** al 8 de
+septiembre de 2026 y el **checkpoint #2 de diseño STAGE-08 / Phase 0** al 9 de
 septiembre. Lo implementado incluye el shell Next.js, toolchain reproducible,
 fronteras de módulos, Supabase opcional, Docker, gates de calidad, motor
 determinista con replay/snapshots, `Promedio · Equipo · Aura · Estilo`, slice de
 7.º, composición por presupuesto, egreso garantizado con recuperación fail-forward
 y `FairScore` candidato con recomputación server-only. `fair-score-dev-2` es
-teacher-informed pero no oficial. La envolvente, matriz v0.2, narrativa de carrera,
-eventos raros/Prestige y cinco Templates de 1.º son **diseño**, no runtime. Todavía
+teacher-informed pero no oficial. La envolvente, matriz v0.3, narrativa de carrera,
+eventos raros/Prestige y 25 Templates de 1.º–5.º son **diseño**, no runtime. Phase 0
+sigue `IN_PROGRESS`; continúa con Full-Career Cross-Content Audit, pases raros/Hitos/
+Prestige y epílogo, y reconciliación final. Todavía
 no existen los años 1.º–5.º, callbacks multianuales, Prestige, Auth, schema de
 producto, endpoints/sesión/persistencia de competencia, ranking ni despliegue
 público.

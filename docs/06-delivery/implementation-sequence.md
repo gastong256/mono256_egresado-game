@@ -143,7 +143,7 @@ Estado real contra el código al 2 de septiembre de 2026, tras cerrar STAGE-07. 
 | Recuperaciones y fail-forward | `DONE` | [ADR-024](../03-architecture/adr/ADR-024-progression-recovery-and-graduation.md), `recovery-dev-1`, `g7.bus-travel-review`, `tests/unit/progression-reachability.test.ts` (espacio de estados recorrido entero) | STAGE-07 |
 | Recuperación fuera del score competitivo | `DONE` | `fair-score.ts` descarta la evidencia por rol; test de anti-farmeo en `tests/integration/recovery-run.test.ts` | STAGE-07 |
 | Carrera completa jugable de seis años | `PARTIAL` | la estructura la ejerce el fixture `six-stage-progression`; el **contenido** de 1.º–5.º no existe | STAGE-08 |
-| Diseño de contenido 1.º · 2.º · 3.º · 4.º · 5.º | `PARTIAL` | matriz v0.2 auditada y 1.º detallado; 2.º–5.º esperan su Design Pass | STAGE-08 / Phase 0 |
+| Diseño de contenido 1.º · 2.º · 3.º · 4.º · 5.º | `DESIGN-CANDIDATE-APPROVED` | cinco pases completos en matriz v0.3; auditoría cruzada, pases raros/epílogo y reconciliación final pendientes | STAGE-08 / Phase 0 |
 | Contenido runtime 1.º · 2.º · 3.º · 4.º · 5.º | `NOT_STARTED` | sólo existe `src/content/grade-7/` | STAGE-08 / Phase 1+ |
 | Verificación autoritativa por replay | `PARTIAL` | `src/server/game/validate-run.ts`: replaya, valida el plan compuesto y **calcula su propio score competitivo**; nada de lo que el cliente afirme se lee. Faltan endpoints, sesión, rate limit y persistencia | STAGE-09 |
 | Ranking con personal best | `NOT_STARTED` | — | STAGE-09 |
@@ -775,19 +775,29 @@ runtime existente.
 
 **Estado interno actual.** La
 [envolvente de producto](../01-game-design/stage-08-product-design-envelope.md), la
-[matriz v0.2](../01-game-design/full-career-content-matrix.md), el
-[diseño de 1.º](../01-game-design/grade-1-template-design.md) y este checkpoint
-documental están completos. Phase 0 sigue `IN_PROGRESS`: faltan los pases
-detallados de 2.º–5.º y la auditoría final de diseño. No empezó implementación.
+[matriz v0.3](../01-game-design/full-career-content-matrix.md) y los diseños de
+[1.º](../01-game-design/grade-1-template-design.md),
+[2.º](../01-game-design/grade-2-template-design.md),
+[3.º](../01-game-design/grade-3-template-design.md),
+[4.º](../01-game-design/grade-4-template-design.md) y
+[5.º](../01-game-design/grade-5-template-design.md) están completos a nivel
+`DESIGN-CANDIDATE-APPROVED`, integrados por el checkpoint #2. Phase 0 sigue
+`IN_PROGRESS`: faltan la auditoría cruzada, los pases detallados de eventos
+raros/Hitos/Prestige y epílogo, y la reconciliación final. No empezó implementación.
 
 **Orden obligatorio.** No es una tarea paralela ni autoriza producir 1.º antes de
 terminar Phase 0.
 
 ```text
 Phase 0 — diseño completo de carrera
-  → matriz v0.2 auditada
-  → Template Design Passes 1.º, 2.º, 3.º, 4.º y 5.º
-  → auditoría final de diseño
+  → auditoría inicial v0.2 + matriz v0.3 integrada      COMPLETE
+  → Template Design Passes 1.º, 2.º, 3.º, 4.º y 5.º    COMPLETE
+  → Documentation Checkpoint #2                       COMPLETE
+  → Full-Career Cross-Content Audit                   NEXT
+  → Rare Events / Milestones / Prestige detailed pass PLANNED
+  → Career Epilogue v1 pass                           PLANNED
+  → Final Phase-0 reconciliation                      PLANNED
+  → Phase 0 DONE
 Phase 1 — implementar 1.º real
   → STOP
   → auditoría de escalabilidad posterior a 1.º
@@ -797,6 +807,14 @@ Phase 1 — implementar 1.º real
 ```
 
 **1.º es la prueba crítica.** Al terminarlo hay que contestar: *¿qué fundaciones nuevas tuvimos que inventar?* Si la respuesta incluye un sistema fundamental —otro modelo de carrera, otro motor de score, otra gramática de progreso, otra paleta—, se revisa antes de seguir.
+
+**Siguiente auditoría de diseño.** La
+[Full-Career Cross-Content Audit](../04-quality/content-validation.md#full-career-cross-content-audit)
+cruza 7.º existente y las 25 Templates futuras: cobertura y duplicación matemática,
+interacciones, Equipo/Aura, Estilo, recovery, clusters, frecuencia del Project Arc,
+neutralidad rara/Prestige, callbacks, pacing, primeras tres runs, riesgos y
+convergencia de 5.º. Está planificada; no sustituye ni adelanta el siguiente
+gate de escalabilidad sobre implementación real.
 
 **Caso obligatorio de la auditoría posterior a 1.º.** Antes de autorizar la
 implementación amplia de 2.º–5.º, una prueba debe ejercer específicamente
@@ -836,11 +854,14 @@ producto aprobada.
 **Criterios de aceptación, por año.**
 
 - [x] Product Design Envelope completo.
-- [x] Matriz de carrera v0.2 auditada: 25 candidatos y distribución 24/52/24.
+- [x] Auditoría inicial de matriz v0.2 y actualización v0.3: 25 diseños y distribución 24/52/24.
 - [x] Template Design Pass de 1.º completo a nivel `DESIGN-CANDIDATE-APPROVED`.
-- [x] Checkpoint documental de Phase 0 integrado.
-- [ ] Template Design Passes de 2.º, 3.º, 4.º y 5.º completos.
-- [ ] Auditoría final de diseño de carrera completa.
+- [x] Checkpoints documentales #1 y #2 de Phase 0 integrados.
+- [x] Template Design Passes de 2.º, 3.º, 4.º y 5.º completos a nivel `DESIGN-CANDIDATE-APPROVED`.
+- [ ] Full-Career Cross-Content Audit ejecutada y reconciliada.
+- [ ] Pase detallado de Rare Events / Milestones / Prestige completo.
+- [ ] Pase de Career Epilogue v1 completo.
+- [ ] Reconciliación final y cierre de Phase 0.
 
 - [ ] La matemática conserva un piso de prerrequisitos accesible desde aproximadamente 7.º; el año cambia contexto, responsabilidad y narrativa, no funciona como barrera curricular.
 - [ ] Cada año puede combinar `CORE / STANDARD / STRETCH`; la complejidad sube por estructura, planificación e información.
@@ -862,13 +883,19 @@ producto aprobada.
 
 **Validación requerida.** `pnpm verify`, `pnpm game:validate-content`, `pnpm game:simulate:deep`, `pnpm test:e2e:only`.
 
-**Decisiones.** La matriz v0.2 es el candidato auditado vigente, no una cuota ni
+**Decisiones.** La matriz v0.3 reúne los 25 diseños candidatos aprobados, no una cuota ni
 un catálogo runtime. Sigue `OPEN` la profundidad final de familias/Templates/
 Variants ([pregunta 46](../07-reference/open-questions.md)), la semántica de dos
 obligaciones bajo un único recovery y las calibraciones exactas de Prestige/eventos
 raros. El acento visual por año permanece `DEFERRED` ([pregunta 48](../07-reference/open-questions.md)).
 
-**Siguiente tarea.** `STAGE-08 / Phase 0 / Grade 2 — Belonging Template Design Pass`.
+Event Cluster Policy, Recurring Arc Policy y Callback Independence están
+`LOCKED` como producto. Frecuencia 1–2 del Proyecto es target aceptado; máximo 2
+sigue candidato, con preferencia no consecutiva y diversidad cognitiva soft.
+Las políticas concretas están en la [matriz](../01-game-design/full-career-content-matrix.md#políticas-de-composición)
+y no se implementan durante este checkpoint.
+
+**Siguiente tarea.** `STAGE-08 / Phase 0 / Full-Career Cross-Content Audit`.
 
 **Exit gate.** ¿Una run completa recorre `7.º → 1.º → 2.º → 3.º → 4.º → 5.º → EGRESADO`?
 

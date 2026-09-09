@@ -81,6 +81,29 @@ Un challenge procedural debe poder afirmar automáticamente:
 - `production_ready`.
 - `retired`.
 
+## Diseño aprobado en Phase 0
+
+Las fichas de [1.º](grade-1-template-design.md), [2.º](grade-2-template-design.md),
+[3.º](grade-3-template-design.md), [4.º](grade-4-template-design.md) y
+[5.º](grade-5-template-design.md) tienen estado `DESIGN-CANDIDATE-APPROVED`.
+Esto aprueba situación, intención matemática, invariantes, placement, pacing y
+evidencia; no equivale a `math_reviewed`, `playtest_ready` ni `production_ready`.
+Los cinco pases están completos; los parámetros y evaluadores ejecutables no
+están producidos.
+
+Antes de producir cada Template se detallan unidades, precisión/redondeo,
+tolerancia, rangos, función objetivo, soluciones alternativas, feedback,
+variantes y evidencia independiente. Los invariantes `LOCKED` de su ficha son
+condiciones de rechazo de variantes, no sugerencias. Las interacciones nombradas
+describen dirección de diseño: se revisan contra los interaction types/adapters
+existentes; una mecánica nueva requiere decisión aparte antes de implementarla.
+
+El pipeline conserva revisión matemática/editorial, barrido de seeds, validación
+a 360 px y teclado. No se interpreta la aprobación documental como evidencia
+de esos checks. La
+[auditoría cruzada de Phase 0](../04-quality/content-validation.md#full-career-cross-content-audit)
+es el siguiente paso y revisa el conjunto antes de cerrar diseño.
+
 ## Checklist editorial
 
 - Lenguaje argentino neutral, comprensible fuera de una provincia específica.
@@ -171,6 +194,10 @@ Un año aporta **uno o dos beats ordinarios**, con exactamente un `anchor`. Un `
 El ruteo se declara por **plantilla ordinaria de origen**, no sólo por año. Para cada plantilla, el content set elige una de dos respuestas explícitas: una o más plantillas con rol `recovery` que aíslen un paso relevante, o `none` con una razón editorial. No toda plantilla necesita repaso y usar el de otra situación sólo para completar cobertura es contenido incoherente.
 
 El techo de un repaso por etapa es estructural bajo [ADR-024](../03-architecture/adr/ADR-024-progression-recovery-and-graduation.md); no es una perilla de authoring ni de `RecoveryPolicy`. La policy calibra qué calidades dejan obligación. El [diseño de 1.º](grade-1-template-design.md) propone dos rutas distintas y el [contrato de auditoría](../04-quality/post-grade-1-scalability-audit.md) obliga a fallarlas en la misma etapa: debe comprobar selección, resolución semántica, relevancia matemática, rastro narrativo, pacing, egreso y exclusión de `FairScore` antes de implementar ampliamente 2.º–5.º. Esa auditoría reúne evidencia: no prescribe hoy cómo resolver el caso.
+
+La [matriz de carrera](full-career-content-matrix.md#cobertura-futura-de-recuperación)
+registra las nueve fuentes recovery-capable de 1.º–5.º y sus rutas aprobadas de
+diseño. No amplía el máximo de uno ni crea gates de escalabilidad adicionales.
 
 No confundir los cuatro artefactos: `ContentCatalog` registra familias y plantillas disponibles; `ApprovedVariantCatalog` contiene direcciones concretas que pasaron el pipeline bajo una versión; `DemoPlan` enumera lo que muestra una demostración; `RunPlan` fija lo que una run normal efectivamente juega. El `RunComposer` construye ese último artefacto una vez, antes de ejecutar. Aprobar una variante no la agenda, elegibilidad no garantiza selección y un demo no es un run plan con más presupuesto.
 

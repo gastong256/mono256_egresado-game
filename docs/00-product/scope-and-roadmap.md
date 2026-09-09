@@ -149,10 +149,11 @@ Esta progresión narrativa está aceptada en la
 ### Producción de contenido después del Teacher Gate 1
 
 No se autoran los años en secuencia sin catálogo. La
-[matriz completa v0.2](../01-game-design/full-career-content-matrix.md) ya fue
-auditada como candidata: 25 Templates, con 1.º aprobado en detalle y 2.º–5.º aún a
-nivel de matriz. Phase 0 completa esos Template Design Passes antes de implementar;
-después se implementa 1.º real, se ejecuta la auditoría obligatoria y sólo si pasa
+[matriz completa v0.3](../01-game-design/full-career-content-matrix.md) reúne 25
+Templates con los cinco pases de 1.º–5.º `DESIGN-CANDIDATE-APPROVED`. Phase 0
+continúa con Full-Career Cross-Content Audit, los pases de Rare Events / Milestones
+/ Prestige y Career Epilogue v1, y la reconciliación final. Sólo después de cerrar
+la fase se implementa 1.º real, se ejecuta la auditoría obligatoria y, si pasa,
 se escala 2.º–5.º. Ver [secuencia de implementación](../06-delivery/implementation-sequence.md).
 
 La referencia histórica de seis a ocho situaciones significativas por año describe **profundidad posible del catálogo**, no beats obligatorios en una run. No fija un requisito ni una cantidad final: cada run normal selecciona uno o dos beats por etapa, mientras el catálogo debe ofrecer más opciones para sostener la rejugabilidad. La profundidad definitiva sigue abierta ([pregunta 46](../07-reference/open-questions.md)).

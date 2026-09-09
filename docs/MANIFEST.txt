@@ -13,6 +13,10 @@
 01-game-design/full-career-content-matrix.md
 01-game-design/game-design-document.md
 01-game-design/grade-1-template-design.md
+01-game-design/grade-2-template-design.md
+01-game-design/grade-3-template-design.md
+01-game-design/grade-4-template-design.md
+01-game-design/grade-5-template-design.md
 01-game-design/graduation-and-fail-forward.md
 01-game-design/math-design-framework.md
 01-game-design/narrative-system.md
