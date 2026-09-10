@@ -94,6 +94,12 @@ No se usa la reunión para elegir tipografías, espaciados ni tokens: eso ya est
 
 Se registraron decisiones TG1-01…TG1-14. La base fue aceptada con ajustes obligatorios: universalidad matemática, 85/10/5, evidencia multi-eje independiente, target de 8–10 minutos y egreso garantizado. Desempate/Hitos, vocabulario de recuperación, factores exactos y freeze final siguen abiertos o asignados.
 
+**Supersesión posterior, no decisión atribuida a TG1:** el Product Pass de septiembre
+cerró Estilo no competitivo, Prestige, Repaso/INVALID, Competition Seed compartida
+y FairScore → Prestige → shared rank. Las preguntas y el guion anteriores
+conservan lo que se pidió en aquella sesión. Ver
+[integración canónica](../07-reference/full-career-product-audit-integration.md).
+
 Se registra en el [acta del gate](teacher-gate-1/09-acta.md), que además guarda qué versiones vieron los docentes: sin eso, dentro de seis meses nadie puede saber sobre qué material se pronunciaron.
 
 ---
@@ -128,8 +134,8 @@ Se revisa:
 - arquetipos finales;
 - fórmula exacta de score y su explicación pública;
 - interfaz del ranking;
-- política de intentos;
-- política exacta de empate y de premios;
+- implementación de intentos ilimitados/mejor resultado y Competition Seed compartida;
+- shared rank al empatar FairScore/Prestige, sin tiempo, y aceptación de premios separados de ese comparador;
 - reglas de nickname;
 - instrucciones del evento.
 

@@ -46,8 +46,8 @@ Los tres primeros son evidencia proxy y se declaran como tal. El cuarto es el ga
 
 ### Incluye
 - Carrera completa: 7.º a 5.º.
-- 30–40 desafíos base o combinaciones equivalentes disponibles mediante parametrización; no todos se juegan en una run.
-- 6–8 patrones de interacción.
+- Inventario vigente de 7.º y 25 diseños de 1.º–5.º; el target histórico de 30–40 no impone nuevas Templates ni confunde variantes con contenido.
+- Cinco motores de interacción reutilizables, con modos específicos según la taxonomía canónica.
 - API de runs.
 - PostgreSQL/Supabase.
 - Ranking por evento.
@@ -125,7 +125,7 @@ Las capas MVP describen **qué se construye**. Las fases del [ciclo de entrega r
 
 La progresión completa es `7.º → 1.º → 2.º → 3.º → 4.º → 5.º → EGRESO`. Cada etapa usa la misma gramática de diseño y de motor: los años posteriores agregan complejidad de contenido, **no un sistema de UI nuevo**.
 
-El producto completo, más allá del MVP Feria, incluye: catálogo completo de escenarios y variantes deterministas, modelo de carrera Promedio · Equipo · Aura · Estilo, dominio matemático y flags ocultos, recuperación fail-forward donde corresponda, arquetipo final, score oficial de feria, ranking por evento, política de intentos configurable, reglas y contenido versionados, verificación de runs en servidor, moderación de nicknames y operación de feria.
+El producto completo, más allá del MVP Feria, incluye: catálogo completo de escenarios y variantes deterministas, modelo de carrera Promedio · Equipo · Aura · Estilo, dominio matemático y flags ocultos, recuperación fail-forward donde corresponda, arquetipo final, score oficial de feria, ranking por evento, intentos ilimitados y mejor resultado verificado en Fair v1, reglas y contenido versionados, verificación de runs en servidor, moderación de nicknames y operación de feria.
 
 Ver [alcance objetivo del motor](../03-architecture/target-engine-architecture.md) para el estado real de cada capacidad.
 
@@ -148,12 +148,15 @@ Esta progresión narrativa está aceptada en la
 
 ### Producción de contenido después del Teacher Gate 1
 
-No se autoran los años en secuencia sin catálogo. La
-[matriz completa v0.3](../01-game-design/full-career-content-matrix.md) reúne 25
-Templates con los cinco pases de 1.º–5.º `DESIGN-CANDIDATE-APPROVED`. Phase 0
-continúa con Full-Career Cross-Content Audit, los pases de Rare Events / Milestones
-/ Prestige y Career Epilogue v1, y la reconciliación final. Sólo después de cerrar
-la fase se implementa 1.º real, se ejecuta la auditoría obligatoria y, si pasa,
-se escala 2.º–5.º. Ver [secuencia de implementación](../06-delivery/implementation-sequence.md).
+La [matriz v0.3](../01-game-design/full-career-content-matrix.md) conserva 25
+Templates de 1.º–5.º `DESIGN-CANDIDATE-APPROVED`, no contenido runtime.
+Product Audit y conformidad técnica reconciliados cierran Phase 0. Sigue
+[Phase 1: implementar 1.º](../06-delivery/implementation-sequence.md#phase-1-implementar-1º-real),
+STOP y gate post-G1; sólo con PASS se escala 2.º–5.º.
 
-La referencia histórica de seis a ocho situaciones significativas por año describe **profundidad posible del catálogo**, no beats obligatorios en una run. No fija un requisito ni una cantidad final: cada run normal selecciona uno o dos beats por etapa, mientras el catálogo debe ofrecer más opciones para sostener la rejugabilidad. La profundidad definitiva sigue abierta ([pregunta 46](../07-reference/open-questions.md)).
+La profundidad del catálogo no define longitud de run: Normal/Fair v1 tiene nueve
+beats ordinarios. Los targets de formas semánticas y materializaciones están en
+[autoría](../01-game-design/content-authoring-guide.md), sin agregar Templates
+antes de G1 salvo BLOCKER genuino. Teacher Demo sigue separado y orientado a
+amplitud. Fair v1 repite una Competition Seed compartida por edición; Practice
+ofrece variedad procedural, sin rank oficial.

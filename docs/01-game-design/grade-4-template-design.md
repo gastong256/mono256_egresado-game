@@ -11,6 +11,15 @@ mostrar consecuencias sobre personas o sistemas sin convertir esa externalidad
 en evidencia automática de Equipo. Su autoridad narrativa está en el
 [sistema narrativo](narrative-system.md#responsibility-externality).
 
+## Taxonomía reconciliada
+
+El Product Pass del 9 de septiembre normaliza las interacciones a los
+[cinco motores reutilizables](challenge-system.md#cinco-motores-reutilizables-de-interacción-v1).
+Los nombres específicos de esta ficha son modos/presentaciones, no frameworks
+nuevos ni capacidades runtime ya implementadas. Estilo sólo usa evidencia
+estratégica significativa para Career/Narrative; no aporta FairScore, Prestige
+ni oportunidades competitivas. Aplican la composición y el DoR canónicos.
+
 ## Colocación y composición
 
 Anchors: `y4.school-event-flow`, `y4.course-project-fundraiser` y
@@ -26,7 +35,7 @@ La recaudación pertenece al arco Proyecto del Curso. Ver
 
 **STANDARD · MEDIUM · anchor.** Intervenir en el flujo del evento escolar usando
 tasas, throughput, capacidad y cuellos de botella. La interacción de diseño es
-`Flow Board`.
+`Spatial / Graph Canvas` (modo red de flujo/cuellos de botella).
 
 **Invariante `LOCKED`:** toda variante contiene un cuello de botella material
 cuya identificación cambia la intervención. Se rechazan cálculos aislados de
@@ -36,8 +45,7 @@ tasa. El efecto sobre otras personas es visible, pero la evaluación es
 ## `y4.course-project-fundraiser`
 
 **STANDARD · MEDIUM · anchor.** Organizar una recaudación con costos fijos y
-variables, ingresos, margen, objetivo y capacidad, mediante construcción bajo
-restricciones. Es la evolución económica del Proyecto del Curso.
+variables, ingresos, margen, objetivo y capacidad, mediante `Allocate / Constrain` (modo ingresos/capacidad). Es la evolución económica del Proyecto del Curso.
 
 **Invariante `LOCKED`:** cubrir costos y alcanzar el objetivo deben ser
 condiciones distintas. No alcanza calcular un margen unitario. El objetivo
@@ -60,7 +68,7 @@ Equipo usa carga social y preferencias entre cronogramas Math-valid.
 
 **Invariante `LOCKED`:** múltiples soluciones Math-valid con consecuencias
 distintas de Equipo/Estilo. Cumplir cobertura no otorga automáticamente el
-crédito social. La dirección de interacción es un tablero de asignación.
+crédito social. La dirección de interacción es `Allocate / Constrain` (modo turnos/cobertura, con representación temporal).
 
 ```text
 Math = yes · Team = yes · Aura = none · Recovery = none
@@ -73,7 +81,7 @@ circulación y despejes explícitos se afectan entre sí.
 
 **Invariante `LOCKED`:** capacidad y flujo son estructuralmente necesarios.
 Una variante de encastre simple, como cambiar muebles del aula de 1.º, se
-rechaza. La interacción espacial expresa capacidad y circulación, no sólo área.
+rechaza. `Spatial / Graph Canvas` (modo capacidad/circulación) expresa flujo, no sólo área.
 
 ```text
 Math = yes · Team = none · Aura = none
@@ -84,8 +92,10 @@ Recovery = y4.spatial-capacity-review
 
 **STANDARD · MEDIUM · reemplazo raro condicional.** Representar al curso con una
 propuesta viable bajo restricciones explícitas y una acción pública separada.
-La elegibilidad admite varios caminos para evitar que sólo quien ya tuvo buenos
-resultados pueda recibir la oportunidad; luego interviene RNG seeded.
+En Practice la elegibilidad admite varios caminos, no sólo buenos resultados.
+En Fair la Competition Seed fija elegibilidad/presencia común antes de jugar; el
+historial individual no desbloquea oportunidades competitivas extra. La interacción
+es `Choice / Compare`, con respuesta Math/comunicación semánticamente separada.
 
 **Invariante `LOCKED`:** `Math action != Aura action != Prestige evidence`.
 
@@ -100,8 +110,9 @@ Team = none · Aura = yes, cuando aparece · Recovery = none
 
 El reemplazo no añade beat puntuable ni techo de FairScore/Prestige. No asigna
 Prestige a la corrección matemática ni a la misma acción pública que ya paga
-Aura. El catálogo de logros y la arquitectura de normalización quedan para los
-pases posteriores. Ver [eventos raros y Prestige](rare-events-and-prestige.md).
+Aura. Los slots y la independencia de evidencia están cerrados como producto;
+el detalle autorado de cada logro y la implementación bajo
+[ADR-025](../03-architecture/adr/ADR-025-full-career-contract-evolution.md) siguen pendientes. Ver [eventos raros y Prestige](rare-events-and-prestige.md).
 
 ## Estado editorial
 

@@ -12,8 +12,8 @@
 
 | Riesgo | Impacto | Probabilidad | Mitigación |
 |---|---:|---:|---|
-| Se percibe como examen | Alto | Medio | playtests; variedad de interacciones; consecuencias narrativas |
-| Dificultad desigual 12–17 | Alto | Alto | variantes por complejidad; dificultad adaptativa/híbrida |
+| Se percibe como examen | Alto | Medio | walkthroughs/proxy y gate docente; matemática intrínseca; riesgo residual sin playtest previo |
+| Dificultad desigual 12–17 | Alto | Alto | piso accesible y dificultad estructural; Fair fija dificultad común |
 | Contenido ambiguo | Alto | Medio | math review + invariants + golden seeds |
 | Wi-Fi insuficiente | Alto | Alto | gameplay local-first; pending sync; fallback |
 | Ranking manipulable | Medio/Alto | Medio | scoring server-side; rate limits; auditoría |
@@ -51,12 +51,12 @@ Riesgos que aparecen cuando el juego pasa a ser una competencia con premios y cu
 |---|---:|---|
 | La primera prueba con estudiantes ocurre durante la feria | Alto | gate docente como proxy, UX conservadora, simulación, telemetría, hardening; el riesgo residual se **declara**, no se disimula |
 | Una variante procedural sale ambigua o imposible | Alto | catálogo de variantes prevalidado y desplegado, invariantes ejecutables |
-| Los intentos ilimitados favorecen a quien tiene más tiempo libre | Medio | personal best en vez de suma; política de intentos configurable |
-| El jugador reintenta hasta recibir una run fácil | Medio | presupuesto de dificultad, pools emparejados, descriptor emitido por el servidor |
+| Los intentos ilimitados favorecen a quien tiene más tiempo libre | Medio | personal best verificado en vez de suma; intentos ilimitados v1 |
+| El jugador reintenta hasta recibir una run fácil | Medio | Competition Seed compartida emitida por servidor, variantes/dificultad/rareza fijas por edición |
 | El score de ranking se puede falsificar | Alto | el servidor reproduce y calcula; nunca se confía el score final del navegador |
-| El score premia la velocidad por encima del razonamiento | Alto | la matemática domina; el tiempo sólo como desempate tardío |
+| El score premia la velocidad por encima del razonamiento | Alto | FairScore → Prestige → shared rank; tiempo sólo diagnóstico |
 | El desempeño académico se cuenta dos veces | Medio | `MathPerformance` separado del Promedio visible |
-| Estilo se convierte en un objetivo de optimización | Medio | Estilo no puntúa directamente |
+| Estilo se convierte en un objetivo de optimización | Medio | Estilo no aporta FairScore, Prestige ni oportunidades competitivas |
 | Matemática trivial para adultos y difícil para 12 años | Alto | piso bajo y techo alto; complejidad por restricciones y optimización |
 | El diseño visual vuelve a parecerse a los juegos de referencia | Medio | sistema de diseño v0.2 aprobado y sus gates de tokens y contraste |
 | Se cambia una regla en medio de la feria | Alto | congelamiento de versiones, control de cambios y capacidad de replay/regrade |

@@ -80,20 +80,20 @@ Un challenge con matemática correcta pero gameplay pobre no está listo.
 
 Este pipeline editorial valida **un desafío**. Desde STAGE-03, el pipeline de [ADR-020](../03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md) agrega sobre la población concreta invariantes transversales, chequeos matemáticos por plantilla, fingerprint canónico, deduplicación, integridad del catálogo y auditoría estadística. Eso ya se aplica al catálogo aprobado de desarrollo vigente `grade-7-dev-5`, que además alimenta gameplay; conserva las 159 entradas de `dev-4` y suma 26 variantes de recuperación bajo `contentVersion 0.9.0-grade-7`.
 
-Una plantilla ordinaria no queda incompleta por declarar `none`: el ruteo de recuperación se decide por plantilla y debe tener una razón pedagógica. Cuando declare recovery, se valida como contenido aprobado y debe aislar matemática relevante al error de origen. El [contrato de auditoría posterior a 1.º](post-grade-1-scalability-audit.md) ejerce explícitamente `classroom-layout` y `rehearsal-schedule` fallidas dentro de una etapa y verifica que el único repaso estructural siga siendo coherente; no anticipa la solución de authoring.
+Una plantilla ordinaria no queda incompleta por declarar `none`: el ruteo de recuperación se decide por plantilla y debe tener una razón pedagógica. Cuando declare recovery, se valida como contenido aprobado y debe aislar matemática relevante al error de origen. El [contrato de auditoría posterior a 1.º](post-grade-1-scalability-audit.md) ejerce explícitamente `classroom-layout` y `rehearsal-schedule` fallidas dentro de una etapa y verifica que el único repaso estructural siga siendo coherente; valida la semántica de producto cerrada: uno seleccionado, debrief del resto y cierre total.
 
 La comparabilidad por bandas y la auditoría determinista del armado de runs están implementadas desde STAGE-05; STAGE-06 agregó el score competitivo candidato y su auditoría reducida. Todavía faltan la calibración docente/empírica y el congelamiento del catálogo oficial de feria; no se deducen de que una población sea matemáticamente válida, de que su carga estructural sea pareja ni de que una fórmula cumpla sus invariantes. Ver [validación y auditoría de variantes](variant-validation-and-audit.md), [auditoría de equidad competitiva](competition-fairness-audit.md), [ADR-022](../03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) y [ADR-023](../03-architecture/adr/ADR-023-competitive-score-policy.md).
 
 ## Full-Career Cross-Content Audit
 
-**Estado: NEXT · PLANNED · NOT EXECUTED.** Es el siguiente trabajo canónico
-de STAGE-08 / Phase 0 tras el checkpoint documental #2. Los cinco Template Design
-Passes están `DESIGN-CANDIDATE-APPROVED`; esta aprobación individual todavía no
-demuestra coherencia del conjunto.
+**Estado: DONE en diseño.** Product Pass del 9 de septiembre integrado el 10 de
+septiembre. [Procedencia y decisiones](../07-reference/full-career-product-audit-integration.md)
+y [conformidad técnica](full-career-technical-conformance.md) preservan evidencia.
+No implica contenido ejecutable, pacing empírico ni gate post-G1 aprobado.
 
 La auditoría cruza **7.º existente + las 25 Templates futuras** de la
 [matriz v0.3](../01-game-design/full-career-content-matrix.md), usando las cinco
-fichas y las fuentes narrativas/competitivas. Debe revisar:
+fichas y las fuentes narrativas/competitivas. Revisó:
 
 1. Cobertura matemática y piso universal; duplicación semántica entre años.
 2. Diversidad de interacciones y de razonamiento; no confundir una familia de UI
@@ -102,8 +102,8 @@ fichas y las fuentes narrativas/competitivas. Debe revisar:
 4. Las nueve fuentes recovery-capable, sus rutas y los `none` explícitos, con
    el máximo estructural de uno y el caso posterior a 1.º preservados.
 5. Clusters Intercurso, School Event y Egreso, su máximo puntuable y compatibilidad
-   con colocación, dificultad y diversidad cognitiva soft.
-6. Frecuencia del Project Arc: target 1–2, máximo 2 candidato y preferencia no
+   con colocación, dificultad, envolvente global y preferencias de variedad.
+6. Frecuencia del Project Arc: target 1–2, máximo 2 LOCKED v1 y preferencia no
    consecutiva, sin volver obligatoria su presencia como desafío.
 7. Neutralidad de oportunidades raras y lógica de Prestige, incluida separación
    de evidencia y cero puntos por aparición.
@@ -117,8 +117,26 @@ madurez candidata cuando corresponda y actualizar el estado con evidencia. No
 debe presentar simulación o revisión documental como validación empírica de los
 8–10 minutos ni como implementación de las políticas nuevas.
 
-Después siguen el pase detallado de **Rare Events / Milestones / Prestige**,
-**Career Epilogue v1** y la **reconciliación final de Phase 0**. Sólo entonces se
-puede cerrar Phase 0 e implementar 1.º. Esta auditoría de diseño no es un nuevo
-gate de recuperación ni ejecuta/reemplaza la
-[auditoría de escalabilidad posterior a 1.º](post-grade-1-scalability-audit.md).
+El Product Pass también completó Rare Events / Milestones / Prestige y Career
+Epilogue v1 a nivel de diseño. Reconciliación y ADR-025 cierran Phase 0; la siguiente
+tarea es Phase 1 G1. La auditoría de diseño no ejecuta/reemplaza el
+[gate post-G1](post-grade-1-scalability-audit.md).
+
+## Gates futuros de contenido y carrera completa
+
+Cada variante debe pasar [Intrinsic Math Gate y Definition of Ready](../01-game-design/content-authoring-guide.md),
+solubilidad, información completa, aritmética/rounding, banda estructural,
+no trivialidad, ausencia de seleccionar-todo/duplicados y legitimidad de estrategias.
+La validación usa oráculo independiente y fuente aprobada, también para Repaso.
+
+Scoring por Template: witness de máximos conjuntamente alcanzables, resultado
+inválido bajo, componentes ausentes/presentes y ninguna evidencia duplicada.
+Tests específicos: standings Math≠Aura; represent-class Math≠Aura≠Prestige;
+Project Final Math≠Team≠Aura. Style nunca paga competencia.
+
+Con contenido completo, objetivo recomendado de ≥100.000 RunPlans sintéticos y
+enumeración exhaustiva donde sea pequeña: nueve beats, seis etapas, cuotas,
+clusters/Project, diversidad, pacing, perfecto 10.000 y egreso. Son pruebas futuras,
+no ejecutadas por esta integración. La [auditoría competitiva](competition-fairness-audit.md)
+y walkthroughs de [UX](../01-game-design/ux-interaction-design.md) completan el gate;
+simulación no sustituye comprensión/diversión ni revisión docente.

@@ -2,7 +2,7 @@
 
 - **Estado:** `REQUIRED · PLANNED · NOT EXECUTED`
 - **Cuándo:** después de implementar contenido real de 1.º y antes de autorizar implementación amplia de 2.º–5.º
-- **Resultado actual:** ninguno; el contrato está congelado, no la solución
+- **Resultado actual:** ninguno; semántica de producto cerrada, implementación/pedagogía por validar
 
 Esta auditoría prueba con contenido real si el modelo de recuperación de STAGE-07
 escala cuando una etapa contiene más de una Template recovery-capable. No reabre
@@ -26,11 +26,11 @@ Construir un fixture, test o RunPlan de 1.º que contenga:
 ```text
 y1.classroom-layout
 → recovery-capable: y1.scale-fit-review
-→ forzar resultado que dispara obligación
+→ forzar resultado INVALID que dispara obligación
 
 y1.rehearsal-schedule
 → recovery-capable: y1.schedule-review
-→ forzar resultado que dispara obligación
+→ forzar resultado INVALID que dispara obligación
 ```
 
 El estado debe representar dos obligaciones distintas:
@@ -44,26 +44,34 @@ AGENDA / VENTANAS TEMPORALES
 y mantener un máximo de una recuperación en la etapa. El diseño de 1.º debe
 permitir explícitamente esa composición; no alcanza probar cada ruta por separado.
 
-## Preguntas obligatorias
+## Verificaciones obligatorias
 
-1. ¿Qué recovery se selecciona y bajo qué regla determinista —orden, prioridad, severidad, rol u otra razón explícita?
-2. ¿Qué cierra semánticamente el único beat: sólo su concepto fuente, la obligación agregada de la etapa u otra cosa?
-3. Si un concepto no recibe repaso directo, ¿queda como consecuencia narrativa, previa, callback posterior, sin remediación u otra representación explícita?
-4. ¿El recovery elegido es matemáticamente pertinente al historial real de error?
-5. ¿La solución necesitó un caso especial de motor o un hack de contenido?
-6. ¿La misma regla escala a otros años con dos Templates recovery-capable?
-7. ¿Un solo recovery se siente aceptable en gameplay real?
-8. ¿Cuál es su costo de pacing?
-9. ¿El egreso permanece garantizado?
-10. ¿El recovery sigue fuera del numerador y denominador de `FairScore`, sin estrategia de farmeo?
-11. ¿Replay y verificación de servidor reconstruyen la misma selección, cierre y progresión terminal?
-12. ¿La decisión puede explicarse a docentes y jugadores?
+La semántica aceptada en [fail-forward](../01-game-design/graduation-and-fail-forward.md)
+es: recoger obligaciones → seleccionar una determinísticamente → debrief breve de
+las restantes → completar un Repaso → cerrar todas. Supersede las hipótesis sin
+solución preseleccionada del checkpoint #2; no concede permiso para omitir el gate.
+
+1. Identificar el Repaso seleccionado y la política/metadata que lo eligió.
+2. Distinguir concepto practicado de obligaciones sólo debriefeadas; no atribuir
+   práctica interactiva a todas por el cierre conjunto de IDs.
+3. Mostrar debrief pertinente y comprensible de cada obligación no seleccionada.
+4. Conservar relevancia matemática y fuente aprobada del Repaso seleccionado.
+5. Rechazar catálogo aprobado vacío; sin fallback no aprobado.
+6. Cerrar todas las obligaciones aun si el Repaso es INVALID, sin recursión.
+7. Verificar que FUNCTIONAL y fuentes con `none` no disparen review.
+8. No usar hacks de motor por año/template; generalizar a otros años.
+9. Medir pacing y adecuación pedagógica con interacción real, sin penalizar lentitud.
+10. Mantener egreso y excluir Repaso de FairScore/Prestige; sin farmeo.
+11. Replay, snapshot/resume y servidor reconstruyen selección, debrief y cierre.
+12. Explicar el resultado a docentes/jugadores sin llamar deuda a la memoria.
 
 ## No objetivos
 
-Phase 0 no elige entre limitar a una Template recovery-capable, consolidar
-conceptos, priorizar, enviar el resto a historia/previa, permitir dos beats ni otra
-arquitectura. Son hipótesis para contrastar con evidencia, no soluciones aprobadas.
+No habilitar dos Repasos, restringir artificialmente la composición para evitar
+el caso ni reabrir producto por preferencia de implementación. `reviewPriority`
+es recomendación editorial; su representación y los deltas de debrief siguen
+[ADR-025](../03-architecture/adr/ADR-025-full-career-contract-evolution.md).
+Sólo evidencia de contradicción real justificaría una revisión formal.
 
 ## Criterio de pase
 

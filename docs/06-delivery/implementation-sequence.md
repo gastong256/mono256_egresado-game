@@ -17,9 +17,9 @@ Si el roadmap y el código difieren, **el código gana** y el roadmap se corrige
 - Fases de validación externa y congelamiento: [ciclo de entrega real](../00-product/real-delivery-lifecycle.md).
 - Qué se construye por capas de alcance: [alcance y roadmap](../00-product/scope-and-roadmap.md) y [backlog](mvp-backlog.md).
 
-**Última reconciliación:** 8 de septiembre de 2026, checkpoint documental de
-STAGE-08 / Phase 0 posterior al diseño de 1.º. La baseline de código sigue siendo
-el hardening post-STAGE-07 del 4 de septiembre.
+**Última reconciliación:** 10 de septiembre de 2026, Full-Career Product Audit y
+conformidad técnica integrados: Phase 0 `DONE`, Phase 1 `READY`. Baseline runtime
+preservada; [trazabilidad del cierre](../07-reference/full-career-product-audit-integration.md).
 
 ---
 
@@ -60,7 +60,7 @@ Tabla de navegación. Los contratos de cada etapa, más abajo, son la autoridad.
 | [STAGE-06](#stage-06-scorepolicy-competitiva) | ScorePolicy competitiva | `DONE` | STAGE-05 | — |
 | [GATE-TG1](#gate-tg1-teacher-gate-1) | **Teacher Gate 1** | `PASSED_WITH_REQUIRED_ADJUSTMENTS` | STAGE-04, STAGE-06 | externo |
 | [STAGE-07](#stage-07-invariante-de-egreso-fail-forward-y-recuperaciones) | Egreso, fail-forward y recuperaciones | `DONE` | GATE-TG1 | — |
-| [STAGE-08](#stage-08-contenido-incremental-de-1º-a-5º) | Contenido incremental 1.º → 5.º | `IN_PROGRESS` · **actual** · Phase 0 | STAGE-07 | auditoría tras 1.º |
+| [STAGE-08](#stage-08-contenido-incremental-de-1º-a-5º) | Contenido incremental 1.º → 5.º | `IN_PROGRESS` · **actual** · Phase 1 READY | STAGE-07 | auditoría tras 1.º |
 | [STAGE-09](#stage-09-fair-mode-servidor-autoritativo-y-ranking) | Fair mode, servidor autoritativo y ranking | `NOT_STARTED` | STAGE-06, STAGE-08 | — |
 | [GATE-TG2](#gate-tg2-teacher-gate-2) | **Teacher Gate 2** | `TEACHER_GATE` | STAGE-09 | externo |
 | [FREEZE](#freeze-congelamiento-de-competencia) | Congelamiento de competencia | `NOT_STARTED` | GATE-TG2 | — |
@@ -753,9 +753,13 @@ Que hoy sólo la familia colectivo tenga repaso es una decisión de alcance, no 
 
 **Riesgos.** Un invariante de egreso mal formulado puede esconder un bucle infinito de recuperaciones. La property test tiene que acotar la cantidad de eventos, no sólo la convergencia. — **Mitigado por construcción**: el bucle no es representable, y la auditoría exhaustiva de estados alcanzables lo comprueba en lugar de confiar en un muestreo.
 
-**Lo que no entró, y por qué.** No se publicó `fair-score-dev-3` ni se tocó la ScorePolicy: la frontera con el score es una exclusión, no una recalibración. No hay ranking, desempate, intentos, personal best ni persistencia —siguen en STAGE-09—, ni Hitos, ni contenido de 1.º a 5.º. El acto del 25 de Mayo no se reescribió. Y ningún umbral de recuperación quedó cerrado: que `invalid` deje algo por cerrar y `functional` no es un candidato de política que va al Teacher Gate 2.
+**Lo que no entró, y por qué.** No se publicó `fair-score-dev-3` ni se tocó la ScorePolicy: la frontera con el score es una exclusión, no una recalibración. No hay ranking, desempate, intentos, personal best ni persistencia —siguen en STAGE-09—, ni Hitos, ni contenido de 1.º a 5.º. El acto del 25 de Mayo no se reescribió. En aquel cierre el umbral era candidato; el Product Pass posterior lo cerró en INVALID para Templates recovery-capable (FUNCTIONAL no dispara), sin modificar runtime en esta reconciliación.
 
-**Decisiones.** `TG1 ACCEPTED` (D-TG1-10): toda run válida completada llega a `GRADUATED`; sin game over global — **implementada**. `OPEN` ([pregunta 53](../07-reference/open-questions.md)): el vocabulario de recuperación y previas, porque TG1-14 no aportó palabras; «repaso» y «quedó algo dando vueltas» son candidatos de copy, no arquitectura. `TEACHER_GATE` ([pregunta 54](../07-reference/open-questions.md)): los umbrales de disparo. El techo de un repaso por etapa es estructura de ADR-024; revisarlo exige reabrir esa decisión y sus pruebas, no calibrar la policy.
+**Decisiones.** `TG1 ACCEPTED` (D-TG1-10): toda run válida completada llega a
+`GRADUATED`; sin game over global — **implementada**. El Product Pass posterior
+cerró Repaso, INVALID y el debrief de obligaciones no seleccionadas
+([preguntas 53 y 54](../07-reference/open-questions.md)); no se atribuye ese cierre
+a TG1. El techo de un Repaso por etapa sigue siendo estructura de ADR-024.
 
 **Exit gate.** ¿Pueden los años futuros apoyarse en este sistema de progresión sin inventar el suyo? — **Sí.** La carrera sintética de seis años se juega entera con el mismo código, sin un solo `if` por etapa, y el content set declara qué se repasa sin que el motor conozca un solo id de contenido.
 
@@ -763,143 +767,115 @@ Que hoy sólo la familia colectivo tenga repaso es una decisión de alcance, no 
 
 ### STAGE-08 — Contenido incremental de 1.º a 5.º
 
-- **Estado:** `IN_PROGRESS` — **etapa actual; Phase 0 de diseño**
+- **Estado:** `IN_PROGRESS` — **etapa actual; Phase 0 DONE / Phase 1 READY**
 - **Depende de:** STAGE-07 (`DONE`)
 - **Desbloquea:** STAGE-09
 
-**Propósito.** Diseñar y construir la carrera completa reutilizando fundaciones,
-no reinventándolas. El diseño precede a la producción y no se presenta como
-runtime existente.
+**Propósito.** Construir la carrera completa sobre las fundaciones existentes.
+El diseño aprobado no es runtime: sólo 7.º tiene catálogo de producción; la carrera
+sintética demuestra progresión de seis etapas, no contenido de 1.º–5.º.
 
-**Qué la habilita.** STAGE-07 cerró la progresión: el egreso es un estado terminal alcanzable, la recuperación converge por construcción y el content set declara qué se repasa sin que el motor conozca un solo id de contenido. La carrera sintética de seis años prueba que la estructura aguanta `7.º · 1.º · 2.º · 3.º · 4.º · 5.º` sin un caso especial por año, así que **ningún año nuevo tiene que inventar su sistema de fracaso y promoción**: declara sus plantillas, su elegibilidad y, si corresponde, su contenido de repaso.
+#### Phase 0 — diseño de carrera completo
 
-**Estado interno actual.** La
-[envolvente de producto](../01-game-design/stage-08-product-design-envelope.md), la
-[matriz v0.3](../01-game-design/full-career-content-matrix.md) y los diseños de
-[1.º](../01-game-design/grade-1-template-design.md),
-[2.º](../01-game-design/grade-2-template-design.md),
-[3.º](../01-game-design/grade-3-template-design.md),
-[4.º](../01-game-design/grade-4-template-design.md) y
-[5.º](../01-game-design/grade-5-template-design.md) están completos a nivel
-`DESIGN-CANDIDATE-APPROVED`, integrados por el checkpoint #2. Phase 0 sigue
-`IN_PROGRESS`: faltan la auditoría cruzada, los pases detallados de eventos
-raros/Hitos/Prestige y epílogo, y la reconciliación final. No empezó implementación.
+**Estado: `DONE`.** Evidencia en la
+[reconciliación del Product Audit](../07-reference/full-career-product-audit-integration.md)
+y la [conformidad técnica](../04-quality/full-career-technical-conformance.md):
+`PASS WITH MINOR CONTRACT DELTAS`, todos entendidos, sin BLOCKER sin resolver.
 
-**Orden obligatorio.** No es una tarea paralela ni autoriza producir 1.º antes de
-terminar Phase 0.
+- [x] Product Design Envelope y matriz v0.3: 25 diseños, sin sustituciones ni nuevas Templates.
+- [x] Template Design Passes de 1.º–5.º y checkpoints #1/#2 integrados.
+- [x] Full-Career Cross-Content Audit reconciliada en fuentes canónicas.
+- [x] Pases de Rare Events / Milestones / Prestige y Career Epilogue v1 cerrados como diseño.
+- [x] Supersesiones y madurez registradas, calibraciones y trabajo futuro separados.
+- [x] Deltas técnicos documentados en ADR-025; plan de implementación G1 ordenado.
+- [x] Integración canónica, índices/master y limpieza de insumos transitorios.
 
-```text
-Phase 0 — diseño completo de carrera
-  → auditoría inicial v0.2 + matriz v0.3 integrada      COMPLETE
-  → Template Design Passes 1.º, 2.º, 3.º, 4.º y 5.º    COMPLETE
-  → Documentation Checkpoint #2                       COMPLETE
-  → Full-Career Cross-Content Audit                   NEXT
-  → Rare Events / Milestones / Prestige detailed pass PLANNED
-  → Career Epilogue v1 pass                           PLANNED
-  → Final Phase-0 reconciliation                      PLANNED
-  → Phase 0 DONE
-Phase 1 — implementar 1.º real
-  → STOP
-  → auditoría de escalabilidad posterior a 1.º
-  → PASS: implementar 2.º → 3.º → 4.º → 5.º
-  → auditoría de carrera completa
-  → STAGE-08 DONE
-```
+Las políticas viven en la [matriz](../01-game-design/full-career-content-matrix.md),
+[narrativa](../01-game-design/narrative-system.md),
+[Prestige](../01-game-design/rare-events-and-prestige.md) y
+[score/ranking](../01-game-design/competitive-scoring-and-ranking.md), no en un
+segundo checklist de números aquí. Diseño cerrado no equivale a calibración
+oficial, validación con estudiantes ni autorización de un freeze.
 
-**1.º es la prueba crítica.** Al terminarlo hay que contestar: *¿qué fundaciones nuevas tuvimos que inventar?* Si la respuesta incluye un sistema fundamental —otro modelo de carrera, otro motor de score, otra gramática de progreso, otra paleta—, se revisa antes de seguir.
+#### Phase 1 — implementar 1.º real
 
-**Siguiente auditoría de diseño.** La
-[Full-Career Cross-Content Audit](../04-quality/content-validation.md#full-career-cross-content-audit)
-cruza 7.º existente y las 25 Templates futuras: cobertura y duplicación matemática,
-interacciones, Equipo/Aura, Estilo, recovery, clusters, frecuencia del Project Arc,
-neutralidad rara/Prestige, callbacks, pacing, primeras tres runs, riesgos y
-convergencia de 5.º. Está planificada; no sustituye ni adelanta el siguiente
-gate de escalabilidad sobre implementación real.
+**Estado: `READY · NEXT · NOT STARTED`.** Orden acotado:
 
-**Caso obligatorio de la auditoría posterior a 1.º.** Antes de autorizar la
-implementación amplia de 2.º–5.º, una prueba debe ejercer específicamente
-`y1.classroom-layout → y1.scale-fit-review` y
-`y1.rehearsal-schedule → y1.schedule-review`, ambos resultados disparando
-obligación en una etapa y un único repaso estructural. El contrato completo está
-en la [auditoría de escalabilidad](../04-quality/post-grade-1-scalability-audit.md).
-Debe observar, sin preseleccionar hoy una solución:
+1. Leer diseño G1, guía de autoría y [ADR-025](../03-architecture/adr/ADR-025-full-career-contract-evolution.md).
+   Definir metadata y contratos sólo para los modos de G1; pruebas de evaluator,
+   addressing, respuesta, snapshot y replay según el contrato que efectivamente cambie.
+2. Resolver el fallback de recovery con catálogo aprobado vacío: fail-closed.
+   Preparar selección determinista y debrief autorado del resto sin otro scheduler.
+3. Implementar `student-day-challenge-wheel` y `mobile-data` con variantes y oráculos
+   independientes, sin confundir umbral/proporcionalidad ni premiar sólo elegir.
+4. Implementar `rehearsal-schedule` y `schedule-review` con una agenda
+   constructiva accesible, no asumir que el timeline de opciones ya lo resuelve.
+5. Implementar `classroom-layout` y `scale-fit-review`: geometría discreta y
+   controles teclado/tap, sin píxeles DOM en el evaluador.
+6. Implementar `course-project-expo`, evidencia Team independiente y callbacks.
+   Mantener las oportunidades Math/Team simultáneamente alcanzables.
+7. Integrar metadata de composición y límites aplicables a la carrera parcial de
+   desarrollo. No forzar cuotas de carrera completa sobre contenido que aún no
+   existe; extender búsqueda/validador global de ADR-025 con fixtures y comprobar
+   nueve beats/seis etapas cuando exista el conjunto completo.
+8. Validar variantes, estados de outcome, accesibilidad, reanudación, replay y
+   simulación G1; actualizar docs y versiones sólo cuando un contrato lo exija.
+9. **STOP: ejecutar el [gate post-G1](../04-quality/post-grade-1-scalability-audit.md).**
+   Forzar `classroom-layout INVALID` + `rehearsal-schedule INVALID`:
+   un Repaso seleccionado, debrief del resto y cierre conjunto, sin recursión,
+   hacks por ID ni contribución a FairScore/Prestige. **No implementarlo como
+   dos repasos ni excluir el caso del test.**
+10. Sólo con PASS documentado: autorizar implementación incremental de 2.º–5.º.
+    Si aparece un sistema fundamental nuevo, revisar arquitectura antes de seguir.
 
-1. qué recovery se selecciona;
-2. qué obligaciones resuelve semánticamente;
-3. si el repaso es matemáticamente pertinente a lo que salió mal;
-4. si otro concepto queda sólo como historia o previa;
-5. si ese resultado es aceptable;
-6. si fue necesario un hack de motor específico de contenido;
-7. si el techo estructural de ADR-024 sigue siendo apropiado;
-8. si el pacing sigue acotado;
-9. si el egreso continúa garantizado;
-10. si recovery permanece fuera de `FairScore`.
+**Scope IN.** Templates/variantes de G1, sus interacciones reutilizables, metadata,
+debrief, mappings y storylets necesarios; deltas mínimos previstos por ADR-025,
+verificación y documentación de lo realmente implementado.
 
-Las hipótesis posibles se comparan con evidencia de 1.º real. Esta etapa no decide por adelantado si limitar cobertura, agregar una recuperación compuesta, priorizar una obligación, convertir el resto en historia o reconsiderar ADR-024.
+**Scope OUT.** Producir 2.º–5.º antes del gate. Otro Career Model, motor de FairScore
+o gramática de progresión. Rediseño visual o una sexta interacción sin decisión
+aparte. Servidor oficial, DB/auth, ranking e intentos (STAGE-09). Recalibración o
+freeze de score/rareza por conveniencia de código.
 
-**Scope IN.** Phase 0: diseño de la matriz, narrativa, matemática, dificultad,
-interacciones, evidencia Team/Aura, recovery, pacing, callbacks, eventos raros,
-Prestige, fichas por año y auditoría final de diseño. Phase 1+: por año, contenido,
-plantillas, variantes validadas, storylets, hito y, si hace falta de verdad y existe
-decisión aparte, una interacción genuinamente nueva.
+#### Después de G1 y aceptación de STAGE-08
 
-**Scope OUT.** Producir runtime durante Phase 0. Otra paleta o rediseño visual.
-Otro Career Model, motor de scoring, gramática de progreso o tratamiento de Aura.
-Implementar Prestige/RNG raro antes de congelar su arquitectura. Ranking. **Un item
-de roadmap del tipo «rediseñar la UI para 1.º» no es válido** salvo decisión de
-producto aprobada.
+Implementar 2.º → 3.º → 4.º → 5.º y auditar carrera completa. La respuesta Math/Aura
+independiente debe existir cuando G2 la necesite. Prestige y saliencia completos
+pueden integrarse en G4/5; sus hechos verificables se originan desde el año fuente.
 
-**Lectura requerida.** [Alcance y roadmap](../00-product/scope-and-roadmap.md) · [marco matemático](../01-game-design/math-design-framework.md) · [guía de autoría](../01-game-design/content-authoring-guide.md) · [ficha de autoría](../07-reference/challenge-authoring.example.yaml) · [sistema de diseño](../09-design-system/README.md).
+**Criterios de aceptación de implementación — todavía pendientes:**
 
-**Criterios de aceptación, por año.**
+- [ ] Matemática intrínseca, prerrequisitos accesibles desde aproximadamente 7.º y bandas por estructura, no filtro curricular.
+- [ ] Cada Template cumple DoR, revisión matemática y variantes semánticas/materializaciones de la guía; cero variantes inválidas desplegadas.
+- [ ] Evidencia Math/Team/Aura independiente y witness de máximo simultáneo; Estilo sólo Career/Narrative.
+- [ ] Composición Normal/Fair de nueve beats, cuotas/cluster/arco y validador independiente; Teacher Demo/carrera parcial diferenciadas.
+- [ ] Rareza, slots de Prestige y callbacks deterministas, sin ventajas por aparición ni duplicación de evidencia.
+- [ ] Repaso: selección/debrief/cierre, pacing, egreso y exclusión competitiva; PASS post-G1 registrado antes de G2.
+- [ ] Epílogo de carrera real con saliencia determinista, datos ausentes no dibujados y Hitos display-only distinguibles.
+- [ ] Accesibilidad teclado/tap, móvil, reduced motion, replay/snapshot/reanudación y E2E por año.
+- [ ] Auditoría de composición completa, cobertura/exploits y playtests de pacing según [validación de contenido](../04-quality/content-validation.md).
+- [ ] Revisión del Departamento de Matemática, documentación por año y cero sistemas fundamentales duplicados.
 
-- [x] Product Design Envelope completo.
-- [x] Auditoría inicial de matriz v0.2 y actualización v0.3: 25 diseños y distribución 24/52/24.
-- [x] Template Design Pass de 1.º completo a nivel `DESIGN-CANDIDATE-APPROVED`.
-- [x] Checkpoints documentales #1 y #2 de Phase 0 integrados.
-- [x] Template Design Passes de 2.º, 3.º, 4.º y 5.º completos a nivel `DESIGN-CANDIDATE-APPROVED`.
-- [ ] Full-Career Cross-Content Audit ejecutada y reconciliada.
-- [ ] Pase detallado de Rare Events / Milestones / Prestige completo.
-- [ ] Pase de Career Epilogue v1 completo.
-- [ ] Reconciliación final y cierre de Phase 0.
+**Lectura requerida.** [Matriz](../01-game-design/full-career-content-matrix.md) ·
+[diseño G1](../01-game-design/grade-1-template-design.md) ·
+[guía de autoría](../01-game-design/content-authoring-guide.md) ·
+[marco matemático](../01-game-design/math-design-framework.md) ·
+[sistema de diseño](../09-design-system/README.md) · ADR-025.
 
-- [ ] La matemática conserva un piso de prerrequisitos accesible desde aproximadamente 7.º; el año cambia contexto, responsabilidad y narrativa, no funciona como barrera curricular.
-- [ ] Cada año puede combinar `CORE / STANDARD / STRETCH`; la complejidad sube por estructura, planificación e información.
-- [ ] Toda contribución multi-eje declara evidencia independiente para Matemática, Equipo y Aura; nunca copia la misma señal y no fuerza secundarias inexistentes.
-- [ ] El pacing de la carrera completa se mide contra 8–10 minutos sobre el rango de 6–12 beats ordinarios, sin puntuar velocidad.
-- [ ] May-25 se conserva y su narrativa puede enriquecerse; deportes/competencias son contextos candidatos, no contenido ya decidido.
-- [ ] Hitos se exploran como reconocimiento narrativo/carrera determinista, nunca bonus competitivo aleatorio.
-- [ ] Matemática revisada por el Departamento de Matemática.
-- [ ] Variantes validadas, cero inválidas desplegadas.
-- [ ] Presupuesto de dificultad consistente con los demás años.
-- [ ] Storylets y flags coherentes con la historia previa.
-- [ ] Efectos de carrera semánticos: la mayoría de los eventos mueve una o dos dimensiones.
-- [ ] Accesibilidad y móvil verificados.
-- [ ] Replay, snapshot y reanudación correctos.
-- [ ] E2E y simulación del año en verde.
-- [ ] Tras 1.º, el caso obligatorio de dos plantillas recovery-capable que fallan en una etapa pasa la auditoría de selección, coherencia, pacing, egreso y `FairScore` antes de empezar 2.º.
-- [ ] **Ningún sistema fundamental duplicado.**
-- [ ] Documentación del año actualizada.
+**Validación requerida al implementar.** `pnpm verify`, `pnpm game:validate-content`,
+`pnpm game:simulate:deep`, `pnpm test:e2e:only`. Pruebas del audit de diseño no
+sustituyen estos gates. Objetivos editoriales y calibraciones versionadas conservan
+la madurez del [registro](../07-reference/decision-register.md).
 
-**Validación requerida.** `pnpm verify`, `pnpm game:validate-content`, `pnpm game:simulate:deep`, `pnpm test:e2e:only`.
+**Siguiente tarea.** `STAGE-08 / PHASE 1 — IMPLEMENT GRADE 1`.
 
-**Decisiones.** La matriz v0.3 reúne los 25 diseños candidatos aprobados, no una cuota ni
-un catálogo runtime. Sigue `OPEN` la profundidad final de familias/Templates/
-Variants ([pregunta 46](../07-reference/open-questions.md)), la semántica de dos
-obligaciones bajo un único recovery y las calibraciones exactas de Prestige/eventos
-raros. El acento visual por año permanece `DEFERRED` ([pregunta 48](../07-reference/open-questions.md)).
-
-Event Cluster Policy, Recurring Arc Policy y Callback Independence están
-`LOCKED` como producto. Frecuencia 1–2 del Proyecto es target aceptado; máximo 2
-sigue candidato, con preferencia no consecutiva y diversidad cognitiva soft.
-Las políticas concretas están en la [matriz](../01-game-design/full-career-content-matrix.md#políticas-de-composición)
-y no se implementan durante este checkpoint.
-
-**Siguiente tarea.** `STAGE-08 / Phase 0 / Full-Career Cross-Content Audit`.
-
-**Exit gate.** ¿Una run completa recorre `7.º → 1.º → 2.º → 3.º → 4.º → 5.º → EGRESADO`?
+**Exit gate.** ¿Una run real, auditada y accesible recorre
+`7.º → 1.º → 2.º → 3.º → 4.º → 5.º → EGRESADO`, con pacing medido y sin duplicar
+fundaciones? **Pendiente.**
 
 ---
+
+
 
 ### STAGE-09 — Fair mode, servidor autoritativo y ranking
 
@@ -916,14 +892,14 @@ SERVIDOR   emite y registra el RunDescriptor
    ↓
 CLIENTE    juega local-first y registra comandos
    ↓
-SERVIDOR   valida versiones → replay → resultados → FairScore → ranking
+SERVIDOR   valida emisión/versiones → replay → FairScore + Prestige → ranking
 ```
 
 El navegador **nunca** es autoridad de score. El precursor ya existe: `src/server/game/validate-run.ts` replaya una submission no confiable e ignora cualquier score que el cliente afirme.
 
-**Scope IN.** Emisión de `RunDescriptor` oficial con metadata de evento; endpoints con idempotencia, reintentos, rate limiting y validación de versiones; verificación por replay; ranking por **personal best**; desempate lexicográfico determinista; política de intentos configurable; moderación de nickname; minimización de datos de menores; E2E de run → submission → ranking.
+**Scope IN.** Emisión de `RunDescriptor` oficial con metadata de evento; endpoints con idempotencia, reintentos, rate limiting y validación de versiones; verificación por replay; ranking por **personal best**; FairScore → Prestige → shared rank, sin tiempo; Competition Seed compartida emitida por servidor y dificultad fija; intentos ilimitados con mejor resultado verificado; moderación de nickname; minimización de datos de menores; E2E de run → submission → ranking.
 
-**Scope OUT.** Congelar la configuración de competencia — es [FREEZE](#freeze-congelamiento-de-competencia). Load testing y hardening — es [STAGE-10](#stage-10-production-hardening). Cerrar la política de empate o de intentos: son Teacher Gate.
+**Scope OUT.** Congelar la configuración de competencia — es [FREEZE](#freeze-congelamiento-de-competencia). Load testing y hardening — es [STAGE-10](#stage-10-production-hardening). Reabrir las reglas v1 de empate/intentos cerradas por el Product Pass; TG2 valida implementación y premios.
 
 **Lectura requerida.** [Arquitectura objetivo del motor](../03-architecture/target-engine-architecture.md) · [ADR-004](../03-architecture/adr/ADR-004-server-authoritative-scoring.md) · [ADR-006](../03-architecture/adr/ADR-006-local-first-gameplay.md) · [ADR-008](../03-architecture/adr/ADR-008-anonymous-identity.md) · [ADR-009](../03-architecture/adr/ADR-009-event-leaderboards.md) · [modo feria y congelamiento](../05-operations/fair-mode-and-competition-freeze.md) · [leaderboard y moderación](../05-operations/leaderboard-and-moderation.md) · [threat model](../04-quality/threat-model.md) · [contratos API](../03-architecture/api-contracts.md) · [modelo de datos](../03-architecture/data-model.md) · [ejemplo de descriptor](../07-reference/run-descriptor.example.json).
 
@@ -933,8 +909,10 @@ El navegador **nunca** es autoridad de score. El precursor ya existe: `src/serve
 - [ ] El servidor verifica por replay y rechaza action logs imposibles con un código tipado.
 - [ ] Un score local válido coincide exactamente con el autoritativo.
 - [ ] El personal best se actualiza transaccionalmente y una run peor no reemplaza a la mejor.
-- [ ] La política de intentos es configuración del evento.
-- [ ] El desempate es determinista y su desglose queda guardado para auditoría.
+- [ ] La edición vincula cada intento a la misma seed, variantes, dificultad y oportunidades; runId único por intento, sin farming de rareza.
+- [ ] Intentos ilimitados y mejor tupla verificada; empate de ambos scores comparte puesto, sin criterio temporal ni clave oculta.
+- [ ] Sólo carreras completas y egresadas válidas pueden competir; Practice no envía rank oficial.
+- [ ] Top 3 público y puesto propio privado, con nickname moderado y sin tabla pública de últimos.
 - [ ] La tupla de versiones queda persistida en cada run oficial.
 - [ ] Un doble envío es idempotente y no crea dos entradas.
 - [ ] El ranking se comporta correctamente bajo la concurrencia objetivo.
@@ -945,7 +923,7 @@ El navegador **nunca** es autoridad de score. El precursor ya existe: `src/serve
 
 **Riesgos.** Implementar leaderboard antes de que el score sea reproducible. Por eso STAGE-06 es dependencia dura.
 
-**Decisiones.** `TG1 ACCEPTED`: intentos ilimitados y mejor resultado verificado; la emisión autoritativa controla plan/seed. `OPEN` ([pregunta 41](../07-reference/open-questions.md)): empate exacto; no se adopta bonus aleatorio ni unicidad obligatoria. También `OPEN` ([preguntas 27 y 51](../07-reference/open-questions.md)): qué señal de tiempo puede verificar el servidor.
+**Decisiones.** Product Pass v1 cierra shared rank y Competition Seed compartida; conserva intentos ilimitados y mejor resultado verificado de TG1. Tiempo, Estilo y azar de aparición no ordenan puestos. La operación decide premios compartidos o una instancia común separada del ranking v1; no inventa desempate oculto. Emisión, elegibilidad y persistencia pendientes bajo ADR-025.
 
 **Exit gate.** ¿Se puede correr una competencia simulada completa con score autoritativo en servidor?
 

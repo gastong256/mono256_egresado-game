@@ -26,6 +26,7 @@
 | ADR-022 | [Modelo de dificultad y compositor de runs](../03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) | Aceptado |
 | ADR-023 | [Política de score competitivo](../03-architecture/adr/ADR-023-competitive-score-policy.md) | Aceptado |
 | ADR-024 | [Progresión, recuperación y egreso](../03-architecture/adr/ADR-024-progression-recovery-and-graduation.md) | Aceptado |
+| ADR-025 | [Evolución acotada de contratos de carrera completa](../03-architecture/adr/ADR-025-full-career-contract-evolution.md) | Aceptado; implementación futura |
 
 ## Regla para ADR nuevo
 
@@ -62,8 +63,8 @@ Estas decisiones vienen del [Project Blueprint v0.2.0](blueprint-v0.2-integratio
 | D-009 | Intentos ilimitados con mejor resultado verificado | TG1 ACCEPTED · PRODUCT DIRECTION | no implementado; emisión autoritativa, persistencia y ranking pertenecen a STAGE-09 ([modo feria](../05-operations/fair-mode-and-competition-freeze.md)) |
 | D-010 | `FairScore` separado de las stats de carrera | RECOMENDADA | **implementado** ([ADR-023](../03-architecture/adr/ADR-023-competitive-score-policy.md)): el score no recibe la carrera, así que no hay por dónde filtrarla |
 | D-011 | La matemática domina el `FairScore` | TG1 ACCEPTED | **implementado como regla ejecutable**; el candidato post-Gate `fair-score-dev-2` usa 85/10/5 y sigue `official: false` |
-| D-012 | Estilo no puntúa directamente | RECOMENDADA | **implementado**: Estilo y Promedio no son componentes de score, así que no existe el peso que alguien podría subir ([ADR-023](../03-architecture/adr/ADR-023-competitive-score-policy.md)) |
-| D-013 | Criterio competitivo posterior a `FairScore DESC → PrestigeScore DESC` | OPEN tras TG1-11 `AJUSTAR` | no implementado; Hitos no dan bonus por aparecer y un empate legítimo puede compartir puesto |
+| D-012 | Estilo sólo Career/Narrative, sin FairScore ni Prestige competitivo | LOCKED v1, Product Pass | FairScore ya lo excluye; track STYLE de Prestige supersedido; [Prestige](../01-game-design/rare-events-and-prestige.md) |
+| D-013 | FairScore DESC → Prestige DESC → puesto compartido; ningún criterio temporal | LOCKED v1, supersede candidato post-TG1 | implementación STAGE-09; [ranking](../01-game-design/competitive-scoring-and-ranking.md#desempate) |
 | D-014 | Presupuesto de dificultad por run competitiva | RECOMENDADA; bandas aceptadas en TG1 | **implementado** ([ADR-022](../03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md)); los costos/umbrales exactos siguen calibrables |
 | D-015 | Diseño de tareas de piso bajo y techo alto | RECOMENDADA como principio | vigente en el contenido de 7.º, y ahora **ejecutable**: la banda de una plantilla se deriva de su estructura, no de sus números ([ADR-022](../03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md)) |
 | D-016 | No hay playtest real con estudiantes antes de la feria | RESTRICCIÓN EXTERNA | declarada ([ciclo de entrega real](../00-product/real-delivery-lifecycle.md)) |
@@ -94,13 +95,13 @@ congelado.
 | D-S08-001 | La carrera progresa adaptación → consolidación → pertenencia → autonomía → responsabilidad → cierre; 7.º y 1.º comparten escuela | LOCKED | [sistema narrativo](../01-game-design/narrative-system.md) |
 | D-S08-002 | Año y dificultad son ejes independientes; el piso matemático sigue accesible desde aproximadamente 7.º | LOCKED | [envolvente](../01-game-design/stage-08-product-design-envelope.md) |
 | D-S08-003 | Narrativa braided-linear con elenco relacional, voz argentina legible, callbacks medios y previas como memoria | ACCEPTED; previas LOCKED | callbacks multianuales no implementados; [sistema narrativo](../01-game-design/narrative-system.md) |
-| D-S08-004 | Recurring Arc Policy: presencia narrativa recurrente no exige desafío puntuable; Proyecto del Curso persiste cada año | LOCKED | [política de arco](../01-game-design/full-career-content-matrix.md#recurring-arc-policy); frecuencia candidata en D-S08-019 |
-| D-S08-005 | Pacing 9–10 beats y QUICK/MEDIUM/DEEP son candidatos; primeras tres runs distintas es el goal | ACCEPTED CANDIDATE + LOCKED GOAL | duración sin validar; [envolvente](../01-game-design/stage-08-product-design-envelope.md) |
+| D-S08-004 | Recurring Arc: presencia narrativa no exige desafío puntuable | LOCKED | [arco](../01-game-design/full-career-content-matrix.md#recurring-arc-policy); frecuencia en D-S08-019 |
+| D-S08-005 | Normal/Fair exactamente nueve beats; envolvente de pacing/diversidad y novedad en Practice | LOCKED cantidad; PRODUCT DIRECTION envolvente | supersede target 9–10; [matriz](../01-game-design/full-career-content-matrix.md#envolvente-normalfair-v1); sin runtime |
 | D-S08-006 | Team/Aura/Estilo usan evidencia propia y una interacción nueva no se esconde como contenido | LOCKED | [envolvente](../01-game-design/stage-08-product-design-envelope.md) |
-| D-S08-007 | RNG raro seeded se aplica después de elegibilidad; aparición no da Prestige ni aumenta techos competitivos | ACCEPTED + LOCKED GUARDRAILS | arquitectura no congelada; [eventos raros](../01-game-design/rare-events-and-prestige.md) |
-| D-S08-008 | FairScore sigue primario; Prestige es segundo criterio lexicográfico sin doble conteo | ACCEPTED + LOCKED GUARDRAILS | runtime no implementado; 25×4/cap/premios son `CANDIDATE`; [Prestige](../01-game-design/rare-events-and-prestige.md) |
-| D-S08-009 | Career Epilogue v1 y diseño de Milestones forman parte de STAGE-08 | ACCEPTED | no implementados; catálogo/elegibilidad abiertos |
-| D-S08-010 | Matriz v0.3 conserva 25 Templates y 6/13/6, con los cinco pases aprobados | DESIGN-CANDIDATE-APPROVED | deriva de la auditoría v0.2; auditoría cruzada pendiente; [matriz](../01-game-design/full-career-content-matrix.md) |
+| D-S08-007 | Rareza seeded acotada; aparición cero; Fair fija presencia por edición | LOCKED guardrails; RECOMENDADA calibración v1 | [eventos raros](../01-game-design/rare-events-and-prestige.md); ADR-025 futuro |
+| D-S08-008 | Prestige secundario 40/40/20, máximo 100, evidencia independiente | LOCKED v1 | supersede 25×4/STYLE; [Prestige](../01-game-design/rare-events-and-prestige.md); sin runtime |
+| D-S08-009 | Career Epilogue v1 y estructura de Milestones cerrados | LOCKED v1 | [narrativa](../01-game-design/narrative-system.md); logros por autorar, sin runtime |
+| D-S08-010 | Matriz conserva 25 Templates y 6/13/6 auditadas sin reemplazos adicionales | DESIGN-CANDIDATE-APPROVED | [matriz](../01-game-design/full-career-content-matrix.md); no producción ni validación empírica |
 | D-S08-011 | Las cinco Templates de consolidación de 1.º, su placement, Team/Aura y pacing están aprobados a nivel de diseño | DESIGN-CANDIDATE-APPROVED | implementación no iniciada; [diseño de 1.º](../01-game-design/grade-1-template-design.md) |
 | D-S08-012 | Rutas candidatas `rehearsal-schedule → schedule-review` y `classroom-layout → scale-fit-review` | ACCEPTED DESIGN | no implementadas; Aura ordinaria de 1.º ausente |
 | D-S08-013 | La auditoría de ambas obligaciones bajo máximo un recovery es obligatoria después de implementar 1.º | LOCKED PROCESS | `REQUIRED · PLANNED`; [contrato](../04-quality/post-grade-1-scalability-audit.md) |
@@ -109,22 +110,42 @@ congelado.
 | D-S08-016 | Pase de 4.º aprobado: responsabilidad, cluster, reemplazo raro y dos rutas | DESIGN-CANDIDATE-APPROVED | no implementado; [diseño de 4.º](../01-game-design/grade-4-template-design.md) |
 | D-S08-017 | Pase de 5.º aprobado: cierre/futuro, síntesis, señales y dos rutas | DESIGN-CANDIDATE-APPROVED | no implementado; [diseño de 5.º](../01-game-design/grade-5-template-design.md) |
 | D-S08-018 | Event Cluster Policy: Intercurso de 2.º, School Event de 4.º y Egreso de 5.º admiten máximo una Template puntuable de cada cluster por run normal | LOCKED | política de producto, sin campos/runtime nuevos; [clusters](../01-game-design/full-career-content-matrix.md#event-cluster-policy) |
-| D-S08-019 | Project Arc apunta a 1–2 Templates puntuables por carrera; máximo 2 candidato y preferencia no consecutiva | ACCEPTED TARGET / CANDIDATE MAX | no implementado; [frecuencia](../01-game-design/full-career-content-matrix.md#frecuencia-del-project-arc) |
+| D-S08-019 | Project hard max 2; target 1–2 y preferencia no consecutiva | LOCKED v1 máximo; SOFT target/separación | supersede máximo candidato; [frecuencia](../01-game-design/full-career-content-matrix.md#frecuencia-del-project-arc) |
 | D-S08-020 | Callback Independence: historia enriquece contexto sin condicionar comprensión, resolución ni techo de FairScore | LOCKED | [callbacks](../01-game-design/narrative-system.md#callback-independence) |
 | D-S08-021 | Responsibility Externality: 4.º muestra efectos sobre terceros/sistemas sin Equipo automático | LOCKED | [externalidad](../01-game-design/narrative-system.md#responsibility-externality) |
 | D-S08-022 | Career Convergence: 5.º recupera historia visiblemente manteniendo Templates autocontenidas | LOCKED | [convergencia](../01-game-design/narrative-system.md#career-convergence) |
-| D-S08-023 | Narrative Salience: priorizar aproximadamente 3–5 hechos de cierre/epílogo | ACCEPTED DIRECTION | algoritmo diferido, sin runtime; [salience](../01-game-design/narrative-system.md#narrative-salience) |
+| D-S08-023 | Saliencia determinista 3–5 por segmentos y prioridad autorada/ID | LOCKED v1 | supersede algoritmo diferido; [saliencia](../01-game-design/narrative-system.md#narrative-salience); sin runtime |
 | D-S08-024 | `represent-class`: Math, acción pública de Aura y logro histórico de Prestige usan evidencia distinta; aparición vale 0 | LOCKED | [diseño de 4.º](../01-game-design/grade-4-template-design.md#y4represent-class) |
 | D-S08-025 | `next-step-options`: FairScore de viabilidad, preferencia opcional sólo Estilo/epílogo, sin orientación vocacional | LOCKED | [diseño de 5.º](../01-game-design/grade-5-template-design.md#y5next-step-options) |
-| D-S08-026 | Los cinco pases están completos; Phase 0 sigue abierta y continúa con Full-Career Cross-Content Audit | ACCEPTED PROCESS | [etapa actual](../06-delivery/current-stage.md), [alcance de auditoría](../04-quality/content-validation.md#full-career-cross-content-audit); no autoriza implementar 1.º |
+| D-S08-026 | Product Pass y conformidad aceptados; reconciliación cierra Phase 0; siguiente Phase 1 G1 | LOCKED proceso | [integración](full-career-product-audit-integration.md), [etapa actual](../06-delivery/current-stage.md); sin implementación en este commit |
 | D-S08-027 | Preferir diversidad cognitiva entre planes válidos; evitar semana + recorrido de 3.º sólo cuando haya alternativa equivalente más diversa | ACCEPTED · SOFT | [composición](../01-game-design/full-career-content-matrix.md#diversidad-cognitiva); no exclusión dura |
 
-La semántica de eventos raros/Prestige todavía no justifica un ADR: es dirección
-de producto con implementación abierta. Cuando se congele una arquitectura que
-cruce RNG, replay, score, ranking o versionado deberá aplicarse la política de ADR.
+## Cierre del Product Pass — 2026-09-10
 
-El checkpoint #2 también conserva esta frontera para clusters, frecuencia de
-arcos y Narrative Salience: las reglas de producto están indexadas, pero todavía
-no se eligieron nuevos contratos ejecutables. No modifica ni supersede ADR-024.
+El [registro de integración](full-career-product-audit-integration.md) relaciona
+FC-001…FC-030 con fuentes únicas y conserva las supersesiones. Son decisiones de
+producto, no flags `official` ni evidencia de implementación.
 
-La [integración post-Gate](../06-delivery/teacher-gate-1/12-integracion-post-gate.md) es la trazabilidad completa de TG1. Siguen abiertos la oficialización final del score, calibraciones exactas, tercer criterio de empate, catálogo de Hitos, vocabulario y triggers de recuperación, profundidad final de contenido y configuración de competencia.
+| ID | Decisión | Madurez | Fuente / estado |
+|---|---|---|---|
+| D-S08-028 | Cinco motores reutilizables; los nombres de tableros son modos | LOCKED v1 | [taxonomía](../01-game-design/challenge-system.md); soporte runtime parcial |
+| D-S08-029 | REPASO visible; INVALID en fuentes recovery-capable; FUNCTIONAL no | LOCKED v1 | [fail-forward](../01-game-design/graduation-and-fail-forward.md); label global pendiente |
+| D-S08-030 | Una selección determinista, debrief del resto y cierre de todas | LOCKED producto | [fail-forward](../01-game-design/graduation-and-fail-forward.md); deltas ADR-025, gate post-G1 pendiente |
+| D-S08-031 | Competition Seed compartida server-issued por edición; reintentos iguales; Practice no oficial | LOCKED v1 | [modo feria](../05-operations/fair-mode-and-competition-freeze.md); STAGE-09 |
+| D-S08-032 | Probabilidades y límites por banda de rareza | RECOMENDADA, calibración v1 aceptada | [defaults](../01-game-design/rare-events-and-prestige.md#defaults-de-practice-v1); no constantes ni freeze |
+| D-S08-033 | Top 3 público pseudónimo; puesto propio privado; sin exposición infinita inferior | LOCKED v1 | [leaderboard](../05-operations/leaderboard-and-moderation.md); no implementado |
+| D-S08-034 | Intrinsic Math Gate IM-1…IM-5 y legitimidad de estrategias | LOCKED | [autoría](../01-game-design/content-authoring-guide.md#intrinsic-math-gate) |
+| D-S08-035 | Formas semánticas y materializaciones son distintas; targets 3/4, 12/16, 8 | LOCKED distinción; RECOMENDADA targets | [profundidad](../01-game-design/content-authoring-guide.md#profundidad-de-variantes); no límite de schema |
+| D-S08-036 | Estilo no se infiere de azar, INVALID o calidad matemática sola | LOCKED dirección | [autoría](../01-game-design/content-authoring-guide.md#estilo-y-evidencia-de-identidad); revisar contenido al implementar, sin cambios runtime actuales |
+| D-S08-037 | Acceso teclado/tap sin drag, color redundante, reduced motion; 44 px target interno | LOCKED acceso; PRODUCT DIRECTION target | [UX](../01-game-design/ux-interaction-design.md); walkthroughs antes de feria |
+| D-S08-038 | Sin LLM en gameplay, score, materialización o epílogo competitivo v1 | LOCKED | [autoría](../01-game-design/content-authoring-guide.md#sin-llm-en-runtime-competitivo-v1) |
+| D-S08-039 | Contratos futuros acotados: composición global, Repaso, hechos, rareza y replay | Aceptado, NOT IMPLEMENTED | [ADR-025](../03-architecture/adr/ADR-025-full-career-contract-evolution.md) |
+| D-S08-040 | Conservar los 25 diseños; no ampliar antes de G1 salvo BLOCKER genuino; Teacher Demo separado | LOCKED alcance | [matriz](../01-game-design/full-career-content-matrix.md) y roadmap |
+| D-S08-041 | Mitigar ausencia de playtest con docentes, walkthroughs y simulación, sin llamarlos validación estudiantil | PRODUCT DIRECTION | [validación de contenido](../04-quality/content-validation.md); riesgo residual |
+| D-S08-042 | Montos ficticios/relativos y tono argentino legible, sin juicios de poder adquisitivo ni marcas necesarias | LOCKED guardrail | [autoría](../01-game-design/content-authoring-guide.md) |
+
+La integración de TG1 permanece histórica en [su acta y trazabilidad](../06-delivery/teacher-gate-1/12-integracion-post-gate.md).
+Siguen pendientes la oficialización/freeze, validación empírica, autoría ejecutable,
+catálogo concreto de logros, operación/auth/retención y el gate post-G1. Label,
+trigger v1, multiobligación, seed común, tracks Prestige, puesto compartido y
+saliencia ya no son aperturas de prediseño.

@@ -19,16 +19,54 @@ Cada desafío debe responder:
 9. **Efecto narrativo:** ¿qué stats/flags cambian?
 10. **Variantes:** ¿qué parámetros pueden generarse proceduralmente?
 
-## Regla “sin números”
+## Intrinsic Math Gate
 
-Eliminar mentalmente todos los números del evento. Si la decisión sigue siendo obvia o equivalente, la matemática probablemente es decorativa.
+**LOCKED.** Toda variante aprobada pasa cinco controles:
 
-## Regla “no examen”
+1. **IM-1 Remove numbers:** quitar cantidades/relaciones debe cambiar materialmente la decisión.
+2. **IM-2 Mathematical action:** la relación matemática es necesaria para elegir/construir; no basta preferencia narrativa.
+3. **IM-3 Context return:** el resultado produce una consecuencia del mundo, no sólo respuesta numérica con prosa decorativa.
+4. **IM-4 No quiz wrapper:** rechazar cálculo que desbloquea una elección no relacionada; la matemática constituye la acción.
+5. **IM-5 Strategy legitimacy:** cuando se prometen estrategias distintas, existe más de un plan matemáticamente válido y semánticamente diferente.
 
-Reformular:
-- “¿Cuál es el área?” → “¿Qué pack de pintura alcanza?”
-- “¿Cuánto es 20% de 800000?” → “¿Qué oferta realmente cuesta menos?”
-- “¿Cuál es la media?” → “¿Qué grupo tuvo mejor rendimiento considerando tamaño?”
+Se evalúa el resultado/plan, no un procedimiento escolar obligatorio. Cálculo mental,
+estimación, comparación, razonamiento inverso y espacial son métodos legítimos.
+
+## Resultados semánticos
+
+Se conserva 100/75/40/10 para Optimal/Efficient/Functional/Invalid; una métrica
+continua honesta, como F1, no se aplana. Functional mantiene viable el objetivo
+real y sacrifica algo secundario declarado; no es un nombre amable para un plan
+matemáticamente imposible. Invalid viola una restricción esencial. Cada evaluador
+especifica los escalones y evita confundir objetivos secundarios con obligaciones.
+
+## Definition of Ready de Template
+
+Antes de implementarla: ID estable, placement/etapas, razonamiento primario,
+banda, pacing, motor principal/modo, evidencia Math, Team/Aura o `none`, oportunidad
+de Estilo, mapping de recovery o `none`, callbacks de entrada/salida, relación rara,
+resultados, restricciones de generación, guardrails y recorrido accesible.
+La taxonomía está en [matriz](full-career-content-matrix.md#taxonomía-primaria-y-contexto)
+y [sistema de desafíos](challenge-system.md); no se crean enums ejecutables aquí.
+
+## Profundidad de variantes
+
+**Distinción LOCKED; cantidades RECOMENDADAS como targets de producción, no límites de arquitectura.** Distinguir
+formas semánticas de una Template —mismas invariantes, distintas configuraciones
+significativas— de materializaciones con números distintos. No confundirlas con
+nuevas Templates ni romper la banda aprobada para fabricar variedad.
+
+| Contenido | Formas semánticas mínimas objetivo | Materializaciones aprobadas objetivo |
+|---|---|---|
+| Template normal | 3 | ≥12 |
+| Template de alto riesgo | 4 | ≥16 |
+| Recovery | según concepto aislado | ≥8 |
+
+Requieren sign-off manual explícito: y1.student-day-challenge-wheel;
+y2.course-project-survey, standings-claim; y3.course-project-tech, transport-pass;
+y4.school-event-flow, course-project-fundraiser, event-floor-plan, represent-class;
+y5.final-trip-or-event, course-project-final, next-step-options. No se declara ese
+sign-off realizado por aprobar este documento.
 
 ## Accesibilidad matemática universal
 
@@ -102,13 +140,14 @@ El pipeline conserva revisión matemática/editorial, barrido de seeds, validaci
 a 360 px y teclado. No se interpreta la aprobación documental como evidencia
 de esos checks. La
 [auditoría cruzada de Phase 0](../04-quality/content-validation.md#full-career-cross-content-audit)
-es el siguiente paso y revisa el conjunto antes de cerrar diseño.
+ya fue integrada; el siguiente paso es implementar G1 bajo el roadmap. El cierre
+de prediseño no sustituye ninguno de esos checks.
 
 ## Checklist editorial
 
 - Lenguaje argentino neutral, comprensible fuera de una provincia específica.
 - No usar marcas comerciales reales salvo decisión expresa.
-- No asumir nivel socioeconómico como norma.
+- No asumir nivel socioeconómico como norma; montos relativos/ficticios, sin juicios de poder adquisitivo real ni dependencia de inflación.
 - Evitar presión financiera personal; contextualizar presupuestos como recursos del proyecto/curso.
 - No usar salud, religión, política partidaria u otros datos sensibles del jugador como personalización.
 - Humor sin humillación.
@@ -139,6 +178,14 @@ Checklist obligatorio:
 Válido: factibilidad matemática y calidad independiente del reparto de responsabilidades. Inválido: copiar el mismo F1 del acto del 25 de Mayo a Matemática y Aura. Si no existe evidencia independiente, la componente es `none`; no se fuerza Equipo/Aura por plantilla.
 
 La idea docente del colectivo —varios márgenes matemáticamente válidos con consecuencias sociales distintas— es un ejemplo futuro de autoría, no una regla runtime actual. Del mismo modo, May-25 sólo podrá aportar Aura competitiva si incorpora una decisión pública/social distinta de la clasificación numérica.
+
+### Estilo y evidencia de identidad
+
+Estilo sólo se infiere de alternativas estratégicas significativas, preferentemente
+planes matemáticamente defendibles. No nace de azar, resultado automático ni
+calidad Math sola: una respuesta inválida no etiqueta la identidad del jugador.
+Sólo afecta Career/Narrative/display, no FairScore, Prestige ni acceso exclusivo
+a oportunidades competitivas. Los pesos exactos siguen siendo calibración futura.
 
 ### Ocultos: dominio y flags
 
@@ -193,7 +240,11 @@ Un año aporta **uno o dos beats ordinarios**, con exactamente un `anchor`. Un `
 
 El ruteo se declara por **plantilla ordinaria de origen**, no sólo por año. Para cada plantilla, el content set elige una de dos respuestas explícitas: una o más plantillas con rol `recovery` que aíslen un paso relevante, o `none` con una razón editorial. No toda plantilla necesita repaso y usar el de otra situación sólo para completar cobertura es contenido incoherente.
 
-El techo de un repaso por etapa es estructural bajo [ADR-024](../03-architecture/adr/ADR-024-progression-recovery-and-graduation.md); no es una perilla de authoring ni de `RecoveryPolicy`. La policy calibra qué calidades dejan obligación. El [diseño de 1.º](grade-1-template-design.md) propone dos rutas distintas y el [contrato de auditoría](../04-quality/post-grade-1-scalability-audit.md) obliga a fallarlas en la misma etapa: debe comprobar selección, resolución semántica, relevancia matemática, rastro narrativo, pacing, egreso y exclusión de `FairScore` antes de implementar ampliamente 2.º–5.º. Esa auditoría reúne evidencia: no prescribe hoy cómo resolver el caso.
+El techo de un Repaso por etapa es estructural bajo [ADR-024](../03-architecture/adr/ADR-024-progression-recovery-and-graduation.md).
+Producto v1 dispara sólo por INVALID en fuentes recovery-capable. La semántica
+seleccionar uno → debrief del resto → cerrar todo está en [fail-forward](graduation-and-fail-forward.md).
+El [gate post-G1](../04-quality/post-grade-1-scalability-audit.md) valida esa solución
+con las dos rutas de 1.º, no reabre el diseño por defecto.
 
 La [matriz de carrera](full-career-content-matrix.md#cobertura-futura-de-recuperación)
 registra las nueve fuentes recovery-capable de 1.º–5.º y sus rutas aprobadas de
@@ -206,3 +257,9 @@ No confundir los cuatro artefactos: `ContentCatalog` registra familias y plantil
 Una plantilla nueva se registra antes de que exista código. La forma de esa ficha —narrativa, dominios matemáticos, apoyos, perfil cognitivo y banda derivada, invariantes, interacción, resultados, efectos de carrera, contribución competitiva, ocultos y estado de revisión docente— está en [challenge-authoring.example.yaml](../07-reference/challenge-authoring.example.yaml).
 
 Es un ejemplo documental: no se importa desde runtime ni reemplaza al [schema de contenido](../07-reference/content-schema.example.json).
+
+## Sin LLM en runtime competitivo v1
+
+**LOCKED.** IA puede asistir desarrollo/autoría, pero no genera desafíos, evidencia,
+score, explicaciones autoritativas ni epílogo canónico durante Fair v1. Contenido y
+prosa son autorados/aprobados, deterministas, versionados y verificables por replay.

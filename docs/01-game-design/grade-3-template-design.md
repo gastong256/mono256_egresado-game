@@ -10,6 +10,15 @@ organiza tiempo, recursos, movilidad y compromisos. Es deliberadamente el año m
 rico en Estilo hasta este punto del recorrido; ninguna estrategia vital recibe
 superioridad moral. Rige la [envolvente](stage-08-product-design-envelope.md).
 
+## Taxonomía reconciliada
+
+El Product Pass del 9 de septiembre normaliza las interacciones a los
+[cinco motores reutilizables](challenge-system.md#cinco-motores-reutilizables-de-interacción-v1).
+Los nombres específicos de esta ficha son modos/presentaciones, no frameworks
+nuevos ni capacidades runtime ya implementadas. Estilo sólo usa evidencia
+estratégica significativa para Career/Narrative; no aporta FairScore, Prestige
+ni oportunidades competitivas. Aplican la composición y el DoR canónicos.
+
 ## Colocación y composición
 
 Anchors: `y3.friend-day`, `y3.course-project-tech` y `y3.route-plan`.
@@ -25,7 +34,7 @@ Proyecto del Curso según las
 
 **STANDARD · MEDIUM · anchor.** Organizar una salida del Día del Amigo mediante
 disponibilidades, traslados, duraciones, restricciones y una optimización pequeña.
-La interacción de diseño es `Constraint Builder + Availability Board`.
+La interacción de diseño es `Timeline / Schedule` (modo disponibilidades).
 
 Math evalúa viabilidad del plan. Equipo evalúa preferencias e inconvenientes
 repartidos entre planes Math-valid; Estilo tiene una señal fuerte.
@@ -41,7 +50,7 @@ Math = yes · Team = yes · Aura = none · Recovery = none
 
 **STANDARD · MEDIUM · anchor.** Organizar recursos compartidos del proyecto
 tecnológico: almacenamiento, tasas, fechas límite y dependencias. La dirección de
-interacción combina asignación y construcción bajo restricciones.
+interacción es `Allocate / Constrain` (modo recursos/dependencias).
 
 **Invariante `LOCKED`:** cada variante utiliza más de un recurso o dependencia;
 no puede resolverse como un único cálculo de tasa. El problema trata recursos
@@ -58,7 +67,7 @@ factibilidad matemática, bajo las reglas comunes de autoría.
 ## `y3.week-planner`
 
 **STANDARD · MEDIUM · secondary.** Construir una organización de varios días
-con capacidad temporal, deadlines y bloques flexibles, mediante una Timeline.
+con capacidad temporal, deadlines y bloques flexibles, mediante `Timeline / Schedule` (modo varios días).
 Tiene Math y Estilo fuerte, sin Equipo, Aura ni recuperación.
 
 La escala de varios días y bloques flexibles la distingue del ensayo de una
@@ -68,7 +77,7 @@ tarde de 1.º. No es una app de productividad ni moraliza trabajo o descanso.
 
 **CORE · QUICK · secondary.** Comparar costos fijos y variables según la
 cantidad de usos; el umbral entre alternativas debe cambiar la decisión.
-La dirección de interacción es comparación/construcción acotada.
+La interacción es `Choice / Compare` (modo umbral entre alternativas).
 
 **Invariante `LOCKED`:** el umbral de cantidad de usos es estructuralmente
 necesario. Comparar dos descuentos como en 7.º no cumple el diseño.
@@ -86,7 +95,7 @@ solo no define Estilo.
 
 **STRETCH · DEEP · anchor.** Construir un recorrido sobre mapa/red con **3–4
 puntos relevantes**, razonando sobre distancia, tiempo y orden de visita.
-Interacción de diseño: `Route Builder / Map`.
+Interacción de diseño: `Spatial / Graph Canvas` (modo recorrido en red).
 
 **Invariante `LOCKED`:** cambiar el orden del recorrido modifica materialmente
 la viabilidad o eficiencia. Es Math-only y no tiene recuperación.

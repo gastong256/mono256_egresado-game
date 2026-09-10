@@ -122,3 +122,17 @@ Es una lectura documental para poder leer juntos los tres vocabularios. No impli
 Si el objetivo de una tarea es modelar y decidir, la fórmula visible o la calculadora no bajan el techo: sacan una barrera que no era el objetivo. Es la distinción de UDL entre barrera de acceso y objetivo real de la tarea; ver [base teórica](../07-reference/research-basis.md).
 
 Qué desafíos ofrecen qué apoyo, y si eso cambia en modo competitivo, es una decisión docente pendiente ([preguntas 7 y 45](../07-reference/open-questions.md)).
+
+## Cierre de cobertura de carrera
+
+El Product Pass confirmó cobertura suficiente de 7.º y las 25 Templates futuras;
+no exige nuevas familias para completar currículo antes de G1. Se conservan las
+firmas distintas de asignación (capacidad → asignación estática → tiempo e
+incompatibilidades → turnos/continuidad → contingencia) y espacio (cobertura →
+encastre/escala → regiones → rutas → capacidad/flujo → ratio/recorte).
+
+El [Intrinsic Math Gate](content-authoring-guide.md#intrinsic-math-gate) es el
+criterio único de aceptación contra regresión a planilla/quiz. Los límites de
+cobertura por run están en [composición](full-career-content-matrix.md#envolvente-normalfair-v1).
+La validez matemática documental no reemplaza revisión docente, variantes aprobadas
+ni evidencia de comprensión/pacing con personas.

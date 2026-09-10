@@ -3,6 +3,16 @@
 - Estado: Aceptado
 - Fecha: 2026-08-29
 
+## Evolución de carrera completa — 2026-09-10
+
+Prestige se agrega como observador separado bajo ADR-025, sin Estilo ni evidencia
+competitiva duplicada. El Product Pass cierra FairScore → Prestige → shared rank;
+ningún tiempo, optimalCount ni campo diagnóstico constituye un tercer criterio.
+Las cifras y versiones de implementación de este ADR son evidencia histórica.
+[Decisión técnica futura](ADR-025-full-career-contract-evolution.md);
+[reconciliación de producto](../../07-reference/full-career-product-audit-integration.md).
+No se modifican runtime ni versiones en esta integración.
+
 ## Reconciliación post-Teacher-Gate-1 — 2026-09-02
 
 TG1 no cambia esta arquitectura; usa el camino de calibración versionada que el ADR diseñó. Se conserva inmutable `fair-score-dev-1@1.0.0-candidate` (80/15/5) y se publica `fair-score-dev-2@2.0.0-post-tg1-candidate` (85/10/5) como candidata actual, `official: false`. Ambas resuelven por identidad o versión exacta y una referencia desconocida falla: nunca existe fallback `latest`.
@@ -129,4 +139,5 @@ Que 23.000 runs se comporten como se espera dice que el mecanismo preserva sus i
 
 ## No objetivos
 
-Ranking, leaderboard, personal best, endpoints, persistencia e inscripción a un evento son STAGE-09. Egreso y recuperaciones, STAGE-07. El desempate lexicográfico está documentado y no implementado: sin ranking no tiene a qué ordenar, y el `optimalCount` que el desglose ya reporta es el primer dato que va a necesitar.
+Ranking, leaderboard, personal best, endpoints, persistencia e inscripción a un evento son STAGE-09. Egreso y recuperaciones, STAGE-07. El ranking no está implementado. La expectativa histórica de usar `optimalCount`
+para desempatar quedó supersedida por el Product Pass; ese dato sigue diagnóstico.

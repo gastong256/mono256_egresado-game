@@ -186,8 +186,8 @@ Cuando el compositor no la selecciona, un storylet breve puede mencionarla. Esto
 evita que una línea recurrente se convierta en contenido fijo repetitivo.
 
 La **Recurring Arc Policy** extiende ese principio a la composición. El target
-aceptado del Proyecto es 1–2 Templates puntuables por carrera; máximo 2 sigue
-candidato y se prefieren años no consecutivos entre planes igualmente válidos.
+aceptado del Proyecto es 1–2 Templates puntuables por carrera; máximo 2 es
+`LOCKED v1` y se prefieren años no consecutivos entre planes igualmente válidos.
 Membresía, frecuencia y clusters de eventos se mantienen en las
 [políticas de la matriz](full-career-content-matrix.md#políticas-de-composición).
 
@@ -203,7 +203,8 @@ historia / flags / Carrera
 
 Puede cambiar texto, quién se acerca, framing, algunas opciones, elegibilidad de
 eventos raros y lectura del epílogo. No crea un grafo combinatorio ni bonificaciones
-matemáticas invisibles.
+matemáticas invisibles. En Fair, la oportunidad competitiva rara está fijada
+por la seed de la edición, no por Estilo o rendimiento previo del participante.
 
 Ejemplos: Equipo alto puede generar confianza posterior; Estilo puede cambiar una
 opción de contingencia; una previa puede reaparecer en humor o síntesis final. La
@@ -223,6 +224,9 @@ La consecuencia narrativa puede recuperarse años después: el elenco recuerda
 cómo se repartió una tarea, una previa vuelve en un comentario o el proyecto
 final retoma una historia. Ese payoff diferido no exige haber jugado cada
 Template del arco ni añade una recompensa matemática por acumular callbacks.
+Cada Template puntuable consume 0–2 condiciones ligeras de callback en su copy
+normal; es presupuesto de autoría, no límite de schema. La selección de cierre
+puede consultar más historia sin multiplicar ramas dentro de cada desafío.
 
 ## Career Convergence
 
@@ -236,36 +240,54 @@ matemática central. Ver [diseño de 5.º](grade-5-template-design.md).
 
 ## Narrative Salience
 
-**Madurez: dirección `ACCEPTED`.**
+**Madurez: `LOCKED v1` · NOT IMPLEMENTED.** Supersede la orientación aproximada
+y el algoritmo diferido del checkpoint #2. Selección determinista de **3–5**
+recuerdos distintos:
 
-El cierre y el epílogo priorizan aproximadamente **3–5 hechos significativos**,
-en lugar de volcar todo el historial. El número es orientación de presentación,
-no límite runtime ni coeficiente congelado. El algoritmo de selección queda
-diferido al pase de Career Epilogue v1 y no está implementado.
+- exactamente uno temprano, de 7.º–2.º;
+- exactamente uno medio, de 3.º–4.º;
+- exactamente uno final, de 5.º;
+- hasta dos extras de rareza o Hito mayor, sin duplicar recuerdos elegidos.
+
+Dentro de cada segmento: evento raro/único mayor → Hito multianual → payoff
+significativo de Repaso/previa → evento icónico → evento ordinario autorado.
+Los empates se resuelven por prioridad editorial `salienceRank` y luego ID
+semántico estable. Cada segmento debe tener fallback ordinario para garantizar
+el mínimo sin exigir rareza ni Projects anteriores. No se usa generación de prosa
+no determinista ni LLM runtime. La representación técnica futura está en
+[ADR-025](../03-architecture/adr/ADR-025-full-career-contract-evolution.md).
 
 ## Quinto año y Career Epilogue v1
 
-5.º concentra callbacks en proyecto final, viaje/evento, anuario y egreso, pero
-sin multiplicar ramas. El epílogo v1 es requerido dentro de STAGE-08 y sintetiza
-Estilo, Promedio, Equipo, Aura, previas/recuperaciones, flags y Hitos.
+**Diseño cerrado; implementación requerida en STAGE-08 y todavía pendiente.**
 
-El contrato de entrada futuro admite estadísticas de carrera, distribución de
-Estilo, historial de recuperaciones/previas, Project Arc, callbacks significativos,
-eventos raros, Hitos de display y de Prestige, y elecciones de cierre. Una
-preferencia opcional de `next-step-options` puede alimentar Estilo/epílogo;
-FairScore evalúa únicamente la viabilidad de los escenarios hipotéticos.
+El contrato de entrada futuro usa carrera, Estilo, recuperación/previas, flags,
+Project Arc, callbacks, eventos raros, logros y elecciones de cierre verificables.
+Una preferencia opcional de `next-step-options` alimenta narrativa, nunca score.
 
-No termina sólo en una tabla ni asigna una personalidad total. Debe contar “cómo
-atravesaste la escuela”, con resumen narrativo, recorrido y estadísticas.
+Orden de presentación:
 
-El pase detallado de epílogo sigue `PLANNED`: sucede después de la auditoría
-cruzada y del pase de Rare Events / Milestones / Prestige, antes de la
-reconciliación final de Phase 0. Aprobar estos insumos no implementa el epílogo.
+1. **EGRESASTE**, siempre: ningún desempeño lo sustituye por fracaso.
+2. Perfil narrativo breve de 2–4 líneas autoradas: Estilo dominante/equilibrado,
+   una trayectoria de Equipo/Aura/carrera y tono final, sin jerarquía moral.
+3. **TU RECORRIDO**, con los recuerdos de la política de saliencia anterior.
+4. Promedio, Equipo, Aura y perfil de Estilo; dimensiones no establecidas conservan
+   `null ≠ 0` y no se dibujan como ceros.
+5. Hitos desbloqueados, badges display-only y Prestige, distinguidos según
+   [su contrato](rare-events-and-prestige.md).
+6. En Fair: FairScore, Prestige, posición propia/contexto Top 3 y CTA. En Practice:
+   resultado personal y jugar otra vez, sin puesto oficial.
+
+El cierre débil sigue siendo factual/humorístico, nunca humillante ni un diagnóstico
+personal. No termina sólo en tabla ni descarga todo el historial. El Product Pass
+completó este pase; no hace falta otro pase de epílogo antes de Phase 1.
 
 ## Career Milestones
 
 STAGE-08 diseña familias académicas, sociales, de Estilo, comeback/recuperación y
 eventos raros. Un Hito puede ser display-only, Prestige-eligible o badge raro. La
+identidad de Estilo, corrección Math/Team/Aura, uso/éxito de Repaso, aparición
+rara y completar la carrera sólo pueden dar badges de display. La restante
 elegibilidad competitiva depende de evidencia independiente y del
 [modelo de Prestige](rare-events-and-prestige.md); nunca se presume.
 

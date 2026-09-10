@@ -134,3 +134,28 @@ El motor y el blueprint nombran distinto la misma escala de cuatro escalones.
 | `invalid` | insufficient / insuficiente | rompe una restricción esencial; la run continúa igual |
 
 Manda el vocabulario del motor. La escala del blueprint aparece en documentos de score competitivo y se lee contra esta tabla.
+
+## Vocabulario cerrado por el Product Pass v1
+
+**Competition Seed:** seed compartida emitida por servidor por edición de Fair;
+fija plan, variantes, dificultad y estado raro. No es runId: cada intento tiene
+uno distinto. [Autoridad](../05-operations/fair-mode-and-competition-freeze.md).
+
+**Prestige:** reconocimiento competitivo secundario por evidencia independiente,
+separado de FairScore y de Hitos display-only. Estilo no participa. Diseño cerrado,
+runtime pendiente. [Autoridad](../01-game-design/rare-events-and-prestige.md).
+
+**Shared rank / puesto compartido:** mismo puesto al empatar FairScore y Prestige,
+sin tiempo ni otra clave oculta. [Autoridad](../01-game-design/competitive-scoring-and-ranking.md).
+
+**Motor de interacción:** uno de cinco patrones reutilizables de producto; un
+modo o un `InteractionKind` técnico no constituye automáticamente otro motor.
+[Taxonomía](../01-game-design/challenge-system.md).
+
+**Narrative Salience:** selección determinista de 3–5 recuerdos por segmentos,
+no resumen generativo del historial. [Autoridad](../01-game-design/narrative-system.md).
+
+**Repaso v1:** label de recuperación disparada por INVALID recovery-capable;
+uno interactivo por etapa, debrief de otras obligaciones y cierre conjunto.
+La distinción de debrief sigue pendiente en runtime.
+[Autoridad](../01-game-design/graduation-and-fail-forward.md).

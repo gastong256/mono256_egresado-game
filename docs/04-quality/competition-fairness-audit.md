@@ -20,7 +20,9 @@ Esta evidencia prueba invariantes del mecanismo y exhibe el efecto de candidatos
 - ¿Alguna plantilla otorga sistemáticamente más puntos que otra para la misma habilidad?
 - ¿Se puede reintentar hasta recibir un calendario más fácil?
 
-Si la respuesta a la tercera es sí, el descriptor de run tiene que emitirlo el servidor y el equiparado tiene que ser real, no nominal.
+En Fair v1 la respuesta debe ser no: seed emitida por servidor compartida por
+edición, mismas variantes, dificultad y rareza en todos los intentos. Comprobar
+vinculación al descriptor registrado, no sólo igualdad nominal de presupuesto.
 
 ## Dominancia
 
@@ -31,12 +33,16 @@ Si la respuesta a la tercera es sí, el descriptor de run tiene que emitirlo el 
 
 La última es la más fácil de romper sin darse cuenta: si el bonus por eficiencia empuja siempre hacia Estratega, Estilo dejó de ser identidad y pasó a ser una build óptima.
 
-## Sesgo de velocidad
+## Ausencia de criterio temporal
 
-- ¿Un jugador más lento y más preciso pierde contra uno mucho más rápido y menos preciso?
-- ¿El tiempo activo participa sólo como desempate tardío?
+- ¿Dos action logs con iguales decisiones y tiempos distintos producen exactamente el mismo FairScore, Prestige y puesto?
+- ¿Ningún elapsed time, timestamp, orden de llegada o ID oculto desempata?
+- ¿Los controles accesibles producen respuestas semánticamente equivalentes?
 
-El producto ya declara que el score no debe estar dominado por la velocidad, por accesibilidad y porque premia el cálculo mental sobre el razonamiento. Ver [reglas, scoring y progresión](../01-game-design/rules-scoring-and-progression.md).
+El Product Pass supersede el candidato de tiempo tardío: la secuencia v1 es
+FairScore → Prestige → shared rank. Tiempo es sólo diagnóstico de UX, no señal de
+mérito. Ver [score/ranking](../01-game-design/competitive-scoring-and-ranking.md).
+
 
 ## Sesgo de volumen de intentos
 
@@ -46,6 +52,14 @@ El producto ya declara que el score no debe estar dominado por la velocidad, por
 ## Análisis de empates
 
 Simular el comparador y estimar la tasa de empate. **No se agrega ruido aleatorio al score para forzar unicidad**: un score con decimales inventados deja de poder explicarse. Si quedan empates, la política de premio la decide el organizador, por escrito y antes de la feria.
+
+## Evidencia independiente y máximos
+
+- Para cada Template, demostrar que los máximos disponibles Math/Team/Aura son conjuntamente alcanzables; el techo algebraico no basta.
+- Prestige no consume corrección, Team/Aura, Estilo ni el hecho de necesitar/superar Repaso; logros declaran evidencia, slot y deduplicación.
+- Reintentar no cambia estado raro ni slots disponibles; aparecer no paga Prestige.
+- Cambiar sólo identidad/Estilo no cambia el comparador ni la oportunidad competitiva.
+- Empates de ambos scores comparten puesto y no desaparecen detrás de una paginación o desempate técnico.
 
 ## Transparencia
 

@@ -5,13 +5,13 @@ Estas decisiones requieren evidencia de prototipo, playtest, implementación u o
 ## Producto
 
 1. ~~¿Run objetivo de 4, 5 o 7 minutos?~~ **Cerrada por TG1-12:** la carrera completa apunta a aproximadamente **8–10 minutos**. Queda abierta la calibración empírica de pacing, no el objetivo.
-2. Dentro del presupuesto ya fijado de uno o dos beats normales, ¿qué combinación con storylets y recuperaciones condicionales mantiene el ritmo sin sentirse repetitiva? Phase 0 usa como candidato una carrera típica de 9–10 beats y clases `QUICK / MEDIUM / DEEP`; falta medirlas con contenido real. Esta pregunta no reabre el presupuesto ni define la profundidad del catálogo.
+2. Cantidad Normal/Fair v1 cerrada en nueve beats y [envolvente](../01-game-design/full-career-content-matrix.md#envolvente-normalfair-v1). Falta validar copy, transiciones y Repasos contra mediana 8–10 min / p75 ≤12 min. *Gate: carrera real y walkthroughs, no reabrir cantidad por conveniencia.*
 3. ¿El nickname se pide antes o después de la primera run en modo libre?
 4. ¿Qué tan visible debe ser el score durante la carrera?
 
 ## Dificultad
 
-5. ¿Selección manual, adaptativa o híbrida? STAGE-05 **no la cierra**: define cómo se expresaría una política de composición, adaptativa o no, y deja el mecanismo listo para cualquiera de las tres.
+5. Dificultad fija para Fair v1 bajo edición común. Selección manual/adaptativa/híbrida abierta sólo para modos no oficiales. *Gate: experiencia de esos modos; ADR-025 preserva separación.*
 6. ¿Cómo mapear 12–17 sin preguntar edad exacta?
 7. ¿Se permite calculadora en ranking de feria?
 
@@ -23,9 +23,9 @@ Estas decisiones requieren evidencia de prototipo, playtest, implementación u o
 
 ## Ranking
 
-11. ¿Mejor run por nickname/session o todas? ¿El default de operaciones es sólo una propuesta de playtest?
-12. ¿Seed idéntica para todos o pool equivalente, y qué política server-issued evita seed farming bajo intentos ilimitados y oportunidades raras normalizadas?
-13. Después de ordenar por `FairScore DESC` y `PrestigeScore DESC`, ¿tiempo debe servir como criterio terciario? ¿La sugerencia de usarlo al final debe aceptarse o descartarse?
+11. ~~¿Mejor run o todas?~~ **Cerrada por TG1/Product Pass:** mejor resultado verificado por participante, no suma; identidad/persistencia STAGE-09.
+12. ~~¿Seed común o pool equivalente?~~ **Cerrada v1:** Competition Seed compartida server-issued por edición; mismos plan/variantes/dificultad fija/estado raro en reintentos. Practice procedural no oficial. [Modo feria](../05-operations/fair-mode-and-competition-freeze.md).
+13. ~~¿Tiempo como criterio terciario?~~ **Supersedida/cerrada:** FairScore → Prestige → puesto compartido; sin velocidad ni criterio oculto.
 
 ## Feria
 
@@ -48,10 +48,10 @@ Estas decisiones requieren evidencia de prototipo, playtest, implementación u o
 
 ## Engine y scoring
 
-24. ¿Cuál es la fórmula y política de redondeo final del score oficial, incluidos calidad, dificultad, velocidad, rachas y penalizaciones? *Gate: congelar el ruleset de score oficial.* STAGE-06 fijó **el mecanismo y el redondeo** —puntos básicos enteros sobre racionales exactos, media-arriba una sola vez al final, reparto por resto mayor para que el desglose cierre— y dejó los coeficientes abiertos. La velocidad sigue afuera del score y su señal confiable es la [pregunta 27](#). Ver [ADR-023](../03-architecture/adr/ADR-023-competitive-score-policy.md).
+24. ¿Qué aprobación/freeze y evidencia empírica requiere la política oficial? Mecanismo/redondeo implementados en ADR-023; se conserva `fair-score-dev-2` 85/10/5, no oficial. Velocidad/bonus temporales excluidos de v1. *Gate: STAGE-09/TG2 y FREEZE.*
 25. ~~¿Qué algoritmo PRNG y contrato de consumo/versionado se adopta para la primera implementación?~~ **Cerrada por [ADR-012](../03-architecture/adr/ADR-012-seeded-prng-and-substreams.md)**: `pure-rand` `xoroshiro128plus` fijado, substreams derivados por namespace y golden replays en `tests/unit/engine-golden.test.ts`.
 26. ¿Durante cuánto tiempo y mediante qué artefactos se conservan engines, rulesets y contenido compatibles para reanudar o reproducir runs históricas? *Gate: prometer compatibilidad de resume/replay entre releases.*
-27. Si el tiempo participa del score o desempate, ¿qué señales y límites autoritativos usa el servidor sin confiar en `client_elapsed_ms`? *Gate: usar velocidad en score o ranking oficial.*
+27. ~~¿Señal temporal para puntuar/desempatar?~~ **Supersedida v1:** tiempo sólo diagnóstico UX/telemetría. El cierre operativo del servidor no es velocidad de juego.
 
 ## Operación, seguridad y privacidad
 
@@ -69,7 +69,7 @@ Estas decisiones requieren evidencia de prototipo, playtest, implementación u o
 
 34. ¿La interacción de presupuesto muestra un total corriente mientras el jugador arma la compra? El handoff de diseño lo especifica; la implementación no lo muestra porque calcular el total *es* el desafío, y mostrarlo lo convertiría en comparar dos números que sacó otro. El handoff marca la interacción como «especificada, no construida» y la difiere a v0.3, así que la diferencia es una decisión de gameplay pendiente y no una deuda de implementación. *Gate: construir BudgetInteraction de verdad.*
 35. ¿Qué evento de 7.º introduce Aura? **Respondida para la Teacher Demo Candidate**: el **acto del 25 de Mayo**, autorado como `g7.may-25-act` y tercer evento del arco amplio. Es el único momento de ese arco que ocurre en público, que es la condición que Aura pide: la mueve lo memorable, no lo correcto. El acto entrega entre `+1000` y `−300` según cómo salga la coreografía, así que la demo establece la dimensión en positivo o negativo. Una partida normal compuesta sólo la establece si su `RunPlan` selecciona el acto; Aura no es obligatoria por año. Ver [la especificación del evento](../01-game-design/challenge-catalog.md) y el [slice de 7.º](../06-delivery/vertical-slice-grade-7.md).
-36. ¿Los arquetipos de cierre son los ocho perfiles del GDD o los que nombra el handoff de diseño? La pantalla usa los ocho del GDD —fuente autoritativa de game design—; el handoff nombra al pasar «El Rey del Último Minuto», «El Vago Eficiente» y «La Leyenda del Colegio», que no están en esa lista. Adoptarlos sería un cambio de game design, no de presentación. *Gate: congelar el set de perfiles de egreso.*
+36. El epílogo v1 cierra una síntesis autorada de 2–4 líneas, sin reducir la carrera a un tipo ni usar errores como identidad. El slice actual conserva sus perfiles históricos; los títulos casuales del handoff visual no los reemplazan. Falta copy concreto y adaptación de la UI al epílogo canónico. *Gate: autoría/implementación del cierre STAGE-08.*
 37. ¿Cuánto tiempo se sostiene el rechazo de snapshots v1 antes de poder borrar el camino? Hoy un checkpoint del modelo de estadísticas viejo se descarta y se ofrece partida nueva. *Gate: prometer compatibilidad de resume entre releases; se cruza con la pregunta 26.*
 
 ## Teacher Gate — decisiones del Departamento de Matemática
@@ -79,7 +79,7 @@ Incorporadas desde el [Project Blueprint v0.2](blueprint-v0.2-integration.md). S
 38. ~~¿Deben Equipo y Aura participar, qué ponderación usar y cómo tratar oportunidades ausentes?~~ **Cerrada en dirección por TG1-04/TG1-05/TG1-06/TG1-07:** las tres participan, el candidato post-Gate es `fair-score-dev-2` 85/10/5 y se normalizan sólo los pesos activos. Sigue **OPEN** su oficialización/freeze en la pregunta 24 y la cobertura independiente de contenido en STAGE-08.
 39. ~~¿Qué valor de calidad matemática corresponde a cada resultado?~~ **Cerrada por TG1-09:** `1,00 / 0,75 / 0,40 / 0,10` sobre `optimal / efficient / functional / invalid`; una métrica continua honesta, como F1, no se aplana a cuatro cajas.
 40. ~~¿Los intentos en la feria son ilimitados o limitados a N?~~ **Cerrada en producto por TG1-10:** ilimitados y se conserva el mejor resultado verificado. Emisión autoritativa, identidad y persistencia siguen en STAGE-09; el jugador no elige seed.
-41. Después de `FairScore DESC` y `PrestigeScore DESC`, ¿qué pasa ante un empate exacto: puesto compartido, premio compartido o desempate anunciado? Un identificador interno **no** puede decidir un premio en silencio. *Gate: STAGE-09 y aprobación del organizador antes de repartir premios.* Se cruza con la pregunta 13.
+41. ~~¿Tercer criterio?~~ **Cerrada v1:** puesto compartido. Premios comunes o desafío separado se anuncian por el organizador, sin agregar criterio al ranking. *Gate operativo: antes de repartir premios.*
 42. ~~¿El acto del 25 de Mayo entra a producción?~~ **Cerrada por TG1-13:** `KEEP` pedagógico; su narrativa debe enriquecerse y diversificarse en STAGE-08. No se agregó Aura competitiva porque hoy no existe una evidencia independiente del F1 matemático.
 43. ~~¿Cuál es la duración objetivo real?~~ **Cerrada por TG1-12:** 8–10 minutos para la carrera completa, como target UX sin timer ni score de velocidad.
 44. **Narrowed por TG1-03/TG1-08:** las bandas `CORE / STANDARD / STRETCH` y el principio de una recompensa competitiva pequeña están aceptados. Sigue **OPEN** la calibración exacta de factores; 1,00/1,08/1,15 permanece candidata y separada de los costos de scheduling 1,00/1,50/2,10.
@@ -87,50 +87,42 @@ Incorporadas desde el [Project Blueprint v0.2](blueprint-v0.2-integration.md). S
 
 ## Contenido y producto, sin gate docente inmediato
 
-46. ¿Qué profundidad final de `ScenarioFamily`, `ChallengeTemplate` y `ChallengeVariant` debe ofrecer el **catálogo de contenido disponible** por etapa para sostener rejugabilidad? La [matriz v0.3](../01-game-design/full-career-content-matrix.md) reúne 25 Templates con los cinco pases `DESIGN-CANDIDATE-APPROVED`, pero no vuelve 25 una cuota ni congela cantidad de Variants. Las opciones del catálogo no son los uno o dos beats jugados por año. *Gate: Full-Career Cross-Content Audit, reconciliación final de Phase 0 y luego catálogo real validado.*
+46. Product Pass conserva las 25 Templates y distingue formas semánticas de números. Los [targets de autoría](../01-game-design/content-authoring-guide.md#profundidad-de-variantes) son objetivos, no límites. Falta catálogo real. *Gate: implementación incremental, no otro pase de prediseño.*
 
-### 46-bis. El inventario final de escenarios sigue ABIERTO
+### 46-bis. Catálogo ejecutable pendiente, prediseño cerrado
 
-El modelo de contenido de [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md) construyó el **mecanismo**. Phase 0 aprobó el diseño candidato de las 25 Templates de 1.º–5.º; no produjo ni congeló el inventario runtime. Siguen sin resolver:
+Las ocho Templates actuales —siete ordinarias y un Repaso— siguen siendo baseline.
+Las 25 futuras, sus nueve rutas recovery-capable y sus `none` están aprobados en
+diseño. No añadir/reemplazar familias antes de G1 salvo contradicción técnica,
+invalidez matemática o evidencia docente/de acceso real. Variantes aprobadas se
+producen contra targets, no se confunden con beats por carrera.
 
-- cuántas familias de escenario tiene Egresado y cuáles son;
-- cuántas plantillas termina teniendo cada familia más allá de la matriz candidata;
-- cuántas variantes tiene cada plantilla;
-- qué ajustes justificados por evidencia necesitará el conjunto después de la auditoría cruzada, conservando como baseline el placement y los invariantes ya aprobados;
-- si cada uno de los escenarios actuales se clasifica como **KEEP**, **MOVE**, **REWORK**, **MERGE**, **REPLACE** o **REMOVE**.
+*Gate: autoría/validación incremental.* Ver [matriz](../01-game-design/full-career-content-matrix.md).
 
-Las ocho plantillas actuales —siete ordinarias y un repaso— son **contenido vigente y sondas de arquitectura**, no el inventario completo. La matriz registra nueve fuentes recovery-capable entre 25 futuras: las nueve rutas tienen aprobación de diseño y ninguna está implementada. Las otras Templates declaran `none`. Las familias runtime actuales —`bus`, `mural`, `notebook`, `group-project`, `school-fair`, `may-25`— tampoco forman un catálogo final cerrado.
-
-Que la familia `bus` haya pasado a tener dos plantillas en STAGE-04 ([ADR-021](../03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md)) **no responde nada de esto**: demuestra que el modelo aloja varias plantillas por familia, y no dice cuántas debería tener ninguna.
-
-*Gate: Full-Career Cross-Content Audit, reconciliación final de Phase 0 e implementación/validación del catálogo.* Ver [matriz v0.3](../01-game-design/full-career-content-matrix.md) y [migración del modelo](../03-architecture/content-model-migration.md).
-47. ¿Cuáles son los pesos exactos con los que cada resultado empuja Estilo? Hoy son valores de desarrollo dentro del presupuesto declarado por el motor. *Gate: congelar el ruleset de perfiles.* Se cruza con la pregunta 24.
+47. ¿Qué pesos/hechos estratégicos expresan Estilo en cada Template? Ya se excluye inferir identidad de Math sola, azar o INVALID; nunca aporta FairScore/Prestige. Los valores actuales requieren revisión al implementar. *Gate: autoría/freeze de perfiles.*
 48. ¿Qué acento visual mínimo distingue cada año? Es una decisión del sistema de diseño, prevista para v0.4 y **explícitamente diferida**. No la resuelve un documento de producto. *Gate: alcance de la v0.4 del sistema de diseño.*
 49. ¿Se produce el pack raster de ocho imágenes o el producto sale confirmando que la UI sola alcanza? Todas las pantallas corren hoy con cero imágenes. *Gate: alcance de la v0.3 del sistema de diseño.*
 50. ¿Cuánto tiempo se conservan action logs, ranking público y datos del evento después de la feria, y qué se archiva o anonimiza? *Gate: persistir datos reales de participantes.* Se cruza con la pregunta 31.
-51. ¿Qué señal de tiempo activo puede verificar el servidor si el tiempo participa del desempate? *Gate: usar tiempo en el ranking oficial.* Es la pregunta 27 vista desde el ranking competitivo.
-52. ¿Qué nombres, condiciones, efectos, rareza visible y presentación tendrá el catálogo de Hitos de carrera? STAGE-08 aceptó diseñarlos y permite que sean display-only, Prestige-eligible o badges raros, pero toda elegibilidad competitiva debe usar evidencia independiente y presupuesto normalizado. La aparición por RNG vale cero. STAGE-07 no los implementó: la recuperación no puntúa. *Gate: diseño de catálogo en STAGE-08; calibración/ranking en STAGE-09/TG2.*
-53. ¿Con qué palabras se le cuenta al jugador que le quedó algo por cerrar? TG1-14 aceptó el egreso garantizado y **no aportó vocabulario**. STAGE-07 implementó el sistema con copy candidato —«repaso», «quedó algo dando vueltas», «previa»— elegido para no humillar, y ninguna de esas palabras es arquitectura: cambiarlas es editar contenido. Falta validar con el docente que sean las que la escuela usa y que un chico las entienda sin explicación. *Gate: Teacher Gate 2.* Ver [egreso, recuperación y fail-forward](../01-game-design/graduation-and-fail-forward.md).
-54. ¿Qué resultado debe dejar algo por cerrar? Hoy `recovery-dev-1` dispara sólo con `invalid`: queda por validar si `functional` debería disparar en algún caso y si el umbral debe variar por plantilla o dominio. Ésta es calibración legítima de `RecoveryPolicy`, sigue `TEACHER_GATE` y no oficial. *Gate: Teacher Gate 2.* Se cruza con la pregunta 39.
+51. ~~¿Tiempo activo verificable para desempate?~~ **Supersedida v1**, igual que 27: sin ranking temporal.
+52. ¿Qué nombres/hechos exactos tendrá cada logro? Tracks, slots y exclusiones cerrados en [Prestige](../01-game-design/rare-events-and-prestige.md); falta contenido concreto. *Gate: autoría STAGE-08 y auditoría/freeze STAGE-09; no bloquea Phase 0.*
+53. ~~¿Vocabulario de recuperación?~~ **Cerrada:** label **REPASO**; recovery/review internos; previa como historia. Copy contextual sigue revisión editorial/docente sin reabrir label.
+54. ~~¿INVALID o FUNCTIONAL dispara?~~ **Cerrada v1:** sólo INVALID de fuentes recovery-capable; `none` explícito válido. FUNCTIONAL no dispara. Policy ejecutable no oficializada por este cierre.
 
 La **capacidad** no forma parte de esta pregunta abierta: bajo [ADR-024](../03-architecture/adr/ADR-024-progression-recovery-and-graduation.md), una etapa juega como máximo un repaso estructural. Cambiar ese límite requeriría reconsiderar explícitamente el ADR y repetir sus pruebas de boundedness, pacing y egreso; no alcanza con calibrar una policy.
 
-55. Con `y1.classroom-layout` y `y1.rehearsal-schedule` fallidas en una misma etapa, ¿qué recovery selecciona el sistema, qué obligación cierra semánticamente y cómo representa la otra bajo un máximo estructural de uno? No hay solución preseleccionada. *Gate: [auditoría obligatoria posterior a implementar 1.º](../04-quality/post-grade-1-scalability-audit.md), antes de producción amplia de 2.º–5.º.*
-56. ¿Cuál es la calibración exacta de Prestige —cap, tracks, pesos y premios— dentro de la dirección secundaria lexicográfica aceptada? El presupuesto 25×4 y las magnitudes +5…+25 son candidatos. *Gate: contenido real, auditoría competitiva y STAGE-09/TG2.*
-57. ¿Qué probabilidades y límites de densidad corresponden a `UNCOMMON / RARE / VERY_RARE`? Bandas, elegibilidad previa y RNG seeded están aceptados; porcentajes y topes no. *Gate: catálogo raro, simulación y calibración.*
-58. ¿Qué regla versionada normaliza el techo de oportunidades Prestige entre runs normales y reemplazos raros? Está bloqueado que RNG no aumente el máximo, pero la arquitectura ejecutable no fue elegida. *Gate: implementación de eventos raros/Prestige; requiere revisión de ADR por cruzar RNG, replay, score y ranking.*
-59. **Cerrada en diseño por el checkpoint #2:** los pases de 2.º–5.º fijan placement, clases de pacing, intención de evaluación, señales Team/Aura y rutas recovery/`none`, todos `DESIGN-CANDIDATE-APPROVED`. No se reabren esos acuerdos como preguntas pendientes. Los parámetros/evaluadores ejecutables aún requieren producción bajo la guía de autoría y la duración real sigue abierta en la pregunta 2. *Siguiente trabajo: Full-Career Cross-Content Audit de la [matriz v0.3](../01-game-design/full-career-content-matrix.md).*
-60. ¿Se justifica una oportunidad rara/ultra-rara de Aura en 1.º con evidencia independiente? Aura ordinaria está decidida como ausente; no hay obligación de llenar el hueco. *Gate: diseño raro posterior, si surge una situación legítima.*
+55. **Semántica cerrada:** un Repaso determinista, debrief de no seleccionadas y cierre de todas. Falta validar `classroom-layout INVALID + rehearsal-schedule INVALID` con uno máximo. *Gate: [audit post-G1](../04-quality/post-grade-1-scalability-audit.md), antes de escalar 2.º–5.º.* `reviewPriority` recomendado; representación ADR-025.
+56. ~~¿Cap/tracks/presupuesto Prestige?~~ **Cerrada v1:** 40 Career Arc/40 Special/20 Rare, máximo 100; STYLE 25 y 25×4 supersedidos. Autoría/validación de evidencia y slots pendientes.
+57. ~~¿Defaults de rareza/densidad?~~ **Calibración v1 documentada:** 15 % / 7,5 % / 2 %, máximo 2 raros, máximo 1 puntuable y 1 VERY_RARE. Ajustable por evidencia mediante policy versionada. *Gate residual: simulación/telemetría; no freeze.*
+58. **Frontera resuelta en [ADR-025](../03-architecture/adr/ADR-025-full-career-contract-evolution.md):** slots/techos comunes de edición, reemplazo compatible, evidencia independiente y replay. Falta implementar/validar oportunidades concretas. *Gate: autoría Prestige y STAGE-09; no bloqueo de prediseño.*
+59. **Diseño cerrado:** checkpoint #2 y Product Pass conservan placement/pacing/evaluación/señales/mappings de las 25 Templates. Parámetros/evaluadores se producen bajo la guía; duración real pendiente en 2. Siguiente: Phase 1 G1.
+60. **DEFERRED:** Aura rara adicional de 1.º no integra v1 ni bloquea G1; Aura ordinaria ausente. Sólo revisar ante situación legítima con evidencia independiente, sin cuotas.
 61. ¿La escuela adquiere una marca ficticia/paródica y el jugador una personalización liviana más allá del nickname? Ambas son stretch, no core STAGE-08. *Gate: disponibilidad de alcance y revisión de portabilidad/privacidad.*
-62. ¿Qué algoritmo selecciona los hechos narrativos significativos del cierre/epílogo? **Narrative Salience está aceptada como dirección**, aproximadamente 3–5 hechos; queda diferida la selección exacta, no la convergencia de 5.º ni la independencia de callbacks. *Gate: pase de Career Epilogue v1.* Ver [sistema narrativo](../01-game-design/narrative-system.md#narrative-salience).
+62. ~~¿Algoritmo de Narrative Salience?~~ **Cerrada v1:** 3–5 recuerdos por segmentos, prioridades autoradas/ID; [narrativa](../01-game-design/narrative-system.md#narrative-salience). Implementación futura ADR-025, no otro pase de epílogo.
 
-El checkpoint #2 preserva además las aperturas ya indexadas: vocabulario y
-triggers de recuperación (53–54), semántica multiobligación después de 1.º (55),
-rareza/densidad y coeficientes/normalización Prestige (56–58), desempate terciario
-(13/41), seeds server-issued y anti-farming (12), pacing real (2) e identidad
-opcional (61). Máximo 2 del Project Arc permanece **candidato** en la
-[política de frecuencia](../01-game-design/full-career-content-matrix.md#frecuencia-del-project-arc);
-no se convierte silenciosamente en regla congelada.
+La [integración](full-career-product-audit-integration.md) registra supersesiones.
+Permanecen pendientes pacing empírico, catálogo/logros ejecutables, calibración,
+freeze y operación/privacidad. Project max 2 es LOCKED v1; contratos futuros en
+ADR-025 y STOP post-G1 preservado. No se declara runtime nuevo.
 
 ## Diferidas a propósito
 

@@ -52,6 +52,7 @@
 03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md
 03-architecture/adr/ADR-023-competitive-score-policy.md
 03-architecture/adr/ADR-024-progression-recovery-and-graduation.md
+03-architecture/adr/ADR-025-full-career-contract-evolution.md
 03-architecture/analytics-observability.md
 03-architecture/api-contracts.md
 03-architecture/architecture-overview.md
@@ -63,6 +64,7 @@
 03-architecture/target-engine-architecture.md
 04-quality/competition-fairness-audit.md
 04-quality/content-validation.md
+04-quality/full-career-technical-conformance.md
 04-quality/non-functional-requirements.md
 04-quality/post-grade-1-scalability-audit.md
 04-quality/post-teacher-gate-1-score-audit.md
@@ -100,6 +102,7 @@
 07-reference/event-config.example.json
 07-reference/event-effects.example.json
 07-reference/formulas-and-algorithms.md
+07-reference/full-career-product-audit-integration.md
 07-reference/glossary.md
 07-reference/open-questions.md
 07-reference/research-basis.md

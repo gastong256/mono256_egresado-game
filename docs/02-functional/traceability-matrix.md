@@ -33,22 +33,29 @@ De requisito de producto a capacidad de motor y a estado real. Esta tabla cubre 
 | Runs comparables entre sí | [dificultad](../01-game-design/difficulty-and-playability.md) | bandas + scheduler por presupuesto | mecanismo implementado; bandas aceptadas en TG1, equivalencia empírica pendiente | STAGE-05 (`DONE`) / STAGE-08 |
 | Ranking dominado por matemática | [score competitivo](../01-game-design/competitive-scoring-and-ranking.md) | `ScorePolicy` competitiva versionada | `fair-score-dev-2` 85/10/5 implementada y auditada; ranking pendiente | STAGE-06 (`DONE`) / STAGE-09 |
 | Premiar mejora y no volumen de intentos | [modo feria](../05-operations/fair-mode-and-competition-freeze.md) | emisión autoritativa + mejor resultado verificado | dirección TG1 aceptada; persistencia no implementada | STAGE-09 |
-| El error no expulsa al jugador | [fail-forward](../01-game-design/graduation-and-fail-forward.md) | invariante de egreso + recuperación | **implementado**: 20.000 carreras de seis años, 20.000 egresadas; el vocabulario sigue abierto | STAGE-07 (`DONE`) |
+| El error no expulsa al jugador | [fail-forward](../01-game-design/graduation-and-fail-forward.md) | invariante de egreso + recuperación | **implementado**: 20.000 carreras de seis años, 20.000 egresadas; label REPASO cerrado en Product Pass, aplicación UI pendiente | STAGE-07 (`DONE`) |
 | Identidad de carrera legible | [ADR-016](../03-architecture/adr/ADR-016-career-player-model.md) | `CareerState` v0.2 | **implementado** | — |
 | Auditoría de una run oficial | [ADR-003](../03-architecture/adr/ADR-003-deterministic-seeded-engine.md) | seed + versiones + action log | `variantCatalogVersion` y `scoreVersion` implementadas; falta emisión oficial | STAGE-06 y STAGE-09 |
 
 Las etapas son las del [roadmap de implementación](../06-delivery/implementation-sequence.md); el estado vigente de cada una está en [la etapa actual](../06-delivery/current-stage.md).
 
-## Diseño de STAGE-08 / Phase 0 — checkpoint #2
+## Cierre de STAGE-08 / Phase 0 — Product Pass
 
-Trazabilidad de diseño al 9 de septiembre de 2026. Ninguna fila declara
-implementación de los años futuros ni reemplaza las evidencias runtime anteriores.
+Diseño reconciliado el 10 de septiembre de 2026. [Integración y FC-001…030](../07-reference/full-career-product-audit-integration.md)
+y [audit técnico](../04-quality/full-career-technical-conformance.md) sostienen el
+cierre; ninguna fila declara producción de 1.º–5.º.
 
-| Requisito / objetivo | Fuente canónica | Estado / siguiente evidencia |
+| Requisitos / objetivo | Fuente única | Implementación / evidencia siguiente |
 |---|---|---|
-| FR-003/005: carrera variada con 25 Templates de 1.º–5.º | [matriz y cinco fichas](../01-game-design/full-career-content-matrix.md) | `DESIGN-CANDIDATE-APPROVED`; Full-Career Cross-Content Audit siguiente |
-| FR-003: clusters, arco recurrente y diversidad cognitiva | [políticas de composición](../01-game-design/full-career-content-matrix.md#políticas-de-composición) | límites de cluster `LOCKED`, frecuencia de arco con máximo candidato y diversidad soft; runtime pendiente |
-| FR-006/018: independencia de evidencia y FairScore de viabilidad | [4.º](../01-game-design/grade-4-template-design.md), [5.º](../01-game-design/grade-5-template-design.md), [Prestige](../01-game-design/rare-events-and-prestige.md) | invariantes `LOCKED`; futura autoría, revisión de equidad y replay |
-| FR-003/007/011: callbacks independientes, externalidad, convergencia y salience | [sistema narrativo](../01-game-design/narrative-system.md) | reglas aceptadas; algoritmo de salience y pase de epílogo pendientes |
-| Egreso con remediación relevante: nueve rutas futuras | [cobertura](../01-game-design/full-career-content-matrix.md#cobertura-futura-de-recuperación) | diseño aprobado bajo ADR-024 intacto; único audit de escalabilidad posterior a 1.º |
-| FR-013: primeras tres runs perceptiblemente distintas | [envolvente](../01-game-design/stage-08-product-design-envelope.md), [auditoría cruzada](../04-quality/content-validation.md#full-career-cross-content-audit) | goal aceptado; diseño conjunto y pacing real aún por validar |
+| FR-003: nueve beats, cuotas, clusters y Project | [matriz](../01-game-design/full-career-content-matrix.md#políticas-de-composición) | ADR-025; composer/validator global futuros |
+| FR-005/006: cinco motores y matemática intrínseca | [desafíos](../01-game-design/challenge-system.md), [autoría](../01-game-design/content-authoring-guide.md) | contratos y contenido incremental desde G1 |
+| FR-006/012: evidencia separada, Style no competitivo, Prestige | [score](../01-game-design/competitive-scoring-and-ranking.md), [Prestige](../01-game-design/rare-events-and-prestige.md) | FairScore actual preservado; Prestige futuro ADR-025 |
+| FR-T06/007: Repaso uno + debrief + cierre | [fail-forward](../01-game-design/graduation-and-fail-forward.md) | base ADR-024; debrief y stress gate post-G1 pendientes |
+| FR-003/011: callbacks, saliencia y epílogo | [narrativa](../01-game-design/narrative-system.md) | selector/evidencia futuros ADR-025 |
+| FR-002/013/014/018: seed común, reintentos, replay | [modo feria](../05-operations/fair-mode-and-competition-freeze.md) | servidor/edición STAGE-09 |
+| FR-012/020: puesto compartido y Top 3 pseudónimo | [ranking](../05-operations/leaderboard-and-moderation.md) | comparador/persistencia STAGE-09 |
+| FR-005, NFR-06: teclado/tap, no-drag, reduced motion, sin tiempo | [UX](../01-game-design/ux-interaction-design.md) | tests por motor y walkthroughs, no certificación actual |
+
+Orden y tareas técnicas: [Phase 1 en roadmap](../06-delivery/implementation-sequence.md#phase-1-implementar-1º-real).
+La implementación de G1 empieza después de este cierre documental; el gate post-G1
+sigue bloqueando producción amplia de 2.º–5.º hasta PASS.

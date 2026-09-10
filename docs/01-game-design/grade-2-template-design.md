@@ -10,6 +10,15 @@ participación, intercurso y reputación hacen visible la pertenencia. Se conser
 el piso matemático universal y las reglas de la
 [envolvente](stage-08-product-design-envelope.md).
 
+## Taxonomía reconciliada
+
+El Product Pass del 9 de septiembre normaliza las interacciones a los
+[cinco motores reutilizables](challenge-system.md#cinco-motores-reutilizables-de-interacción-v1).
+Los nombres específicos de esta ficha son modos/presentaciones, no frameworks
+nuevos ni capacidades runtime ya implementadas. Estilo sólo usa evidencia
+estratégica significativa para Career/Narrative; no aporta FairScore, Prestige
+ni oportunidades competitivas. Aplican la composición y el DoR canónicos.
+
 ## Colocación y continuidad
 
 Anchors: `y2.intercurso-plan`, `y2.course-project-survey` y `y2.court-zones`.
@@ -25,7 +34,7 @@ Curso. Los límites y su madurez viven en las
 
 **STANDARD · MEDIUM · anchor.** El jugador distribuye personas entre actividades
 y franjas horarias, considerando incompatibilidades. La interacción de diseño es
-`Timeline + Allocation Board`: el tiempo participa de la asignación.
+`Allocate / Constrain` (modo asignación, combinado con Timeline / Schedule): el tiempo participa de la asignación.
 
 Math evalúa personas × actividades × franjas × incompatibilidades. Equipo usa
 preferencias, exclusiones evitables, concentración de roles no deseados y
@@ -43,7 +52,7 @@ Estilo = consecuencias entre planes válidos · Recovery = none
 ## `y2.course-project-survey`
 
 **STANDARD · MEDIUM · anchor.** El curso necesita decidir qué puede afirmar o
-publicar a partir de una encuesta. `Data Table + Claim Selection` conecta datos
+publicar a partir de una encuesta. `Choice / Compare` (modo datos/afirmaciones) conecta datos
 con afirmaciones defendibles.
 
 Math trabaja porcentajes, encuestados frente a población, elección del
@@ -60,7 +69,7 @@ Recovery = y2.data-claim-review
 
 **CORE · QUICK · secondary.** Construir un pedido/asignación proporcional que
 respete el total, la reserva y mínimos por categoría. La dirección de interacción
-es `Constraint Builder`; cantidades, stock y redondeo deben servir a esas
+es `Allocate / Constrain` (modo pedido); cantidades, stock y redondeo deben servir a esas
 restricciones.
 
 Es Math-only y declara `Recovery = none`. No centra la escena en cuerpos o peso,
@@ -71,7 +80,7 @@ presupuesto de 7.º.
 
 **STANDARD · QUICK · secondary.** Ante puntos y un espacio pequeño de resultados
 pendientes, distinguir qué está garantizado, qué es posible y qué es imposible.
-La comparación/selección matemática precede a una decisión de comunicación
+`Choice / Compare` separa la selección matemática de una decisión de comunicación
 pública separada.
 
 **Invariante `LOCKED`:** `Math action != Aura action`. Resolver bien la tabla no
@@ -84,7 +93,7 @@ Math = yes · Team = none · Aura = yes · Recovery = none
 ## `y2.court-zones`
 
 **STRETCH · DEEP · anchor.** Definir regiones y zonas usando límites, distancias,
-área y márgenes. La interacción espacial debe hacer necesarias esas relaciones.
+área y márgenes. `Spatial / Graph Canvas` (modo zonas/distancias) debe hacer necesarias esas relaciones.
 
 Es Math-only y declara `Recovery = none`. La diversidad geométrica exige
 **zonas/distancias**, frente al **encastre/escala** de `y1.classroom-layout`;

@@ -30,7 +30,9 @@ Cada etapa puede modificar:
 
 ## Modelo de score
 
-El score debe premiar calidad de decisión más que rapidez.
+El resultado premia calidad de decisión; la rapidez no puntúa ni desempata.
+Las fórmulas preliminares siguientes son antecedentes de desarrollo, no la
+política competitiva v1 ni instrucciones para añadir bonuses.
 
 ### Componentes sugeridos
 
@@ -52,22 +54,14 @@ Donde:
 
 Estos valores son de **desarrollo** y no oficiales: el motor los expone bajo una política nombrada marcada `production: false`, y el cargador de ruleset se niega a construir un ruleset oficial desde ahí. Su calibración final es una decisión del Departamento de Matemática ([pregunta 24](../07-reference/open-questions.md) y [pregunta 39](../07-reference/open-questions.md)), no el resultado de un playtest previo que no está garantizado. Ver [ciclo de entrega real](../00-product/real-delivery-lifecycle.md).
 
-## Velocidad
+## Velocidad y rachas — supersesión v1
 
-La velocidad puede aportar un bonus pequeño con techo. No debe dominar el resultado porque:
-- favorece cálculo mental sobre razonamiento;
-- aumenta ansiedad;
-- perjudica accesibilidad;
-- incentiva adivinar.
+Los candidatos de bonus por tiempo y multiplicadores de racha quedan
+`SUPERSEDED` para la competencia. Tiempo sirve sólo para diagnóstico UX;
+rachas pueden celebrarse como narrativa/display. Ninguno agrega FairScore o
+Prestige ni desempata el ranking. La autoridad es
+[score competitivo y ranking](competitive-scoring-and-ranking.md).
 
-## Rachas
-
-Una racha puede celebrarse visualmente, pero su multiplicador debe ser controlado para no hacer imposible recuperar una run.
-
-Ejemplo:
-- 2 óptimas consecutivas: +3%.
-- 3: +5%.
-- 4+: cap +8%.
 
 ## Estadísticas narrativas
 
@@ -83,25 +77,11 @@ El score matemático debe basarse principalmente en calidad ex ante. El jugador 
 
 ## Perfil final
 
-El perfil se calcula sobre features normalizadas:
-- eficiencia;
-- precisión;
-- riesgo;
-- colaboración (derivada de Equipo; el punto neutro cuando no hay evidencia, no cero);
-- iniciativa (derivada de Estilo, no de una estadística visible);
-- uso de datos adicionales;
-- estabilidad entre años.
+El [epílogo](narrative-system.md#quinto-año-y-career-epilogue-v1) sintetiza hechos y elecciones
+significativas con prosa autorada, sin diagnósticos ni etiquetas basadas en errores.
+Estilo conserva Aplicado/Estratega/Improvisador como identidad no competitiva;
+velocidad y calidad matemática por sí solas no definen una estrategia.
 
-Ejemplo conceptual:
-
-```text
-Estratéga = eficiencia alta + precisión alta + riesgo moderado
-Improvisador = velocidad alta + riesgo alto + uso bajo de herramientas
-Líder = equipo alto + decisiones de asignación eficientes
-Científico = precisión alta + preferencia por evidencia + estadística alta
-```
-
-No usar diagnósticos psicológicos ni lenguaje clínico.
 
 ## Condición de finalización
 
@@ -111,7 +91,8 @@ No hay repetición automática de año por bajo desempeño en el MVP. La fantas�
 
 Eso no significa que el bajo desempeño no tenga consecuencia. El **fail-forward está implementado**: un resultado ordinario alcanzado por la política puede dejar una obligación; el año la cierra con un repaso fuera de su presupuesto ordinario, y toda run válida completada alcanza `GRADUATED`. El repaso no aporta evidencia a `FairScore`, no borra el resultado original y nunca se repite en bucle.
 
-El máximo de **un repaso por etapa** es estructura aceptada en [ADR-024](../03-architecture/adr/ADR-024-progression-recovery-and-graduation.md), no una calibración ordinaria. `RecoveryPolicy` conserva el campo como literal inspeccionable `1` y calibra qué calidades disparan una obligación; el content set declara el ruteo por plantilla. Una plantilla puede declarar `none` de manera intencional. 7.º ya prueba el recorrido real: las dos plantillas del colectivo rutean a `g7.bus-travel-review`; las otras cinco plantillas ordinarias declaran `none`. Ver [egreso, recuperación y fail-forward](graduation-and-fail-forward.md).
+El máximo de **un repaso por etapa** es estructura aceptada en [ADR-024](../03-architecture/adr/ADR-024-progression-recovery-and-graduation.md), no una calibración ordinaria. `RecoveryPolicy` conserva el campo como literal inspeccionable `1` y expresa la política de disparo; el Product Pass fija INVALID para v1,
+sin disparo por FUNCTIONAL; el content set declara el ruteo por plantilla. Una plantilla puede declarar `none` de manera intencional. 7.º ya prueba el recorrido real: las dos plantillas del colectivo rutean a `g7.bus-travel-review`; las otras cinco plantillas ordinarias declaran `none`. Ver [egreso, recuperación y fail-forward](graduation-and-fail-forward.md).
 
 ## Este score no es el score de la competencia
 
@@ -128,4 +109,6 @@ Lo anterior describe el **score por evento y por run** que ve el jugador. Es una
 
 La cadena vigente mantiene límites explícitos: resultado de desafío ≠ efecto de carrera ≠ desempeño competitivo ≠ `FairScore` ≠ ranking. `MathPerformance` domina; `TeamPerformance` y `AuraPerformance` son secundarias y acotadas; Promedio y Estilo no puntúan directamente. Cuando el `RunPlan` no ofrece una componente, ésta sale del cálculo y los pesos activos se renormalizan, de modo que una ejecución perfecta conserva el máximo de 10.000.
 
-La arquitectura y el mecanismo ya existen, incluida la aritmética entera y la recomputación en servidor. TG1 aceptó 85/10/5, los escalones de calidad, la normalización de oportunidades y el principio de recompensa pequeña; `fair-score-dev-2` los publica como candidato no oficial. Los factores exactos de dificultad, el ranking, la persistencia del personal best y el desempate siguen abiertos/futuros. Ver [score competitivo y ranking](competitive-scoring-and-ranking.md) y [ADR-023](../03-architecture/adr/ADR-023-competitive-score-policy.md).
+La arquitectura y el mecanismo ya existen, incluida la aritmética entera y la recomputación en servidor. TG1 aceptó 85/10/5, los escalones de calidad, la normalización de oportunidades y el principio de recompensa pequeña; `fair-score-dev-2` los publica como candidato no oficial. Los factores exactos de dificultad siguen siendo calibración candidata.
+El orden FairScore → Prestige → shared rank y las reglas v1 están cerrados como
+producto; ranking, Prestige y persistencia del personal best siguen sin implementar. Ver [score competitivo y ranking](competitive-scoring-and-ranking.md) y [ADR-023](../03-architecture/adr/ADR-023-competitive-score-policy.md).

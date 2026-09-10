@@ -3,14 +3,16 @@
 - **Alcance:** 1.º–5.º
 - **Estado de las 25 Templates:** `DESIGN-CANDIDATE-APPROVED`
 - **Auditoría inicial de contenido:** completada en v0.2; preserva su trazabilidad
-- **Full-Career Cross-Content Audit:** siguiente tarea, todavía no ejecutada
-- **Revisión documental:** v0.3, checkpoint #2 del 9 de septiembre de 2026; no es una versión runtime
+- **Full-Career Cross-Content Audit:** completada; Product Pass integrado el 10 de septiembre de 2026
+- **Revisión documental:** inventario v0.3 del checkpoint #2, reconciliado con el Product Pass; sin cambio de versión runtime
 
 Esta es la arquitectura de contenido candidata vigente para los cinco años que
 faltan. Contiene 25 Templates —cinco por año— porque hoy dan cobertura y margen
 de composición suficientes, no porque 25 sea una cuota contractual. El diseño
 detallado de los cinco años está aprobado a nivel candidato; ningún ítem de esta
-matriz es todavía contenido runtime.
+matriz es todavía contenido runtime. El Product Pass conserva las 25 Templates sin
+reemplazos nuevos; la [conformidad técnica](../04-quality/full-career-technical-conformance.md)
+aprobó viabilidad con deltas entendidos, no autoría ejecutada.
 
 Fuentes de intención matemática, interacción, evidencia e invariantes:
 [1.º — Consolidación](grade-1-template-design.md),
@@ -141,11 +143,10 @@ Los cinco pases aprobaron las clases de pacing que muestra la tabla. STRETCH no
 equivale a DEEP: `stage-screen` es STRETCH/QUICK y `course-project-final` es
 STANDARD/DEEP. Son intenciones de diseño pendientes de validación real.
 
-La composición candidata de carrera usa 3–4 QUICK, 4–5 MEDIUM y 1–2 DEEP; apunta
-a 9–10 beats ordinarios típicos y un rango preferido aproximado de 8–10. Son
-presupuestos UX, no timers ni reglas de score. El objetivo temporal de 8–10
-minutos requiere contenido real. No se compone una carrera de nueve beats todos
-profundos.
+La envolvente Normal/Fair v1 está en las políticas siguientes. Pacing no equivale
+a dificultad ni a un timer. Objetivo UX: mediana 8–10 minutos y p75 ≤12 minutos,
+todavía sin validación empírica. Si no se cumple, reducir copy/fricción antes de
+recortar sustancia matemática. Teacher Demo conserva densidad de inspección.
 
 ## Riesgos de autoría
 
@@ -158,7 +159,8 @@ profundos.
 
 Los demás invariantes duros —múltiples soluciones, cuellos de botella,
 capacidad/flujo, recorrido, márgenes, información geométrica completa— se
-conservan en las fichas. Su revisión conjunta es parte de la siguiente auditoría.
+conservan en las fichas. La auditoría conjunta los confirmó; la producción debe
+aplicar el [Intrinsic Math Gate](content-authoring-guide.md#intrinsic-math-gate).
 
 ## Línea del Proyecto del Curso
 
@@ -178,7 +180,42 @@ Su frecuencia puntuable se rige por las políticas siguientes.
 
 Son políticas de **producto/contenido**, todavía sin implementación de clusters
 ni frecuencia del arco en el RunComposer. No agregan campos al schema ni cambian
-el presupuesto de uno o dos beats ordinarios y un anchor por etapa.
+el presupuesto estructural de uno o dos beats ordinarios y un anchor por etapa.
+La evolución técnica futura está en [ADR-025](../03-architecture/adr/ADR-025-full-career-contract-evolution.md).
+
+### Envolvente Normal/Fair v1
+
+**Cantidad: LOCKED v1.** Exactamente **9 beats ordinarios puntuables** entre
+7.º y 5.º: seis anchors y tres slots secundarios. Supersede el target candidato
+9–10/rango preferido 8–10. Recovery, storylets y epílogo no suman beats ordinarios;
+un reemplazo raro ocupa un slot existente compatible. La capacidad genérica de
+6–12 y las carreras parciales de desarrollo no son el producto oficial v1.
+
+| Eje | Contrato de diseño para una carrera válida | Madurez |
+|---|---|---|
+| Bandas | CORE 2–3; STANDARD 4–5; STRETCH 1–2 | PRODUCT DIRECTION v1; restricciones de composición versionadas |
+| Pacing | QUICK 2–4; MEDIUM 4–5; DEEP 1–2; máximo 2 DEEP | PRODUCT DIRECTION v1; presupuesto de autoría, no reloj |
+| Razonamiento | ≥4 familias primarias; máximo 3 TEMPORAL y 2 ECONOMIC_PROPORTIONAL | PRODUCT DIRECTION v1; restricciones globales |
+| Datos/lógica | ≥1 primaria DATA_UNCERTAINTY o LOGIC_CLASSIFICATION | PRODUCT DIRECTION v1; mínimo global |
+| Interacción | ≥3 de los cinco motores; preferir 4 entre planes válidos | mínimo de producto; preferencia soft adicional |
+
+Los mínimos/máximos no son penalizaciones que otra preferencia pueda compensar.
+Su madurez no los convierte en constantes inmutables del core ni en políticas
+oficiales desplegadas. No se fuerza una cuota de Equipo/Aura.
+
+### Taxonomía primaria y contexto
+
+Cada Template declara exactamente una familia primaria y tags secundarios
+opcionales. Vocabulario v1: TEMPORAL, ALLOCATION, DATA_UNCERTAINTY,
+ECONOMIC_PROPORTIONAL, SPATIAL, LOGIC_CLASSIFICATION, SYSTEMS_OPTIMIZATION.
+Se cuenta la primaria, no cada tema mencionado; una familia narrativa no equivale
+a una familia de razonamiento. Su asignación por Template se valida en la
+Definition of Ready, sin inventar enums runtime en documentación.
+
+Contextos secundarios recomendados: SCHOOL_ROUTINE, SOCIAL_GROUP, EVENT_COMPETITION,
+PROJECT, MOBILITY, ECONOMIC_RESOURCE, TECHNOLOGY, SPATIAL_ENVIRONMENT,
+GRADUATION_FUTURE. Favorecen variedad sin convertir todos los tags en límites duros.
+La taxonomía y los modos de interacción viven en [sistema de desafíos](challenge-system.md).
 
 ### Event Cluster Policy
 
@@ -204,10 +241,10 @@ su Template matemática ese año.
 
 ### Frecuencia del Project Arc
 
-**Madurez: `ACCEPTED / CANDIDATE`.**
+**Madurez: máximo `LOCKED v1`; target y separación `PRODUCT DIRECTION / SOFT`.**
 
 - Target de diseño aceptado: **1–2 Templates puntuables por carrera completa**.
-- Máximo duro **2**: candidato, no límite runtime ni calibración congelada.
+- Máximo duro **2**: cerrado para v1; supersede explícitamente el máximo candidato del checkpoint #2. Todavía no está implementado.
 - Preferir años no consecutivos cuando las composiciones sean igualmente válidas.
 
 ### Callback Independence
@@ -221,7 +258,7 @@ exige haber jugado un Proyecto puntuable previo. Autoridad narrativa:
 
 ### Diversidad cognitiva
 
-**Madurez: preferencia `ACCEPTED · SOFT`.**
+**Madurez: mínimos globales de la envolvente v1; preferencias adicionales `SOFT`.**
 
 Entre planes válidos, preferir el más diverso cognitivamente. En particular,
 evitar `y3.week-planner + y3.route-plan` si existe una alternativa igualmente
@@ -253,5 +290,6 @@ Los contratos de `rare.y1.power-outage`, `rare.y2.missing-player`,
 `rare.y5.five-minutes-before-act` están en
 [eventos raros y Prestige](rare-events-and-prestige.md#diseños-raros-aprobados-por-año).
 Incluyen narrativa, modificadores y reemplazo puntuable neutral; no son todos
-narrativos ni agregan beats. Las probabilidades, los Hitos exactos y la
-normalización ejecutable siguen abiertos.
+narrativos ni agregan beats. Probabilidades por banda y presupuestos ya tienen
+calibración v1 documentada. Los logros concretos y la implementación de
+normalización siguen como autoría/contratos futuros, no otro pase de prediseño.

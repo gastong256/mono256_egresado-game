@@ -2,7 +2,9 @@
 
 **Estado: IMPLEMENTADO en STAGE-07** (2 de septiembre de 2026). La dirección —el error cambia el camino, no termina la partida— y el egreso garantizado fueron aceptados en TG1-14 y hoy son una propiedad de la máquina de estados, no una promesa del roadmap. La decisión completa está en [ADR-024](../03-architecture/adr/ADR-024-progression-recovery-and-graduation.md).
 
-Sigue **OPEN** el vocabulario: qué palabras usa el juego para contar que quedó algo por cerrar ([pregunta 53](../07-reference/open-questions.md)). TG1-14 aceptó la dirección y no aportó lenguaje.
+**Producto v1 cerrado por el Product Pass:** el label visible es **REPASO**.
+La terminología interna recovery/review se conserva. TG1-14 no había fijado copy;
+esta decisión posterior supersede esa apertura sin afirmar que la UI ya cambió.
 
 ## Invariante
 
@@ -16,7 +18,9 @@ Esto no es indulgencia: es la consecuencia de que el producto trate el error com
 
 ## Cómo funciona
 
-Un beat que sale mal deja **algo por cerrar**. El año no puede terminar debiéndolo, y cerrarlo es un **repaso**: una escena nueva, más chica, que aísla el paso donde estuvo el error.
+Un beat ordinario recovery-capable con resultado **INVALID** deja una obligación.
+**FUNCTIONAL no dispara Repaso** en v1; una Template con `none` conserva sólo la
+consecuencia ordinaria. No se amplía cobertura para cumplir cuotas. El año no puede terminar debiéndolo, y cerrarlo es un **repaso**: una escena nueva, más chica, que aísla el paso donde estuvo el error.
 
 Un repaso no es un reintento. No devuelve la misma pregunta ni borra lo que pasó: el resultado original sigue en la historia y sigue siendo parte de cómo egresó ese jugador. Permite progresar; no deshace.
 
@@ -31,7 +35,8 @@ El techo es un repaso por año, y una run nunca necesita un segundo para arregla
 
 ### El repaso no puntúa
 
-Ni en el numerador ni en el denominador del [score competitivo](competitive-scoring-and-ranking.md). La evidencia competitiva sigue siendo el beat ordinario que salió mal.
+Ni en el numerador ni en el denominador del [score competitivo](competitive-scoring-and-ranking.md).
+Necesitar o completar Repaso tampoco otorga Prestige competitivo; puede dejar badge o memoria. La evidencia competitiva sigue siendo el beat ordinario que salió mal.
 
 Si puntuara, fallar a propósito sería una forma de comprarse una oportunidad extra de puntuar, y toda la comparabilidad entre runs se caería por esa puerta. **Fallar y recuperarse perfecto siempre puntúa menos que jugar bien de entrada.** Hay un test que lo comprueba.
 
@@ -39,7 +44,15 @@ Si puntuara, fallar a propósito sería una forma de comprarse una oportunidad e
 
 Se agenda **después** de los beats ordinarios y fuera del presupuesto de uno o dos que fija [ADR-019](../03-architecture/adr/ADR-019-scenario-family-template-variant.md). Contarlo adentro le costaría una de las decisiones que el año fue compuesto para darle, que es lo contrario de lo que corresponde cuando algo salió mal.
 
-Todas las obligaciones de un año se cierran en **un solo** repaso: de a una, un mal año costaría tantos beats extra como errores tuvo, y seis años lo multiplican por seis.
+Todas las obligaciones de un año se cierran en **un solo** repaso. Producto v1:
+reunir obligaciones → seleccionar una determinísticamente → mostrar debrief breve
+de las no seleccionadas → completar el único Repaso → cerrar todas → continuar.
+Cerrar IDs no significa haber practicado interactivamente todos los conceptos.
+
+El motor actual ya selecciona por orden canónico y cierra todas; **no representa
+explícitamente el debrief de las restantes**. Mayor prioridad editorial `reviewPriority`
+y desempate por ID semántico estable son recomendados, con representación a concretar bajo
+[ADR-025](../03-architecture/adr/ADR-025-full-career-contract-evolution.md).
 
 ## Progresión separada de desempeño
 
@@ -80,7 +93,9 @@ Ni corazones, ni intentos limitados, ni tres strikes, ni reintentar hasta acerta
 
 El juego no dice que fracasaste. Dice que quedó algo dando vueltas y te da la oportunidad de cerrarlo antes de que termine el año.
 
-«Repaso», «quedó algo dando vueltas» y «previa» son el copy candidato: elegido para sonar a escuela y no a castigo, y **pendiente de validación docente**. No son arquitectura; cambiarlos es editar contenido.
+**REPASO** es el label v1. «Quedó algo dando vueltas» puede acompañarlo como
+copy contextual; «previa» queda como memoria de carrera, no nombre por defecto de
+una deuda. El wording de cada escena se valida editorialmente sin reabrir el label.
 
 ## Verificación
 
@@ -99,7 +114,8 @@ Lo que la etapa tenía que establecer, y con qué quedó establecido:
 
 ## Estado de implementación
 
-El motor está completo. Lo que falta es **contenido**: el slice de 7.º termina en un hito de año, y la carrera `7.º → 1.º → 2.º → 3.º → 4.º → 5.º → Egreso` se juega hoy entera sólo en el fixture sintético que existe para probar que la estructura la sostiene. Los años 1.º a 5.º son el alcance de STAGE-08. Ver [la secuencia de implementación](../06-delivery/implementation-sequence.md).
+La fundación de progresión de STAGE-07 está implementada. Faltan **contenido** y
+los deltas acotados de presentación/debrief identificados por la conformidad técnica: el slice de 7.º termina en un hito de año, y la carrera `7.º → 1.º → 2.º → 3.º → 4.º → 5.º → Egreso` se juega hoy entera sólo en el fixture sintético que existe para probar que la estructura la sostiene. Los años 1.º a 5.º son el alcance de STAGE-08. Ver [la secuencia de implementación](../06-delivery/implementation-sequence.md).
 
 Del contenido de producción, hoy repasa la familia colectivo: `g7.bus-travel-review` aísla la duración del viaje con demora, que es el paso que las dos plantillas del colectivo dan por sabido. Las otras declaran `none`, que es una decisión explícita: el error del mural es de redondeo de compra, el de la oferta es leer cuál quedó más barata, y el acto ocurre una vez y en público. Una recuperación inventada para completar una tabla sería peor contenido que ninguna.
 
@@ -111,6 +127,7 @@ Los cinco pases de Phase 0 fijan **9/25 Templates fuente recovery-capable** y su
 rutas, registradas en la
 [matriz de carrera](full-career-content-matrix.md#cobertura-futura-de-recuperación).
 Son diseños futuros: no agregan contenido runtime, no modifican ADR-024 ni
-permiten un segundo repaso. La semántica de dos obligaciones sigue reservada al
+permiten un segundo repaso. La semántica multiobligación está cerrada; su ejecución
+y adecuación pedagógica se validan en el
 [audit posterior a implementar 1.º](../04-quality/post-grade-1-scalability-audit.md).
 No se agregan gates de escalabilidad de recuperación por año.

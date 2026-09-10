@@ -4,81 +4,37 @@
 
 Evitar que Egresado se transforme en una secuencia de multiple-choice. El contenido se construye sobre un conjunto limitado de **patrones de interacción reutilizables**.
 
-## Familias iniciales
+## Cinco motores reutilizables de interacción v1
 
-> **Acá «familia» significa patrón de interacción**, no dominio narrativo. La otra acepción —`ScenarioFamily`: Colectivo, Mural, Stand— está en [familias, plantillas y variantes](challenge-families-and-variants.md). Una familia de escenario puede usar varias de estas interacciones, y al revés.
+**LOCKED en producto; soporte runtime parcial.** Esta taxonomía supersede la
+lista histórica de diez familias y los nombres de tableros como primitivas
+independientes. `ScenarioFamily` sigue siendo escenario; los ocho
+`InteractionKind` actuales son contratos técnicos, no ocho motores de producto.
 
+| Motor | Modos / componentes, no motores adicionales | Templates de referencia |
+|---|---|---|
+| Choice / Compare | cards, tabla + claim, escenarios, input numérico acotado | g7.notebook-offer; y2.course-project-survey, standings-claim; y3.transport-pass; y5.final-trip-or-event, next-step-options |
+| Allocate / Constrain | Allocation/Constraint Builder, cantidades, recursos, turnos, contingencia, páginas | g7.group-tasks, stand-supplies; y1.course-project-expo, mobile-data; y2.intercurso-plan, team-kit-order; y3.course-project-tech; y4.shift-coverage, course-project-fundraiser; y5.course-project-final, yearbook |
+| Timeline / Schedule | deadline, salida inversa, secuencia, disponibilidad, agenda semanal | g7.bus-timing, bus-latest-departure; y1.rehearsal-schedule; y3.friend-day, week-planner |
+| Spatial / Graph Canvas | fit/scale, regiones, Route Builder, Flow Board, capacidad, ratio/crop | g7.mural-paint; y1.classroom-layout; y2.court-zones; y3.route-plan; y4.school-event-flow, event-floor-plan; y5.stage-screen |
+| Grid / Select / Classify | Number Grid, conteos/distribución, Spinner Builder | g7.may-25-act; y1.student-day-challenge-wheel |
 
-### 1. Decision Card
-El jugador compara opciones y elige una.
+Los modos compuestos conservan un motor principal para contar diversidad.
+Intercurso puede combinar Allocate con Timeline; Project Final combina asignación,
+tiempo y contingencia; `represent-class` usa comparación/construcción acotada y
+comunicación separada, cuya composición concreta se cierra al autorarlo.
+Estas correspondencias son diseño: el mural actual usa BudgetBuilder y el
+timeline actual compara opciones; no se declara implementado un canvas o planner.
 
-Usos:
-- descuentos;
-- rutas;
-- compras;
-- decisiones de riesgo.
+Sin sexto motor en Phase 1 salvo evidencia de que los cinco distorsionan la acción
+matemática y revisión explícita de diseño. Sliders, tablas, inputs, pedir información
+y animación de rueda son componentes/modos, no frameworks nuevos.
 
-### 2. Numeric Estimate / Input
-Ingresa o ajusta un valor.
-
-Usos:
-- hora de llegada;
-- cantidad necesaria;
-- presupuesto objetivo.
-
-### 3. Budget Builder
-Agrega packs/ítems bajo restricciones.
-
-Usos:
-- fiesta;
-- viaje;
-- materiales.
-
-### 4. Assignment Board
-Arrastra personas/recursos a tareas.
-
-Usos:
-- trabajo grupal;
-- cronograma;
-- distribución de puestos.
-
-### 5. Timeline
-Ubica eventos, estima duración o selecciona ventanas.
-
-Usos:
-- colectivo;
-- estudio;
-- cronogramas.
-
-### 6. Chart / Data Interpretation
-Interpreta gráficos, tablas o encuestas.
-
-Usos:
-- centro de estudiantes;
-- métricas de redes;
-- rendimiento de una campaña.
-
-### 7. Spatial Grid
-Ubica objetos en un plano o calcula coberturas.
-
-Usos:
-- stand;
-- mural;
-- distribución de aula.
-
-### 8. Information Request
-Permite pedir un dato antes de decidir.
-
-Usos:
-- tamaño de muestra;
-- costos ocultos;
-- restricciones no visibles inicialmente.
-
-### 9. Sequence / Trend
-Predice o decide según una serie.
-
-### 10. Special Minigame
-Interacción excepcional, por ejemplo Reactor 42. No debe convertirse en dependencia para el MVP.
+La primera exposición a cada motor ofrece una pista contextual de un paso sobre
+la interacción, no sobre la solución matemática; después se reduce. Teacher Demo
+futura expone los cinco deliberadamente, separada de la carrera normal. Cada motor
+define teclado, tap/touch, foco, errores, labels y reduced motion según [UX](ux-interaction-design.md).
+La frontera técnica y las extensiones futuras están en [ADR-025](../03-architecture/adr/ADR-025-full-career-contract-evolution.md).
 
 ## Taxonomía matemática
 

@@ -3,6 +3,16 @@
 - Estado: Aceptado
 - Fecha: 2026-09-02
 
+## Evolución de carrera completa — 2026-09-10
+
+El Product Pass posterior cierra vocabulario Repaso y trigger INVALID para v1;
+FUNCTIONAL no dispara. Preserva máximo uno y cierre conjunto. ADR-025 extiende
+la representación de seleccionado/debrief y exige fail-closed con catálogo
+aprobado vacío. El gate post-G1 sigue pendiente; no se reescribe su evidencia histórica.
+[Decisión técnica futura](ADR-025-full-career-contract-evolution.md);
+[reconciliación de producto](../../07-reference/full-career-product-audit-integration.md).
+No se modifican runtime ni versiones en esta integración.
+
 ## Contexto
 
 El Teacher Gate 1 aceptó una regla corta y absoluta: **toda run válida completada llega al egreso** (D-TG1-10). El jugador no está averiguando *si* egresa. Está averiguando *cómo*.

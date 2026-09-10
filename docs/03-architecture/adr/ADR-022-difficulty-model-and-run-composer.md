@@ -3,6 +3,15 @@
 - Estado: Aceptado
 - Fecha: 2026-08-29
 
+## Evolución de carrera completa — 2026-09-10
+
+La enumeración por etapa de este ADR sigue siendo la baseline implementada.
+ADR-025 extiende composición y validación a restricciones globales de carrera;
+no declara que el algoritmo actual ya garantice nueve beats ni cuotas completas.
+[Decisión técnica futura](ADR-025-full-career-contract-evolution.md);
+[reconciliación de producto](../../07-reference/full-career-product-audit-integration.md).
+No se modifican runtime ni versiones en esta integración.
+
 ## Contexto
 
 [ADR-021](ADR-021-approved-catalog-in-play-and-teacher-demo.md) puso el catálogo aprobado adentro del juego. Lo que quedó sin resolver es **quién elige**.

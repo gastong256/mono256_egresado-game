@@ -13,6 +13,15 @@ Frente a 7.º incorpora más construcción, asignación, restricciones simultán
 evidencia de Estilo, callbacks, continuidad del Proyecto del Curso, una interacción
 espacial fuerte y el primer stress case con dos Templates recovery-capable.
 
+## Taxonomía reconciliada
+
+El Product Pass del 9 de septiembre normaliza las interacciones a los
+[cinco motores reutilizables](challenge-system.md#cinco-motores-reutilizables-de-interacción-v1).
+Los nombres específicos de esta ficha son modos/presentaciones, no frameworks
+nuevos ni capacidades runtime ya implementadas. Estilo sólo usa evidencia
+estratégica significativa para Career/Narrative; no aporta FairScore, Prestige
+ni oportunidades competitivas. Aplican la composición y el DoR canónicos.
+
 ## Cronología y colocación
 
 ```text
@@ -58,7 +67,7 @@ Son ejemplos de parámetros, no valores congelados.
 
 - Fracciones, porcentajes, proporciones, probabilidad intuitiva y restricciones discretas.
 - Modelo interno: `Σ n_i = N` y `P(i) = n_i / N`, sin formalismo visible.
-- Interacción: `Grid / Spinner Builder`; la rueda circular es presentación opcional, el modelo puede ser grilla/conteos.
+- Interacción: `Grid / Select / Classify` (modo grilla/conteos); la rueda circular es presentación opcional, el modelo puede ser grilla/conteos.
 
 El generador elige totales y restricciones con soluciones enteras legibles. No usa
 aritmética incómoda salvo que esa conversión sea el objetivo.
@@ -101,7 +110,7 @@ Math pregunta si el plan funciona: tareas cubiertas, capacidades no excedidas,
 dependencias, disponibilidad y roles requeridos. El modelo es un problema pequeño
 de asignación; no muestra notación formal.
 
-Interacción: `Allocation Board`, con tarjetas de tareas y personas/roles. Puede
+Interacción: `Allocate / Constrain` (modo asignación), con tarjetas de tareas y personas/roles. Puede
 usar una matriz interna, pero no debe verse como una planilla.
 
 ### Evidencia independiente
@@ -142,7 +151,7 @@ Pacing = MEDIUM · objetivo 40–60 s
 ```
 
 El evento raro `rare.y1.power-outage` puede rodear la presentación, pero queda
-`RARE / CONDITIONAL / NARRATIVE_ONLY / Prestige 0`: no agrega challenge puntuable.
+`UNCOMMON / CONDITIONAL / NARRATIVE_ONLY / Prestige 0`: no agrega challenge puntuable.
 
 ## `y1.mobile-data`
 
@@ -239,7 +248,7 @@ objetos deben encastrar y el espacio debe seguir siendo utilizable.
 
 ### Matemática e interacción
 
-Interacción `Geometry / Spatial Manipulation` con escala explícita, ubicación o
+Interacción `Spatial / Graph Canvas` (modo encastre/escala) con escala explícita, ubicación o
 rotación acotada, selección de zonas y restricciones legibles, más controles
 equivalentes sin drag.
 
@@ -286,7 +295,7 @@ Cobertura matemática: probabilidad/proporción, asignación/restricciones,
 tasas/capacidad, tiempo/agenda y geometría/escala. Equipo competitivo aparece sólo
 en `course-project-expo`. Ninguna Template ordinaria ofrece Aura competitiva.
 
-`power-outage` queda `RARE / CONDITIONAL / NARRATIVE_ONLY / Prestige 0`. Una
+`power-outage` queda `UNCOMMON / CONDITIONAL / NARRATIVE_ONLY / Prestige 0`. Una
 oportunidad rara futura de Aura en 1.º es opcional y debe probar evidencia
 independiente; no se fabrica para completar cobertura.
 
@@ -303,4 +312,6 @@ verificarse en 360 px y por teclado.
 Después de implementar 1.º se ejecuta el
 [audit obligatorio](../04-quality/post-grade-1-scalability-audit.md) antes de
 autorizar implementación amplia de 2.º–5.º. La semántica de dos obligaciones bajo
-un repaso máximo queda deliberadamente abierta hasta esa evidencia.
+un Repaso máximo está cerrada: seleccionar uno determinísticamente, debrief del
+resto y cierre de todas. La implementación y pertinencia pedagógica deben pasar
+ese gate; no se lo da por ejecutado.

@@ -2,7 +2,7 @@
 
 - **Etapa:** STAGE-08
 - **Fase:** Phase 0 — Full-Career Content Design
-- **Estado de la fase:** `IN_PROGRESS`
+- **Estado de la fase:** `DONE` — reconciliación documental del 10 de septiembre de 2026
 - **Estado de esta envolvente:** `COMPLETE · ACCEPTED`
 - **Implementación masiva:** fuera de alcance
 
@@ -31,9 +31,10 @@ Produce diseño, no contenido ejecutable. Incluye:
 
 No incluye producción masiva de variantes o años, ranking/backend, grandes sets
 de assets ni una arquitectura nueva de motor. Los cinco pases por año ya están
-aprobados. Phase 0 sigue abierta hasta completar la Full-Career Cross-Content
-Audit, el pase detallado de Rare Events / Milestones / Prestige, Career Epilogue
-v1 y la reconciliación final de diseño.
+aprobados. El Product Pass completó la auditoría cruzada y los pases de raros,
+Prestige y epílogo. La [conformidad técnica](../04-quality/full-career-technical-conformance.md)
+y [reconciliación](../07-reference/full-career-product-audit-integration.md) cierran
+Phase 0 sin producir runtime.
 
 ## Arco de carrera — `LOCKED`
 
@@ -90,21 +91,16 @@ La dirección de inventario es `4–6` Templates por año y aproximadamente 25 e
 prevalecen. Una Template cambia el razonamiento; cambiar sólo números produce una
 Variant.
 
-## Interacciones — `ACCEPTED`
+## Interacciones — `LOCKED v1`
 
-La carrera reutiliza familias de interacción y no puede convertirse en una
-secuencia de texto con A/B/C. Además de elección, input numérico, clasificación,
-ordenamiento, comparación y optimización, Phase 0 prioriza cinco familias:
+La fuente única es la [taxonomía de cinco motores](challenge-system.md#cinco-motores-reutilizables-de-interacción-v1).
+Allocation Board, Constraint Builder, Flow Board, Spinner Builder y similares
+pasan a ser modos/componentes, no motores independientes. La implementación
+reutiliza adapters existentes y amplía sólo los contratos necesarios; no declara
+ya construidas interacciones espaciales o de planificación.
 
-1. **Allocation Board:** distribuir tareas, recursos o personas.
-2. **Timeline / Schedule:** ordenar compromisos y ventanas temporales.
-3. **Grid / Spatial Selection:** clasificar o seleccionar celdas, zonas o posiciones.
-4. **Constraint Builder:** construir una solución acotada bajo restricciones.
-5. **Geometry / Spatial Manipulation:** trabajar con planos, escala, áreas, trayectos y encastre sin canvas libre.
-
-Arrastrar nunca es la única vía: teclado, botones o selección deben ofrecer una
-alternativa equivalente. Una mecánica realmente nueva requiere una decisión
-separada; no se esconde dentro de data.
+Arrastrar nunca es la única vía: teclado y tap/selección deben ofrecer una
+alternativa equivalente. Una sexta familia requiere revisión explícita.
 
 ## Evidencia secundaria — `LOCKED`
 
@@ -120,7 +116,8 @@ oportunidad competitiva ordinaria de Aura.
 
 **Estilo** conserva `Aplicado / Estratega / Improvisador`: ningún eje es mejor.
 Phase 0 aumenta su utilidad narrativa mediante copy, callbacks, storylets,
-epílogo y Hitos con evidencia independiente. Estilo no es parte de `FairScore`.
+epílogo y badges de display. Estilo no es parte de `FairScore` ni de Prestige
+competitivo, ni habilita oportunidades competitivas ocultas.
 
 Matemática, Equipo, Aura y Prestige nunca cobran dos veces el mismo hecho.
 
@@ -178,13 +175,14 @@ La [matriz](full-career-content-matrix.md#políticas-de-composición) fija Event
 Cluster Policy, Recurring Arc Policy y Callback Independence como `LOCKED`.
 Intercurso de 2.º, School Event de 4.º y Egreso de 5.º admiten como máximo una
 Template puntuable de cada cluster por run normal. Para Project Arc, el target
-aceptado es 1–2 por carrera, máximo 2 candidato y preferencia por años no
-consecutivos. La diversidad cognitiva es una preferencia soft, no otro límite.
+aceptado es 1–2 por carrera, máximo 2 `LOCKED v1` y preferencia por años no
+consecutivos. La matriz distingue mínimos globales de diversidad y preferencias
+soft adicionales.
 
 El [sistema narrativo](narrative-system.md) fija Responsibility Externality para
 4.º —consecuencias externas sin Equipo automático— y Career Convergence para
 5.º —historia visible sin prerrequisitos de callbacks—. Narrative Salience
-prioriza aproximadamente 3–5 hechos de cierre; su algoritmo queda diferido.
+fija 3–5 recuerdos deterministas por segmentos; la implementación queda pendiente.
 
 Deportes, dinero cotidiano/colectivo, tecnología, transporte, proyectos y eventos
 son contextos aceptados. Los presupuestos deben ser ficticios o colectivos y no
@@ -192,20 +190,19 @@ inferir poder adquisitivo familiar.
 
 ## Pacing — `ACCEPTED TARGET · UNVALIDATED`
 
-La carrera completa apunta a 8–10 minutos y normalmente a 9–10 beats ordinarios,
-dentro del rango preferido de 8–10. La arquitectura sigue admitiendo 6–12. Las
-Templates declaran `QUICK / MEDIUM / DEEP`; una composición candidata típica usa
-3–4 QUICK, 4–5 MEDIUM y 1–2 DEEP. Una recuperación suele ser QUICK o MEDIUM.
-
-Es un objetivo sin validar hasta que exista contenido real suficiente. El fixture
-sintético de 12 beats demuestra capacidad y boundedness, no pacing de producto.
+La [matriz](full-career-content-matrix.md#envolvente-normalfair-v1) fija exactamente
+nueve beats ordinarios y la envolvente de dificultad, pacing y diversidad de v1.
+El tiempo es target UX sin timer, puntuación ni desempate. La arquitectura genérica
+admite otros tamaños; el fixture sintético de doce beats demuestra capacidad y
+boundedness, no pacing validado de producto.
 
 ## Rejugabilidad — `LOCKED GOAL`
 
-Las primeras tres runs deberían sentirse perceptiblemente distintas por la suma
+Las primeras tres runs de Practice deberían sentirse perceptiblemente distintas por la suma
 de composición, variantes aprobadas, callbacks, eventos condicionales/raros y
 consecuencias de Carrera/Estilo. La variación numérica masiva por sí sola no cuenta
-como rejugabilidad.
+como rejugabilidad. Esta preferencia no rige Fair: sus reintentos conservan
+la Competition Seed de la edición, según [modo feria](../05-operations/fair-mode-and-competition-freeze.md).
 
 ## Epílogo e Hitos
 
@@ -216,14 +213,16 @@ breve; no termina sólo en una tabla ni reduce la carrera a una etiqueta.
 **Career Milestones — `ACCEPTED DESIGN SCOPE`.** Phase 0 diseña familias
 académicas, sociales, de Estilo, recuperación y eventos raros. Un Hito puede ser
 sólo visual, elegible para Prestige o badge raro; nunca recibe competencia
-automáticamente ni duplica evidencia ya puntuada.
+automáticamente ni duplica evidencia ya puntuada. Identidad de Estilo, logros
+basados sólo en Math/Team/Aura, aparición rara y recuperación son display-only.
+Presupuesto y elegibilidad competitiva viven exclusivamente en [Prestige](rare-events-and-prestige.md).
 
 ## Estado y siguiente paso
 
-La envolvente está completa y aceptada, pero Phase 0 sigue `IN_PROGRESS`. La
-matriz v0.3 integra los cinco pases de 1.º–5.º, todos
-`DESIGN-CANDIDATE-APPROVED`. El siguiente trabajo canónico es
-**STAGE-08 / Phase 0 / Full-Career Cross-Content Audit**. Su
-[alcance de auditoría](../04-quality/content-validation.md#full-career-cross-content-audit)
-es documental/de diseño; la implementación de 1.º sigue después del cierre
-completo de Phase 0 y conserva el audit posterior a 1.º ya previsto.
+**Phase 0 DONE. Next: Phase 1 — implementar 1.º real.** No se agregan familias ni
+se reemplazan las 25 Templates antes de G1 salvo evidencia de contradicción real.
+El [roadmap](../06-delivery/implementation-sequence.md) gobierna implementación,
+contratos previos y el STOP obligatorio del audit posterior a G1. La aprobación
+de diseño no equivale a producción, revisión matemática, pacing empírico o freeze.
+Sólo evidencia técnica, feedback docente, problemas medidos de acceso/pacing o
+invalidez matemática justifican reabrir decisiones de prediseño.

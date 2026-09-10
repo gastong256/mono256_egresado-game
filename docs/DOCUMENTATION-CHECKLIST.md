@@ -24,13 +24,13 @@
 - [x] Familias de escenario, plantillas y variantes deterministas.
 - [x] Dificultad de piso bajo y techo alto, bandas y presupuesto.
 - [x] Score competitivo post-TG1 85/10/5 como candidato no oficial, con historia dev-1 preservada.
-- [x] Egreso garantizado **implementado** en STAGE-07: la recuperación converge por construcción y no puntúa ([ADR-024](03-architecture/adr/ADR-024-progression-recovery-and-graduation.md)); el vocabulario sigue abierto.
+- [x] Egreso garantizado **implementado** en STAGE-07: la recuperación converge por construcción y no puntúa ([ADR-024](03-architecture/adr/ADR-024-progression-recovery-and-graduation.md)); Repaso/INVALID cerrados como producto, debrief futuro.
 - [x] Envolvente de producto de STAGE-08 / Phase 0 completa, sin confundir diseño con runtime.
 - [x] Matriz de carrera v0.3 con 25 diseños candidatos aprobados, cobertura 6/13/6 y reemplazos históricos trazables.
 - [x] Sistema narrativo de carrera reconciliado: consolidación en 1.º, elenco relacional, callbacks, Proyecto del Curso y epílogo.
-- [x] Eventos raros y Prestige documentados con semántica aceptada, calibración candidata y arquitectura abierta.
+- [x] Eventos raros y Prestige documentados con diseño v1 cerrado, calibración versionada y arquitectura futura en ADR-025.
 - [x] Cinco pases de 1.º–5.º completos: 25 Templates `DESIGN-CANDIDATE-APPROVED`.
-- [x] Políticas de clusters, arco recurrente, frecuencia candidata del Proyecto y diversidad cognitiva soft.
+- [x] Políticas de clusters, arco recurrente, máximo 2 locked del Proyecto y diversidad cognitiva soft.
 - [x] Callback Independence, Responsibility Externality, Career Convergence y dirección de Narrative Salience.
 - [x] Nueve rutas futuras de recuperación, manteniendo un único gate de escalabilidad posterior a 1.º.
 
@@ -66,7 +66,7 @@
 - [x] Invariantes y auditoría estadística de variantes desplegadas.
 - [x] Auditoría de equidad competitiva.
 - [x] Contrato de auditoría de escalabilidad posterior a 1.º, marcado requerido y todavía no ejecutado.
-- [x] Alcance de Full-Career Cross-Content Audit documentado como siguiente tarea; ejecución pendiente.
+- [x] Full-Career Product Audit integrado y conformidad técnica PASS con deltas entendidos, sin confundirlos con validación empírica.
 
 ## Operación
 - [x] Runbook de feria.
@@ -81,7 +81,7 @@
 - [x] CI reproducible, Dependabot y bloqueo de release por dependencia.
 - [x] Roadmap canónico con contrato por etapa: estado, alcance IN/OUT, dependencias, criterios de aceptación, validación, evidencia y exit gate.
 - [x] Vista corta de la etapa activa, siempre en contexto.
-- [x] Checkpoint #2 integrado; Phase 0 abierta con auditoría cruzada, pases raros/epílogo y reconciliación final pendientes.
+- [x] Phase 0 DONE; Phase 1 READY con plan G1, STOP y gate post-G1 pendientes.
 - [x] Protocolo de actualización del roadmap para agentes futuros.
 - [x] Checklists de Teacher Gate 1 y 2 y de congelamiento de fundaciones.
 
@@ -94,6 +94,8 @@
 - [x] Fórmulas y algoritmos, etiquetados como normativos, candidatos o ilustrativos.
 - [x] Ejemplos de contrato de run, score, evento y autoría, marcados como documentación.
 - [x] Integración, procedencia y trazabilidad del Project Blueprint v0.2.
+- [x] Product Audit: 30 hallazgos, ocho supersesiones, inventario/hashes de insumos y fuentes únicas.
+- [x] ADR-025 registra deltas futuros sin cambios ejecutables.
 
 ## Ingeniería asistida
 - [x] Instrucciones raíz y scoped para documentación.
@@ -124,24 +126,24 @@
 No son omisiones documentales; son decisiones que no deben fijarse sin evidencia, y varias sólo las puede cerrar el Departamento de Matemática. El playtest con estudiantes **no está garantizado antes de la feria**; ver [ciclo de entrega real](00-product/real-delivery-lifecycle.md):
 - calibración empírica del target de run 8–10 minutos;
 - fórmula final de scoring;
-- distribución final de eventos por año;
-- coherencia conjunta de 7.º + 25 diseños futuros y validación real de su pacing;
+- validación real de composición bajo cuotas v1;
+- implementación conjunta de 7.º + 25 diseños futuros y validación real de su pacing;
 - política final de dificultad/adaptación;
 - cantidad esperada de concurrentes;
 - política legal/retención aplicable a la institución anfitriona;
-- diseño visual definitivo;
+- validación de accesibilidad de los modos futuros, sin rediseñar la identidad;
 - proveedor final de analytics/error tracking.
 
 Se agregan, desde la integración del Project Blueprint v0.2:
 - oficialización/freeze de los coeficientes y topes del score competitivo;
-- política de empate exacto/premios y diseño de Hitos;
+- operación de premios compartidos y catálogo autorado de Hitos;
 - factores exactos de recompensa por dificultad;
 - qué desafíos ofrecen fórmula o calculadora;
-- cantidad de familias y plantillas por año;
-- semántica del único recovery ante dos obligaciones conceptuales, reservada al audit posterior a 1.º;
-- probabilidades de rareza, calibración de Prestige y tercer criterio de empate;
+- materializaciones aprobadas concretas y revisión de los diseños conservados;
+- implementación y validación del Repaso/debrief ante dos obligaciones en el audit post-G1;
+- calibración empírica de rareza; no queda un tercer criterio de empate abierto;
 - catálogo exacto de Career Milestones y posible Aura rara de 1.º;
-- algoritmo de Narrative Salience y pase detallado de epílogo;
+- implementación de Narrative Salience y epílogo bajo el contrato cerrado;
 - acento visual por año y producción del pack raster, ambos diferidos al sistema de diseño.
 
 Estas preguntas están registradas en [preguntas abiertas](07-reference/open-questions.md) y deben cerrarse en la fuente autoritativa correspondiente cuando exista evidencia o decisión docente, actualizando el [registro de decisiones](07-reference/decision-register.md), la trazabilidad y el ADR cuando aplique.

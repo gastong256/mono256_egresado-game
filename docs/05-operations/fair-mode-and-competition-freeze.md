@@ -1,23 +1,37 @@
 # Modo feria, congelamiento y control de cambios
 
-**Estado: mixto.** El congelamiento de versiones antes de una feria ya es política vigente ([runbook](fair-runbook.md), [Definition of Done](../06-delivery/definition-of-done.md)). La política de intentos, el comparador extendido y la política de empate exacto son **RECOMENDADOS / TEACHER GATE / OPEN**. Nada de esto está implementado.
+**Estado: dirección de producto v1 cerrada; implementación STAGE-09 pendiente.**
+El congelamiento sigue siendo política vigente ([runbook](fair-runbook.md),
+[Definition of Done](../06-delivery/definition-of-done.md)); cierre de diseño no
+oficializa las políticas de desarrollo.
 
 Este documento cubre la operación de la competencia. Las reglas del score están en [score competitivo y ranking](../01-game-design/competitive-scoring-and-ranking.md); la presentación y moderación del ranking, en [leaderboard y moderación](leaderboard-and-moderation.md).
 
-## Intentos
+## Competition Seed e intentos v1
 
-**Recomendación por defecto: intentos ilimitados, cuenta el mejor.** La configuración del evento tiene que poder cambiarlo a 1 o N intentos si los docentes lo deciden.
+**LOCKED en producto.** Una seed compartida, emitida y registrada por el servidor,
+por edición de leaderboard. Todos reciben el mismo RunPlan, variantes, dificultad
+fija, estado raro y techo de oportunidades. Reintentos ilimitados reutilizan esa
+seed; cuenta el mejor resultado verificado, nunca suma ni cantidad de intentos.
+Esto supersede la elección pendiente entre seed común y pool equivalente, y el
+default configurable de 1/N intentos para v1.
 
-Acumular scores entre intentos convierte el ranking en una medida de tiempo disponible en la feria. El personal best premia la mejora y deja una sola run comparable por participante en el tablero.
+Cada intento tiene runId propio vinculado a participante/edición/descriptor.
+El servidor contrasta esa emisión, versiones y plan, reproduce acciones y exige
+completitud/egreso antes de admitir al ranking. El hash enviado no prueba emisión.
+Auth, tablas, endpoints e idempotencia se implementan en STAGE-09, no en Phase 0.
 
-La decisión final es **TEACHER GATE**.
+Practice usa seeds procedurales aprobadas y puede favorecer novedad entre carreras;
+no presenta esos resultados como ranking oficial. Un pack común multi-seed queda
+como evolución posterior, no alternativa abierta de v1.
 
 ## Configuración de evento
 
 Un evento oficial declara, antes de abrir:
 
 - período de vigencia y horario de cierre del servidor;
-- tupla de versiones permitida;
+- Competition Seed compartida, plan/variantes, dificultad fija y estado raro;
+- tupla de versiones permitida, incluidas las políticas de Prestige y composición;
 - política de intentos;
 - comparador de ranking y su versión;
 - política de empate exacto;
@@ -25,16 +39,20 @@ Un evento oficial declara, antes de abrir:
 - reglas de nickname y moderación;
 - si se muestran métricas secundarias en público.
 
-El ejemplo documental de esa forma está en [event-config.example.json](../07-reference/event-config.example.json). Es un ejemplo: no es configuración de producción ni se importa desde runtime.
+El ejemplo documental de esa forma está en [event-config.example.json](../07-reference/event-config.example.json). Es un ejemplo histórico: no es configuración de producción ni se importa desde
+runtime. Sus campos/candidatos no reemplazan estas decisiones v1; actualizar su
+forma ejecutable corresponde a la futura tarea de contrato, no a esta reconciliación.
 
 ## Congelamiento antes del inicio oficial
 
 Se congelan:
 
+- engine y Competition Seed/RunPlan de la edición;
 - `rulesetVersion`;
 - `contentVersion`;
-- `variantCatalogVersion` del catálogo oficial cuando el evento lo defina —el campo técnico ya existe, pero ninguno de los catálogos de desarrollo `grade-7-dev-1` a `dev-4` es un freeze de feria—;
+- `variantCatalogVersion` del catálogo oficial cuando el evento lo defina —el campo técnico ya existe, pero ninguno de los catálogos de desarrollo `grade-7-dev-1` a `dev-5` es un freeze de feria—;
 - `scoreVersion` de la política competitiva aprobada —el campo técnico y dos versiones resolubles ya existen, pero `fair-score-dev-2` sigue `official: false`—;
+- política de Prestige, slots/techos de evidencia y selección rara;
 - el comparador del leaderboard;
 - la política de intentos.
 
@@ -73,7 +91,10 @@ Esa exportación existe para que el organizador confirme ganadores sin depender 
 
 ## Empate exacto
 
-**OPEN.** Opciones razonables: puesto y premio compartidos, un desafío de desempate presencial, u otro criterio anunciado de antemano. Lo que no es opción es que un identificador interno decida un premio en silencio.
+**LOCKED v1:** puesto compartido tras FairScore y Prestige. La política de entrega
+de premios puede reconocer co-ganadores o un desafío común separado anunciado;
+no introduce velocidad ni otro criterio oculto en el ranking. La logística de
+premios sigue siendo decisión operativa previa a la feria.
 
 ## Privacidad de menores en competencia
 

@@ -8,9 +8,18 @@
 La pregunta del año es **«¿Qué dice de mí todo el recorrido que hice?»**.
 **Career Convergence — `LOCKED`** exige reutilizar visiblemente una selección
 del historial manteniendo cada situación comprensible y resoluble por sí sola.
-La dirección **Narrative Salience — `ACCEPTED`** prioriza aproximadamente **3–5
-hechos significativos** para el cierre/epílogo; el algoritmo se difiere. Ambas
+**Narrative Salience v1 — `LOCKED`** selecciona **3–5 hechos significativos**
+con cobertura temporal y desempate deterministas; la implementación sigue pendiente. Ambas
 decisiones viven en el [sistema narrativo](narrative-system.md).
+
+## Taxonomía reconciliada
+
+El Product Pass del 9 de septiembre normaliza las interacciones a los
+[cinco motores reutilizables](challenge-system.md#cinco-motores-reutilizables-de-interacción-v1).
+Los nombres específicos de esta ficha son modos/presentaciones, no frameworks
+nuevos ni capacidades runtime ya implementadas. Estilo sólo usa evidencia
+estratégica significativa para Career/Narrative; no aporta FairScore, Prestige
+ni oportunidades competitivas. Aplican la composición y el DoR canónicos.
 
 ## Colocación y composición
 
@@ -20,7 +29,7 @@ Secundarias: `y5.yearbook` y `y5.next-step-options`.
 El **cluster Egreso** agrupa `final-trip-or-event`, `stage-screen` y `yearbook`:
 máximo **una** Template puntuable por run normal (`LOCKED`).
 El Proyecto del Curso persiste narrativamente cada año; su frecuencia puntuable
-tiene target aceptado de **1–2 por carrera**, máximo duro **2 candidato** y
+tiene target aceptado de **1–2 por carrera**, máximo duro **2 LOCKED** y
 preferencia por años no consecutivos entre composiciones igualmente válidas.
 Ver [políticas de composición](full-career-content-matrix.md#políticas-de-composición).
 
@@ -32,7 +41,7 @@ viaje de egresados, con alternativa semántica de evento final de egreso.
 
 **Guardrail socioeconómico `LOCKED`:** no evaluar si el jugador puede pagar
 personalmente ni inferir situación económica. Los presupuestos son ficticios o
-colectivos. La interacción de diseño combina comparación y restricciones.
+colectivos. La interacción es `Choice / Compare` (modo opciones con restricciones).
 
 **Invariante `LOCKED`:** al menos **dos restricciones relevantes además del
 precio**. Una oferta de notebook con números mayores no cumple el diseño.
@@ -53,9 +62,10 @@ un plan final viable; no vuelve a hacer una asignación estática.
 - Math: viabilidad del plan bajo el cambio y sus restricciones.
 - Equipo: carga y preferencias independientes entre planes Math-valid.
 - Aura: acción pública de comunicación separada.
-- Estilo: señal fuerte de carrera, sin contribución directa a FairScore.
+- Estilo: señal fuerte de carrera, sin contribución a FairScore ni Prestige.
 
-La dirección de interacción combina asignación, Timeline y contingencia. Los
+La interacción primaria es `Allocate / Constrain` (modo contingencia), con
+representación temporal cuando sea necesaria. Los
 callbacks del Proyecto pueden cambiar texto, personajes y opciones limitadas,
 pero no el máximo de FairScore ni exigir haber jugado Projects puntuables antes.
 
@@ -71,7 +81,7 @@ Riesgo de autoría = VERY HIGH
 ## `y5.stage-screen`
 
 **STRETCH · QUICK · anchor.** Resolver razón, escala y recorte de una
-representación para la pantalla del acto. La construcción/selección espacial
+representación para la pantalla del acto. `Spatial / Graph Canvas` (modo escala/recorte)
 usa dimensiones y relaciones proporcionadas en la escena.
 
 **Invariante `LOCKED`:** toda la información geométrica necesaria está dada;
@@ -81,7 +91,7 @@ Es Math-only, sin recuperación.
 ## `y5.yearbook`
 
 **STANDARD · MEDIUM · secondary.** Distribuir páginas entre secciones con
-mínimos y capacidades, mediante asignación/construcción bajo restricciones.
+mínimos y capacidades, mediante `Allocate / Constrain` (modo páginas/capacidad).
 
 **Invariante `LOCKED`:** capacidad y restricciones de secciones interactúan.
 Se rechazan variantes de reparto igualitario o proporción simple. Los callbacks
@@ -103,8 +113,8 @@ viables con los datos, nunca si la preferencia de vida del jugador es correcta.
 Una elección opcional de preferencia puede alimentar únicamente Estilo/epílogo.
 
 No es orientación vocacional y nunca sugiere que universidad, trabajo, curso u
-otra opción tenga superioridad moral. La interacción es comparación/selección
-de escenarios bajo restricciones, no recomendación personal.
+otra opción tenga superioridad moral. La interacción es `Choice / Compare`
+(modo viabilidad de escenarios), no recomendación personal.
 
 ```text
 Math = yes · Team = none · Aura = none · Recovery = none
@@ -125,7 +135,8 @@ Career Epilogue v1 podrá consumir estadísticas de carrera, distribución de
 Estilo, historial de recuperaciones/previas, Project Arc, callbacks significativos,
 eventos raros, Hitos de display, Hitos de Prestige y elecciones de cierre.
 Debe seleccionar una síntesis narrativa, no volcar el historial o una tabla
-cruda de estadísticas. El pase detallado y el algoritmo siguen pendientes.
+cruda de estadísticas. El contrato de seis secciones y el selector están cerrados
+en [narrativa](narrative-system.md#quinto-año-y-career-epilogue-v1); falta implementarlos.
 
 ## Estado editorial
 

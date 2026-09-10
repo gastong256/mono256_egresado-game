@@ -2,6 +2,13 @@
 
 Base conceptual: `/api/v1`.
 
+**Ejemplos históricos no normativos; endpoints aún no implementados.** Los bloques
+siguientes preceden al contrato de carrera completa: `adaptive` en Fair, forma
+`ANSWER`, `officialScore`, score 10240 y `limit=20` no son decisiones v1 vigentes.
+Se conservan como antecedentes sin modificar schemas en esta integración.
+La evolución se gobierna en [ADR-025](adr/ADR-025-full-career-contract-evolution.md);
+el contrato HTTP concreto se resolverá en STAGE-09.
+
 ## POST `/runs`
 
 Crea run oficial.
@@ -108,7 +115,7 @@ Response:
 - tamaño máximo de actions/payload;
 - cantidad máxima de acciones por run;
 - rate limiting por IP/session/event;
-- server timestamps como autoridad.
+- server timestamps para operación/diagnóstico, nunca para FairScore, Prestige o desempate.
 
 ## Versionado
 
@@ -116,8 +123,21 @@ Cambios incompatibles usan `/v2` o negociación explícita. Cambios de reglas de
 
 ## Superficie objetivo del backend de feria
 
-**No implementada.** Cuando exista el modo competitivo, la superficie mínima es: crear o retomar un participante pseudónimo; emitir un `RunDescriptor` oficial; recibir un envío final con action log e idempotencia, **sin aceptar un score del cliente**; devolver leaderboard moderado y paginado; y endpoints de moderación con autorización separada.
+**No implementada.** Cuando exista el modo competitivo, la superficie mínima es: crear o retomar un participante pseudónimo; emitir un `RunDescriptor` oficial; recibir un envío final con action log e idempotencia, **sin aceptar un score del cliente**; devolver Top 3 público moderado y el puesto propio por vía privada; y endpoints de moderación con autorización separada.
 
 Los límites de contrato son parte del contrato: largo máximo de nickname, cantidad de comandos y bytes del action log, tamaño de request, límites de tasa, validación de la tupla de versiones y tope de paginación.
 
 El diseño de esa superficie está en [arquitectura objetivo del motor](target-engine-architecture.md); su contrato concreto sigue abierto ([pregunta 22](../07-reference/open-questions.md)).
+
+## Requisitos de producto vinculantes para el contrato futuro
+
+- Competition Seed compartida por edición, emitida y registrada por servidor; variantes y dificultad fija comunes, runId único por intento.
+- Verificar emisión, versiones/catálogo, replay, nueve ordinarios/seis etapas y egreso antes de oficializar. El action log actual es v4; los ejemplos de arriba no lo sustituyen.
+- Ignorar cualquier score del cliente. Calcular FairScore (techo 10.000) y Prestige separados; no confundir el total legacy del validador con FairScore.
+- Intentos ilimitados, mejor tupla verificada y puesto compartido al empatar ambos scores; sin tiempo ni clave oculta.
+- Practice no envía resultados oficiales; sólo pseudónimo moderado en el Top 3 público, sin listado público de últimos.
+
+Autoridades: [modo feria](../05-operations/fair-mode-and-competition-freeze.md),
+[ranking](../01-game-design/competitive-scoring-and-ranking.md) y
+[leaderboard](../05-operations/leaderboard-and-moderation.md). Formatos HTTP, DB y
+autenticación siguen pendientes; no se inventa aquí un schema implementable.

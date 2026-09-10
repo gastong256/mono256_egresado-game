@@ -31,7 +31,12 @@ Objetivo WCAG 2.2 AA para la interfaz principal cuando sea razonable.
 - reduced motion;
 - targets táctiles;
 - labels/semántica;
-- no depender sólo de color/audio.
+- no depender sólo de color/audio ni animación;
+- todas las acciones esenciales operables por teclado y tap sin drag;
+- target de producto 44×44 CSS px para controles primarios cuando el layout lo permita;
+- sin métricas competitivas de velocidad.
+
+Criterios y walkthroughs en [UX](../01-game-design/ux-interaction-design.md#aceptación-por-motor-y-walkthroughs).
 
 ## NFR-07 Seguridad
 - HTTPS;

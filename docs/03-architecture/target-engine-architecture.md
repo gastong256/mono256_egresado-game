@@ -56,9 +56,11 @@ Esto ya es lo que hay: núcleo funcional con función de transición explícita 
 
 ## Lo que la migración de carrera ya cerró
 
-El blueprint pide una migración del modelo viejo (`knowledge`, `team`, `initiative`, `energy`) al modelo de carrera. **Esa migración ya ocurrió.** `ENGINE_VERSION` es `2.0.0` exactamente por eso, y un action log `1.x` no reproduce su resultado original bajo este motor —que es lo que la tripleta de versiones existe para decir en voz alta.
+El blueprint pide una migración del modelo viejo (`knowledge`, `team`, `initiative`, `energy`) al modelo de carrera. **Esa migración ya ocurrió.** `ENGINE_VERSION` pasó entonces a `2.0.0` por eso (la baseline actual es `6.0.0`), y un action log `1.x` no reproduce su resultado original bajo este motor —que es lo que la tripleta de versiones existe para decir en voz alta.
 
-Un agente futuro que lea el paquete original y planifique esa migración estaría replanificando trabajo hecho. Lo que sí queda pendiente del capítulo de migración es la serialización de flags como estructura determinista, ya resuelta en el codec actual, y el rastreo de impacto ante cada cambio de estado, que sigue siendo la disciplina vigente.
+Un agente futuro que lea el paquete original y planifique esa migración estaría replanificando trabajo hecho. La serialización determinista de flags también está resuelta en el codec actual.
+El rastreo de impacto ante cada cambio de estado sigue siendo disciplina vigente,
+no una migración de flags pendiente.
 
 ## `RunDescriptor` — presente y objetivo oficial
 
@@ -85,10 +87,10 @@ El [ejemplo](../07-reference/run-descriptor.example.json) muestra el contrato im
 
 Reglas asociadas:
 
-- el servidor decide versiones, seed y asignación de variantes;
+- Fair v1 usa una Competition Seed compartida emitida por servidor por edición, con variantes, dificultad y oportunidades idénticas en cada intento; runId distinto por intento;
 - el cliente no puede pedir un seed arbitrario ni una dificultad más fácil para modo con premios;
 - el descriptor no cambia una vez emitido.
-- una run oficial que consume catálogo debe declarar la versión congelada por el evento; una run curada que no consume catálogo puede omitirla.
+- Fair oficial requiere catálogo aprobado y versión congelada por el evento; sólo runs no oficiales que no consumen catálogo pueden omitirla;
 
 El contrato HTTP concreto se decide dentro de [contratos API](api-contracts.md) cuando exista; la [pregunta 22](../07-reference/open-questions.md) es su gate.
 
@@ -134,3 +136,25 @@ Los cinco ejes existen en los contratos actuales. `variantCatalogVersion` y `sco
 - la evaluación matemática no se muda a React;
 - el dominio devuelve descripciones y efectos; el shell hace persistencia, analytics y UI;
 - una constante de scoring recomendada no se escribe como número mágico: se escribe como política versionada.
+
+## Deltas de carrera completa — diseño cerrado, implementación futura
+
+La [conformidad técnica de Phase 0](../04-quality/full-career-technical-conformance.md)
+aprueba viabilidad sobre la baseline, con estos deltas pendientes gobernados por
+[ADR-025](adr/ADR-025-full-career-contract-evolution.md):
+
+| Capacidad | Estado real / delta |
+|---|---|
+| Composición global de carrera | El composer actual decide por etapa en una pasada; faltan metadata y cuotas globales, búsqueda acotada y validación independiente de completitud. |
+| Cinco motores de interacción | Taxonomía de producto normalizada; ocho kinds técnicos actuales no equivalen a cinco motores completos. Timeline constructivo, espacial y respuestas multi-eje requieren extensiones. |
+| Repaso y debrief | Selección determinista/cierre conjunto implementados; debrief de no seleccionadas y hardening approved-only pendientes. |
+| Prestige y hechos | Agregador independiente y hechos verificables/deduplicados pendientes; Style no es fuente competitiva. |
+| Saliencia/epílogo | History/flags existentes reutilizables; selector autorado por segmentos y UI de carrera pendientes. |
+| Rareza | Substreams disponibles; política/budgets y addressing semántico de eventos pendientes. |
+| Fair oficial | Replay/recomposición existen; emisión vinculada a edición, elegibilidad de carrera completa, personal best y ranking no existen. |
+
+El servidor actual devuelve un total legacy llamado `officialScore`; no es el
+`competitiveScore.fairScore` requerido por el ranking futuro. Un hash SHA-256 de
+plan no acredita que el servidor lo haya emitido. La interfaz conceptual de arriba
+no es contrato HTTP congelado ni justifica implementar campos antes de su etapa.
+Los bumps se deciden cuando cambie cada contrato, no en esta reconciliación.

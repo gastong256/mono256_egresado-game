@@ -41,9 +41,10 @@ Clave Supabase elevada en bundle.
 **Mitigación:** secret sólo env server; revisión de build/env.
 
 ### T7 Manipulación de elapsed time
-Busca bonus velocidad.
+Intenta alterar métricas temporales para ganar ventaja.
 
-**Mitigación:** limitar peso de tiempo; timestamps server; plausibility checks; no confiar exclusivamente en client timer.
+**Mitigación:** excluir tiempo de FairScore, Prestige y ranking v1. Timestamps y
+plausibility checks sólo operativos/diagnósticos, sin penalizar razonamiento lento.
 
 ### T8 Version skew
 Cliente viejo finaliza contra reglas nuevas.
@@ -81,7 +82,9 @@ Un envío oficial llega con una tupla de versiones distinta de la congelada del 
 ### T13 Reintento hasta recibir una run fácil
 No es una intrusión: es un uso del reglamento que rompe la comparabilidad.
 
-**Mitigación:** presupuesto de dificultad equiparado, pools de variantes emparejados y descriptor emitido por el servidor. Ver [auditoría de equidad competitiva](competition-fairness-audit.md).
+**Mitigación:** Competition Seed compartida emitida/registrada por servidor por
+edición; mismas variantes, dificultad fija, estado raro y oportunidades en cada
+reintento. RunId único no cambia ese plan; Practice no compite oficialmente. Ver [auditoría de equidad competitiva](competition-fairness-audit.md).
 
 ### T14 Consumo de recursos sin restricción
 Ráfagas de emisión de runs, envíos gigantes o action logs desmedidos.

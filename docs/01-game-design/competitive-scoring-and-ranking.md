@@ -115,11 +115,12 @@ No se suma aparte si ya está determinado por desempeño académico matemático.
 
 ### Estilo
 
-No puntúa directamente. Darle score a Aplicado, Estratega o Improvisador implicaría que hay una personalidad objetivamente superior, y eso destruye el concepto de perfil: el juego dice explícitamente que ningún eje es el malo.
+No participa de FairScore **ni de Prestige competitivo**, directa o indirectamente.
+El Product Pass supersede expresamente el track STYLE candidato. Darle score a Aplicado, Estratega o Improvisador implicaría que hay una personalidad objetivamente superior, y eso destruye el concepto de perfil: el juego dice explícitamente que ningún eje es el malo.
 
 ### Cantidad de intentos
 
-No es desempate en ninguna dirección. Premiar más intentos premia tiempo libre; penalizarlos castiga la práctica. Queda como dato informativo salvo decisión docente explícita.
+No es desempate en ninguna dirección. Premiar más intentos premia tiempo libre; penalizarlos castiga la práctica. Queda como dato informativo; v1 no lo usa para ordenar.
 
 ## Intentos y personal best
 
@@ -127,41 +128,57 @@ No es desempate en ninguna dirección. Premiar más intentos premia tiempo libre
 
 Sumar intentos convierte el ranking en una medida de tiempo disponible. El mejor intento premia la mejora sin castigar a quien llegó tarde a la feria. La guía de GameKit para desafíos repetibles apunta en la misma dirección; ver [base teórica](../07-reference/research-basis.md).
 
-STAGE-09 implementará emisión autoritativa, identidad y persistencia. Ilimitado no significa elegir una seed fácil: la infraestructura asigna cada `RunPlan`/seed. La operación está en [modo feria y congelamiento](../05-operations/fair-mode-and-competition-freeze.md).
+STAGE-09 implementará emisión autoritativa, identidad y persistencia. Fair v1
+usa una Competition Seed compartida por edición: mismos plan, variantes,
+dificultad fija y estado raro en cada intento. Practice conserva variedad procedural
+aprobada y no envía resultados al ranking oficial. La operación está en [modo feria y congelamiento](../05-operations/fair-mode-and-competition-freeze.md).
 
 ## Desempate
 
-Sin ruido aleatorio ni decimales inventados para forzar unicidad. La dirección de
-producto aceptada en STAGE-08 comienza con:
+**LOCKED v1.** El Product Pass supersede cualquier candidato temporal y toda tupla
+terciaria basada en Math, óptimos, precisión o dificultad:
 
 1. `FairScore` descendente;
 2. `PrestigeScore` descendente;
-3. política futura de STAGE-09 o puesto compartido.
+3. **puesto compartido** si ambos empatan.
 
-Prestige no se suma a `FairScore`: sólo ordena runs con el mismo valor primario y
-jamás permite que `9.999 + 100 Prestige` supere a `10.000 + 0 Prestige`. Su cap,
-tracks y premios exactos siguen candidatos; comparador, persistencia y ranking no
-están implementados. La tupla histórica basada en Math/óptimos/precisión/dificultad/
-tiempo queda supersedida como dirección vigente, aunque sus señales pueden volver
-a evaluarse para el tercer criterio si STAGE-09 lo justifica y anuncia.
+No se suma Prestige a FairScore: 9.999/100 nunca supera 10.000/0. La política de
+Prestige está en [su fuente](rare-events-and-prestige.md). Ningún timestamp,
+runId, orden de llegada, intentos, seed o RNG decide un puesto o premio en silencio.
+Un ID puede estabilizar el orden visual entre empatados, sin romper el puesto.
 
 ### Empate exacto
 
-No se puede prometer que un score con significado nunca empate: garantizar unicidad exige una clave arbitraria. Para premios hace falta una **política de organizador escrita antes de la feria**: puesto compartido, premio compartido o un desempate anunciado. Un `run_id` puede dar orden de visualización estable, pero no puede decidir un premio en secreto.
-
-Esa política posterior a FairScore/Prestige es **OPEN**. TG1-11 pidió ajustarla y
-propuso Hitos aleatorios para reducir empates. La integración separa los problemas:
-un Hito sólo puede aportar Prestige mediante acción o trayectoria independiente;
-su aparición aleatoria vale cero y la oportunidad máxima debe normalizarse. Los
-empates legítimos pueden existir y STAGE-09/TG2 decidirán el criterio anunciado.
+La implementación del comparador pertenece a STAGE-09; la regla de producto ya
+no está OPEN. Si un organizador necesita un único premio, acuerda un desafío común
+separado o reconoce co-ganadores; no cambia el ranking v1 por un criterio oculto.
+Los detalles de premios/cierre son de [operaciones](../05-operations/fair-mode-and-competition-freeze.md).
 
 ### Tiempo
 
-Si el tiempo activo participa del desempate, hay que definirlo con cuidado: el reloj de pared se distorsiona con pestañas en segundo plano y red intermitente. Se prefieren intervalos activos controlados por el motor o marcas verificables por el servidor. La pregunta de qué señal temporal puede confiar el servidor sigue **OPEN** ([pregunta 27](../07-reference/open-questions.md)).
+Tiempo de respuesta y duración total son diagnósticos UX/telemetría, nunca inputs
+de FairScore, Prestige ni ranking. No hay bonus de velocidad ni desempate temporal.
+La ausencia de presión de tiempo protege teclado, lectura pausada y razonamiento.
 
 ## Transparencia
 
-Las reglas publicadas tienen que poder explicarse en tres frases: la matemática es lo que más pesa, las decisiones de juego secundarias suman poco, la velocidad sólo desempata. Si la explicación pública no cabe en un cartel, la fórmula es demasiado complicada para una feria.
+La explicación pública distingue: matemática dominante en FairScore; Prestige
+secundario por logros independientes; empate compartido y ninguna ventaja por
+velocidad. No se presenta una suma ficticia de ambas escalas.
+
+## Gate de score para carrera completa
+
+Se conserva `fair-score-dev-2` 85/10/5. Factores pequeños 1,00/1,08/1,15 y
+costos de scheduling siguen siendo políticas distintas; la seed fija iguala sus
+entradas competitivas. El mecanismo normaliza perfecto a 10.000 para evidencia
+máxima disponible, pero autoría debe probar que esos máximos son conjuntamente
+alcanzables en cada Template y en planes oficiales de nueve beats.
+
+Un mismo hecho puede actualizar Equipo/Aura de carrera y su componente FairScore:
+la stat no se suma de nuevo al ranking. No puede además pagar Prestige. Promedio
+permanece ledger de carrera; el F1 de May-25 no se copia a Aura competitiva.
+Recovery queda fuera de numerador y denominador por rol. Ver
+[conformidad técnica](../04-quality/full-career-technical-conformance.md).
 
 ## Estado de implementación
 
@@ -172,8 +189,8 @@ Las reglas publicadas tienen que poder explicarse en tres frases: la matemática
 | `MathPerformance` / `TeamPerformance` / `AuraPerformance` normalizados | **implementado**, en puntos básicos enteros |
 | `FairScore` y desglose competitivo | **implementado**; `fair-score-dev-1` histórico y `fair-score-dev-2` actual, ambos `official: false` |
 | Recomputación y verificación autoritativa del score en servidor | **implementado**: el servidor puntúa reproduciendo, y `verifyScoreClaim` contradice un reclamo campo por campo |
-| Semántica de `PrestigeScore` como segundo criterio lexicográfico | **diseño de producto aceptado**, calibración candidata; no implementado |
-| Comparador lexicográfico versionado | **no implementado**; deberá comenzar por FairScore y Prestige y resolver su tercer criterio en STAGE-09 |
+| Semántica de `PrestigeScore` como segundo criterio lexicográfico | **producto v1 cerrado**, presupuesto definido en Prestige; no implementado |
+| Comparador lexicográfico versionado | **no implementado**; STAGE-09 implementa FairScore → Prestige → puesto compartido |
 | Personal best transaccional en servidor | **no implementado** |
 | `scoreVersion` en la identidad de la run | **implementado**, opcional: una partida de práctica no está compitiendo |
 

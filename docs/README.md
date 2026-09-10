@@ -85,12 +85,13 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 - `security-privacy.md`: seguridad, privacidad y anti-cheat.
 - `analytics-observability.md`: eventos, métricas y observabilidad.
 - `deployment-and-environments.md`: ambientes, CI/CD y despliegue.
-- `adr/`: decisiones arquitectónicas formales, incluido el toolchain reproducible y el artefacto Docker portable.
+- `adr/`: decisiones arquitectónicas formales; [ADR-025](03-architecture/adr/ADR-025-full-career-contract-evolution.md) gobierna contratos futuros de carrera completa.
 
 ### 04-quality
 - `content-validation.md`: pipeline de schema, matemática, generación, UI y playtest.
 - `competition-fairness-audit.md`: preguntas de equidad que un ranking con premios debe poder contestar.
 - `post-teacher-gate-1-score-audit.md`: barrida reproducible de `fair-score-dev-2` sobre 23.000 planes y comparación histórica.
+- `full-career-technical-conformance.md`: reporte técnico read-only de Phase 0, evidencia y deltas futuros.
 - `post-grade-1-scalability-audit.md`: contrato obligatorio para dos obligaciones conceptuales bajo un recovery máximo después de implementar 1.º.
 - `variant-validation-and-audit.md`: invariantes de variante y auditoría estadística del catálogo.
 - `testing-strategy.md`: unit, property-based, integration, E2E y pruebas de contenido.
@@ -115,6 +116,7 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 
 ### 07-reference
 - `research-basis.md`: teoría, referencias y decisiones derivadas.
+- `full-career-product-audit-integration.md`: procedencia, FC-001–030, supersesiones y cierre de Phase 0.
 - `blueprint-v0.2-integration.md`: qué entró del Project Blueprint v0.2, dónde quedó y qué conflictos hubo.
 - `formulas-and-algorithms.md`: fórmulas normativas, candidatas e ilustrativas, etiquetadas.
 - `glossary.md`: vocabulario oficial.
@@ -200,16 +202,16 @@ Una decisión integrada declara su nivel, y **el nivel es parte de la decisión*
 Un documento no describe en presente una capacidad que no existe. Lo implementado vive en los documentos de arquitectura actuales; lo que falta, en [arquitectura objetivo del motor](03-architecture/target-engine-architecture.md), con el estado real de cada capacidad.
 
 Los documentos describen la **baseline de código post-Teacher-Gate-1** al 4 de
-septiembre de 2026 y el **checkpoint #2 de diseño STAGE-08 / Phase 0** al 9 de
-septiembre. Lo implementado incluye el shell Next.js, toolchain reproducible,
+septiembre de 2026 y el **cierre documental de STAGE-08 / Phase 0** al 10 de
+septiembre, tras Product Audit y conformidad técnica con deltas entendidos. Lo implementado incluye el shell Next.js, toolchain reproducible,
 fronteras de módulos, Supabase opcional, Docker, gates de calidad, motor
 determinista con replay/snapshots, `Promedio · Equipo · Aura · Estilo`, slice de
 7.º, composición por presupuesto, egreso garantizado con recuperación fail-forward
 y `FairScore` candidato con recomputación server-only. `fair-score-dev-2` es
 teacher-informed pero no oficial. La envolvente, matriz v0.3, narrativa de carrera,
 eventos raros/Prestige y 25 Templates de 1.º–5.º son **diseño**, no runtime. Phase 0
-sigue `IN_PROGRESS`; continúa con Full-Career Cross-Content Audit, pases raros/Hitos/
-Prestige y epílogo, y reconciliación final. Todavía
+está `DONE`; sigue **Phase 1 — implementar 1.º**, `READY · NOT STARTED`.
+El gate post-G1 sigue obligatorio/no ejecutado y STAGE-08 no terminó. Todavía
 no existen los años 1.º–5.º, callbacks multianuales, Prestige, Auth, schema de
 producto, endpoints/sesión/persistencia de competencia, ranking ni despliegue
 público.

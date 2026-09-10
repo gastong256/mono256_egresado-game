@@ -14,10 +14,12 @@ Los cinco pases de 1.º–5.º están `DESIGN-CANDIDATE-APPROVED` en la
 [políticas de composición](full-career-content-matrix.md#políticas-de-composición)
 fijan máximo una Template puntuable por cluster Intercurso/School Event/Egreso,
 arcos recurrentes sin desafío obligatorio, target 1–2 del Proyecto con máximo 2
-candidato y diversidad cognitiva soft. Son diseño de producto pendiente de
+`LOCKED` y diversidad cognitiva soft. Son diseño de producto pendiente de
 implementación. El [sistema narrativo](narrative-system.md) gobierna callbacks
 independientes, externalidad de 4.º, convergencia de 5.º y selección de hechos
-significativos del cierre. La auditoría cruzada es el siguiente paso de Phase 0.
+significativos del cierre. Product Audit y conformidad técnica están integrados:
+[Phase 0 DONE; Phase 1 READY](../06-delivery/current-stage.md). El runtime sigue
+siendo la baseline de 7.º, no la carrera completa.
 
 ## 2. Género
 
@@ -54,29 +56,26 @@ flowchart TD
     Y2 --> Y3[3.º año]
     Y3 --> Y4[4.º año]
     Y4 --> Y5[5.º año]
-    Y5 --> F[Desafío final]
-    F --> R[Tarjeta de egreso]
+    Y5 --> R[Epílogo de carrera]
     R --> L[Ranking / comparar / reintentar]
 ```
 
 ## 6. Duración objetivo
 
-- Onboarding: <30 s.
-- Evento normal: 15–35 s.
-- Minijuego especial: 20–60 s.
-- Run completa: objetivo UX aproximado de 8–10 min (TG1-12), sin timeout.
+Onboarding breve y controles enseñados en un paso antes de cada motor nuevo.
+La envolvente QUICK/MEDIUM/DEEP y el target p50 8–10 min, p75 ≤12 min viven en
+la [matriz](full-career-content-matrix.md). Son objetivos UX por medir sobre
+carrera real, sin timeout ni bonus/desempate por velocidad. Ante exceso de tiempo,
+reducir primero texto, pasos UI y fricción no matemática.
 
-## 7. Estructura sugerida por run
+## 7. Estructura v1 por run
 
-- 7.º: 1–2 beats ordinarios.
-- 1.º: 1–2 beats ordinarios.
-- 2.º: 1–2 beats ordinarios.
-- 3.º: 1–2 beats ordinarios.
-- 4.º: 1–2 beats ordinarios.
-- 5.º: 1–2 beats ordinarios.
-- Final: 1 evento combinado.
+Normal/Fair: exactamente nueve beats ordinarios distribuidos entre seis etapas:
+un anchor por etapa y tres secundarios. El cierre de 5.º ocurre dentro de ese
+presupuesto; epílogo y Repaso no agregan ordinarios. El motor genérico admite
+carreras parciales y el rango estructural 6–12; no es el target de producto v1.
+Teacher Demo sigue siendo un recorrido separado orientado a mostrar amplitud.
 
-Con seis etapas, el rango teórico es 6–12 beats ordinarios. STAGE-08 debe medirlo contra el target de 8–10 minutos; no se congela una cantidad final todavía.
 
 ## 8. Estadísticas de carrera
 
@@ -89,7 +88,7 @@ Cuatro dimensiones visibles. Nada más es permanente: energía, plata y similare
 | **Promedio** | nota | 1,0–10,0 · un decimal | el evento es **genuinamente académico** |
 | **Equipo** | colaboración | 0–100 | está en juego la conducta hacia el grupo |
 | **Aura** | reputación | con signo, sin techo | el momento es **socialmente memorable** |
-| **Estilo** | ternario | Aplicado / Estratega / Improvisador, suman 100 | casi toda decisión lo empuja un poco |
+| **Estilo** | ternario | Aplicado / Estratega / Improvisador, suman 100 | evidencia estratégica significativa, no calidad Math por sí sola |
 
 Tres reglas que definen el modelo tanto como los nombres:
 
@@ -105,7 +104,8 @@ Tres reglas que definen el modelo tanto como los nombres:
 - Dominio por categoría matemática.
 - Flags e historia narrativa.
 
-Las visibles generan narrativa; las ocultas alimentan scoring, dificultad adaptativa, perfiles y analítica. **Ninguna oculta se renderiza**, y que exista en el estado no es motivo para mostrarla.
+Las visibles generan narrativa. Cada uso de evidencia oculta requiere contrato:
+no modifica el plan/dificultad fija de Fair ni permite puntuar Estilo indirectamente. **Ninguna oculta se renderiza**, y que exista en el estado no es motivo para mostrarla.
 
 ## 9. Filosofía de error
 
@@ -122,7 +122,7 @@ No hay game over por una respuesta incorrecta. El error produce una consecuencia
 Una decisión puede ser:
 
 - **Inválida:** no cumple una restricción esencial.
-- **Funcional:** resuelve el problema.
+- **Funcional:** resultado usable que puede sacrificar un objetivo no esencial explícito.
 - **Eficiente:** resuelve con buen uso de recursos.
 - **Óptima:** mejor solución según la función de evaluación declarada.
 
@@ -153,23 +153,28 @@ El humor nunca debe ridiculizar a un estudiante por fallar.
 - Ranking por evento.
 - Seed diaria/feria compartida.
 
-Objetivo aceptado: las primeras tres runs deben sentirse perceptiblemente
-diferentes. Ver [matriz de carrera](full-career-content-matrix.md) y
+Objetivo de Practice: las primeras tres runs deben sentirse perceptiblemente
+diferentes. En Fair se repite la misma Competition Seed emitida por servidor,
+incluidas variantes y rareza; esa igualdad de oportunidades es intencional. Ver [matriz de carrera](full-career-content-matrix.md) y
 [eventos raros y Prestige](rare-events-and-prestige.md).
 
 ## 13. Modos previstos
 
-### Carrera estándar
-Seed individual; máxima variedad.
+### Carrera estándar / Practice
 
-### Desafío de la feria
-Mismo ruleset y pool controlado para todos. Puede usar seed común o set precomputado.
+Seed individual y variedad procedural aprobada; sin envío al ranking oficial.
 
-### Daily challenge — futuro
-Condiciones compartidas por día.
+### Desafío de la feria / Fair v1
 
-### Práctica — futuro
-Sin ranking; selecciona categoría matemática.
+Una Competition Seed compartida por edición, emitida por servidor; mismo plan,
+variantes, dificultad y oportunidades para todos. Intentos ilimitados y mejor
+resultado verificado. [Contrato de producto](../05-operations/fair-mode-and-competition-freeze.md);
+servidor/ranking aún no implementados.
+
+### Extensiones diferidas
+
+Daily challenge, packs de seeds y práctica por categoría no son requisitos de v1.
+
 
 ## 14. Herramientas permitidas
 
@@ -188,31 +193,22 @@ Un año puede culminar con un desafío combinado: viaje, feria, proyecto grupal,
 
 ## 16. Final de run
 
-STAGE-08 requiere un Career Epilogue v1 narrativo que sintetice trayectoria,
-Estilo, previas, flags e Hitos sin reducir al jugador a un único tipo. La tarjeta
-final puede contener:
-- nickname;
-- promoción/año del evento;
-- score;
-- perfil de egreso;
-- stats principales;
-- mayor logro;
-- decisión más arriesgada o memorable;
-- posición en ranking si aplica;
-- CTA “Jugar otra vez”.
+[Career Epilogue v1](narrative-system.md#quinto-año-y-career-epilogue-v1) cierra con EGRESASTE,
+perfil narrativo autorado, 3–5 recuerdos, estadísticas, Hitos/Prestige y resultado
+según modo. No vuelca history ni depende de un LLM runtime. Style y reconocimientos
+display-only no conceden Prestige.
 
-## 17. Perfiles iniciales
+## 17. Perfil narrativo
 
-- El Estratega.
-- El Improvisador.
-- El Científico.
-- El Líder.
-- El Emprendedor.
-- El Competidor.
-- El Equilibrado.
-- El Superviviente.
+Síntesis determinista de hechos y decisiones, no diagnóstico ni un tipo único que
+reduzca al jugador. La política de saliencia y el copy del epílogo tienen una sola
+autoridad en el sistema narrativo; no se infiere personalidad de velocidad o errores.
 
-La asignación debe ser determinista a partir de métricas, con desempate documentado.
+
+Como baseline histórica, el slice actual conserva El Estratega, El Improvisador,
+El Científico, El Líder, El Emprendedor, El Competidor, El Equilibrado y El
+Superviviente. Esta reconciliación no cambia su algoritmo ni la pantalla; el
+epílogo de carrera completa debe implementar el contrato narrativo anterior.
 
 ## 18. Anti-patrones
 
@@ -221,7 +217,7 @@ No introducir:
 - largos bloques de texto;
 - tutorial obligatorio de varios minutos;
 - castigo que cierre la run por un error;
-- score basado sólo en velocidad;
+- score o ranking basado en velocidad;
 - estética infantilizada;
 - decisiones falsas donde un número visible no afecta nada;
 - historias que equiparen desempeño matemático con valor personal.

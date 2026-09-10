@@ -173,3 +173,38 @@ Implicación: controles semánticos, feedback anunciado, y ninguna semántica de
 Principios relevantes: validar los datos que cruzan una frontera de confianza, mantener autoritativa la lógica sensible y aplicar límites de tasa y de recursos.
 
 Implicación: el cliente no publica un score final; el servidor valida y reproduce; se limitan creación y envío de runs y el tamaño del action log. Ver [arquitectura objetivo del motor](../03-architecture/target-engine-architecture.md) y [threat model](../04-quality/threat-model.md).
+
+## 15. Referencias aportadas por el Full-Career Product Audit
+
+Paquete del 9 de septiembre, integrado el 10 de septiembre de 2026.
+Se conserva su bibliografía como **procedencia declarada**, no como una nueva
+revisión externa ejecutada por esta reconciliación. La heterogeneidad de la
+evidencia no permite afirmar que una fuente pruebe una mecánica de Egresado ni
+extrapolar resultados de educación superior a estudiantes secundarios.
+
+Las referencias repetidas tienen una sola entrada mantenible: R1 → §3 (Habgood y
+Ainsworth, 2011), R3 → §5 (MDA, 2004), R4 → §4 (PISA 2022), R8 → §9 (CAST UDL 3.0,
+2024), R9 → §13 (WCAG 2.2). El paquete resalta teclado, alternativas al arrastre y
+redundancia de color; el target interno de 44 CSS px es una decisión de
+[UX](../01-game-design/ux-interaction-design.md), no una afirmación de que todo
+mínimo WCAG sea 44 px.
+
+| ID de origen | Referencia adicional declarada | Uso y límite |
+|---|---|---|
+| R2 | Habgood, Ainsworth y Benford (2005), *Endogenous fantasy and learning in digital games*, Simulation & Gaming 36(4), 483–498. DOI: 10.1177/1046878105282276. | Integración entre acción y contexto; informa el Intrinsic Math Gate. |
+| R5 | NCTM, *Principles to Actions: Ensuring Mathematical Success for All*. | Razonamiento, representaciones y validación; no prescribe el scorer. |
+| R6 | Secretaría de Educación / Ministerio de Capital Humano, “Resolución 476/2026 — criterios para materiales de Matemática”, según el paquete. | Referencia normativa **no verificada** aquí; no se afirma existencia, vigencia ni aplicabilidad legal. Los criterios pedagógicos aceptados tienen autoridad de producto propia. |
+| R7 | Plan Nacional Aprender Matemática — Nivel Secundario, materiales NAP/IPAP. | Variables, representaciones y situaciones significativas; el paquete no identifica edición/enlace precisos. |
+| R10 | Skulmowski y Xu (2022), *Understanding Cognitive Load in Digital and Online Learning: a New Perspective on Extraneous Cognitive Load*, Educational Psychology Review 34, 171–196. DOI: 10.1007/s10648-021-09624-7. | Reducir fricción no matemática antes que profundidad de razonamiento. |
+| R11 | Kiili, Lainema, de Freitas y Arnab (2014), *Flow framework for analyzing the quality of educational games*, Entertainment Computing 5(4), 367–377. DOI: 10.1016/j.entcom.2014.08.002. | Lente de pacing/feedback; no demuestra el target de duración local. |
+| R12 | Togelius, Yannakakis, Stanley y Browne (2011), *Search-Based Procedural Content Generation: A Taxonomy and Survey*, IEEE TCIAIG 3(3), 172–186. DOI: 10.1109/TCIAIG.2011.2148116. | Espacio de variantes y validación, no obligación de usar un solver. |
+| R13 | Byun y Joung (2018), *Digital game-based learning for K–12 mathematics education: A meta-analysis*, School Science and Mathematics 118(3–4), 113–126. DOI: 10.1111/ssm.12271. | Evidencia heterogénea de aprendizaje basado en juegos, sin garantía causal para Egresado. |
+| R14 | Hussein, Ow, Elaish y Jensen (2022), *Digital game-based learning in K-12 mathematics education: a systematic literature review*, Education and Information Technologies 27, 2859–2891. DOI: 10.1007/s10639-021-10721-x. | Misma cautela de contexto, diseño y población. |
+| R15 | Li et al. (2024), *The use of leaderboards in education: A systematic review of empirical evidence in higher education*, Journal of Computer Assisted Learning. DOI: 10.1111/jcal.13077. | Riesgos de comparación social; no extrapolar automáticamente a secundaria. |
+| R16 | Nebel, Schneider, Beege y Rey (2017), *Leaderboards within educational videogames: The impact of difficulty, effort and gameplay*, Computers & Education 113, 28–41. DOI: 10.1016/j.compedu.2017.05.011. | Revisar exposición pública, dificultad y esfuerzo sin puntuar actividad acumulada. |
+| R17 | Alusión del paquete a un cuasi-experimento longitudinal de 2024 en *Learning and Individual Differences*. | **Cita incompleta/no verificable con los datos aportados**: no se usa su supuesto resultado como evidencia validada. |
+
+Destino de las decisiones, método y límites:
+[integración canónica del Product Audit](full-career-product-audit-integration.md).
+Teacher Gate 2, walkthroughs cognitivos/accesibles y simulación mitigan riesgo;
+no sustituyen ni se presentan como playtest real con estudiantes.
