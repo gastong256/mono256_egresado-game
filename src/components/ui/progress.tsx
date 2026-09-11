@@ -31,7 +31,9 @@ export function StageProgress({
 
   return (
     <div
-      className={cn('flex items-center gap-1', className)}
+      // Cells shrink before they overflow: a long year narrows its squares
+      // instead of pushing the sheet past a 360 px screen.
+      className={cn('flex min-w-0 items-center gap-1', className)}
       data-testid="stage-progress"
     >
       <span className="sr-only">
@@ -42,7 +44,7 @@ export function StageProgress({
           key={index}
           aria-hidden="true"
           className={cn(
-            'motion-progress block size-4',
+            'motion-progress block h-4 w-4 min-w-1 shrink',
             index < resolved && 'bg-progress-done',
             index === resolved && 'border-progress-current border-2',
             index > resolved && 'border-progress-pending border',

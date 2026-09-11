@@ -25,6 +25,11 @@ import {
   type ApprovedVariantCatalog,
 } from '../../src/game'
 import { createGrade7Dependencies } from '../../src/content/grade-7'
+import { createGrade1Catalog } from '../../src/content/grade-1/registry'
+import {
+  GRADE_1_CONTENT_VERSION,
+  GRADE_1_VARIANT_CATALOG_VERSION,
+} from '../../src/content/grade-1/versions'
 import {
   GRADE_7_CONTENT_VERSION,
   GRADE_7_VARIANT_CATALOG_VERSION,
@@ -65,10 +70,28 @@ function write(line: string): void {
 function main(): void {
   const argv = process.argv.slice(2)
   const command = argv.find((entry) => !entry.startsWith('-')) ?? 'check'
-  const dependencies = createGrade7Dependencies()
+  const grade1 = argv.includes('--content=grade-1')
+  const contentCatalog = grade1
+    ? createGrade1Catalog()
+    : createGrade7Dependencies().catalog
+  const build = grade1
+    ? {
+        ...BUILD,
+        contentVersion: GRADE_1_CONTENT_VERSION,
+        catalogVersion: GRADE_1_VARIANT_CATALOG_VERSION,
+      }
+    : BUILD
+  const catalogPath = grade1
+    ? path.join(
+        'src',
+        'content',
+        'grade-1',
+        `variant-catalog.${GRADE_1_VARIANT_CATALOG_VERSION}.json`,
+      )
+    : CATALOG_PATH
 
   if (command === 'build' || command === 'check') {
-    const { catalog, report } = buildVariantCatalog(dependencies.catalog, BUILD)
+    const { catalog, report } = buildVariantCatalog(contentCatalog, build)
     const serialized = serializeCatalog(catalog)
 
     write('Egresado variant catalog')
@@ -80,12 +103,12 @@ function main(): void {
     write(`  duplicates    ${String(report.duplicates)}`)
 
     if (command === 'build') {
-      writeFileSync(CATALOG_PATH, serialized, 'utf8')
-      write(`  written       ${CATALOG_PATH}`)
+      writeFileSync(catalogPath, serialized, 'utf8')
+      write(`  written       ${catalogPath}`)
       return
     }
 
-    const committed = readFileSync(CATALOG_PATH, 'utf8')
+    const committed = readFileSync(catalogPath, 'utf8')
     if (committed !== serialized) {
       write('')
       write(
@@ -97,9 +120,9 @@ function main(): void {
 
     const parsed: unknown = JSON.parse(committed)
     const issues = verifyCatalogIntegrity(
-      dependencies.catalog,
+      contentCatalog,
       parsed as ApprovedVariantCatalog,
-      { contentVersion: GRADE_7_CONTENT_VERSION },
+      { contentVersion: build.contentVersion },
     )
     for (const issue of issues) {
       write(
@@ -117,13 +140,13 @@ function main(): void {
   if (command === 'audit') {
     const candidates = numberArg(argv, '--candidates') ?? 10_000
     const approvals = numberArg(argv, '--approve') ?? 2_000
-    const { catalog, report } = buildVariantCatalog(dependencies.catalog, {
-      catalogVersion: `${GRADE_7_VARIANT_CATALOG_VERSION}-audit`,
-      contentVersion: GRADE_7_CONTENT_VERSION,
+    const { catalog, report } = buildVariantCatalog(contentCatalog, {
+      catalogVersion: `${build.catalogVersion}-audit`,
+      contentVersion: build.contentVersion,
       candidatesPerTemplate: candidates,
       approvalTarget: approvals,
     })
-    const audit = auditVariantCatalog(dependencies.catalog, catalog, report)
+    const audit = auditVariantCatalog(contentCatalog, catalog, report)
 
     write('Egresado variant audit')
     write(`  candidates/template  ${String(candidates)}`)

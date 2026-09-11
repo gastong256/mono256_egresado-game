@@ -11,78 +11,76 @@ actualización están en el [roadmap](implementation-sequence.md).
 STAGE-07                                      DONE
 STAGE-08                                      IN_PROGRESS · CURRENT
 ├── PHASE 0 — FULL-CAREER CONTENT DESIGN       DONE
-│   ├── Envelope, matriz y diseños 1.º–5.º     COMPLETE · diseño
-│   ├── Full-Career Product Audit             RECONCILED
-│   ├── Rare Events / Prestige / Epilogue v1   COMPLETE · diseño
-│   ├── Technical Conformance Audit           PASS WITH MINOR CONTRACT DELTAS
-│   └── Canonical reconciliation              COMPLETE
-└── PHASE 1 — IMPLEMENT GRADE 1                READY · NEXT · NOT STARTED
-    └── Post-G1 scalability audit              REQUIRED · NOT EXECUTED
+├── PHASE 1 — IMPLEMENT GRADE 1                DONE
+│   ├── Contratos de ADR-025 que usa 1.º       IMPLEMENTED
+│   ├── 5 Templates + 2 Repasos                RUNTIME · catálogo grade-1-dev-1
+│   └── Práctica 7.º → 1.º                     PARTIAL DEVELOPMENT · no oficial
+├── POST-G1 SCALABILITY AUDIT                  READY · PENDING · NOT EXECUTED
+└── 2.º–5.º                                    BLOCKED ON post-G1 gate
 ```
 
-Phase 0 está `DONE`: la [integración del Product Audit](../07-reference/full-career-product-audit-integration.md)
-reconcilia decisiones y supersesiones; la [conformidad técnica](../04-quality/full-career-technical-conformance.md)
-no encontró BLOCKER sin resolver. Sus deltas entendidos quedan en
-[ADR-025](../03-architecture/adr/ADR-025-full-career-contract-evolution.md), para
-implementación futura. **No significa que STAGE-08 esté terminada ni que exista
-contenido real de 1.º–5.º.** Los 25 diseños siguen `DESIGN-CANDIDATE-APPROVED`,
-no variantes aprobadas ni contenido desplegado.
+Phase 1 cerró el 11 de septiembre de 2026. Las cinco Templates de 1.º
+—rueda del Día del Estudiante, Proyecto del Curso I, datos móviles, agenda del
+ensayo y aula para la expo— y sus dos Repasos corren sobre el catálogo aprobado
+`grade-1-dev-1`, con oráculos independientes, witness óptimo por variante,
+evidencia Math/Equipo/Estilo separada, replay, reanudación y recomputación en
+servidor. Detalle en la [implementación de 1.º](../01-game-design/grade-1-template-design.md#implementación-runtime-phase-1)
+y en [ADR-025](../03-architecture/adr/ADR-025-full-career-contract-evolution.md#implementación-de-phase-1-2026-09-11).
+
+**No significa que STAGE-08 esté terminada ni que exista una carrera oficial.**
+`7.º → 1.º` es práctica local de desarrollo (`official: false`,
+`partial-development`); 2.º–5.º no tienen contenido ejecutable. El contenido de 1.º
+está en estado `draft`: falta la revisión del Departamento de Matemática, el
+sign-off manual de la rueda y el pacing empírico, gates de producción de STAGE-08.
 
 ## Baseline autoritativa
 
-STAGE-07 cerró el 2 de septiembre de 2026 y permanece `DONE`. Toda run válida
-completada alcanza el egreso; [ADR-024](../03-architecture/adr/ADR-024-progression-recovery-and-graduation.md)
-garantiza como máximo un Repaso por etapa, fuera del presupuesto ordinario y de
-FairScore, con cierre de todas las obligaciones y sin recursión. El hardening
-posterior fijó `RecoveryPolicy.maxRecoveriesPerStage` al literal `1`.
+STAGE-07 sigue `DONE`: toda run válida completada egresa, con un Repaso máximo
+por etapa fuera del presupuesto ordinario y de FairScore.
 
-La carrera sintética de seis años prueba estructura, no contenido real ni el
-target UX. El motor actual selecciona y cierra obligaciones; todavía no representa
-el debrief explícito del resto exigido por el Product Pass.
-
-- Entrada histórica: 20.000 carreras sintéticas egresadas, 0 hallazgos; peor caso, 6 repasos.
-- Baseline post-hardening: 908 tests en 50 archivos y 70 E2E; no reejecutados por esta integración.
-- Conformidad técnica del 9 de septiembre: 308 tests en 16 archivos PASS, alcance exacto en su reporte.
-- Versiones preservadas: engine `6.0.0`, snapshot `7`, action log `4`, ruleset `0.4.0-grade-7`, contenido `0.9.0-grade-7`, catálogo `grade-7-dev-5`.
-- Huellas preservadas: motor `a0ed168d`, ruleset `5b9b0bc5`, contenido `dbaf5094`.
+- Versiones: engine `6.0.0 → 7.0.0`, action log `4 → 5`, snapshot `7` (sin
+  campos nuevos). 7.º conserva ruleset `0.4.0-grade-7`, contenido
+  `0.9.0-grade-7` y catálogo `grade-7-dev-5`. `7.º → 1.º`: rulesets
+  `1.0.0-grade-1-partial` y `1.0.0-grade-1-demo`, contenido `1.0.0-grade-1`,
+  catálogo `grade-1-dev-1`. Score `fair-score-dev-2@2.0.0-post-tg1-candidate`
+  sin cambios.
+- Huellas: motor `7e7e61eb`; ruleset `5b9b0bc5` y contenido `dbaf5094` del
+  fixture de desarrollo intactos.
+- Tests: 62 archivos y 1339 tests de Vitest; 80 E2E de Playwright en desktop y
+  mobile, incluidos cinco recorridos de 1.º.
+- Simulación: 5000 runs de 7.º, 5000 de `7.º → 1.º` y 2000 del demo amplio
+  egresadas, 0 hallazgos, peor caso un Repaso por etapa.
+- Composición: 2000 seeds de `7.º → 1.º` dan 2000 planes distintos, 0 inválidos
+  y 0 diferencias al recomponer.
 
 ## Siguiente tarea canónica
 
 ```text
 STAGE-08
-PHASE 0 — DONE
+PHASE 1 — DONE
 
 Next:
-PHASE 1 — IMPLEMENT GRADE 1
+Post-Grade-1 Scalability Audit — READY / PENDING
 ```
 
-El [plan de Phase 1](implementation-sequence.md#phase-1-implementar-1º-real)
-ordena contratos mínimos, implementación incremental de los cinco Templates de
-1.º y dos rutas de Repaso, variantes, composición y verificación. Las fuentes de
-producto son la [matriz](../01-game-design/full-career-content-matrix.md),
-el [diseño de 1.º](../01-game-design/grade-1-template-design.md) y la
-[guía de autoría](../01-game-design/content-authoring-guide.md).
-
-Al terminar 1.º: **STOP** y [auditoría de escalabilidad post-G1](../04-quality/post-grade-1-scalability-audit.md).
-Debe forzar `classroom-layout INVALID` y `rehearsal-schedule INVALID` en una etapa:
-selección determinista de un Repaso, debrief del resto, cierre conjunto, egreso y
-neutralidad competitiva. La semántica está decidida; el gate empírico no pasó.
+El [audit posterior a 1.º](../04-quality/post-grade-1-scalability-audit.md) fuerza
+`classroom-layout INVALID` y `rehearsal-schedule INVALID` en una etapa y decide si
+un Repaso seleccionado, el debrief del otro concepto y el cierre conjunto son
+pedagógica y técnicamente adecuados. El mecanismo y el harness existen; el
+veredicto no se da por ejecutado.
 
 ## Scope OUT y gates restantes
 
-Esta reconciliación no implementa runtime, UI, contenido, schemas, catálogos,
-tests, configuraciones ni versiones. Phase 1 no habilita producir 2.º–5.º antes
-del PASS post-G1, duplicar sistemas fundamentales ni implementar servidor/ranking
-de STAGE-09. Las calibraciones recomendadas y Teacher Gate no se vuelven constantes
-inmutables ni configuración oficial.
+No producir 2.º–5.º antes del PASS post-G1, no duplicar sistemas fundamentales y
+no implementar servidor/ranking de STAGE-09. Las calibraciones recomendadas y
+Teacher Gate no se vuelven constantes inmutables ni configuración oficial.
 
-Después del PASS post-G1: implementar 2.º → 3.º → 4.º → 5.º, completar capacidades
-narrativas/Prestige previstas y auditar la carrera real. El exit gate de STAGE-08
-sigue siendo recorrer `7.º → 1.º → 2.º → 3.º → 4.º → 5.º → EGRESADO`
+Después del PASS post-G1: implementar 2.º → 3.º → 4.º → 5.º, completar
+capacidades narrativas/Prestige previstas y auditar la carrera real. El exit gate
+de STAGE-08 sigue siendo recorrer `7.º → 1.º → 2.º → 3.º → 4.º → 5.º → EGRESADO`
 con contenido auditado, sin duplicar sistemas y verificando el target de pacing.
 
 ## Última reconciliación
 
-10 de septiembre de 2026: integración documental del Full-Career Product Audit del
-9 de septiembre y su conformidad técnica. Checkpoints #1 (`1dea7e5`) y #2
-(`147df60`) preservados como antecedentes. Sin implementación ni push.
+11 de septiembre de 2026: cierre de STAGE-08 / Phase 1 con implementación,
+tests, documentación y verificación completa. Sin push.

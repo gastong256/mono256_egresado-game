@@ -106,10 +106,14 @@ function candidateAnswers(view: PublicChallengeView): InteractionAnswer[] {
           }),
         },
       ]
+    case 'schedule-builder':
+    case 'spatial-layout':
+      return [{ kind: interaction.kind, placements: [] }]
+    case 'quantity-builder':
     case 'budget-builder':
       return [
         {
-          kind: 'budget-builder',
+          kind: interaction.kind,
           lines: interaction.items.map((item) => ({
             itemId: item.id,
             quantity: 1,

@@ -83,9 +83,13 @@ function answerFor(
             : [{ agentId: agent.id, taskId: task.id }]
         }),
       }
+    case 'schedule-builder':
+    case 'spatial-layout':
+      return { kind: interaction.kind, placements: [] }
+    case 'quantity-builder':
     case 'budget-builder':
       return {
-        kind: 'budget-builder',
+        kind: interaction.kind,
         lines: interaction.items.map((item) => ({
           itemId: item.id,
           quantity: best ? 2 : 0,

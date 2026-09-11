@@ -41,9 +41,10 @@ arquitectura o identidad requiere evidencia de defecto, no preferencia.
 `7.º → 1.º → 2.º → 3.º → 4.º → 5.º → Egreso`, más catálogo completo de escenarios, variantes desplegadas, ranking, backend de evento, verificación autoritativa y herramientas de operación.
 
 **Actual:** STAGE-08 sigue IN_PROGRESS; Phase 0 está DONE tras Product Audit y
-conformidad técnica reconciliados. Phase 1 — implementar 1.º está READY, no
-iniciada. Después de G1 es obligatorio STOP y PASS de escalabilidad antes de
-producir 2.º–5.º. El cierre de diseño no implementa contenido, epílogo ni ranking.
+conformidad técnica reconciliados, y Phase 1 —1.º real como práctica de
+desarrollo `7.º → 1.º`— cerró el 11 de septiembre. Rige el STOP: el audit de
+escalabilidad post-G1 está READY, sin ejecutar, y su PASS es obligatorio antes de
+producir 2.º–5.º. Epílogo, carrera oficial y ranking siguen sin implementar.
 Ver [etapa actual](../06-delivery/current-stage.md).
 
 

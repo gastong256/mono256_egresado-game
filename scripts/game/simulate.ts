@@ -11,10 +11,13 @@
  *     --seed=<prefix>  seed prefix, so a sweep is reproducible (default "sim")
  *     --verify=<n>     run the replay/snapshot check every n runs (default 25)
  *     --verbose        print the per-run seed of every finding
- *     --content=<grade-7|grade-7-composed|development|development-composed|six-stage>
+ *     --content=<grade-7|grade-7-composed|grade-1|grade-1-demo|development|
+ *               development-composed|six-stage>
  *                      content set (default grade-7). The composed sets play
  *                      runs whose content the composer pinned before they
- *                      started.
+ *                      started. `grade-1` is the composed 7.º → 1.º practice
+ *                      (partial development, never official) and
+ *                      `grade-1-demo` its broad uncomposed demo.
  *
  * This lives outside `src/game` on purpose: the deterministic core may not read
  * `process`, argv or stdout, so the tooling that drives it stays out here where
@@ -29,6 +32,7 @@ import {
   createGrade7Dependencies,
 } from '../../src/content/grade-7'
 import type { EngineDependencies } from '../../src/game'
+import { createGrade1Dependencies } from '../../src/content/grade-1'
 import { simulateMany } from '../../src/game/testing/simulation'
 
 /**
@@ -57,6 +61,8 @@ function selectDependencies(argv: readonly string[]): EngineDependencies {
   if (requested === 'grade-7-composed') {
     return createGrade7ComposedDependencies()
   }
+  if (requested === 'grade-1') return createGrade1Dependencies()
+  if (requested === 'grade-1-demo') return createGrade1Dependencies(true)
   if (requested !== undefined && requested !== 'grade-7') {
     throw new Error(`unknown content set: ${requested}`)
   }

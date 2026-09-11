@@ -2,6 +2,7 @@
  * Reproducible composition audit.
  *
  *     pnpm game:compose -- --content=grade-7 --runs=20000
+ *     pnpm game:compose -- --content=grade-1 --runs=2000
  *     pnpm game:compose -- --content=synthetic-six-stage --runs=5000
  *
  * The report has no timestamps or timings, so the same repository, seed prefix
@@ -29,6 +30,10 @@ import {
   createGrade7ComposedDependencies,
   grade7CompositionPolicy,
 } from '../../src/content/grade-7'
+import {
+  createGrade1Dependencies,
+  grade1CompositionPolicy,
+} from '../../src/content/grade-1'
 
 interface Target {
   readonly label: string
@@ -53,6 +58,19 @@ function selectTarget(argv: readonly string[]): Target {
         ? {}
         : { approvedVariants: dependencies.approvedVariants }),
       policy: grade7CompositionPolicy,
+    }
+  }
+  if (requested === 'grade-1') {
+    const dependencies = createGrade1Dependencies()
+    return {
+      label:
+        'grade-7 through grade-1 PARTIAL DEVELOPMENT (not a full-career audit)',
+      stages: dependencies.ruleset.stages.map((stage) => stage.id),
+      catalog: dependencies.catalog,
+      ...(dependencies.approvedVariants === undefined
+        ? {}
+        : { approvedVariants: dependencies.approvedVariants }),
+      policy: grade1CompositionPolicy,
     }
   }
   if (requested === 'synthetic-six-stage') {

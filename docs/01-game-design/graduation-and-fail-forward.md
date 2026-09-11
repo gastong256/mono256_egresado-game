@@ -49,10 +49,12 @@ reunir obligaciones → seleccionar una determinísticamente → mostrar debrief
 de las no seleccionadas → completar el único Repaso → cerrar todas → continuar.
 Cerrar IDs no significa haber practicado interactivamente todos los conceptos.
 
-El motor actual ya selecciona por orden canónico y cierra todas; **no representa
-explícitamente el debrief de las restantes**. Mayor prioridad editorial `reviewPriority`
-y desempate por ID semántico estable son recomendados, con representación a concretar bajo
-[ADR-025](../03-architecture/adr/ADR-025-full-career-contract-evolution.md).
+Desde Phase 1 el motor lo representa: selecciona por orden canónico, deriva qué
+obligaciones practica el Repaso —las que su ruta declara— y cuáles sólo se
+explican con el debrief autorado, muestra las dos listas antes de la interacción y
+cierra todas. La distinción se reconstruye desde el registro del año, sin estado
+persistido nuevo ([ADR-025](../03-architecture/adr/ADR-025-full-career-contract-evolution.md)).
+`reviewPriority` editorial sigue siendo una recomendación, no un campo.
 
 ## Progresión separada de desempeño
 
@@ -114,8 +116,12 @@ Lo que la etapa tenía que establecer, y con qué quedó establecido:
 
 ## Estado de implementación
 
-La fundación de progresión de STAGE-07 está implementada. Faltan **contenido** y
-los deltas acotados de presentación/debrief identificados por la conformidad técnica: el slice de 7.º termina en un hito de año, y la carrera `7.º → 1.º → 2.º → 3.º → 4.º → 5.º → Egreso` se juega hoy entera sólo en el fixture sintético que existe para probar que la estructura la sostiene. Los años 1.º a 5.º son el alcance de STAGE-08. Ver [la secuencia de implementación](../06-delivery/implementation-sequence.md).
+La fundación de progresión de STAGE-07 está implementada, y Phase 1 de STAGE-08
+sumó el debrief y el contenido real de 1.º con sus dos rutas. El slice de 7.º
+termina en un hito de año; la práctica de desarrollo `7.º → 1.º` recorre dos años
+reales, y la carrera `7.º → 1.º → 2.º → 3.º → 4.º → 5.º → Egreso` se juega entera
+sólo en el fixture sintético que prueba la estructura. 2.º a 5.º siguen en
+STAGE-08, después del gate post-G1. Ver [la secuencia de implementación](../06-delivery/implementation-sequence.md).
 
 Del contenido de producción, hoy repasa la familia colectivo: `g7.bus-travel-review` aísla la duración del viaje con demora, que es el paso que las dos plantillas del colectivo dan por sabido. Las otras declaran `none`, que es una decisión explícita: el error del mural es de redondeo de compra, el de la oferta es leer cuál quedó más barata, y el acto ocurre una vez y en público. Una recuperación inventada para completar una tabla sería peor contenido que ninguna.
 

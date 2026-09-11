@@ -58,6 +58,17 @@ Un desafío correcto que no entra en la pantalla es un desafío roto. Ver [NFR](
 
 La barrida profunda de cierre de STAGE-03 recorrió **50.013 direcciones**, aprobó **30.671 problemas semánticos distintos**, rechazó **0** y produjo **0 errores**. La de cierre de STAGE-04, ya con siete plantillas, recorrió **36.064** y aprobó **7.954** con **0 rechazos**. Los warnings de duplicación de Mural, Stand y la salida más tarde describen espacios finitos que el pipeline deduplica; no significan contenido inválido ni exigen que 10.000 direcciones produzcan 10.000 problemas únicos. El caso más nítido es `g7.bus-latest-departure`: su espacio son exactamente 360 problemas —30 pares duración/demora × 4 horas de entrada × 3 márgenes—, los aprueba a los 360 y el 96 % de duplicados es la consecuencia aritmética de agotarlo. La evidencia canónica está en el [roadmap](../06-delivery/implementation-sequence.md#stage-03-generación-validación-y-catálogo-de-variantes) y en [ADR-020](../03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md).
 
+### Catálogo de 1.º — `grade-1-dev-1`
+
+Construido en STAGE-08 / Phase 1 con la misma política de build que 7.º (hasta
+400 candidatos y 24 aprobaciones generadas por plantilla). Las siete plantillas
+de 1.º intentaron 250 direcciones, aprobaron 174, rechazaron 69 y deduplicaron 7
+—cada una, el candidato igual a su referencia autorada—. Los rechazos son gates de
+autoría: repartos parejos que ya eran óptimos, estilos que aparecían con un solo
+nivel de resultado, aulas donde apilar en orden bastaba. `check` revalida cada
+entrada; el desglose por plantilla está en el
+[diseño de 1.º](../01-game-design/grade-1-template-design.md#implementación-runtime-phase-1).
+
 Los umbrales son **heurísticas de revisión, no constantes universales**. Su función es levantar la mano; la aprobación sigue requiriendo que cada variante pase sus validaciones y que la integridad del artefacto sea reproducible.
 
 ## Auditoría Monte Carlo del armado de runs

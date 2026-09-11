@@ -74,6 +74,9 @@ export function developmentRunDescriptor(
     gameVersion: ENGINE_VERSION,
     rulesetVersion: dependencies.ruleset.version,
     contentVersion: dependencies.ruleset.contentVersion,
+    ...(dependencies.competitiveScore === undefined
+      ? {}
+      : { scoreVersion: dependencies.competitiveScore.version }),
     ...(catalogVersion === undefined
       ? {}
       : { variantCatalogVersion: catalogVersion }),

@@ -56,6 +56,7 @@ Estas reglas se verifican con lint de fronteras, un proyecto TypeScript sin DOM/
 3. Compilar. El proyecto va a fallar en los `switch` exhaustivos que falten: el renderer (`src/components/game/interaction-area.tsx`), el guard de envío y el agente sintético. Esa es la cobertura garantizada por tipos: no hay `Record<string, Component>` que pueda quedar incompleto en silencio.
 4. Implementar el renderer con semántica accesible: control nativo, etiqueta, foco visible, target ≥44 px y significado que no dependa del color.
 5. Si la familia se describe con drag & drop, la vía accesible por teclado/tap se implementa primero y por sí sola.
+6. Una respuesta nueva cambia la forma serializada de los comandos: subir `ACTION_LOG_VERSION` y `ENGINE_VERSION`, y documentarlo. Los tres modos constructivos de 1.º (`quantity-builder`, `schedule-builder`, `spatial-layout`) llevaron el action log a `5` y el motor a `7.0.0` ([ADR-025](../03-architecture/adr/ADR-025-full-career-contract-evolution.md)).
 
 ## Agregar una condición o un efecto de storylet
 

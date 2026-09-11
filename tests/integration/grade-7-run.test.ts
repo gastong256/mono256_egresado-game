@@ -137,6 +137,10 @@ function candidateAnswers(view: PublicChallengeView): InteractionAnswer[] {
         }),
       }))
     }
+    case 'schedule-builder':
+    case 'spatial-layout':
+      return [{ kind: interaction.kind, placements: [] }]
+    case 'quantity-builder':
     case 'budget-builder': {
       const answers: InteractionAnswer[] = []
       const items = interaction.items
@@ -147,7 +151,7 @@ function candidateAnswers(view: PublicChallengeView): InteractionAnswer[] {
         for (let b = 0; b <= limit(1); b += 1) {
           for (let c = 0; c <= limit(2); c += 1) {
             answers.push({
-              kind: 'budget-builder',
+              kind: interaction.kind,
               lines: items.map((item, index) => ({
                 itemId: item.id,
                 quantity: [a, b, c][index] ?? 0,

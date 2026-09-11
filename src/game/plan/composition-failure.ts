@@ -30,6 +30,9 @@ export const COMPOSITION_FAILURE_CODES = [
   'difficulty-unsatisfiable',
   /** The policy itself is malformed. */
   'invalid-policy',
+  'career-unsatisfiable',
+  'search-budget-exceeded',
+  'missing-composition-metadata',
 ] as const
 
 export type CompositionFailureCode = (typeof COMPOSITION_FAILURE_CODES)[number]

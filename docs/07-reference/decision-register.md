@@ -143,6 +143,22 @@ producto, no flags `official` ni evidencia de implementación.
 | D-S08-040 | Conservar los 25 diseños; no ampliar antes de G1 salvo BLOCKER genuino; Teacher Demo separado | LOCKED alcance | [matriz](../01-game-design/full-career-content-matrix.md) y roadmap |
 | D-S08-041 | Mitigar ausencia de playtest con docentes, walkthroughs y simulación, sin llamarlos validación estudiantil | PRODUCT DIRECTION | [validación de contenido](../04-quality/content-validation.md); riesgo residual |
 | D-S08-042 | Montos ficticios/relativos y tono argentino legible, sin juicios de poder adquisitivo ni marcas necesarias | LOCKED guardrail | [autoría](../01-game-design/content-authoring-guide.md) |
+| D-S08-043 | Rueda y datos móviles conservan CORE por factibilidad constructiva, sin optimización estructural; thresholds y bandas de 7.º intactos | ACCEPTED · precisión autorizada de Phase 1 | [traits y envolvente](../01-game-design/grade-1-template-design.md#difficulty-reconciliation-precisión-de-phase-1); no reapertura de Phase 0 |
+
+## STAGE-08 / Phase 1 — implementación de 1.º (2026-09-11)
+
+Decisiones técnicas y de autoría tomadas al implementar; no reabren producto.
+
+| ID | Decisión | Madurez | Fuente / estado |
+|---|---|---|---|
+| D-S08-044 | Engine `7.0.0` y action log `5` por composición global, respuestas constructivas y fail-closed; snapshot `7` sin campos nuevos; 7.º conserva ruleset, contenido, catálogo y score | ACCEPTED · implementado | [ADR-025](../03-architecture/adr/ADR-025-full-career-contract-evolution.md#implementación-de-phase-1-2026-09-11) |
+| D-S08-045 | Metadata de composición tipada y `CareerConstraints` con alcance `partial-development`/`full-career`; búsqueda acotada con validador independiente; una carrera parcial nunca es oficial | ACCEPTED · implementado | ADR-025; `7.º → 1.º` es práctica local |
+| D-S08-046 | Repaso practicado/debriefeado derivado de obligaciones y ruteo; approved-only fail-closed en creación y en el borde del beat | ACCEPTED · implementado | ADR-024/ADR-025; gate post-G1 pendiente |
+| D-S08-047 | Estilo de 1.º desde rasgos estratégicos independientes de la calidad; gate: óptimo alcanzable con ≥2 estilos y ningún estilo atado a un solo nivel | ACCEPTED · autoría; pesos candidatos | [implementación de 1.º](../01-game-design/grade-1-template-design.md#implementación-runtime-phase-1); pregunta 47 sigue para freeze |
+| D-S08-048 | Expo: robustez del óptimo = reemplazo posible para presentar; dependencia real «presenta quien investigó o construyó»; nota de Promedio por ser el proyecto evaluado del curso | ACCEPTED · autoría | ídem; FairScore sin cambios |
+| D-S08-049 | Catálogo `grade-1-dev-1` con la política de build de 7.º; sign-off manual de la rueda y revisión del Departamento quedan como gates de producción | ACCEPTED · desarrollo | [variantes](../04-quality/variant-validation-and-audit.md#catálogo-de-1º-grade-1-dev-1) |
+| D-S08-050 | `rare.y1.power-outage` diferido: hechos registrados y hook `implemented: false`; sin orquestación de rareza antes de ADR-025 completo | ACCEPTED · diferido | [eventos raros](../01-game-design/rare-events-and-prestige.md) |
+| D-S08-051 | El encabezado de etapa cuenta la etapa con la duración del plan; sus celdas se angostan antes de desbordar | ACCEPTED · UI | [primitivas de juego](../09-design-system/game-components.md) |
 
 La integración de TG1 permanece histórica en [su acta y trazabilidad](../06-delivery/teacher-gate-1/12-integracion-post-gate.md).
 Siguen pendientes la oficialización/freeze, validación empírica, autoría ejecutable,

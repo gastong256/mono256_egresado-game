@@ -12,12 +12,13 @@ devolvió `PASS WITH MINOR CONTRACT DELTAS`: equivale a PASS con deltas menores
 entendidos, no a ausencia de trabajo futuro. No quedó BLOCKER sin resolver.
 [ADR-025](../03-architecture/adr/ADR-025-full-career-contract-evolution.md) registra
 composición global, respuestas, debrief, hechos/Prestige, RNG y emisión oficial
-como evolución futura, sin implementar ni cambiar contratos ejecutables.
+como evolución futura, sin implementar ni cambiar contratos ejecutables en Phase 0;
+Phase 1 implementó luego sólo la parte que usa 1.º.
 
 **Resultado:** correcciones aceptadas integradas, **Phase 0 DONE**.
 [Phase 1 — implementar 1.º](../06-delivery/implementation-sequence.md#phase-1-implementar-1º-real)
-está READY, no iniciada; STAGE-08 sigue IN_PROGRESS. El gate post-G1 sigue requerido
-y no ejecutado. Este registro conserva procedencia y destinos; las reglas viven
+quedó READY y cerró después, el 11 de septiembre; STAGE-08 sigue IN_PROGRESS. El
+gate post-G1 sigue requerido y no ejecutado. Este registro conserva procedencia y destinos; las reglas viven
 en cada documento especializado y su madurez en el registro único de decisiones.
 
 ## Método y límites de la evidencia

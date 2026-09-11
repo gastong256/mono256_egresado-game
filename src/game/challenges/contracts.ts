@@ -39,6 +39,7 @@ import {
   type DifficultyBand,
 } from '../difficulty/cognitive'
 import type { ChallengeScoringProfile } from './scoring-profile'
+import type { CompositionMetadata } from './composition-metadata'
 import type { CareerEffects } from '../progression/career'
 import type { DifficultyLevel, MathCategory, SolutionQuality } from './taxonomy'
 import type {
@@ -188,12 +189,37 @@ export interface GenerationContext<
   readonly params: TParams
 }
 
+/**
+ * One obligation, as the single remediation beat of its year presents it.
+ *
+ * `title` and `text` are the content set's authored debrief for the template
+ * that went badly; the ids say which obligation it is, not what to render.
+ */
+export interface RecoveryNote {
+  readonly obligationId: string
+  readonly sourceTemplateId: string
+  readonly title: string
+  readonly text: string
+}
+
 /** Everything the UI may see. Deliberately excludes the solution. */
 export interface PublicChallengeView {
   readonly ref: ChallengeInstanceRef
   readonly narrative: ChallengeNarrative
   readonly interaction: InteractionPresentation
   readonly tools: readonly ToolId[]
+  /**
+   * What a remediation beat closes, split by how it closes it.
+   *
+   * Derived from the obligations still pending and the content set's routing,
+   * never persisted: `practised` is what this interaction works on, `debriefed`
+   * is closed by the same beat with authored text and is not practised in a
+   * second interaction (ADR-025).
+   */
+  readonly review?: {
+    readonly practised: readonly RecoveryNote[]
+    readonly debriefed: readonly RecoveryNote[]
+  }
 }
 
 /**
@@ -206,6 +232,10 @@ export interface PublicChallengeView {
 export interface MaterializedChallenge {
   readonly ref: ChallengeInstanceRef
   readonly narrative: ChallengeNarrative
+  /** Presentation-only flags cannot alter parameters, evaluation or scoring. */
+  narrativeFor(
+    flags: Readonly<Record<string, boolean | number | string>>,
+  ): ChallengeNarrative
   readonly tools: readonly ToolId[]
   /**
    * Generation attempts spent before the instance satisfied its invariants.
@@ -234,6 +264,7 @@ export interface MaterializedChallenge {
  * concrete variants it can produce.
  */
 export interface ChallengeSpec<TModel, TParams> {
+  readonly composition?: CompositionMetadata
   readonly id: ChallengeId
   /** Scenario family this template belongs to. */
   readonly family: ScenarioFamilyId
@@ -281,7 +312,12 @@ export interface ChallengeSpec<TModel, TParams> {
   readonly tools: readonly ToolId[]
   generate(context: GenerationContext<TParams>): TModel
   verify(model: TModel): readonly string[]
-  narrate(model: TModel): ChallengeNarrative
+  narrate(
+    model: TModel,
+    context: {
+      readonly flags: Readonly<Record<string, boolean | number | string>>
+    },
+  ): ChallengeNarrative
   requestable?(model: TModel): readonly RequestableInformation[]
   present(model: TModel, revealed: readonly string[]): InteractionPresentation
   evaluate(
@@ -299,6 +335,8 @@ export interface ChallengeSpec<TModel, TParams> {
  * exactly those.
  */
 export interface ChallengeDefinition {
+  /** Required by global composition; absent in historical content sets. */
+  readonly composition?: CompositionMetadata
   readonly id: ChallengeId
   readonly family: ScenarioFamilyId
   readonly placement: ChallengePlacementRole
@@ -386,6 +424,9 @@ export function defineChallenge<TModel, TParams>(
     stages: spec.stages,
     baseDifficulty: spec.baseDifficulty,
     cognitive: spec.cognitive,
+    ...(spec.composition === undefined
+      ? {}
+      : { composition: spec.composition }),
     band: bandOf(spec.cognitive),
     scoring: spec.scoring,
     tools: spec.tools,
@@ -431,7 +472,8 @@ export function defineChallenge<TModel, TParams>(
       return {
         ref,
         attempts,
-        narrative: spec.narrate(generated),
+        narrative: spec.narrate(generated, { flags: {} }),
+        narrativeFor: (flags) => spec.narrate(generated, { flags }),
         tools: spec.tools,
         requestable: spec.requestable?.(generated) ?? [],
         present: (revealed) => spec.present(generated, revealed),

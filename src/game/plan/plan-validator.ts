@@ -35,6 +35,8 @@ import { isStageId, stageIndex, type StageId } from '../progression/stages'
 import { toRunPlan, type ComposedRunPlan } from './composer'
 import { stagePolicyFor, type CompositionPolicy } from './composition-policy'
 import { validateRunPlan } from './run-plan'
+import { compositionMetadataIssues } from '../challenges/composition-metadata'
+import { careerConstraintIssues } from './career-constraints'
 
 export interface PlanValidationContext {
   readonly catalog: ContentCatalog
@@ -56,6 +58,111 @@ export function validateComposedPlan(
 ): readonly ValidationIssue[] {
   const issues: ValidationIssue[] = []
   const { catalog, policy } = context
+
+  if (policy.career !== undefined) {
+    const career = policy.career
+    const fail = (code: string, detail: string) =>
+      issues.push(contentError(`plan.career-${code}`, 'run', detail))
+    for (const issue of careerConstraintIssues(career)) fail('policy', issue)
+    if (
+      plan.stages.map((stage) => stage.stageId).join(',') !==
+      career.requiredStages.join(',')
+    )
+      fail(
+        'stages',
+        'career must contain every required stage, exactly once and in order',
+      )
+    for (const stage of plan.stages) {
+      const chronology = stage.beats.map(
+        (beat) =>
+          catalog.template(beat.variant.templateId)?.composition?.chronology ??
+          0,
+      )
+      if (
+        chronology.some(
+          (order, i) => order < (chronology[i - 1] ?? Number.NEGATIVE_INFINITY),
+        )
+      )
+        fail('chronology', 'beats violate authored stage chronology')
+    }
+    const templates = plan.stages.flatMap((stage) =>
+      stage.beats.flatMap((beat) => {
+        const template = catalog.template(beat.variant.templateId)
+        return template === undefined ? [] : [template]
+      }),
+    )
+    if (
+      templates.some(
+        (template) =>
+          template.composition === undefined ||
+          compositionMetadataIssues(template.composition).length > 0,
+      )
+    )
+      fail('metadata', 'missing or invalid authoritative composition metadata')
+    const checkRange = (
+      name: string,
+      actual: number,
+      range: { readonly min: number; readonly max: number },
+    ) => {
+      if (actual < range.min || actual > range.max)
+        fail('quota', `${name}: ${actual}, required ${range.min}–${range.max}`)
+    }
+    checkRange(
+      'ordinary',
+      templates.filter((t) => isOrdinaryBeatRole(t.placement)).length,
+      career.ordinaryBeats,
+    )
+    for (const [band, range] of Object.entries(career.bands))
+      checkRange(
+        band,
+        templates.filter((t) => bandOf(t.cognitive) === band).length,
+        range,
+      )
+    for (const [pacing, range] of Object.entries(career.pacing))
+      checkRange(
+        pacing,
+        templates.filter((t) => t.composition?.pacingClass === pacing).length,
+        range,
+      )
+    const metadata = templates.flatMap((t) =>
+      t.composition === undefined ? [] : [t.composition],
+    )
+    const families = new Set(metadata.map((m) => m.primaryReasoningFamily))
+    const engines = new Set(metadata.map((m) => m.interactionEngine))
+    if (families.size < career.minReasoningFamilies)
+      fail('diversity', 'not enough primary reasoning families')
+    if (engines.size < career.minInteractionEngines)
+      fail('diversity', 'not enough reusable interaction engines')
+    for (const [family, max] of Object.entries(career.maxByReasoning))
+      if (
+        metadata.filter((m) => m.primaryReasoningFamily === family).length > max
+      )
+        fail('reasoning-max', `${family} exceeds ${max}`)
+    if (
+      metadata.filter(
+        (m) =>
+          m.primaryReasoningFamily === 'DATA_UNCERTAINTY' ||
+          m.primaryReasoningFamily === 'LOGIC_CLASSIFICATION',
+      ).length < career.minDataOrLogic
+    )
+      fail('data-logic', 'missing data/logic coverage')
+    const clusters = new Set(
+      metadata.flatMap((m) =>
+        m.eventCluster === undefined ? [] : [m.eventCluster],
+      ),
+    )
+    for (const cluster of clusters)
+      if (
+        metadata.filter((m) => m.eventCluster === cluster).length >
+        career.maxPerEventCluster
+      )
+        fail('cluster', `event cluster ${cluster} occurs too often`)
+    checkRange(
+      'Project Arc',
+      metadata.filter((m) => m.recurringArc === 'PROJECT').length,
+      career.projectArc,
+    )
+  }
 
   if (
     plan.compositionPolicyId !== policy.id ||

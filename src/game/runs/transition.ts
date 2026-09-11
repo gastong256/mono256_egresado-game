@@ -26,6 +26,7 @@ import type { ApprovedVariantLookup } from '../challenges/variant-source'
 import {
   composeRun,
   composedStage,
+  plannedEventCount,
   type ComposedRunPlan,
   type ComposedStagePlan,
 } from '../plan/composer'
@@ -42,7 +43,6 @@ import {
 } from '../challenges/contracts'
 import {
   createVariantRng,
-  isEligibleForStage,
   type ChallengeVariantRef,
 } from '../challenges/content-model'
 import type { ContentCatalog } from '../challenges/content-catalog'
@@ -54,11 +54,20 @@ import {
   owesRecovery,
   pendingForStage,
   previasOf,
+  selectedObligation,
   withGraduation,
   withObligation,
   withRecovery,
   type RecoveryPolicy,
 } from '../progression/recovery'
+import {
+  recoveryContentIssues,
+  recoveryFrameFor,
+  recoveryNotes,
+  reviewTemplateFor,
+  reviewsFor,
+  type RecoveryContent,
+} from './recovery-content'
 import { applyEffects } from '../narrative/effects'
 import type { NarrativeContext } from '../narrative/conditions'
 import {
@@ -134,25 +143,8 @@ export interface EngineDependencies {
   readonly recoveryContent?: RecoveryContent
 }
 
-/** How a content set answers a year that owes something. */
-export interface RecoveryContent {
-  /** Storylet used to frame the remediation beat. */
-  readonly storyletId: StoryletId
-  /**
-   * Which template reviews which, in authored preference order.
-   *
-   * Keyed by the **ordinary** template whose failure is being remediated, so
-   * `none` is a real per-template decision: a template absent from this map
-   * leaves nothing to close, and its bad result simply stands. That is the
-   * honest answer for a template with no isolable intermediate step — handing
-   * the player a review of some *other* situation would be worse content than
-   * no review at all.
-   *
-   * Every value must carry the `recovery` placement role: remediation content
-   * is never part of ordinary selection and never spends an ordinary slot.
-   */
-  readonly reviews: Readonly<Record<string, readonly ChallengeId[]>>
-}
+/** Declared by a content set; see `recovery-content.ts`. */
+export type { RecoveryContent } from './recovery-content'
 
 /**
  * Substream address of the challenge generated at a given event.
@@ -202,6 +194,18 @@ export function materializeChallenge(
     return err({ kind: 'unknown-challenge', challengeId: ref.templateId })
   }
 
+  if (
+    dependencies.approvedVariants !== undefined &&
+    !dependencies.approvedVariants
+      .variantsFor(template.id)
+      .includes(ref.variantId)
+  ) {
+    return err({
+      kind: 'invalid-content',
+      issues: [`unapproved variant ${template.id}/${ref.variantId}`],
+    })
+  }
+
   return ok(
     template.materialize(ref, {
       rng: createRng(descriptor.seed, challengeRngPath(ref)),
@@ -232,11 +236,33 @@ export function activeChallengeView(
     return materialized
   }
 
+  // A remediation beat says what it practises and what it only explains. The
+  // split is derived from what the year still owes, so a resumed or replayed
+  // run shows exactly the same notes without persisting a second history.
+  const config = dependencies.recoveryContent
+  let review: PublicChallengeView['review']
+  if (active.recovery === true && config !== undefined) {
+    const notes = recoveryNotes(
+      config,
+      pendingForStage(state.progression, state.stage),
+      active.challenge.templateId,
+    )
+    if (!notes.ok) {
+      return err({
+        kind: 'invalid-content',
+        issues: notes.error.map(
+          (id) => `obligation ${id} would close without practice or debrief`,
+        ),
+      })
+    }
+    review = notes.value
+  }
   return ok({
     ref: active.challenge,
-    narrative: materialized.value.narrative,
+    narrative: materialized.value.narrativeFor(state.flags),
     interaction: materialized.value.present(active.revealed),
     tools: materialized.value.tools,
+    ...(review === undefined ? {} : { review }),
   })
 }
 
@@ -346,10 +372,7 @@ function plannedBeat(
  * would let a composed year keep asking for events after the plan ran out.
  */
 function stageEventCount(state: RunState, stage: StageConfig): number {
-  if (state.plan === undefined) {
-    return stage.eventCount
-  }
-  return composedStage(state.plan, stage.id)?.eventCount ?? stage.eventCount
+  return plannedEventCount(state.plan, stage)
 }
 
 /**
@@ -423,20 +446,6 @@ function applyObligation(
 }
 
 /**
- * The recovery templates a content set declares for one ordinary template.
- *
- * An empty list is the answer for a template whose author decided it has no
- * honest review, and it is what keeps `none` a real decision rather than a
- * silent fallback to whatever else the year happens to carry.
- */
-function reviewsFor(
-  config: RecoveryContent,
-  templateId: string,
-): readonly ChallengeId[] {
-  return config.reviews[templateId] ?? []
-}
-
-/**
  * Which content a year plays to close what it owes.
  *
  * Derived from the obligation's own semantic identity on a fixed substream, not
@@ -452,8 +461,7 @@ function recoveryContentFor(
   dependencies: EngineDependencies,
 ): Result<ChallengeVariantRef, EngineRejection> {
   const config = dependencies.recoveryContent
-  const owed = pendingForStage(state.progression, state.stage)
-  const obligation = owed[0]
+  const obligation = selectedObligation(state.progression, state.stage)
 
   if (config === undefined || obligation === undefined) {
     return err({
@@ -468,16 +476,12 @@ function recoveryContentFor(
   // the mural wrong is owed the mural's review or nothing at all; handing them
   // some other situation's review would be a non sequitur wearing remediation's
   // clothes.
-  const eligible = reviewsFor(config, obligation.source.templateId)
-    .map((templateId) => dependencies.catalog.template(templateId))
-    .filter((template) => template !== undefined)
-    .filter(
-      (template) =>
-        template.placement === 'recovery' &&
-        isEligibleForStage(template, state.stage),
-    )
-
-  const template = eligible[0]
+  const template = reviewTemplateFor(
+    config,
+    dependencies.catalog,
+    obligation.source.templateId,
+    state.stage,
+  )
   if (template === undefined) {
     return err({
       kind: 'invalid-content',
@@ -489,8 +493,15 @@ function recoveryContentFor(
 
   // Approved content only, exactly as ordinary beats. Remediation is played by
   // the same person under the same rules; it does not get a looser catalog.
-  const approved = dependencies.approvedVariants?.variantsFor(template.id) ?? []
-  const pool = approved.length > 0 ? approved : template.variants
+  const pool =
+    dependencies.approvedVariants === undefined
+      ? template.variants
+      : dependencies.approvedVariants.variantsFor(template.id)
+  if (pool.length === 0)
+    return err({
+      kind: 'invalid-content',
+      issues: [`no approved recovery variants for ${template.id}`],
+    })
   const played = new Set(
     state.history.flatMap((entry) =>
       entry.challengeId === template.id && entry.instanceId !== undefined
@@ -532,9 +543,12 @@ function beginRecovery(
   dependencies: EngineDependencies,
 ): TransitionResult {
   const config = dependencies.recoveryContent
-  const storylet = dependencies.storylets.find(
-    (candidate) => candidate.id === config?.storyletId,
-  )
+  const storylet =
+    config === undefined
+      ? undefined
+      : dependencies.storylets.find(
+          (candidate) => candidate.id === recoveryFrameFor(config, state.stage),
+        )
   const content = recoveryContentFor(state, dependencies)
 
   if (config === undefined || storylet === undefined || !content.ok) {
@@ -770,12 +784,14 @@ function beginEvent(
     // one. That is the whole point of validating a population: the run seed
     // decides *which* approved problem a player gets, never what that problem
     // contains, and never reaches an address that failed validation.
-    const approved =
-      dependencies.approvedVariants?.variantsFor(templateId) ?? []
     const pool =
-      approved.length > 0
-        ? approved
-        : requireTemplate(dependencies, templateId).variants
+      dependencies.approvedVariants === undefined
+        ? requireTemplate(dependencies, templateId).variants
+        : dependencies.approvedVariants.variantsFor(templateId)
+    if (pool.length === 0)
+      throw new EngineInvariantError(
+        `no approved variants for ${templateId}; content configuration changed during run`,
+      )
 
     variantId = selectVariantId(
       createRng(state.descriptor.seed, [
@@ -1097,6 +1113,49 @@ export function createRun(
       expected: scoreVersion ?? '(no competitive policy)',
       received: descriptor.scoreVersion ?? '(no competitive policy)',
     })
+  }
+
+  // Fail before a run starts, including the broad, uncomposed authoring demo.
+  // A configured approved catalog is never permission to fall back to curated data.
+  if (dependencies.approvedVariants !== undefined) {
+    const ordinary = new Set(
+      dependencies.storylets
+        .filter((storylet) =>
+          storylet.stages.some((id) =>
+            dependencies.ruleset.stages.some((entry) => entry.id === id),
+          ),
+        )
+        .flatMap((storylet) => storylet.challengePool),
+    )
+    const missing = [...ordinary].filter(
+      (id) => dependencies.approvedVariants?.variantsFor(id).length === 0,
+    )
+    if (missing.length > 0)
+      return err({
+        kind: 'invalid-content',
+        issues: missing.map((id) => `no approved ordinary variants for ${id}`),
+      })
+  }
+
+  // The same rule for what a year may owe: every declared route closes with
+  // approved review content, framed, and with a note for what it does not
+  // practise. Checked here so a gap fails before the first beat, not mid-year.
+  if (
+    dependencies.ruleset.recovery !== undefined &&
+    dependencies.recoveryContent !== undefined
+  ) {
+    const issues = recoveryContentIssues({
+      recoveryContent: dependencies.recoveryContent,
+      catalog: dependencies.catalog,
+      storylets: dependencies.storylets,
+      stages: dependencies.ruleset.stages.map((config) => config.id),
+      ...(dependencies.approvedVariants === undefined
+        ? {}
+        : { approvedVariants: dependencies.approvedVariants }),
+    })
+    if (issues.length > 0) {
+      return err({ kind: 'invalid-content', issues })
+    }
   }
 
   /*
@@ -1504,6 +1563,53 @@ export function transition(
     }
 
     case 'CONTINUE': {
+      if (
+        (state.phase === 'feedback' || state.phase === 'narrative') &&
+        dependencies.ruleset.recovery !== undefined &&
+        state.stageEventIndex + 1 >=
+          stageEventCount(state, requireStage(dependencies.ruleset, state)) &&
+        owesRecovery(state.progression, state.stage)
+      ) {
+        // Refuse at the edge of the beat, before the year moves: approved
+        // content, a frame and a note for every obligation it closes. A gap
+        // here is a content defect, and the run stays where it was instead of
+        // closing a year with a concept nobody practised or explained.
+        const content = recoveryContentFor(state, dependencies)
+        if (!content.ok) return content
+        const config = dependencies.recoveryContent
+        if (config === undefined) {
+          return err({
+            kind: 'invalid-content',
+            issues: [`${state.stage} owes a review and declares no content`],
+          })
+        }
+        const frame = recoveryFrameFor(config, state.stage)
+        if (
+          !dependencies.storylets.some(
+            (storylet) =>
+              storylet.id === frame && storylet.stages.includes(state.stage),
+          )
+        ) {
+          return err({
+            kind: 'invalid-content',
+            issues: [`missing recovery frame for ${state.stage}`],
+          })
+        }
+        const notes = recoveryNotes(
+          config,
+          pendingForStage(state.progression, state.stage),
+          content.value.templateId,
+        )
+        if (!notes.ok) {
+          return err({
+            kind: 'invalid-content',
+            issues: notes.error.map(
+              (id) =>
+                `obligation ${id} would close without practice or debrief`,
+            ),
+          })
+        }
+      }
       if (state.phase === 'feedback') {
         return ok(advance(state, dependencies, []))
       }

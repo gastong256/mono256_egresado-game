@@ -23,6 +23,13 @@ import { err, ok, type Result } from './result'
 /**
  * Engine/game version of this build. Also serialized as `gameVersion`.
  *
+ * `7.0.0` adds bounded global composition, semantic constructive responses,
+ * presentation-only narrative context and approved-only recovery/debriefs.
+ * ACTION_LOG_VERSION 5 encodes the three new answer kinds. Snapshot 7 remains:
+ * new views are derived and no persisted field was added. G7 content, traits,
+ * scoring and legacy composition remain unchanged. Older version triples/logs
+ * are explicitly rejected, never silently migrated or reinterpreted.
+ *
  * `6.0.0` is progression: a run now knows what a bad year owes and whether it
  * graduated. A poor ordinary result leaves an obligation the year must close
  * before it can end, closing it is a remediation beat scheduled outside the
@@ -83,7 +90,7 @@ import { err, ok, type Result } from './result'
  * reproduce its original result under this engine, and that is exactly what the
  * version triple exists to say out loud instead of discovering it in a replay.
  */
-export const ENGINE_VERSION = '6.0.0'
+export const ENGINE_VERSION = '7.0.0'
 
 export interface VersionTriple {
   readonly gameVersion: string

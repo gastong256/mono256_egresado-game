@@ -194,6 +194,13 @@ El pase detallado Rare Events / Milestones / Prestige está completo a nivel de
 producto; no hace falta repetirlo. No hay todavía implementación ni catálogo de
 logros competitivo aprobado.
 
+**1.º, Phase 1:** `rare.y1.power-outage` **no corre**. Implementarlo exigía la
+orquestación de rareza —substreams semánticos propios y arbitraje de
+presupuesto— que ADR-025 ubica después. Lo que sí quedó: la expo registra en
+origen los hechos que su condición necesita (`y1.project.context-established`,
+`y1.project.outcome`) y el content set declara un hook con `implemented: false`,
+`NARRATIVE_ONLY` y Prestige de aparición 0. No altera FairScore, egreso ni Repaso.
+
 ## Trabajo diferido, no bloqueos de Phase 0
 
 - Autoría de nombres, hechos, condiciones y variantes de logros concretos.

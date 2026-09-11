@@ -28,10 +28,12 @@ import type {
 import { Button, type DataGridItem } from '@/components/ui'
 
 import { AssignmentBoard } from './interactions/assignment-board'
-import { BudgetBuilder } from './interactions/budget-builder'
+import { BudgetBuilder, QuantityBuilder } from './interactions/budget-builder'
 import { NumberGridBoard } from './interactions/number-grid'
 import { NumericAnswer } from './interactions/numeric-answer'
 import { OptionList } from './interactions/option-list'
+import { ScheduleBuilder } from './interactions/schedule-builder'
+import { SpatialLayout } from './interactions/spatial-layout'
 
 /** Traduce los datos del motor a celdas de la grilla, sin decidir nada. */
 function toGridItems(data: readonly PresentedDatum[]): DataGridItem[] {
@@ -58,6 +60,9 @@ export function interactionData(
     case 'timeline':
     case 'numeric-input':
     case 'budget-builder':
+    case 'quantity-builder':
+    case 'schedule-builder':
+    case 'spatial-layout':
     case 'information-request':
       return toGridItems(presentation.data)
     case 'chart-interpretation':
@@ -93,8 +98,12 @@ export function usesDecisionBlock(
     case 'numeric-input':
       return true
     case 'budget-builder':
+    case 'quantity-builder':
     case 'assignment-board':
     case 'number-grid':
+      return false
+    case 'schedule-builder':
+    case 'spatial-layout':
       return false
     default:
       return assertNever(presentation)
@@ -137,6 +146,32 @@ export function InteractionControls({
   instanceId,
 }: InteractionControlsProps) {
   switch (presentation.kind) {
+    case 'schedule-builder':
+      return (
+        <ScheduleBuilder
+          activities={presentation.activities}
+          instructions={presentation.instructions}
+          span={presentation.span}
+          placements={
+            draft?.kind === 'schedule-builder' ? draft.placements : []
+          }
+          disabled={disabled}
+          onChange={(placements) =>
+            onDraftChange({ kind: 'schedule-builder', placements })
+          }
+        />
+      )
+    case 'spatial-layout':
+      return (
+        <SpatialLayout
+          presentation={presentation}
+          placements={draft?.kind === 'spatial-layout' ? draft.placements : []}
+          disabled={disabled}
+          onChange={(placements) =>
+            onDraftChange({ kind: 'spatial-layout', placements })
+          }
+        />
+      )
     case 'decision-card':
     case 'timeline':
     case 'chart-interpretation':
@@ -196,6 +231,22 @@ export function InteractionControls({
               value === '' ? undefined : { kind: 'numeric-input', value },
             )
           }}
+        />
+      )
+
+    case 'quantity-builder':
+      return (
+        <QuantityBuilder
+          items={presentation.items}
+          instructions={presentation.instructions}
+          {...(presentation.positions === undefined
+            ? {}
+            : { positions: presentation.positions })}
+          lines={draft?.kind === 'quantity-builder' ? draft.lines : []}
+          disabled={disabled}
+          onChange={(lines) =>
+            onDraftChange({ kind: 'quantity-builder', lines })
+          }
         />
       )
 
@@ -324,6 +375,24 @@ export function isDraftSubmittable(
   }
 
   switch (draft.kind) {
+    case 'schedule-builder':
+      return (
+        presentation.kind === 'schedule-builder' &&
+        presentation.activities.every(
+          (activity) =>
+            activity.optional ||
+            draft.placements.some((p) => p.activityId === activity.id),
+        )
+      )
+    case 'spatial-layout':
+      return (
+        presentation.kind === 'spatial-layout' &&
+        presentation.objects.every(
+          (object) =>
+            object.optional ||
+            draft.placements.some((p) => p.objectId === object.id),
+        )
+      )
     case 'decision-card':
     case 'timeline':
     case 'chart-interpretation':
@@ -332,11 +401,16 @@ export function isDraftSubmittable(
     case 'numeric-input':
       return /^[+-]?\d+(?:\.\d+)?$/u.test(draft.value)
     case 'budget-builder':
+    case 'quantity-builder':
       return draft.lines.some((line) => line.quantity > 0)
     case 'assignment-board':
       return (
         presentation.kind === 'assignment-board' &&
-        draft.assignments.length === presentation.tasks.length
+        presentation.tasks.every(
+          (task) =>
+            task.optional === true ||
+            draft.assignments.some((entry) => entry.taskId === task.id),
+        )
       )
     case 'number-grid':
       // Cada paso del acto tiene que estar contestado. Una ronda vacía es una
@@ -380,13 +454,22 @@ export function missingRequirement(
     case 'numeric-input':
       return 'Escribí un número para confirmar.'
     case 'budget-builder':
+    case 'quantity-builder':
       return 'Agregá al menos una cantidad para confirmar.'
     case 'assignment-board': {
       const assigned =
-        draft?.kind === 'assignment-board' ? draft.assignments.length : 0
-      const missing = presentation.tasks.length - assigned
+        draft?.kind === 'assignment-board' ? draft.assignments : []
+      const missing = presentation.tasks.filter(
+        (task) =>
+          task.optional !== true &&
+          !assigned.some((entry) => entry.taskId === task.id),
+      ).length
       return `Falta asignar ${String(missing)} ${missing === 1 ? 'tarea' : 'tareas'}.`
     }
+    case 'schedule-builder':
+      return 'Elegí el inicio de cada actividad obligatoria para confirmar.'
+    case 'spatial-layout':
+      return 'Incluí los objetos obligatorios y elegí su ubicación para confirmar.'
     case 'number-grid': {
       const marked = draft?.kind === 'number-grid' ? draft.rounds : []
       const pending = presentation.rounds.filter(

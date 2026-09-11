@@ -19,6 +19,13 @@ El motor suma cuatro capas que no son unit tests convencionales:
 - **simulación masiva** (`pnpm game:simulate`): miles de runs deterministas que buscan callejones sin salida, scores inválidos, divergencia de replay, deriva de snapshot y **runs que completan sin egresar**. `pnpm verify` corre 200 runs; la simulación profunda queda local, y `--content=six-stage` juega la carrera de seis años;
 - **auditoría exhaustiva del espacio de estados** (`tests/unit/progression-reachability.test.ts`): donde el espacio es finito y chico, no se muestrea — se recorre entero. La progresión de un año y de una carrera de seis se enumeran completas para establecer que hay un único estado terminal alcanzable, sin ciclos ni callejones. Un muestreo puede no encontrar el bucle; una enumeración prueba que no existe.
 
+El contenido de 1.º (STAGE-08 / Phase 1) agrega su propia pirámide:
+
+- **oráculos por plantilla** (`tests/unit/grade-1-*.test.ts`): cada evaluador se compara con una implementación independiente en todos los planes enumerables o en respuestas arbitrarias de `fast-check`, junto con señuelos, exploits y fronteras de payload;
+- **witness por variante** (`tests/unit/grade-1-catalog.test.ts`): cada entrada aprobada materializa, verifica y alcanza su máximo declarado —con Equipo máximo simultáneo donde existe—, y el artefacto se reconstruye byte a byte;
+- **recorrido real** (`tests/integration/grade-1-run.test.ts`): create → comandos → snapshot/reanudación en cada frontera → replay → servidor, Repaso practicado/debriefeado, fail-closed y FairScore exacto de 10.000 con evidencia máxima;
+- **UI y navegador** (`tests/component/grade-1-*.test.tsx`, `tests/e2e/grade-1.spec.ts`): controles nativos sin arrastre, teclado, 360/390 px, axe, reanudación con red cortada y el caso de dos obligaciones.
+
 ## Verificación local
 
 `pnpm verify` es el gate integrado y exige la versión exacta de Node.js fijada en `.node-version` (`24.19.0` en esta baseline). Ejecuta en orden:
@@ -30,10 +37,11 @@ El motor suma cuatro capas que no son unit tests convencionales:
 5. lint, incluidas fronteras de arquitectura;
 6. TypeScript general y core sin DOM/Node;
 7. unit, component, integration y property tests con cobertura;
-8. validación de contenido (`pnpm game:validate-content`);
-9. simulación determinista de 200 runs con verificación de replay y snapshot;
-10. build de producción;
-11. smoke E2E sobre el build, incluido el harness del motor.
+8. validación de contenido (`pnpm game:validate-content`), también para `--content=grade-1`;
+9. integridad de los catálogos aprobados de 7.º y de `7.º → 1.º`;
+10. simulación determinista de 200 runs con verificación de replay y snapshot, también sobre `7.º → 1.º`;
+11. build de producción;
+12. smoke E2E sobre el build, incluido el harness del motor y los recorridos de 1.º.
 
 Comandos más estrechos para iteración:
 

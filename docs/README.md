@@ -202,17 +202,19 @@ Una decisión integrada declara su nivel, y **el nivel es parte de la decisión*
 Un documento no describe en presente una capacidad que no existe. Lo implementado vive en los documentos de arquitectura actuales; lo que falta, en [arquitectura objetivo del motor](03-architecture/target-engine-architecture.md), con el estado real de cada capacidad.
 
 Los documentos describen la **baseline de código post-Teacher-Gate-1** al 4 de
-septiembre de 2026 y el **cierre documental de STAGE-08 / Phase 0** al 10 de
-septiembre, tras Product Audit y conformidad técnica con deltas entendidos. Lo implementado incluye el shell Next.js, toolchain reproducible,
+septiembre de 2026, el **cierre documental de STAGE-08 / Phase 0** al 10 de
+septiembre, tras Product Audit y conformidad técnica con deltas entendidos, y el
+**cierre de STAGE-08 / Phase 1** al 11 de septiembre. Lo implementado incluye el shell Next.js, toolchain reproducible,
 fronteras de módulos, Supabase opcional, Docker, gates de calidad, motor
 determinista con replay/snapshots, `Promedio · Equipo · Aura · Estilo`, slice de
-7.º, composición por presupuesto, egreso garantizado con recuperación fail-forward
-y `FairScore` candidato con recomputación server-only. `fair-score-dev-2` es
+7.º, composición por presupuesto, egreso garantizado con recuperación fail-forward,
+`FairScore` candidato con recomputación server-only y 1.º real —cinco Templates y
+dos Repasos— como práctica de desarrollo `7.º → 1.º`. `fair-score-dev-2` es
 teacher-informed pero no oficial. La envolvente, matriz v0.3, narrativa de carrera,
-eventos raros/Prestige y 25 Templates de 1.º–5.º son **diseño**, no runtime. Phase 0
-está `DONE`; sigue **Phase 1 — implementar 1.º**, `READY · NOT STARTED`.
-El gate post-G1 sigue obligatorio/no ejecutado y STAGE-08 no terminó. Todavía
-no existen los años 1.º–5.º, callbacks multianuales, Prestige, Auth, schema de
+eventos raros/Prestige y las 20 Templates de 2.º–5.º son **diseño**, no runtime.
+Phase 0 y Phase 1 están `DONE`; sigue el **audit post-G1**, `READY · NOT EXECUTED`,
+obligatorio antes de 2.º–5.º, y STAGE-08 no terminó. Todavía no existen los años
+2.º–5.º, la carrera oficial, callbacks multianuales, Prestige, Auth, schema de
 producto, endpoints/sesión/persistencia de competencia, ranking ni despliegue
 público.
 

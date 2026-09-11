@@ -94,11 +94,20 @@ describe('exact rational arithmetic', () => {
   })
 
   it('orders values consistently with negation', () => {
+    // Reversing an equal ordering with `-` gives -0, which `toBe` (Object.is)
+    // tells apart from 0: the property used to fail whenever it drew two equals.
+    const reversed = (order: -1 | 0 | 1) => (order === 0 ? 0 : -order)
     fc.assert(
       fc.property(arbRational, arbRational, (a, b) => {
-        expect(compare(a, b)).toBe(-compare(b, a))
-        expect(compare(negate(a), negate(b))).toBe(-compare(a, b))
+        expect(compare(a, b)).toBe(reversed(compare(b, a)))
+        expect(compare(negate(a), negate(b))).toBe(reversed(compare(a, b)))
       }),
+      {
+        examples: [
+          [fromInteger(0), fromInteger(0)],
+          [rational(1n, 2n), rational(2n, 4n)],
+        ],
+      },
     )
   })
 

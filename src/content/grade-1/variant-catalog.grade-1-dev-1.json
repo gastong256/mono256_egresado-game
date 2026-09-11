@@ -1,0 +1,2605 @@
+{
+  "catalogVersion": "grade-1-dev-1",
+  "contentVersion": "1.0.0-grade-1",
+  "generators": [
+    {
+      "templateId": "g7.bus-latest-departure",
+      "generatorId": "bus.latest-departure.constraint-first",
+      "generatorVersion": "1",
+      "candidateSpace": 20000
+    },
+    {
+      "templateId": "g7.bus-timing",
+      "generatorId": "bus.timing.constraint-first",
+      "generatorVersion": "1",
+      "candidateSpace": 20000
+    },
+    {
+      "templateId": "g7.bus-travel-review",
+      "generatorId": "bus.travel-review.constraint-first",
+      "generatorVersion": "1",
+      "candidateSpace": 20000
+    },
+    {
+      "templateId": "g7.may-25-act",
+      "generatorId": "may-25.grid.constraint-first",
+      "generatorVersion": "2",
+      "candidateSpace": 20000
+    },
+    {
+      "templateId": "g7.mural-paint",
+      "generatorId": "mural.coverage.reverse",
+      "generatorVersion": "1",
+      "candidateSpace": 20000
+    },
+    {
+      "templateId": "g7.notebook-offer",
+      "generatorId": "notebook.offer.constraint-first",
+      "generatorVersion": "1",
+      "candidateSpace": 20000
+    },
+    {
+      "templateId": "g7.stand-supplies",
+      "generatorId": "stand.supplies.constraint-first",
+      "generatorVersion": "1",
+      "candidateSpace": 20000
+    },
+    {
+      "templateId": "y1.classroom-layout",
+      "generatorId": "y1.layout.cell-graphs",
+      "generatorVersion": "1",
+      "candidateSpace": 192
+    },
+    {
+      "templateId": "y1.course-project-expo",
+      "generatorId": "y1.expo.assignments",
+      "generatorVersion": "1",
+      "candidateSpace": 576
+    },
+    {
+      "templateId": "y1.mobile-data",
+      "generatorId": "y1.mobile-data.capacity-decoys",
+      "generatorVersion": "1",
+      "candidateSpace": 288
+    },
+    {
+      "templateId": "y1.rehearsal-schedule",
+      "generatorId": "y1.schedule.afternoons",
+      "generatorVersion": "1",
+      "candidateSpace": 288
+    },
+    {
+      "templateId": "y1.scale-fit-review",
+      "generatorId": "y1.scale-review.wall-fit",
+      "generatorVersion": "1",
+      "candidateSpace": 24
+    },
+    {
+      "templateId": "y1.schedule-review",
+      "generatorId": "y1.schedule-review.backward-chain",
+      "generatorVersion": "1",
+      "candidateSpace": 216
+    },
+    {
+      "templateId": "y1.student-day-challenge-wheel",
+      "generatorId": "y1.student-day.rule-distributions",
+      "generatorVersion": "1",
+      "candidateSpace": 1728
+    }
+  ],
+  "entries": [
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00000",
+      "source": "generated",
+      "fingerprint": "4c3456e26995cc86b307e12e3b711894ed7d4489fb6025366b7f0c241ab3e9a1"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00001",
+      "source": "generated",
+      "fingerprint": "14d7c98b4276236ec84857991ee7bc5ae64ecb8ef7bd5f608e218e69c34454d2"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00002",
+      "source": "generated",
+      "fingerprint": "e5d5db450bc9705275ee9dcce712d32a7a3e573965f70ac450d69d09b4209b28"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00003",
+      "source": "generated",
+      "fingerprint": "d79a84583d51c330c70c3a37d7d9cde3c68385bae9095061bb81fe21e98acad5"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00004",
+      "source": "generated",
+      "fingerprint": "2a1641344b694ce06815964339f557a1df8ad822aef64d9f613f7f1136cdc9a0"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00005",
+      "source": "generated",
+      "fingerprint": "026009f023e6cfafead7c60c7038df3684d515feeada54b7ad9edd0cd63c5a30"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00006",
+      "source": "generated",
+      "fingerprint": "11ce45e22cd2f84d98fd492d12cd3df444950c1e1d05b3d4e1d633ef4ea0b993"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00007",
+      "source": "generated",
+      "fingerprint": "c19917767194ec329b4bbd950e82c838d18da32004451ef8cc2a10f57a96ff0d"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00008",
+      "source": "generated",
+      "fingerprint": "35604e60221a51415aa3dd0841c5bb811983464884fe4b2ab6d9894b5722f125"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00009",
+      "source": "generated",
+      "fingerprint": "438cab4506faece67e98141a3d0171e2b4bb4f21a35f1950a7d97b1e8ecfa4b5"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00010",
+      "source": "generated",
+      "fingerprint": "9585b7573ce3592af8a66f6201d112739a7ea0ab59fce9b87ec566b21f4dd67c"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00011",
+      "source": "generated",
+      "fingerprint": "4adcdbac2e2c4a1f68af2b0a5de708f130f5d30152a2e4f7436cbad2441bfb6c"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00012",
+      "source": "generated",
+      "fingerprint": "be6479c72817be107db6708b9c44b55cca9c0ad60a47ad36de681cc66e3b16e2"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00013",
+      "source": "generated",
+      "fingerprint": "4d3f522e6961e9db795889801af234cec33b331aa54ad7f93ad761b77a34d508"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00014",
+      "source": "generated",
+      "fingerprint": "e323b65899567204f435673b1ede84f29127f87052a3aeb8d811aea3d7ce1d75"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00015",
+      "source": "generated",
+      "fingerprint": "ec7eff5ad5aaf733edaa6f58dcaf06c0ae3d39ec2bd9edef911da2fd9b6e02e8"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00016",
+      "source": "generated",
+      "fingerprint": "931d208e24dd384192f875f331d25f81caeef9ba66523e058526c47633396e93"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00017",
+      "source": "generated",
+      "fingerprint": "264bb5359cdc40775a11d73509d3f9bcdb4b452a0be5ab529d22fe26b7a375f1"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00018",
+      "source": "generated",
+      "fingerprint": "b1c50125c184c8e30a446d061dc85e279fccbdd1232143e7d63b1accc2e8bb3b"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00019",
+      "source": "generated",
+      "fingerprint": "90ddef658cdfdc66fcc8c7302242d0f173faf73a623d61da9ce0fa84f137d436"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00020",
+      "source": "generated",
+      "fingerprint": "0f0e0d24c1a4f2fe84f4c4fa4add18bf44676875ea192831c3ec4624f1284aac"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00021",
+      "source": "generated",
+      "fingerprint": "c7f0d48bf6b8b1965b6ec5dc70c247d10aba48ecd1e74b42ae2e6e87d724d236"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00022",
+      "source": "generated",
+      "fingerprint": "504b29f31b6d93a3ac0e503f6272a1b262f673f70e669d12afe45b983104c2ee"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00023",
+      "source": "generated",
+      "fingerprint": "7a5dbc3196bf659d6636341453d9b05d31d09aada3f579560b00b2d7e990270a"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "margen-10",
+      "source": "authored",
+      "fingerprint": "7e92c2bb47c3f88293919979b0341299fb061c133405c76c0cd6a638101814c4"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "margen-5",
+      "source": "authored",
+      "fingerprint": "95b56854529414f8f56c0b5425e61553412a4ad08e69df59a230aa871e054754"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00000",
+      "source": "generated",
+      "fingerprint": "da440e5b4ef199bf3914012f734c93db5c641a8ed9e0a39e01173a53135c404c"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00001",
+      "source": "generated",
+      "fingerprint": "9ee3b59f7b03ef0db15b797e22d382acf6126ae8d9a1e1c0d3d7cb864b2d84fc"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00002",
+      "source": "generated",
+      "fingerprint": "33777fc40ce6fbc3de96f8403c5ab9532d3586232a9372621a3edb77a57e646f"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00003",
+      "source": "generated",
+      "fingerprint": "f428d36b9f2ef4ed023d14995579cadb73e5d48b158e4f04060fe740a0683562"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00004",
+      "source": "generated",
+      "fingerprint": "5655ae952d41398846e84867f958d44a3b118df92f97d6b686833be18ccc2dc9"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00005",
+      "source": "generated",
+      "fingerprint": "cfa01a4c42bf8f7a6cbc5d10cf5f4f4b046d641105ef8a921502da6491ba2909"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00006",
+      "source": "generated",
+      "fingerprint": "aae80a180236c3b5a2d5e5596116f6a450ebc55ee90cea9a1ae1521db6ef06bc"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00007",
+      "source": "generated",
+      "fingerprint": "2bdf15a33378fa7d56eefcbbbd6f66cda1b3fb3b8a9983b6ed584a0c0e152880"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00008",
+      "source": "generated",
+      "fingerprint": "c2e0762fde46433aeb0ab7a0038ee6c1bcafda265729690a64033edd433bf1c9"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00009",
+      "source": "generated",
+      "fingerprint": "083f6b8e9acdb5d346b8c17c836cfe51adeaa8739320c0b5e252b5e72b43cd99"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00010",
+      "source": "generated",
+      "fingerprint": "cd62a3beb06a4516f991a2d2b7081998a19c94f3de94f7b29e2e995c22960edd"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00011",
+      "source": "generated",
+      "fingerprint": "4da647bf4503a05a236faaf4e0061bb0e6bc306872bafa5f86c5f084bce9b57b"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00012",
+      "source": "generated",
+      "fingerprint": "9cf0129f5ba21ab07a7088cf3eedb371b70fd2974a4ec373872c0186df40487e"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00013",
+      "source": "generated",
+      "fingerprint": "4cac818db2ed3074a9a78ce4b5649a349dda93f8a33371dc8084b89da54a198a"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00014",
+      "source": "generated",
+      "fingerprint": "9b5c47fa69a9cea0436f21c2741bea8e0bcbd1259b9c429cdafffac8df0522fc"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00015",
+      "source": "generated",
+      "fingerprint": "7143be0b37dc71799b54a773d2e97513179de25cbd7e156407be4731bfb4d83e"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00016",
+      "source": "generated",
+      "fingerprint": "1c26a5ce94fd768b991561a4904dcade3bfdf48bd3f3f102b905dea8fa141f69"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00017",
+      "source": "generated",
+      "fingerprint": "023537827b13736f37909153e78b055b2bf59c1ae3fe8164a502fab4a5f0bac1"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00018",
+      "source": "generated",
+      "fingerprint": "b59ad69e677016b6b143ec199589bc2600262ec185b07b74031df15632a29685"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00019",
+      "source": "generated",
+      "fingerprint": "95bde4ee63dec8466616c0ab1fc1dda8335a6e1f3c9c50922b421eaec744cc2e"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00020",
+      "source": "generated",
+      "fingerprint": "5a0e663bac929f7dc3498c4317c0d77b5840f60c5bc67596105af2b6dd4b0114"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00021",
+      "source": "generated",
+      "fingerprint": "1197c3be58e48c3e38845dd06c129abfd86fb5f45d45eeda2287e12030509573"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00022",
+      "source": "generated",
+      "fingerprint": "1ba461ac27c5030598fdfd1057252d31337ef8616555ca5c4b6302c69440e3ce"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00023",
+      "source": "generated",
+      "fingerprint": "dd74c6e2f6f95837716e5c9110bf7805a4830cf7a288ed274d6db23179b7042c"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "demora-25",
+      "source": "authored",
+      "fingerprint": "13043c246176177c335d8a8e61b0ca392d238c74529dd3441762e9a3564a0455"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "demora-50",
+      "source": "authored",
+      "fingerprint": "1c1fbd489f4d0b67c2ce104a0f2e758946ab4d8b690f8654c9faf8e0889d9831"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00000",
+      "source": "generated",
+      "fingerprint": "254a276dc83add237400e9e3adc5b664b6b491ac6d1be941e08fcaeb0e4ec1e2"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00001",
+      "source": "generated",
+      "fingerprint": "d6d67a9495858e7564659cd46b111e8457fa492aee2fbb9f997707dc691bc2a5"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00002",
+      "source": "generated",
+      "fingerprint": "d179ce369ba7a1f76d58337582701d466450b7d2d4fb06c129faa6f12815a6c9"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00003",
+      "source": "generated",
+      "fingerprint": "7c6af3509701ae3c0b299f938f331792864fd209905aca7961d11b90e8d37a21"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00005",
+      "source": "generated",
+      "fingerprint": "655337f503888b6081ae54e7dec8a076e69583de26b0fa837da7a217a10c5890"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00007",
+      "source": "generated",
+      "fingerprint": "e4e18ad7de1ee72a8da7caf8ba84c1d4981fc626d022fd21a821e7c0bc54cbc9"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00008",
+      "source": "generated",
+      "fingerprint": "9dda2c4adf31e9fec4f9ea2382ef89ddd50c785016fbd854bc968932f97969ad"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00010",
+      "source": "generated",
+      "fingerprint": "5962653972487d3d30fbddb03eb71a70d8f70b02c4947a3458e8e79fcb0412e6"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00013",
+      "source": "generated",
+      "fingerprint": "3beba365d0c252cd6314a7017a2ebf70e6f2e28a8c9c6ff705fc241cc96bfc7a"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00014",
+      "source": "generated",
+      "fingerprint": "e3eab079d59dc299f96f08c829c71fae60fd846634da9f2b73b0a754d8cf7bd7"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00015",
+      "source": "generated",
+      "fingerprint": "2a809363b3054694ac21b4dff76bad8868f6ec61cb077899152dbeba59aaea46"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00017",
+      "source": "generated",
+      "fingerprint": "41f9f85a61c4a6c43ca9dc1c4518192a0c6479109d93594b31852f648007ad6c"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00018",
+      "source": "generated",
+      "fingerprint": "284b4db44706b3aaef6757ed85f9415308a077cc62d11f12951ad9f245695be4"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00019",
+      "source": "generated",
+      "fingerprint": "eaaf20f53184f9299c284b2f58445ec13f03972887ce452835ef81df4f6334ef"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00020",
+      "source": "generated",
+      "fingerprint": "461661bb3f386e81419c7c9fe8760dbade6399dd646e68bef93f106205252677"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00025",
+      "source": "generated",
+      "fingerprint": "291eb87a9f242ac0ccc9f4f7fde9fe621a18ce3c6a4fe0d8ffe3aaf4d10da3af"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00027",
+      "source": "generated",
+      "fingerprint": "084106bab6fcfaed020a32baa1a7fe3d46517ac81e28e86d411456676de0686d"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00028",
+      "source": "generated",
+      "fingerprint": "214f8b78e9d49e63652fba0cc37e42716537a2fdc180556f2e3478d63a564f22"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00038",
+      "source": "generated",
+      "fingerprint": "08e6f4cc69aaae56ad7492d8e018be711ca34ede1a633be7d26da5564c8ade71"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00040",
+      "source": "generated",
+      "fingerprint": "75065bc3fe45d9adcffa5c85b074b8183acfc637cbdbb6836353f08c717e01ec"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00042",
+      "source": "generated",
+      "fingerprint": "6c6c0f2822e2113cff780c21b01c7e19eed2434d852c2754753b634df89f0366"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00043",
+      "source": "generated",
+      "fingerprint": "7311650260ffbabc1e83a3e52bc143eef82146164b9ceefc7aaa8edbae5fb6be"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00045",
+      "source": "generated",
+      "fingerprint": "c6bac839e2617569fc48955391a92f2b2995962cf43da64467b78ec559bd5f95"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00047",
+      "source": "generated",
+      "fingerprint": "53be6205cb55a37d0d3cd6d944443b565d8417d00bc493274279187f45e85b78"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "repaso-25",
+      "source": "authored",
+      "fingerprint": "c32d32f42d2d2ddbab60c2f5b46e2133cf5b2e58d5119ae31edeaebe5855848b"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "repaso-50",
+      "source": "authored",
+      "fingerprint": "43ed736c36b6e0543a2f380804d06d59998d8d6a76fd01cc74c87ad5934e018c"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.classroom-layout",
+      "variantId": "c00001",
+      "source": "generated",
+      "fingerprint": "2142f46c96402abbe1c51a042735dc9971e1ef2fe7121bc2a1182276454dd27d"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.classroom-layout",
+      "variantId": "c00003",
+      "source": "generated",
+      "fingerprint": "cf3525b2a9cff854381e0a988d09b3ed00346561a146afd9e25188ee2ab3fb8a"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.classroom-layout",
+      "variantId": "c00004",
+      "source": "generated",
+      "fingerprint": "d0da5ed317369d8e9758b7f6911c9b3b2a6c8acb1b92ebf032c2067c9b52f463"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.classroom-layout",
+      "variantId": "c00006",
+      "source": "generated",
+      "fingerprint": "07e86480872a757220f0306b16a0b439c0c9a62a41a88fce2f086d430f90ea24"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.classroom-layout",
+      "variantId": "c00007",
+      "source": "generated",
+      "fingerprint": "34aab7e659110e5002f18a86ae8fe5c2e69862fcac3d7ec3edb600f59b8ad3e4"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.classroom-layout",
+      "variantId": "c00008",
+      "source": "generated",
+      "fingerprint": "eb657b3e276e0fdfefc32df72c2882ca9f81b06db5ec10747d92d3b6ebfa9ffe"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.classroom-layout",
+      "variantId": "c00009",
+      "source": "generated",
+      "fingerprint": "f834f21ea1063eef21087989872ce58e5d80d5ba7a4d7489661f05fec396e47f"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.classroom-layout",
+      "variantId": "c00011",
+      "source": "generated",
+      "fingerprint": "f324e0c194263333a133a02e04e0a978235795e2ca7ead8ae78df1b157d6f8f9"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.classroom-layout",
+      "variantId": "c00012",
+      "source": "generated",
+      "fingerprint": "f3665cee26c6f8179fd21916fbfb1a179538d62e97e40d014f2a8b63e224f30f"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.classroom-layout",
+      "variantId": "c00014",
+      "source": "generated",
+      "fingerprint": "5ad0de8e94299b016476b90e7f6e53ad8c1676ae3212eba97a99ab7be3dbcfc8"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.classroom-layout",
+      "variantId": "c00015",
+      "source": "generated",
+      "fingerprint": "27bf7d580fa5970cb4b258abd97e265ac1986be6b6aa4f4aeab92c29dfa56fe8"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.classroom-layout",
+      "variantId": "c00016",
+      "source": "generated",
+      "fingerprint": "4310643bd7282b712b740af230414052e202fedb42c098ddd047a4b3fb19c9d0"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.classroom-layout",
+      "variantId": "c00017",
+      "source": "generated",
+      "fingerprint": "c332efbf72a804bb89188babcfc5c0afd8240495eff1074b7058925bdb0d6f02"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.classroom-layout",
+      "variantId": "c00019",
+      "source": "generated",
+      "fingerprint": "4ba0a62cc84bf79b72446a3d5b9f8e7d0ae0dbc54d43a151c448fbd5e8999e6a"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.classroom-layout",
+      "variantId": "c00020",
+      "source": "generated",
+      "fingerprint": "d88f648acdae42596d689305c42a8850fdb453ea6441940f89dda4f86c5d02aa"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.classroom-layout",
+      "variantId": "c00022",
+      "source": "generated",
+      "fingerprint": "16a66fae9956d639203d0347202742a8afafe5a466f6044b8346f5a03b1ccfac"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.classroom-layout",
+      "variantId": "c00023",
+      "source": "generated",
+      "fingerprint": "e1cad6dc8a3723d3f97c0762dd3b32cc41c6d417feff0ec29d7a9ee7eca1e4d7"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.classroom-layout",
+      "variantId": "c00024",
+      "source": "generated",
+      "fingerprint": "dcff2bafa8acebac48d7011062d2d090ce91235df9e89d113c26056e60e08bc8"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.classroom-layout",
+      "variantId": "c00025",
+      "source": "generated",
+      "fingerprint": "b2ddee62cd7b9516e9a8d45d6899109a5eaa795a412fac401cd9ec3e46c64075"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.classroom-layout",
+      "variantId": "c00027",
+      "source": "generated",
+      "fingerprint": "7bb68d9aaf56c22a5300702087b4884d87c8e62d9ef072cecafb02df437bdce9"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.classroom-layout",
+      "variantId": "c00028",
+      "source": "generated",
+      "fingerprint": "531f4d6b0bdc9e109ad59aa5bc2b28c4bf91e140b89a046a19303ffc18d92b04"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.classroom-layout",
+      "variantId": "c00030",
+      "source": "generated",
+      "fingerprint": "d82756d031342150f73bda3a04121e30599f38a925304ec0c4bd2a8f53051b16"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.classroom-layout",
+      "variantId": "c00031",
+      "source": "generated",
+      "fingerprint": "7e92bf7948bbcc334b4308f7ba1865f78d5f88ee74f2ae97ec6a1a396c8871dc"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.classroom-layout",
+      "variantId": "c00032",
+      "source": "generated",
+      "fingerprint": "def7d523fdfe4fbe81e82f202405afb42631223e80459155f85bd757a310621b"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.classroom-layout",
+      "variantId": "reference",
+      "source": "authored",
+      "fingerprint": "3a46fe01a2dffc73abc7a05705e05c388d6b6045824020900ee7d2351b81a188"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.scale-fit-review",
+      "variantId": "c00001",
+      "source": "generated",
+      "fingerprint": "c4e8ebd032d4db66434aafdae87fe7dde5c99904348fb5b9d9d9d0893829905b"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.scale-fit-review",
+      "variantId": "c00002",
+      "source": "generated",
+      "fingerprint": "101cc7459a79b6bf8ae2f221d91be0fd24b132a5c1bfe7cd540f508c8dc6123e"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.scale-fit-review",
+      "variantId": "c00003",
+      "source": "generated",
+      "fingerprint": "9e4326caae1c76a0346893a883dd279a8118fe765ff3c8fb0133513f1e2f3bfa"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.scale-fit-review",
+      "variantId": "c00004",
+      "source": "generated",
+      "fingerprint": "2c54396c5600d33bd00ef65478dec20c3427eab79925bfe79453884946295755"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.scale-fit-review",
+      "variantId": "c00005",
+      "source": "generated",
+      "fingerprint": "21a9e7ca2865dba7479a65f7062eb122a69289294f9433902c82c06c28612ed1"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.scale-fit-review",
+      "variantId": "c00006",
+      "source": "generated",
+      "fingerprint": "fc17fcc06acce7b2de1690050dae43f9e242667d2112dea2ec7a410333e48176"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.scale-fit-review",
+      "variantId": "c00007",
+      "source": "generated",
+      "fingerprint": "ab1f1432b7c46dbba4c08044e7b9553f479dab3fa029bb5b915d416a853a2124"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.scale-fit-review",
+      "variantId": "c00008",
+      "source": "generated",
+      "fingerprint": "551b3570f67fdc87a240529a31b927b01e7915a340af07a4203f1e39958088d5"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.scale-fit-review",
+      "variantId": "c00009",
+      "source": "generated",
+      "fingerprint": "c5ba0d96025c789dff65a6ac61a4a8d4f6b88f09ac76cf5a8daccd195305a82e"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.scale-fit-review",
+      "variantId": "c00010",
+      "source": "generated",
+      "fingerprint": "1cf045f80fe5e3d72c1a2c9ecf94d22aa542ea555774885ac744d87b8d4eae81"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.scale-fit-review",
+      "variantId": "c00011",
+      "source": "generated",
+      "fingerprint": "67768b8ac327df2e82691c1f6d62a608a665657acac5b81d0a1c6680c4f1fc9a"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.scale-fit-review",
+      "variantId": "c00012",
+      "source": "generated",
+      "fingerprint": "f2a46118fcecad14bf2854b46e04afb0017cfc844cf004a296c7193b82b592a3"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.scale-fit-review",
+      "variantId": "c00013",
+      "source": "generated",
+      "fingerprint": "31023edbd9cb1596642c066f602f5c9497c585409ae85515c3e23b03981ba697"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.scale-fit-review",
+      "variantId": "c00014",
+      "source": "generated",
+      "fingerprint": "999bc8581fd6e3fe9e613d365ca5c3bfbff19fc025ec6f8e4dea2a8dc4c78f89"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.scale-fit-review",
+      "variantId": "c00015",
+      "source": "generated",
+      "fingerprint": "bd0e7a8b64972016b02d556b7c1e3ed3283eb645d6f909dcc28b913623dd5705"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.scale-fit-review",
+      "variantId": "c00016",
+      "source": "generated",
+      "fingerprint": "3a70b5237a85c516983c28d6df83a6ec65d07988db4d751d3605bcb471ff12d0"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.scale-fit-review",
+      "variantId": "c00017",
+      "source": "generated",
+      "fingerprint": "7b20db93ba841d8f6dcd8d1f4ec6534f967fa64b24bb3c64a9bdac1321b602ca"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.scale-fit-review",
+      "variantId": "c00018",
+      "source": "generated",
+      "fingerprint": "225ca400244406c731a8ba962fc813dc7f5acfe1387a614fa6970671093eb711"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.scale-fit-review",
+      "variantId": "c00019",
+      "source": "generated",
+      "fingerprint": "7c694ea0b00def1b9dcf15f8b4ee19d5a00ac459ff4bbc09f97b2b71ed2ce5b1"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.scale-fit-review",
+      "variantId": "c00020",
+      "source": "generated",
+      "fingerprint": "d9bae934ae24192d4a9e2d7a6a0021b4cb88af003373e8f2a013114983c256ce"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.scale-fit-review",
+      "variantId": "c00021",
+      "source": "generated",
+      "fingerprint": "a31a8fb86fc35a93c573b2c74a6a6579455a1a7131ca09a912d7df91ce921a36"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.scale-fit-review",
+      "variantId": "c00022",
+      "source": "generated",
+      "fingerprint": "722ab2973979f10005e407129d4eddbf96dab60fbe9b87801730306143879993"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.scale-fit-review",
+      "variantId": "c00023",
+      "source": "generated",
+      "fingerprint": "a6eabf67f7cca6992bb094786377439ea33050a1d74efe86ad648e35976e2e70"
+    },
+    {
+      "familyId": "classroom-space",
+      "templateId": "y1.scale-fit-review",
+      "variantId": "reference",
+      "source": "authored",
+      "fingerprint": "b7c97cd53469f13fb80ac0342676935e6d794c217ed8a7c5a9280dc272893e64"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y1.course-project-expo",
+      "variantId": "c00001",
+      "source": "generated",
+      "fingerprint": "3533a1b6f0d5f87ee59fbec2372163d84e06b2b71c6b4ec14fb07b34308a77e5"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y1.course-project-expo",
+      "variantId": "c00003",
+      "source": "generated",
+      "fingerprint": "94e62b3e7202048ff12782759bff318f4b525dacf306cf7e90e6858d2dae7adb"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y1.course-project-expo",
+      "variantId": "c00004",
+      "source": "generated",
+      "fingerprint": "f05b783c5668c76f8062a2e7afe1a869a99381b29c04c4dcd30fda0c789ffc00"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y1.course-project-expo",
+      "variantId": "c00005",
+      "source": "generated",
+      "fingerprint": "362d99cc519e0e38682c2885261cc55d44a3a2f30ce8526734127ff302239ed0"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y1.course-project-expo",
+      "variantId": "c00007",
+      "source": "generated",
+      "fingerprint": "43c7437da11f60b864aec9a0bb1d699bf0a85f3a11f0b1fbe3b1c660e52ecb54"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y1.course-project-expo",
+      "variantId": "c00008",
+      "source": "generated",
+      "fingerprint": "c9a013a2a7b313e1c450e2e413b03138c6724a3e7438932d8ba57df9fc29e522"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y1.course-project-expo",
+      "variantId": "c00009",
+      "source": "generated",
+      "fingerprint": "9595ab3f260ced5cf8837f23d12b98da8184568febcbf7468a3cd54c62ddd3c5"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y1.course-project-expo",
+      "variantId": "c00011",
+      "source": "generated",
+      "fingerprint": "4de56a97a12e77eb61b98c5fe027977b5fe522357eb56df3fc16fc85d81d52b8"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y1.course-project-expo",
+      "variantId": "c00012",
+      "source": "generated",
+      "fingerprint": "41d45bd4ab0fba6463e65b92e37d5615c9aa3c4a1cd3a015e55293e43095561f"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y1.course-project-expo",
+      "variantId": "c00013",
+      "source": "generated",
+      "fingerprint": "b298e63201e62cd096540e3d75cc411f4d4051ba91ba37d3539b868e7db0ba7f"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y1.course-project-expo",
+      "variantId": "c00015",
+      "source": "generated",
+      "fingerprint": "576c19cdb8da2bb403fa978aa51b9c7c6b9936f5e196108c9522d63d29356116"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y1.course-project-expo",
+      "variantId": "c00016",
+      "source": "generated",
+      "fingerprint": "2445df72e7d5d48de9b46fbaf94fd0bdbc22d7c4566c26eb06390d28eb4e6a5c"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y1.course-project-expo",
+      "variantId": "c00017",
+      "source": "generated",
+      "fingerprint": "7046101382baf5c91e14db9d3f2f4085040a5a65d68edb30af55f6327a01cb5d"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y1.course-project-expo",
+      "variantId": "c00019",
+      "source": "generated",
+      "fingerprint": "ab5ed390f1409fd66bba46fe700a1efe1d0fda814c7bef04ffb3479e6e7ae91f"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y1.course-project-expo",
+      "variantId": "c00020",
+      "source": "generated",
+      "fingerprint": "add572bd6832328e7fdf5360619ef56141dbe9b778a00c6e0a3c872c20cf188a"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y1.course-project-expo",
+      "variantId": "c00021",
+      "source": "generated",
+      "fingerprint": "dab5e033aa78862366dc0a23c1a7dd683bdcad84411a45fc13069070a5454cfd"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y1.course-project-expo",
+      "variantId": "c00023",
+      "source": "generated",
+      "fingerprint": "8fbba3ac1b6f7468f46dc009e6224bf16c9d4510700353f18dc897e0970a3511"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y1.course-project-expo",
+      "variantId": "c00024",
+      "source": "generated",
+      "fingerprint": "f984b21cb4b8246126e03839b0a71141c2f41837b75de341cefca419e7ac9883"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y1.course-project-expo",
+      "variantId": "c00025",
+      "source": "generated",
+      "fingerprint": "0ad9e2287aa48f5c35178a874d428f9bf86e3e50a2feb0101e1cc7bf76e15e28"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y1.course-project-expo",
+      "variantId": "c00027",
+      "source": "generated",
+      "fingerprint": "fa09763a212f57a9474f9e431b7640b4e19374187a0aa757814d7dd20be5f5c9"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y1.course-project-expo",
+      "variantId": "c00028",
+      "source": "generated",
+      "fingerprint": "06ae224b8bdbe33c27d27d77b6101019f5f0ee95eb0fff402bf16c61e4e06ae5"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y1.course-project-expo",
+      "variantId": "c00029",
+      "source": "generated",
+      "fingerprint": "f51cd776eb74f8093a9bbff2b9eb7c39a711b4018fa6dd2d6f7bf467949e9016"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y1.course-project-expo",
+      "variantId": "c00031",
+      "source": "generated",
+      "fingerprint": "9f0514823fc46095b76e548e2b33a38f0600e4756a5be306fb780938e757ac0d"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y1.course-project-expo",
+      "variantId": "c00032",
+      "source": "generated",
+      "fingerprint": "ee835445e50511fb2cffd55179ccf5c324b9d91691d2351cfb38defb8203eb2f"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y1.course-project-expo",
+      "variantId": "reference",
+      "source": "authored",
+      "fingerprint": "ab607f226e246d5d2196a924ef0c0881010ef5f64bdf4da5d07bef6816fa70f6"
+    },
+    {
+      "familyId": "group-project",
+      "templateId": "g7.group-tasks",
+      "variantId": "equipo-a",
+      "source": "authored",
+      "fingerprint": "96032ec74726ef3b0f366cc3e482f228701776fb0764a4b7507ca3ea93c9a471"
+    },
+    {
+      "familyId": "group-project",
+      "templateId": "g7.group-tasks",
+      "variantId": "equipo-b",
+      "source": "authored",
+      "fingerprint": "9ae65881bd48e4612aa51fdcc2a161c7457844e0d49ef4a000c7dd6bd53bf0b8"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00000",
+      "source": "generated",
+      "fingerprint": "bfc9e43ada83c9f3b7edb28b8f48f848efde5caacc7a8a32b57107106d9f11f8"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00001",
+      "source": "generated",
+      "fingerprint": "e39e2f09430448a68598cc36e12b79e19c2936564767c6035859eb98b5b2bbfa"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00002",
+      "source": "generated",
+      "fingerprint": "015275d669f3f4d69103eb09e609845980d56e0a85c6c6ff988954275e020969"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00003",
+      "source": "generated",
+      "fingerprint": "847451e5c481d3a92ad234b46c5c5b307da92ddaf508358021494ee900fc4209"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00004",
+      "source": "generated",
+      "fingerprint": "76a12ca18d344688dfa97b292bf53bf6693e7dd5eaaca409c9803107c79da384"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00005",
+      "source": "generated",
+      "fingerprint": "525ad3b20394eaaa757d03227b16b3b2526bf27ddba4080503db04737b11c9c2"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00006",
+      "source": "generated",
+      "fingerprint": "d2cd6a0fdb2059743517f51f5324c0fd0f6cb8fb9bb17f5b620e5a9a6168848e"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00007",
+      "source": "generated",
+      "fingerprint": "8cf289b0c9217fb11abb03bb821a23992ea051a84183624b591cab288d5c1779"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00008",
+      "source": "generated",
+      "fingerprint": "3b6cfc32fcb157b220536e6ba0cdeb091549973223b6f74c8ed4e77b874bf25e"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00009",
+      "source": "generated",
+      "fingerprint": "aa3803399548a663519a4bc7f56da0fe3e0f621920da3fb2883853c1c61fa02c"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00010",
+      "source": "generated",
+      "fingerprint": "446b7a1fabf379feaaa84ec4685ea5b1ccda1bcd0c2565585e50cea6b3a15e2f"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00011",
+      "source": "generated",
+      "fingerprint": "01e07960a2b5961baa5e69956ddfa31d9d13301646a0c6698c24e8ed57dac057"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00012",
+      "source": "generated",
+      "fingerprint": "3122617930dfdca468be5dbd2b1a561cdff99827db458c86d43dc82f71aa5843"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00013",
+      "source": "generated",
+      "fingerprint": "6e277d33e64e3629948e3db4c9a1fef8b8032f332302e5c1f13a79f64125a7be"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00014",
+      "source": "generated",
+      "fingerprint": "4b01d938ab51f97c6ed20351f8195af97f49f483ad701a0c6d58c40c0aae693f"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00015",
+      "source": "generated",
+      "fingerprint": "2f3ec64d1419fc6020cfab526e09e547de659ee6cfdec8ac63020932117cfb86"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00016",
+      "source": "generated",
+      "fingerprint": "a88a225a423ea302e09aa890d6950bc6ac3e8ba5b0496f4a69274a3628277fb1"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00017",
+      "source": "generated",
+      "fingerprint": "28c25c8bb93b94a288116b63f3c39133e75605cebb27413d599b3b43a0dd85fc"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00018",
+      "source": "generated",
+      "fingerprint": "6aede2a1a4bfebcf44426f87dc6d29e7d6d7138b148b6a2a97b3f18ec3fab70a"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00019",
+      "source": "generated",
+      "fingerprint": "23591f887ecc993591d61dd8be5377150a9f0626f20de068e1155593d34ee604"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00020",
+      "source": "generated",
+      "fingerprint": "e4c3b0029d2b57a106d95276f30a7bc3b74997204f0839ff97f006435ea17c13"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00021",
+      "source": "generated",
+      "fingerprint": "c4e27b2cc483de4a3e96054796980e8a3929d925394cabed688fbb8467aeb723"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00022",
+      "source": "generated",
+      "fingerprint": "d063541305882a17ef5d4ebbad2d0571327959ff9d94975f8a4aaf7e828a92c4"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00023",
+      "source": "generated",
+      "fingerprint": "0e0b82bedca4da77716512db490df57137811583a63bbb03b7c9a23bd5b23c8d"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "coreografia-a",
+      "source": "authored",
+      "fingerprint": "177570976b57af2a9b91799bc2cd8232be289d88c7b4a743ccc5ab6fc04a5a06"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "coreografia-b",
+      "source": "authored",
+      "fingerprint": "08454eb560fcf1d1c4860bd24775e6877220e2fbb0a1aa3653e07d82206fbaee"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "coreografia-c",
+      "source": "authored",
+      "fingerprint": "5130376438865eb35b8e28317b23c5f99a9f5570da2dd1463e21212198164908"
+    },
+    {
+      "familyId": "mobile-data",
+      "templateId": "y1.mobile-data",
+      "variantId": "c00001",
+      "source": "generated",
+      "fingerprint": "e0a54cef839d948e85299896c60e2240ea6618b72e2bde397d116489d9609a8b"
+    },
+    {
+      "familyId": "mobile-data",
+      "templateId": "y1.mobile-data",
+      "variantId": "c00002",
+      "source": "generated",
+      "fingerprint": "c52b5712553567db1523a73023668d189aadbd6f432da0c09cd3916b9a785d00"
+    },
+    {
+      "familyId": "mobile-data",
+      "templateId": "y1.mobile-data",
+      "variantId": "c00003",
+      "source": "generated",
+      "fingerprint": "eb77ebd896112e03193248caabca47a21ea5877e299ccd23b93b4a050bebbad0"
+    },
+    {
+      "familyId": "mobile-data",
+      "templateId": "y1.mobile-data",
+      "variantId": "c00004",
+      "source": "generated",
+      "fingerprint": "747c4bde4f158fafbedd7bbdabe4e48993108a62641082f0d7b437a994e5fb8f"
+    },
+    {
+      "familyId": "mobile-data",
+      "templateId": "y1.mobile-data",
+      "variantId": "c00005",
+      "source": "generated",
+      "fingerprint": "1cae021374ba3df38cefe8a43bb47b45fe9e59de8ca7740707e0dc087fe1751b"
+    },
+    {
+      "familyId": "mobile-data",
+      "templateId": "y1.mobile-data",
+      "variantId": "c00006",
+      "source": "generated",
+      "fingerprint": "86aed7f78fbfd5806cf77ac47bb411d8697eddd5b8e2ed44b717e4bd62d7a29c"
+    },
+    {
+      "familyId": "mobile-data",
+      "templateId": "y1.mobile-data",
+      "variantId": "c00008",
+      "source": "generated",
+      "fingerprint": "42b8b7dc190c3356877c724201d303468b5c6ebc3756b2c7808e71d2ba24d963"
+    },
+    {
+      "familyId": "mobile-data",
+      "templateId": "y1.mobile-data",
+      "variantId": "c00009",
+      "source": "generated",
+      "fingerprint": "9daf4762e5bfd4a9b2fd438bee37105140eda2a279849df60d96f54e40bd5bea"
+    },
+    {
+      "familyId": "mobile-data",
+      "templateId": "y1.mobile-data",
+      "variantId": "c00011",
+      "source": "generated",
+      "fingerprint": "7858c2b98d5caab2d226d32d6c30539b1d69fef5eebdefa8d67773796edc0be8"
+    },
+    {
+      "familyId": "mobile-data",
+      "templateId": "y1.mobile-data",
+      "variantId": "c00012",
+      "source": "generated",
+      "fingerprint": "f1a85cee39de7f5211fcbfb47e308fd80dfbedc1ea4b73ddd89432c3ae80f8fc"
+    },
+    {
+      "familyId": "mobile-data",
+      "templateId": "y1.mobile-data",
+      "variantId": "c00014",
+      "source": "generated",
+      "fingerprint": "761de7f2e340d53d694b0c094ed91241a212eae6ca93b53b66fa5b43e4282d4b"
+    },
+    {
+      "familyId": "mobile-data",
+      "templateId": "y1.mobile-data",
+      "variantId": "c00015",
+      "source": "generated",
+      "fingerprint": "a6e2f63ae89b05fcbf465243e6cac5d298f132c22e77b84900c02c77a3899896"
+    },
+    {
+      "familyId": "mobile-data",
+      "templateId": "y1.mobile-data",
+      "variantId": "c00016",
+      "source": "generated",
+      "fingerprint": "baec649f2dc1d65bbc0c6a1657d4b6d9f19d2cbf5b16524f5ab9998f589d87bc"
+    },
+    {
+      "familyId": "mobile-data",
+      "templateId": "y1.mobile-data",
+      "variantId": "c00017",
+      "source": "generated",
+      "fingerprint": "398064d2c177f1269c86b7fc1fb2227ccd4a02d47d193c1566a09066ef2850c5"
+    },
+    {
+      "familyId": "mobile-data",
+      "templateId": "y1.mobile-data",
+      "variantId": "c00018",
+      "source": "generated",
+      "fingerprint": "761fb348f8b8eca1b08be148efbbfd286808978865904b9f3eeed01d8f26211c"
+    },
+    {
+      "familyId": "mobile-data",
+      "templateId": "y1.mobile-data",
+      "variantId": "c00019",
+      "source": "generated",
+      "fingerprint": "997b06cf7268ece68adf9227d1660ab16025b0e48c292524d6b873d0f502c988"
+    },
+    {
+      "familyId": "mobile-data",
+      "templateId": "y1.mobile-data",
+      "variantId": "c00021",
+      "source": "generated",
+      "fingerprint": "6df18cfa02177f44f7b035b28a9ac7e00904f53a465c37291bd0c0879a9e764e"
+    },
+    {
+      "familyId": "mobile-data",
+      "templateId": "y1.mobile-data",
+      "variantId": "c00024",
+      "source": "generated",
+      "fingerprint": "5d95606e34cd4cac8e2dc11ee050098595ea69a9a54816ee497836d90cb715fb"
+    },
+    {
+      "familyId": "mobile-data",
+      "templateId": "y1.mobile-data",
+      "variantId": "c00025",
+      "source": "generated",
+      "fingerprint": "f08267659bc7405bd1d7761a3f7a297d145d6fb260e511d10ae9142374bcea2f"
+    },
+    {
+      "familyId": "mobile-data",
+      "templateId": "y1.mobile-data",
+      "variantId": "c00026",
+      "source": "generated",
+      "fingerprint": "2908a740415bd6122932a5104d5eff8b35c3ee717e4e9af671e697f93443f5c1"
+    },
+    {
+      "familyId": "mobile-data",
+      "templateId": "y1.mobile-data",
+      "variantId": "c00027",
+      "source": "generated",
+      "fingerprint": "8511ccb94cd1b7bd46cfc502ac39125c6c76dfd56e08c22842f779bf38cfc29d"
+    },
+    {
+      "familyId": "mobile-data",
+      "templateId": "y1.mobile-data",
+      "variantId": "c00028",
+      "source": "generated",
+      "fingerprint": "b0af3fb291b5ebcb1d411d0bafe4f36c7c98f120488b60c351a3920f1177c5e5"
+    },
+    {
+      "familyId": "mobile-data",
+      "templateId": "y1.mobile-data",
+      "variantId": "c00030",
+      "source": "generated",
+      "fingerprint": "bc28647375944ca439ed8ebbf5fc0f8414877eeacf1a9813b6316b4468563f82"
+    },
+    {
+      "familyId": "mobile-data",
+      "templateId": "y1.mobile-data",
+      "variantId": "c00031",
+      "source": "generated",
+      "fingerprint": "031153ae578a31fba0978b11d3e3407152f4eac9c96439692f2af2ad02578cf9"
+    },
+    {
+      "familyId": "mobile-data",
+      "templateId": "y1.mobile-data",
+      "variantId": "reference",
+      "source": "authored",
+      "fingerprint": "5e0c6f217fd66e63395d51522945affda8cba797a3bb3f7928aea48dd85166a9"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00000",
+      "source": "generated",
+      "fingerprint": "0a2d4f0a2b45326347787765cf8d448b7800e8f1eb59aba52d4af17a242e93bc"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00001",
+      "source": "generated",
+      "fingerprint": "8dd1f8bae494cbc45f07fecf7ed4bdd3592c59406c4780f3225b53df669bfdc6"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00002",
+      "source": "generated",
+      "fingerprint": "827fb9702f3123fff811b72c9b3e61846b4236761cb3bd403bef13ab28fb5bc5"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00003",
+      "source": "generated",
+      "fingerprint": "684d002f5831ac41679607beef095337c666fb9f6cd5984e397ae5861f3d8326"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00004",
+      "source": "generated",
+      "fingerprint": "5200ccb0f7501fa081c22b124f27227bb9be72dac452c78ea00920f5f6857b96"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00005",
+      "source": "generated",
+      "fingerprint": "f9971761adb10121ca5a6cc1166ecfa83f2b19b1a9c610540b8f557b13877dc5"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00006",
+      "source": "generated",
+      "fingerprint": "a8e49c3666f4385f1770ab266fd4196b36388203b584b0a374ce459f06a34971"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00007",
+      "source": "generated",
+      "fingerprint": "4b1110cfaf551ec015d5e1827dadd7b0fd8d64faa7703237f6d493467474385a"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00008",
+      "source": "generated",
+      "fingerprint": "c775213f5f5c4f1f80139de0931f444c89d246cec71534458107da748aaa821a"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00009",
+      "source": "generated",
+      "fingerprint": "edc4d4fd967515ce3e4bf6476ff06fde1f61172bac4a870bf33a4bdffd9e87df"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00010",
+      "source": "generated",
+      "fingerprint": "65667003c95e619ebb9f5e534965ed9111606b9730725f838cbe102576f046a6"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00011",
+      "source": "generated",
+      "fingerprint": "f7824378e71b28460bbb3089c00a7b2dd8c4d788119c63994f28383ef64b1810"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00013",
+      "source": "generated",
+      "fingerprint": "49cbf1d971621471a957640a018e211994c26bd9b8c7e73aa9b9fbef0e5c3369"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00014",
+      "source": "generated",
+      "fingerprint": "4d387993c273b669621e2828d78638c1a983dac01d71e370cf674f6a6e250f9a"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00015",
+      "source": "generated",
+      "fingerprint": "17ede9630cb113a4cc283dbeb75877e109e1359300b0d008e1802d008cecef91"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00016",
+      "source": "generated",
+      "fingerprint": "f072e49b30f50e4a2cfca8ff3ed0876e1bd5c85e7548cd007a63847223cc2822"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00017",
+      "source": "generated",
+      "fingerprint": "6ad0e59db39ceb4a2d99f7ccc4471a95670d6745f47b2fbca4042b43fc5a4b5d"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00018",
+      "source": "generated",
+      "fingerprint": "433d7850c03d89140ef6658908c2e139e81abfe052766784db8bc856395866d8"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00019",
+      "source": "generated",
+      "fingerprint": "3a870034858bbb43c2b87314c71d94088a1315e6521af4898c86799e10d5452b"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00020",
+      "source": "generated",
+      "fingerprint": "5ca593d6d3f7d09c6ef4f3187ad82e14d4ae332d6536a562da886a1354cedf64"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00021",
+      "source": "generated",
+      "fingerprint": "a74620e3bb95d0d65c0a48b4b43c9b56540282a8deb03c563d12f0031b6803b9"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00022",
+      "source": "generated",
+      "fingerprint": "b6a63e20aaf81f7ce77891d24f9774bebc3837947502ffb7c0a97130e9d73a86"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00023",
+      "source": "generated",
+      "fingerprint": "58e8af0baf97d4c16fbafdc799f5f9297eb541aa1d788999bc034d7fe3e72a29"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00024",
+      "source": "generated",
+      "fingerprint": "b83c9ea71a54ba413078288b09d8f88c3ef2100eeba1afef0ab92eaee924dc6a"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "pared-5x24",
+      "source": "authored",
+      "fingerprint": "54582b705c232182e0c771c7286f6cc122c8bc004c72c2d3394c0199fac50f4a"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "pared-6x24",
+      "source": "authored",
+      "fingerprint": "6ba3d0683e13740c2c19ee1ddc31902e0acd9a90e8fd97aa16083888e4eda038"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00000",
+      "source": "generated",
+      "fingerprint": "8c9bc4845e52c5c6c119561890723a9e7a65cc7b7c14721ee41ca4e78ce71a55"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00001",
+      "source": "generated",
+      "fingerprint": "881cd03212aca15cf0f868629e59d41cd7b432735cd72086243ba6d952b402d2"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00002",
+      "source": "generated",
+      "fingerprint": "780eea69ac9fb78d46dae919958f95ad8fc8fc5bb77691899a4038c4a3e8bfb9"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00003",
+      "source": "generated",
+      "fingerprint": "bfb98b2daf0580db6bc04c5dc8021d4d30c7a82be4332338da3049a7fdc003cd"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00004",
+      "source": "generated",
+      "fingerprint": "8a84e6c027caf703600d5e2ab60465d9be63432de70dfd6252703d326cfa569d"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00005",
+      "source": "generated",
+      "fingerprint": "f6fae1be7c6b3f8c334642eb064a295582af97f737516281a68b82459c078969"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00006",
+      "source": "generated",
+      "fingerprint": "8016ba6dda159de95daf4f6fb0e295c43e35633985ce0e4e68cc8afa775056ce"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00007",
+      "source": "generated",
+      "fingerprint": "5439f5cd9c2ae75e774e02ea1f98a3773bc822881be1f753484d5876e5211357"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00008",
+      "source": "generated",
+      "fingerprint": "2464dc84916f90071e01749e9bad38e83ceef967fd6ead37a48a5450a814970c"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00009",
+      "source": "generated",
+      "fingerprint": "ae95fb060e2b342a0b69b245e0840a0f7c1c074e77c12fd3aa9ac28760297311"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00010",
+      "source": "generated",
+      "fingerprint": "e93dfc9f49a0c4978a645b62993ceab01b3ba49d62277501f15cd877d2019900"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00011",
+      "source": "generated",
+      "fingerprint": "b39f66a4cdb2529c29d62c26554ae08c4ce8a72ccfd86a36b0407fee7db40827"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00012",
+      "source": "generated",
+      "fingerprint": "f988487553de26287ebbff71385351db1cd1fac8dc8739842535d736fc6b4d3a"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00013",
+      "source": "generated",
+      "fingerprint": "704a7d8b61fe5cd10efc33423c7b7199314fb0216edb232d21698fbd3520057d"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00014",
+      "source": "generated",
+      "fingerprint": "0832a0eea2e89c510102d444532a647d29bcc389b5a76643f4b752b482fd0f26"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00015",
+      "source": "generated",
+      "fingerprint": "740d9530e49bd9e094dd34ee7b85ef8801f0b54b4fc97d535ed15b797e2ac0b8"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00016",
+      "source": "generated",
+      "fingerprint": "bdf2a63759e845c4ddc465e9ddd3871146fd56a715ee154d4b9cd15e7b87bfc2"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00017",
+      "source": "generated",
+      "fingerprint": "213a80a2cf6602a8006888fc374b96f4d45a0e27f7d1164964b15bbc5c4e443b"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00018",
+      "source": "generated",
+      "fingerprint": "eb5aebcb3ba36967d2b7ce934d1accec9bcb5ae32228d9bdbcf8c7b8ac31aa74"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00019",
+      "source": "generated",
+      "fingerprint": "ac8b81fda7d3e8f5dcd34cb741905d6eb4a2ff1a93b62ad978aa2c06213e369f"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00020",
+      "source": "generated",
+      "fingerprint": "8977d6a1fc9077730d85807d2ad6f4af1e7f6b37915c241162307c80990a7356"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00021",
+      "source": "generated",
+      "fingerprint": "c0f3654a9e3587cd0af8b64abff627bc6ade7070cd6e16f714132eb4e3b47bfc"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00022",
+      "source": "generated",
+      "fingerprint": "8107ccc0d07582236f6b7faf395da922b496c49e5eb7e8c3904daab774ea45e4"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00023",
+      "source": "generated",
+      "fingerprint": "294b758a437d5edd6a435eeb2ec3c7a6860b3ed1af45262d71582a6bda7e1196"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "precio-alto",
+      "source": "authored",
+      "fingerprint": "aab95547bf9c7dd187471c7da1eac563345cb1097f27001d10dabd7ca194f96f"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "precio-bajo",
+      "source": "authored",
+      "fingerprint": "ca8a996d9ac33b48c71c482673ffd34b322117a232784564c2cc3e5303043693"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.rehearsal-schedule",
+      "variantId": "c00001",
+      "source": "generated",
+      "fingerprint": "bc65104764b9a41f0150a7f5d5e8fbde7701661b05a5d5e1a202434ba1d437b5"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.rehearsal-schedule",
+      "variantId": "c00004",
+      "source": "generated",
+      "fingerprint": "5d176f05990131139ab18325e21d1781a12b2d3707ffdd06627e75c21c5919ac"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.rehearsal-schedule",
+      "variantId": "c00005",
+      "source": "generated",
+      "fingerprint": "d25ac0fc38c0261b2f0c5b14a7ed8a3aa6e837d132783499e35e02908f8d9a0e"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.rehearsal-schedule",
+      "variantId": "c00007",
+      "source": "generated",
+      "fingerprint": "7883fab93c805e5c79fd8fe5f40bf80dab3445fc27a72738ba605924b6d68a39"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.rehearsal-schedule",
+      "variantId": "c00008",
+      "source": "generated",
+      "fingerprint": "2ceff6b553c70a0f1e08a24b6499b55a6b107a122a58981860b78c6608e3d5fe"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.rehearsal-schedule",
+      "variantId": "c00009",
+      "source": "generated",
+      "fingerprint": "6a1c691509baf8f9f1def543679a1a4c6528c0e95e1a75b2e60dc5b6f2890d41"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.rehearsal-schedule",
+      "variantId": "c00011",
+      "source": "generated",
+      "fingerprint": "6d771db0e8f90d6cf3c894fd6ebbf6697d4cc98d5fad9b47da1a8b50c694b2f7"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.rehearsal-schedule",
+      "variantId": "c00012",
+      "source": "generated",
+      "fingerprint": "00fa6b3a359493933c3cd212954dba23acfe266e74a731ca3b36ef8dfd41285f"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.rehearsal-schedule",
+      "variantId": "c00013",
+      "source": "generated",
+      "fingerprint": "04cc200eb3412d62ec3408348a3880aa3664ea6705441d08268e942e09e93973"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.rehearsal-schedule",
+      "variantId": "c00016",
+      "source": "generated",
+      "fingerprint": "68216b26518f8f8ae7c39b6a38d6356c1268586bdf7dafaf4c906850f71e2e47"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.rehearsal-schedule",
+      "variantId": "c00017",
+      "source": "generated",
+      "fingerprint": "9b43c13c366b6580dab2503812f3b85b7c1b4a1198d0e1498cf6526ac420035d"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.rehearsal-schedule",
+      "variantId": "c00020",
+      "source": "generated",
+      "fingerprint": "f50d7a6192323d211f65d4d0d31e30449aac65ffbaafdef001c3386e99fc3c62"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.rehearsal-schedule",
+      "variantId": "c00021",
+      "source": "generated",
+      "fingerprint": "b535b3356a0386dab4336ad7dc935147fc8cb53ba1318e9715ca14912922cfaf"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.rehearsal-schedule",
+      "variantId": "c00024",
+      "source": "generated",
+      "fingerprint": "4d29fee67d5fa7238403184132f8cd901d4289d8434880d577906f576b04de0d"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.rehearsal-schedule",
+      "variantId": "c00025",
+      "source": "generated",
+      "fingerprint": "7f25801fe6190c1a72c67924573df6fef7a67135f868bb9f19d8a3dd6d74ef86"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.rehearsal-schedule",
+      "variantId": "c00026",
+      "source": "generated",
+      "fingerprint": "c2f627c98cfcbfd20ba037abaa4e5ade0394614b2ef832fbfbf7656c503428e8"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.rehearsal-schedule",
+      "variantId": "c00028",
+      "source": "generated",
+      "fingerprint": "ac0a689f1319601071619971e8c12add5e59b6800ef23b47d853834f5e5f7248"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.rehearsal-schedule",
+      "variantId": "c00029",
+      "source": "generated",
+      "fingerprint": "9555debb28a18778b15407d0cb054e64c55668fcdb06e46495778a8a32cb84d5"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.rehearsal-schedule",
+      "variantId": "c00032",
+      "source": "generated",
+      "fingerprint": "befc22ca5a8524a893a8aa9ace74dc4f855538b0ef40be7886500cf1970403c4"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.rehearsal-schedule",
+      "variantId": "c00033",
+      "source": "generated",
+      "fingerprint": "cdaa8c9f1a0166b5b6d22a222bb5e12b03c66e3a828953aae2cc0711b3825235"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.rehearsal-schedule",
+      "variantId": "c00036",
+      "source": "generated",
+      "fingerprint": "4adc681816ae5ecf4f5c2bf33d17ae1f03cf4aea8ebc5d8f9328ac967b7a507b"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.rehearsal-schedule",
+      "variantId": "c00037",
+      "source": "generated",
+      "fingerprint": "0706b1dc69dbcb94708e8f245c6e895c3a5bb6804b56f9772ae9368a52db9cd7"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.rehearsal-schedule",
+      "variantId": "c00040",
+      "source": "generated",
+      "fingerprint": "24dc1d89fac08af4d70eeedff2c199bc43585d57bee06b0f09c5214b092500bb"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.rehearsal-schedule",
+      "variantId": "c00041",
+      "source": "generated",
+      "fingerprint": "3deab59e03f31b30b9782f1c3ae4a324cddcc781b8d98d49dba058bdc2ce9d08"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.rehearsal-schedule",
+      "variantId": "reference",
+      "source": "authored",
+      "fingerprint": "7cd4e8070e329d8859b7887e8777d669418e360ca25357bd8b5d89e51309bdbb"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.schedule-review",
+      "variantId": "c00001",
+      "source": "generated",
+      "fingerprint": "7394b43f5ab91c917f7e70463500bf40512cc02b652ef900c34ff2ddaa9fb63d"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.schedule-review",
+      "variantId": "c00002",
+      "source": "generated",
+      "fingerprint": "68095d0d08b9a4698fa8670ae5bcbddd54dcc018a4d631694958522860f5fcf9"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.schedule-review",
+      "variantId": "c00003",
+      "source": "generated",
+      "fingerprint": "0b0cdc68be4a693d3d7a2c93ace0341d46310df74e45b7e326b868a373344bf4"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.schedule-review",
+      "variantId": "c00004",
+      "source": "generated",
+      "fingerprint": "02ca484ed29eb4e147a70740d77809d361308ccdc48087476be4099b4c28f814"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.schedule-review",
+      "variantId": "c00005",
+      "source": "generated",
+      "fingerprint": "35add7eb75d8a41c8e27172ad6021f41c2a598c8924495f1454be225eb7ac66b"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.schedule-review",
+      "variantId": "c00006",
+      "source": "generated",
+      "fingerprint": "faa075e115c0f6d9cfc4aef62770195c1aa873dd7644770b5c073e90e7596557"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.schedule-review",
+      "variantId": "c00007",
+      "source": "generated",
+      "fingerprint": "83bb4f2e32b4005330fad8ecd8a1bff20bca14abe9e4ee8208b22a83f62d7eef"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.schedule-review",
+      "variantId": "c00008",
+      "source": "generated",
+      "fingerprint": "da316dd7ddb98122585ad0c04f4603839c53ff6bea3edde7bd87aec59098b806"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.schedule-review",
+      "variantId": "c00009",
+      "source": "generated",
+      "fingerprint": "9b1d141d971c7dc67c1a197dd1bebc8217a0c046802af9b72e7cee4330f51584"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.schedule-review",
+      "variantId": "c00010",
+      "source": "generated",
+      "fingerprint": "6298c763bde7a72df930f90a265dcaadbbc2ccc4fa4f2ac551bf7b0998c58fab"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.schedule-review",
+      "variantId": "c00011",
+      "source": "generated",
+      "fingerprint": "3427a027d600e4dcb05f7cf491a359763ed7b334deca13d1c14c20b92b864676"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.schedule-review",
+      "variantId": "c00012",
+      "source": "generated",
+      "fingerprint": "7ed47ff3ce7998e9667db88cfbd09708c89615bab4ff3e5ac573ed1dc9c77c65"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.schedule-review",
+      "variantId": "c00013",
+      "source": "generated",
+      "fingerprint": "b128e061a652e3d643d54afb35a41df967d7cac21000e8c8e84a5344af29daf4"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.schedule-review",
+      "variantId": "c00014",
+      "source": "generated",
+      "fingerprint": "27ac18e01bbc876f027deeca72b87e3fd429febda75082a104615ce120dd6f83"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.schedule-review",
+      "variantId": "c00015",
+      "source": "generated",
+      "fingerprint": "84619548f524bf703f7d974091981b7a10a9e41a2b6f260be24e06c4e513dde1"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.schedule-review",
+      "variantId": "c00016",
+      "source": "generated",
+      "fingerprint": "566b9e3e7317b8f0d097e2cdcf759d14b4ee1064115d9805c4e2832c35531bf1"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.schedule-review",
+      "variantId": "c00017",
+      "source": "generated",
+      "fingerprint": "e49d5a3d2ad358ce2c6def010bc699ef2f237ff59d259a99ac790de4fc37028d"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.schedule-review",
+      "variantId": "c00018",
+      "source": "generated",
+      "fingerprint": "a00705e458e949dce67597fa3b2b9a03995c5cc7b40450909c74c240d1aebecb"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.schedule-review",
+      "variantId": "c00019",
+      "source": "generated",
+      "fingerprint": "2657a0b97e81658d1364974e0568eb44124652131270de27a9f9119ba49c9d40"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.schedule-review",
+      "variantId": "c00020",
+      "source": "generated",
+      "fingerprint": "611582557f8bf5a18ca429fe544d398ec8796b3cb80359536372835ba1e8ec13"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.schedule-review",
+      "variantId": "c00021",
+      "source": "generated",
+      "fingerprint": "c98bbfc9ac32a77cccefba94f2a9e010c24a8ec3258b5e43b83de81a78b4f633"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.schedule-review",
+      "variantId": "c00022",
+      "source": "generated",
+      "fingerprint": "6b6ca84c0ce03633d2e96c3342109e34911a69c9b5fe8d3b76c8d21ca1ab4f75"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.schedule-review",
+      "variantId": "c00023",
+      "source": "generated",
+      "fingerprint": "f343dfefde38775e8a65775fd8413ce18d234419581e101412c3eb4d572683b3"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.schedule-review",
+      "variantId": "c00024",
+      "source": "generated",
+      "fingerprint": "caa86ffbd59e9534488ae8557e3cd493595d0ef40f1bdf01bef3a9301d38ef3f"
+    },
+    {
+      "familyId": "rehearsal-planning",
+      "templateId": "y1.schedule-review",
+      "variantId": "reference",
+      "source": "authored",
+      "fingerprint": "5fb6df6c09d02c8f412ca8ed23e723a0f7185c2adf007c6d66d95788826570ee"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00000",
+      "source": "generated",
+      "fingerprint": "aeafa7c2d70da7c2459783af37fff528c35876c795ef47870920249abd990d2b"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00001",
+      "source": "generated",
+      "fingerprint": "2586b2b97db589d623d1152f76050471905392c87c84015b7688aa48027b1e7f"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00002",
+      "source": "generated",
+      "fingerprint": "58f6d9f02f6836ddc0b9f1525f2a9aabe640602516a34950f8a5150c9167537c"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00003",
+      "source": "generated",
+      "fingerprint": "15643e9e04f45e25e5f2a7fff87a3d1a18aedb1d8474ba3ccff29d901fc3ab29"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00004",
+      "source": "generated",
+      "fingerprint": "1bc9835b7df44f1955703670375e6e7447b6a4c00a7edb7ae5422c6fcdbb6082"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00005",
+      "source": "generated",
+      "fingerprint": "3197fb0a8b54e7fd19fa6ee74b2f3061ec672a522eb1aca625571d851a42e5b2"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00007",
+      "source": "generated",
+      "fingerprint": "30ae664668b1a7077968a45395c125c5b762459793fb50f9ad16dedb1a1d9296"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00008",
+      "source": "generated",
+      "fingerprint": "4673a890d79ad8f6ab1f1997a24d6413e452a954360810cac6298ae3d23c615a"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00009",
+      "source": "generated",
+      "fingerprint": "6120cdeafc79f9dac2317fab7f94cb367b37b1c154f2d33bfde3b6c9f9806e68"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00010",
+      "source": "generated",
+      "fingerprint": "09291325cddb6d65a08a3530d75765236d0b147916a1058c59675374105b871c"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00011",
+      "source": "generated",
+      "fingerprint": "63c5fa1ee61ed7b54c84c105df7dc4c4c5a9637d0c7e68ee86e458834c9c8097"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00012",
+      "source": "generated",
+      "fingerprint": "a8b4612e739c8b352faa4c65572d8a87bdbae613709a9e8b40b34346cefa6cc4"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00013",
+      "source": "generated",
+      "fingerprint": "ee9300a5ce94d5f0ba2a70d30efe0521cd15ee263b8ca5953f992da8be54734a"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00014",
+      "source": "generated",
+      "fingerprint": "d8da385a3e9ab1ef660e5fec7cd542ebb59904c0016a41580edc5fb636c75898"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00015",
+      "source": "generated",
+      "fingerprint": "a0ebb63001260d2542f098e817672ab9b87f3fe3b2a8c41a3fa25f3dff81f755"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00016",
+      "source": "generated",
+      "fingerprint": "a1ad8f2d880d7fd7d2d2cfea3fb9f62228f02398b8fa625754f40d429bab8b75"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00017",
+      "source": "generated",
+      "fingerprint": "8307b79ca5b53aa76ecac31454cb643511040f48097194cb75118df232936c17"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00018",
+      "source": "generated",
+      "fingerprint": "8c828127ebfb897fbaad6a12d8c1fdcafb808e1eda97da8772f167e236c2f81a"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00019",
+      "source": "generated",
+      "fingerprint": "0c36f35b3365f79a3a9ead4269a92e86b46613a1dfc37552e5ea8ea02058f2e8"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00020",
+      "source": "generated",
+      "fingerprint": "301b25a541a21838f5127faf78fc9ce5fcd88f3a813f144a339fb8aa461185b6"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00021",
+      "source": "generated",
+      "fingerprint": "5e58addefaba1cd4484be7681685fd4d27c410b1d0800042d81d3d91e186501d"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00022",
+      "source": "generated",
+      "fingerprint": "eff7117bfef6527acde080ace9122fe024f5d4b4a6881bd650d455dffa682e0c"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00023",
+      "source": "generated",
+      "fingerprint": "5482eb431450cc792598ba050c6e74c414532147236dd61b0f58ce90cc3c7cba"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00024",
+      "source": "generated",
+      "fingerprint": "f98dfc083a30a018529139c6a10c38075ba1c908aaf6b79cdcaa952f2439a065"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "porciones-20",
+      "source": "authored",
+      "fingerprint": "6024aec20781d02272032efc922f66a898747a095fee7f7f29cc3b4060c9f4e1"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "porciones-24",
+      "source": "authored",
+      "fingerprint": "90da2254325f8df97e6df56eff2c1e71b5f337371d314ef7b4714dc65b837307"
+    },
+    {
+      "familyId": "student-day",
+      "templateId": "y1.student-day-challenge-wheel",
+      "variantId": "c00001",
+      "source": "generated",
+      "fingerprint": "bf0b1b51d8ba75e5ab247f2e39213b2ec18cd9044fd9643b647a60907d662bd0"
+    },
+    {
+      "familyId": "student-day",
+      "templateId": "y1.student-day-challenge-wheel",
+      "variantId": "c00003",
+      "source": "generated",
+      "fingerprint": "c3150e6679c235643e22ccdb4f2e7a934744257ded17c88a79fc56d929e11b29"
+    },
+    {
+      "familyId": "student-day",
+      "templateId": "y1.student-day-challenge-wheel",
+      "variantId": "c00006",
+      "source": "generated",
+      "fingerprint": "8bf0a231a957f74e6e6a3ebe7c6d644fe82c3fffab1d01451e6d1c486cb03295"
+    },
+    {
+      "familyId": "student-day",
+      "templateId": "y1.student-day-challenge-wheel",
+      "variantId": "c00008",
+      "source": "generated",
+      "fingerprint": "8df3f14ff7792a75ab1faec6cedb6d522eb35ba3c572d53c5b3df99ee98ebef7"
+    },
+    {
+      "familyId": "student-day",
+      "templateId": "y1.student-day-challenge-wheel",
+      "variantId": "c00013",
+      "source": "generated",
+      "fingerprint": "10ff6cfe37646f21e073d7104cd61f5bff9e5e52135546a620414bc263d4d2c2"
+    },
+    {
+      "familyId": "student-day",
+      "templateId": "y1.student-day-challenge-wheel",
+      "variantId": "c00015",
+      "source": "generated",
+      "fingerprint": "77a06dcdb0f8368c324af0f0163d00e565e4b8764da2cbfe5cf2191684360494"
+    },
+    {
+      "familyId": "student-day",
+      "templateId": "y1.student-day-challenge-wheel",
+      "variantId": "c00016",
+      "source": "generated",
+      "fingerprint": "67fa6aca4efac290bfcf417c01073fd9cb65152e56b376c0b2991fe14002c019"
+    },
+    {
+      "familyId": "student-day",
+      "templateId": "y1.student-day-challenge-wheel",
+      "variantId": "c00017",
+      "source": "generated",
+      "fingerprint": "fad6a11b6604fa9e4cf99b73b47fdab42271b6a61ee6a784c1b364b027c658f4"
+    },
+    {
+      "familyId": "student-day",
+      "templateId": "y1.student-day-challenge-wheel",
+      "variantId": "c00018",
+      "source": "generated",
+      "fingerprint": "3645dafa3ab064ed4310f24f44b0a6ac0003f549a378bd21c3972a6444b21d58"
+    },
+    {
+      "familyId": "student-day",
+      "templateId": "y1.student-day-challenge-wheel",
+      "variantId": "c00019",
+      "source": "generated",
+      "fingerprint": "1702c5d4298b5b5fbfd22db4cc5c7df9f701179ff6fa5bb64ec5afa017386e8b"
+    },
+    {
+      "familyId": "student-day",
+      "templateId": "y1.student-day-challenge-wheel",
+      "variantId": "c00022",
+      "source": "generated",
+      "fingerprint": "42dba1995e88ad83045423356a90f8ffdfb8fa95da09a5fafe7dd8d5b32bff96"
+    },
+    {
+      "familyId": "student-day",
+      "templateId": "y1.student-day-challenge-wheel",
+      "variantId": "c00031",
+      "source": "generated",
+      "fingerprint": "d62013caac7bb0dc970349f425ea244c47974164b5418224b49b2c72e324a203"
+    },
+    {
+      "familyId": "student-day",
+      "templateId": "y1.student-day-challenge-wheel",
+      "variantId": "c00033",
+      "source": "generated",
+      "fingerprint": "1cd9719f19c6ac208e7200b1a75b3b3d7b15ec63ef8668dd02b0225f4fad84fa"
+    },
+    {
+      "familyId": "student-day",
+      "templateId": "y1.student-day-challenge-wheel",
+      "variantId": "c00034",
+      "source": "generated",
+      "fingerprint": "93e76769d7fdfd1668ef2e4e2415c6719482664061299f97c0460ef146857d41"
+    },
+    {
+      "familyId": "student-day",
+      "templateId": "y1.student-day-challenge-wheel",
+      "variantId": "c00035",
+      "source": "generated",
+      "fingerprint": "9a003c8425b988f7c6868c2ddbe798eed274333f7d9181ab665f04940553ebfb"
+    },
+    {
+      "familyId": "student-day",
+      "templateId": "y1.student-day-challenge-wheel",
+      "variantId": "c00036",
+      "source": "generated",
+      "fingerprint": "fea01482ecd4def8bd535202125becd61d58afdc3f4d105f6dc56095ac16a6b5"
+    },
+    {
+      "familyId": "student-day",
+      "templateId": "y1.student-day-challenge-wheel",
+      "variantId": "c00037",
+      "source": "generated",
+      "fingerprint": "341505fbb90c7eb52a820cbab99106eda25214f71ae2bc93ccdff42cc44a55b1"
+    },
+    {
+      "familyId": "student-day",
+      "templateId": "y1.student-day-challenge-wheel",
+      "variantId": "c00039",
+      "source": "generated",
+      "fingerprint": "a260fcb17af4295c80fc3fec4ac3208a736961404c758840a7bd85eb283018c4"
+    },
+    {
+      "familyId": "student-day",
+      "templateId": "y1.student-day-challenge-wheel",
+      "variantId": "c00040",
+      "source": "generated",
+      "fingerprint": "0b4d9482b1600782b0fbd51725618bd9703676d2684ba8ecb057076d0ac72405"
+    },
+    {
+      "familyId": "student-day",
+      "templateId": "y1.student-day-challenge-wheel",
+      "variantId": "c00041",
+      "source": "generated",
+      "fingerprint": "c5ffe43e6100c5065519c5d6167fc3bd105929253f08b0e5074e5862b7e243b7"
+    },
+    {
+      "familyId": "student-day",
+      "templateId": "y1.student-day-challenge-wheel",
+      "variantId": "c00042",
+      "source": "generated",
+      "fingerprint": "d0e7a0397a175910d602e7661c72cd865c3b59317343a2823b7f928502441c25"
+    },
+    {
+      "familyId": "student-day",
+      "templateId": "y1.student-day-challenge-wheel",
+      "variantId": "c00049",
+      "source": "generated",
+      "fingerprint": "e91eba9636a33fb6f0038d2338b5d0ddca3955cea4813b40e2da97da51bef837"
+    },
+    {
+      "familyId": "student-day",
+      "templateId": "y1.student-day-challenge-wheel",
+      "variantId": "c00051",
+      "source": "generated",
+      "fingerprint": "b6d66c0188cd9f948b962a20819e44d300168768a59c0e5e6ec91164d37eb502"
+    },
+    {
+      "familyId": "student-day",
+      "templateId": "y1.student-day-challenge-wheel",
+      "variantId": "c00053",
+      "source": "generated",
+      "fingerprint": "c95ca05253e85b21b8e3061693e9557405bd2b1cf4d22b18de6466493e8b73f9"
+    },
+    {
+      "familyId": "student-day",
+      "templateId": "y1.student-day-challenge-wheel",
+      "variantId": "reference",
+      "source": "authored",
+      "fingerprint": "e79ca679df5a6c8f89acf5d2e52cb5bdc3118efc5280440e7769b510d48b4088"
+    }
+  ]
+}

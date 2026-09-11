@@ -31,7 +31,8 @@ import { createDevelopmentDependencies } from '@/game/testing'
 const dependencies = createDevelopmentDependencies()
 
 /*
- * Regenerados para la progresión (`ENGINE_VERSION` 6.0.0).
+ * Phase 1: engine 7.0.0 / action log 5; snapshot 7 y fingerprints
+ * de ruleset/contenido legacy intactos. Antecedente de progresión (6.0.0):
  *
  * Dos se movieron y **la que no lo hizo vuelve a ser la evidencia**:
  *
@@ -129,14 +130,14 @@ const dependencies = createDevelopmentDependencies()
  * golden quedaron **idénticos**.
  */
 const EXPECTED = {
-  engine: 'a0ed168d',
+  engine: '7e7e61eb',
   ruleset: '5b9b0bc5',
   content: 'dbaf5094',
 } as const
 
 describe('version fingerprints', () => {
   it('pins the deterministic kernel to its engine version', () => {
-    expect(ENGINE_VERSION).toBe('6.0.0')
+    expect(ENGINE_VERSION).toBe('7.0.0')
     expect(engineFingerprint()).toBe(EXPECTED.engine)
   })
 

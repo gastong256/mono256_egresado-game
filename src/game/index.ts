@@ -51,8 +51,18 @@ export {
   materializeChallenge,
   transition,
   type EngineDependencies,
-  type RecoveryContent,
 } from './runs/transition'
+export {
+  recoveryContentIssues,
+  recoveryFrameFor,
+  recoveryNotes,
+  reviewTemplateFor,
+  reviewsFor,
+  type RecoveryContent,
+  type RecoveryContentCheck,
+  type RecoveryDebrief,
+  type RecoveryNotes,
+} from './runs/recovery-content'
 export { parseCommand, type GameCommand } from './runs/commands'
 export type {
   DomainEvent,
@@ -184,6 +194,7 @@ export type {
   MaterializedChallenge,
   PublicChallengeView,
   ReasoningMetrics,
+  RecoveryNote,
 } from './challenges/contracts'
 export {
   defineChallenge,
@@ -276,6 +287,29 @@ export {
   type PlanValidationContext,
 } from './plan/plan-validator'
 export { parseRunPlan, serializeRunPlan } from './plan/plan-codec'
+export type {
+  SchedulePlacement,
+  PresentedActivity,
+  SpatialPlacement,
+  GridCell,
+  PresentedSpatialObject,
+  PresentedQuantityItem,
+} from './challenges/interactions'
+export {
+  fullCareerV1Constraints,
+  careerConstraintIssues,
+  type CareerConstraints,
+  type CountRange,
+} from './plan/career-constraints'
+export {
+  PRIMARY_REASONING_FAMILIES,
+  INTERACTION_ENGINES,
+  PACING_CLASSES,
+  type CompositionMetadata,
+  type PrimaryReasoningFamily,
+  type InteractionEngine,
+  type PacingClass,
+} from './challenges/composition-metadata'
 export {
   agreesWithDocumentedLevel,
   bandOf,
@@ -384,6 +418,11 @@ export {
   progressionIssues,
   recoveriesPlayedInStage,
   recoveryPolicyIssues,
+  selectedObligation,
+  recoveryCoverage,
+  recordCoverage,
+  obligationSourceOf,
+  type RecoveryCoverage,
   withGraduation,
   withObligation,
   withRecovery,

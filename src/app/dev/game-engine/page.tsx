@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
 import { DevelopmentHarness } from '@/components/game/development-harness'
+import { Grade1Harness } from '@/components/game/grade-1-harness'
 import { isDevelopmentHarnessEnabled } from '@/server/development/harness-access'
 
 /**
@@ -40,5 +41,9 @@ export default async function DevelopmentGameEnginePage({
       ? requested
       : 'harness-default'
 
+  if (params['content'] === 'grade-1' || params['content'] === 'grade-1-demo')
+    return (
+      <Grade1Harness seed={seed} demo={params['content'] === 'grade-1-demo'} />
+    )
   return <DevelopmentHarness initialSeed={seed} />
 }

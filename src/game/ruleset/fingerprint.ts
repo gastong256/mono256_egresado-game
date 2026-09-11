@@ -27,6 +27,8 @@ import { RNG_ALGORITHM } from '../random/rng'
 import { ACTION_LOG_VERSION } from '../runs/action-log'
 import { SNAPSHOT_SCHEMA_VERSION } from '../runs/snapshot'
 import type { Ruleset } from './ruleset'
+import { canonicalize } from '../core/canonical'
+import type { RecoveryContent } from '../runs/transition'
 
 /** FNV-1a over UTF-16 code units, rendered as eight hex digits. */
 function digest(input: string): string {
@@ -120,6 +122,9 @@ function composition(ruleset: Ruleset): string {
     `costs:${policy.costPolicy.id}@${policy.costPolicy.version}:${costs}`,
     `objectives:${policy.objectives.join('>')}`,
     `stages:${stages}`,
+    ...(policy.career === undefined
+      ? []
+      : [`career:${canonicalize(policy.career)}`]),
   ].join(';')
 }
 
@@ -186,6 +191,7 @@ export function rulesetFingerprint(ruleset: Ruleset): string {
 export function contentFingerprint(
   catalog: ContentCatalog,
   storylets: readonly Storylet[],
+  recoveryContent?: RecoveryContent,
 ): string {
   const families = catalog.families
     .map((family) => [family.id, family.labelKey].join(':'))
@@ -219,6 +225,9 @@ export function contentFingerprint(
         [...template.stages].sort().join(','),
         [...template.categories].sort().join(','),
         [...template.tools].sort().join(','),
+        ...(template.composition === undefined
+          ? []
+          : [`composition:${canonicalize(template.composition)}`]),
       ].join(':'),
     )
     .join('|')
@@ -244,6 +253,6 @@ export function contentFingerprint(
     .join('|')
 
   return digest(
-    `families:${families}||templates:${definitions}||storylets:${events}`,
+    `families:${families}||templates:${definitions}||storylets:${events}${recoveryContent === undefined ? '' : `||recovery:${canonicalize(recoveryContent)}`}`,
   )
 }

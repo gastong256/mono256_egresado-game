@@ -100,7 +100,7 @@ export function AssignmentBoard({
               <label htmlFor={fieldId} className="block">
                 <span className="text-goal font-display text-ink block">
                   {task.label}
-                </span>
+                </span>{' '}
                 <span
                   data-numeric
                   className="text-meta font-display text-ink block font-bold"
@@ -117,7 +117,11 @@ export function AssignmentBoard({
                 }}
                 className="border-ink bg-surface text-ink text-meta mt-2 h-11 w-full border-[1.5px] px-2"
               >
-                <option value="">Sin asignar</option>
+                <option value="">
+                  {task.optional === true
+                    ? 'No incluir (opcional)'
+                    : 'Sin asignar'}
+                </option>
                 {agents.map((agent) => (
                   <option key={agent.id} value={agent.id}>
                     {agent.label}

@@ -9,8 +9,10 @@
 Esta es la arquitectura de contenido candidata vigente para los cinco años que
 faltan. Contiene 25 Templates —cinco por año— porque hoy dan cobertura y margen
 de composición suficientes, no porque 25 sea una cuota contractual. El diseño
-detallado de los cinco años está aprobado a nivel candidato; ningún ítem de esta
-matriz es todavía contenido runtime. El Product Pass conserva las 25 Templates sin
+detallado de los cinco años está aprobado a nivel candidato. Desde STAGE-08 /
+Phase 1 las cinco Templates de 1.º y sus dos Repasos son contenido runtime de
+desarrollo (catálogo `grade-1-dev-1`, [implementación](grade-1-template-design.md#implementación-runtime-phase-1));
+2.º–5.º siguen siendo diseño. El Product Pass conserva las 25 Templates sin
 reemplazos nuevos; la [conformidad técnica](../04-quality/full-career-technical-conformance.md)
 aprobó viabilidad con deltas entendidos, no autoría ejecutada.
 
@@ -131,8 +133,8 @@ de cada señal están en las fichas de año; no son pesos congelados.
 
 Total: `9 / 25 = 36 %`. Son nueve Templates fuente futuras, no nueve beats de
 repaso por run. Las restantes declaran `none` y deben conservar su justificación
-editorial; no se inventa recuperación para completar una cuota. Ninguna de estas
-rutas está implementada. ADR-024 mantiene **un recovery máximo por etapa**, fuera
+editorial; no se inventa recuperación para completar una cuota. Las dos rutas de
+1.º están implementadas desde Phase 1; las de 2.º–5.º no. ADR-024 mantiene **un recovery máximo por etapa**, fuera
 del presupuesto ordinario y del score. El único gate de escalabilidad sigue
 siendo el [audit posterior a 1.º](../04-quality/post-grade-1-scalability-audit.md),
 con ambas obligaciones de ese año; no se agrega un gate por cada año o ruta.
@@ -178,10 +180,12 @@ Su frecuencia puntuable se rige por las políticas siguientes.
 
 ## Políticas de composición
 
-Son políticas de **producto/contenido**, todavía sin implementación de clusters
-ni frecuencia del arco en el RunComposer. No agregan campos al schema ni cambian
-el presupuesto estructural de uno o dos beats ordinarios y un anchor por etapa.
-La evolución técnica futura está en [ADR-025](../03-architecture/adr/ADR-025-full-career-contract-evolution.md).
+Son políticas de **producto/contenido**. Desde Phase 1 el mecanismo existe
+—metadata `eventCluster`/`recurringArc`, `CareerConstraints` y validador global—,
+pero ninguna carrera oficial se compone todavía con ellas: sólo la práctica
+parcial `7.º → 1.º`. No cambian el presupuesto estructural de uno o dos beats
+ordinarios y un anchor por etapa. La frontera técnica está en
+[ADR-025](../03-architecture/adr/ADR-025-full-career-contract-evolution.md).
 
 ### Envolvente Normal/Fair v1
 

@@ -81,7 +81,7 @@
 - [x] CI reproducible, Dependabot y bloqueo de release por dependencia.
 - [x] Roadmap canónico con contrato por etapa: estado, alcance IN/OUT, dependencias, criterios de aceptación, validación, evidencia y exit gate.
 - [x] Vista corta de la etapa activa, siempre en contexto.
-- [x] Phase 0 DONE; Phase 1 READY con plan G1, STOP y gate post-G1 pendientes.
+- [x] Phase 0 y Phase 1 DONE; gate post-G1 READY, pendiente de ejecución antes de 2.º–5.º.
 - [x] Protocolo de actualización del roadmap para agentes futuros.
 - [x] Checklists de Teacher Gate 1 y 2 y de congelamiento de fundaciones.
 

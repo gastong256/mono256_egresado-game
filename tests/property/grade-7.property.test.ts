@@ -156,23 +156,27 @@ describe('toda seed produce un año jugable', () => {
                           : [{ agentId: agent.id, taskId: task.id }]
                       }),
                     }
-                  : interaction.kind === 'budget-builder'
+                  : interaction.kind === 'budget-builder' ||
+                      interaction.kind === 'quantity-builder'
                     ? {
-                        kind: 'budget-builder' as const,
+                        kind: interaction.kind,
                         lines: interaction.items.map((item) => ({
                           itemId: item.id,
                           quantity: 2,
                         })),
                       }
-                    : interaction.kind === 'numeric-input'
-                      ? {
-                          kind: 'numeric-input' as const,
-                          value: interaction.min,
-                        }
-                      : {
-                          kind: interaction.kind,
-                          optionId: interaction.options[0]?.id ?? '',
-                        }
+                    : interaction.kind === 'schedule-builder' ||
+                        interaction.kind === 'spatial-layout'
+                      ? { kind: interaction.kind, placements: [] }
+                      : interaction.kind === 'numeric-input'
+                        ? {
+                            kind: 'numeric-input' as const,
+                            value: interaction.min,
+                          }
+                        : {
+                            kind: interaction.kind,
+                            optionId: interaction.options[0]?.id ?? '',
+                          }
 
             command = {
               type: 'ANSWER',

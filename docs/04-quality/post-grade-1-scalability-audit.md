@@ -1,8 +1,29 @@
 # Auditoría de escalabilidad posterior a 1.º
 
-- **Estado:** `REQUIRED · PLANNED · NOT EXECUTED`
-- **Cuándo:** después de implementar contenido real de 1.º y antes de autorizar implementación amplia de 2.º–5.º
-- **Resultado actual:** ninguno; semántica de producto cerrada, implementación/pedagogía por validar
+- **Estado:** `REQUIRED · READY · NOT EXECUTED` — la precondición (1.º real) se cumplió el 2026-09-11
+- **Cuándo:** ahora, antes de autorizar implementación amplia de 2.º–5.º
+- **Resultado actual:** ninguno; semántica de producto cerrada, mecanismo implementado, veredicto pedagógico/técnico pendiente
+
+## Preparado por Phase 1 — no es un veredicto
+
+El caso se puede construir sin código nuevo:
+
+- contenido: `y1.classroom-layout → y1.scale-fit-review` y
+  `y1.rehearsal-schedule → y1.schedule-review` en el catálogo `grade-1-dev-1`,
+  con debriefs autorados en `grade1RecoveryContent`;
+- composición: `createGrade1Dependencies(true)` juega las cinco Templates en
+  cronología (aula 30 antes que agenda 40), y el plan parcial también puede
+  combinar `classroom-layout` (anchor) con `rehearsal-schedule` (secundaria);
+- harness: `stressCaseQualities()` y `playGrade1()` en `tests/helpers/grade-1-play.ts`
+  fuerzan ambas INVALID y el resultado del Repaso;
+- observables: `PublicChallengeView.review` (practicada/debriefeada),
+  `recordCoverage` sobre el registro, `validateSubmittedRun` para el servidor y el
+  escenario E2E `both-invalid` en `tests/e2e/grade-1.spec.ts`.
+
+Los tests de ingeniería comprueban el mecanismo —una sola interacción, debrief
+de la otra, cierre de ambas, sin recursión, egreso, replay y score neutral—. El
+gate sigue exigiendo su propio reporte con relevancia pedagógica, pacing y
+decisión posterior; los tests verdes no lo sustituyen.
 
 Esta auditoría prueba con contenido real si el modelo de recuperación de STAGE-07
 escala cuando una etapa contiene más de una Template recovery-capable. No reabre

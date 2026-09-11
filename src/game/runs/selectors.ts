@@ -8,6 +8,7 @@
  * Every function is pure and allocation-light; none mutates state.
  */
 
+import { plannedEventCount } from '../plan/composer'
 import type { StageConfig, StageId } from '../progression/stages'
 import { stageConfig, type Ruleset } from '../ruleset/ruleset'
 import type { PendingFeedback, RunState } from './state'
@@ -33,24 +34,42 @@ export interface RunProgress {
   readonly stageIndex: number
   readonly stageCount: number
   readonly eventInStage: number
+  /** Events the current stage plays: the composed plan's count when there is one. */
   readonly eventsInStage: number
+  /** Events of the current stage already closed, a remediation beat included. */
+  readonly resolvedInStage: number
+  /**
+   * Cells the stage needs right now: its planned events, plus the remediation
+   * beat once the year opens one. Never fewer than the event being played.
+   */
+  readonly stageCells: number
   readonly totalEvents: number
   readonly eventsResolved: number
 }
 
 export function runProgress(state: RunState, ruleset: Ruleset): RunProgress {
   const totalEvents = ruleset.stages.reduce(
-    (total, stage) => total + stage.eventCount,
+    (total, stage) => total + plannedEventCount(state.plan, stage),
     0,
   )
   const stage = currentStage(state, ruleset)
+  const eventsInStage =
+    stage === undefined ? 0 : plannedEventCount(state.plan, stage)
+  const resolvedInStage = state.history.filter(
+    (entry) => entry.stage === state.stage,
+  ).length
 
   return {
     stage: state.stage,
     stageIndex: currentStageIndex(state, ruleset),
     stageCount: ruleset.stages.length,
     eventInStage: state.stageEventIndex,
-    eventsInStage: stage?.eventCount ?? 0,
+    eventsInStage,
+    resolvedInStage,
+    stageCells: Math.max(
+      eventsInStage,
+      resolvedInStage + (state.status === 'active' ? 1 : 0),
+    ),
     totalEvents,
     eventsResolved: state.history.length,
   }

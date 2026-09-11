@@ -69,6 +69,68 @@ const decimalLiteral = z
   .regex(/^[+-]?\d+(?:\.\d+)?$/u, 'expected a decimal literal')
 
 export const interactionAnswerSchema = z.discriminatedUnion('kind', [
+  z.strictObject({
+    kind: z.literal('schedule-builder'),
+    placements: z
+      .array(
+        z.strictObject({
+          activityId: z
+            .string()
+            .min(1)
+            .max(64)
+            .regex(/^[a-zA-Z0-9._-]+$/u),
+          startMinute: z.number().int().min(0).max(1439),
+        }),
+      )
+      .max(8)
+      .refine(
+        (values) =>
+          new Set(values.map((v) => v.activityId)).size === values.length,
+        'duplicate activity',
+      ),
+  }),
+  z.strictObject({
+    kind: z.literal('spatial-layout'),
+    placements: z
+      .array(
+        z.strictObject({
+          objectId: z
+            .string()
+            .min(1)
+            .max(64)
+            .regex(/^[a-zA-Z0-9._-]+$/u),
+          x: z.number().int().min(0).max(15),
+          y: z.number().int().min(0).max(15),
+          rotation: z.union([z.literal(0), z.literal(90)]),
+        }),
+      )
+      .max(8)
+      .refine(
+        (values) =>
+          new Set(values.map((v) => v.objectId)).size === values.length,
+        'duplicate object',
+      ),
+  }),
+  z.strictObject({
+    kind: z.literal('quantity-builder'),
+    lines: z
+      .array(
+        z.strictObject({
+          itemId: z
+            .string()
+            .min(1)
+            .max(64)
+            .regex(/^[a-zA-Z0-9._-]+$/u),
+          quantity: z.number().int().min(0).max(999),
+        }),
+      )
+      .max(12)
+      .refine(
+        (lines) =>
+          new Set(lines.map((line) => line.itemId)).size === lines.length,
+        'duplicate quantity item',
+      ),
+  }),
   z.object({ kind: z.literal('decision-card'), optionId: z.string().min(1) }),
   z.object({ kind: z.literal('numeric-input'), value: decimalLiteral }),
   z.object({

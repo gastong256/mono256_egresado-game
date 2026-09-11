@@ -13,6 +13,12 @@ aprobado vacío. El gate post-G1 sigue pendiente; no se reescribe su evidencia h
 [reconciliación de producto](../../07-reference/full-career-product-audit-integration.md).
 No se modifican runtime ni versiones en esta integración.
 
+**Phase 1 (2026-09-11):** implementados el debrief de obligaciones no
+practicadas —derivado, sin bump de snapshot— y el fail-closed approved-only;
+1.º suma las dos rutas `schedule-review` y `scale-fit-review`. Máximo uno, cierre
+conjunto, no recursión y exclusión competitiva intactos. El gate post-G1 sigue
+pendiente.
+
 ## Contexto
 
 El Teacher Gate 1 aceptó una regla corta y absoluta: **toda run válida completada llega al egreso** (D-TG1-10). El jugador no está averiguando *si* egresa. Está averiguando *cómo*.

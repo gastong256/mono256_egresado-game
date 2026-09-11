@@ -31,6 +31,9 @@ export type InteractionKind =
   | 'assignment-board'
   | 'information-request'
   | 'number-grid'
+  | 'quantity-builder'
+  | 'schedule-builder'
+  | 'spatial-layout'
 
 /** A single selectable option. `detail` carries the numbers the player compares. */
 export interface PresentedOption {
@@ -63,6 +66,21 @@ export interface PresentedBudgetItem {
   readonly maxQuantity: number
 }
 
+/** Counts or uses, without implying money. The unit/rate is authored text. */
+export interface PresentedQuantityItem {
+  readonly id: string
+  readonly label: string
+  readonly detail: string
+  readonly maxQuantity: number
+  /**
+   * Short text code for the positions a distribution fills («Jue», «Desc»).
+   *
+   * Authored, because initials collide and a colour cannot be the only way to
+   * tell two categories apart.
+   */
+  readonly code?: string
+}
+
 export interface PresentedChartPoint {
   readonly label: string
   readonly value: number
@@ -79,6 +97,55 @@ export interface PresentedTask {
   readonly id: string
   readonly label: string
   readonly detail: string
+  /** Omission is an intentional decision, not an unfinished draft. */
+  readonly optional?: boolean
+}
+
+export interface SchedulePlacement {
+  readonly activityId: string
+  /** Minutes since midnight, not a DOM coordinate or localized string. */
+  readonly startMinute: number
+}
+/**
+ * One block of a schedule, with the public numbers the player plans with.
+ *
+ * Duration, preparation and place are given data, not the solution: the plan
+ * is which start the player picks for each block, and whether the chain of
+ * durations, preparations and trips between places fits.
+ */
+export interface PresentedActivity {
+  readonly id: string
+  readonly label: string
+  readonly detail: string
+  /** Place label, e.g. «Escuela». Two blocks in different places need a trip. */
+  readonly location: string
+  readonly durationMinutes: number
+  /** Preparation needed on site right before the block starts. */
+  readonly setupMinutes: number
+  /** Starts the player may pick, minutes since midnight, ascending. */
+  readonly startMinutes: readonly number[]
+  readonly optional: boolean
+}
+export interface SpatialPlacement {
+  readonly objectId: string
+  readonly x: number
+  readonly y: number
+  readonly rotation: 0 | 90
+}
+export interface GridCell {
+  readonly x: number
+  readonly y: number
+}
+export interface PresentedSpatialObject {
+  readonly id: string
+  readonly label: string
+  /** Short text code drawn inside the cells the object occupies («A», «P»). */
+  readonly code: string
+  readonly widthCells: number
+  readonly heightCells: number
+  readonly detail: string
+  readonly rotatable: boolean
+  readonly optional: boolean
 }
 
 /** A datum the player may reveal before deciding. */
@@ -113,6 +180,43 @@ export interface PresentedGridRound {
 }
 
 export type InteractionPresentation =
+  | {
+      readonly kind: 'schedule-builder'
+      readonly data: readonly PresentedDatum[]
+      readonly instructions: string
+      readonly activities: readonly PresentedActivity[]
+      /**
+       * The public time axis: when the plan may start and the fixed limit it
+       * has to meet, minutes since midnight.
+       */
+      readonly span: { readonly from: number; readonly to: number }
+    }
+  | {
+      readonly kind: 'spatial-layout'
+      readonly data: readonly PresentedDatum[]
+      readonly instructions: string
+      readonly width: number
+      readonly height: number
+      readonly cellCentimeters: number
+      readonly blocked: readonly GridCell[]
+      readonly clearance: readonly GridCell[]
+      readonly entrances: readonly GridCell[]
+      readonly objects: readonly PresentedSpatialObject[]
+    }
+  | {
+      readonly kind: 'quantity-builder'
+      readonly data: readonly PresentedDatum[]
+      readonly items: readonly PresentedQuantityItem[]
+      readonly instructions: string
+      /**
+       * Equiprobable positions the counts fill, when the plan is a
+       * distribution (the Grid/Select/Classify counts mode of a wheel).
+       *
+       * Absent for a resource plan: there the running total *is* the
+       * challenge, so the renderer must not add it up for the player.
+       */
+      readonly positions?: number
+    }
   | {
       readonly kind: 'decision-card'
       readonly data: readonly PresentedDatum[]
@@ -188,6 +292,15 @@ export interface GridRoundSelection {
 }
 
 export type InteractionAnswer =
+  | {
+      readonly kind: 'schedule-builder'
+      readonly placements: readonly SchedulePlacement[]
+    }
+  | {
+      readonly kind: 'spatial-layout'
+      readonly placements: readonly SpatialPlacement[]
+    }
+  | { readonly kind: 'quantity-builder'; readonly lines: readonly BudgetLine[] }
   | { readonly kind: 'decision-card'; readonly optionId: string }
   /** Decimal literal as a string so no answer passes through a binary float. */
   | { readonly kind: 'numeric-input'; readonly value: string }

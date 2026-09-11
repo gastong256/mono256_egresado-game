@@ -59,6 +59,10 @@ import { bandOf, type DifficultyBand } from '../difficulty/cognitive'
 import { costOf, type DifficultyCost } from '../difficulty/cost-policy'
 import type { StageId } from '../progression/stages'
 import { createRng, type Rng } from '../random/rng'
+import { sha256Hex } from '../core/hash'
+import { EngineInvariantError } from '../core/invariant'
+import { compositionMetadataIssues } from '../challenges/composition-metadata'
+import type { CareerConstraints } from './career-constraints'
 import {
   compositionFailure,
   type CompositionFailure,
@@ -294,11 +298,11 @@ function planKey(plan: readonly Candidate[]): string {
   return plan.map((beat) => formatVariantAddress(beat.variant)).join('+')
 }
 
-function composeStagePlan(
+function candidatePlansFor(
   request: RunCompositionRequest,
   stage: StageCompositionPolicy,
   history: RunHistory,
-): Result<ComposedStagePlan, CompositionFailure> {
+): Result<readonly (readonly Candidate[])[], CompositionFailure> {
   const eligible = request.catalog.templates.filter(
     (template) =>
       isEligibleForStage(template, stage.stageId) &&
@@ -376,6 +380,24 @@ function composeStagePlan(
     )
   }
 
+  // Bound the Cartesian materialization as well as the later search. A tiny
+  // policy budget cannot allocate an arbitrarily large stage candidate array.
+  const upperBound =
+    anchors.length *
+    ((stage.ordinaryBeats.min <= 1 ? 1 : 0) +
+      (stage.ordinaryBeats.max >= 2 ? secondaries.length : 0))
+  if (
+    request.policy.career !== undefined &&
+    upperBound > request.policy.career.maxSearchNodes
+  )
+    return err(
+      compositionFailure(
+        'search-budget-exceeded',
+        stage.stageId,
+        'stage candidate enumeration exceeds the configured search budget',
+        { counts },
+      ),
+    )
   const structural = feasiblePlans(stage, anchors, secondaries)
   const feasible = structural.filter((plan) =>
     withinEnvelope(stage, totalCost(plan)),
@@ -395,6 +417,17 @@ function composeStagePlan(
     )
   }
 
+  return ok(feasible)
+}
+
+function composeStagePlan(
+  request: RunCompositionRequest,
+  stage: StageCompositionPolicy,
+  history: RunHistory,
+): Result<ComposedStagePlan, CompositionFailure> {
+  const result = candidatePlansFor(request, stage, history)
+  if (!result.ok) return result
+  const feasible = result.value
   // Lexicographic ranking. Each objective narrows the field; the next only ever
   // sees what survived, so a later preference can never overturn an earlier one.
   let surviving = [...feasible].sort((left, right) =>
@@ -428,7 +461,6 @@ function composeStagePlan(
         'no-eligible-content',
         stage.stageId,
         'ranking eliminated every feasible plan, which is a composer defect',
-        { counts: { ...counts, feasiblePlans: feasible.length } },
       ),
     )
   }
@@ -492,6 +524,9 @@ export function composeRun(
     )
   }
 
+  if (request.policy.career !== undefined)
+    return composeCareer(request, request.policy.career)
+
   const stages: ComposedStagePlan[] = []
   let history = EMPTY_HISTORY
 
@@ -525,6 +560,296 @@ export function composeRun(
       : { variantCatalogVersion: request.approvedVariants.catalogVersion }),
     stages,
     difficultyCost: stages.reduce(
+      (sum, stage) => sum + stage.difficultyCost,
+      0,
+    ),
+  })
+}
+
+/** Counts used only by search/pruning. The public validator recomputes independently. */
+function careerCounts(
+  plans: readonly (readonly Candidate[])[],
+): ReadonlyMap<string, number> {
+  const counts = new Map<string, number>()
+  const add = (key: string) => counts.set(key, (counts.get(key) ?? 0) + 1)
+  for (const beat of plans.flat()) {
+    const metadata = beat.template.composition
+    if (metadata === undefined) continue
+    add('ordinary')
+    add(`band:${beat.band}`)
+    add(`pacing:${metadata.pacingClass}`)
+    add(`reason:${metadata.primaryReasoningFamily}`)
+    add(`engine:${metadata.interactionEngine}`)
+    if (
+      metadata.primaryReasoningFamily === 'DATA_UNCERTAINTY' ||
+      metadata.primaryReasoningFamily === 'LOGIC_CLASSIFICATION'
+    )
+      add('data-or-logic')
+    if (metadata.eventCluster !== undefined)
+      add(`cluster:${metadata.eventCluster}`)
+    if (metadata.recurringArc === 'PROJECT') add('project')
+  }
+  return counts
+}
+
+/** Global finite search. Legacy policies retain their historical one-stage choices. */
+function composeCareer(
+  request: RunCompositionRequest,
+  constraints: CareerConstraints,
+): Result<ComposedRunPlan, CompositionFailure> {
+  if (request.stages.join(',') !== constraints.requiredStages.join(','))
+    return err(
+      compositionFailure(
+        'invalid-policy',
+        undefined,
+        'requested stages do not match the complete ordered career scope',
+      ),
+    )
+  const stages: StageCompositionPolicy[] = []
+  const choices: (readonly (readonly Candidate[])[])[] = []
+  for (const stageId of request.stages) {
+    const policy = stagePolicyFor(request.policy, stageId)
+    if (policy === undefined)
+      return err(
+        compositionFailure(
+          'stage-not-configured',
+          stageId,
+          'missing stage policy',
+        ),
+      )
+    const candidates = candidatePlansFor(request, policy, EMPTY_HISTORY)
+    if (!candidates.ok) return candidates
+    if (
+      candidates.value
+        .flat()
+        .some(
+          (candidate) =>
+            candidate.template.composition === undefined ||
+            compositionMetadataIssues(candidate.template.composition).length >
+              0,
+        )
+    )
+      return err(
+        compositionFailure(
+          'missing-composition-metadata',
+          stageId,
+          'every eligible global candidate must declare valid product axes',
+        ),
+      )
+    stages.push(policy)
+    choices.push(
+      [...candidates.value].sort((a, b) =>
+        planKey(a) < planKey(b) ? -1 : planKey(a) > planKey(b) ? 1 : 0,
+      ),
+    )
+  }
+
+  const limits = new Map<
+    string,
+    { readonly min: number; readonly max: number }
+  >([
+    ['ordinary', constraints.ordinaryBeats],
+    ['project', constraints.projectArc],
+    [
+      'data-or-logic',
+      { min: constraints.minDataOrLogic, max: constraints.ordinaryBeats.max },
+    ],
+    ...Object.entries(constraints.bands).map(
+      ([key, range]) => [`band:${key}`, range] as const,
+    ),
+    ...Object.entries(constraints.pacing).map(
+      ([key, range]) => [`pacing:${key}`, range] as const,
+    ),
+    ...Object.entries(constraints.maxByReasoning).map(
+      ([key, max]) => [`reason:${key}`, { min: 0, max }] as const,
+    ),
+  ])
+  const choiceCounts = choices.map((stage) =>
+    stage.map((plan) => careerCounts([plan])),
+  )
+  /** Optimistic remaining bounds may overestimate feasibility, never exclude a valid plan. */
+  const possible = (partial: readonly (readonly Candidate[])[]): boolean => {
+    const counts = careerCounts(partial)
+    for (const [key, range] of limits) {
+      let low = counts.get(key) ?? 0,
+        high = low
+      for (const stage of choiceCounts.slice(partial.length)) {
+        low += Math.min(...stage.map((c) => c.get(key) ?? 0))
+        high += Math.max(...stage.map((c) => c.get(key) ?? 0))
+      }
+      if (low > range.max || high < range.min) return false
+    }
+    for (const [key, count] of counts)
+      if (key.startsWith('cluster:') && count > constraints.maxPerEventCluster)
+        return false
+    const potentialKeys = new Set(counts.keys())
+    for (const stage of choiceCounts.slice(partial.length))
+      for (const c of stage) for (const key of c.keys()) potentialKeys.add(key)
+    if (
+      [...potentialKeys].filter((key) => key.startsWith('reason:')).length <
+      constraints.minReasoningFamilies
+    )
+      return false
+    if (
+      [...potentialKeys].filter((key) => key.startsWith('engine:')).length <
+      constraints.minInteractionEngines
+    )
+      return false
+    return true
+  }
+
+  const objectiveVector = (
+    plans: readonly (readonly Candidate[])[],
+  ): readonly number[] => {
+    const counts = careerCounts(plans)
+    const beats = plans.flat()
+    const score = request.policy.objectives.map((objective) => {
+      switch (objective) {
+        case 'difficulty-fit':
+          return -plans.reduce(
+            (sum, plan, i) =>
+              sum +
+              Math.abs(totalCost(plan) - (stages[i]?.difficulty.target ?? 0)),
+            0,
+          )
+        case 'family-variety':
+          return new Set(beats.map((beat) => beat.template.family)).size
+        case 'interaction-variety':
+          return new Set(
+            beats.map((beat) => beat.template.composition?.interactionEngine),
+          ).size
+        case 'domain-coverage':
+          return new Set(beats.flatMap((beat) => beat.template.categories)).size
+        case 'template-freshness':
+          return new Set(beats.map((beat) => beat.template.id)).size
+      }
+    })
+    const engines = [...counts.keys()].filter((key) =>
+      key.startsWith('engine:'),
+    ).length
+    const projectStages = plans.map((plan) =>
+      plan.some(
+        (beat) => beat.template.composition?.recurringArc === 'PROJECT',
+      ),
+    )
+    const adjacent = projectStages.filter(
+      (active, i) => active && projectStages[i - 1],
+    ).length
+    // Product preferences rank only already-valid careers, before calibration details.
+    return [
+      Math.min(engines, constraints.preferredEngines),
+      Math.min(counts.get('project') ?? 0, constraints.preferredProjectMin),
+      constraints.preferNonconsecutiveProject ? -adjacent : 0,
+      ...score,
+    ]
+  }
+  const compareVectors = (
+    a: readonly number[],
+    b: readonly number[],
+  ): number => {
+    for (let i = 0; i < a.length; i++) {
+      const difference = (a[i] ?? 0) - (b[i] ?? 0)
+      if (difference !== 0) return difference
+    }
+    return 0
+  }
+
+  let visited = 0
+  let exhausted = false
+  let best: readonly (readonly Candidate[])[] | undefined
+  let bestVector: readonly number[] = []
+  let bestTie = ''
+  function visit(partial: readonly (readonly Candidate[])[]): void {
+    if (exhausted) return
+    visited++
+    if (visited > constraints.maxSearchNodes) {
+      exhausted = true
+      return
+    }
+    if (!possible(partial)) return
+    const options = choices[partial.length]
+    if (options === undefined) {
+      const vector = objectiveVector(partial)
+      const comparison =
+        best === undefined ? 1 : compareVectors(vector, bestVector)
+      const key = partial.map(planKey).join('|')
+      // Semantic tie address: independent of traversal, retries and runtime actions.
+      const tie = sha256Hex(
+        JSON.stringify([
+          request.seed,
+          'compose-career-tie',
+          constraints.id,
+          constraints.version,
+          key,
+        ]),
+      )
+      if (comparison > 0 || (comparison === 0 && tie < bestTie)) {
+        best = partial
+        bestVector = vector
+        bestTie = tie
+      }
+      return
+    }
+    const used = new Set(partial.flat().map((beat) => beat.template.id))
+    for (const plan of options) {
+      if (
+        stages[partial.length]?.allowTemplateRepeats !== true &&
+        plan.some((beat) => used.has(beat.template.id))
+      )
+        continue
+      visit([...partial, plan])
+      if (exhausted) return
+    }
+  }
+  visit([])
+  if (exhausted)
+    return err(
+      compositionFailure(
+        'search-budget-exceeded',
+        undefined,
+        `global composition exceeded ${constraints.maxSearchNodes} nodes; no plan was accepted`,
+      ),
+    )
+  if (best === undefined)
+    return err(
+      compositionFailure(
+        'career-unsatisfiable',
+        undefined,
+        `no career satisfies ${constraints.id}@${constraints.version}; examined ${visited} bounded nodes`,
+      ),
+    )
+  const composedStages = best.map((plan, index) => {
+    const stage = stages[index]
+    if (stage === undefined)
+      throw new EngineInvariantError('composition stage invariant')
+    const beats = [...plan]
+      .sort(
+        (a, b) =>
+          (a.template.composition?.chronology ?? 0) -
+          (b.template.composition?.chronology ?? 0),
+      )
+      .map((candidate): ComposedBeat => ({
+        variant: candidate.variant,
+        role: candidate.template.placement as ComposedBeat['role'],
+        band: candidate.band,
+        cost: candidate.cost,
+      }))
+    return {
+      stageId: stage.stageId,
+      beats,
+      difficultyCost: totalCost(plan),
+      eventCount: beats.length + stage.narrativeBeats,
+    }
+  })
+  return ok({
+    compositionPolicyId: request.policy.id,
+    compositionPolicyVersion: request.policy.version,
+    difficultyCostPolicyVersion: request.policy.costPolicy.version,
+    ...(request.approvedVariants === undefined
+      ? {}
+      : { variantCatalogVersion: request.approvedVariants.catalogVersion }),
+    stages: composedStages,
+    difficultyCost: composedStages.reduce(
       (sum, stage) => sum + stage.difficultyCost,
       0,
     ),
@@ -566,4 +891,22 @@ export function composedStage(
   stageId: StageId,
 ): ComposedStagePlan | undefined {
   return plan.stages.find((stage) => stage.stageId === stageId)
+}
+
+/**
+ * How many events a stage plays.
+ *
+ * A composed stage runs for exactly as long as the content it was given: its
+ * beats plus its narrative cards. Only an uncomposed run falls back to the
+ * ruleset's fixed count. The transition and the progress a screen draws both
+ * read it here, so they cannot disagree about how long a year is.
+ */
+export function plannedEventCount(
+  plan: ComposedRunPlan | undefined,
+  stage: { readonly id: StageId; readonly eventCount: number },
+): number {
+  if (plan === undefined) {
+    return stage.eventCount
+  }
+  return composedStage(plan, stage.id)?.eventCount ?? stage.eventCount
 }

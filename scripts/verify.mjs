@@ -54,6 +54,22 @@ runPnpm('Content validation', ['game:validate-content', '--', '--seeds=60'])
 // every entry in it must still validate. The deep statistical sweep is a
 // separate, much slower command: `pnpm game:variants audit`.
 runPnpm('Approved variant catalog', ['game:variants', 'check'])
+runPnpm('Grade-1 content validation', [
+  'game:validate-content',
+  '--content=grade-1',
+  '--seeds=60',
+])
+runPnpm('Grade-1 approved variant catalog', [
+  'game:variants',
+  'check',
+  '--content=grade-1',
+])
+runPnpm('Grade-1 deterministic simulation', [
+  'game:simulate',
+  '--content=grade-1',
+  '--runs=200',
+  '--verify=10',
+])
 runPnpm('Deterministic run simulation', [
   'game:simulate',
   '--',

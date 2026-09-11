@@ -51,6 +51,24 @@ export function synthesizeAnswer(
   rng: Rng,
 ): InteractionAnswer {
   switch (presentation.kind) {
+    case 'schedule-builder':
+      return {
+        kind: 'schedule-builder',
+        placements: presentation.activities.map((activity) => ({
+          activityId: activity.id,
+          startMinute: rng.pick(activity.startMinutes),
+        })),
+      }
+    case 'spatial-layout':
+      return {
+        kind: 'spatial-layout',
+        placements: presentation.objects.map((object) => ({
+          objectId: object.id,
+          x: rng.nextInt(0, presentation.width - 1),
+          y: rng.nextInt(0, presentation.height - 1),
+          rotation: object.rotatable && rng.chance(1, 2) ? 90 : 0,
+        })),
+      }
     case 'decision-card':
       return {
         kind: 'decision-card',
@@ -78,9 +96,10 @@ export function synthesizeAnswer(
         value: String(rng.nextInt(low, Math.max(low, high))),
       }
     }
+    case 'quantity-builder':
     case 'budget-builder':
       return {
-        kind: 'budget-builder',
+        kind: presentation.kind,
         lines: presentation.items.map((item) => ({
           itemId: item.id,
           quantity: rng.nextInt(0, Math.min(item.maxQuantity, 6)),

@@ -151,15 +151,21 @@ El pipeline de STAGE-03 recorre ambas fuentes con el mismo contrato: resolver, m
 
 ### Vista pública
 
-`PublicChallengeView` contiene narrativa, interacción y herramientas. No expone el modelo interno ni la solución. Un juego servido al browser no puede garantizar secreto absoluto, pero la arquitectura no entrega la respuesta a los componentes de presentación.
+`PublicChallengeView` contiene narrativa, interacción y herramientas —y, en un repaso, las notas de lo que practica y de lo que sólo se explica—. No expone el modelo interno ni la solución. Un juego servido al browser no puede garantizar secreto absoluto, pero la arquitectura no entrega la respuesta a los componentes de presentación.
+
+La narrativa de una plantilla puede leer los flags de la run (`narrate(model, { flags })`) para un callback; es sólo texto. Parámetros, evaluación y score no leen flags, y los tests comprueban que la interacción es idéntica con y sin historia.
 
 ## Interacciones
 
-La categoría matemática y la interacción son ejes independientes (ADR-007). Familias contratadas en este build:
+La categoría matemática y la interacción son ejes independientes (ADR-007). Kinds contratados en este build:
 
-`decision-card`, `numeric-input`, `budget-builder`, `timeline`, `chart-interpretation`, `assignment-board`, `information-request`.
+`decision-card`, `numeric-input`, `budget-builder`, `timeline`, `chart-interpretation`, `assignment-board`, `information-request`, `number-grid` y, desde STAGE-08 / Phase 1, los tres modos constructivos de 1.º ([ADR-025](adr/ADR-025-full-career-contract-evolution.md)):
 
-Las familias documentadas todavía **no** contratadas son `spatial-grid`, `sequence/trend` y `special minigame`. Ver [cómo agregar una interacción](../08-engineering/game-engine-development.md#agregar-un-interaction-type).
+- `quantity-builder` — conteos o usos por ítem; con `positions`, la vista de posiciones iguales de una distribución (modo conteos de Grid / Select / Classify);
+- `schedule-builder` — un inicio por bloque, en minutos desde medianoche; la presentación trae lugar, duración, preparación, inicios posibles y el eje público de la tarde (Timeline / Schedule);
+- `spatial-layout` — objetos en celdas enteras con giro 0/90; la presentación trae celdas bloqueadas, pasos reservados, puertas, huellas y códigos (Spatial / Graph Canvas).
+
+Las tres respuestas se confirman enteras, pasan por schemas Zod estrictos y se evalúan sobre conteos, minutos y celdas, nunca sobre píxeles. Los kinds técnicos no son los cinco motores de producto: ver [sistema de desafíos](../01-game-design/challenge-system.md). Siguen sin contratar `sequence/trend` y los minijuegos especiales. Ver [cómo agregar una interacción](../08-engineering/game-engine-development.md#agregar-un-interaction-type).
 
 ## Narrativa
 
@@ -182,6 +188,8 @@ El compositor enumera todas las combinaciones de uno o dos beats que cumplen las
 
 `validateComposedPlan` es un programa separado: recalcula rol, banda y costo desde el catálogo y comprueba política, presupuesto, hosts, repeticiones y catálogo aprobado sin volver a componer. El motor consume el plan; no vuelve a sortear en runtime. Snapshot, action log y validación server-only preservan o recomprueban su identidad. `grade-7-composed` es el content set normal que ejerce este camino; el arco docente `grade-7` sigue separado y explícito.
 
+Cuando la política declara `career` ([ADR-025](adr/ADR-025-full-career-contract-evolution.md)), el compositor combina las etapas con una búsqueda acotada: enumera los planes legales de cada etapa, poda por mínimos y máximos globales restantes, ordena los planes válidos por preferencias de producto y objetivos de la política, y desempata con una huella SHA-256 del seed y de la clave canónica del plan. Si agota su presupuesto de nodos, falla en vez de devolver un plan sin probar. El validador recomprueba etapas exactas, cronología, metadata y cuotas. Hoy lo usa sólo la práctica de desarrollo `grade-7-through-1`, con alcance `partial-development`; una carrera oficial de nueve beats necesita contenido de 2.º–5.º. Sin `career`, el camino por etapa queda idéntico.
+
 ## Progresión y ruleset
 
 Las siete etapas canónicas son configuración del ruleset, no `if (year === 3)` repartidos por el motor. El ruleset reúne etapas, política de scoring, de dificultad, de perfil, de composición, de recuperación y pacing narrativo, y se valida al construirse. Un content set sin política de composición conserva su flujo explícito; la demo amplia de 7.º es ese caso.
@@ -193,6 +201,8 @@ Un beat ordinario que sale mal deja una **obligación**, y el año no puede cerr
 La convergencia es estructural, no configurada: sólo un beat ordinario crea obligaciones —así que un repaso no puede crear otra— y un repaso siempre cierra lo que aborda, salga como salga. El techo es un repaso por año, y `GRADUATED` es el estado terminal que toda run válida completada alcanza. El contenido del repaso se deriva de la identidad semántica de la obligación sobre un substream propio, dentro del catálogo aprobado, así que una reproducción llega al mismo repaso.
 
 El motor no conoce un solo id de contenido de recuperación: el content set declara **qué repasa qué**, por plantilla, y una plantilla ausente de esa declaración no deja nada por cerrar — `none` es una decisión escrita, no un silencio que el motor rellene con lo que el año tenga a mano. La política —`recovery-dev-1@1.0.0-candidate`, `official: false`— calibra qué calidad deja algo por cerrar. El máximo no es calibración: `MAX_RECOVERIES_PER_STAGE` fija estructuralmente uno, `RecoveryPolicy` sólo puede expresarlo como el literal `1` para conservarlo inspeccionable y el validador runtime rechaza cualquier otro valor. Cambiar ese límite exige reconsiderar [ADR-024](adr/ADR-024-progression-recovery-and-graduation.md) y sus pruebas de boundedness y pacing.
+
+Si un año debe más de una cosa, el único repaso practica la obligación seleccionada —la primera en orden canónico— y cualquier otra que su ruta declare; el resto se explica con el debrief autorado del content set. La vista pública trae las dos listas y `recordCoverage` las reconstruye desde el registro del año, sin estado persistido nuevo. Con catálogo aprobado presente no hay fallback a variantes curadas: `createRun` rechaza rutas sin variantes aprobadas, sin marco o sin debrief, y el borde del beat lo vuelve a comprobar antes de mover el año.
 
 Un ruleset **oficial** exige que las tres políticas estén marcadas `production`, y rechaza una política de recuperación que no sea oficial. Como las preguntas abiertas 5 y 24 siguen sin cerrarse, hoy no existe ninguna política de producción y `createRuleset({ official: true })` falla a propósito.
 
@@ -218,7 +228,7 @@ createRun(descriptor) -> action[0] -> action[1] -> ... -> finalState
 
 El action log versionado es el artefacto de validación más fuerte: se puede volver a ejecutar. Las secuencias deben empezar en cero y avanzar de a uno; un salto se rechaza en vez de repararse. Un comando que las reglas no habrían permitido invalida el log completo.
 
-`ACTION_LOG_VERSION` es `4`. El log lleva el descriptor completo: `variantCatalogVersion` —sin ese campo una run se reproducía contra el contenido equivocado sin decir nada, que es el defecto que [ADR-021](adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md) encontró y cerró— la huella del plan compuesto, que dice contra qué composición hay que reproducirla, y el `scoreVersion`, que dice bajo qué calibración competitiva se jugó.
+`ACTION_LOG_VERSION` es `5`: agrega las respuestas `quantity-builder`, `schedule-builder` y `spatial-layout`; un log `4` se rechaza explícitamente. El log lleva el descriptor completo: `variantCatalogVersion` —sin ese campo una run se reproducía contra el contenido equivocado sin decir nada, que es el defecto que [ADR-021](adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md) encontró y cerró— la huella del plan compuesto, que dice contra qué composición hay que reproducirla, y el `scoreVersion`, que dice bajo qué calibración competitiva se jugó.
 
 La comparación usa una forma JSON canónica con claves ordenadas, así que el orden de inserción no puede producir un falso negativo.
 
@@ -274,7 +284,7 @@ Opcional. `canonicalize(state)` produce la forma estable sobre la que se puede c
 
 Una instancia de desafío se direcciona por su identidad de contenido completa —familia de escenario, plantilla y variante— más dónde la ubicó la run. Una `ChallengeDefinition` **es** una plantilla; el catálogo de contenido disponible (`ContentCatalog`) está separado del plan de contenido de una run (`RunPlan`), y la elegibilidad por etapa y el rol de colocación son metadata declarativa del contenido, no conocimiento del motor.
 
-Cada plantilla declara una fuente híbrida: registros autorados y, opcionalmente, un espacio generado por restricción. Ambas pasan por validadores genéricos y matemáticos, canonización, fingerprint SHA-256 y deduplicación antes de entrar en un `ApprovedVariantCatalog`. El catálogo vigente es `grade-7-dev-5`; es de desarrollo y la partida real de 7.º lo consume mediante `ApprovedVariantLookup`. Conserva intactas las 159 direcciones de `dev-4` y suma 26 de `g7.bus-travel-review`, para 185 entradas bajo `contentVersion 0.9.0-grade-7`; `dev-1` a `dev-4` siguen publicados sin cambios.
+Cada plantilla declara una fuente híbrida: registros autorados y, opcionalmente, un espacio generado por restricción. Ambas pasan por validadores genéricos y matemáticos, canonización, fingerprint SHA-256 y deduplicación antes de entrar en un `ApprovedVariantCatalog`. El catálogo vigente es `grade-7-dev-5`; es de desarrollo y la partida real de 7.º lo consume mediante `ApprovedVariantLookup`. Conserva intactas las 159 direcciones de `dev-4` y suma 26 de `g7.bus-travel-review`, para 185 entradas bajo `contentVersion 0.9.0-grade-7`; `dev-1` a `dev-4` siguen publicados sin cambios. El content set de desarrollo `grade-7-through-1` usa su propio catálogo, `grade-1-dev-1`: 174 variantes de las siete plantillas de 1.º más las de 7.º re-aprobadas bajo `contentVersion 1.0.0-grade-1`.
 
 `DemoPlan` es otro artefacto: declara qué muestra una demostración docente y su validador exige que no pueda pasar por `StageContentPlan`. No construye una run ni relaja el presupuesto normal de uno a dos beats. La composición normal ya existe como `RunComposer` + `ComposedRunPlan`; son caminos separados.
 

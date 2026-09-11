@@ -26,7 +26,7 @@ import type { RunDescriptor } from './state'
  * replayed against whatever catalog that server happened to hold, and the same
  * seed would resolve different variants without anyone noticing.
  */
-export const ACTION_LOG_VERSION = 4
+export const ACTION_LOG_VERSION = 5
 
 export interface RunActionEnvelope {
   /** Strictly increasing, starting at zero. */

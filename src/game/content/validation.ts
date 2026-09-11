@@ -52,6 +52,7 @@ export interface ContentValidationReport {
 }
 
 export interface ContentValidationInput {
+  readonly approvedVariants?: import('../challenges/variant-source').ApprovedVariantLookup
   readonly ruleset: Ruleset
   readonly catalog: ContentCatalog
   readonly storylets: readonly Storylet[]
@@ -448,13 +449,25 @@ function runGeneration(input: ContentValidationInput): {
   const generation: ChallengeGenerationStats[] = []
 
   for (const definition of input.catalog.templates) {
+    const variants =
+      input.approvedVariants === undefined
+        ? definition.variants
+        : input.approvedVariants.variantsFor(definition.id)
+    if (variants.length === 0)
+      issues.push(
+        error(
+          'challenge.no-approved-variant',
+          definition.id,
+          'no approved variants in the selected catalog',
+        ),
+      )
     let failures = 0
     const presentations = new Set<string>()
     const optionCounts: Record<string, number> = {}
     let checked = 0
 
     for (const stage of definition.stages) {
-      for (const variantId of definition.variants) {
+      for (const variantId of variants) {
         for (let index = 0; index < seeds; index += 1) {
           const seed = toRunSeed(
             `validate-${definition.id}-${stage}-${variantId}-${String(index)}`,
@@ -497,7 +510,12 @@ function runGeneration(input: ContentValidationInput): {
           }
 
           const presentation = materialized.present([])
-          presentations.add(presentationKey(presentation))
+          presentations.add(
+            presentationKey({
+              narrative: materialized.narrative,
+              interaction: presentation,
+            }),
+          )
 
           // Track which position an "obvious" answer would occupy so a content
           // set cannot systematically put the right answer first.
@@ -516,12 +534,12 @@ function runGeneration(input: ContentValidationInput): {
     // a defect: the address says they are different cases and the player sees
     // the same screen. Authored content legitimately stops there; a procedural
     // template will produce many more.
-    if (checked > 1 && presentations.size < definition.variants.length) {
+    if (checked > 1 && presentations.size < variants.length) {
       issues.push(
         error(
           'challenge.variant-collision',
           definition.id,
-          `declares ${String(definition.variants.length)} variants but produced ${String(presentations.size)} distinct instances across ${String(checked)} generations`,
+          `selected ${String(variants.length)} variants but produced ${String(presentations.size)} distinct instances across ${String(checked)} generations`,
         ),
       )
     }

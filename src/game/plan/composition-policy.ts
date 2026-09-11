@@ -20,6 +20,10 @@ import type {
 } from '../difficulty/cost-policy'
 import { candidateDifficultyCostPolicy } from '../difficulty/cost-policy'
 import { DEFAULT_STAGE_BEAT_BUDGET, type StageBeatBudget } from './run-plan'
+import {
+  careerConstraintIssues,
+  type CareerConstraints,
+} from './career-constraints'
 
 /**
  * The soft objectives, in the order they are applied.
@@ -105,6 +109,7 @@ export interface StageCompositionPolicy {
 }
 
 export interface CompositionPolicy {
+  readonly career?: CareerConstraints
   readonly id: string
   readonly version: string
   /**
@@ -161,6 +166,8 @@ export function compositionPolicyIssues(
   policy: CompositionPolicy,
 ): readonly string[] {
   const issues: string[] = []
+  if (policy.career !== undefined)
+    issues.push(...careerConstraintIssues(policy.career))
 
   if (policy.id.trim() === '' || policy.version.trim() === '') {
     issues.push('a composition policy must be identified and versioned')

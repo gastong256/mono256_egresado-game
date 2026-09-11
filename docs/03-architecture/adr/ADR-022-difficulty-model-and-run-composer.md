@@ -12,6 +12,10 @@ no declara que el algoritmo actual ya garantice nueve beats ni cuotas completas.
 [reconciliación de producto](../../07-reference/full-career-product-audit-integration.md).
 No se modifican runtime ni versiones en esta integración.
 
+**Phase 1 (2026-09-11):** con `policy.career`, `composeRun` usa la búsqueda
+global acotada de ADR-025; sin él, este algoritmo por etapa queda idéntico y los
+planes de 7.º no cambian. Engine `7.0.0`.
+
 ## Contexto
 
 [ADR-021](ADR-021-approved-catalog-in-play-and-teacher-demo.md) puso el catálogo aprobado adentro del juego. Lo que quedó sin resolver es **quién elige**.

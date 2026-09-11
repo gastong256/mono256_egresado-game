@@ -78,7 +78,7 @@ Un challenge con matemática correcta pero gameplay pobre no está listo.
 
 ## Del desafío al catálogo
 
-Este pipeline editorial valida **un desafío**. Desde STAGE-03, el pipeline de [ADR-020](../03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md) agrega sobre la población concreta invariantes transversales, chequeos matemáticos por plantilla, fingerprint canónico, deduplicación, integridad del catálogo y auditoría estadística. Eso ya se aplica al catálogo aprobado de desarrollo vigente `grade-7-dev-5`, que además alimenta gameplay; conserva las 159 entradas de `dev-4` y suma 26 variantes de recuperación bajo `contentVersion 0.9.0-grade-7`.
+Este pipeline editorial valida **un desafío**. Desde STAGE-03, el pipeline de [ADR-020](../03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md) agrega sobre la población concreta invariantes transversales, chequeos matemáticos por plantilla, fingerprint canónico, deduplicación, integridad del catálogo y auditoría estadística. Eso ya se aplica al catálogo aprobado de desarrollo vigente `grade-7-dev-5`, que además alimenta gameplay; conserva las 159 entradas de `dev-4` y suma 26 variantes de recuperación bajo `contentVersion 0.9.0-grade-7`. Desde STAGE-08 / Phase 1 el mismo pipeline construye `grade-1-dev-1` para `7.º → 1.º`, con gates de autoría ejecutables por Template —witnesses de cada nivel, señuelos del Intrinsic Math Gate, Estilo independiente de la calidad— y un witness óptimo probado para cada variante aprobada ([detalle](../01-game-design/grade-1-template-design.md#implementación-runtime-phase-1)).
 
 Una plantilla ordinaria no queda incompleta por declarar `none`: el ruteo de recuperación se decide por plantilla y debe tener una razón pedagógica. Cuando declare recovery, se valida como contenido aprobado y debe aislar matemática relevante al error de origen. El [contrato de auditoría posterior a 1.º](post-grade-1-scalability-audit.md) ejerce explícitamente `classroom-layout` y `rehearsal-schedule` fallidas dentro de una etapa y verifica que el único repaso estructural siga siendo coherente; valida la semántica de producto cerrada: uno seleccionado, debrief del resto y cierre total.
 
@@ -128,6 +128,8 @@ Cada variante debe pasar [Intrinsic Math Gate y Definition of Ready](../01-game-
 solubilidad, información completa, aritmética/rounding, banda estructural,
 no trivialidad, ausencia de seleccionar-todo/duplicados y legitimidad de estrategias.
 La validación usa oráculo independiente y fuente aprobada, también para Repaso.
+Para 1.º eso ya corre en el pipeline y en tests, incluido el witness de Math y
+Equipo máximos simultáneos de la expo; lo que sigue es para 2.º–5.º y la carrera.
 
 Scoring por Template: witness de máximos conjuntamente alcanzables, resultado
 inválido bajo, componentes ausentes/presentes y ninguna evidencia duplicada.

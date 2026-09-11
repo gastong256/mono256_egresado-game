@@ -14,12 +14,14 @@ Los cinco pases de 1.º–5.º están `DESIGN-CANDIDATE-APPROVED` en la
 [políticas de composición](full-career-content-matrix.md#políticas-de-composición)
 fijan máximo una Template puntuable por cluster Intercurso/School Event/Egreso,
 arcos recurrentes sin desafío obligatorio, target 1–2 del Proyecto con máximo 2
-`LOCKED` y diversidad cognitiva soft. Son diseño de producto pendiente de
-implementación. El [sistema narrativo](narrative-system.md) gobierna callbacks
+`LOCKED` y diversidad cognitiva soft. Son diseño de producto: 1.º ya corre desde
+STAGE-08 / Phase 1 y 2.º–5.º siguen pendientes de implementación. El
+[sistema narrativo](narrative-system.md) gobierna callbacks
 independientes, externalidad de 4.º, convergencia de 5.º y selección de hechos
 significativos del cierre. Product Audit y conformidad técnica están integrados:
-[Phase 0 DONE; Phase 1 READY](../06-delivery/current-stage.md). El runtime sigue
-siendo la baseline de 7.º, no la carrera completa.
+[Phase 0 y Phase 1 DONE; audit post-G1 READY](../06-delivery/current-stage.md).
+El runtime es la baseline de 7.º más la práctica de desarrollo `7.º → 1.º`, no la
+carrera completa.
 
 ## 2. Género
 

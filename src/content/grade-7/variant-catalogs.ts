@@ -19,11 +19,11 @@ import {
   type ApprovedVariantCatalog,
   type ApprovedVariantLookup,
 } from '@/game'
-import catalogDev1 from './variant-catalog.grade-7-dev-1.json'
-import catalogDev2 from './variant-catalog.grade-7-dev-2.json'
-import catalogDev3 from './variant-catalog.grade-7-dev-3.json'
-import catalogDev4 from './variant-catalog.grade-7-dev-4.json'
-import catalogDev5 from './variant-catalog.grade-7-dev-5.json'
+import catalogDev1 from './variant-catalog.grade-7-dev-1.json' with { type: 'json' }
+import catalogDev2 from './variant-catalog.grade-7-dev-2.json' with { type: 'json' }
+import catalogDev3 from './variant-catalog.grade-7-dev-3.json' with { type: 'json' }
+import catalogDev4 from './variant-catalog.grade-7-dev-4.json' with { type: 'json' }
+import catalogDev5 from './variant-catalog.grade-7-dev-5.json' with { type: 'json' }
 import { GRADE_7_VARIANT_CATALOG_VERSION } from './versions'
 
 /**

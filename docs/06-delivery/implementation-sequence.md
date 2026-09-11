@@ -17,9 +17,10 @@ Si el roadmap y el código difieren, **el código gana** y el roadmap se corrige
 - Fases de validación externa y congelamiento: [ciclo de entrega real](../00-product/real-delivery-lifecycle.md).
 - Qué se construye por capas de alcance: [alcance y roadmap](../00-product/scope-and-roadmap.md) y [backlog](mvp-backlog.md).
 
-**Última reconciliación:** 10 de septiembre de 2026, Full-Career Product Audit y
-conformidad técnica integrados: Phase 0 `DONE`, Phase 1 `READY`. Baseline runtime
-preservada; [trazabilidad del cierre](../07-reference/full-career-product-audit-integration.md).
+**Última reconciliación:** 11 de septiembre de 2026, STAGE-08 / Phase 1 `DONE`:
+1.º implementado sobre `grade-1-dev-1`, contratos acotados de ADR-025 en runtime y
+audit post-G1 `READY`. Antecedente: Phase 0 cerrada el 10 de septiembre
+([trazabilidad](../07-reference/full-career-product-audit-integration.md)).
 
 ---
 
@@ -60,7 +61,7 @@ Tabla de navegación. Los contratos de cada etapa, más abajo, son la autoridad.
 | [STAGE-06](#stage-06-scorepolicy-competitiva) | ScorePolicy competitiva | `DONE` | STAGE-05 | — |
 | [GATE-TG1](#gate-tg1-teacher-gate-1) | **Teacher Gate 1** | `PASSED_WITH_REQUIRED_ADJUSTMENTS` | STAGE-04, STAGE-06 | externo |
 | [STAGE-07](#stage-07-invariante-de-egreso-fail-forward-y-recuperaciones) | Egreso, fail-forward y recuperaciones | `DONE` | GATE-TG1 | — |
-| [STAGE-08](#stage-08-contenido-incremental-de-1º-a-5º) | Contenido incremental 1.º → 5.º | `IN_PROGRESS` · **actual** · Phase 1 READY | STAGE-07 | auditoría tras 1.º |
+| [STAGE-08](#stage-08-contenido-incremental-de-1º-a-5º) | Contenido incremental 1.º → 5.º | `IN_PROGRESS` · **actual** · Phase 1 DONE · audit post-G1 READY | STAGE-07 | auditoría tras 1.º |
 | [STAGE-09](#stage-09-fair-mode-servidor-autoritativo-y-ranking) | Fair mode, servidor autoritativo y ranking | `NOT_STARTED` | STAGE-06, STAGE-08 | — |
 | [GATE-TG2](#gate-tg2-teacher-gate-2) | **Teacher Gate 2** | `TEACHER_GATE` | STAGE-09 | externo |
 | [FREEZE](#freeze-congelamiento-de-competencia) | Congelamiento de competencia | `NOT_STARTED` | GATE-TG2 | — |
@@ -96,7 +97,7 @@ flowchart TD
 
 ## Matriz de capacidades
 
-Estado real contra el código al 2 de septiembre de 2026, tras cerrar STAGE-07. Es la base de la que salen los estados de etapa de arriba, y lo que hay que reverificar antes de planificar.
+Estado real contra el código al 11 de septiembre de 2026, tras cerrar STAGE-08 / Phase 1. Es la base de la que salen los estados de etapa de arriba, y lo que hay que reverificar antes de planificar.
 
 | Capacidad | Estado | Evidencia | Etapa |
 |---|---|---|---|
@@ -142,16 +143,20 @@ Estado real contra el código al 2 de septiembre de 2026, tras cerrar STAGE-07. 
 | Invariante de egreso | `DONE` | `withGraduation` en `src/game/progression/recovery.ts`, `RunCompletion.graduated`, invariantes tipados, servidor autoritativo; **20.000 carreras de seis años, 20.000 egresadas** | STAGE-07 |
 | Recuperaciones y fail-forward | `DONE` | [ADR-024](../03-architecture/adr/ADR-024-progression-recovery-and-graduation.md), `recovery-dev-1`, `g7.bus-travel-review`, `tests/unit/progression-reachability.test.ts` (espacio de estados recorrido entero) | STAGE-07 |
 | Recuperación fuera del score competitivo | `DONE` | `fair-score.ts` descarta la evidencia por rol; test de anti-farmeo en `tests/integration/recovery-run.test.ts` | STAGE-07 |
-| Carrera completa jugable de seis años | `PARTIAL` | la estructura la ejerce el fixture `six-stage-progression`; el **contenido** de 1.º–5.º no existe | STAGE-08 |
-| Diseño de contenido 1.º · 2.º · 3.º · 4.º · 5.º | `DESIGN-CANDIDATE-APPROVED` | cinco pases completos en matriz v0.3; auditoría cruzada, pases raros/epílogo y reconciliación final pendientes | STAGE-08 / Phase 0 |
-| Contenido runtime 1.º · 2.º · 3.º · 4.º · 5.º | `NOT_STARTED` | sólo existe `src/content/grade-7/` | STAGE-08 / Phase 1+ |
+| Carrera completa jugable de seis años | `PARTIAL` | la estructura la ejerce el fixture `six-stage-progression`; 1.º existe desde Phase 1 y `7.º → 1.º` corre como práctica; el **contenido** de 2.º–5.º no existe | STAGE-08 |
+| Diseño de contenido 1.º · 2.º · 3.º · 4.º · 5.º | `DESIGN-CANDIDATE-APPROVED` | cinco pases completos en matriz v0.3, auditoría cruzada y reconciliación cerradas en Phase 0 | STAGE-08 / Phase 0 |
+| Contenido runtime 1.º | `DONE` para desarrollo | `src/content/grade-1/`, catálogo `grade-1-dev-1` (174 variantes de 1.º), `tests/unit/grade-1-*.test.ts`, `tests/integration/grade-1-run.test.ts`, `tests/e2e/grade-1.spec.ts`; estado de contenido `draft` hasta la revisión docente | STAGE-08 / Phase 1 |
+| Contenido runtime 2.º · 3.º · 4.º · 5.º | `NOT_STARTED` | bloqueado por el audit post-G1 | STAGE-08 |
+| Composición global de carrera | `DONE` como mecanismo | `src/game/challenges/composition-metadata.ts`, `src/game/plan/career-constraints.ts`, búsqueda acotada en `composer.ts`, validador global; `tests/unit/career-composition.test.ts`. Sólo la práctica parcial la usa: la carrera oficial de nueve beats espera 2.º–5.º | STAGE-08 / Phase 1 |
+| Repaso practicado/debriefeado y approved-only fail-closed | `DONE` | `src/game/runs/recovery-content.ts`, `recoveryCoverage`/`recordCoverage`, `tests/unit/recovery-coverage.test.ts`; veredicto pedagógico en el audit post-G1 | STAGE-08 / Phase 1 |
+| Modos constructivos: cantidades y posiciones, agenda, plano | `DONE` para 1.º | `quantity-builder`, `schedule-builder`, `spatial-layout`; renderers accesibles sin arrastre | STAGE-08 / Phase 1 |
 | Verificación autoritativa por replay | `PARTIAL` | `src/server/game/validate-run.ts`: replaya, valida el plan compuesto y **calcula su propio score competitivo**; nada de lo que el cliente afirme se lee. Faltan endpoints, sesión, rate limit y persistencia | STAGE-09 |
 | Ranking con personal best | `NOT_STARTED` | — | STAGE-09 |
 | Desempate lexicográfico | `NOT_STARTED` | — | STAGE-09 |
 | Fair mode operativo | `PARTIAL` | `GameMode` ya declara `'fair'` como literal; no hay comportamiento asociado | STAGE-09 |
 | Configuración de competencia | `NOT_STARTED` | — | FREEZE |
-| Simulación determinista masiva | `DONE` para el alcance actual | `src/game/testing/simulation.ts`, `pnpm game:simulate`, 200 runs en `pnpm verify`; reporta egresos, repasos y previas, y `not-graduated` es hallazgo | transversal |
-| E2E y accesibilidad automatizada | `DONE` para el alcance actual | `tests/e2e/`, `@axe-core/playwright`, 70 tests | transversal |
+| Simulación determinista masiva | `DONE` para el alcance actual | `src/game/testing/simulation.ts`, `pnpm game:simulate`, 200 runs de 7.º y 200 de `7.º → 1.º` en `pnpm verify`; reporta egresos, repasos y previas, y `not-graduated` es hallazgo | transversal |
+| E2E y accesibilidad automatizada | `DONE` para el alcance actual | `tests/e2e/`, `@axe-core/playwright`, 80 tests | transversal |
 | Catálogo de contenido separado del plan de la run | `DONE` | `ContentCatalog`, `RunPlan`, `tests/unit/content-model.test.ts` | STAGE-02 |
 | Elegibilidad por etapa y roles de colocación | `DONE` | declarativos por plantilla; elegibilidad no contigua probada | STAGE-02 |
 | Presupuesto de beats por año | `DONE` como contrato validable | `DEFAULT_STAGE_BEAT_BUDGET`, `validateStagePlan` | STAGE-02 |
@@ -159,10 +164,10 @@ Estado real contra el código al 2 de septiembre de 2026, tras cerrar STAGE-07. 
 
 ### Discrepancias registradas
 
-- `STAGE_ORDER` incluye las siete etapas hasta `graduation`, y **el egreso ya existe**: STAGE-07 lo volvió un estado terminal que toda run válida completada alcanza. Lo que sigue faltando es el **contenido** de 1.º a 5.º; hoy la carrera de seis años se juega entera sólo en el fixture `six-stage-progression`, que existe para probar que el motor la sostiene. Documentación que hable de la carrera completa **jugable** sigue describiendo objetivo, no presente.
+- `STAGE_ORDER` incluye las siete etapas hasta `graduation`, y **el egreso ya existe**: STAGE-07 lo volvió un estado terminal que toda run válida completada alcanza. Lo que sigue faltando es el **contenido** de 2.º a 5.º —1.º existe desde STAGE-08 / Phase 1 como práctica `7.º → 1.º`—; hoy la carrera de seis años se juega entera sólo en el fixture `six-stage-progression`, que existe para probar que el motor la sostiene. Documentación que hable de la carrera completa **jugable** sigue describiendo objetivo, no presente.
 - El presupuesto de uno a dos beats por año era un contrato de **plan** que ningún código construía. STAGE-04 lo reconcilió por escrito con el `DemoPlan`; **STAGE-05 lo cerró por código**: existe una partida normal de 7.º de un anchor más un secundario, el motor la ejecuta y un validador independiente la comprueba. El arco de ocho eventos sigue existiendo y es el demo.
 - `GameMode` admite `'fair'` y `'practice'`, y `DifficultySetting` admite `'adaptive'`. Son literales que el motor acepta; ninguno tiene todavía la semántica competitiva que el roadmap describe a partir de STAGE-06.
-- **7.º tiene dos rulesets y juega de dos formas.** `grade-7` es el arco completo de ocho eventos, que es el demo docente; `grade-7-composed` es la partida normal de tres. La pantalla del juego sigue usando el primero: cuál corresponde a un jugador es una decisión de producto que tiene sentido cuando existan los años 1.º a 5.º. Ver [ADR-022](../03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md).
+- **7.º tiene dos rulesets y juega de dos formas.** `grade-7` es el arco completo de ocho eventos, que es el demo docente; `grade-7-composed` es la partida normal de tres. La pantalla del juego sigue usando el primero: cuál corresponde a un jugador es una decisión de producto que tiene sentido cuando exista la carrera completa. Ver [ADR-022](../03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md).
 
 ---
 
@@ -767,13 +772,14 @@ a TG1. El techo de un Repaso por etapa sigue siendo estructura de ADR-024.
 
 ### STAGE-08 — Contenido incremental de 1.º a 5.º
 
-- **Estado:** `IN_PROGRESS` — **etapa actual; Phase 0 DONE / Phase 1 READY**
+- **Estado:** `IN_PROGRESS` — **etapa actual; Phase 0 DONE / Phase 1 DONE / audit post-G1 READY**
 - **Depende de:** STAGE-07 (`DONE`)
 - **Desbloquea:** STAGE-09
 
 **Propósito.** Construir la carrera completa sobre las fundaciones existentes.
-El diseño aprobado no es runtime: sólo 7.º tiene catálogo de producción; la carrera
-sintética demuestra progresión de seis etapas, no contenido de 1.º–5.º.
+El diseño aprobado sólo es runtime donde se implementó: 7.º y, desde Phase 1, 1.º
+tienen catálogo aprobado; la carrera sintética demuestra progresión de seis etapas,
+no contenido de 2.º–5.º.
 
 #### Phase 0 — diseño de carrera completo
 
@@ -799,28 +805,30 @@ oficial, validación con estudiantes ni autorización de un freeze.
 
 #### Phase 1 — implementar 1.º real
 
-**Estado: `READY · NEXT · NOT STARTED`.** Orden acotado:
+**Estado: `DONE`** (11 de septiembre de 2026). Evidencia por paso:
 
-1. Leer diseño G1, guía de autoría y [ADR-025](../03-architecture/adr/ADR-025-full-career-contract-evolution.md).
-   Definir metadata y contratos sólo para los modos de G1; pruebas de evaluator,
-   addressing, respuesta, snapshot y replay según el contrato que efectivamente cambie.
-2. Resolver el fallback de recovery con catálogo aprobado vacío: fail-closed.
-   Preparar selección determinista y debrief autorado del resto sin otro scheduler.
-3. Implementar `student-day-challenge-wheel` y `mobile-data` con variantes y oráculos
-   independientes, sin confundir umbral/proporcionalidad ni premiar sólo elegir.
-4. Implementar `rehearsal-schedule` y `schedule-review` con una agenda
-   constructiva accesible, no asumir que el timeline de opciones ya lo resuelve.
-5. Implementar `classroom-layout` y `scale-fit-review`: geometría discreta y
-   controles teclado/tap, sin píxeles DOM en el evaluador.
-6. Implementar `course-project-expo`, evidencia Team independiente y callbacks.
-   Mantener las oportunidades Math/Team simultáneamente alcanzables.
-7. Integrar metadata de composición y límites aplicables a la carrera parcial de
-   desarrollo. No forzar cuotas de carrera completa sobre contenido que aún no
-   existe; extender búsqueda/validador global de ADR-025 con fixtures y comprobar
-   nueve beats/seis etapas cuando exista el conjunto completo.
-8. Validar variantes, estados de outcome, accesibilidad, reanudación, replay y
-   simulación G1; actualizar docs y versiones sólo cuando un contrato lo exija.
-9. **STOP: ejecutar el [gate post-G1](../04-quality/post-grade-1-scalability-audit.md).**
+1. [x] Metadata y contratos sólo para los modos de 1.º, con tests de evaluador,
+   addressing, respuesta, snapshot y replay: `composition-metadata.ts`,
+   `interactions.ts`, `commands.ts`; action log `5`, snapshot `7` sin cambios.
+2. [x] Recovery fail-closed con catálogo aprobado —`createRun` y borde del beat—;
+   selección canónica y debrief autorado del resto derivados, sin otro scheduler:
+   `recovery-content.ts`, `recoveryCoverage`, `recordCoverage`.
+3. [x] `student-day-challenge-wheel` y `mobile-data` con variantes y oráculos
+   independientes; señuelos del Intrinsic Math Gate en el pipeline.
+4. [x] `rehearsal-schedule` y `schedule-review` con agenda constructiva accesible
+   (`schedule-builder`), viaje, preparación, ventanas, dependencia y límite fijo.
+5. [x] `classroom-layout` y `scale-fit-review` sobre celdas enteras, con controles
+   teclado/tap y búsqueda acotada de witnesses; ningún píxel en el evaluador.
+6. [x] `course-project-expo` con Equipo independiente —participación, ofrecimiento
+   y pedido—, Math y Equipo máximos simultáneos probados por variante, y callbacks.
+7. [x] Metadata de composición y `CareerConstraints` con alcance
+   `partial-development` para `7.º → 1.º`; búsqueda/validador global probados con
+   un catálogo sintético de nueve beats, sin fabricar 2.º–5.º.
+8. [x] Variantes (`grade-1-dev-1`, 174 de 1.º, witness por entrada), outcomes,
+   accesibilidad (axe, teclado, 360/390 px), reanudación, replay, servidor y
+   simulación; 62 archivos/1339 tests, 80 E2E, 5000 + 5000 + 2000 runs
+   simuladas egresadas con 0 hallazgos. Docs y versiones actualizados.
+9. **NEXT — `READY`, no ejecutado: [gate post-G1](../04-quality/post-grade-1-scalability-audit.md).**
    Forzar `classroom-layout INVALID` + `rehearsal-schedule INVALID`:
    un Repaso seleccionado, debrief del resto y cierre conjunto, sin recursión,
    hacks por ID ni contribución a FairScore/Prestige. **No implementarlo como
@@ -867,7 +875,8 @@ pueden integrarse en G4/5; sus hechos verificables se originan desde el año fue
 sustituyen estos gates. Objetivos editoriales y calibraciones versionadas conservan
 la madurez del [registro](../07-reference/decision-register.md).
 
-**Siguiente tarea.** `STAGE-08 / PHASE 1 — IMPLEMENT GRADE 1`.
+**Siguiente tarea.** `STAGE-08 — Post-Grade-1 Scalability Audit` (`READY`). 2.º–5.º
+quedan bloqueados hasta su PASS documentado.
 
 **Exit gate.** ¿Una run real, auditada y accesible recorre
 `7.º → 1.º → 2.º → 3.º → 4.º → 5.º → EGRESADO`, con pacing medido y sin duplicar

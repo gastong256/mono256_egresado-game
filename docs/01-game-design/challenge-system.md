@@ -8,8 +8,8 @@ Evitar que Egresado se transforme en una secuencia de multiple-choice. El conten
 
 **LOCKED en producto; soporte runtime parcial.** Esta taxonomía supersede la
 lista histórica de diez familias y los nombres de tableros como primitivas
-independientes. `ScenarioFamily` sigue siendo escenario; los ocho
-`InteractionKind` actuales son contratos técnicos, no ocho motores de producto.
+independientes. `ScenarioFamily` sigue siendo escenario; los once
+`InteractionKind` actuales son contratos técnicos, no once motores de producto.
 
 | Motor | Modos / componentes, no motores adicionales | Templates de referencia |
 |---|---|---|
@@ -23,8 +23,11 @@ Los modos compuestos conservan un motor principal para contar diversidad.
 Intercurso puede combinar Allocate con Timeline; Project Final combina asignación,
 tiempo y contingencia; `represent-class` usa comparación/construcción acotada y
 comunicación separada, cuya composición concreta se cierra al autorarlo.
-Estas correspondencias son diseño: el mural actual usa BudgetBuilder y el
-timeline actual compara opciones; no se declara implementado un canvas o planner.
+Estas correspondencias son de producto. En runtime, 1.º implementa sólo los modos
+que necesita: `quantity-builder` (cantidades de un plan y posiciones de una
+distribución), `schedule-builder` (agenda constructiva) y `spatial-layout` (plano
+por coordenadas), todos operables con teclado y tap, sin arrastre. En 7.º el mural
+sigue usando BudgetBuilder y el colectivo compara opciones.
 
 Sin sexto motor en Phase 1 salvo evidencia de que los cinco distorsionan la acción
 matemática y revisión explícita de diseño. Sliders, tablas, inputs, pedir información

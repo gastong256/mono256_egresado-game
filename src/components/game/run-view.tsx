@@ -117,15 +117,61 @@ export function RunView({ controller, dependencies }: RunViewProps) {
 
   return (
     <GameSheet>
+      {/* A stage header counts its own stage: a 7.º → 1.º run shows each year's cells, not the career's. */}
       <StageHeader
         stage={stageLabel(state.run.stage)}
-        resolved={progress.eventsResolved}
-        total={progress.totalEvents}
+        resolved={progress.resolvedInStage}
+        total={progress.stageCells}
       />
 
       <CareerStrip career={state.run.career} />
 
       <SceneColumn>
+        {view?.review === undefined ? null : (
+          <section
+            aria-labelledby="review-notes-title"
+            data-testid="review-notes"
+            className="border-rule bg-surface border p-3"
+          >
+            <h2
+              id="review-notes-title"
+              className="text-goal text-ink font-display"
+            >
+              Repaso:{' '}
+              {view.review.practised.map((note) => note.title).join(' · ')}
+            </h2>
+            {view.review.practised.map((note) => (
+              <p
+                key={note.obligationId}
+                className="text-body text-ink-secondary"
+              >
+                {note.text}
+              </p>
+            ))}
+            <p className="text-caption text-ink-label mt-2">
+              Un único Repaso cierra lo que quedó pendiente este año, aunque la
+              respuesta no salga completa.
+            </p>
+            {view.review.debriefed.length === 0 ? null : (
+              <ul
+                aria-label="Para recordar"
+                className="mt-3 flex list-none flex-col gap-3 p-0"
+              >
+                {view.review.debriefed.map((note) => (
+                  <li key={note.obligationId} data-testid="review-debrief">
+                    <h3 className="text-meta text-ink font-bold">
+                      Para recordar: {note.title}
+                    </h3>
+                    <p className="text-body text-ink-secondary">{note.text}</p>
+                    <p className="text-caption text-ink-label">
+                      Se comenta acá; no se practica en otra interacción.
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        )}
         {view !== undefined && active !== undefined ? (
           <ChallengeFrame
             view={view}

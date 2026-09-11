@@ -34,11 +34,14 @@
  */
 
 import type { ChallengeVariantRef } from '../challenges/content-model'
-import { formatVariantAddress } from '../challenges/content-model'
+import {
+  formatVariantAddress,
+  parseVariantAddress,
+} from '../challenges/content-model'
 import type { SolutionQuality } from '../challenges/taxonomy'
 import { SOLUTION_QUALITIES } from '../challenges/taxonomy'
 import type { StageId } from './stages'
-import { stageIndex } from './stages'
+import { isStageId, stageIndex } from './stages'
 
 /**
  * Why a beat left something to close.
@@ -272,6 +275,117 @@ export function pendingForStage(
   return orderObligations(
     progression.pending.filter((entry) => entry.stageId === stageId),
   )
+}
+
+/**
+ * The obligation a stage's single remediation beat is chosen for.
+ *
+ * The first one in canonical order — school order, then the order the beats
+ * were played, then the semantic address. ADR-025 accepts that order as the
+ * deterministic selection; an editorial priority would be content, not a
+ * second scheduler.
+ */
+export function selectedObligation(
+  progression: ProgressionState,
+  stageId: StageId,
+): RecoveryObligation | undefined {
+  return pendingForStage(progression, stageId)[0]
+}
+
+/**
+ * How one remediation beat relates to the obligations it closes.
+ *
+ * ADR-024 closes every obligation of a year with one review, and closing an id
+ * is not the same as practising its concept. An obligation is **practised**
+ * when the review being played is one its source declares; any other one is
+ * **debriefed** — explained with authored text, never practised in a second
+ * interaction. Both halves are derived from the obligations and the content
+ * set's routing, so nothing new is persisted and a replay reaches the same
+ * split.
+ */
+export interface RecoveryCoverage {
+  /** Practised by the review being played. Canonical order. */
+  readonly practised: readonly RecoveryObligation[]
+  /** Closed by the same beat with an authored debrief. Canonical order. */
+  readonly debriefed: readonly RecoveryObligation[]
+}
+
+export function recoveryCoverage(
+  obligations: readonly RecoveryObligation[],
+  reviewTemplateId: string,
+  reviewsOf: (sourceTemplateId: string) => readonly string[],
+): RecoveryCoverage {
+  const ordered = orderObligations(obligations)
+  const practises = (obligation: RecoveryObligation): boolean =>
+    reviewsOf(obligation.source.templateId).includes(reviewTemplateId)
+  return {
+    practised: ordered.filter(practises),
+    debriefed: ordered.filter((obligation) => !practises(obligation)),
+  }
+}
+
+/**
+ * Where a closed obligation came from, read back from its semantic identity.
+ *
+ * `obligationId` writes `stage/eventIndex/family/template/variant`; this is its
+ * inverse, and it refuses anything else instead of guessing.
+ */
+export function obligationSourceOf(id: string):
+  | {
+      readonly stageId: StageId
+      readonly sourceEventIndex: number
+      readonly source: ChallengeVariantRef
+    }
+  | undefined {
+  const [stageId, eventIndex, ...address] = id.split('/')
+  if (stageId === undefined || !isStageId(stageId)) {
+    return undefined
+  }
+  const sourceEventIndex = Number(eventIndex)
+  if (
+    eventIndex === undefined ||
+    !/^\d+$/u.test(eventIndex) ||
+    !Number.isSafeInteger(sourceEventIndex)
+  ) {
+    return undefined
+  }
+  const source = parseVariantAddress(address.join('/'))
+  if (!source.ok) {
+    return undefined
+  }
+  return { stageId, sourceEventIndex, source: source.value }
+}
+
+/**
+ * The coverage of a remediation that already happened.
+ *
+ * A record keeps what it closed and which review it played; with the content
+ * set's routing that is enough to say again, months later, which concept was
+ * practised and which was only debriefed.
+ */
+export function recordCoverage(
+  record: RecoveryRecord,
+  reviewsOf: (sourceTemplateId: string) => readonly string[],
+): {
+  readonly practised: readonly string[]
+  readonly debriefed: readonly string[]
+} {
+  const played = record.content?.templateId
+  const practised: string[] = []
+  const debriefed: string[] = []
+  for (const id of record.resolved) {
+    const source = obligationSourceOf(id)
+    if (
+      played !== undefined &&
+      source !== undefined &&
+      reviewsOf(source.source.templateId).includes(played)
+    ) {
+      practised.push(id)
+    } else {
+      debriefed.push(id)
+    }
+  }
+  return { practised, debriefed }
 }
 
 /** How many remediation beats a stage has already played. */

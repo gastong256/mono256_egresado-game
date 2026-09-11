@@ -137,17 +137,18 @@ Los cinco ejes existen en los contratos actuales. `variantCatalogVersion` y `sco
 - el dominio devuelve descripciones y efectos; el shell hace persistencia, analytics y UI;
 - una constante de scoring recomendada no se escribe como número mágico: se escribe como política versionada.
 
-## Deltas de carrera completa — diseño cerrado, implementación futura
+## Deltas de carrera completa — estado tras Phase 1
 
 La [conformidad técnica de Phase 0](../04-quality/full-career-technical-conformance.md)
-aprueba viabilidad sobre la baseline, con estos deltas pendientes gobernados por
-[ADR-025](adr/ADR-025-full-career-contract-evolution.md):
+aprobó viabilidad sobre la baseline con deltas gobernados por
+[ADR-025](adr/ADR-025-full-career-contract-evolution.md). Phase 1 implementó los
+que 1.º necesitaba:
 
 | Capacidad | Estado real / delta |
 |---|---|
-| Composición global de carrera | El composer actual decide por etapa en una pasada; faltan metadata y cuotas globales, búsqueda acotada y validación independiente de completitud. |
-| Cinco motores de interacción | Taxonomía de producto normalizada; ocho kinds técnicos actuales no equivalen a cinco motores completos. Timeline constructivo, espacial y respuestas multi-eje requieren extensiones. |
-| Repaso y debrief | Selección determinista/cierre conjunto implementados; debrief de no seleccionadas y hardening approved-only pendientes. |
+| Composición global de carrera | **Implementada como mecanismo**: metadata tipada, `CareerConstraints`, búsqueda acotada y validador independiente. Sólo la carrera parcial de desarrollo `7.º → 1.º` la usa; la composición oficial de nueve beats espera contenido de 2.º–5.º. |
+| Cinco motores de interacción | Once kinds técnicos. Allocate/Constrain (`quantity-builder`, `budget-builder`, `assignment-board`), Timeline constructivo (`schedule-builder`), Spatial (`spatial-layout`) y conteos de Grid/Select/Classify (`quantity-builder` con posiciones) corren para 1.º; la respuesta compuesta Math/Aura sigue pendiente para 2.º. |
+| Repaso y debrief | **Implementados**: selección canónica, notas practicadas/debriefeadas derivadas, cierre conjunto y approved-only fail-closed en creación y en el borde del beat. El veredicto pedagógico es del gate post-G1. |
 | Prestige y hechos | Agregador independiente y hechos verificables/deduplicados pendientes; Style no es fuente competitiva. |
 | Saliencia/epílogo | History/flags existentes reutilizables; selector autorado por segmentos y UI de carrera pendientes. |
 | Rareza | Substreams disponibles; política/budgets y addressing semántico de eventos pendientes. |

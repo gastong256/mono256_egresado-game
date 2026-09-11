@@ -75,3 +75,35 @@ Dice **«vas camino a»** y no «sos»: 7.º es el primero de seis años, y un v
 Todo el tratamiento de imagen vive acá y no se repite por pantalla: 16:9 (3:2 en mobile), `object-fit: cover`, foco por `object-position`, borde de 1 px, radio 0, desaturado ~15 %.
 
 El pack raster está **briefeado y no generado**, y ninguna pantalla del slice de 7.º lo monta. El componente existe para que la primera imagen que se produzca entre por un solo lugar.
+
+## StageHeader: progreso de la etapa
+
+Las celdas cuentan la **etapa** que nombra el encabezado, con la duración del
+plan cuando la run está compuesta; un repaso agrega su celda cuando se abre. Si
+un año largo no entra, las celdas se angostan en vez de empujar la hoja fuera de
+una pantalla de 360 px. La lectura accesible sigue siendo «Evento n de m».
+
+## Modos constructivos de 1.º
+
+Tres renderers de `src/components/game/interactions/`, sobre las mismas reglas:
+controles nativos —campos de cantidad con botones de 44 px y `select`— como vía
+principal, nada que arrastrar, un borrador que se confirma entero y una vista
+que **dibuja lo elegido sin juzgarlo**. Ninguno suma, convierte ni valida.
+
+- **QuantityBuilder** — cantidades de un plan. Sin total corriente: sumarlo es el
+  desafío. En una distribución (la rueda) agrega sus posiciones: cada una lleva
+  escrito el código de su categoría y las libres tienen borde punteado.
+- **ScheduleBuilder** — un inicio por actividad y la vista de la tarde en
+  columnas por lugar, filas de cinco minutos. No dibuja viajes ni preparaciones,
+  que son la cuenta; la lista «Agenda elegida» dice lo mismo por escrito.
+- **SpatialLayout** — el plano como tabla de coordenadas. Cada celda escribe el
+  código del objeto que la ocupa o la marca de lo que ya estaba (`col`, `pas`,
+  `pta`), con referencias al pie; dos objetos en una celda se escriben juntos y
+  engrosan el borde, sin llamarlo error. Una región que scrollea es alcanzable
+  por teclado.
+
+## Notas del Repaso
+
+Antes del único repaso del año, un bloque dice qué concepto se practica y lista
+«Para recordar» los que sólo se explican. Es texto del contenido: el motor no
+decide la prosa, sólo cuál nota es cuál.

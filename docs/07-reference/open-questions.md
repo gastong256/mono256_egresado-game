@@ -91,15 +91,16 @@ Incorporadas desde el [Project Blueprint v0.2](blueprint-v0.2-integration.md). S
 
 ### 46-bis. Catálogo ejecutable pendiente, prediseño cerrado
 
-Las ocho Templates actuales —siete ordinarias y un Repaso— siguen siendo baseline.
-Las 25 futuras, sus nueve rutas recovery-capable y sus `none` están aprobados en
-diseño. No añadir/reemplazar familias antes de G1 salvo contradicción técnica,
-invalidez matemática o evidencia docente/de acceso real. Variantes aprobadas se
-producen contra targets, no se confunden con beats por carrera.
+7.º conserva sus ocho Templates —siete ordinarias y un Repaso—. 1.º ya tiene sus
+cinco Templates y dos Repasos en el catálogo de desarrollo `grade-1-dev-1`; las
+20 de 2.º–5.º, sus rutas y sus `none` siguen aprobados sólo en diseño. No
+añadir/reemplazar familias salvo contradicción técnica, invalidez matemática o
+evidencia docente/de acceso real. Variantes aprobadas se producen contra
+targets, no se confunden con beats por carrera.
 
 *Gate: autoría/validación incremental.* Ver [matriz](../01-game-design/full-career-content-matrix.md).
 
-47. ¿Qué pesos/hechos estratégicos expresan Estilo en cada Template? Ya se excluye inferir identidad de Math sola, azar o INVALID; nunca aporta FairScore/Prestige. Los valores actuales requieren revisión al implementar. *Gate: autoría/freeze de perfiles.*
+47. ¿Qué pesos/hechos estratégicos expresan Estilo en cada Template? Ya se excluye inferir identidad de Math sola, azar o INVALID; nunca aporta FairScore/Prestige. 1.º implementa rasgos candidatos (`grade-1-strategy-evidence@1-candidate`) con un gate que impide atar un estilo a un nivel de resultado; los pesos siguen abiertos. *Gate: autoría/freeze de perfiles.*
 48. ¿Qué acento visual mínimo distingue cada año? Es una decisión del sistema de diseño, prevista para v0.4 y **explícitamente diferida**. No la resuelve un documento de producto. *Gate: alcance de la v0.4 del sistema de diseño.*
 49. ¿Se produce el pack raster de ocho imágenes o el producto sale confirmando que la UI sola alcanza? Todas las pantallas corren hoy con cero imágenes. *Gate: alcance de la v0.3 del sistema de diseño.*
 50. ¿Cuánto tiempo se conservan action logs, ranking público y datos del evento después de la feria, y qué se archiva o anonimiza? *Gate: persistir datos reales de participantes.* Se cruza con la pregunta 31.
@@ -110,7 +111,7 @@ producen contra targets, no se confunden con beats por carrera.
 
 La **capacidad** no forma parte de esta pregunta abierta: bajo [ADR-024](../03-architecture/adr/ADR-024-progression-recovery-and-graduation.md), una etapa juega como máximo un repaso estructural. Cambiar ese límite requeriría reconsiderar explícitamente el ADR y repetir sus pruebas de boundedness, pacing y egreso; no alcanza con calibrar una policy.
 
-55. **Semántica cerrada:** un Repaso determinista, debrief de no seleccionadas y cierre de todas. Falta validar `classroom-layout INVALID + rehearsal-schedule INVALID` con uno máximo. *Gate: [audit post-G1](../04-quality/post-grade-1-scalability-audit.md), antes de escalar 2.º–5.º.* `reviewPriority` recomendado; representación ADR-025.
+55. **Semántica cerrada e implementada en Phase 1:** un Repaso determinista, debrief de no seleccionadas y cierre de todas. Falta el veredicto sobre `classroom-layout INVALID + rehearsal-schedule INVALID` con uno máximo. *Gate: [audit post-G1](../04-quality/post-grade-1-scalability-audit.md), `READY`, antes de escalar 2.º–5.º.* `reviewPriority` sigue recomendación.
 56. ~~¿Cap/tracks/presupuesto Prestige?~~ **Cerrada v1:** 40 Career Arc/40 Special/20 Rare, máximo 100; STYLE 25 y 25×4 supersedidos. Autoría/validación de evidencia y slots pendientes.
 57. ~~¿Defaults de rareza/densidad?~~ **Calibración v1 documentada:** 15 % / 7,5 % / 2 %, máximo 2 raros, máximo 1 puntuable y 1 VERY_RARE. Ajustable por evidencia mediante policy versionada. *Gate residual: simulación/telemetría; no freeze.*
 58. **Frontera resuelta en [ADR-025](../03-architecture/adr/ADR-025-full-career-contract-evolution.md):** slots/techos comunes de edición, reemplazo compatible, evidencia independiente y replay. Falta implementar/validar oportunidades concretas. *Gate: autoría Prestige y STAGE-09; no bloqueo de prediseño.*

@@ -1,6 +1,8 @@
 # ADR-025 — Evolución acotada de contratos para carrera completa
 
-- Estado: Aceptado para implementación futura; **NOT IMPLEMENTED**
+- Estado: Aceptado; **implementado parcialmente en STAGE-08 / Phase 1** (2026-09-11) —
+  lo que necesita 1.º corre; Prestige, saliencia, rareza y la carrera oficial de
+  nueve beats siguen futuros. Detalle en [Implementación de Phase 1](#implementación-de-phase-1-2026-09-11).
 - Fecha: 2026-09-10
 - Origen: [conformidad técnica de Phase 0](../../04-quality/full-career-technical-conformance.md), `PASS WITH MINOR CONTRACT DELTAS`
 
@@ -137,11 +139,43 @@ metadata y mappings nuevos deben entrar a la cobertura de fingerprints y tests.
 - Inferir logros de corrección, Estilo o aparición: duplica evidencia o premia azar.
 - Cambiar toda serialización anticipadamente: declara incompatibilidades sin necesidad.
 
+## Implementación de Phase 1 — 2026-09-11
+
+Lo que 1.º necesitaba de esta decisión ya corre, con estas formas concretas:
+
+| Delta | Implementación | Dónde |
+|---|---|---|
+| Metadata de composición | `CompositionMetadata`: familia primaria de razonamiento, motor, pacing y, cuando corresponden, `chronology`, `eventCluster` y `recurringArc: 'PROJECT'`. Cada campo tiene consumidor —contadores de búsqueda, validador, orden de beats y huella de contenido— y `compositionMetadataIssues` lo valida. Es opcional en el tipo: un content set histórico no la declara y conserva su camino. | `src/game/challenges/composition-metadata.ts` |
+| Restricciones globales | `CareerConstraints` versionadas con `scope: 'partial-development' \| 'full-career'`. `fullCareerV1Constraints` expresa la envolvente Normal/Fair v1 (9 beats, bandas, pacing, familias, motores, TEMPORAL/ECONOMIC, datos/lógica, cluster, Project); `full-career` exige las seis etapas en orden. | `src/game/plan/career-constraints.ts` |
+| Búsqueda acotada | Con `policy.career`, `composeRun` enumera los planes legales de cada etapa, recorre la carrera en profundidad podando por mínimos y máximos restantes, aplica primero duras, después preferencias de producto y objetivos de la política, y desempata con SHA-256 del seed y la clave canónica del plan. Sin `career`, el camino por etapa de ADR-022 queda idéntico. Agotar el presupuesto de nodos falla explícitamente. | `src/game/plan/composer.ts` |
+| Validador global | `validateComposedPlan` recomprueba etapas exactas y ordenadas, cronología, metadata, cuotas, diversidad, máximos por familia, datos/lógica, clusters y Project Arc sin volver a componer. | `src/game/plan/plan-validator.ts` |
+| Respuestas constructivas | `quantity-builder`, `schedule-builder` y `spatial-layout` con schemas Zod estrictos. Se evalúan conteos, minutos y celdas enteras; la presentación sólo agrega datos públicos —posiciones, eje de la tarde, huellas y códigos—. | `src/game/challenges/interactions.ts`, `src/game/runs/commands.ts` |
+| Repaso seleccionado y debrief | La obligación seleccionada es la primera en orden canónico. `recoveryCoverage` separa practicadas —su ruta declara el repaso que se juega— de debriefeadas; la vista pública deriva las notas y `recordCoverage` las reconstruye después del cierre desde `resolved` y `content`. No se persiste nada nuevo: snapshot sigue en `7`. | `src/game/progression/recovery.ts`, `src/game/runs/recovery-content.ts` |
+| Fail-closed aprobado | Con catálogo aprobado presente no hay fallback a variantes curadas: `materializeChallenge` rechaza una dirección no aprobada, `createRun` rechaza pools ordinarios o de repaso vacíos y rutas sin debrief, y el borde del beat vuelve a comprobarlo antes de mover el año. | `src/game/runs/transition.ts` |
+| Contexto de callbacks | `narrate(model, { flags })` sólo cambia la narrativa; parámetros, evaluación y score no leen flags. | `src/game/challenges/contracts.ts` |
+
+**Parcial ≠ oficial.** El content set `grade-7-through-1` compone con
+`grade-7-through-1-partial` (`partial-development`, dos etapas, cuatro beats,
+`official: false`) y corre sólo como práctica local. No se fabrica una carrera de
+nueve beats ni contenido de 2.º–5.º: el contrato `full-career` se ejerce con un
+catálogo sintético en `tests/unit/career-composition.test.ts`.
+
+**Versiones.** Engine `6.0.0 → 7.0.0` y action log `4 → 5`; snapshot `7`,
+ruleset/contenido/catálogo de 7.º y `fair-score-dev-2` sin cambios. Identidades
+nuevas: contenido `1.0.0-grade-1`, rulesets `1.0.0-grade-1-partial` y
+`1.0.0-grade-1-demo`, catálogo `grade-1-dev-1`.
+
+**Sigue futuro:** agregador de Prestige y hechos más allá de los flags de 1.º,
+selector de saliencia, orquestación de rareza (1.º sólo registra los hechos que
+`rare.y1.power-outage` necesitaría), respuesta compuesta Math/Aura para 2.º,
+composición oficial de carrera completa y emisión/vinculación de STAGE-09.
+
 ## Gates y orden
 
 Antes/durante G1: metadata mínima, contratos constructivos utilizados por G1,
-debrief, catálogo aprobado fail-closed, tests de variantes y replay. La respuesta
-Math/Aura separada debe estar lista cuando G2 la use; no se difiere a G5.
+debrief, catálogo aprobado fail-closed, tests de variantes y replay —**hechos en
+Phase 1**—. La respuesta Math/Aura separada debe estar lista cuando G2 la use; no
+se difiere a G5.
 
 G4/5: agregación completa de Prestige, selector de saliencia y modos avanzados;
 los hechos necesarios deben originarse desde el año correspondiente.
