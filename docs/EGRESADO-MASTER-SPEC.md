@@ -281,9 +281,9 @@ arquitectura o identidad requiere evidencia de defecto, no preferencia.
 
 **Actual:** STAGE-08 sigue IN_PROGRESS; Phase 0 está DONE tras Product Audit y
 conformidad técnica reconciliados, y Phase 1 —1.º real como práctica de
-desarrollo `7.º → 1.º`— cerró el 11 de septiembre. Rige el STOP: el audit de
-escalabilidad post-G1 está READY, sin ejecutar, y su PASS es obligatorio antes de
-producir 2.º–5.º. Epílogo, carrera oficial y ranking siguen sin implementar.
+desarrollo `7.º → 1.º`— cerró el 11 de septiembre. El STOP se cumplió: el audit de
+escalabilidad post-G1 se ejecutó el 14 de septiembre y pasó con hardening
+resuelto, así que producir 2.º–5.º queda autorizado. Epílogo, carrera oficial y ranking siguen sin implementar.
 Ver [etapa actual](06-delivery/current-stage.md).
 
 
@@ -2140,7 +2140,7 @@ STAGE-08 / Phase 1 y 2.º–5.º siguen pendientes de implementación. El
 [sistema narrativo](01-game-design/narrative-system.md) gobierna callbacks
 independientes, externalidad de 4.º, convergencia de 5.º y selección de hechos
 significativos del cierre. Product Audit y conformidad técnica están integrados:
-[Phase 0 y Phase 1 DONE; audit post-G1 READY](06-delivery/current-stage.md).
+[Phase 0, Phase 1 y audit post-G1 cerrados](06-delivery/current-stage.md).
 El runtime es la baseline de 7.º más la práctica de desarrollo `7.º → 1.º`, no la
 carrera completa.
 
@@ -2727,12 +2727,14 @@ automatizados. Ninguna Template es todavía `math_reviewed`, `playtest_ready` ni
 manual de la rueda —Template de alto riesgo— y el pacing empírico son gates de
 producción de STAGE-08, no parte de Phase 1.
 
-Después de implementar 1.º se ejecuta el
-[audit obligatorio](04-quality/post-grade-1-scalability-audit.md) antes de
-autorizar implementación amplia de 2.º–5.º. La semántica de dos obligaciones bajo
-un Repaso máximo está cerrada: seleccionar uno determinísticamente, debrief del
-resto y cierre de todas. El contenido y el mecanismo ya corren; la pertinencia
-pedagógica y el veredicto son de ese gate, que **no** se da por ejecutado.
+Después de implementar 1.º se ejecutó el
+[audit obligatorio](04-quality/post-grade-1-scalability-audit.md#resultado-de-la-ejecución-2026-09-14),
+que el 14 de septiembre de 2026 dio `PASS WITH REQUIRED HARDENING — RESOLVED` y
+autorizó la implementación amplia de 2.º–5.º. La semántica de dos obligaciones
+bajo un Repaso máximo está cerrada —seleccionar uno determinísticamente, debrief
+del resto y cierre de todas— y el gate la comprobó con contenido real: los
+debriefs autorados nombran el concepto que falló y la copia distingue lo
+practicado de lo comentado, sin atribuir práctica al cierre conjunto.
 
 ## Implementación runtime — Phase 1
 
@@ -4893,7 +4895,7 @@ cierre; ninguna fila declara producción de 1.º–5.º.
 | FR-003: nueve beats, cuotas, clusters y Project | [matriz](01-game-design/full-career-content-matrix.md#políticas-de-composición) | mecanismo global implementado en Phase 1 (ADR-025); carrera oficial pendiente de 2.º–5.º |
 | FR-005/006: cinco motores y matemática intrínseca | [desafíos](01-game-design/challenge-system.md), [autoría](01-game-design/content-authoring-guide.md) | modos constructivos y contenido de 1.º implementados; `tests/unit/grade-1-*.test.ts` |
 | FR-006/012: evidencia separada, Style no competitivo, Prestige | [score](01-game-design/competitive-scoring-and-ranking.md), [Prestige](01-game-design/rare-events-and-prestige.md) | FairScore actual preservado; Prestige futuro ADR-025 |
-| FR-T06/007: Repaso uno + debrief + cierre | [fail-forward](01-game-design/graduation-and-fail-forward.md) | base ADR-024; debrief y stress gate post-G1 pendientes |
+| FR-T06/007: Repaso uno + debrief + cierre | [fail-forward](01-game-design/graduation-and-fail-forward.md) | base ADR-024; debrief implementado y stress gate post-G1 `PASSED` (2026-09-14) |
 | FR-003/011: callbacks, saliencia y epílogo | [narrativa](01-game-design/narrative-system.md) | selector/evidencia futuros ADR-025 |
 | FR-002/013/014/018: seed común, reintentos, replay | [modo feria](05-operations/fair-mode-and-competition-freeze.md) | servidor/edición STAGE-09 |
 | FR-012/020: puesto compartido y Top 3 pseudónimo | [ranking](05-operations/leaderboard-and-moderation.md) | comparador/persistencia STAGE-09 |
@@ -6686,7 +6688,7 @@ para desempatar quedó supersedida por el Product Pass; ese dato sigue diagnóst
 El Product Pass posterior cierra vocabulario Repaso y trigger INVALID para v1;
 FUNCTIONAL no dispara. Preserva máximo uno y cierre conjunto. ADR-025 extiende
 la representación de seleccionado/debrief y exige fail-closed con catálogo
-aprobado vacío. El gate post-G1 sigue pendiente; no se reescribe su evidencia histórica.
+aprobado vacío. El gate post-G1 pasó el 14 de septiembre de 2026; no se reescribe su evidencia histórica.
 [Decisión técnica futura](03-architecture/adr/ADR-025-full-career-contract-evolution.md);
 [reconciliación de producto](07-reference/full-career-product-audit-integration.md).
 No se modifican runtime ni versiones en esta integración.
@@ -8726,9 +8728,11 @@ Un nuevo desafío sobre interaction existente no debería exigir modificar routi
 
 # Auditoría de escalabilidad posterior a 1.º
 
-- **Estado:** `REQUIRED · READY · NOT EXECUTED` — la precondición (1.º real) se cumplió el 2026-09-11
-- **Cuándo:** ahora, antes de autorizar implementación amplia de 2.º–5.º
-- **Resultado actual:** ninguno; semántica de producto cerrada, mecanismo implementado, veredicto pedagógico/técnico pendiente
+- **Estado:** `REQUIRED · EXECUTED` — ejecutado el 2026-09-14 sobre `74d8bd5`, con 1.º real
+- **Cuándo:** antes de autorizar implementación amplia de 2.º–5.º; cumplido
+- **Resultado:** `PASS WITH REQUIRED HARDENING — RESOLVED`. Tres defectos técnicos
+  acotados se corrigieron dentro del gate y ninguna decisión de producto cambió;
+  el detalle está en [resultado de la ejecución](#resultado-de-la-ejecución-2026-09-14)
 
 ## Preparado por Phase 1 — no es un veredicto
 
@@ -8847,8 +8851,84 @@ PASS → implementación de 2.º–5.º
 FAIL → resolver fundaciones/semántica antes de escalar
 ```
 
-El reporte de ejecución futuro debe conservar fixture/seed/versiones, observaciones,
-resultado `PASS` o `FAIL`, decisión posterior y evidencia de egreso, score y replay.
+## Resultado de la ejecución (2026-09-14)
+
+**Veredicto: `PASS WITH REQUIRED HARDENING — RESOLVED`.** Ejecutado sobre `74d8bd5`,
+con engine `7.0.0`, action log `5`, snapshot `7`, catálogo `grade-1-dev-1` y
+`fair-score-dev-2` sin recalibrar. Fixtures: `stressCaseQualities()` y `playGrade1()`
+con seeds `formal-multi-obligation`, `canonical-inversion`, `audit-fail-closed`,
+`audit-server` y `post-g1-browser-audit`.
+
+### Lo que se comprobó
+
+- **Multiobligación formal.** `classroom-layout` INVALID y `rehearsal-schedule`
+  INVALID en `year-1` dejan dos obligaciones con direcciones y rutas distintas, en
+  orden canónico por índice de evento. El beat de recuperación presenta
+  `y1.scale-fit-review`, practica la primera y debriefea la otra; ambas quedan
+  resueltas en un único registro. Se repitió con las cuatro calidades del Repaso,
+  incluida INVALID: el año cierra igual, no aparece un segundo Repaso, la run egresa
+  y el índice de evento de la etapa no se mueve.
+- **Determinismo de la selección.** Invertir el orden del arreglo no cambia la
+  elegida, y `Math.random` y `Date.now` quedan prohibidos durante la selección sin
+  que nadie los invoque. Invertir los índices de origen sí cambia el concepto
+  practicado, que es la regla temporal declarada.
+- **Escalabilidad del modelo.** 1, 2, 3, 6, 9 y 32 obligaciones de conceptos
+  distintos cierran en un solo Repaso, con notas y registro lineales y la cobertura
+  rederivada del registro serializado.
+- **Approved-only fail-closed.** Pool aprobado vacío, ruteo a una review inexistente
+  y debrief faltante fallan explícitamente al crear la run y en el borde del beat,
+  dos veces con el mismo error y sin mutar el estado.
+- **Servidor.** Descriptor forjado en cualquiera de sus cinco versiones, códec viejo,
+  acción duplicada, faltante o reordenada, respuestas semánticas fuera de schema, un
+  Repaso sin obligación y un `planFingerprint` alterado quedan rechazados. Score,
+  calidad, Equipo, Estilo, carrera y egreso declarados por el cliente se ignoran.
+- **Composición global.** Catálogos sintéticos con una única carrera legal, con
+  muchas, y con cada restricción dura hecha imposible de a una; las preferencias
+  blandas insatisfechas no impiden un plan válido. Rechazar una carrera imposible
+  cuesta 14 ms con presupuesto de 50 000, 200 000 o 1 000 000 de nodos: la poda no
+  depende del presupuesto.
+- **Accesibilidad.** Recorrido real por `Tab` en las seis pantallas de 1.º, con foco
+  visible de 2 px, objetivos de 44 px, `reduced motion`, offline y axe sin
+  violaciones, a 360, 390 y 412 px y con zoom 2 sobre 1280.
+
+### Hardening aplicado
+
+1. **Reflow a 360 px con el plano construido.** Varios objetos en una celda se
+   escriben juntos; esa cadena ensanchaba la celda, la tabla pasaba de 301 a 358 px
+   y el documento a 372. La celda ahora corta el texto. El escenario
+   `layout-invalid` falla sin el arreglo y pasa con él.
+2. **Cobertura del propio E2E.** El reflow se medía antes de construir la respuesta,
+   así que el defecto vivía en un ancho ya declarado verificado. Ahora también se
+   mide con la respuesta armada.
+3. **Deriva documental de reflow.** El sistema de diseño prometía 320 px cuando
+   `html` declara `min-width: 360px` desde antes de 1.º. El doc dice lo que el
+   producto hace y deja anotado que el criterio de WCAG mide 320 px.
+
+### Lo que no se cambió
+
+`MAX_RECOVERIES_PER_STAGE`, la semántica de cerrar varias obligaciones, los pesos de
+FairScore, las bandas, el Estilo, el pacing, la política de composición y la copia
+del Repaso siguen exactamente como estaban.
+
+### Observaciones para 2.º–5.º
+
+- **Costo de composición.** Componer una carrera de nueve beats cuesta unos 2,7 s con
+  36 Templates sintéticas, contra milisegundos en la práctica parcial actual. El
+  contrato —plan válido o fallo explícito, determinista y acotado— se cumple, pero el
+  número debe volver a medirse con el catálogo real antes de componer la carrera
+  oficial.
+- **`g7.may-25-act` en el 100 % de las mitades de 7.º.** Es consecuencia del slice:
+  sólo tres Templates son hostables y es la única con rol `special`.
+- **Perfiles y Estilo.** La concentración en `leader` de las simulaciones es artefacto
+  del agente aleatorio: con políticas dirigidas se alcanzan `aplicado` y `estratega`
+  en 120 de 120 runs. Jugar óptimo tiende a `estratega` porque, entre las respuestas
+  óptimas, los estilos existen pero no son equiprobables.
+- **Estilo y orden.** `nudgeEstilo` normaliza a 100 en cada paso, así que el Estilo
+  final depende del orden de los beats. No afecta FairScore, que no lo puntúa, pero
+  la composición global reordena beats entre runs.
+
+Este reporte conserva fixture, seeds, versiones, observaciones, resultado y evidencia
+de egreso, score y replay, como el propio documento exige.
 
 ---
 
@@ -9644,8 +9724,8 @@ STAGE-08                                      IN_PROGRESS · CURRENT
 │   ├── Contratos de ADR-025 que usa 1.º       IMPLEMENTED
 │   ├── 5 Templates + 2 Repasos                RUNTIME · catálogo grade-1-dev-1
 │   └── Práctica 7.º → 1.º                     PARTIAL DEVELOPMENT · no oficial
-├── POST-G1 SCALABILITY AUDIT                  READY · PENDING · NOT EXECUTED
-└── 2.º–5.º                                    BLOCKED ON post-G1 gate
+├── POST-G1 SCALABILITY AUDIT                  PASSED · hardening resuelto
+└── 2.º–5.º                                    READY · NEXT
 ```
 
 Phase 1 cerró el 11 de septiembre de 2026. Las cinco Templates de 1.º
@@ -9667,16 +9747,15 @@ sign-off manual de la rueda y el pacing empírico, gates de producción de STAGE
 STAGE-07 sigue `DONE`: toda run válida completada egresa, con un Repaso máximo
 por etapa fuera del presupuesto ordinario y de FairScore.
 
-- Versiones: engine `6.0.0 → 7.0.0`, action log `4 → 5`, snapshot `7` (sin
-  campos nuevos). 7.º conserva ruleset `0.4.0-grade-7`, contenido
-  `0.9.0-grade-7` y catálogo `grade-7-dev-5`. `7.º → 1.º`: rulesets
-  `1.0.0-grade-1-partial` y `1.0.0-grade-1-demo`, contenido `1.0.0-grade-1`,
-  catálogo `grade-1-dev-1`. Score `fair-score-dev-2@2.0.0-post-tg1-candidate`
-  sin cambios.
+- Versiones: engine `7.0.0`, action log `5`, snapshot `7`. 7.º conserva ruleset
+  `0.4.0-grade-7`, contenido `0.9.0-grade-7` y catálogo `grade-7-dev-5`.
+  `7.º → 1.º`: rulesets `1.0.0-grade-1-partial` y `1.0.0-grade-1-demo`, contenido
+  `1.0.0-grade-1`, catálogo `grade-1-dev-1`. Score
+  `fair-score-dev-2@2.0.0-post-tg1-candidate` sin cambios.
 - Huellas: motor `7e7e61eb`; ruleset `5b9b0bc5` y contenido `dbaf5094` del
   fixture de desarrollo intactos.
-- Tests: 62 archivos y 1339 tests de Vitest; 80 E2E de Playwright en desktop y
-  mobile, incluidos cinco recorridos de 1.º.
+- Tests: 64 archivos y 1362 tests de Vitest; 88 E2E de Playwright en desktop y
+  mobile, incluidos los recorridos de 1.º y el barrido de accesibilidad del audit.
 - Simulación: 5000 runs de 7.º, 5000 de `7.º → 1.º` y 2000 del demo amplio
   egresadas, 0 hallazgos, peor caso un Repaso por etapa.
 - Composición: 2000 seeds de `7.º → 1.º` dan 2000 planes distintos, 0 inválidos
@@ -9687,32 +9766,41 @@ por etapa fuera del presupuesto ordinario y de FairScore.
 ```text
 STAGE-08
 PHASE 1 — DONE
+POST-G1 SCALABILITY AUDIT — PASSED
 
 Next:
-Post-Grade-1 Scalability Audit — READY / PENDING
+Implementar 2.º → 3.º → 4.º → 5.º
 ```
 
-El [audit posterior a 1.º](04-quality/post-grade-1-scalability-audit.md) fuerza
-`classroom-layout INVALID` y `rehearsal-schedule INVALID` en una etapa y decide si
-un Repaso seleccionado, el debrief del otro concepto y el cierre conjunto son
-pedagógica y técnicamente adecuados. El mecanismo y el harness existen; el
-veredicto no se da por ejecutado.
+El [audit posterior a 1.º](04-quality/post-grade-1-scalability-audit.md#resultado-de-la-ejecución-2026-09-14)
+se ejecutó el 14 de septiembre de 2026 y dio
+`PASS WITH REQUIRED HARDENING — RESOLVED`: forzó `classroom-layout INVALID` y
+`rehearsal-schedule INVALID` en la misma etapa y comprobó que un Repaso practica
+una obligación, debriefea la otra y cierra ambas, sin recursión, sin tocar
+FairScore y con replay, reanudación y servidor reproduciendo la distinción. Se
+corrigieron tres defectos técnicos acotados —reflow a 360 px con el plano
+construido, la medición del propio E2E y una deriva documental de reflow— sin
+cambiar ninguna decisión de producto.
 
 ## Scope OUT y gates restantes
 
-No producir 2.º–5.º antes del PASS post-G1, no duplicar sistemas fundamentales y
-no implementar servidor/ranking de STAGE-09. Las calibraciones recomendadas y
-Teacher Gate no se vuelven constantes inmutables ni configuración oficial.
+No duplicar sistemas fundamentales y no implementar servidor/ranking de STAGE-09.
+Las calibraciones recomendadas y Teacher Gate no se vuelven constantes inmutables
+ni configuración oficial.
 
-Después del PASS post-G1: implementar 2.º → 3.º → 4.º → 5.º, completar
-capacidades narrativas/Prestige previstas y auditar la carrera real. El exit gate
-de STAGE-08 sigue siendo recorrer `7.º → 1.º → 2.º → 3.º → 4.º → 5.º → EGRESADO`
-con contenido auditado, sin duplicar sistemas y verificando el target de pacing.
+Ahora corresponde implementar 2.º → 3.º → 4.º → 5.º usando 1.º como referencia
+validada, con auditorías más livianas por año y una verificación final de carrera
+completa, y completar las capacidades narrativas/Prestige previstas. Antes de
+componer la carrera oficial hay que volver a medir el costo de composición global
+con el catálogo real. El exit gate de STAGE-08 sigue siendo recorrer
+`7.º → 1.º → 2.º → 3.º → 4.º → 5.º → EGRESADO` con contenido auditado, sin
+duplicar sistemas y verificando el target de pacing.
 
 ## Última reconciliación
 
-11 de septiembre de 2026: cierre de STAGE-08 / Phase 1 con implementación,
-tests, documentación y verificación completa. Sin push.
+14 de septiembre de 2026: ejecución del Post-Grade-1 Scalability Audit con
+hardening resuelto, verificación completa en verde y 2.º–5.º desbloqueados.
+Sin push.
 
 ---
 
@@ -9823,7 +9911,9 @@ Si el roadmap y el código difieren, **el código gana** y el roadmap se corrige
 - Fases de validación externa y congelamiento: [ciclo de entrega real](00-product/real-delivery-lifecycle.md).
 - Qué se construye por capas de alcance: [alcance y roadmap](00-product/scope-and-roadmap.md) y [backlog](06-delivery/mvp-backlog.md).
 
-**Última reconciliación:** 11 de septiembre de 2026, STAGE-08 / Phase 1 `DONE`:
+**Última reconciliación:** 14 de septiembre de 2026, Post-Grade-1 Scalability
+Audit ejecutado con `PASS WITH REQUIRED HARDENING — RESOLVED`; 2.º–5.º
+desbloqueados. Antecedente del 11 de septiembre, STAGE-08 / Phase 1 `DONE`:
 1.º implementado sobre `grade-1-dev-1`, contratos acotados de ADR-025 en runtime y
 audit post-G1 `READY`. Antecedente: Phase 0 cerrada el 10 de septiembre
 ([trazabilidad](07-reference/full-career-product-audit-integration.md)).
@@ -9867,7 +9957,7 @@ Tabla de navegación. Los contratos de cada etapa, más abajo, son la autoridad.
 | [STAGE-06](#stage-06-scorepolicy-competitiva) | ScorePolicy competitiva | `DONE` | STAGE-05 | — |
 | [GATE-TG1](#gate-tg1-teacher-gate-1) | **Teacher Gate 1** | `PASSED_WITH_REQUIRED_ADJUSTMENTS` | STAGE-04, STAGE-06 | externo |
 | [STAGE-07](#stage-07-invariante-de-egreso-fail-forward-y-recuperaciones) | Egreso, fail-forward y recuperaciones | `DONE` | GATE-TG1 | — |
-| [STAGE-08](#stage-08-contenido-incremental-de-1º-a-5º) | Contenido incremental 1.º → 5.º | `IN_PROGRESS` · **actual** · Phase 1 DONE · audit post-G1 READY | STAGE-07 | auditoría tras 1.º |
+| [STAGE-08](#stage-08-contenido-incremental-de-1º-a-5º) | Contenido incremental 1.º → 5.º | `IN_PROGRESS` · **actual** · Phase 1 DONE · audit post-G1 PASSED | STAGE-07 | auditoría tras 1.º |
 | [STAGE-09](#stage-09-fair-mode-servidor-autoritativo-y-ranking) | Fair mode, servidor autoritativo y ranking | `NOT_STARTED` | STAGE-06, STAGE-08 | — |
 | [GATE-TG2](#gate-tg2-teacher-gate-2) | **Teacher Gate 2** | `TEACHER_GATE` | STAGE-09 | externo |
 | [FREEZE](#freeze-congelamiento-de-competencia) | Congelamiento de competencia | `NOT_STARTED` | GATE-TG2 | — |
@@ -9952,7 +10042,7 @@ Estado real contra el código al 11 de septiembre de 2026, tras cerrar STAGE-08 
 | Carrera completa jugable de seis años | `PARTIAL` | la estructura la ejerce el fixture `six-stage-progression`; 1.º existe desde Phase 1 y `7.º → 1.º` corre como práctica; el **contenido** de 2.º–5.º no existe | STAGE-08 |
 | Diseño de contenido 1.º · 2.º · 3.º · 4.º · 5.º | `DESIGN-CANDIDATE-APPROVED` | cinco pases completos en matriz v0.3, auditoría cruzada y reconciliación cerradas en Phase 0 | STAGE-08 / Phase 0 |
 | Contenido runtime 1.º | `DONE` para desarrollo | `src/content/grade-1/`, catálogo `grade-1-dev-1` (174 variantes de 1.º), `tests/unit/grade-1-*.test.ts`, `tests/integration/grade-1-run.test.ts`, `tests/e2e/grade-1.spec.ts`; estado de contenido `draft` hasta la revisión docente | STAGE-08 / Phase 1 |
-| Contenido runtime 2.º · 3.º · 4.º · 5.º | `NOT_STARTED` | bloqueado por el audit post-G1 | STAGE-08 |
+| Contenido runtime 2.º · 3.º · 4.º · 5.º | `NOT_STARTED` | desbloqueado por el PASS post-G1 del 14 de septiembre de 2026; es la siguiente tarea | STAGE-08 |
 | Composición global de carrera | `DONE` como mecanismo | `src/game/challenges/composition-metadata.ts`, `src/game/plan/career-constraints.ts`, búsqueda acotada en `composer.ts`, validador global; `tests/unit/career-composition.test.ts`. Sólo la práctica parcial la usa: la carrera oficial de nueve beats espera 2.º–5.º | STAGE-08 / Phase 1 |
 | Repaso practicado/debriefeado y approved-only fail-closed | `DONE` | `src/game/runs/recovery-content.ts`, `recoveryCoverage`/`recordCoverage`, `tests/unit/recovery-coverage.test.ts`; veredicto pedagógico en el audit post-G1 | STAGE-08 / Phase 1 |
 | Modos constructivos: cantidades y posiciones, agenda, plano | `DONE` para 1.º | `quantity-builder`, `schedule-builder`, `spatial-layout`; renderers accesibles sin arrastre | STAGE-08 / Phase 1 |
@@ -10578,7 +10668,7 @@ a TG1. El techo de un Repaso por etapa sigue siendo estructura de ADR-024.
 
 ### STAGE-08 — Contenido incremental de 1.º a 5.º
 
-- **Estado:** `IN_PROGRESS` — **etapa actual; Phase 0 DONE / Phase 1 DONE / audit post-G1 READY**
+- **Estado:** `IN_PROGRESS` — **etapa actual; Phase 0 DONE / Phase 1 DONE / audit post-G1 PASSED**
 - **Depende de:** STAGE-07 (`DONE`)
 - **Desbloquea:** STAGE-09
 
@@ -10634,13 +10724,16 @@ oficial, validación con estudiantes ni autorización de un freeze.
    accesibilidad (axe, teclado, 360/390 px), reanudación, replay, servidor y
    simulación; 62 archivos/1339 tests, 80 E2E, 5000 + 5000 + 2000 runs
    simuladas egresadas con 0 hallazgos. Docs y versiones actualizados.
-9. **NEXT — `READY`, no ejecutado: [gate post-G1](04-quality/post-grade-1-scalability-audit.md).**
-   Forzar `classroom-layout INVALID` + `rehearsal-schedule INVALID`:
-   un Repaso seleccionado, debrief del resto y cierre conjunto, sin recursión,
-   hacks por ID ni contribución a FairScore/Prestige. **No implementarlo como
-   dos repasos ni excluir el caso del test.**
-10. Sólo con PASS documentado: autorizar implementación incremental de 2.º–5.º.
-    Si aparece un sistema fundamental nuevo, revisar arquitectura antes de seguir.
+9. [x] **Gate post-G1 ejecutado el 14 de septiembre de 2026:**
+   `PASS WITH REQUIRED HARDENING — RESOLVED`. Con `classroom-layout INVALID` +
+   `rehearsal-schedule INVALID` en la misma etapa, un Repaso practica una
+   obligación, debriefea la otra y cierra ambas, sin recursión, sin hacks por ID
+   y sin tocar FairScore. Tres defectos acotados corregidos dentro del gate;
+   ninguna decisión de producto cambió.
+   [Resultado](04-quality/post-grade-1-scalability-audit.md#resultado-de-la-ejecución-2026-09-14).
+10. [x] Con el PASS documentado queda autorizada la implementación incremental de
+    2.º–5.º. Si aparece un sistema fundamental nuevo, revisar arquitectura antes
+    de seguir.
 
 **Scope IN.** Templates/variantes de G1, sus interacciones reutilizables, metadata,
 debrief, mappings y storylets necesarios; deltas mínimos previstos por ADR-025,
@@ -10681,8 +10774,10 @@ pueden integrarse en G4/5; sus hechos verificables se originan desde el año fue
 sustituyen estos gates. Objetivos editoriales y calibraciones versionadas conservan
 la madurez del [registro](07-reference/decision-register.md).
 
-**Siguiente tarea.** `STAGE-08 — Post-Grade-1 Scalability Audit` (`READY`). 2.º–5.º
-quedan bloqueados hasta su PASS documentado.
+**Siguiente tarea.** Implementar 2.º → 3.º → 4.º → 5.º con 1.º como referencia
+validada, con auditorías más livianas por año y verificación final de carrera
+completa. Antes de componer la carrera oficial, volver a medir el costo de
+composición global con el catálogo real.
 
 **Exit gate.** ¿Una run real, auditada y accesible recorre
 `7.º → 1.º → 2.º → 3.º → 4.º → 5.º → EGRESADO`, con pacing medido y sin duplicar
@@ -13529,6 +13624,18 @@ Decisiones técnicas y de autoría tomadas al implementar; no reabren producto.
 | D-S08-050 | `rare.y1.power-outage` diferido: hechos registrados y hook `implemented: false`; sin orquestación de rareza antes de ADR-025 completo | ACCEPTED · diferido | [eventos raros](01-game-design/rare-events-and-prestige.md) |
 | D-S08-051 | El encabezado de etapa cuenta la etapa con la duración del plan; sus celdas se angostan antes de desbordar | ACCEPTED · UI | [primitivas de juego](09-design-system/game-components.md) |
 
+## STAGE-08 / Post-Grade-1 Scalability Audit (2026-09-14)
+
+Ejecución del gate sobre 1.º real. Ninguna decisión de producto se reabrió.
+
+| ID | Decisión | Madurez | Fuente / estado |
+|---|---|---|---|
+| D-S08-052 | El gate post-G1 pasa como `PASS WITH REQUIRED HARDENING — RESOLVED`: un Repaso que practica una obligación y debriefea el resto se sostiene con contenido real, y 2.º–5.º quedan desbloqueados | ACCEPTED · gate ejecutado | [audit post-G1](04-quality/post-grade-1-scalability-audit.md#resultado-de-la-ejecución-2026-09-14) |
+| D-S08-053 | La celda del plano corta el texto: varios objetos en una celda no pueden ensanchar la tabla ni sacar la pantalla del viewport a 360 px | ACCEPTED · hardening | E2E `layout-invalid`, que falla sin el arreglo |
+| D-S08-054 | El reflow se mide también con la respuesta ya construida, no sólo con la interacción vacía | ACCEPTED · cobertura | `tests/e2e/grade-1.spec.ts` |
+| D-S08-055 | El piso declarado es 360 px (`html { min-width: 360px }`), anterior a 1.º; el criterio de reflow de WCAG mide 320 px y bajar el piso queda como decisión de producto abierta | ACCEPTED · documentado; decisión abierta | [accesibilidad](09-design-system/accessibility.md) |
+| D-S08-056 | El costo de composición global —unos 2,7 s con 36 Templates— se vuelve a medir con el catálogo real antes de componer la carrera oficial | ACCEPTED · riesgo registrado | [audit post-G1](04-quality/post-grade-1-scalability-audit.md#resultado-de-la-ejecución-2026-09-14); `tests/unit/post-g1-composer-audit.test.ts` |
+
 La integración de TG1 permanece histórica en [su acta y trazabilidad](06-delivery/teacher-gate-1/12-integracion-post-gate.md).
 Siguen pendientes la oficialización/freeze, validación empírica, autoría ejecutable,
 catálogo concreto de logros, operación/auth/retención y el gate post-G1. Label,
@@ -13677,7 +13784,7 @@ Phase 1 implementó luego sólo la parte que usa 1.º.
 **Resultado:** correcciones aceptadas integradas, **Phase 0 DONE**.
 [Phase 1 — implementar 1.º](06-delivery/implementation-sequence.md#phase-1-implementar-1º-real)
 quedó READY y cerró después, el 11 de septiembre; STAGE-08 sigue IN_PROGRESS. El
-gate post-G1 sigue requerido y no ejecutado. Este registro conserva procedencia y destinos; las reglas viven
+gate post-G1 se ejecutó el 14 de septiembre de 2026 y pasó con hardening resuelto. Este registro conserva procedencia y destinos; las reglas viven
 en cada documento especializado y su madurez en el registro único de decisiones.
 
 ## Método y límites de la evidencia
@@ -13717,7 +13824,7 @@ editoriales mantienen su madurez versionada; cerrar producto no los oficializa.
 
 IDs FC pertenecen al paquete; D remite al
 [registro único](07-reference/decision-register.md). “Resuelto” significa resuelto en producto,
-no implementado. FC-016 conserva validación post-G1 pendiente; FC-022 es mitigado,
+no implementado. FC-016 cerró su validación con el PASS post-G1 del 2026-09-14; FC-022 es mitigado,
 no eliminado; FC-019/024 son calibración/targets, no constantes de motor.
 
 | Hallazgo | Contenido absorbido | Decisión canónica | Fuente mantenible |
@@ -14094,7 +14201,7 @@ targets, no se confunden con beats por carrera.
 
 La **capacidad** no forma parte de esta pregunta abierta: bajo [ADR-024](03-architecture/adr/ADR-024-progression-recovery-and-graduation.md), una etapa juega como máximo un repaso estructural. Cambiar ese límite requeriría reconsiderar explícitamente el ADR y repetir sus pruebas de boundedness, pacing y egreso; no alcanza con calibrar una policy.
 
-55. **Semántica cerrada e implementada en Phase 1:** un Repaso determinista, debrief de no seleccionadas y cierre de todas. Falta el veredicto sobre `classroom-layout INVALID + rehearsal-schedule INVALID` con uno máximo. *Gate: [audit post-G1](04-quality/post-grade-1-scalability-audit.md), `READY`, antes de escalar 2.º–5.º.* `reviewPriority` sigue recomendación.
+55. ~~¿La semántica multiobligación se sostiene con contenido real?~~ **Cerrada el 2026-09-14:** el [audit post-G1](04-quality/post-grade-1-scalability-audit.md#resultado-de-la-ejecución-2026-09-14) forzó `classroom-layout INVALID + rehearsal-schedule INVALID` con un Repaso máximo y dio `PASS WITH REQUIRED HARDENING — RESOLVED`: uno se practica, el resto se debriefea, todas cierran, sin recursión ni efecto en FairScore, y replay, reanudación y servidor reproducen la distinción. `reviewPriority` sigue recomendación editorial.
 56. ~~¿Cap/tracks/presupuesto Prestige?~~ **Cerrada v1:** 40 Career Arc/40 Special/20 Rare, máximo 100; STYLE 25 y 25×4 supersedidos. Autoría/validación de evidencia y slots pendientes.
 57. ~~¿Defaults de rareza/densidad?~~ **Calibración v1 documentada:** 15 % / 7,5 % / 2 %, máximo 2 raros, máximo 1 puntuable y 1 VERY_RARE. Ajustable por evidencia mediante policy versionada. *Gate residual: simulación/telemetría; no freeze.*
 58. **Frontera resuelta en [ADR-025](03-architecture/adr/ADR-025-full-career-contract-evolution.md):** slots/techos comunes de edición, reemplazo compatible, evidencia independiente y replay. Falta implementar/validar oportunidades concretas. *Gate: autoría Prestige y STAGE-09; no bloqueo de prediseño.*
@@ -14422,7 +14529,7 @@ no sustituyen ni se presentan como playtest real con estudiantes.
 - [x] CI reproducible, Dependabot y bloqueo de release por dependencia.
 - [x] Roadmap canónico con contrato por etapa: estado, alcance IN/OUT, dependencias, criterios de aceptación, validación, evidencia y exit gate.
 - [x] Vista corta de la etapa activa, siempre en contexto.
-- [x] Phase 0 y Phase 1 DONE; gate post-G1 READY, pendiente de ejecución antes de 2.º–5.º.
+- [x] Phase 0, Phase 1 y gate post-G1 cerrados; 2.º–5.º habilitados como siguiente tarea.
 - [x] Protocolo de actualización del roadmap para agentes futuros.
 - [x] Checklists de Teacher Gate 1 y 2 y de congelamiento de fundaciones.
 
@@ -14707,8 +14814,9 @@ determinista con replay/snapshots, `Promedio · Equipo · Aura · Estilo`, slice
 dos Repasos— como práctica de desarrollo `7.º → 1.º`. `fair-score-dev-2` es
 teacher-informed pero no oficial. La envolvente, matriz v0.3, narrativa de carrera,
 eventos raros/Prestige y las 20 Templates de 2.º–5.º son **diseño**, no runtime.
-Phase 0 y Phase 1 están `DONE`; sigue el **audit post-G1**, `READY · NOT EXECUTED`,
-obligatorio antes de 2.º–5.º, y STAGE-08 no terminó. Todavía no existen los años
+Phase 0 y Phase 1 están `DONE` y el **audit post-G1** se ejecutó el 14 de
+septiembre de 2026 con `PASS WITH REQUIRED HARDENING — RESOLVED`; sigue
+implementar 2.º–5.º, y STAGE-08 no terminó. Todavía no existen los años
 2.º–5.º, la carrera oficial, callbacks multianuales, Prestige, Auth, schema de
 producto, endpoints/sesión/persistencia de competencia, ranking ni despliegue
 público.

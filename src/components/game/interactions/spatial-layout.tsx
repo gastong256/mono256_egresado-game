@@ -142,7 +142,11 @@ export function SpatialLayout({
                       key={x}
                       data-testid={`cell-${String(x)}-${String(y)}`}
                       className={cn(
-                        'text-meta font-display size-9 min-w-9 border text-center',
+                        // Varios objetos en una celda se escriben juntos, y esa
+                        // cadena no puede ensanchar la celda: sin corte, su
+                        // ancho mínimo infla la tabla y saca del viewport a la
+                        // pantalla entera en 360 px.
+                        'text-meta font-display size-9 min-w-9 border text-center break-all',
                         codes.length > 1
                           ? 'border-ink border-2'
                           : reserved

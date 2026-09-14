@@ -160,6 +160,18 @@ Decisiones técnicas y de autoría tomadas al implementar; no reabren producto.
 | D-S08-050 | `rare.y1.power-outage` diferido: hechos registrados y hook `implemented: false`; sin orquestación de rareza antes de ADR-025 completo | ACCEPTED · diferido | [eventos raros](../01-game-design/rare-events-and-prestige.md) |
 | D-S08-051 | El encabezado de etapa cuenta la etapa con la duración del plan; sus celdas se angostan antes de desbordar | ACCEPTED · UI | [primitivas de juego](../09-design-system/game-components.md) |
 
+## STAGE-08 / Post-Grade-1 Scalability Audit (2026-09-14)
+
+Ejecución del gate sobre 1.º real. Ninguna decisión de producto se reabrió.
+
+| ID | Decisión | Madurez | Fuente / estado |
+|---|---|---|---|
+| D-S08-052 | El gate post-G1 pasa como `PASS WITH REQUIRED HARDENING — RESOLVED`: un Repaso que practica una obligación y debriefea el resto se sostiene con contenido real, y 2.º–5.º quedan desbloqueados | ACCEPTED · gate ejecutado | [audit post-G1](../04-quality/post-grade-1-scalability-audit.md#resultado-de-la-ejecución-2026-09-14) |
+| D-S08-053 | La celda del plano corta el texto: varios objetos en una celda no pueden ensanchar la tabla ni sacar la pantalla del viewport a 360 px | ACCEPTED · hardening | E2E `layout-invalid`, que falla sin el arreglo |
+| D-S08-054 | El reflow se mide también con la respuesta ya construida, no sólo con la interacción vacía | ACCEPTED · cobertura | `tests/e2e/grade-1.spec.ts` |
+| D-S08-055 | El piso declarado es 360 px (`html { min-width: 360px }`), anterior a 1.º; el criterio de reflow de WCAG mide 320 px y bajar el piso queda como decisión de producto abierta | ACCEPTED · documentado; decisión abierta | [accesibilidad](../09-design-system/accessibility.md) |
+| D-S08-056 | El costo de composición global —unos 2,7 s con 36 Templates— se vuelve a medir con el catálogo real antes de componer la carrera oficial | ACCEPTED · riesgo registrado | [audit post-G1](../04-quality/post-grade-1-scalability-audit.md#resultado-de-la-ejecución-2026-09-14); `tests/unit/post-g1-composer-audit.test.ts` |
+
 La integración de TG1 permanece histórica en [su acta y trazabilidad](../06-delivery/teacher-gate-1/12-integracion-post-gate.md).
 Siguen pendientes la oficialización/freeze, validación empírica, autoría ejecutable,
 catálogo concreto de logros, operación/auth/retención y el gate post-G1. Label,

@@ -8,7 +8,7 @@
 El Product Pass posterior cierra vocabulario Repaso y trigger INVALID para v1;
 FUNCTIONAL no dispara. Preserva máximo uno y cierre conjunto. ADR-025 extiende
 la representación de seleccionado/debrief y exige fail-closed con catálogo
-aprobado vacío. El gate post-G1 sigue pendiente; no se reescribe su evidencia histórica.
+aprobado vacío. El gate post-G1 pasó el 14 de septiembre de 2026; no se reescribe su evidencia histórica.
 [Decisión técnica futura](ADR-025-full-career-contract-evolution.md);
 [reconciliación de producto](../../07-reference/full-career-product-audit-integration.md).
 No se modifican runtime ni versiones en esta integración.

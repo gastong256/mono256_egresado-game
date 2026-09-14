@@ -232,6 +232,15 @@ for (const [scenario, { failed, width }] of Object.entries(SCENARIOS)) {
         ? invalidConstructiveAnswer(v)
         : grade1Answer(v, deps)
       await fillAnswer(page, v, answer)
+      // Reflow has to hold with the answer already built. An empty interaction
+      // is the easy case: a filled plan is what widens a cell, and measuring
+      // only before the answer hid a real 360 px overflow.
+      if (g1)
+        expect(
+          await page.evaluate(
+            () => document.documentElement.scrollWidth <= window.innerWidth,
+          ),
+        ).toBe(true)
       const submit = page.getByTestId('submit-answer')
       await expect(submit).toBeEnabled()
       await submit.focus()

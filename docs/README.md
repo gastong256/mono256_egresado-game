@@ -212,8 +212,9 @@ determinista con replay/snapshots, `Promedio · Equipo · Aura · Estilo`, slice
 dos Repasos— como práctica de desarrollo `7.º → 1.º`. `fair-score-dev-2` es
 teacher-informed pero no oficial. La envolvente, matriz v0.3, narrativa de carrera,
 eventos raros/Prestige y las 20 Templates de 2.º–5.º son **diseño**, no runtime.
-Phase 0 y Phase 1 están `DONE`; sigue el **audit post-G1**, `READY · NOT EXECUTED`,
-obligatorio antes de 2.º–5.º, y STAGE-08 no terminó. Todavía no existen los años
+Phase 0 y Phase 1 están `DONE` y el **audit post-G1** se ejecutó el 14 de
+septiembre de 2026 con `PASS WITH REQUIRED HARDENING — RESOLVED`; sigue
+implementar 2.º–5.º, y STAGE-08 no terminó. Todavía no existen los años
 2.º–5.º, la carrera oficial, callbacks multianuales, Prestige, Auth, schema de
 producto, endpoints/sesión/persistencia de competencia, ranking ni despliegue
 público.

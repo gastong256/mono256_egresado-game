@@ -19,7 +19,7 @@ STAGE-08 / Phase 1 y 2.º–5.º siguen pendientes de implementación. El
 [sistema narrativo](narrative-system.md) gobierna callbacks
 independientes, externalidad de 4.º, convergencia de 5.º y selección de hechos
 significativos del cierre. Product Audit y conformidad técnica están integrados:
-[Phase 0 y Phase 1 DONE; audit post-G1 READY](../06-delivery/current-stage.md).
+[Phase 0, Phase 1 y audit post-G1 cerrados](../06-delivery/current-stage.md).
 El runtime es la baseline de 7.º más la práctica de desarrollo `7.º → 1.º`, no la
 carrera completa.
 

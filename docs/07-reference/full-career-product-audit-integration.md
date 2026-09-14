@@ -18,7 +18,7 @@ Phase 1 implementó luego sólo la parte que usa 1.º.
 **Resultado:** correcciones aceptadas integradas, **Phase 0 DONE**.
 [Phase 1 — implementar 1.º](../06-delivery/implementation-sequence.md#phase-1-implementar-1º-real)
 quedó READY y cerró después, el 11 de septiembre; STAGE-08 sigue IN_PROGRESS. El
-gate post-G1 sigue requerido y no ejecutado. Este registro conserva procedencia y destinos; las reglas viven
+gate post-G1 se ejecutó el 14 de septiembre de 2026 y pasó con hardening resuelto. Este registro conserva procedencia y destinos; las reglas viven
 en cada documento especializado y su madurez en el registro único de decisiones.
 
 ## Método y límites de la evidencia
@@ -58,7 +58,7 @@ editoriales mantienen su madurez versionada; cerrar producto no los oficializa.
 
 IDs FC pertenecen al paquete; D remite al
 [registro único](decision-register.md). “Resuelto” significa resuelto en producto,
-no implementado. FC-016 conserva validación post-G1 pendiente; FC-022 es mitigado,
+no implementado. FC-016 cerró su validación con el PASS post-G1 del 2026-09-14; FC-022 es mitigado,
 no eliminado; FC-019/024 son calibración/targets, no constantes de motor.
 
 | Hallazgo | Contenido absorbido | Decisión canónica | Fuente mantenible |

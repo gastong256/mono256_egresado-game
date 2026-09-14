@@ -376,12 +376,14 @@ automatizados. Ninguna Template es todavía `math_reviewed`, `playtest_ready` ni
 manual de la rueda —Template de alto riesgo— y el pacing empírico son gates de
 producción de STAGE-08, no parte de Phase 1.
 
-Después de implementar 1.º se ejecuta el
-[audit obligatorio](../04-quality/post-grade-1-scalability-audit.md) antes de
-autorizar implementación amplia de 2.º–5.º. La semántica de dos obligaciones bajo
-un Repaso máximo está cerrada: seleccionar uno determinísticamente, debrief del
-resto y cierre de todas. El contenido y el mecanismo ya corren; la pertinencia
-pedagógica y el veredicto son de ese gate, que **no** se da por ejecutado.
+Después de implementar 1.º se ejecutó el
+[audit obligatorio](../04-quality/post-grade-1-scalability-audit.md#resultado-de-la-ejecución-2026-09-14),
+que el 14 de septiembre de 2026 dio `PASS WITH REQUIRED HARDENING — RESOLVED` y
+autorizó la implementación amplia de 2.º–5.º. La semántica de dos obligaciones
+bajo un Repaso máximo está cerrada —seleccionar uno determinísticamente, debrief
+del resto y cierre de todas— y el gate la comprobó con contenido real: los
+debriefs autorados nombran el concepto que falló y la copia distingue lo
+practicado de lo comentado, sin atribuir práctica al cierre conjunto.
 
 ## Implementación runtime — Phase 1
 

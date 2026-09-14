@@ -42,9 +42,9 @@ arquitectura o identidad requiere evidencia de defecto, no preferencia.
 
 **Actual:** STAGE-08 sigue IN_PROGRESS; Phase 0 está DONE tras Product Audit y
 conformidad técnica reconciliados, y Phase 1 —1.º real como práctica de
-desarrollo `7.º → 1.º`— cerró el 11 de septiembre. Rige el STOP: el audit de
-escalabilidad post-G1 está READY, sin ejecutar, y su PASS es obligatorio antes de
-producir 2.º–5.º. Epílogo, carrera oficial y ranking siguen sin implementar.
+desarrollo `7.º → 1.º`— cerró el 11 de septiembre. El STOP se cumplió: el audit de
+escalabilidad post-G1 se ejecutó el 14 de septiembre y pasó con hardening
+resuelto, así que producir 2.º–5.º queda autorizado. Epílogo, carrera oficial y ranking siguen sin implementar.
 Ver [etapa actual](../06-delivery/current-stage.md).
 
 

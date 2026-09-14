@@ -55,7 +55,7 @@ Una región que scrollea horizontalmente tiene que ser alcanzable con el teclado
 
 ## Reflow, movimiento e idioma
 
-Sin scroll horizontal de 320 a 1920 px; el shell de 412 px centra en vez de estirarse. `prefers-reduced-motion` es un solo bloque global y no se pierde información. `<html lang="es-AR">`, porque el juego escribe coma decimal, punto de miles y hora de 24 h.
+Sin scroll horizontal de 360 a 1920 px; el shell de 412 px centra en vez de estirarse. El piso es explícito: `html` declara `min-width: 360px` porque la UX de referencia exige legibilidad a 360. Por debajo de ese ancho la página scrollea, así que el criterio de reflow de WCAG —que mide 320 px— hoy no se cumple; bajar el piso es una decisión de producto abierta, no un ajuste de implementación. `prefers-reduced-motion` es un solo bloque global y no se pierde información. `<html lang="es-AR">`, porque el juego escribe coma decimal, punto de miles y hora de 24 h.
 
 ## Cómo se verifica
 

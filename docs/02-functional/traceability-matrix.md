@@ -50,7 +50,7 @@ cierre; ninguna fila declara producción de 1.º–5.º.
 | FR-003: nueve beats, cuotas, clusters y Project | [matriz](../01-game-design/full-career-content-matrix.md#políticas-de-composición) | mecanismo global implementado en Phase 1 (ADR-025); carrera oficial pendiente de 2.º–5.º |
 | FR-005/006: cinco motores y matemática intrínseca | [desafíos](../01-game-design/challenge-system.md), [autoría](../01-game-design/content-authoring-guide.md) | modos constructivos y contenido de 1.º implementados; `tests/unit/grade-1-*.test.ts` |
 | FR-006/012: evidencia separada, Style no competitivo, Prestige | [score](../01-game-design/competitive-scoring-and-ranking.md), [Prestige](../01-game-design/rare-events-and-prestige.md) | FairScore actual preservado; Prestige futuro ADR-025 |
-| FR-T06/007: Repaso uno + debrief + cierre | [fail-forward](../01-game-design/graduation-and-fail-forward.md) | base ADR-024; debrief y stress gate post-G1 pendientes |
+| FR-T06/007: Repaso uno + debrief + cierre | [fail-forward](../01-game-design/graduation-and-fail-forward.md) | base ADR-024; debrief implementado y stress gate post-G1 `PASSED` (2026-09-14) |
 | FR-003/011: callbacks, saliencia y epílogo | [narrativa](../01-game-design/narrative-system.md) | selector/evidencia futuros ADR-025 |
 | FR-002/013/014/018: seed común, reintentos, replay | [modo feria](../05-operations/fair-mode-and-competition-freeze.md) | servidor/edición STAGE-09 |
 | FR-012/020: puesto compartido y Top 3 pseudónimo | [ranking](../05-operations/leaderboard-and-moderation.md) | comparador/persistencia STAGE-09 |
