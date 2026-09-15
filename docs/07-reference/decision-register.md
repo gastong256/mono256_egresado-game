@@ -169,8 +169,15 @@ Ejecución del gate sobre 1.º real. Ninguna decisión de producto se reabrió.
 | D-S08-052 | El gate post-G1 pasa como `PASS WITH REQUIRED HARDENING — RESOLVED`: un Repaso que practica una obligación y debriefea el resto se sostiene con contenido real, y 2.º–5.º quedan desbloqueados | ACCEPTED · gate ejecutado | [audit post-G1](../04-quality/post-grade-1-scalability-audit.md#resultado-de-la-ejecución-2026-09-14) |
 | D-S08-053 | La celda del plano corta el texto: varios objetos en una celda no pueden ensanchar la tabla ni sacar la pantalla del viewport a 360 px | ACCEPTED · hardening | E2E `layout-invalid`, que falla sin el arreglo |
 | D-S08-054 | El reflow se mide también con la respuesta ya construida, no sólo con la interacción vacía | ACCEPTED · cobertura | `tests/e2e/grade-1.spec.ts` |
-| D-S08-055 | El piso declarado es 360 px (`html { min-width: 360px }`), anterior a 1.º; el criterio de reflow de WCAG mide 320 px y bajar el piso queda como decisión de producto abierta | ACCEPTED · documentado; decisión abierta | [accesibilidad](../09-design-system/accessibility.md) |
+| D-S08-055 | ~~El piso declarado es 360 px; bajar el piso queda como decisión de producto abierta~~ **Superada por D-S08-057 el 2026-09-15** | SUPERSEDED | [accesibilidad](../09-design-system/accessibility.md) |
 | D-S08-056 | El costo de composición global —unos 2,7 s con 36 Templates— se vuelve a medir con el catálogo real antes de componer la carrera oficial | ACCEPTED · riesgo registrado | [audit post-G1](../04-quality/post-grade-1-scalability-audit.md#resultado-de-la-ejecución-2026-09-14); `tests/unit/post-g1-composer-audit.test.ts` |
+
+## STAGE-08 / Piso de reflow (2026-09-15)
+
+| ID | Decisión | Madurez | Fuente / estado |
+|---|---|---|---|
+| D-S08-057 | El piso de reflow de la experiencia general es **320 px**: sin scroll horizontal de página, sin pérdida de información ni de funcionalidad, con teclado y alternativas sin arrastre intactas. `html` declara `min-width: 320px` | PRODUCT DECISION · implementada | [accesibilidad](../09-design-system/accessibility.md); [cierre de F-03](../04-quality/post-grade-1-scalability-audit.md#cierre-de-f-03-2026-09-15) |
+| D-S08-058 | Una representación que necesita dos dimensiones por significado puede scrollear **dentro de su propia región**, alcanzable por teclado; nunca la página, y nunca como única vía para completar el desafío | PRODUCT DECISION · implementada | plano de 1.º: los controles X/Y/orientación completan la respuesta |
 
 La integración de TG1 permanece histórica en [su acta y trazabilidad](../06-delivery/teacher-gate-1/12-integracion-post-gate.md).
 Siguen pendientes la oficialización/freeze, validación empírica, autoría ejecutable,

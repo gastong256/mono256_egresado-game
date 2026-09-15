@@ -9,8 +9,8 @@
  */
 
 html {
-  /* La UX de referencia exige legibilidad a 360 px. */
-  min-width: 360px;
+  /* Piso de reflow: WCAG 1.4.10 mide 320 px y el juego se opera entero ahí. */
+  min-width: 320px;
   background-color: var(--canvas);
   -webkit-text-size-adjust: 100%;
 }

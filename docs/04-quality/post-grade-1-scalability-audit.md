@@ -199,5 +199,28 @@ del Repaso siguen exactamente como estaban.
   final depende del orden de los beats. No afecta FairScore, que no lo puntúa, pero
   la composición global reordena beats entre runs.
 
+### Cierre de F-03 (2026-09-15)
+
+El gate dejó una sola decisión de producto abierta: el piso de reflow. Producto
+adoptó **320 px** como piso objetivo para la experiencia general de juego, con
+excepción local para representaciones que requieren dos dimensiones por
+significado. Implementado con tres cambios acotados:
+
+- `html` declara `min-width: 320px`. La causa del piso anterior era exactamente
+  esa línea —introducida como "la UX de referencia exige legibilidad a 360"— sin
+  ningún token ni layout acoplado a 360.
+- La tira de carrera refluye a dos filas cuando sus celdas no entran en una: era
+  lo único que empujaba la página a 320 px.
+- La región del plano ancla su propio desborde, así que la grilla scrollea dentro
+  de su región —alcanzable por teclado— y el documento no.
+
+A 320 px no se pierde información ni funcionalidad. Las seis pantallas de 1.º se
+operan enteras por teclado, con foco visible, objetivos de 44 px y axe sin
+violaciones, medidas en vacío, con la respuesta construida y en el resultado; el
+slice de 7.º también se verifica a 320. El plano conserva su modelo semántico de
+coordenadas y se completa con los controles de X, Y y orientación, sin que el
+scroll local sea nunca la única vía. **F-03 queda cerrado y el gate no deja
+decisiones de producto abiertas.**
+
 Este reporte conserva fixture, seeds, versiones, observaciones, resultado y evidencia
 de egreso, score y replay, como el propio documento exige.

@@ -386,7 +386,8 @@ test('la grilla del acto se juega sólo con el teclado', async ({ page }) => {
  */
 test.describe('la grilla del acto entra en cualquier pantalla', () => {
   const VIEWPORTS = [
-    { label: '360 · el piso', width: 360, height: 740 },
+    { label: '320 · el piso', width: 320, height: 740 },
+    { label: '360 · phone chico', width: 360, height: 740 },
     { label: '390 · iPhone', width: 390, height: 844 },
     { label: '430 · phone grande', width: 430, height: 932 },
     { label: 'tablet vertical', width: 768, height: 1024 },

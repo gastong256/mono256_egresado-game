@@ -99,7 +99,11 @@ export function SpatialLayout({
         role="region"
         aria-label="Plano por coordenadas"
         tabIndex={0}
-        className="max-w-full overflow-x-auto"
+        // `relative` ancla el desborde de la grilla a esta región: sin él, el
+        // scroll local de la tabla estira el documento entero y la página
+        // scrollea horizontalmente en 320 px. La grilla necesita dos
+        // dimensiones por significado; la página, no.
+        className="relative max-w-full overflow-x-auto"
       >
         <table className="border-collapse tabular-nums">
           <caption className="text-caption text-ink-secondary pb-2 text-left">

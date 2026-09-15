@@ -45,7 +45,7 @@ Los cuatro glifos son SVG inline con `currentColor` y terminación cuadrada. Van
 
 - Viewport de juego: **412 px máximo**, centrado, en todos los breakpoints.
 - Gutter de 16 px, con safe area.
-- Verificado a **360 / 390 / 412**.
+- Verificado a **320 / 360 / 390 / 412**, y con zoom 2 sobre 1280. 320 px es el piso de reflow: `html` declara `min-width: 320px`.
 - Tablet y desktop **centran**, no estiran. Un máximo mayor (≤560 px) queda reservado para interacciones genuinamente anchas.
 
 Estirar el juego a 1200 px no mejora ni leer un enunciado ni comparar cuatro opciones: sólo obliga a barrer la cabeza de un lado al otro de la pantalla.

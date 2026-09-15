@@ -151,6 +151,49 @@ async function fillAnswer(
   } else throw new Error('missing browser interaction driver')
 }
 
+/**
+ * The document never scrolls horizontally, in any state of the challenge.
+ *
+ * Measured empty, with the answer built and on the result: a filled plan or a
+ * long feedback line is what widens a page, not the first paint.
+ */
+async function reflow(page: Page, label: string) {
+  const layout = await page.evaluate(() => ({
+    viewport: window.innerWidth,
+    scroll: document.documentElement.scrollWidth,
+    overflowing: Array.from(document.querySelectorAll('body *'))
+      .filter((e) => e.getBoundingClientRect().right > window.innerWidth + 0.5)
+      .map((e) => ({
+        tag: e.tagName,
+        className: String(e.className),
+        right: e.getBoundingClientRect().right,
+        text: e.textContent?.slice(0, 60),
+      })),
+    // Boxes wider than the viewport: whoever is actually stretching the page.
+    wide: Array.from(document.querySelectorAll('body *'))
+      .filter((e) => e.getBoundingClientRect().width > window.innerWidth + 0.5)
+      .map((e) => ({
+        tag: e.tagName,
+        className: String(e.className).slice(0, 70),
+        width: Math.round(e.getBoundingClientRect().width),
+        left: Math.round(e.getBoundingClientRect().left),
+      })),
+    // Elements whose content is wider than their box: when the document grows,
+    // one of these is the ancestor that refused to shrink.
+    tight: Array.from(document.querySelectorAll('body *'))
+      .filter((e) => e.scrollWidth > e.clientWidth + 1 && e.clientWidth > 0)
+      .map((e) => ({
+        tag: e.tagName,
+        className: String(e.className).slice(0, 70),
+        clientWidth: e.clientWidth,
+        scrollWidth: e.scrollWidth,
+      })),
+  }))
+  if (layout.scroll > layout.viewport)
+    console.log('OVERFLOW', label, JSON.stringify(layout))
+  expect(layout.scroll, label).toBeLessThanOrEqual(layout.viewport)
+}
+
 /** Audit navigation uses actual Tab traversal, never HTMLElement.focus or mouse. */
 async function tabTo(page: Page, target: Locator) {
   for (let step = 0; step < 150; step++) {
@@ -172,11 +215,11 @@ async function tabTo(page: Page, target: Locator) {
   )
 }
 
-// The declared floor is 360: `html` carries `min-width: 360px` and the design
-// system verifies 360 / 390 / 412. Below that the page scrolls by construction,
-// which is a product decision recorded in the design system, not a defect this
-// suite can assert away.
+// The declared floor is 320: `html` carries `min-width: 320px` and the whole
+// game is operable there. 412 is the shell maximum, and 1280 at zoom 2 is the
+// reflow equivalent of a 640 px viewport.
 for (const [width, zoom] of [
+  [320, 1],
   [360, 1],
   [390, 1],
   [412, 1],
@@ -231,6 +274,7 @@ for (const [width, zoom] of [
       await expect(
         page.getByRole('heading', { name: view.narrative.title, exact: true }),
       ).toBeVisible()
+      await reflow(page, `${view.ref.templateId} · empty`)
       await page.context().setOffline(true)
       const answer = ['y1.classroom-layout', 'y1.rehearsal-schedule'].includes(
         view.ref.templateId,
@@ -255,23 +299,7 @@ for (const [width, zoom] of [
         expect(control.height / zoom).toBeGreaterThanOrEqual(44)
         expect(control.width / zoom).toBeGreaterThanOrEqual(44)
       }
-      const layout = await page.evaluate(() => ({
-        viewport: window.innerWidth,
-        scroll: document.documentElement.scrollWidth,
-        overflowing: Array.from(document.querySelectorAll('body *'))
-          .filter((e) => e.getBoundingClientRect().right > window.innerWidth)
-          .map((e) => ({
-            tag: e.tagName,
-            className: e.className,
-            right: e.getBoundingClientRect().right,
-            text: e.textContent?.slice(0, 60),
-          })),
-      }))
-      if (layout.scroll > layout.viewport)
-        console.log('OVERFLOW', view.ref.templateId, JSON.stringify(layout))
-      expect
-        .soft(layout.scroll, view.ref.templateId)
-        .toBeLessThanOrEqual(layout.viewport)
+      await reflow(page, `${view.ref.templateId} · answered`)
       const axe = await new AxeBuilder({ page })
         .withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'])
         .analyze()
@@ -290,6 +318,7 @@ for (const [width, zoom] of [
         'role',
         'alert',
       )
+      await reflow(page, `${view.ref.templateId} · result`)
       await tabTo(page, page.getByTestId('continue'))
       await page.keyboard.press('Enter')
       await page.context().setOffline(false)

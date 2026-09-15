@@ -74,7 +74,12 @@ export function CareerStrip({
 
   return (
     <div className={cn('flex flex-col', className)} data-testid="career-strip">
-      <div className="border-rule flex items-stretch gap-1.5 border-b px-4 py-3">
+      {/*
+        La tira refluye: por debajo de ~360 px las celdas no entran en una línea
+        y pasan a dos, en vez de recortarse o empujar la página. Nada se pierde
+        y ningún objetivo táctil baja de 44 px.
+      */}
+      <div className="border-rule flex flex-wrap items-stretch gap-1.5 border-b px-4 py-3">
         {average === null ? null : (
           <PaperCell label="Promedio" value={formatPromedio(average)} />
         )}
