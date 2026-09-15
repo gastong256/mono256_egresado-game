@@ -41,9 +41,15 @@ export default async function DevelopmentGameEnginePage({
       ? requested
       : 'harness-default'
 
-  if (params['content'] === 'grade-1' || params['content'] === 'grade-1-demo')
-    return (
-      <Grade1Harness seed={seed} demo={params['content'] === 'grade-1-demo'} />
-    )
+  const content = params['content']
+  for (const set of ['grade-1', 'grade-2'] as const)
+    if (content === set || content === `${set}-demo`)
+      return (
+        <Grade1Harness
+          seed={seed}
+          demo={content === `${set}-demo`}
+          content={set}
+        />
+      )
   return <DevelopmentHarness initialSeed={seed} />
 }

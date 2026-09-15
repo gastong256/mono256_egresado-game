@@ -338,7 +338,7 @@ export function evaluatePlan(
     read.quality,
     {
       outcomeKey: `intercurso-plan.${p.shape}.${read.quality}`,
-      stamp: read.quality === 'invalid' ? 'No cierra' : 'Plan armado',
+      stamp: read.quality === 'invalid' ? 'No cierra' : 'Armado',
       facts: [
         ...SLOTS.map((slot) => ({
           label: `Turno ${slot.label}`,

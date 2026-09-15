@@ -312,7 +312,7 @@ export function evaluateCourt(
       quality,
       {
         outcomeKey: `court-zones.${p.shape}.${quality}`,
-        stamp: quality === 'invalid' ? 'No entra' : 'Cancha armada',
+        stamp: quality === 'invalid' ? 'No entra' : 'Armada',
         facts: [
           {
             label: 'Cancha',

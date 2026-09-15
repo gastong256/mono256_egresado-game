@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest'
-import { replayRun, restoreSnapshot, serializeSnapshot } from '@/game'
+import {
+  replayRun,
+  restoreSnapshot,
+  serializeActionLog,
+  serializeSnapshot,
+} from '@/game'
+import { validateSubmittedRun } from '@/server/game/validate-run'
+import { actionLogSchema } from '@/game/runs/action-log'
 import { simulateRun } from '@/game/testing'
 import {
   createGrade2Dependencies,
@@ -59,6 +66,49 @@ describe('2.º · el año corre de punta a punta', () => {
       'year-2',
     ])
     expect(state.plan?.stages.flatMap((stage) => stage.beats).length).toBe(6)
+  })
+
+  it('el servidor recalcula la run de 2.º y descarta lo que el cliente afirme', () => {
+    const built = descriptor('g2-server', true)
+    const outcome = simulateRun(built, demo)
+    expect(outcome.ok).toBe(true)
+    if (!outcome.ok) return
+    const encoded = actionLogSchema.parse(serializeActionLog(outcome.value.log))
+    const good = validateSubmittedRun(encoded, demo)
+    expect(good.ok).toBe(true)
+    // Valores inflados por el cliente: mismo resultado que la submission legítima.
+    expect(
+      validateSubmittedRun(
+        {
+          ...encoded,
+          score: 999999,
+          quality: 'optimal',
+          graduated: false,
+          aura: 99999,
+        },
+        demo,
+      ),
+    ).toEqual(good)
+    for (const field of [
+      'gameVersion',
+      'contentVersion',
+      'variantCatalogVersion',
+    ])
+      expect(
+        validateSubmittedRun(
+          {
+            ...encoded,
+            descriptor: { ...encoded.descriptor, [field]: 'forjado' },
+          },
+          demo,
+        ).ok,
+      ).toBe(false)
+    expect(
+      validateSubmittedRun(
+        { ...encoded, actions: encoded.actions.slice(0, -1) },
+        demo,
+      ).ok,
+    ).toBe(false)
   })
 
   it('LOCKED · el cluster Intercurso aporta como máximo una Template puntuable', () => {

@@ -339,7 +339,7 @@ export function evaluateSurvey(
       quality,
       {
         outcomeKey: `course-project-survey.${p.shape}.${quality}`,
-        stamp: quality === 'invalid' ? 'Dato forzado' : 'Informe listo',
+        stamp: quality === 'invalid' ? 'Forzado' : 'Informe',
         facts: [
           {
             label: 'Respondieron',
@@ -559,7 +559,7 @@ export function evaluateReview(
       quality,
       {
         outcomeKey: `data-claim-review.${quality}`,
-        stamp: quality === 'invalid' ? 'Dato forzado' : 'Repasado',
+        stamp: quality === 'invalid' ? 'Forzado' : 'Repasado',
         facts: [
           {
             label: 'Contestaron',

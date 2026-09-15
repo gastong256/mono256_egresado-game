@@ -337,9 +337,9 @@ export function evaluateKitOrder(
         stamp:
           quality === 'invalid'
             ? uncovered.length > 0
-              ? 'Falta gente'
+              ? 'Faltan'
               : 'No entra'
-            : 'Pedido hecho',
+            : 'Pedido',
         facts: [
           ...TEAMS.map((team, index) => ({
             label: team.label,

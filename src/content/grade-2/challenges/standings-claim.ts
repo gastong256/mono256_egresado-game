@@ -371,7 +371,7 @@ export function evaluateStandings(
     quality,
     {
       outcomeKey: `standings-claim.${p.shape}.${quality}`,
-      stamp: quality === 'invalid' ? 'Cuenta forzada' : 'Tabla leída',
+      stamp: quality === 'invalid' ? 'Forzada' : 'Leída',
       facts: [
         ...CLAIM_TEAMS.map((team, index) => ({
           label: team.label,

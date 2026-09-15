@@ -6,6 +6,10 @@ import {
   createGrade1RunDescriptor,
 } from '@/content/grade-1'
 import {
+  createGrade2Dependencies,
+  createGrade2RunDescriptor,
+} from '@/content/grade-2'
+import {
   canonicalize,
   parseActionLog,
   replayRun,
@@ -25,21 +29,50 @@ import { RunView } from './run-view'
 import { useControllerSelector } from './use-game-run'
 import type { EngineDependencies } from '@/game'
 
+/** Which career content set this harness plays. One entry per implemented year. */
+export type HarnessContent = 'grade-1' | 'grade-2'
+
+const SETS = {
+  'grade-1': {
+    dependencies: createGrade1Dependencies,
+    descriptor: createGrade1RunDescriptor,
+    storage: 'grade1',
+    title: '7.º → 1.º',
+    demoDetail:
+      'Muestra las cinco situaciones de primero; no respeta el presupuesto de una run normal.',
+    partialDetail:
+      'Cuatro situaciones ordinarias en dos años, con Repaso fuera del presupuesto.',
+  },
+  'grade-2': {
+    dependencies: createGrade2Dependencies,
+    descriptor: createGrade2RunDescriptor,
+    storage: 'grade2',
+    title: '7.º → 2.º',
+    demoDetail:
+      'Muestra las situaciones de primero y segundo; no respeta el presupuesto de una run normal.',
+    partialDetail:
+      'Seis situaciones ordinarias en tres años, con Repaso fuera del presupuesto.',
+  },
+} as const
+
 /** Isolated local practice surface. Never touches the /jugar Grade-7 checkpoint. */
 export function Grade1Harness({
   seed,
   demo,
+  content = 'grade-1',
 }: {
   readonly seed: string
   readonly demo: boolean
+  readonly content?: HarnessContent
 }) {
-  const dependencies = useMemo(() => createGrade1Dependencies(demo), [demo])
+  const set = SETS[content]
+  const dependencies = useMemo(() => set.dependencies(demo), [set, demo])
   const [controller, setController] = useState<GameController>()
   const [message, setMessage] = useState('')
-  const key = `egresado.grade1.harness.v1.${demo ? 'demo' : 'partial'}.${seed}`
+  const key = `egresado.${set.storage}.harness.v1.${demo ? 'demo' : 'partial'}.${seed}`
 
   function start(resume: boolean) {
-    const built = createGrade1RunDescriptor(seed, demo)
+    const built = set.descriptor(seed, demo)
     if (!built.ok) {
       setMessage(`No se pudo componer: ${built.error.detail}`)
       return
@@ -136,18 +169,12 @@ export function Grade1Harness({
     <div className="flex min-w-0 flex-col gap-4">
       <div className="max-w-viewport px-gutter mx-auto flex w-full flex-col gap-3 pt-4">
         <Callout
-          title={
-            demo
-              ? 'Demo de contenido · 7.º → 1.º'
-              : 'Recorrido compuesto · 7.º → 1.º'
-          }
+          title={`${demo ? 'Demo de contenido' : 'Recorrido compuesto'} · ${set.title}`}
           tone="accent"
         >
           Práctica local de desarrollo.{' '}
-          {demo
-            ? 'Muestra las cinco situaciones de primero; no respeta el presupuesto de una run normal.'
-            : 'Cuatro situaciones ordinarias en dos años, con Repaso fuera del presupuesto.'}{' '}
-          No es una carrera completa ni habilita ranking oficial. Seed: {seed}.
+          {demo ? set.demoDetail : set.partialDetail} No es una carrera completa
+          ni habilita ranking oficial. Seed: {seed}.
         </Callout>
         {message !== '' && (
           <p role="status" className="text-meta text-ink-secondary">
