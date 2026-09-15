@@ -30,6 +30,11 @@ import {
   GRADE_1_CONTENT_VERSION,
   GRADE_1_VARIANT_CATALOG_VERSION,
 } from '../../src/content/grade-1/versions'
+import { createGrade2Catalog } from '../../src/content/grade-2/registry'
+import {
+  GRADE_2_CONTENT_VERSION,
+  GRADE_2_VARIANT_CATALOG_VERSION,
+} from '../../src/content/grade-2/versions'
 import {
   GRADE_7_CONTENT_VERSION,
   GRADE_7_VARIANT_CATALOG_VERSION,
@@ -70,25 +75,47 @@ function write(line: string): void {
 function main(): void {
   const argv = process.argv.slice(2)
   const command = argv.find((entry) => !entry.startsWith('-')) ?? 'check'
-  const grade1 = argv.includes('--content=grade-1')
-  const contentCatalog = grade1
-    ? createGrade1Catalog()
-    : createGrade7Dependencies().catalog
-  const build = grade1
-    ? {
-        ...BUILD,
-        contentVersion: GRADE_1_CONTENT_VERSION,
-        catalogVersion: GRADE_1_VARIANT_CATALOG_VERSION,
-      }
-    : BUILD
-  const catalogPath = grade1
-    ? path.join(
-        'src',
-        'content',
-        'grade-1',
-        `variant-catalog.${GRADE_1_VARIANT_CATALOG_VERSION}.json`,
-      )
-    : CATALOG_PATH
+  // One entry per implemented content set. A new grade adds a row here and
+  // nothing else in this script.
+  const sets = {
+    'grade-1': {
+      catalog: createGrade1Catalog,
+      contentVersion: GRADE_1_CONTENT_VERSION,
+      catalogVersion: GRADE_1_VARIANT_CATALOG_VERSION,
+      directory: 'grade-1',
+    },
+    'grade-2': {
+      catalog: createGrade2Catalog,
+      contentVersion: GRADE_2_CONTENT_VERSION,
+      catalogVersion: GRADE_2_VARIANT_CATALOG_VERSION,
+      directory: 'grade-2',
+    },
+  } as const
+  const requested = Object.keys(sets).find((name) =>
+    argv.includes(`--content=${name}`),
+  ) as keyof typeof sets | undefined
+  const selected = requested === undefined ? undefined : sets[requested]
+  const contentCatalog =
+    selected === undefined
+      ? createGrade7Dependencies().catalog
+      : selected.catalog()
+  const build =
+    selected === undefined
+      ? BUILD
+      : {
+          ...BUILD,
+          contentVersion: selected.contentVersion,
+          catalogVersion: selected.catalogVersion,
+        }
+  const catalogPath =
+    selected === undefined
+      ? CATALOG_PATH
+      : path.join(
+          'src',
+          'content',
+          selected.directory,
+          `variant-catalog.${selected.catalogVersion}.json`,
+        )
 
   if (command === 'build' || command === 'check') {
     const { catalog, report } = buildVariantCatalog(contentCatalog, build)

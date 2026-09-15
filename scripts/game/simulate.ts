@@ -11,7 +11,8 @@
  *     --seed=<prefix>  seed prefix, so a sweep is reproducible (default "sim")
  *     --verify=<n>     run the replay/snapshot check every n runs (default 25)
  *     --verbose        print the per-run seed of every finding
- *     --content=<grade-7|grade-7-composed|grade-1|grade-1-demo|development|
+ *     --content=<grade-7|grade-7-composed|grade-1|grade-1-demo|grade-2|
+ *               grade-2-demo|development|
  *               development-composed|six-stage>
  *                      content set (default grade-7). The composed sets play
  *                      runs whose content the composer pinned before they
@@ -33,6 +34,7 @@ import {
 } from '../../src/content/grade-7'
 import type { EngineDependencies } from '../../src/game'
 import { createGrade1Dependencies } from '../../src/content/grade-1'
+import { createGrade2Dependencies } from '../../src/content/grade-2'
 import { simulateMany } from '../../src/game/testing/simulation'
 
 /**
@@ -63,6 +65,8 @@ function selectDependencies(argv: readonly string[]): EngineDependencies {
   }
   if (requested === 'grade-1') return createGrade1Dependencies()
   if (requested === 'grade-1-demo') return createGrade1Dependencies(true)
+  if (requested === 'grade-2') return createGrade2Dependencies()
+  if (requested === 'grade-2-demo') return createGrade2Dependencies(true)
   if (requested !== undefined && requested !== 'grade-7') {
     throw new Error(`unknown content set: ${requested}`)
   }

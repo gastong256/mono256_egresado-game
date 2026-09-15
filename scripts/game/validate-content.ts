@@ -15,6 +15,7 @@ import { validateContent } from '../../src/game/content/validation'
 import { createDevelopmentDependencies } from '../../src/game/testing/fixtures/development-ruleset'
 import { createGrade7Dependencies } from '../../src/content/grade-7'
 import { createGrade1Dependencies } from '../../src/content/grade-1'
+import { createGrade2Dependencies } from '../../src/content/grade-2'
 import type { EngineDependencies } from '../../src/game'
 
 /**
@@ -34,6 +35,8 @@ function selectDependencies(argv: readonly string[]): EngineDependencies {
   }
   if (requested === 'grade-1') return createGrade1Dependencies()
   if (requested === 'grade-1-demo') return createGrade1Dependencies(true)
+  if (requested === 'grade-2') return createGrade2Dependencies()
+  if (requested === 'grade-2-demo') return createGrade2Dependencies(true)
   if (requested !== undefined && requested !== 'grade-7') {
     throw new Error(`unknown content set: ${requested}`)
   }

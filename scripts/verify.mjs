@@ -64,6 +64,22 @@ runPnpm('Grade-1 approved variant catalog', [
   'check',
   '--content=grade-1',
 ])
+runPnpm('Grade-2 content validation', [
+  'game:validate-content',
+  '--content=grade-2',
+  '--seeds=60',
+])
+runPnpm('Grade-2 approved variant catalog', [
+  'game:variants',
+  'check',
+  '--content=grade-2',
+])
+runPnpm('Grade-2 deterministic simulation', [
+  'game:simulate',
+  '--content=grade-2',
+  '--runs=200',
+  '--verify=10',
+])
 runPnpm('Grade-1 deterministic simulation', [
   'game:simulate',
   '--content=grade-1',

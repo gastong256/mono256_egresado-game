@@ -94,15 +94,29 @@ const grade7Axes: Readonly<Record<string, CompositionMetadata>> = {
     pacingClass: 'MEDIUM',
   },
 }
-export function createGrade1Catalog() {
+/**
+ * The career content so far, with the Grade-7 composition overlay applied.
+ *
+ * Exposed as parts so a later year can extend the same list instead of
+ * rebuilding the overlay, which would be a second place to keep in sync.
+ */
+export function grade1CatalogParts(): {
+  readonly families: readonly ScenarioFamilyDefinition[]
+  readonly challenges: readonly ChallengeDefinition[]
+} {
   const previous = grade7Challenges.map((template) => {
     const composition = grade7Axes[template.id]
     if (composition === undefined)
       throw new Error(`missing Grade-7 composition axis: ${template.id}`)
     return { ...template, composition }
   })
-  return createContentCatalog(
-    [...grade7Families, ...grade1Families],
-    [...previous, ...grade1Challenges],
-  )
+  return {
+    families: [...grade7Families, ...grade1Families],
+    challenges: [...previous, ...grade1Challenges],
+  }
+}
+
+export function createGrade1Catalog() {
+  const parts = grade1CatalogParts()
+  return createContentCatalog(parts.families, parts.challenges)
 }

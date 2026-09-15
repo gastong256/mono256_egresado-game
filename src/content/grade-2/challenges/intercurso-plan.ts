@@ -127,10 +127,13 @@ export function generatePlan(index: number): PlanParams {
           [true, true],
         ]
       : shape === 'clash'
-        ? [
+        ? // Cris misses the morning. Each shape owns a distinct availability
+          // signature: the shape itself is never shown, so two shapes that can
+          // produce the same crew would be the same situation twice.
+          [
             [true, true],
             [true, true],
-            [swap === 0 ? true : false, true],
+            [false, true],
             [true, true],
           ]
         : [
