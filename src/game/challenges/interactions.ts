@@ -34,6 +34,7 @@ export type InteractionKind =
   | 'quantity-builder'
   | 'schedule-builder'
   | 'spatial-layout'
+  | 'classification'
 
 /** A single selectable option. `detail` carries the numbers the player compares. */
 export interface PresentedOption {
