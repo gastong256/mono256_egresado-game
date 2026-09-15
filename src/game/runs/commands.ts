@@ -131,6 +131,38 @@ export const interactionAnswerSchema = z.discriminatedUnion('kind', [
         'duplicate quantity item',
       ),
   }),
+  z.strictObject({
+    kind: z.literal('classification'),
+    entries: z
+      .array(
+        z.strictObject({
+          statementId: z
+            .string()
+            .min(1)
+            .max(64)
+            .regex(/^[a-zA-Z0-9._-]+$/u),
+          labelId: z
+            .string()
+            .min(1)
+            .max(64)
+            .regex(/^[a-zA-Z0-9._-]+$/u),
+        }),
+      )
+      .max(12)
+      .refine(
+        (entries) =>
+          new Set(entries.map((entry) => entry.statementId)).size ===
+          entries.length,
+        'duplicate statement',
+      ),
+    /** La acción pública viaja aparte de las etiquetas, nunca mezclada. */
+    stance: z
+      .string()
+      .min(1)
+      .max(64)
+      .regex(/^[a-zA-Z0-9._-]+$/u)
+      .optional(),
+  }),
   z.object({ kind: z.literal('decision-card'), optionId: z.string().min(1) }),
   z.object({ kind: z.literal('numeric-input'), value: decimalLiteral }),
   z.object({

@@ -58,6 +58,19 @@ function candidateAnswers(view: PublicChallengeView): InteractionAnswer[] {
         kind: interaction.kind,
         optionId: option.id,
       }))
+    case 'classification':
+      return [
+        {
+          kind: 'classification',
+          entries: interaction.statements.map((statement) => ({
+            statementId: statement.id,
+            labelId: interaction.labels[0]?.id ?? '',
+          })),
+          ...(interaction.stance === undefined
+            ? {}
+            : { stance: interaction.stance.options[0]?.id ?? '' }),
+        },
+      ]
     case 'numeric-input': {
       const low = Math.ceil(Number(interaction.min))
       const high = Math.floor(Number(interaction.max))

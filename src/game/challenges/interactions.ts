@@ -267,6 +267,40 @@ export type InteractionPresentation =
       /** Columnas de la grilla. Las mismas para todas las rondas. */
       readonly columns: number
     }
+  | {
+      readonly kind: 'classification'
+      readonly data: readonly PresentedDatum[]
+      readonly instructions: string
+      /** Lo que hay que clasificar: afirmaciones, escenarios, propuestas. */
+      readonly statements: readonly PresentedStatement[]
+      /** Las etiquetas disponibles, las mismas para todos los enunciados. */
+      readonly labels: readonly PresentedLabel[]
+      /**
+       * La acción pública, cuando la plantilla declara una.
+       *
+       * Vive aparte de las etiquetas a propósito: clasificar es la acción
+       * matemática y esto es lo que el curso dice después. Son dos decisiones,
+       * y el evaluador las lee de dos campos distintos para que ninguna pueda
+       * pagarse dos veces.
+       */
+      readonly stance?: {
+        readonly prompt: string
+        readonly options: readonly PresentedLabel[]
+      }
+    }
+
+/** Un enunciado a clasificar, con el dato que lo sostiene. */
+export interface PresentedStatement {
+  readonly id: string
+  readonly label: string
+  readonly detail?: string
+}
+
+/** Una etiqueta disponible. El id viaja en la respuesta; el label se lee. */
+export interface PresentedLabel {
+  readonly id: string
+  readonly label: string
+}
 
 export interface BudgetLine {
   readonly itemId: string
@@ -316,6 +350,18 @@ export type InteractionAnswer =
       readonly kind: 'number-grid'
       readonly rounds: readonly GridRoundSelection[]
     }
+  | {
+      readonly kind: 'classification'
+      readonly entries: readonly ClassificationEntry[]
+      /** La acción pública, sólo cuando la presentación la ofrece. */
+      readonly stance?: string
+    }
+
+/** La etiqueta que el jugador le puso a un enunciado. */
+export interface ClassificationEntry {
+  readonly statementId: string
+  readonly labelId: string
+}
 
 /** Tools a challenge may enable, per FR-008. */
 export type ToolId = 'calculator' | 'notepad' | 'table' | 'ruler'

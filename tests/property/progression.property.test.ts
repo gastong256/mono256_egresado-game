@@ -60,6 +60,19 @@ function answerFor(
       if (option === undefined) throw new Error('sin opciones')
       return { kind: interaction.kind, optionId: option.id }
     }
+    case 'classification':
+      return {
+        kind: 'classification',
+        entries: interaction.statements.map((statement) => ({
+          statementId: statement.id,
+          labelId:
+            interaction.labels[best ? interaction.labels.length - 1 : 0]?.id ??
+            '',
+        })),
+        ...(interaction.stance === undefined
+          ? {}
+          : { stance: interaction.stance.options[0]?.id ?? '' }),
+      }
     case 'numeric-input':
       return {
         kind: 'numeric-input',

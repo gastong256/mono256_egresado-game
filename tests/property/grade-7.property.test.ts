@@ -173,10 +173,20 @@ describe('toda seed produce un año jugable', () => {
                             kind: 'numeric-input' as const,
                             value: interaction.min,
                           }
-                        : {
-                            kind: interaction.kind,
-                            optionId: interaction.options[0]?.id ?? '',
-                          }
+                        : interaction.kind === 'classification'
+                          ? {
+                              kind: 'classification' as const,
+                              entries: interaction.statements.map(
+                                (statement) => ({
+                                  statementId: statement.id,
+                                  labelId: interaction.labels[0]?.id ?? '',
+                                }),
+                              ),
+                            }
+                          : {
+                              kind: interaction.kind,
+                              optionId: interaction.options[0]?.id ?? '',
+                            }
 
             command = {
               type: 'ANSWER',

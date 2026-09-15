@@ -81,7 +81,7 @@ const GOLDEN_RUNS: readonly Golden[] = [
       'year-5|dev.orientation|dev.survey-confidence|optimal|1630',
       'graduation|dev.graduation|-|-|0',
     ],
-    hash: '8222092385bbe82645e49d7351cd9dd5290e5eae0a9c15b0c777f553636b6004',
+    hash: '49b604ac2eb47033fbc99a6d03da9e9e8a0352a8aaf271f07088d4e0ee05e61d',
   },
   {
     seed: 'golden-beta',
@@ -104,7 +104,7 @@ const GOLDEN_RUNS: readonly Golden[] = [
       'year-5|dev.orientation|dev.survey-confidence|invalid|495',
       'graduation|dev.graduation|-|-|0',
     ],
-    hash: 'd2e1ad7ae80250e79ef2fa3a136b1a15c868f9bb54996ced698f121811a0e8bd',
+    hash: '2ac65c9a79e499045008dca269e58f57ba84a0ed719f76ad50f1daea9deea0ad',
   },
 ]
 

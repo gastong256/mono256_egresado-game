@@ -134,6 +134,19 @@ export function synthesizeAnswer(
         }),
       }
     }
+    case 'classification':
+      // Label every statement and, when the Template asks for a public stance,
+      // pick one too: an incomplete classification is not a legal answer.
+      return {
+        kind: 'classification',
+        entries: presentation.statements.map((statement) => ({
+          statementId: statement.id,
+          labelId: rng.pick(presentation.labels).id,
+        })),
+        ...(presentation.stance === undefined
+          ? {}
+          : { stance: rng.pick(presentation.stance.options).id }),
+      }
     default:
       return assertNever(presentation)
   }

@@ -28,6 +28,7 @@ import type {
 import { Button, type DataGridItem } from '@/components/ui'
 
 import { AssignmentBoard } from './interactions/assignment-board'
+import { Classification } from './interactions/classification'
 import { BudgetBuilder, QuantityBuilder } from './interactions/budget-builder'
 import { NumberGridBoard } from './interactions/number-grid'
 import { NumericAnswer } from './interactions/numeric-answer'
@@ -75,6 +76,8 @@ export function interactionData(
       // Los números de la grilla son el dato. Repetirlos arriba en cajas sería
       // pedir que se lean dos veces.
       return []
+    case 'classification':
+      return [...presentation.data]
     default:
       return assertNever(presentation)
   }
@@ -101,6 +104,7 @@ export function usesDecisionBlock(
     case 'quantity-builder':
     case 'assignment-board':
     case 'number-grid':
+    case 'classification':
       return false
     case 'schedule-builder':
     case 'spatial-layout':
@@ -301,6 +305,19 @@ export function InteractionControls({
         />
       )
 
+    case 'classification':
+      return (
+        <Classification
+          presentation={presentation}
+          entries={draft?.kind === 'classification' ? draft.entries : []}
+          stance={draft?.kind === 'classification' ? draft.stance : undefined}
+          disabled={disabled}
+          onChange={(value) => {
+            onDraftChange({ kind: 'classification', ...value })
+          }}
+        />
+      )
+
     default:
       return assertNever(presentation)
   }
@@ -425,6 +442,14 @@ export function isDraftSubmittable(
           ),
         )
       )
+    case 'classification':
+      return (
+        presentation.kind === 'classification' &&
+        presentation.statements.every((statement) =>
+          draft.entries.some((entry) => entry.statementId === statement.id),
+        ) &&
+        (presentation.stance === undefined || draft.stance !== undefined)
+      )
     default:
       return assertNever(draft)
   }
@@ -483,6 +508,22 @@ export function missingRequirement(
         return undefined
       }
       return `Falta marcar el paso «${first.cue}» para confirmar.`
+    }
+    case 'classification': {
+      const entries = draft?.kind === 'classification' ? draft.entries : []
+      const pending = presentation.statements.filter(
+        (statement) =>
+          !entries.some((entry) => entry.statementId === statement.id),
+      )
+      const first = pending[0]
+      if (first !== undefined)
+        return `Falta clasificar «${first.label}» para confirmar.`
+      if (
+        presentation.stance !== undefined &&
+        (draft?.kind !== 'classification' || draft.stance === undefined)
+      )
+        return `Falta responder «${presentation.stance.prompt}» para confirmar.`
+      return undefined
     }
     default:
       return assertNever(presentation)

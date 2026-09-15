@@ -67,6 +67,17 @@ function answerFor(view: PublicChallengeView): InteractionAnswer {
     }
     case 'numeric-input':
       return { kind: 'numeric-input', value: interaction.min }
+    case 'classification':
+      return {
+        kind: 'classification',
+        entries: interaction.statements.map((statement) => ({
+          statementId: statement.id,
+          labelId: interaction.labels[0]?.id ?? '',
+        })),
+        ...(interaction.stance === undefined
+          ? {}
+          : { stance: interaction.stance.options[0]?.id ?? '' }),
+      }
     case 'number-grid':
       return {
         kind: 'number-grid',

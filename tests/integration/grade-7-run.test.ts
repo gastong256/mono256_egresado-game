@@ -70,6 +70,19 @@ function candidateAnswers(view: PublicChallengeView): InteractionAnswer[] {
         kind: 'information-request' as const,
         optionId: option.id,
       }))
+    case 'classification':
+      return [
+        {
+          kind: 'classification' as const,
+          entries: interaction.statements.map((statement) => ({
+            statementId: statement.id,
+            labelId: interaction.labels[0]?.id ?? '',
+          })),
+          ...(interaction.stance === undefined
+            ? {}
+            : { stance: interaction.stance.options[0]?.id ?? '' }),
+        },
+      ]
     case 'numeric-input': {
       /*
        * Un barrido entero del rango que la pantalla ofrece.

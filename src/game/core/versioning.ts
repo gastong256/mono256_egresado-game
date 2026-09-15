@@ -23,6 +23,12 @@ import { err, ok, type Result } from './result'
 /**
  * Engine/game version of this build. Also serialized as `gameVersion`.
  *
+ * `8.0.0` adds the classification response — statements labelled against a
+ * shared set, with the public stance carried in its own field so a Template can
+ * keep its Math action and its Aura action apart. ACTION_LOG_VERSION 6 encodes
+ * it; snapshot 7 is untouched because nothing new is persisted. Grade 7 and
+ * Grade 1 content, traits, scoring and composition are unchanged.
+ *
  * `7.0.0` adds bounded global composition, semantic constructive responses,
  * presentation-only narrative context and approved-only recovery/debriefs.
  * ACTION_LOG_VERSION 5 encodes the three new answer kinds. Snapshot 7 remains:
@@ -90,7 +96,7 @@ import { err, ok, type Result } from './result'
  * reproduce its original result under this engine, and that is exactly what the
  * version triple exists to say out loud instead of discovering it in a replay.
  */
-export const ENGINE_VERSION = '7.0.0'
+export const ENGINE_VERSION = '8.0.0'
 
 export interface VersionTriple {
   readonly gameVersion: string

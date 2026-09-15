@@ -130,14 +130,14 @@ const dependencies = createDevelopmentDependencies()
  * golden quedaron **idénticos**.
  */
 const EXPECTED = {
-  engine: '7e7e61eb',
+  engine: 'dfed0811',
   ruleset: '5b9b0bc5',
   content: 'dbaf5094',
 } as const
 
 describe('version fingerprints', () => {
   it('pins the deterministic kernel to its engine version', () => {
-    expect(ENGINE_VERSION).toBe('7.0.0')
+    expect(ENGINE_VERSION).toBe('8.0.0')
     expect(engineFingerprint()).toBe(EXPECTED.engine)
   })
 

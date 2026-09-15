@@ -98,6 +98,17 @@ export function grade1Answer(
   // G7 portion: public, deliberately ordinary play. Its regressions have their
   // own optimal/worst-run suite; do not duplicate those private math oracles.
   switch (p.kind) {
+    case 'classification':
+      return {
+        kind: 'classification',
+        entries: p.statements.map((statement) => ({
+          statementId: statement.id,
+          labelId: p.labels[0]?.id ?? '',
+        })),
+        ...(p.stance === undefined
+          ? {}
+          : { stance: p.stance.options[0]?.id ?? '' }),
+      }
     case 'number-grid':
       return {
         kind: p.kind,

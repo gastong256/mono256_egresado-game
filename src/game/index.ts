@@ -508,7 +508,10 @@ export {
 export type {
   AgentAssignment,
   BudgetLine,
+  ClassificationEntry,
   GridRoundSelection,
+  PresentedLabel,
+  PresentedStatement,
   InteractionAnswer,
   InteractionKind,
   InteractionPresentation,
