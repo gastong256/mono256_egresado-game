@@ -66,6 +66,8 @@
 04-quality/content-validation.md
 04-quality/full-career-implementation-audit.md
 04-quality/full-career-technical-conformance.md
+04-quality/mathematics-department-human-review-packet.md
+04-quality/mathematics-department-pre-review.md
 04-quality/non-functional-requirements.md
 04-quality/post-grade-1-scalability-audit.md
 04-quality/post-teacher-gate-1-score-audit.md

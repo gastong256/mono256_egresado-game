@@ -94,6 +94,8 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 - `full-career-technical-conformance.md`: reporte técnico read-only de Phase 0, evidencia y deltas futuros.
 - `post-grade-1-scalability-audit.md`: contrato obligatorio para dos obligaciones conceptuales bajo un recovery máximo después de implementar 1.º.
 - `full-career-implementation-audit.md`: auditoría de la carrera real 7.º → 5.º con su veredicto único, hallazgos y lo que no afirma.
+- `mathematics-department-pre-review.md`: pre-revisión matemática y didáctica asistida por IA, con registro de hallazgos y bibliografía; no reemplaza al gate humano.
+- `mathematics-department-human-review-packet.md`: paquete operativo para que el Departamento de Matemática revise el juego sin leer código.
 - `variant-validation-and-audit.md`: invariantes de variante y auditoría estadística del catálogo.
 - `testing-strategy.md`: unit, property-based, integration, E2E y pruebas de contenido.
 - `non-functional-requirements.md`: performance, resiliencia, accesibilidad y compatibilidad.

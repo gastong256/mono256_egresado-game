@@ -21,10 +21,15 @@ STAGE-08                                      IN_PROGRESS · CURRENT
 │   ├── 3.º Autonomía                          DONE · catálogo grade-3-dev-1
 │   ├── 4.º Responsabilidad                    DONE · catálogo grade-4-dev-1
 │   └── 5.º Cierre y futuro                    DONE · catálogo grade-5-dev-1
-└── INTEGRACIÓN DE CARRERA COMPLETA            DONE
-    ├── Carrera real 7.º–5.º de nueve beats    DONE · catálogo grade-5-dev-2
-    ├── Rareza, Prestige y epílogo             DONE · una sola vez
-    └── D-S08-056 con catálogo real            CLOSED · aceptada con evidencia
+├── INTEGRACIÓN DE CARRERA COMPLETA            DONE
+│   ├── Carrera real 7.º–5.º de nueve beats    DONE · catálogo grade-5-dev-2
+│   ├── Rareza, Prestige y epílogo             DONE · una sola vez
+│   └── D-S08-056 con catálogo real            CLOSED · aceptada con evidencia
+└── GATES DE PRODUCCIÓN                        IN_PROGRESS
+    ├── Pre-revisión de Matemática (IA)        DONE · 13 hallazgos, 0 bloqueantes
+    ├── Revisión del Depto. de Matemática      PENDING · humana, indelegable
+    ├── Sign-off manual de la rueda            PENDING · humana
+    └── Pacing empírico con jugadores          PENDING · humana
 ```
 
 Phase 1 cerró el 11 de septiembre de 2026. Las cinco Templates de 1.º
@@ -94,6 +99,16 @@ por etapa fuera del presupuesto ordinario y de FairScore.
   **434 ms**, 0 fallas, 0 planes inválidos y las 28 Templates elegibles
   aparecen (D-S08-056 y D-S08-082).
 
+El 16 de septiembre se ejecutó además la
+[pre-revisión de Matemática asistida por IA](../04-quality/mathematics-department-pre-review.md):
+`PRE-REVIEW READY FOR HUMAN MATHEMATICS DEPARTMENT REVIEW`, con trece hallazgos
+—dos HIGH, seis MEDIUM, tres LOW y dos observaciones— y **ninguna corrección
+aplicada**, para que el Departamento revise el mismo objeto que se auditó. El
+material operativo está en el
+[paquete de revisión humana](../04-quality/mathematics-department-human-review-packet.md).
+La revisión del Departamento de Matemática **sigue pendiente**: esta pre-revisión
+no la reemplaza ni la aprueba.
+
 ## Siguiente tarea canónica
 
 ```text
@@ -106,9 +121,11 @@ POST-G1 SCALABILITY AUDIT — PASSED
 5.º — DONE
 INTEGRACIÓN DE CARRERA COMPLETA — DONE
 
+Pre-revisión de Matemática (IA) — DONE
+
 Next:
-Gates de producción de STAGE-08: revisión del Departamento de Matemática,
-sign-off manual de la rueda y pacing empírico sobre la carrera real
+Gates humanos de STAGE-08: revisión del Departamento de Matemática sobre el
+paquete ya preparado, sign-off manual de la rueda y pacing empírico
 ```
 
 La [auditoría de implementación de carrera completa](../04-quality/full-career-implementation-audit.md)
@@ -146,7 +163,9 @@ contenido permanece `draft` y la edición `official: false`.
 
 ## Última reconciliación
 
-16 de septiembre de 2026: integración de la carrera completa —composición de
+16 de septiembre de 2026: pre-revisión de Matemática asistida por IA, con su
+registro de hallazgos y el paquete para el Departamento humano; antes, la
+integración de la carrera completa —composición de
 nueve beats sobre el catálogo real, eventos raros, Prestige con techo ofrecido
 0, hitos, callbacks y epílogo con su pantalla—, auditoría de Estilo, barrido por
 políticas de juego y E2E de carrera. D-S08-056 cerrada con evidencia.

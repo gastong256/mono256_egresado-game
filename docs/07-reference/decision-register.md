@@ -234,6 +234,19 @@ decisión de producto cerrada se reabrió.
 | D-S08-088 | Para que la carrera perfecta llegue a 10 000 se agregaron gates de autoría —que alguna respuesta óptima deje el Equipo máximo y que alguna postura llegue al máximo de Aura—, no se recalibró el score. Al cambiar la población aprobada, los catálogos se **republicaron** como `-dev-2`: un artefacto publicado no se edita en el lugar | ACCEPTED · autoría | `tests/integration/full-career.test.ts` |
 | D-S08-089 | El detalle de una opción baja a su propio renglón cuando no entra, en vez de empujar la fila fuera de la pantalla: un detalle con prosa rompía el piso de reflow de 320 px en las tarjetas de decisión | ACCEPTED · hardening | `src/components/ui/choice-card.tsx`; `tests/e2e/full-career.spec.ts` |
 
+## STAGE-08 / Pre-revisión de Matemática (2026-09-16)
+
+Pre-revisión asistida por IA previa al gate humano. No aprueba nada y no
+modificó contenido: su producto son hallazgos y un paquete de revisión.
+
+| ID | Decisión | Madurez | Fuente / estado |
+|---|---|---|---|
+| D-S08-090 | La pre-revisión de Matemática es **review-first**: documenta hallazgos y propone correcciones precisas, pero **no toca** consignas, evaluadores, oráculos, niveles ni catálogos. El Departamento humano tiene que poder comparar implementación, pre-revisión y propuesta sobre el mismo objeto | ACCEPTED · método | [pre-revisión](../04-quality/mathematics-department-pre-review.md) |
+| D-S08-091 | El marco curricular de contraste es el **nacional (NAP)**, no un diseño provincial: la guía de autoría pide lenguaje argentino neutral y el juego no se ata a una jurisdicción. Un mapeo provincial es posible como decisión institucional, no como requisito | ACCEPTED · alcance | NAP Matemática, Ciclo Básico; [guía de autoría](../01-game-design/content-authoring-guide.md) |
+| D-S08-092 | El hallazgo principal no es aritmético sino de **validez de evaluación**: en `y3.transport-pass`, `g7.mural-paint` y `y5.stage-screen` una estrategia ciega rinde entre 75 y 78 sobre 100 sin hacer ninguna cuenta. Queda registrado como MAT-001, MAT-006 y MAT-008 y **no se corrige** en esta tarea | ACCEPTED · hallazgo | [registro de hallazgos](../04-quality/mathematics-department-pre-review.md#o-registro-de-hallazgos) |
+| D-S08-093 | El techo de la escalera 100/75/40/10 no está garantizado por variante: `g7.mural-paint` no alcanza `efficient` en ninguna, `y4.represent-class` no alcanza `functional` en 13 de 25 y `g7.notebook-offer` es binaria. Se documenta; decidir si la escalera debe tener cuatro niveles siempre es una decisión de producto que este gate no toma | ACCEPTED · diferido | MAT-006, MAT-007, MAT-010 |
+| D-S08-094 | La revisión del Departamento de Matemática **sigue `PENDING`** al terminar esta tarea, y la pre-revisión lo declara explícitamente. Ninguna firma humana se simuló | ACCEPTED · gate | [paquete de revisión humana](../04-quality/mathematics-department-human-review-packet.md) |
+
 La integración de TG1 permanece histórica en [su acta y trazabilidad](../06-delivery/teacher-gate-1/12-integracion-post-gate.md).
 Siguen pendientes la oficialización/freeze, validación empírica, autoría ejecutable,
 catálogo concreto de logros, operación/auth/retención y el gate post-G1. Label,

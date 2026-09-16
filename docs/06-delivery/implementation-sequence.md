@@ -917,7 +917,7 @@ cerrar la integración de carrera completa):
 - [x] Epílogo de carrera real con saliencia determinista, datos ausentes no dibujados y Hitos display-only distinguibles.
 - [x] Accesibilidad teclado/tap, móvil, reduced motion, replay/snapshot/reanudación y E2E por año. — Más el E2E de carrera completa a 320 px.
 - [ ] Auditoría de composición completa, cobertura/exploits y playtests de pacing según [validación de contenido](../04-quality/content-validation.md). — La [auditoría de implementación](../04-quality/full-career-implementation-audit.md) está ejecutada y los exploits barridos; **los playtests de pacing con jugadores reales no**.
-- [ ] Revisión del Departamento de Matemática, documentación por año y cero sistemas fundamentales duplicados. — Documentación por año completa y sin sistemas duplicados; la revisión sigue pendiente.
+- [ ] Revisión del Departamento de Matemática, documentación por año y cero sistemas fundamentales duplicados. — Documentación por año completa y sin sistemas duplicados. La [pre-revisión asistida por IA](../04-quality/mathematics-department-pre-review.md) está ejecutada y dejó preparado el [paquete de revisión humana](../04-quality/mathematics-department-human-review-packet.md); **la revisión del Departamento sigue pendiente y es indelegable**.
 
 **Lectura requerida.** [Matriz](../01-game-design/full-career-content-matrix.md) ·
 [diseño G1](../01-game-design/grade-1-template-design.md) ·
@@ -931,9 +931,10 @@ sustituyen estos gates. Objetivos editoriales y calibraciones versionadas conser
 la madurez del [registro](../07-reference/decision-register.md).
 
 **Siguiente tarea.** Los tres gates de producción que quedan y que ningún test
-sustituye: revisión del Departamento de Matemática sobre las 42 Templates,
-sign-off manual de la rueda del Día del Estudiante y playtests de pacing con
-jugadores reales.
+sustituye: revisión del Departamento de Matemática sobre las 42 Templates —con
+el paquete y los trece hallazgos de la pre-revisión ya preparados—, sign-off
+manual de la rueda del Día del Estudiante y playtests de pacing con jugadores
+reales.
 
 **Exit gate.** ¿Una run real, auditada y accesible recorre
 `7.º → 1.º → 2.º → 3.º → 4.º → 5.º → EGRESADO`, con pacing medido y sin duplicar
