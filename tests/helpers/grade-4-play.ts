@@ -27,6 +27,7 @@ import {
 import {
   flowSchema,
   flowPlans,
+  STATIONS as FLOW_STATIONS,
 } from '@/content/grade-4/challenges/school-event-flow'
 import {
   floorSchema,
@@ -74,11 +75,21 @@ export function grade4Answer(
     return { kind: 'quantity-builder', lines: plan.lines }
   }
   if (id === 'y4.school-event-flow') {
-    const plan = flowPlans(flowSchema.parse(params)).find(
-      (entry) => entry.quality === quality,
-    )
-    if (plan === undefined) throw new Error(`missing ${quality} for ${id}`)
-    return { kind: 'quantity-builder', lines: plan.lines }
+    const p = flowSchema.parse(params)
+    const plan = flowPlans(p).find((entry) => entry.quality === quality)
+    if (plan !== undefined)
+      return { kind: 'quantity-builder', lines: plan.lines }
+    // Repartir más ayudantes de los que hay es inválido siempre, y el oráculo
+    // no lo enumera porque sólo recorre repartos que existen.
+    if (quality === 'invalid')
+      return {
+        kind: 'quantity-builder',
+        lines: FLOW_STATIONS.map((station) => ({
+          itemId: station.id,
+          quantity: station.max,
+        })),
+      }
+    throw new Error(`missing ${quality} for ${id}`)
   }
   if (id === 'y4.event-floor-plan') {
     if (quality === 'invalid') return { kind: 'spatial-layout', placements: [] }
