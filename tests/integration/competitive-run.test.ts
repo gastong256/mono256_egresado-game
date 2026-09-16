@@ -75,6 +75,13 @@ function answerFor(
     }
     case 'numeric-input':
       return { kind: 'numeric-input', value: best ? '45' : interaction.min }
+    case 'route-builder':
+      // Ninguna Template de 7.º arma un recorrido; la rama existe para que el
+      // día que alguna lo haga esto no compile en silencio.
+      return {
+        kind: 'route-builder',
+        stops: interaction.points.map((point) => point.id),
+      }
     case 'classification':
       return {
         kind: 'classification',

@@ -12,14 +12,37 @@
  * bloque en la columna de su lugar y del alto de lo que dura; **no** dibuja
  * viajes ni preparaciones —cuánto necesita cada cambio de lugar es la cuenta
  * del desafío— y no marca choques como error: muestra lo elegido, sin juzgarlo.
+ *
+ * El mismo componente tiene dos modos. Sin calendario es una tarde y las
+ * columnas son lugares, que es lo de 1.º. Con calendario los minutos son
+ * absolutos desde el primer día y las columnas son días, que es lo que necesita
+ * una organización de varios días: la entrada, la respuesta y el evaluador no
+ * cambian, sólo cambia cómo se lee la misma recta de tiempo.
  */
 
 import { useId } from 'react'
 
-import type { PresentedActivity, SchedulePlacement } from '@/game'
+import type {
+  PresentedActivity,
+  PresentedCalendar,
+  SchedulePlacement,
+} from '@/game'
 
 export function formatMinute(minute: number): string {
-  return `${String(Math.floor(minute / 60)).padStart(2, '0')}:${String(minute % 60).padStart(2, '0')}`
+  const clock = minute % 1440
+  return `${String(Math.floor(clock / 60)).padStart(2, '0')}:${String(clock % 60).padStart(2, '0')}`
+}
+
+const MINUTES_PER_DAY = 1440
+
+/** «Mié 17:30» en el modo de varios días; «17:30» en el de una tarde. */
+function formatStart(
+  minute: number,
+  calendar: PresentedCalendar | undefined,
+): string {
+  if (calendar === undefined) return formatMinute(minute)
+  const day = calendar.days[Math.floor(minute / MINUTES_PER_DAY)]
+  return `${day ?? ''} ${formatMinute(minute)}`.trim()
 }
 
 export interface ScheduleBuilderProps {
@@ -27,6 +50,7 @@ export interface ScheduleBuilderProps {
   readonly instructions: string
   readonly placements: readonly SchedulePlacement[]
   readonly span: { readonly from: number; readonly to: number }
+  readonly calendar?: PresentedCalendar
   readonly disabled: boolean
   readonly onChange: (value: readonly SchedulePlacement[]) => void
 }
@@ -37,6 +61,7 @@ export function ScheduleBuilder({
   instructions,
   placements,
   span,
+  calendar,
   disabled,
   onChange,
 }: ScheduleBuilderProps) {
@@ -102,14 +127,26 @@ export function ScheduleBuilder({
               </option>
               {activity.startMinutes.map((minute) => (
                 <option key={minute} value={minute}>
-                  {formatMinute(minute)}
+                  {formatStart(minute, calendar)}
                 </option>
               ))}
             </select>
           </div>
         )
       })}
-      <AfternoonView activities={activities} placements={chosen} span={span} />
+      {calendar === undefined ? (
+        <AfternoonView
+          activities={activities}
+          placements={chosen}
+          span={span}
+        />
+      ) : (
+        <WeekView
+          activities={activities}
+          placements={chosen}
+          calendar={calendar}
+        />
+      )}
       <ol
         aria-label="Agenda elegida"
         className="text-meta text-ink flex list-none flex-col gap-1 p-0 tabular-nums"
@@ -120,8 +157,8 @@ export function ScheduleBuilder({
           )
           return activity === undefined ? null : (
             <li key={placement.activityId}>
-              {formatMinute(placement.startMinute)} · {activity.label} ·{' '}
-              {activity.location} · {activity.durationMinutes} min
+              {formatStart(placement.startMinute, calendar)} · {activity.label}{' '}
+              · {activity.location} · {activity.durationMinutes} min
             </li>
           )
         })}
@@ -244,6 +281,113 @@ function AfternoonView({
       <figcaption className="text-caption text-ink-secondary mt-1 tabular-nums">
         De {formatMinute(span.from)} a {formatMinute(span.to)}. Los viajes y las
         preparaciones no se dibujan: entran en tu cuenta.
+      </figcaption>
+    </figure>
+  )
+}
+
+const WEEK_MINUTES_PER_ROW = 15
+
+/**
+ * La semana en columnas por día, filas de quince minutos.
+ *
+ * Decorativa para la tecnología de asistencia, igual que la tarde: la misma
+ * información está escrita en la lista «Agenda elegida» y en cada campo.
+ */
+function WeekView({
+  activities,
+  placements,
+  calendar,
+}: {
+  readonly activities: readonly PresentedActivity[]
+  readonly placements: readonly SchedulePlacement[]
+  readonly calendar: PresentedCalendar
+}) {
+  const rows = Math.max(
+    1,
+    Math.ceil((calendar.dayEnd - calendar.dayStart) / WEEK_MINUTES_PER_ROW),
+  )
+  const rowOf = (clock: number) =>
+    Math.min(
+      rows,
+      Math.max(
+        0,
+        Math.floor((clock - calendar.dayStart) / WEEK_MINUTES_PER_ROW),
+      ),
+    )
+
+  const blocks = placements.flatMap((placement) => {
+    const activity = activities.find(
+      (entry) => entry.id === placement.activityId,
+    )
+    if (activity === undefined) return []
+    const day = Math.floor(placement.startMinute / MINUTES_PER_DAY)
+    const clock = placement.startMinute % MINUTES_PER_DAY
+    const end = clock + activity.durationMinutes
+    return [
+      {
+        key: placement.activityId,
+        label: activity.label,
+        start: placement.startMinute,
+        column: 2 + day,
+        rowStart: rowOf(clock) + 1,
+        rowSpan: Math.max(1, rowOf(end) - rowOf(clock)),
+      },
+    ]
+  })
+
+  const marks = Array.from(
+    { length: rows + 1 },
+    (_, index) => calendar.dayStart + index * WEEK_MINUTES_PER_ROW,
+  )
+    .filter((minute) => minute % 60 === 0 || minute === calendar.dayStart)
+    .map((minute) => ({ minute, row: rowOf(minute) + 1 }))
+
+  return (
+    <figure className="m-0" data-testid="week-view">
+      <div
+        aria-hidden="true"
+        className="border-rule bg-canvas grid border"
+        style={{
+          gridTemplateColumns: `2.5rem repeat(${String(calendar.days.length)}, minmax(0, 1fr))`,
+          gridTemplateRows: `auto repeat(${String(rows)}, 0.875rem)`,
+        }}
+      >
+        <span className="text-caption text-ink-label px-1" />
+        {calendar.days.map((day) => (
+          <span
+            key={day}
+            className="text-caption text-ink border-rule border-b border-l px-1 font-bold"
+          >
+            {day}
+          </span>
+        ))}
+        {marks.map(({ minute, row }) => (
+          <span
+            key={minute}
+            className="text-caption text-ink-label px-1 tabular-nums"
+            style={{ gridColumn: '1', gridRow: `${String(row + 1)}` }}
+          >
+            {formatMinute(minute)}
+          </span>
+        ))}
+        {blocks.map((block) => (
+          <span
+            key={block.key}
+            className="border-ink bg-surface text-caption text-ink overflow-hidden border px-1 leading-tight"
+            style={{
+              gridColumn: `${String(block.column)}`,
+              gridRow: `${String(block.rowStart + 1)} / span ${String(block.rowSpan)}`,
+            }}
+          >
+            {block.label}
+          </span>
+        ))}
+      </div>
+      <figcaption className="text-caption text-ink-secondary mt-1 tabular-nums">
+        Cada día va de {formatMinute(calendar.dayStart)} a{' '}
+        {formatMinute(calendar.dayEnd)}. Lo que ya estaba comprometido también
+        ocupa lugar.
       </figcaption>
     </figure>
   )

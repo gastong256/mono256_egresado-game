@@ -28,8 +28,11 @@ import {
  * Regenerating these numbers without a version bump silently invalidates every
  * stored replay, which is exactly what this file exists to prevent.
  *
- * Los valores actuales corresponden a Grade 1 (`ENGINE_VERSION` 7.0.0,
- * contenido de desarrollo `0.6.0-dev`). El hash del estado se movió
+ * Los valores actuales corresponden a 3.º (`ENGINE_VERSION` 9.0.0, contenido de
+ * desarrollo `0.6.0-dev`): el motor contrata la respuesta de recorrido y el
+ * modo de varios días de la agenda, así que el descriptor declara otra versión
+ * y el hash del estado se mueve con él. El recorrido, el score por evento, el
+ * perfil y la cantidad de comandos son exactamente los de antes. El hash del estado se movió
  * porque el descriptor declara otras versiones; el recorrido, el score por
  * evento, el perfil y la cantidad de comandos son exactamente los de antes.
  *
@@ -81,7 +84,7 @@ const GOLDEN_RUNS: readonly Golden[] = [
       'year-5|dev.orientation|dev.survey-confidence|optimal|1630',
       'graduation|dev.graduation|-|-|0',
     ],
-    hash: '49b604ac2eb47033fbc99a6d03da9e9e8a0352a8aaf271f07088d4e0ee05e61d',
+    hash: 'd5a07e06914a8721b1641baa5108fb5f2f541aad8221891df3c0bade15a5fa19',
   },
   {
     seed: 'golden-beta',
@@ -104,7 +107,7 @@ const GOLDEN_RUNS: readonly Golden[] = [
       'year-5|dev.orientation|dev.survey-confidence|invalid|495',
       'graduation|dev.graduation|-|-|0',
     ],
-    hash: '2ac65c9a79e499045008dca269e58f57ba84a0ed719f76ad50f1daea9deea0ad',
+    hash: '324ace714db5d0bbd854713241cd61446ecf6c55247af571f362a86b9e551bee',
   },
 ]
 

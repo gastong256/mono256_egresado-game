@@ -242,6 +242,7 @@ export {
   type StageContentPlan,
 } from './plan/run-plan'
 export {
+  NEAR_PROFILE_DISTANCE,
   composeRun,
   composeStage,
   composedStage,
@@ -257,6 +258,7 @@ export {
   stagePolicyFor,
   developmentCompositionPolicy,
   COMPOSITION_OBJECTIVES,
+  PUBLISHED_OBJECTIVES_V1,
   type CompositionObjective,
   type CompositionPolicy,
   type StageCompositionPolicy,
@@ -290,6 +292,8 @@ export { parseRunPlan, serializeRunPlan } from './plan/plan-codec'
 export type {
   SchedulePlacement,
   PresentedActivity,
+  PresentedCalendar,
+  PresentedRoutePoint,
   SpatialPlacement,
   GridCell,
   PresentedSpatialObject,

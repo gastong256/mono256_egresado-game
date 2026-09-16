@@ -29,7 +29,7 @@ import { developmentDifficultyPolicy } from '../../difficulty/development-policy
 import { developmentProfilePolicy } from '../../profiles/development-policy'
 import { developmentScoringPolicy } from '../../scoring/development-policy'
 import {
-  COMPOSITION_OBJECTIVES,
+  PUBLISHED_OBJECTIVES_V1,
   stageCompositionPolicy,
   type CompositionPolicy,
 } from '../../plan/composition-policy'
@@ -220,7 +220,7 @@ export const sixStageCompositionPolicy: CompositionPolicy = {
   version: '1.0.0-test',
   official: false,
   costPolicy: candidateDifficultyCostPolicy,
-  objectives: [...COMPOSITION_OBJECTIVES],
+  objectives: [...PUBLISHED_OBJECTIVES_V1],
   stages: STAGE_SHAPES.map((shape) =>
     stageCompositionPolicy(shape.stageId, {
       ordinaryBeats: { min: 2, max: 2 },

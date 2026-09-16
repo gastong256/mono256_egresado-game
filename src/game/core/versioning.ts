@@ -23,6 +23,14 @@ import { err, ok, type Result } from './result'
 /**
  * Engine/game version of this build. Also serialized as `gameVersion`.
  *
+ * `9.0.0` adds the route response — the stops of a trip in the order the player
+ * chose, where the order *is* the answer — and a multi-day mode for the
+ * schedule: its minutes are absolute from the first day, so a plan that spans a
+ * week stays one line of integers instead of growing a second field.
+ * ACTION_LOG_VERSION 7 encodes both; snapshot 7 is untouched because nothing
+ * new is persisted. Grade 7, Grade 1 and Grade 2 content, traits, scoring and
+ * composition are unchanged.
+ *
  * `8.0.0` adds the classification response — statements labelled against a
  * shared set, with the public stance carried in its own field so a Template can
  * keep its Math action and its Aura action apart. ACTION_LOG_VERSION 6 encodes
@@ -96,7 +104,7 @@ import { err, ok, type Result } from './result'
  * reproduce its original result under this engine, and that is exactly what the
  * version triple exists to say out loud instead of discovering it in a replay.
  */
-export const ENGINE_VERSION = '8.0.0'
+export const ENGINE_VERSION = '9.0.0'
 
 export interface VersionTriple {
   readonly gameVersion: string

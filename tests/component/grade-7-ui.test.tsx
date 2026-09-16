@@ -92,25 +92,27 @@ function completedRun(seed: string): RunState {
               : interaction.kind === 'schedule-builder' ||
                   interaction.kind === 'spatial-layout'
                 ? { kind: interaction.kind, placements: [] }
-                : interaction.kind === 'numeric-input'
-                  ? { kind: 'numeric-input', value: interaction.min }
-                  : interaction.kind === 'classification'
-                    ? {
-                        kind: 'classification',
-                        entries: interaction.statements.map((statement) => ({
-                          statementId: statement.id,
-                          labelId: interaction.labels[0]?.id ?? '',
-                        })),
-                        ...(interaction.stance === undefined
-                          ? {}
-                          : {
-                              stance: interaction.stance.options[0]?.id ?? '',
-                            }),
-                      }
-                    : {
-                        kind: interaction.kind,
-                        optionId: interaction.options[0]?.id ?? '',
-                      }
+                : interaction.kind === 'route-builder'
+                  ? { kind: 'route-builder', stops: [] }
+                  : interaction.kind === 'numeric-input'
+                    ? { kind: 'numeric-input', value: interaction.min }
+                    : interaction.kind === 'classification'
+                      ? {
+                          kind: 'classification',
+                          entries: interaction.statements.map((statement) => ({
+                            statementId: statement.id,
+                            labelId: interaction.labels[0]?.id ?? '',
+                          })),
+                          ...(interaction.stance === undefined
+                            ? {}
+                            : {
+                                stance: interaction.stance.options[0]?.id ?? '',
+                              }),
+                        }
+                      : {
+                          kind: interaction.kind,
+                          optionId: interaction.options[0]?.id ?? '',
+                        }
 
       command = {
         type: 'ANSWER',

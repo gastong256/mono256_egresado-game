@@ -123,7 +123,7 @@ it('rejects malformed metadata and career configuration, rather than treating ty
 it('uses new command codec but no redundant snapshot state; refuses old logs explicitly', () => {
   const d = createGrade1RunDescriptor('codec')
   if (!d.ok) throw new Error('no descriptor')
-  expect(ACTION_LOG_VERSION).toBe(6)
+  expect(ACTION_LOG_VERSION).toBe(7)
   expect(SNAPSHOT_SCHEMA_VERSION).toBe(7)
   const encoded = serializeActionLog(emptyActionLog(d.value))
   if (typeof encoded !== 'object' || encoded === null)

@@ -29,7 +29,7 @@ import {
   stageCompositionPolicy,
   toChallengeId,
   candidateDifficultyCostPolicy,
-  COMPOSITION_OBJECTIVES,
+  PUBLISHED_OBJECTIVES_V1,
   type CompositionPolicy,
 } from '@/game'
 
@@ -60,7 +60,7 @@ export const grade7CompositionPolicy: CompositionPolicy = {
   version: '1.0.0-candidate',
   official: false,
   costPolicy: candidateDifficultyCostPolicy,
-  objectives: [...COMPOSITION_OBJECTIVES],
+  objectives: [...PUBLISHED_OBJECTIVES_V1],
   stages: [
     stageCompositionPolicy('grade-7', {
       difficulty: { target: 250, tolerance: 110 },

@@ -15,7 +15,7 @@ import { toChallengeId } from '../../core/branded'
 import { bandOf, type CognitiveProfile } from '../../difficulty/cognitive'
 import { candidateDifficultyCostPolicy } from '../../difficulty/cost-policy'
 import {
-  COMPOSITION_OBJECTIVES,
+  PUBLISHED_OBJECTIVES_V1,
   stageCompositionPolicy,
   type CompositionPolicy,
 } from '../../plan/composition-policy'
@@ -141,7 +141,7 @@ export const syntheticSixStageCompositionPolicy: CompositionPolicy = {
   version: '1.0.0-test',
   official: false,
   costPolicy: candidateDifficultyCostPolicy,
-  objectives: [...COMPOSITION_OBJECTIVES],
+  objectives: [...PUBLISHED_OBJECTIVES_V1],
   stages: STAGE_SHAPES.map((shape) =>
     stageCompositionPolicy(shape.stageId, {
       ordinaryBeats: { min: 2, max: 2 },

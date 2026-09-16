@@ -19,6 +19,7 @@ import {
   costOf,
   toChallengeId,
   COMPOSITION_OBJECTIVES,
+  PUBLISHED_OBJECTIVES_V1,
   DEFAULT_STAGE_BEAT_BUDGET,
   type ApprovedVariantLookup,
   type ComposedRunPlan,
@@ -594,10 +595,17 @@ describe('el plan viaja como JSON', () => {
 
 describe('los objetivos blandos', () => {
   it('están declarados en la política, no escondidos en el algoritmo', () => {
+    // Y la política los **congela**: 7.º ordena planes con los cinco objetivos
+    // con los que se publicó, no con los que el motor tenga después. Por eso
+    // `cognitive-variety`, que llegó con 3.º, está en el vocabulario y no acá.
     expect(grade7CompositionPolicy.objectives).toEqual([
-      ...COMPOSITION_OBJECTIVES,
+      ...PUBLISHED_OBJECTIVES_V1,
     ])
     expect(grade7CompositionPolicy.objectives[0]).toBe('difficulty-fit')
+    expect(COMPOSITION_OBJECTIVES).toContain('cognitive-variety')
+    expect(grade7CompositionPolicy.objectives).not.toContain(
+      'cognitive-variety',
+    )
   })
 
   it('prefieren no repetir familia entre años cuando hay alternativa', () => {

@@ -134,6 +134,18 @@ export function synthesizeAnswer(
         }),
       }
     }
+    case 'route-builder': {
+      // Visit every required point in a random order, and the optional ones
+      // about half the time: the order is the answer, and whether it works is
+      // still the engine's decision.
+      const chosen = presentation.points.filter(
+        (point) => !point.optional || rng.chance(1, 2),
+      )
+      return {
+        kind: 'route-builder',
+        stops: rng.shuffle(chosen).map((point) => point.id),
+      }
+    }
     case 'classification':
       // Label every statement and, when the Template asks for a public stance,
       // pick one too: an incomplete classification is not a legal answer.

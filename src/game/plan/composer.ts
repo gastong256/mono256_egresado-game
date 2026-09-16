@@ -290,7 +290,66 @@ function objectiveScore(
     case 'template-freshness':
       return plan.filter((beat) => !history.templates.has(beat.template.id))
         .length
+    case 'cognitive-variety':
+      return -nearProfilePairs(plan)
   }
+}
+
+/**
+ * Dos perfiles que difieren en un rasgo o menos piden lo mismo.
+ *
+ * El umbral es la única superficie de calibración de este objetivo, y está acá
+ * y no repartido: moverlo reclasifica qué parejas se consideran repetidas sin
+ * tocar la búsqueda.
+ */
+export const NEAR_PROFILE_DISTANCE = 2
+
+/**
+ * Parejas de la etapa que piden lo mismo.
+ *
+ * Se cuentan, no se maximiza la distancia. Maximizarla tiene un ganador único y
+ * fija la misma pareja en todas las runs; contar las repetidas sólo empuja al
+ * último lugar a las que el diseño quiere evitar, y entre las que quedan sigue
+ * decidiendo el sorteo sembrado. Esa diferencia es la que hace que la
+ * preferencia sea blanda y que dos runs no se parezcan.
+ */
+function nearProfilePairs(plan: readonly Candidate[]): number {
+  return plan.reduce(
+    (total, beat, index) =>
+      total +
+      plan
+        .slice(index + 1)
+        .filter(
+          (other) =>
+            profileDistance(beat.template, other.template) <
+            NEAR_PROFILE_DISTANCE,
+        ).length,
+    0,
+  )
+}
+
+/**
+ * How far apart two Templates are in what they ask of the player.
+ *
+ * The sum of the trait-by-trait differences of their cognitive profiles. Two
+ * Templates with the same vector — two plans to construct holding the same
+ * number of constraints — sit at zero however different their stories are,
+ * which is the point: the composer reads metadata, never a challenge id.
+ */
+function profileDistance(
+  left: ChallengeDefinition,
+  right: ChallengeDefinition,
+): number {
+  const a = left.cognitive
+  const b = right.cognitive
+  return (
+    Math.abs(a.steps - b.steps) +
+    Math.abs(a.constraints - b.constraints) +
+    Math.abs(a.selection - b.selection) +
+    Math.abs(a.optimization - b.optimization) +
+    Math.abs(a.uncertainty - b.uncertainty) +
+    Math.abs(a.construction - b.construction)
+  )
 }
 
 /** A stable, content-addressed key. Two different plans never share one. */
@@ -722,6 +781,14 @@ function composeCareer(
           return new Set(beats.flatMap((beat) => beat.template.categories)).size
         case 'template-freshness':
           return new Set(beats.map((beat) => beat.template.id)).size
+        case 'cognitive-variety':
+          // Contado por etapa y no sobre la carrera entera: la preferencia
+          // habla de qué se juega junto, no de cuánto se parecen dos años
+          // lejanos.
+          return -plans.reduce(
+            (total, plan) => total + nearProfilePairs(plan),
+            0,
+          )
       }
     })
     const engines = [...counts.keys()].filter((key) =>

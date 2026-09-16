@@ -33,6 +33,7 @@ import { BudgetBuilder, QuantityBuilder } from './interactions/budget-builder'
 import { NumberGridBoard } from './interactions/number-grid'
 import { NumericAnswer } from './interactions/numeric-answer'
 import { OptionList } from './interactions/option-list'
+import { RouteBuilder } from './interactions/route-builder'
 import { ScheduleBuilder } from './interactions/schedule-builder'
 import { SpatialLayout } from './interactions/spatial-layout'
 
@@ -64,6 +65,7 @@ export function interactionData(
     case 'quantity-builder':
     case 'schedule-builder':
     case 'spatial-layout':
+    case 'route-builder':
     case 'information-request':
       return toGridItems(presentation.data)
     case 'chart-interpretation':
@@ -108,6 +110,7 @@ export function usesDecisionBlock(
       return false
     case 'schedule-builder':
     case 'spatial-layout':
+    case 'route-builder':
       return false
     default:
       return assertNever(presentation)
@@ -156,6 +159,9 @@ export function InteractionControls({
           activities={presentation.activities}
           instructions={presentation.instructions}
           span={presentation.span}
+          {...(presentation.calendar === undefined
+            ? {}
+            : { calendar: presentation.calendar })}
           placements={
             draft?.kind === 'schedule-builder' ? draft.placements : []
           }
@@ -305,6 +311,18 @@ export function InteractionControls({
         />
       )
 
+    case 'route-builder':
+      return (
+        <RouteBuilder
+          presentation={presentation}
+          stops={draft?.kind === 'route-builder' ? draft.stops : []}
+          disabled={disabled}
+          onChange={(stops) => {
+            onDraftChange({ kind: 'route-builder', stops })
+          }}
+        />
+      )
+
     case 'classification':
       return (
         <Classification
@@ -442,6 +460,15 @@ export function isDraftSubmittable(
           ),
         )
       )
+    case 'route-builder':
+      // Las paradas obligatorias tienen que estar; el orden en el que están es
+      // la respuesta, y no hay un orden que la UI pueda pedir de antemano.
+      return (
+        presentation.kind === 'route-builder' &&
+        presentation.points.every(
+          (point) => point.optional || draft.stops.includes(point.id),
+        )
+      )
     case 'classification':
       return (
         presentation.kind === 'classification' &&
@@ -508,6 +535,16 @@ export function missingRequirement(
         return undefined
       }
       return `Falta marcar el paso «${first.cue}» para confirmar.`
+    }
+    case 'route-builder': {
+      const stops = draft?.kind === 'route-builder' ? draft.stops : []
+      const missing = presentation.points.filter(
+        (point) => !point.optional && !stops.includes(point.id),
+      )
+      const first = missing[0]
+      return first === undefined
+        ? undefined
+        : `Falta poner «${first.label}» en el recorrido para confirmar.`
     }
     case 'classification': {
       const entries = draft?.kind === 'classification' ? draft.entries : []

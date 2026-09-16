@@ -79,7 +79,9 @@ export const interactionAnswerSchema = z.discriminatedUnion('kind', [
             .min(1)
             .max(64)
             .regex(/^[a-zA-Z0-9._-]+$/u),
-          startMinute: z.number().int().min(0).max(1439),
+          // Seven days of absolute minutes: a multi-day schedule carries its
+          // day in the same integer instead of in a second field.
+          startMinute: z.number().int().min(0).max(10_079),
         }),
       )
       .max(8)
@@ -162,6 +164,23 @@ export const interactionAnswerSchema = z.discriminatedUnion('kind', [
       .max(64)
       .regex(/^[a-zA-Z0-9._-]+$/u)
       .optional(),
+  }),
+  z.strictObject({
+    kind: z.literal('route-builder'),
+    /** El orden es la respuesta; una parada no se visita dos veces. */
+    stops: z
+      .array(
+        z
+          .string()
+          .min(1)
+          .max(64)
+          .regex(/^[a-zA-Z0-9._-]+$/u),
+      )
+      .max(8)
+      .refine(
+        (stops) => new Set(stops).size === stops.length,
+        'duplicate stop',
+      ),
   }),
   z.object({ kind: z.literal('decision-card'), optionId: z.string().min(1) }),
   z.object({ kind: z.literal('numeric-input'), value: decimalLiteral }),

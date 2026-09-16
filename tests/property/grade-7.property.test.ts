@@ -168,25 +168,27 @@ describe('toda seed produce un año jugable', () => {
                     : interaction.kind === 'schedule-builder' ||
                         interaction.kind === 'spatial-layout'
                       ? { kind: interaction.kind, placements: [] }
-                      : interaction.kind === 'numeric-input'
-                        ? {
-                            kind: 'numeric-input' as const,
-                            value: interaction.min,
-                          }
-                        : interaction.kind === 'classification'
+                      : interaction.kind === 'route-builder'
+                        ? { kind: 'route-builder' as const, stops: [] }
+                        : interaction.kind === 'numeric-input'
                           ? {
-                              kind: 'classification' as const,
-                              entries: interaction.statements.map(
-                                (statement) => ({
-                                  statementId: statement.id,
-                                  labelId: interaction.labels[0]?.id ?? '',
-                                }),
-                              ),
+                              kind: 'numeric-input' as const,
+                              value: interaction.min,
                             }
-                          : {
-                              kind: interaction.kind,
-                              optionId: interaction.options[0]?.id ?? '',
-                            }
+                          : interaction.kind === 'classification'
+                            ? {
+                                kind: 'classification' as const,
+                                entries: interaction.statements.map(
+                                  (statement) => ({
+                                    statementId: statement.id,
+                                    labelId: interaction.labels[0]?.id ?? '',
+                                  }),
+                                ),
+                              }
+                            : {
+                                kind: interaction.kind,
+                                optionId: interaction.options[0]?.id ?? '',
+                              }
 
             command = {
               type: 'ANSWER',

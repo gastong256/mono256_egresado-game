@@ -98,6 +98,10 @@ export function grade1Answer(
   // G7 portion: public, deliberately ordinary play. Its regressions have their
   // own optimal/worst-run suite; do not duplicate those private math oracles.
   switch (p.kind) {
+    case 'route-builder':
+      // Ningún año implementado hasta 1.º arma un recorrido; la rama existe
+      // para que el día que alguno lo haga esto no compile en silencio.
+      return { kind: p.kind, stops: p.points.map((point) => point.id) }
     case 'classification':
       return {
         kind: 'classification',

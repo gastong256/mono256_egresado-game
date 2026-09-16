@@ -44,9 +44,35 @@ export const COMPOSITION_OBJECTIVES = [
   'domain-coverage',
   /** Templates the run has not played yet. More is better. */
   'template-freshness',
+  /**
+   * Beats of a stage that ask the player for the same thing. Fewer is better.
+   *
+   * Counts the pairs whose cognitive profiles differ in at most one trait — two
+   * constructions holding the same number of constraints, say — which is the
+   * preference the design of 3.º calls soft. It is soft here too: it never
+   * filters a plan, it only orders the valid ones, so a stage whose only legal
+   * pairing is two similar beats still composes.
+   */
+  'cognitive-variety',
 ] as const
 
 export type CompositionObjective = (typeof COMPOSITION_OBJECTIVES)[number]
+
+/**
+ * Los objetivos con los que se publicaron las políticas anteriores a 3.º.
+ *
+ * Congelado a propósito. Una política publicada ordena planes con la lista que
+ * declaró, no con la que el motor tenga más adelante: agregar un objetivo al
+ * vocabulario no puede cambiar en silencio qué plan gana en un content set que
+ * ya existe. El que quiera el objetivo nuevo, lo declara.
+ */
+export const PUBLISHED_OBJECTIVES_V1: readonly CompositionObjective[] = [
+  'difficulty-fit',
+  'family-variety',
+  'interaction-variety',
+  'domain-coverage',
+  'template-freshness',
+]
 
 /** What one academic stage contributes to a run, and under what limits. */
 export interface StageCompositionPolicy {
@@ -236,6 +262,6 @@ export const developmentCompositionPolicy: CompositionPolicy = {
   version: '1.0.0-dev',
   official: false,
   costPolicy: candidateDifficultyCostPolicy,
-  objectives: [...COMPOSITION_OBJECTIVES],
+  objectives: [...PUBLISHED_OBJECTIVES_V1],
   stages: [stageCompositionPolicy('grade-7')],
 }

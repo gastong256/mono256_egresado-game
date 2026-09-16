@@ -35,6 +35,7 @@ export type InteractionKind =
   | 'schedule-builder'
   | 'spatial-layout'
   | 'classification'
+  | 'route-builder'
 
 /** A single selectable option. `detail` carries the numbers the player compares. */
 export interface PresentedOption {
@@ -104,7 +105,12 @@ export interface PresentedTask {
 
 export interface SchedulePlacement {
   readonly activityId: string
-  /** Minutes since midnight, not a DOM coordinate or localized string. */
+  /**
+   * Minutes since midnight, not a DOM coordinate or localized string.
+   *
+   * In the multi-day mode the origin is midnight of the first day, so the value
+   * carries its day: `day * 1440 + minute`. See {@link PresentedCalendar}.
+   */
   readonly startMinute: number
 }
 /**
@@ -123,10 +129,45 @@ export interface PresentedActivity {
   readonly durationMinutes: number
   /** Preparation needed on site right before the block starts. */
   readonly setupMinutes: number
-  /** Starts the player may pick, minutes since midnight, ascending. */
+  /** Starts the player may pick, on the same clock as `startMinute`, ascending. */
   readonly startMinutes: readonly number[]
   readonly optional: boolean
 }
+/**
+ * El calendario de una agenda de varios días.
+ *
+ * Los minutos de una agenda son absolutos y arrancan en el minuto 0 del primer
+ * día: `día * 1440 + minuto`. Eso mantiene una sola recta de tiempo —solapar,
+ * ordenar y comparar contra un vencimiento siguen siendo comparaciones de
+ * enteros— y deja que la presentación diga cómo se lee esa recta. Sin este
+ * campo la agenda es de una sola tarde, que es el modo de 1.º.
+ */
+export interface PresentedCalendar {
+  /** Etiqueta de cada día, en orden. El índice es el día. */
+  readonly days: readonly string[]
+  /** Ventana utilizable dentro de cada día, en minutos desde su medianoche. */
+  readonly dayStart: number
+  readonly dayEnd: number
+}
+
+/**
+ * Un punto del mapa de un recorrido.
+ *
+ * Las coordenadas son esquinas de una cuadrícula de cuadras, no píxeles: la
+ * distancia entre dos puntos es una cuenta del jugador sobre datos públicos, y
+ * ninguna capa visual la resuelve por él.
+ */
+export interface PresentedRoutePoint {
+  readonly id: string
+  readonly label: string
+  /** Código corto dibujado en el mapa («P», «C»). Nunca sólo un color. */
+  readonly code: string
+  readonly x: number
+  readonly y: number
+  readonly detail: string
+  readonly optional: boolean
+}
+
 export interface SpatialPlacement {
   readonly objectId: string
   readonly x: number
@@ -191,6 +232,19 @@ export type InteractionPresentation =
        * has to meet, minutes since midnight.
        */
       readonly span: { readonly from: number; readonly to: number }
+      /** Presente sólo en el modo de varios días. */
+      readonly calendar?: PresentedCalendar
+    }
+  | {
+      readonly kind: 'route-builder'
+      readonly data: readonly PresentedDatum[]
+      readonly instructions: string
+      /** Cuadras del mapa: las esquinas van de 0 a `width`/`height`. */
+      readonly width: number
+      readonly height: number
+      /** De dónde sale el recorrido, y a dónde vuelve si la consigna lo pide. */
+      readonly origin: PresentedRoutePoint
+      readonly points: readonly PresentedRoutePoint[]
     }
   | {
       readonly kind: 'spatial-layout'
@@ -350,6 +404,11 @@ export type InteractionAnswer =
   | {
       readonly kind: 'number-grid'
       readonly rounds: readonly GridRoundSelection[]
+    }
+  | {
+      /** Las paradas en el orden elegido. El orden **es** la respuesta. */
+      readonly kind: 'route-builder'
+      readonly stops: readonly string[]
     }
   | {
       readonly kind: 'classification'

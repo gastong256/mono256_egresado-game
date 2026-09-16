@@ -35,7 +35,7 @@ import { developmentProfilePolicy } from '../../profiles/development-policy'
 import { developmentScoringPolicy } from '../../scoring/development-policy'
 import { candidateDifficultyCostPolicy } from '../../difficulty/cost-policy'
 import {
-  COMPOSITION_OBJECTIVES,
+  PUBLISHED_OBJECTIVES_V1,
   stageCompositionPolicy,
   type CompositionPolicy,
 } from '../../plan/composition-policy'
@@ -128,7 +128,7 @@ export const composedDevelopmentCompositionPolicy: CompositionPolicy = {
   version: '1.0.0-dev',
   official: false,
   costPolicy: candidateDifficultyCostPolicy,
-  objectives: [...COMPOSITION_OBJECTIVES],
+  objectives: [...PUBLISHED_OBJECTIVES_V1],
   stages: [
     stageCompositionPolicy('grade-7', {
       difficulty: { target: 250, tolerance: 110 },

@@ -70,6 +70,15 @@ function candidateAnswers(view: PublicChallengeView): InteractionAnswer[] {
         kind: 'information-request' as const,
         optionId: option.id,
       }))
+    case 'route-builder':
+      // Ninguna Template de 7.º arma un recorrido; la rama existe para que el
+      // día que alguna lo haga esto no compile en silencio.
+      return [
+        {
+          kind: 'route-builder',
+          stops: interaction.points.map((point) => point.id),
+        },
+      ]
     case 'classification':
       return [
         {

@@ -31,7 +31,15 @@ import { createDevelopmentDependencies } from '@/game/testing'
 const dependencies = createDevelopmentDependencies()
 
 /*
- * Phase 1: engine 7.0.0 / action log 5; snapshot 7 y fingerprints
+ * 3.º: engine 9.0.0 / action log 7; snapshot 7 intacto. El motor contrata la
+ * respuesta de recorrido —el orden de las paradas— y el modo de varios días de
+ * la agenda, que no agrega campo alguno a la respuesta: los minutos son
+ * absolutos desde el primer día. Se mueve **sólo el motor**: el ruleset y el
+ * contenido de desarrollo quedan idénticos, porque ninguna regla ni ninguna
+ * plantilla de fixtures cambió. El contenido nuevo es de 3.º y vive en su
+ * propio content set.
+ *
+ * El antecedente de Phase 1: engine 7.0.0 / action log 5; snapshot 7 y fingerprints
  * de ruleset/contenido legacy intactos. Antecedente de progresión (6.0.0):
  *
  * Dos se movieron y **la que no lo hizo vuelve a ser la evidencia**:
@@ -130,14 +138,14 @@ const dependencies = createDevelopmentDependencies()
  * golden quedaron **idénticos**.
  */
 const EXPECTED = {
-  engine: 'dfed0811',
+  engine: 'c542afb3',
   ruleset: '5b9b0bc5',
   content: 'dbaf5094',
 } as const
 
 describe('version fingerprints', () => {
   it('pins the deterministic kernel to its engine version', () => {
-    expect(ENGINE_VERSION).toBe('8.0.0')
+    expect(ENGINE_VERSION).toBe('9.0.0')
     expect(engineFingerprint()).toBe(EXPECTED.engine)
   })
 
