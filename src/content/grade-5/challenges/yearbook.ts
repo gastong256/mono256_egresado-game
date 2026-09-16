@@ -36,6 +36,7 @@ import {
   spaceOf,
   tierWitnessIssues,
 } from '@/content/authoring'
+import { friendDayCallback } from '../../career-facts'
 
 export const SECTIONS = [
   { id: 'cursos', label: 'Fotos de los cursos', max: 12 },
@@ -418,10 +419,9 @@ export const yearbook: ChallengeDefinition = defineChallenge<
     p.sections.reduce((total, entry) => total + entry.minimum, 0) <= p.pages
       ? []
       : ['los mínimos no entran en el anuario'],
-  narrate: () => ({
+  narrate: (_p, context) => ({
     title: 'El anuario',
-    setup:
-      'La imprenta entrega un anuario de páginas contadas y hay más material del que entra.',
+    setup: `${friendDayCallback(context.flags)}La imprenta entrega un anuario de páginas contadas y hay más material del que entra.`,
     goal: 'Repartí las páginas entre las secciones: el total tiene que dar exacto.',
   }),
   present: (p) => ({

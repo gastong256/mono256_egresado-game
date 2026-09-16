@@ -44,6 +44,7 @@ import {
   tierWitnessIssues,
   type StyledPlan,
 } from '@/content/authoring'
+import { projectArcCallback } from '../../career-facts'
 
 /** Se vende por bandeja: los números quedan legibles y la cuenta, entera. */
 export const ITEMS = [
@@ -382,10 +383,9 @@ export const courseProjectFundraiser: ChallengeDefinition = defineChallenge<
     p.items.every((entry) => entry.price > entry.cost)
       ? []
       : ['una bandeja se vende a menos de lo que cuesta'],
-  narrate: () => ({
+  narrate: (_p, context) => ({
     title: 'Proyecto del Curso: la peña',
-    setup:
-      'El curso alquila el salón para la peña y hay que decidir cuánto preparar de cada cosa.',
+    setup: `${projectArcCallback(context.flags)}El curso alquila el salón para la peña y hay que decidir cuánto preparar de cada cosa.`,
     goal: 'Armá la producción: que cubra los costos y llegue a lo que el curso necesita juntar.',
   }),
   present: (p) => ({

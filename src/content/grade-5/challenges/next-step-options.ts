@@ -35,6 +35,7 @@ import {
   parameters,
   spaceOf,
 } from '@/content/authoring'
+import { teamworkCallback } from '../../career-facts'
 
 export const SCENARIOS = [
   { id: 'facultad', label: 'Cursar en la facultad' },
@@ -345,10 +346,9 @@ export const nextStepOptions = defineChallenge<NextStepParams, NextStepParams>({
     SCENARIOS.some((_, index) => fitsScenario(p, index))
       ? []
       : ['ningún escenario entra'],
-  narrate: () => ({
+  narrate: (_p, context) => ({
     title: 'El año que viene',
-    setup:
-      'Alguien te pregunta qué vas a hacer el año que viene. Hay varias ideas dando vueltas y algunas no entran en la semana que tenés.',
+    setup: `${teamworkCallback(context.flags)}Alguien te pregunta qué vas a hacer el año que viene. Hay varias ideas dando vueltas y algunas no entran en la semana que tenés.`,
     goal: 'Marcá cuáles entran con lo que tenés. Después, si querés, decí cuál te gustaría.',
   }),
   present: (p) => ({

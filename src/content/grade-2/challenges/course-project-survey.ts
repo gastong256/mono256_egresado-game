@@ -35,6 +35,7 @@ import {
   spaceOf,
   tierWitnessIssues,
 } from '@/content/authoring'
+import { projectArcCallback } from '../../career-facts'
 
 /** What the course may say about a claim. Two labels, one decision. */
 export const CLAIM_LABELS = [
@@ -421,9 +422,9 @@ export const courseProjectSurvey = defineChallenge<SurveyParams, SurveyParams>({
   tools: ['calculator'],
   generate: ({ params }) => parameters(surveySchema, params),
   verify: verifySurvey,
-  narrate: (p) => ({
+  narrate: (p, context) => ({
     title: 'Lo que dice la encuesta',
-    setup: `El Proyecto del Curso encuestó al nivel sobre en qué gastar lo recaudado. Contestaron ${String(sum(p.answers))} de ${String(p.population)} personas.`,
+    setup: `${projectArcCallback(context.flags)}El Proyecto del Curso encuestó al nivel sobre en qué gastar lo recaudado. Contestaron ${String(sum(p.answers))} de ${String(p.population)} personas.`,
     goal: 'Decidí qué puede publicar el curso y qué no, con estos números.',
   }),
   present: (p) => ({

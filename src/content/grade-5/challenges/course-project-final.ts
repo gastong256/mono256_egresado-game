@@ -45,6 +45,7 @@ import {
   tierWitnessIssues,
   type StyledPlan,
 } from '@/content/authoring'
+import { projectArcCallback, teamworkCallback } from '../../career-facts'
 
 export const CREW = [
   { id: 'lu', label: 'Lu' },
@@ -522,10 +523,9 @@ export const courseProjectFinal = defineChallenge<FinalParams, FinalParams>({
     p.available[CREW.findIndex((entry) => entry.id === p.missing)] === 0
       ? []
       : ['quien no está tiene horas disponibles'],
-  narrate: () => ({
+  narrate: (_p, context) => ({
     title: 'Proyecto del Curso: la muestra final',
-    setup:
-      'Faltan tres días para la muestra y se cae algo. Las tareas ya estaban repartidas.',
+    setup: `${projectArcCallback(context.flags)}${teamworkCallback(context.flags)}Faltan tres días para la muestra y se cae algo. Las tareas ya estaban repartidas.`,
     goal: 'Rehacé el plan con lo que queda, y decidí qué dice el curso sobre el cambio.',
   }),
   present: (p) => ({

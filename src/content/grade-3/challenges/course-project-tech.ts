@@ -48,6 +48,7 @@ import {
   spaceOf,
   tierWitnessIssues,
 } from '@/content/authoring'
+import { projectArcCallback } from '../../career-facts'
 
 /** Quién se ofreció para qué. El dueño no cambia lo que el plan puede producir. */
 export const CREW = [
@@ -466,10 +467,9 @@ export const courseProjectTech: ChallengeDefinition = defineChallenge<
     p.uploadRate * p.labMinutes >= p.megabytes / 4
       ? []
       : ['el laboratorio no alcanza ni para una parte del pendrive'],
-  narrate: () => ({
+  narrate: (_p, context) => ({
     title: 'Proyecto del Curso: la feria de tecnología',
-    setup:
-      'La feria es el viernes y el curso tiene que armar el stand con la notebook prestada, el pendrive y una hora de laboratorio.',
+    setup: `${projectArcCallback(context.flags)}La feria es el viernes y el curso tiene que armar el stand con la notebook prestada, el pendrive y una hora de laboratorio.`,
     goal: 'Decidí cuánto hacer de cada cosa: que entre en los recursos y que el grupo trabaje parejo.',
   }),
   present: (p) => ({
