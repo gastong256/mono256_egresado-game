@@ -905,18 +905,19 @@ Implementar 2.º → 3.º → 4.º → 5.º y auditar carrera completa. La respu
 independiente debe existir cuando G2 la necesite. Prestige y saliencia completos
 pueden integrarse en G4/5; sus hechos verificables se originan desde el año fuente.
 
-**Criterios de aceptación de implementación — todavía pendientes:**
+**Criterios de aceptación de implementación** (revisados el 2026-09-16, al
+cerrar la integración de carrera completa):
 
-- [ ] Matemática intrínseca, prerrequisitos accesibles desde aproximadamente 7.º y bandas por estructura, no filtro curricular.
-- [ ] Cada Template cumple DoR, revisión matemática y variantes semánticas/materializaciones de la guía; cero variantes inválidas desplegadas.
-- [ ] Evidencia Math/Team/Aura independiente y witness de máximo simultáneo; Estilo sólo Career/Narrative.
-- [ ] Composición Normal/Fair de nueve beats, cuotas/cluster/arco y validador independiente; Teacher Demo/carrera parcial diferenciadas.
-- [ ] Rareza, slots de Prestige y callbacks deterministas, sin ventajas por aparición ni duplicación de evidencia.
-- [ ] Repaso: selección/debrief/cierre, pacing, egreso y exclusión competitiva; PASS post-G1 registrado antes de G2.
-- [ ] Epílogo de carrera real con saliencia determinista, datos ausentes no dibujados y Hitos display-only distinguibles.
-- [ ] Accesibilidad teclado/tap, móvil, reduced motion, replay/snapshot/reanudación y E2E por año.
-- [ ] Auditoría de composición completa, cobertura/exploits y playtests de pacing según [validación de contenido](../04-quality/content-validation.md).
-- [ ] Revisión del Departamento de Matemática, documentación por año y cero sistemas fundamentales duplicados.
+- [ ] Matemática intrínseca, prerrequisitos accesibles desde aproximadamente 7.º y bandas por estructura, no filtro curricular. — Las bandas salen de `bandOf(cognitive)`, por estructura y no por currículum; la accesibilidad del prerrequisito la decide la revisión del Departamento de Matemática, abajo.
+- [ ] Cada Template cumple DoR, revisión matemática y variantes semánticas/materializaciones de la guía; cero variantes inválidas desplegadas. — Cero variantes inválidas desplegadas está probado por el pipeline y la validación de contenido; la revisión matemática sigue siendo externa.
+- [x] Evidencia Math/Team/Aura independiente y witness de máximo simultáneo; Estilo sólo Career/Narrative. — Una carrera perfecta alcanza 10 000 exactos, con Equipo y Aura máximos leídos de campos distintos de la respuesta.
+- [x] Composición Normal/Fair de nueve beats, cuotas/cluster/arco y validador independiente; Teacher Demo/carrera parcial diferenciadas. — La carrera real compone nueve beats en seis etapas y el validador independiente acepta cada plan; demo y práctica parcial siguen siendo sets distintos.
+- [x] Rareza, slots de Prestige y callbacks deterministas, sin ventajas por aparición ni duplicación de evidencia. — Con el techo de Prestige **ofrecido en 0** que la edición declara (D-S08-084).
+- [x] Repaso: selección/debrief/cierre, pacing, egreso y exclusión competitiva; PASS post-G1 registrado antes de G2.
+- [x] Epílogo de carrera real con saliencia determinista, datos ausentes no dibujados y Hitos display-only distinguibles.
+- [x] Accesibilidad teclado/tap, móvil, reduced motion, replay/snapshot/reanudación y E2E por año. — Más el E2E de carrera completa a 320 px.
+- [ ] Auditoría de composición completa, cobertura/exploits y playtests de pacing según [validación de contenido](../04-quality/content-validation.md). — La [auditoría de implementación](../04-quality/full-career-implementation-audit.md) está ejecutada y los exploits barridos; **los playtests de pacing con jugadores reales no**.
+- [ ] Revisión del Departamento de Matemática, documentación por año y cero sistemas fundamentales duplicados. — Documentación por año completa y sin sistemas duplicados; la revisión sigue pendiente.
 
 **Lectura requerida.** [Matriz](../01-game-design/full-career-content-matrix.md) ·
 [diseño G1](../01-game-design/grade-1-template-design.md) ·
@@ -929,14 +930,20 @@ pueden integrarse en G4/5; sus hechos verificables se originan desde el año fue
 sustituyen estos gates. Objetivos editoriales y calibraciones versionadas conservan
 la madurez del [registro](../07-reference/decision-register.md).
 
-**Siguiente tarea.** Implementar 2.º → 3.º → 4.º → 5.º con 1.º como referencia
-validada, con auditorías más livianas por año y verificación final de carrera
-completa. Antes de componer la carrera oficial, volver a medir el costo de
-composición global con el catálogo real.
+**Siguiente tarea.** Los tres gates de producción que quedan y que ningún test
+sustituye: revisión del Departamento de Matemática sobre las 42 Templates,
+sign-off manual de la rueda del Día del Estudiante y playtests de pacing con
+jugadores reales.
 
 **Exit gate.** ¿Una run real, auditada y accesible recorre
 `7.º → 1.º → 2.º → 3.º → 4.º → 5.º → EGRESADO`, con pacing medido y sin duplicar
-fundaciones? **Pendiente.**
+fundaciones? **Parcialmente.** La run existe, se audita y es accesible: la
+carrera real compone nueve beats en los seis años, egresa bajo seis políticas de
+juego, se recompone en servidor y pasa accesibilidad a 320 px, con la
+[auditoría de implementación](../04-quality/full-career-implementation-audit.md)
+en `PASS WITH REQUIRED HARDENING — RESOLVED`. **El pacing sigue sin medirse con
+jugadores reales**, así que la etapa no cierra: la implementación está completa,
+la validación empírica no.
 
 ---
 
