@@ -24,6 +24,7 @@ import {
   teamworkCallback,
 } from '@/content/career-facts'
 import {
+  closeCareer,
   createFullCareerDependencies,
   createFullCareerRunDescriptor,
 } from '@/content/full-career'
@@ -195,5 +196,43 @@ describe('Eventos icónicos del año', () => {
       iconicStorylets.length,
     )
     expect(iconicStorylets.length).toBe(6)
+  })
+})
+
+describe('El cierre no dibuja ausencias como ceros', () => {
+  it('sin oportunidades ofrecidas, el epílogo no muestra Prestige', () => {
+    const built = createFullCareerRunDescriptor('cierre-prestige')
+    if (!built.ok) throw new Error('no descriptor')
+    const created = createRun(built.value, dependencies)
+    if (!created.ok) throw new Error('no run')
+    let state = created.value.state
+    for (let step = 0; step < 240 && state.status === 'active'; step++) {
+      let command: GameCommand = { type: 'CONTINUE' }
+      if (state.phase === 'challenge') {
+        const view = activeChallengeView(state, dependencies)
+        if (!view.ok || view.value === undefined) throw new Error('no view')
+        command = {
+          type: 'ANSWER',
+          instanceId: view.value.ref.instanceId,
+          answer: grade5Answer(
+            view.value,
+            dependencies,
+            'optimal',
+            built.value,
+          ),
+        }
+      }
+      const next = transition(state, command, dependencies)
+      if (!next.ok) throw new Error(JSON.stringify(next.error))
+      state = next.value.state
+    }
+    const closed = closeCareer(state)
+    // La edición declara techo ofrecido 0: el total sigue existiendo para el
+    // servidor, pero la pantalla no lo dibuja.
+    expect(
+      Object.values(closed.prestige.offered).every((value) => value === 0),
+    ).toBe(true)
+    expect(closed.epilogue.prestige).toBeUndefined()
+    expect(closed.epilogue.graduated).toBe(true)
   })
 })

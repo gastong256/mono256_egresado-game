@@ -93,6 +93,7 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 - `post-teacher-gate-1-score-audit.md`: barrida reproducible de `fair-score-dev-2` sobre 23.000 planes y comparación histórica.
 - `full-career-technical-conformance.md`: reporte técnico read-only de Phase 0, evidencia y deltas futuros.
 - `post-grade-1-scalability-audit.md`: contrato obligatorio para dos obligaciones conceptuales bajo un recovery máximo después de implementar 1.º.
+- `full-career-implementation-audit.md`: auditoría de la carrera real 7.º → 5.º con su veredicto único, hallazgos y lo que no afirma.
 - `variant-validation-and-audit.md`: invariantes de variante y auditoría estadística del catálogo.
 - `testing-strategy.md`: unit, property-based, integration, E2E y pruebas de contenido.
 - `non-functional-requirements.md`: performance, resiliencia, accesibilidad y compatibilidad.

@@ -203,7 +203,13 @@ export function closeCareer(state: RunState): {
       rareEvents: careerRareEvents,
       milestones,
       iconicStorylets,
-      prestige: prestige.total,
+      // Prestige se muestra sólo si la edición ofreció alguna oportunidad.
+      // Dibujar un 0 donde no había nada que ganar presenta una ausencia como
+      // un mal resultado, que es la misma regla por la que una dimensión no
+      // establecida no se dibuja como cero.
+      ...(Object.values(prestige.offered).some((value) => value > 0)
+        ? { prestige: prestige.total }
+        : {}),
     }),
   }
 }

@@ -284,6 +284,13 @@ function Grade1Run({
   readonly onPlayAgain: () => void
 }) {
   const run = useControllerSelector(controller, (current) => current.run)
+  // El cierre se deriva del estado final, igual que lo recompone el servidor
+  // desde el log: la pantalla no guarda nada propio. Se memoiza porque
+  // derivarlo reconstruye el content set entero.
+  const closed = useMemo(
+    () => (career && run.status === 'completed' ? closeCareer(run) : undefined),
+    [career, run],
+  )
   if (run.status !== 'completed')
     return <RunView controller={controller} dependencies={dependencies} />
   if (!career)
@@ -293,9 +300,7 @@ function Grade1Run({
         oficial todavía no están habilitados.
       </Callout>
     )
-  // El cierre se deriva del estado final, igual que lo recompone el servidor
-  // desde el log: la pantalla no guarda nada propio.
-  const closed = closeCareer(run)
+  if (closed === undefined) throw new Error('missing career closing')
   return (
     <CareerEpilogueView epilogue={closed.epilogue} onPlayAgain={onPlayAgain} />
   )

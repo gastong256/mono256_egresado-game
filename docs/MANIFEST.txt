@@ -64,6 +64,7 @@
 03-architecture/target-engine-architecture.md
 04-quality/competition-fairness-audit.md
 04-quality/content-validation.md
+04-quality/full-career-implementation-audit.md
 04-quality/full-career-technical-conformance.md
 04-quality/non-functional-requirements.md
 04-quality/post-grade-1-scalability-audit.md

@@ -111,6 +111,15 @@ Gates de producción de STAGE-08: revisión del Departamento de Matemática,
 sign-off manual de la rueda y pacing empírico sobre la carrera real
 ```
 
+La [auditoría de implementación de carrera completa](../04-quality/full-career-implementation-audit.md)
+se ejecutó el 16 de septiembre de 2026 y dio
+`PASS WITH REQUIRED HARDENING — RESOLVED`: cuatro defectos técnicos acotados
+—el techo de FairScore inalcanzable por falta de witnesses de Equipo y Aura, la
+rejugabilidad colapsada por los objetivos blandos, la política de rareza
+descartada al construir el ruleset y un desborde de reflow a 320 px— se
+corrigieron dentro del gate, sin mover score, dificultad ni oportunidades
+competitivas.
+
 El [audit posterior a 1.º](../04-quality/post-grade-1-scalability-audit.md#resultado-de-la-ejecución-2026-09-14)
 se ejecutó el 14 de septiembre de 2026 y dio
 `PASS WITH REQUIRED HARDENING — RESOLVED`: forzó `classroom-layout INVALID` y
