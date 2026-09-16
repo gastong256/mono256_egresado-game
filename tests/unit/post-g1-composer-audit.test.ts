@@ -346,3 +346,51 @@ describe('post-G1 · bounded composition against adversarial catalogs', () => {
     ).toEqual(plans[0])
   }, 120_000)
 })
+
+/**
+ * Gate 16 — el caso adversarial que la carrera real agrega sobre el catálogo
+ * sintético anterior: un catálogo donde todo pertenece al arco Proyecto. La
+ * dirección de variante alterada se prueba contra el catálogo aprobado real,
+ * en `full-career-simulation`, porque ahí sí existe una población aprobada
+ * contra la cual una dirección puede ser falsa.
+ */
+describe('Gate 16 · el arco Proyecto', () => {
+  it('refuses a catalog where every beat belongs to the Project arc', () => {
+    // `projectArc` acepta entre 0 y 2 beats del arco: nueve no entran, y el
+    // compositor tiene que decirlo en vez de recortar en silencio.
+    const catalog = catalogOf(
+      stages.flatMap((stage) => {
+        const count = doubled.includes(stage) ? 2 : 1
+        return Array.from({ length: count }, (_, slot) =>
+          template(
+            `project.${stage}-${String(slot)}`,
+            stage,
+            slot === 0 ? 'anchor' : 'checkpoint',
+            standard,
+            {
+              primaryReasoningFamily: 'ALLOCATION',
+              interactionEngine: 'allocate-constrain',
+              pacingClass: pacingOf(standard),
+              recurringArc: 'PROJECT',
+            },
+          ),
+        )
+      }),
+    )
+    const policy = policyWith({
+      ...fullCareerV1Constraints,
+      maxSearchNodes: 50_000,
+    })
+    const result = composeRun({
+      seed: toRunSeed('project-overflow'),
+      stages,
+      catalog,
+      policy,
+    })
+    expect(result.ok).toBe(false)
+    if (result.ok) return
+    expect(['career-unsatisfiable', 'search-budget-exceeded']).toContain(
+      result.error.code,
+    )
+  })
+})
