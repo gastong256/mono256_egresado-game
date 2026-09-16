@@ -9936,10 +9936,10 @@ STAGE-08                                      IN_PROGRESS · CURRENT
 │   ├── 3.º Autonomía                          DONE · catálogo grade-3-dev-1
 │   ├── 4.º Responsabilidad                    DONE · catálogo grade-4-dev-1
 │   └── 5.º Cierre y futuro                    DONE · catálogo grade-5-dev-1
-└── INTEGRACIÓN DE CARRERA COMPLETA            NOT_STARTED
-    ├── Catálogo real 7.º–5.º y composición    pendiente
-    ├── Rareza, Prestige y epílogo             pendiente · una sola vez
-    └── D-S08-056 con catálogo real            pendiente
+└── INTEGRACIÓN DE CARRERA COMPLETA            DONE
+    ├── Carrera real 7.º–5.º de nueve beats    DONE · catálogo grade-5-dev-2
+    ├── Rareza, Prestige y epílogo             DONE · una sola vez
+    └── D-S08-056 con catálogo real            CLOSED · aceptada con evidencia
 ```
 
 Phase 1 cerró el 11 de septiembre de 2026. Las cinco Templates de 1.º
@@ -9962,41 +9962,52 @@ viene, más dos Repasos—. Detalle en
 [4.º](01-game-design/grade-4-template-design.md#implementación-runtime) y
 [5.º](01-game-design/grade-5-template-design.md#implementación-runtime).
 
-**No significa que STAGE-08 esté terminada ni que exista una carrera oficial.**
-`7.º → 5.º` tiene los seis años pero es práctica local de desarrollo
-(`official: false`, `partial-development`): compone doce beats ordinarios, no
-los nueve del presupuesto oficial. Falta la integración —catálogo y composición
-oficiales, rareza, Prestige, callbacks de carrera y epílogo, que se implementan
-una sola vez ahí (D-S08-067 y D-S08-072)— y cerrar D-S08-056 con el catálogo
-real. El contenido de 1.º a 5.º está en estado `draft`: faltan la revisión del
-Departamento de Matemática, el sign-off manual de la rueda y el pacing empírico,
-gates de producción de STAGE-08.
+La integración cerró el 16 de septiembre de 2026. La **carrera completa** es una
+edición propia —ruleset `1.0.0-full-career`, catálogo `grade-5-dev-2`— que
+compone los **nueve** beats del presupuesto sobre los seis años, con eventos
+raros, Prestige, hitos, callbacks y epílogo implementados **una sola vez** ahí
+(D-S08-067 y D-S08-072, ahora cerradas). La práctica parcial `7.º → 5.º` sigue
+existiendo, con sus doce beats, como superficie de desarrollo.
+
+**Sigue sin existir una carrera oficial.** La edición es `official: false`: la
+oficialización, el ranking y el servidor competitivo son STAGE-09. El techo de
+Prestige **ofrecido es 0** por decisión explícita (D-S08-084): la maquinaria
+existe y el servidor la recomputa, pero autorar una oportunidad competitiva
+exigiría inventar acciones de jugador que ninguna Template tiene. El contenido
+de 1.º a 5.º está en estado `draft`: faltan la revisión del Departamento de
+Matemática, el sign-off manual de la rueda y el pacing empírico, gates de
+producción de STAGE-08.
 
 ## Baseline autoritativa
 
 STAGE-07 sigue `DONE`: toda run válida completada egresa, con un Repaso máximo
 por etapa fuera del presupuesto ordinario y de FairScore.
 
-- Versiones: engine `9.0.0`, action log `7`, snapshot `7`. 7.º conserva ruleset
+- Versiones: engine `10.0.0`, action log `7`, snapshot `8`. 7.º conserva ruleset
   `0.4.0-grade-7`, contenido `0.9.0-grade-7` y catálogo `grade-7-dev-5`.
   `7.º → 1.º`: contenido `1.0.0-grade-1`, catálogo `grade-1-dev-1`.
-  `7.º → 2.º`: contenido `2.0.0-grade-2`, catálogo `grade-2-dev-1`.
-  `7.º → 3.º`: contenido `3.0.0-grade-3`, catálogo `grade-3-dev-1`.
-  `7.º → 4.º`: contenido `4.0.0-grade-4`, catálogo `grade-4-dev-1`.
-  `7.º → 5.º`: rulesets `5.0.0-grade-5-partial` y `5.0.0-grade-5-demo`, contenido
-  `5.0.0-grade-5`, catálogo `grade-5-dev-1`. Score
+  `7.º → 2.º`: contenido `2.1.0-grade-2`, catálogo `grade-2-dev-2`.
+  `7.º → 3.º`: contenido `3.1.0-grade-3`, catálogo `grade-3-dev-2`.
+  `7.º → 4.º`: contenido `4.1.0-grade-4`, catálogo `grade-4-dev-2`.
+  `7.º → 5.º`: rulesets `5.1.0-grade-5-partial` y `5.1.0-grade-5-demo`, contenido
+  `5.1.0-grade-5`, catálogo `grade-5-dev-2`. Carrera completa: ruleset
+  `1.0.0-full-career` sobre ese mismo contenido y catálogo. Score
   `fair-score-dev-2@2.0.0-post-tg1-candidate` sin cambios.
-- Huellas: motor `c542afb3` —se movió con las dos respuestas nuevas—; ruleset
-  `5b9b0bc5` y contenido `dbaf5094` del fixture de desarrollo intactos.
-- Tests: 87 archivos y 1599 tests de Vitest; 136 E2E de Playwright en desktop y
-  mobile, incluidos los recorridos de 1.º a 5.º y el barrido de accesibilidad
-  del audit.
+- Huellas: motor `4bcf054e` —se movió con la respuesta de recorrido y con la
+  política de rareza—; ruleset de la carrera completa `7d41fddb`.
+- Tests: 93 archivos y 1662 tests de Vitest; 146 E2E de Playwright en desktop y
+  mobile, incluidos los recorridos de 1.º a 5.º, la carrera completa y el
+  barrido de accesibilidad del audit.
 - Simulación: 5000 runs de 7.º, 5000 de `7.º → 1.º`, 2000 del demo amplio y 200
   de cada práctica parcial de 2.º a 5.º egresadas, 0 hallazgos, peor caso un
-  Repaso por etapa.
+  Repaso por etapa. La carrera completa se barre con seis políticas de juego
+  —óptima, eficiente, funcional, inválida pesada, mixta y aleatoria—: todas
+  terminan, todas egresan y el servidor recompone el mismo puntaje.
 - Composición: 2000 seeds de `7.º → 1.º` dan 2000 planes distintos, 0 inválidos
-  y 0 diferencias al recomponer; `7.º → 5.º` compone doce beats ordinarios en
-  las seis etapas y el validador independiente los acepta.
+  y 0 diferencias al recomponer. La carrera completa compone nueve beats en las
+  seis etapas; 300 carreras dan p50 **384 ms**, p95 **404 ms** y peor caso
+  **434 ms**, 0 fallas, 0 planes inválidos y las 28 Templates elegibles
+  aparecen (D-S08-056 y D-S08-082).
 
 ## Siguiente tarea canónica
 
@@ -10008,10 +10019,11 @@ POST-G1 SCALABILITY AUDIT — PASSED
 3.º — DONE
 4.º — DONE
 5.º — DONE
+INTEGRACIÓN DE CARRERA COMPLETA — DONE
 
 Next:
-Integrar la carrera completa: catálogo y composición oficiales, rareza,
-Prestige, callbacks y epílogo, y cerrar D-S08-056 con el catálogo real
+Gates de producción de STAGE-08: revisión del Departamento de Matemática,
+sign-off manual de la rueda y pacing empírico sobre la carrera real
 ```
 
 El [audit posterior a 1.º](04-quality/post-grade-1-scalability-audit.md#resultado-de-la-ejecución-2026-09-14)
@@ -10030,19 +10042,21 @@ No duplicar sistemas fundamentales y no implementar servidor/ranking de STAGE-09
 Las calibraciones recomendadas y Teacher Gate no se vuelven constantes inmutables
 ni configuración oficial.
 
-Ahora corresponde implementar 2.º → 3.º → 4.º → 5.º usando 1.º como referencia
-validada, con auditorías más livianas por año y una verificación final de carrera
-completa, y completar las capacidades narrativas/Prestige previstas. Antes de
-componer la carrera oficial hay que volver a medir el costo de composición global
-con el catálogo real. El exit gate de STAGE-08 sigue siendo recorrer
-`7.º → 1.º → 2.º → 3.º → 4.º → 5.º → EGRESADO` con contenido auditado, sin
-duplicar sistemas y verificando el target de pacing.
+El exit gate de implementación se cumplió: `7.º → 1.º → 2.º → 3.º → 4.º → 5.º →
+EGRESADO` se recorre entero, con contenido auditado y sin duplicar sistemas. Lo
+que queda de STAGE-08 son gates de producción que no dependen de código: la
+revisión del Departamento de Matemática sobre las 42 Templates, el sign-off
+manual de la rueda del Día del Estudiante y el pacing empírico con jugadores
+reales —el target de pacing sigue sin validarse con personas—. Hasta eso, el
+contenido permanece `draft` y la edición `official: false`.
 
 ## Última reconciliación
 
-14 de septiembre de 2026: ejecución del Post-Grade-1 Scalability Audit con
-hardening resuelto, verificación completa en verde y 2.º–5.º desbloqueados.
-Sin push.
+16 de septiembre de 2026: integración de la carrera completa —composición de
+nueve beats sobre el catálogo real, eventos raros, Prestige con techo ofrecido
+0, hitos, callbacks y epílogo con su pantalla—, auditoría de Estilo, barrido por
+políticas de juego y E2E de carrera. D-S08-056 cerrada con evidencia.
+Verificación completa en verde. Sin push.
 
 ---
 
@@ -11024,10 +11038,16 @@ checkpoint y commit sólo si pasa.
    por persona, y `y5.next-step-options` sin prescribir ningún camino: la
    preferencia no alimenta puntaje ni Estilo, sólo queda registrada.
    [Implementación](01-game-design/grade-5-template-design.md#implementación-runtime).
-5. [ ] **Integración de carrera completa**: catálogo real 7.º–5.º, composición de
-   nueve beats con el contenido real, rareza, slots de Prestige y epílogo
-   implementados **una sola vez** acá y no por año (D-S08-067), cierre de
-   D-S08-056 con el catálogo real y auditoría final de implementación.
+5. [x] **Integración de carrera completa** (16 de septiembre de 2026). La
+   carrera real es una edición propia —ruleset `1.0.0-full-career` sobre
+   `grade-5-dev-2`— que compone los **nueve** beats del presupuesto en los seis
+   años, con eventos raros contextuales, Prestige, hitos, callbacks y epílogo
+   implementados una sola vez acá (D-S08-067 y D-S08-072). D-S08-056 quedó
+   cerrada con evidencia: 300 carreras, p50 384 ms, p95 404 ms, peor caso
+   434 ms, 0 fallas. El epílogo tiene pantalla y E2E, y la carrera se barre con
+   seis políticas de juego. La edición sigue `official: false` y declara un
+   techo de Prestige ofrecido de 0 (D-S08-084).
+   [Estado](06-delivery/current-stage.md#stage-08-contenido-incremental-de-1º-a-5º).
 
 #### Después de G1 y aceptación de STAGE-08
 
@@ -13919,7 +13939,7 @@ Ejecución del gate sobre 1.º real. Ninguna decisión de producto se reabrió.
 | D-S08-053 | La celda del plano corta el texto: varios objetos en una celda no pueden ensanchar la tabla ni sacar la pantalla del viewport a 360 px | ACCEPTED · hardening | E2E `layout-invalid`, que falla sin el arreglo |
 | D-S08-054 | El reflow se mide también con la respuesta ya construida, no sólo con la interacción vacía | ACCEPTED · cobertura | `tests/e2e/grade-1.spec.ts` |
 | D-S08-055 | ~~El piso declarado es 360 px; bajar el piso queda como decisión de producto abierta~~ **Superada por D-S08-057 el 2026-09-15** | SUPERSEDED | [accesibilidad](09-design-system/accessibility.md) |
-| D-S08-056 | El costo de composición global —unos 2,7 s con 36 Templates— se vuelve a medir con el catálogo real antes de componer la carrera oficial | ACCEPTED · riesgo registrado | [audit post-G1](04-quality/post-grade-1-scalability-audit.md#resultado-de-la-ejecución-2026-09-14); `tests/unit/post-g1-composer-audit.test.ts` |
+| D-S08-056 | ~~El costo de composición global —unos 2,7 s con 36 Templates— se vuelve a medir con el catálogo real antes de componer la carrera oficial~~ **CERRADA el 2026-09-16 con evidencia**: con las 42 Templates reales, 300 carreras compuestas dan p50 **384 ms**, p95 **404 ms** y peor caso **434 ms**, 0 fallas y 0 planes inválidos. Los 2,7 s eran un artefacto del catálogo sintético, no del algoritmo | CLOSED · aceptada con evidencia | `tests/integration/full-career.test.ts`; [audit post-G1](04-quality/post-grade-1-scalability-audit.md#resultado-de-la-ejecución-2026-09-14) |
 
 ## STAGE-08 / Piso de reflow (2026-09-15)
 
@@ -13964,6 +13984,24 @@ Ejecución del gate sobre 1.º real. Ninguna decisión de producto se reabrió.
 | D-S08-078 | `y5.stage-screen` usa el motor `Choice / Compare` en vez del `Spatial / Graph Canvas` que sugiere la ficha: la decisión es elegir entre formas de proyectar y toda la geometría está escrita. La familia de razonamiento declarada sigue siendo `SPATIAL` | ACCEPTED · autoría | misma regla que D-S08-070 |
 | D-S08-079 | Los niveles de `y5.yearbook` se miden contra **cuántas secciones se podían completar** con esas páginas, no contra completarlas todas: el material nunca entra entero, así que exigir todo dejaría el nivel máximo fuera de alcance | ACCEPTED · autoría | `bestCoverage`; `tests/unit/grade-5-screen-yearbook-next.test.ts` |
 | D-S08-080 | El viaje y la pantalla construyen sus variantes por papeles —cuál no se puede hacer, cuál no trae lo pedido, cuál lo trae justo— en vez de combinar medidas al azar: con cuatro o cinco opciones, los cuatro niveles no aparecen por combinatoria y rotar los papeles es lo que impide que la respuesta sea siempre la misma | ACCEPTED · autoría | `tests/unit/grade-5-final-trip.test.ts` |
+
+## STAGE-08 / Integración de carrera completa (2026-09-16)
+
+La carrera real 7.º → 5.º: composición de nueve beats sobre el catálogo
+aprobado, eventos raros, Prestige, hitos, epílogo y su pantalla. Ninguna
+decisión de producto cerrada se reabrió.
+
+| ID | Decisión | Madurez | Fuente / estado |
+|---|---|---|---|
+| D-S08-081 | La carrera completa es una edición propia —ruleset `1.0.0-full-career`, contenido `5.1.0-grade-5`, catálogo `grade-5-dev-2`— con `official: false`: compone los **nueve** beats del presupuesto, no los doce de la práctica parcial, y convive con los recorridos parciales sin reemplazarlos | ACCEPTED · implementación | `src/content/full-career.ts`; `tests/integration/full-career.test.ts` |
+| D-S08-082 | La carrera usa **sólo** `template-freshness` como objetivo blando. Con la lista completa de objetivos los criterios lexicográficos producen un ganador único: 300 carreras usaban 12 de 28 Templates y las tres primeras runs eran el mismo contenido. Las restricciones duras ya llevan los pisos de variedad, así que sacar los objetivos no afloja ninguna cuota — y con el cambio aparecen las 28 | ACCEPTED · medida | medición de 300 carreras; `fullCareerCompositionPolicy` |
+| D-S08-083 | Los cuatro eventos raros son contextuales, nunca por rendimiento: se sortean por seed sobre la carrera y respetan el presupuesto de 2 apariciones, 1 con efecto y 1 muy rara. Dos son `narrative-only` y dos `variant-modifier`, que sólo re-eligen otra variante aprobada del mismo Template | ACCEPTED · implementación | `src/content/rare-events.ts`; `tests/unit/rare-events.test.ts` |
+| D-S08-084 | La edición declara un techo de Prestige **ofrecido de 0**. La maquinaria existe y el servidor la recomputa, pero autorar una oportunidad competitiva hoy exigiría inventar acciones de jugador que ninguna Template tiene, y eso es una decisión de producto que esta tarea no toma. El contrato canónico admite explícitamente una edición sin oportunidad competitiva | ACCEPTED · fail-closed | `careerPrestigeOpportunities`; [eventos raros y Prestige](01-game-design/rare-events-and-prestige.md) |
+| D-S08-085 | El epílogo se implementa con su pantalla, en el orden que fija el sistema narrativo: EGRESASTE primero, perfil autorado, recorrido, registro con `null ≠ 0`, hitos display-only y cierre de modo. `closeCareer` es puro y el servidor lo recompone desde el log | ACCEPTED · implementación | `src/components/game/career-epilogue.tsx`; `tests/e2e/full-career.spec.ts` |
+| D-S08-086 | Los callbacks de carrera leen **sólo** flags grabados en el año de origen y devuelven texto vacío sin causa rastreable. Entran en el `setup`, así que la instancia matemática y la evaluación no cambian: recordar nunca modifica la cuenta | ACCEPTED · autoría | `src/content/career-facts.ts`; `tests/integration/career-callbacks.test.ts` |
+| D-S08-087 | Estilo queda auditado a nivel carrera sin recalibrar nada: cada Template con estilo deja al menos dos ejes disponibles con la matemática óptima en **todas** sus variantes aprobadas, y jugar siempre óptimo produce estilos dominantes distintos según la seed. Las Templates de 7.º, anteriores al gate de autoría, atan algunos ejes a su nivel Math; se registra como asimetría conocida y no se toca | ACCEPTED · auditoría | `tests/integration/style-audit.test.ts` |
+| D-S08-088 | Para que la carrera perfecta llegue a 10 000 se agregaron gates de autoría —que alguna respuesta óptima deje el Equipo máximo y que alguna postura llegue al máximo de Aura—, no se recalibró el score. Al cambiar la población aprobada, los catálogos se **republicaron** como `-dev-2`: un artefacto publicado no se edita en el lugar | ACCEPTED · autoría | `tests/integration/full-career.test.ts` |
+| D-S08-089 | El detalle de una opción baja a su propio renglón cuando no entra, en vez de empujar la fila fuera de la pantalla: un detalle con prosa rompía el piso de reflow de 320 px en las tarjetas de decisión | ACCEPTED · hardening | `src/components/ui/choice-card.tsx`; `tests/e2e/full-career.spec.ts` |
 
 La integración de TG1 permanece histórica en [su acta y trazabilidad](06-delivery/teacher-gate-1/12-integracion-post-gate.md).
 Siguen pendientes la oficialización/freeze, validación empírica, autoría ejecutable,

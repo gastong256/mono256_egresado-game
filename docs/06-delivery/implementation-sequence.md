@@ -888,10 +888,16 @@ checkpoint y commit sólo si pasa.
    por persona, y `y5.next-step-options` sin prescribir ningún camino: la
    preferencia no alimenta puntaje ni Estilo, sólo queda registrada.
    [Implementación](../01-game-design/grade-5-template-design.md#implementación-runtime).
-5. [ ] **Integración de carrera completa**: catálogo real 7.º–5.º, composición de
-   nueve beats con el contenido real, rareza, slots de Prestige y epílogo
-   implementados **una sola vez** acá y no por año (D-S08-067), cierre de
-   D-S08-056 con el catálogo real y auditoría final de implementación.
+5. [x] **Integración de carrera completa** (16 de septiembre de 2026). La
+   carrera real es una edición propia —ruleset `1.0.0-full-career` sobre
+   `grade-5-dev-2`— que compone los **nueve** beats del presupuesto en los seis
+   años, con eventos raros contextuales, Prestige, hitos, callbacks y epílogo
+   implementados una sola vez acá (D-S08-067 y D-S08-072). D-S08-056 quedó
+   cerrada con evidencia: 300 carreras, p50 384 ms, p95 404 ms, peor caso
+   434 ms, 0 fallas. El epílogo tiene pantalla y E2E, y la carrera se barre con
+   seis políticas de juego. La edición sigue `official: false` y declara un
+   techo de Prestige ofrecido de 0 (D-S08-084).
+   [Estado](current-stage.md#stage-08-contenido-incremental-de-1º-a-5º).
 
 #### Después de G1 y aceptación de STAGE-08
 
