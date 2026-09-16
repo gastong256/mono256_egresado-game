@@ -18,6 +18,7 @@ import { createGrade1Dependencies } from '../../src/content/grade-1'
 import { createGrade2Dependencies } from '../../src/content/grade-2'
 import { createGrade3Dependencies } from '../../src/content/grade-3'
 import { createGrade4Dependencies } from '../../src/content/grade-4'
+import { createGrade5Dependencies } from '../../src/content/grade-5'
 import type { EngineDependencies } from '../../src/game'
 
 /**
@@ -43,6 +44,8 @@ function selectDependencies(argv: readonly string[]): EngineDependencies {
   if (requested === 'grade-3-demo') return createGrade3Dependencies(true)
   if (requested === 'grade-4') return createGrade4Dependencies()
   if (requested === 'grade-4-demo') return createGrade4Dependencies(true)
+  if (requested === 'grade-5') return createGrade5Dependencies()
+  if (requested === 'grade-5-demo') return createGrade5Dependencies(true)
   if (requested !== undefined && requested !== 'grade-7') {
     throw new Error(`unknown content set: ${requested}`)
   }

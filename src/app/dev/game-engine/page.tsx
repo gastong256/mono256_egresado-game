@@ -42,7 +42,13 @@ export default async function DevelopmentGameEnginePage({
       : 'harness-default'
 
   const content = params['content']
-  for (const set of ['grade-1', 'grade-2', 'grade-3', 'grade-4'] as const)
+  for (const set of [
+    'grade-1',
+    'grade-2',
+    'grade-3',
+    'grade-4',
+    'grade-5',
+  ] as const)
     if (content === set || content === `${set}-demo`)
       return (
         <Grade1Harness

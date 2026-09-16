@@ -63,7 +63,7 @@ Tabla de navegación. Los contratos de cada etapa, más abajo, son la autoridad.
 | [STAGE-06](#stage-06-scorepolicy-competitiva) | ScorePolicy competitiva | `DONE` | STAGE-05 | — |
 | [GATE-TG1](#gate-tg1-teacher-gate-1) | **Teacher Gate 1** | `PASSED_WITH_REQUIRED_ADJUSTMENTS` | STAGE-04, STAGE-06 | externo |
 | [STAGE-07](#stage-07-invariante-de-egreso-fail-forward-y-recuperaciones) | Egreso, fail-forward y recuperaciones | `DONE` | GATE-TG1 | — |
-| [STAGE-08](#stage-08-contenido-incremental-de-1º-a-5º) | Contenido incremental 1.º → 5.º | `IN_PROGRESS` · **actual** · Phase 1 DONE · audit post-G1 PASSED · 2.º, 3.º y 4.º DONE | STAGE-07 | auditoría tras 1.º |
+| [STAGE-08](#stage-08-contenido-incremental-de-1º-a-5º) | Contenido incremental 1.º → 5.º | `IN_PROGRESS` · **actual** · Phase 1 DONE · audit post-G1 PASSED · 2.º–5.º DONE · falta la integración | STAGE-07 | auditoría tras 1.º |
 | [STAGE-09](#stage-09-fair-mode-servidor-autoritativo-y-ranking) | Fair mode, servidor autoritativo y ranking | `NOT_STARTED` | STAGE-06, STAGE-08 | — |
 | [GATE-TG2](#gate-tg2-teacher-gate-2) | **Teacher Gate 2** | `TEACHER_GATE` | STAGE-09 | externo |
 | [FREEZE](#freeze-congelamiento-de-competencia) | Congelamiento de competencia | `NOT_STARTED` | GATE-TG2 | — |
@@ -775,7 +775,8 @@ a TG1. El techo de un Repaso por etapa sigue siendo estructura de ADR-024.
 ### STAGE-08 — Contenido incremental de 1.º a 5.º
 
 - **Estado:** `IN_PROGRESS` — **etapa actual; Phase 0 DONE / Phase 1 DONE /
-  audit post-G1 PASSED / Phase 2: 2.º, 3.º y 4.º DONE, 5.º NEXT**
+  audit post-G1 PASSED / Phase 2: 2.º–5.º DONE; falta la integración de carrera
+  completa**
 - **Depende de:** STAGE-07 (`DONE`)
 - **Desbloquea:** STAGE-09
 
@@ -880,8 +881,13 @@ checkpoint y commit sólo si pasa.
    agendada con el rol `special` para reemplazar una oportunidad y no agregar
    un beat. Prestige y elegibilidad condicional quedan para la integración.
    [Implementación](../01-game-design/grade-4-template-design.md#implementación-runtime).
-4. [ ] **5.º — Cierre y futuro**, con convergencia de carrera que enriquece sin
-   condicionar, y `y5.next-step-options` sin prescribir ningún camino.
+4. [x] **5.º — Cierre y futuro** (16 de septiembre de 2026). Cinco Templates y
+   dos Repasos sobre `grade-5-dev-1`, con convergencia por construcción
+   —ninguna Template necesita un callback para entenderse ni para resolverse—,
+   el guardrail socioeconómico del viaje implementado como ausencia de datos
+   por persona, y `y5.next-step-options` sin prescribir ningún camino: la
+   preferencia no alimenta puntaje ni Estilo, sólo queda registrada.
+   [Implementación](../01-game-design/grade-5-template-design.md#implementación-runtime).
 5. [ ] **Integración de carrera completa**: catálogo real 7.º–5.º, composición de
    nueve beats con el contenido real, rareza, slots de Prestige y epílogo
    implementados **una sola vez** acá y no por año (D-S08-067), cierre de

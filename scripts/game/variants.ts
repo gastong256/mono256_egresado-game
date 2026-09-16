@@ -37,6 +37,11 @@ import {
 } from '../../src/content/grade-2/versions'
 import { createGrade3Catalog } from '../../src/content/grade-3/registry'
 import { createGrade4Catalog } from '../../src/content/grade-4/registry'
+import { createGrade5Catalog } from '../../src/content/grade-5/registry'
+import {
+  GRADE_5_CONTENT_VERSION,
+  GRADE_5_VARIANT_CATALOG_VERSION,
+} from '../../src/content/grade-5/versions'
 import {
   GRADE_4_CONTENT_VERSION,
   GRADE_4_VARIANT_CATALOG_VERSION,
@@ -111,6 +116,12 @@ function main(): void {
       contentVersion: GRADE_4_CONTENT_VERSION,
       catalogVersion: GRADE_4_VARIANT_CATALOG_VERSION,
       directory: 'grade-4',
+    },
+    'grade-5': {
+      catalog: createGrade5Catalog,
+      contentVersion: GRADE_5_CONTENT_VERSION,
+      catalogVersion: GRADE_5_VARIANT_CATALOG_VERSION,
+      directory: 'grade-5',
     },
   } as const
   const requested = Object.keys(sets).find((name) =>

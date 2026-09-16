@@ -3357,7 +3357,8 @@ tocar sus artefactos publicados. La práctica parcial `7.º → 4.º` es
 - **Etapa académica:** 5.º
 - **Función narrativa:** cierre y futuro
 - **Estado:** `DESIGN-CANDIDATE-APPROVED` · checkpoint #2, 9 de septiembre de 2026
-- **Implementación:** `NOT_STARTED`; aprobación de diseño, no de contenido ejecutable
+- **Implementación:** `IMPLEMENTED` en STAGE-08 (2026-09-16) como contenido de
+  desarrollo; ver [implementación runtime](#implementación-runtime)
 
 La pregunta del año es **«¿Qué dice de mí todo el recorrido que hice?»**.
 **Career Convergence — `LOCKED`** exige reutilizar visiblemente una selección
@@ -3500,9 +3501,60 @@ Equipo y Aura ordinaria aparecen sólo en `course-project-final`. Las rutas son
 El conteo y placement se consultan en la [matriz](01-game-design/full-career-content-matrix.md).
 
 La aprobación de los cinco diseños no constituye una validación empírica de
-pacing ni de equidad. Parámetros, evaluadores, feedback y variantes ejecutables
-todavía requieren autoría y los
+pacing ni de equidad. Los parámetros, evaluadores, feedback y variantes ya
+existen —ver abajo— y siguen en estado `draft`: la revisión del Departamento de
+Matemática y el pacing empírico son gates de producción. Aplican los
 [requisitos editoriales de Phase 0](01-game-design/content-authoring-guide.md#diseño-aprobado-en-phase-0).
+
+## Implementación runtime
+
+Fuente: `src/content/grade-5/`. Mismas reglas que los años anteriores:
+generación por restricción, gates de autoría en el pipeline, oráculo
+independiente por evaluador y materialización sólo de direcciones aprobadas.
+
+| Template | Formas semánticas | Escalera 100/75/40/10 | Equipo / Aura / Estilo |
+|---|---|---|---|
+| `y5.final-trip-or-event` | Cuatro paquetes contra el fondo del curso, los días que da el colegio y los lugares que hacen falta; formas `fondo-corto`, `pocos-dias` y `curso-grande` | INVALID no se puede hacer · FUNCTIONAL se puede pero falta lo que el curso pidió · EFFICIENT trae todo y deja el fondo al límite · OPTIMAL trae todo y deja la reserva | Ninguno |
+| `y5.course-project-final` | Seis tareas con dueño y horas, alguien que no va a estar, y tres destinos por tarea: mantener, repartir o recortar; formas `se-cae-el-video`, `menos-horas` y `todo-esencial` | INVALID recorta algo esencial, deja la tarea de quien no está o pasa las horas de alguien · FUNCTIONAL el plan cierra · EFFICIENT sobrevive parte de lo no esencial · OPTIMAL sobrevive todo | **Equipo** por los acuerdos del grupo y **Aura** por lo que el curso dice del cambio, en campos distintos de la respuesta (`LOCKED`). Estilo por la forma de la reconstrucción |
+| `y5.stage-screen` | Pantalla e imagen en centímetros, el cartel del curso de un lado con su aire, y cinco formas de proyectar; formas `pantalla-ancha`, `imagen-alta` y `cartel-grande` | INVALID deforma o se come el cartel · FUNCTIONAL deja media pantalla vacía · EFFICIENT llena casi todo · OPTIMAL llena la pantalla con el cartel entero | Ninguno |
+| `y5.yearbook` | Páginas exactas de imprenta, mínimos pactados, un tope y material por sección; formas `tope-apretado`, `minimos-altos` y `material-desparejo` | INVALID no suma exacto o rompe lo pactado · FUNCTIONAL cierra sin completar ninguna sección · EFFICIENT completa alguna · OPTIMAL completa todas las que se podían | Ninguno |
+| `y5.next-step-options` | Cinco escenarios ya escritos contra las horas libres, el viaje diario y el día tomado; formas `horas-justas`, `viaje-largo` y `compromiso-fijo` | INVALID marca como viable algo que no entra · EFFICIENT deja uno viable afuera · FUNCTIONAL deja dos o más · OPTIMAL exacta | Ninguno. La preferencia personal **no se puntúa de ninguna forma** |
+| `y5.multi-option-comparison-review` | Un paquete que no incluye el micro, que se cobra por persona | OPTIMAL el total con el micro de cada uno · FUNCTIONAL sumarlo una sola vez · EFFICIENT una persona de diferencia · INVALID el resto | Sin Estilo ni score |
+| `y5.proportion-capacity-review` | Material de una sección contra lo que entra por página | OPTIMAL sube al entero · FUNCTIONAL se queda en la parte entera · EFFICIENT una página de diferencia · INVALID el resto | Sin Estilo ni score |
+
+**Banda y metadata.** `bandOf(cognitive)` da: el año que viene 4 → CORE; muestra
+final y anuario 7 → STANDARD; viaje y pantalla 8 → STRETCH; los dos Repasos 1 →
+CORE. Eso es 1 CORE / 2 STANDARD / 2 STRETCH, la distribución que pide la
+matriz. El cluster `egreso` lo declaran viaje, pantalla y anuario.
+
+**Guardrail socioeconómico.** El viaje mira un fondo del curso, nunca un
+bolsillo: entre los parámetros no hay ningún dato por persona y el desafío no
+pregunta ni infiere qué puede pagar nadie. El Repaso sí usa un precio por
+persona, y es del micro —un costo del paquete—, no de la situación de nadie.
+
+**`next-step-options` no opina.** Se evalúa sólo qué escenarios entran con las
+horas, el viaje y el día ya tomado. La preferencia personal se pregunta aparte,
+con «no se puntúa» escrito en la pantalla, y lo único que hace es quedar
+registrada como hecho de carrera para el cierre: no toca FairScore, ni Equipo,
+ni Aura, ni Estilo. Ninguna opción de vida vale más que otra, y el evaluador no
+tiene forma de expresar que alguna valga.
+
+**Interacción de la pantalla.** El diseño dirige la pantalla del acto a
+`Spatial / Graph Canvas`; la implementación usa `Choice / Compare`, porque la
+decisión es elegir entre formas de proyectar y toda la geometría está escrita.
+La familia de razonamiento declarada sigue siendo `SPATIAL`, que es de lo que
+trata la cuenta.
+
+**Catálogo `grade-5-dev-1`.** 1025 entradas, 172 de 5.º, construido con
+`pnpm game:variants build --content=grade-5`; re-aprueba los años anteriores sin
+tocar sus artefactos publicados. `7.º → 5.º` es el primer set con los seis años
+y sigue siendo `official: false`.
+
+**Lo que 5.º todavía no trae.** La convergencia de carrera se cumple hoy por
+construcción —ninguna Template necesita un callback para entenderse ni para
+resolverse— pero la saliencia narrativa, el epílogo y la rareza son parte de la
+integración de carrera completa, donde se implementan una sola vez
+(D-S08-067).
 
 ---
 
@@ -9879,11 +9931,11 @@ STAGE-08                                      IN_PROGRESS · CURRENT
 │   ├── 5 Templates + 2 Repasos                RUNTIME · catálogo grade-1-dev-1
 │   └── Práctica 7.º → 1.º                     PARTIAL DEVELOPMENT · no oficial
 ├── POST-G1 SCALABILITY AUDIT                  PASSED · hardening resuelto
-├── PHASE 2 — IMPLEMENT GRADES 2–5             IN_PROGRESS
+├── PHASE 2 — IMPLEMENT GRADES 2–5             DONE
 │   ├── 2.º Pertenencia                        DONE · catálogo grade-2-dev-1
 │   ├── 3.º Autonomía                          DONE · catálogo grade-3-dev-1
 │   ├── 4.º Responsabilidad                    DONE · catálogo grade-4-dev-1
-│   └── 5.º Cierre y futuro                    NEXT
+│   └── 5.º Cierre y futuro                    DONE · catálogo grade-5-dev-1
 └── INTEGRACIÓN DE CARRERA COMPLETA            NOT_STARTED
     ├── Catálogo real 7.º–5.º y composición    pendiente
     ├── Rareza, Prestige y epílogo             pendiente · una sola vez
@@ -9902,18 +9954,21 @@ y en [ADR-025](03-architecture/adr/ADR-025-full-career-contract-evolution.md#imp
 Proyecto II, plan del Intercurso, tabla y postas de la cancha, más el Repaso del
 denominador— y 3.º el mismo día —colectivo, feria de tecnología, Día del Amigo,
 semana y recorrido del barrio, más dos Repasos—. 4.º cerró el 16 de septiembre
-—turnos, peña, cola del evento, salón y consejo escolar, más dos Repasos—.
-Detalle en
+—turnos, peña, cola del evento, salón y consejo escolar, más dos Repasos— y 5.º
+el mismo día —viaje, muestra final, anuario, pantalla del acto y el año que
+viene, más dos Repasos—. Detalle en
 [2.º](01-game-design/grade-2-template-design.md#implementación-runtime),
-[3.º](01-game-design/grade-3-template-design.md#implementación-runtime) y
-[4.º](01-game-design/grade-4-template-design.md#implementación-runtime).
+[3.º](01-game-design/grade-3-template-design.md#implementación-runtime),
+[4.º](01-game-design/grade-4-template-design.md#implementación-runtime) y
+[5.º](01-game-design/grade-5-template-design.md#implementación-runtime).
 
 **No significa que STAGE-08 esté terminada ni que exista una carrera oficial.**
-`7.º → 4.º` es práctica local de desarrollo (`official: false`,
-`partial-development`); 5.º no tiene contenido ejecutable y la carrera de nueve
-beats sigue sin componerse con el catálogo real. Rareza, Prestige y epílogo se
-implementan una sola vez en la integración, no por año (D-S08-067 y D-S08-072).
-El contenido de 1.º a 4.º está en estado `draft`: faltan la revisión del
+`7.º → 5.º` tiene los seis años pero es práctica local de desarrollo
+(`official: false`, `partial-development`): compone doce beats ordinarios, no
+los nueve del presupuesto oficial. Falta la integración —catálogo y composición
+oficiales, rareza, Prestige, callbacks de carrera y epílogo, que se implementan
+una sola vez ahí (D-S08-067 y D-S08-072)— y cerrar D-S08-056 con el catálogo
+real. El contenido de 1.º a 5.º está en estado `draft`: faltan la revisión del
 Departamento de Matemática, el sign-off manual de la rueda y el pacing empírico,
 gates de producción de STAGE-08.
 
@@ -9927,20 +9982,21 @@ por etapa fuera del presupuesto ordinario y de FairScore.
   `7.º → 1.º`: contenido `1.0.0-grade-1`, catálogo `grade-1-dev-1`.
   `7.º → 2.º`: contenido `2.0.0-grade-2`, catálogo `grade-2-dev-1`.
   `7.º → 3.º`: contenido `3.0.0-grade-3`, catálogo `grade-3-dev-1`.
-  `7.º → 4.º`: rulesets `4.0.0-grade-4-partial` y `4.0.0-grade-4-demo`, contenido
-  `4.0.0-grade-4`, catálogo `grade-4-dev-1`. Score
+  `7.º → 4.º`: contenido `4.0.0-grade-4`, catálogo `grade-4-dev-1`.
+  `7.º → 5.º`: rulesets `5.0.0-grade-5-partial` y `5.0.0-grade-5-demo`, contenido
+  `5.0.0-grade-5`, catálogo `grade-5-dev-1`. Score
   `fair-score-dev-2@2.0.0-post-tg1-candidate` sin cambios.
 - Huellas: motor `c542afb3` —se movió con las dos respuestas nuevas—; ruleset
   `5b9b0bc5` y contenido `dbaf5094` del fixture de desarrollo intactos.
-- Tests: 83 archivos y 1561 tests de Vitest; 124 E2E de Playwright en desktop y
-  mobile, incluidos los recorridos de 1.º a 4.º y el barrido de accesibilidad
+- Tests: 87 archivos y 1599 tests de Vitest; 136 E2E de Playwright en desktop y
+  mobile, incluidos los recorridos de 1.º a 5.º y el barrido de accesibilidad
   del audit.
 - Simulación: 5000 runs de 7.º, 5000 de `7.º → 1.º`, 2000 del demo amplio y 200
-  de cada práctica parcial de 2.º, 3.º y 4.º egresadas, 0 hallazgos, peor caso un
+  de cada práctica parcial de 2.º a 5.º egresadas, 0 hallazgos, peor caso un
   Repaso por etapa.
 - Composición: 2000 seeds de `7.º → 1.º` dan 2000 planes distintos, 0 inválidos
-  y 0 diferencias al recomponer; `7.º → 4.º` compone diez beats ordinarios en
-  cinco etapas y el validador independiente los acepta.
+  y 0 diferencias al recomponer; `7.º → 5.º` compone doce beats ordinarios en
+  las seis etapas y el validador independiente los acepta.
 
 ## Siguiente tarea canónica
 
@@ -9951,9 +10007,11 @@ POST-G1 SCALABILITY AUDIT — PASSED
 2.º — DONE
 3.º — DONE
 4.º — DONE
+5.º — DONE
 
 Next:
-Implementar 5.º, después integrar la carrera completa
+Integrar la carrera completa: catálogo y composición oficiales, rareza,
+Prestige, callbacks y epílogo, y cerrar D-S08-056 con el catálogo real
 ```
 
 El [audit posterior a 1.º](04-quality/post-grade-1-scalability-audit.md#resultado-de-la-ejecución-2026-09-14)
@@ -10141,7 +10199,7 @@ Tabla de navegación. Los contratos de cada etapa, más abajo, son la autoridad.
 | [STAGE-06](#stage-06-scorepolicy-competitiva) | ScorePolicy competitiva | `DONE` | STAGE-05 | — |
 | [GATE-TG1](#gate-tg1-teacher-gate-1) | **Teacher Gate 1** | `PASSED_WITH_REQUIRED_ADJUSTMENTS` | STAGE-04, STAGE-06 | externo |
 | [STAGE-07](#stage-07-invariante-de-egreso-fail-forward-y-recuperaciones) | Egreso, fail-forward y recuperaciones | `DONE` | GATE-TG1 | — |
-| [STAGE-08](#stage-08-contenido-incremental-de-1º-a-5º) | Contenido incremental 1.º → 5.º | `IN_PROGRESS` · **actual** · Phase 1 DONE · audit post-G1 PASSED · 2.º, 3.º y 4.º DONE | STAGE-07 | auditoría tras 1.º |
+| [STAGE-08](#stage-08-contenido-incremental-de-1º-a-5º) | Contenido incremental 1.º → 5.º | `IN_PROGRESS` · **actual** · Phase 1 DONE · audit post-G1 PASSED · 2.º–5.º DONE · falta la integración | STAGE-07 | auditoría tras 1.º |
 | [STAGE-09](#stage-09-fair-mode-servidor-autoritativo-y-ranking) | Fair mode, servidor autoritativo y ranking | `NOT_STARTED` | STAGE-06, STAGE-08 | — |
 | [GATE-TG2](#gate-tg2-teacher-gate-2) | **Teacher Gate 2** | `TEACHER_GATE` | STAGE-09 | externo |
 | [FREEZE](#freeze-congelamiento-de-competencia) | Congelamiento de competencia | `NOT_STARTED` | GATE-TG2 | — |
@@ -10853,7 +10911,8 @@ a TG1. El techo de un Repaso por etapa sigue siendo estructura de ADR-024.
 ### STAGE-08 — Contenido incremental de 1.º a 5.º
 
 - **Estado:** `IN_PROGRESS` — **etapa actual; Phase 0 DONE / Phase 1 DONE /
-  audit post-G1 PASSED / Phase 2: 2.º, 3.º y 4.º DONE, 5.º NEXT**
+  audit post-G1 PASSED / Phase 2: 2.º–5.º DONE; falta la integración de carrera
+  completa**
 - **Depende de:** STAGE-07 (`DONE`)
 - **Desbloquea:** STAGE-09
 
@@ -10958,8 +11017,13 @@ checkpoint y commit sólo si pasa.
    agendada con el rol `special` para reemplazar una oportunidad y no agregar
    un beat. Prestige y elegibilidad condicional quedan para la integración.
    [Implementación](01-game-design/grade-4-template-design.md#implementación-runtime).
-4. [ ] **5.º — Cierre y futuro**, con convergencia de carrera que enriquece sin
-   condicionar, y `y5.next-step-options` sin prescribir ningún camino.
+4. [x] **5.º — Cierre y futuro** (16 de septiembre de 2026). Cinco Templates y
+   dos Repasos sobre `grade-5-dev-1`, con convergencia por construcción
+   —ninguna Template necesita un callback para entenderse ni para resolverse—,
+   el guardrail socioeconómico del viaje implementado como ausencia de datos
+   por persona, y `y5.next-step-options` sin prescribir ningún camino: la
+   preferencia no alimenta puntaje ni Estilo, sólo queda registrada.
+   [Implementación](01-game-design/grade-5-template-design.md#implementación-runtime).
 5. [ ] **Integración de carrera completa**: catálogo real 7.º–5.º, composición de
    nueve beats con el contenido real, rareza, slots de Prestige y epílogo
    implementados **una sola vez** acá y no por año (D-S08-067), cierre de
@@ -13889,6 +13953,17 @@ Ejecución del gate sobre 1.º real. Ninguna decisión de producto se reabrió.
 | D-S08-072 | La elegibilidad condicional de `y4.represent-class` y su evidencia de Prestige quedan para la integración de carrera completa, junto con el resto de la orquestación de rareza (D-S08-067); hoy la Template existe y es neutral en oportunidades | ACCEPTED · diferido | [roadmap](06-delivery/implementation-sequence.md#stage-08-contenido-incremental-de-1º-a-5º) |
 | D-S08-073 | Los niveles de `y4.event-floor-plan` se leen de hechos del salón —que sobre lugar para una mesa más, que entre la barra— y no de cuántas zonas se pusieron: con la capacidad decidiendo cuántas mesas hacen falta, contar zonas haría inalcanzable un nivel en la mitad de los salones | ACCEPTED · autoría | `tests/unit/grade-4-floor-plan.test.ts` |
 | D-S08-074 | La búsqueda de witnesses del salón tiene presupuesto de nodos y **rechaza** la variante si se agota, en vez de aprobarla a medias | ACCEPTED · fail-closed | `floorSearch`, `floorGates` |
+
+## STAGE-08 / Implementación de 5.º (2026-09-16)
+
+| ID | Decisión | Madurez | Fuente / estado |
+|---|---|---|---|
+| D-S08-075 | 5.º queda implementado sobre `grade-5-dev-1`: cinco Templates, dos Repasos y el primer set con los seis años, `7.º → 5.º`, todavía `official: false` | ACCEPTED · implementación | [diseño de 5.º](01-game-design/grade-5-template-design.md#implementación-runtime) |
+| D-S08-076 | El guardrail socioeconómico del viaje se implementa por construcción: entre los parámetros no existe ningún dato por persona, sólo el fondo del curso, los días y los lugares. El precio por persona que sí aparece es el del micro, un costo del paquete | ACCEPTED · autoría | `tests/unit/grade-5-final-trip.test.ts` |
+| D-S08-077 | En `y5.next-step-options` la preferencia personal no alimenta **nada** puntuable ni descriptivo: ni FairScore, ni Equipo, ni Aura, ni Estilo. Queda registrada como hecho de carrera para el cierre y la pantalla lo dice. Mapear una elección de vida a un eje de Estilo habría insinuado una jerarquía que el diseño prohíbe | ACCEPTED · autoría | ídem; `tests/unit/grade-5-screen-yearbook-next.test.ts` |
+| D-S08-078 | `y5.stage-screen` usa el motor `Choice / Compare` en vez del `Spatial / Graph Canvas` que sugiere la ficha: la decisión es elegir entre formas de proyectar y toda la geometría está escrita. La familia de razonamiento declarada sigue siendo `SPATIAL` | ACCEPTED · autoría | misma regla que D-S08-070 |
+| D-S08-079 | Los niveles de `y5.yearbook` se miden contra **cuántas secciones se podían completar** con esas páginas, no contra completarlas todas: el material nunca entra entero, así que exigir todo dejaría el nivel máximo fuera de alcance | ACCEPTED · autoría | `bestCoverage`; `tests/unit/grade-5-screen-yearbook-next.test.ts` |
+| D-S08-080 | El viaje y la pantalla construyen sus variantes por papeles —cuál no se puede hacer, cuál no trae lo pedido, cuál lo trae justo— en vez de combinar medidas al azar: con cuatro o cinco opciones, los cuatro niveles no aparecen por combinatoria y rotar los papeles es lo que impide que la respuesta sea siempre la misma | ACCEPTED · autoría | `tests/unit/grade-5-final-trip.test.ts` |
 
 La integración de TG1 permanece histórica en [su acta y trazabilidad](06-delivery/teacher-gate-1/12-integracion-post-gate.md).
 Siguen pendientes la oficialización/freeze, validación empírica, autoría ejecutable,

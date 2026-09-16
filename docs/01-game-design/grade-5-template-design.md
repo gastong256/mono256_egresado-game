@@ -3,7 +3,8 @@
 - **Etapa académica:** 5.º
 - **Función narrativa:** cierre y futuro
 - **Estado:** `DESIGN-CANDIDATE-APPROVED` · checkpoint #2, 9 de septiembre de 2026
-- **Implementación:** `NOT_STARTED`; aprobación de diseño, no de contenido ejecutable
+- **Implementación:** `IMPLEMENTED` en STAGE-08 (2026-09-16) como contenido de
+  desarrollo; ver [implementación runtime](#implementación-runtime)
 
 La pregunta del año es **«¿Qué dice de mí todo el recorrido que hice?»**.
 **Career Convergence — `LOCKED`** exige reutilizar visiblemente una selección
@@ -146,6 +147,57 @@ Equipo y Aura ordinaria aparecen sólo en `course-project-final`. Las rutas son
 El conteo y placement se consultan en la [matriz](full-career-content-matrix.md).
 
 La aprobación de los cinco diseños no constituye una validación empírica de
-pacing ni de equidad. Parámetros, evaluadores, feedback y variantes ejecutables
-todavía requieren autoría y los
+pacing ni de equidad. Los parámetros, evaluadores, feedback y variantes ya
+existen —ver abajo— y siguen en estado `draft`: la revisión del Departamento de
+Matemática y el pacing empírico son gates de producción. Aplican los
 [requisitos editoriales de Phase 0](content-authoring-guide.md#diseño-aprobado-en-phase-0).
+
+## Implementación runtime
+
+Fuente: `src/content/grade-5/`. Mismas reglas que los años anteriores:
+generación por restricción, gates de autoría en el pipeline, oráculo
+independiente por evaluador y materialización sólo de direcciones aprobadas.
+
+| Template | Formas semánticas | Escalera 100/75/40/10 | Equipo / Aura / Estilo |
+|---|---|---|---|
+| `y5.final-trip-or-event` | Cuatro paquetes contra el fondo del curso, los días que da el colegio y los lugares que hacen falta; formas `fondo-corto`, `pocos-dias` y `curso-grande` | INVALID no se puede hacer · FUNCTIONAL se puede pero falta lo que el curso pidió · EFFICIENT trae todo y deja el fondo al límite · OPTIMAL trae todo y deja la reserva | Ninguno |
+| `y5.course-project-final` | Seis tareas con dueño y horas, alguien que no va a estar, y tres destinos por tarea: mantener, repartir o recortar; formas `se-cae-el-video`, `menos-horas` y `todo-esencial` | INVALID recorta algo esencial, deja la tarea de quien no está o pasa las horas de alguien · FUNCTIONAL el plan cierra · EFFICIENT sobrevive parte de lo no esencial · OPTIMAL sobrevive todo | **Equipo** por los acuerdos del grupo y **Aura** por lo que el curso dice del cambio, en campos distintos de la respuesta (`LOCKED`). Estilo por la forma de la reconstrucción |
+| `y5.stage-screen` | Pantalla e imagen en centímetros, el cartel del curso de un lado con su aire, y cinco formas de proyectar; formas `pantalla-ancha`, `imagen-alta` y `cartel-grande` | INVALID deforma o se come el cartel · FUNCTIONAL deja media pantalla vacía · EFFICIENT llena casi todo · OPTIMAL llena la pantalla con el cartel entero | Ninguno |
+| `y5.yearbook` | Páginas exactas de imprenta, mínimos pactados, un tope y material por sección; formas `tope-apretado`, `minimos-altos` y `material-desparejo` | INVALID no suma exacto o rompe lo pactado · FUNCTIONAL cierra sin completar ninguna sección · EFFICIENT completa alguna · OPTIMAL completa todas las que se podían | Ninguno |
+| `y5.next-step-options` | Cinco escenarios ya escritos contra las horas libres, el viaje diario y el día tomado; formas `horas-justas`, `viaje-largo` y `compromiso-fijo` | INVALID marca como viable algo que no entra · EFFICIENT deja uno viable afuera · FUNCTIONAL deja dos o más · OPTIMAL exacta | Ninguno. La preferencia personal **no se puntúa de ninguna forma** |
+| `y5.multi-option-comparison-review` | Un paquete que no incluye el micro, que se cobra por persona | OPTIMAL el total con el micro de cada uno · FUNCTIONAL sumarlo una sola vez · EFFICIENT una persona de diferencia · INVALID el resto | Sin Estilo ni score |
+| `y5.proportion-capacity-review` | Material de una sección contra lo que entra por página | OPTIMAL sube al entero · FUNCTIONAL se queda en la parte entera · EFFICIENT una página de diferencia · INVALID el resto | Sin Estilo ni score |
+
+**Banda y metadata.** `bandOf(cognitive)` da: el año que viene 4 → CORE; muestra
+final y anuario 7 → STANDARD; viaje y pantalla 8 → STRETCH; los dos Repasos 1 →
+CORE. Eso es 1 CORE / 2 STANDARD / 2 STRETCH, la distribución que pide la
+matriz. El cluster `egreso` lo declaran viaje, pantalla y anuario.
+
+**Guardrail socioeconómico.** El viaje mira un fondo del curso, nunca un
+bolsillo: entre los parámetros no hay ningún dato por persona y el desafío no
+pregunta ni infiere qué puede pagar nadie. El Repaso sí usa un precio por
+persona, y es del micro —un costo del paquete—, no de la situación de nadie.
+
+**`next-step-options` no opina.** Se evalúa sólo qué escenarios entran con las
+horas, el viaje y el día ya tomado. La preferencia personal se pregunta aparte,
+con «no se puntúa» escrito en la pantalla, y lo único que hace es quedar
+registrada como hecho de carrera para el cierre: no toca FairScore, ni Equipo,
+ni Aura, ni Estilo. Ninguna opción de vida vale más que otra, y el evaluador no
+tiene forma de expresar que alguna valga.
+
+**Interacción de la pantalla.** El diseño dirige la pantalla del acto a
+`Spatial / Graph Canvas`; la implementación usa `Choice / Compare`, porque la
+decisión es elegir entre formas de proyectar y toda la geometría está escrita.
+La familia de razonamiento declarada sigue siendo `SPATIAL`, que es de lo que
+trata la cuenta.
+
+**Catálogo `grade-5-dev-1`.** 1025 entradas, 172 de 5.º, construido con
+`pnpm game:variants build --content=grade-5`; re-aprueba los años anteriores sin
+tocar sus artefactos publicados. `7.º → 5.º` es el primer set con los seis años
+y sigue siendo `official: false`.
+
+**Lo que 5.º todavía no trae.** La convergencia de carrera se cumple hoy por
+construcción —ninguna Template necesita un callback para entenderse ni para
+resolverse— pero la saliencia narrativa, el epílogo y la rareza son parte de la
+integración de carrera completa, donde se implementan una sola vez
+(D-S08-067).

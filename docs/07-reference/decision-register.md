@@ -205,6 +205,17 @@ Ejecución del gate sobre 1.º real. Ninguna decisión de producto se reabrió.
 | D-S08-073 | Los niveles de `y4.event-floor-plan` se leen de hechos del salón —que sobre lugar para una mesa más, que entre la barra— y no de cuántas zonas se pusieron: con la capacidad decidiendo cuántas mesas hacen falta, contar zonas haría inalcanzable un nivel en la mitad de los salones | ACCEPTED · autoría | `tests/unit/grade-4-floor-plan.test.ts` |
 | D-S08-074 | La búsqueda de witnesses del salón tiene presupuesto de nodos y **rechaza** la variante si se agota, en vez de aprobarla a medias | ACCEPTED · fail-closed | `floorSearch`, `floorGates` |
 
+## STAGE-08 / Implementación de 5.º (2026-09-16)
+
+| ID | Decisión | Madurez | Fuente / estado |
+|---|---|---|---|
+| D-S08-075 | 5.º queda implementado sobre `grade-5-dev-1`: cinco Templates, dos Repasos y el primer set con los seis años, `7.º → 5.º`, todavía `official: false` | ACCEPTED · implementación | [diseño de 5.º](../01-game-design/grade-5-template-design.md#implementación-runtime) |
+| D-S08-076 | El guardrail socioeconómico del viaje se implementa por construcción: entre los parámetros no existe ningún dato por persona, sólo el fondo del curso, los días y los lugares. El precio por persona que sí aparece es el del micro, un costo del paquete | ACCEPTED · autoría | `tests/unit/grade-5-final-trip.test.ts` |
+| D-S08-077 | En `y5.next-step-options` la preferencia personal no alimenta **nada** puntuable ni descriptivo: ni FairScore, ni Equipo, ni Aura, ni Estilo. Queda registrada como hecho de carrera para el cierre y la pantalla lo dice. Mapear una elección de vida a un eje de Estilo habría insinuado una jerarquía que el diseño prohíbe | ACCEPTED · autoría | ídem; `tests/unit/grade-5-screen-yearbook-next.test.ts` |
+| D-S08-078 | `y5.stage-screen` usa el motor `Choice / Compare` en vez del `Spatial / Graph Canvas` que sugiere la ficha: la decisión es elegir entre formas de proyectar y toda la geometría está escrita. La familia de razonamiento declarada sigue siendo `SPATIAL` | ACCEPTED · autoría | misma regla que D-S08-070 |
+| D-S08-079 | Los niveles de `y5.yearbook` se miden contra **cuántas secciones se podían completar** con esas páginas, no contra completarlas todas: el material nunca entra entero, así que exigir todo dejaría el nivel máximo fuera de alcance | ACCEPTED · autoría | `bestCoverage`; `tests/unit/grade-5-screen-yearbook-next.test.ts` |
+| D-S08-080 | El viaje y la pantalla construyen sus variantes por papeles —cuál no se puede hacer, cuál no trae lo pedido, cuál lo trae justo— en vez de combinar medidas al azar: con cuatro o cinco opciones, los cuatro niveles no aparecen por combinatoria y rotar los papeles es lo que impide que la respuesta sea siempre la misma | ACCEPTED · autoría | `tests/unit/grade-5-final-trip.test.ts` |
+
 La integración de TG1 permanece histórica en [su acta y trazabilidad](../06-delivery/teacher-gate-1/12-integracion-post-gate.md).
 Siguen pendientes la oficialización/freeze, validación empírica, autoría ejecutable,
 catálogo concreto de logros, operación/auth/retención y el gate post-G1. Label,
