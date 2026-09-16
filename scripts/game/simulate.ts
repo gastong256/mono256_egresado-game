@@ -12,7 +12,8 @@
  *     --verify=<n>     run the replay/snapshot check every n runs (default 25)
  *     --verbose        print the per-run seed of every finding
  *     --content=<grade-7|grade-7-composed|grade-1|grade-1-demo|grade-2|
- *               grade-2-demo|grade-3|grade-3-demo|development|
+ *               grade-2-demo|grade-3|grade-3-demo|grade-4|grade-4-demo|
+ *               development|
  *               development-composed|six-stage>
  *                      content set (default grade-7). The composed sets play
  *                      runs whose content the composer pinned before they
@@ -36,6 +37,7 @@ import type { EngineDependencies } from '../../src/game'
 import { createGrade1Dependencies } from '../../src/content/grade-1'
 import { createGrade2Dependencies } from '../../src/content/grade-2'
 import { createGrade3Dependencies } from '../../src/content/grade-3'
+import { createGrade4Dependencies } from '../../src/content/grade-4'
 import { simulateMany } from '../../src/game/testing/simulation'
 
 /**
@@ -70,6 +72,8 @@ function selectDependencies(argv: readonly string[]): EngineDependencies {
   if (requested === 'grade-2-demo') return createGrade2Dependencies(true)
   if (requested === 'grade-3') return createGrade3Dependencies()
   if (requested === 'grade-3-demo') return createGrade3Dependencies(true)
+  if (requested === 'grade-4') return createGrade4Dependencies()
+  if (requested === 'grade-4-demo') return createGrade4Dependencies(true)
   if (requested !== undefined && requested !== 'grade-7') {
     throw new Error(`unknown content set: ${requested}`)
   }

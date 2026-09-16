@@ -193,6 +193,18 @@ Ejecución del gate sobre 1.º real. Ninguna decisión de producto se reabrió.
 | D-S08-066 | 3.º queda implementado sobre `grade-3-dev-1`: cinco Templates, dos Repasos y práctica parcial `7.º → 3.º`, con Math/Equipo separada en el Día del Amigo y en la feria de tecnología | ACCEPTED · implementación | ídem |
 | D-S08-067 | La orquestación de rareza, los slots de Prestige y el epílogo se implementan una sola vez en la integración de carrera completa, no por año: `rare.y2.missing-player` y `rare.y3.offline-project` siguen siendo hooks sin runtime | ACCEPTED · secuencia | [eventos raros](../01-game-design/rare-events-and-prestige.md); [roadmap](../06-delivery/implementation-sequence.md#stage-08-contenido-incremental-de-1º-a-5º) |
 
+## STAGE-08 / Implementación de 4.º (2026-09-16)
+
+| ID | Decisión | Madurez | Fuente / estado |
+|---|---|---|---|
+| D-S08-068 | 4.º queda implementado sobre `grade-4-dev-1`: cinco Templates, dos Repasos y práctica parcial `7.º → 4.º`, con el cluster del evento escolar aportando como máximo una Template puntuable | ACCEPTED · implementación | [diseño de 4.º](../01-game-design/grade-4-template-design.md#implementación-runtime) |
+| D-S08-069 | La externalidad de 4.º se muestra en la consecuencia y en la matemática —un puesto vacío, una cola en la vereda, gente parada— pero **no** se cobra como Equipo. Equipo aparece sólo donde hay preferencias de otras personas que medir, que es `shift-coverage` | ACCEPTED · autoría | ídem; `tests/unit/grade-4-event-flow.test.ts` |
+| D-S08-070 | `y4.school-event-flow` usa el motor `Allocate / Constrain` en vez del `Spatial / Graph Canvas` que sugiere la ficha: la respuesta es un reparto de ayudantes y un lienzo de red distorsionaría la matemática. Estrena la familia de razonamiento `SYSTEMS_OPTIMIZATION` | ACCEPTED · autoría | la ficha declara que sus nombres de interacción son modos, no capacidades runtime |
+| D-S08-071 | `y4.represent-class` se agenda con el rol `special`, que la composición usa **en lugar de** una secundaria compatible: el año conserva dos beats ordinarios y el techo de FairScore no se mueve. No otorga Prestige y aparecer vale cero | ACCEPTED · composición | `tests/integration/grade-4-run.test.ts`; `tests/unit/grade-4-represent-class.test.ts` |
+| D-S08-072 | La elegibilidad condicional de `y4.represent-class` y su evidencia de Prestige quedan para la integración de carrera completa, junto con el resto de la orquestación de rareza (D-S08-067); hoy la Template existe y es neutral en oportunidades | ACCEPTED · diferido | [roadmap](../06-delivery/implementation-sequence.md#stage-08-contenido-incremental-de-1º-a-5º) |
+| D-S08-073 | Los niveles de `y4.event-floor-plan` se leen de hechos del salón —que sobre lugar para una mesa más, que entre la barra— y no de cuántas zonas se pusieron: con la capacidad decidiendo cuántas mesas hacen falta, contar zonas haría inalcanzable un nivel en la mitad de los salones | ACCEPTED · autoría | `tests/unit/grade-4-floor-plan.test.ts` |
+| D-S08-074 | La búsqueda de witnesses del salón tiene presupuesto de nodos y **rechaza** la variante si se agota, en vez de aprobarla a medias | ACCEPTED · fail-closed | `floorSearch`, `floorGates` |
+
 La integración de TG1 permanece histórica en [su acta y trazabilidad](../06-delivery/teacher-gate-1/12-integracion-post-gate.md).
 Siguen pendientes la oficialización/freeze, validación empírica, autoría ejecutable,
 catálogo concreto de logros, operación/auth/retención y el gate post-G1. Label,

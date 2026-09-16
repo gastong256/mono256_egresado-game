@@ -3175,7 +3175,8 @@ el de 2.º (D-S08-067).
 - **Etapa académica:** 4.º
 - **Función narrativa:** responsabilidad
 - **Estado:** `DESIGN-CANDIDATE-APPROVED` · checkpoint #2, 9 de septiembre de 2026
-- **Implementación:** `NOT_STARTED`; aprobación de diseño, no de contenido ejecutable
+- **Implementación:** `IMPLEMENTED` en STAGE-08 (2026-09-16) como contenido de
+  desarrollo; ver [implementación runtime](#implementación-runtime)
 
 La pregunta del año es **«¿Qué pasa cuando otras personas dependen de mis
 decisiones?»**. El principio **Responsibility Externality — `LOCKED`** exige
@@ -3294,9 +3295,58 @@ aparece. Las rutas de diseño son `course-project-fundraiser → margin-review` 
 `none`, incluido el reemplazo raro.
 
 La [matriz](01-game-design/full-career-content-matrix.md) conserva placement y cobertura.
-Evaluadores, parámetros, feedback y variantes ejecutables siguen pendientes de
-producción bajo los
+Los evaluadores, parámetros, feedback y variantes ya existen —ver abajo— y
+siguen en estado `draft`: la revisión del Departamento de Matemática y el
+pacing empírico son gates de producción. Aplican los
 [requisitos editoriales de Phase 0](01-game-design/content-authoring-guide.md#diseño-aprobado-en-phase-0).
+
+## Implementación runtime
+
+Fuente: `src/content/grade-4/`. Mismas reglas que los años anteriores:
+generación por restricción, gates de autoría en el pipeline, oráculo
+independiente por evaluador y materialización sólo de direcciones aprobadas.
+
+| Template | Formas semánticas | Escalera 100/75/40/10 | Equipo / Aura / Estilo |
+|---|---|---|---|
+| `y4.shift-coverage` | Dos puestos en tres bloques seguidos y cuatro personas con disponibilidad por bloque; formas `llega-tarde`, `se-va-temprano` y `todos-parciales` | INVALID puesto vacío, choque de hora o alguien que no está · FUNCTIONAL cierra pero alguien se queda las tres horas · EFFICIENT todos descansan · OPTIMAL además ningún puesto cambia de manos más de una vez | **Equipo** 0–3 por los acuerdos del grupo, leído entre cronogramas que ya cierran (`LOCKED`) |
+| `y4.course-project-fundraiser` | Costo fijo, tres cosas para vender con su costo, precio y minutos de cocina, un objetivo y un colchón; formas `cocina-corta`, `objetivo-alto` y `margen-parejo` | INVALID se pasa de cocina o pierde plata · FUNCTIONAL cubre costos · EFFICIENT llega al objetivo · OPTIMAL llega con el colchón | Sin Equipo ni Aura. Estilo por la forma de la producción |
+| `y4.school-event-flow` | Tres puestos en fila con su tasa y lo que suma cada ayudante; formas `puerta-lenta`, `acreditacion-lenta` y `buffet-lento` | INVALID la cola crece o reparte ayudantes que no hay · FUNCTIONAL alcanza el ritmo pedido · EFFICIENT llega a la mitad del margen posible · OPTIMAL el mejor ritmo alcanzable | Ninguno: la consecuencia sobre otra gente se ve, pero no se cobra como gesto social |
+| `y4.event-floor-plan` | Salón con puerta, pasillo y a veces columnas; escenario, tres mesas y una barra; formas `salon-angosto`, `puerta-al-medio` y `con-columnas` | INVALID se sale, se pisa, tapa el pasillo, no sienta a todos o deja una zona encerrada · FUNCTIONAL entra y se circula · EFFICIENT además sobra lugar para una mesa más **o** entra la barra · OPTIMAL las dos | Ninguno |
+| `y4.represent-class` | Tres límites escritos —plata, minutos y lugar— y cinco propuestas; la situación declara a quién afecta lo que se propone | INVALID lleva al consejo algo que no entra · EFFICIENT deja una viable afuera · FUNCTIONAL deja dos o más · OPTIMAL exacta | **Aura** por la postura pública, leída de un campo distinto del de las etiquetas (`LOCKED`). Sin Equipo y sin Prestige |
+| `y4.margin-review` | Costo fijo contra lo que deja cada bandeja | OPTIMAL las bandejas justas · FUNCTIONAL dividir por el precio · EFFICIENT una de diferencia · INVALID el resto | Sin Estilo ni score |
+| `y4.spatial-capacity-review` | Salón, celdas reservadas y mesas de cuatro celdas | OPTIMAL descuenta lo reservado · FUNCTIONAL cuenta el salón entero · EFFICIENT una mesa de diferencia · INVALID el resto | Sin Estilo ni score |
+
+**Banda y metadata.** `bandOf(cognitive)` da: turnos 4 → CORE; peña, cola y
+consejo 7 → STANDARD; salón 8 → STRETCH; los dos Repasos 1 → CORE. Eso es
+1 CORE / 3 STANDARD / 1 STRETCH, la distribución que pide la matriz. El cluster
+`evento-escolar` lo declaran turnos, cola y salón, así que una run normal aporta
+como máximo una de las tres.
+
+**Externalidad, sin moraleja.** Las tres Templates del evento hacen visible que
+la cuenta le pasa a otra gente —un puesto vacío, una cola que sale a la vereda,
+gente parada— pero ninguna cobra Equipo por eso: repartir bien los ayudantes es
+una cuenta, no un gesto. Equipo aparece sólo donde hay preferencias de otras
+personas que medir, que es `shift-coverage`.
+
+**`represent-class` y el rol `special`.** La oportunidad se agenda con el rol
+`special`, que la composición usa **en lugar de** una secundaria compatible: el
+año sigue teniendo dos beats ordinarios y el techo de FairScore no se mueve. La
+elegibilidad condicional por varios caminos y la evidencia de Prestige quedan
+para la integración de carrera completa, donde la orquestación de rareza se
+implementa una sola vez (D-S08-067); hoy la Template no otorga Prestige y
+aparecer vale cero, que es lo que el diseño exige.
+
+**Motor de interacción de la cola.** El diseño la dirige a `Spatial / Graph
+Canvas`; la implementación usa el motor `Allocate / Constrain`, porque la
+respuesta es un reparto de ayudantes entre puestos y forzarla a un lienzo de red
+distorsionaría la matemática sin agregar nada. La ficha declara que sus nombres
+de interacción son modos, no capacidades runtime. La familia de razonamiento sí
+estrena `SYSTEMS_OPTIMIZATION`, que ninguna Template usaba.
+
+**Catálogo `grade-4-dev-1`.** 854 entradas, 173 de 4.º, construido con
+`pnpm game:variants build --content=grade-4`; re-aprueba los años anteriores sin
+tocar sus artefactos publicados. La práctica parcial `7.º → 4.º` es
+`official: false`.
 
 ---
 
@@ -9832,8 +9882,8 @@ STAGE-08                                      IN_PROGRESS · CURRENT
 ├── PHASE 2 — IMPLEMENT GRADES 2–5             IN_PROGRESS
 │   ├── 2.º Pertenencia                        DONE · catálogo grade-2-dev-1
 │   ├── 3.º Autonomía                          DONE · catálogo grade-3-dev-1
-│   ├── 4.º Responsabilidad                    NEXT
-│   └── 5.º Cierre y futuro                    NOT_STARTED
+│   ├── 4.º Responsabilidad                    DONE · catálogo grade-4-dev-1
+│   └── 5.º Cierre y futuro                    NEXT
 └── INTEGRACIÓN DE CARRERA COMPLETA            NOT_STARTED
     ├── Catálogo real 7.º–5.º y composición    pendiente
     ├── Rareza, Prestige y epílogo             pendiente · una sola vez
@@ -9851,16 +9901,19 @@ y en [ADR-025](03-architecture/adr/ADR-025-full-career-contract-evolution.md#imp
 2.º cerró el 15 de septiembre de 2026 —pedido de pecheras, encuesta del
 Proyecto II, plan del Intercurso, tabla y postas de la cancha, más el Repaso del
 denominador— y 3.º el mismo día —colectivo, feria de tecnología, Día del Amigo,
-semana y recorrido del barrio, más dos Repasos—. Detalle en
-[2.º](01-game-design/grade-2-template-design.md#implementación-runtime) y
-[3.º](01-game-design/grade-3-template-design.md#implementación-runtime).
+semana y recorrido del barrio, más dos Repasos—. 4.º cerró el 16 de septiembre
+—turnos, peña, cola del evento, salón y consejo escolar, más dos Repasos—.
+Detalle en
+[2.º](01-game-design/grade-2-template-design.md#implementación-runtime),
+[3.º](01-game-design/grade-3-template-design.md#implementación-runtime) y
+[4.º](01-game-design/grade-4-template-design.md#implementación-runtime).
 
 **No significa que STAGE-08 esté terminada ni que exista una carrera oficial.**
-`7.º → 3.º` es práctica local de desarrollo (`official: false`,
-`partial-development`); 4.º y 5.º no tienen contenido ejecutable y la carrera de
-nueve beats sigue sin componerse con el catálogo real. Rareza, Prestige y
-epílogo se implementan una sola vez en la integración, no por año (D-S08-067).
-El contenido de 1.º a 3.º está en estado `draft`: faltan la revisión del
+`7.º → 4.º` es práctica local de desarrollo (`official: false`,
+`partial-development`); 5.º no tiene contenido ejecutable y la carrera de nueve
+beats sigue sin componerse con el catálogo real. Rareza, Prestige y epílogo se
+implementan una sola vez en la integración, no por año (D-S08-067 y D-S08-072).
+El contenido de 1.º a 4.º está en estado `draft`: faltan la revisión del
 Departamento de Matemática, el sign-off manual de la rueda y el pacing empírico,
 gates de producción de STAGE-08.
 
@@ -9873,20 +9926,21 @@ por etapa fuera del presupuesto ordinario y de FairScore.
   `0.4.0-grade-7`, contenido `0.9.0-grade-7` y catálogo `grade-7-dev-5`.
   `7.º → 1.º`: contenido `1.0.0-grade-1`, catálogo `grade-1-dev-1`.
   `7.º → 2.º`: contenido `2.0.0-grade-2`, catálogo `grade-2-dev-1`.
-  `7.º → 3.º`: rulesets `3.0.0-grade-3-partial` y `3.0.0-grade-3-demo`, contenido
-  `3.0.0-grade-3`, catálogo `grade-3-dev-1`. Score
+  `7.º → 3.º`: contenido `3.0.0-grade-3`, catálogo `grade-3-dev-1`.
+  `7.º → 4.º`: rulesets `4.0.0-grade-4-partial` y `4.0.0-grade-4-demo`, contenido
+  `4.0.0-grade-4`, catálogo `grade-4-dev-1`. Score
   `fair-score-dev-2@2.0.0-post-tg1-candidate` sin cambios.
 - Huellas: motor `c542afb3` —se movió con las dos respuestas nuevas—; ruleset
   `5b9b0bc5` y contenido `dbaf5094` del fixture de desarrollo intactos.
-- Tests: 77 archivos y 1514 tests de Vitest; 104 E2E de Playwright en desktop y
-  mobile, incluidos los recorridos de 1.º, 2.º y 3.º y el barrido de
-  accesibilidad del audit.
+- Tests: 83 archivos y 1561 tests de Vitest; 124 E2E de Playwright en desktop y
+  mobile, incluidos los recorridos de 1.º a 4.º y el barrido de accesibilidad
+  del audit.
 - Simulación: 5000 runs de 7.º, 5000 de `7.º → 1.º`, 2000 del demo amplio y 200
-  de cada práctica parcial de 2.º y 3.º egresadas, 0 hallazgos, peor caso un
+  de cada práctica parcial de 2.º, 3.º y 4.º egresadas, 0 hallazgos, peor caso un
   Repaso por etapa.
 - Composición: 2000 seeds de `7.º → 1.º` dan 2000 planes distintos, 0 inválidos
-  y 0 diferencias al recomponer; `7.º → 3.º` compone ocho beats ordinarios en
-  cuatro etapas y el validador independiente los acepta.
+  y 0 diferencias al recomponer; `7.º → 4.º` compone diez beats ordinarios en
+  cinco etapas y el validador independiente los acepta.
 
 ## Siguiente tarea canónica
 
@@ -9896,9 +9950,10 @@ PHASE 1 — DONE
 POST-G1 SCALABILITY AUDIT — PASSED
 2.º — DONE
 3.º — DONE
+4.º — DONE
 
 Next:
-Implementar 4.º → 5.º, después integrar la carrera completa
+Implementar 5.º, después integrar la carrera completa
 ```
 
 El [audit posterior a 1.º](04-quality/post-grade-1-scalability-audit.md#resultado-de-la-ejecución-2026-09-14)
@@ -10086,7 +10141,7 @@ Tabla de navegación. Los contratos de cada etapa, más abajo, son la autoridad.
 | [STAGE-06](#stage-06-scorepolicy-competitiva) | ScorePolicy competitiva | `DONE` | STAGE-05 | — |
 | [GATE-TG1](#gate-tg1-teacher-gate-1) | **Teacher Gate 1** | `PASSED_WITH_REQUIRED_ADJUSTMENTS` | STAGE-04, STAGE-06 | externo |
 | [STAGE-07](#stage-07-invariante-de-egreso-fail-forward-y-recuperaciones) | Egreso, fail-forward y recuperaciones | `DONE` | GATE-TG1 | — |
-| [STAGE-08](#stage-08-contenido-incremental-de-1º-a-5º) | Contenido incremental 1.º → 5.º | `IN_PROGRESS` · **actual** · Phase 1 DONE · audit post-G1 PASSED · 2.º y 3.º DONE | STAGE-07 | auditoría tras 1.º |
+| [STAGE-08](#stage-08-contenido-incremental-de-1º-a-5º) | Contenido incremental 1.º → 5.º | `IN_PROGRESS` · **actual** · Phase 1 DONE · audit post-G1 PASSED · 2.º, 3.º y 4.º DONE | STAGE-07 | auditoría tras 1.º |
 | [STAGE-09](#stage-09-fair-mode-servidor-autoritativo-y-ranking) | Fair mode, servidor autoritativo y ranking | `NOT_STARTED` | STAGE-06, STAGE-08 | — |
 | [GATE-TG2](#gate-tg2-teacher-gate-2) | **Teacher Gate 2** | `TEACHER_GATE` | STAGE-09 | externo |
 | [FREEZE](#freeze-congelamiento-de-competencia) | Congelamiento de competencia | `NOT_STARTED` | GATE-TG2 | — |
@@ -10798,7 +10853,7 @@ a TG1. El techo de un Repaso por etapa sigue siendo estructura de ADR-024.
 ### STAGE-08 — Contenido incremental de 1.º a 5.º
 
 - **Estado:** `IN_PROGRESS` — **etapa actual; Phase 0 DONE / Phase 1 DONE /
-  audit post-G1 PASSED / Phase 2: 2.º y 3.º DONE, 4.º NEXT**
+  audit post-G1 PASSED / Phase 2: 2.º, 3.º y 4.º DONE, 5.º NEXT**
 - **Depende de:** STAGE-07 (`DONE`)
 - **Desbloquea:** STAGE-09
 
@@ -10894,9 +10949,15 @@ checkpoint y commit sólo si pasa.
    varios días de la agenda (engine `9.0.0`, action log `7`), y la preferencia
    blanda de diversidad cognitiva se implementó como objetivo del compositor.
    [Implementación](01-game-design/grade-3-template-design.md#implementación-runtime).
-3. [ ] **4.º — Responsabilidad**, con la externalidad visible en el juego y no
-   sólo en la copia, el cluster del evento escolar y `y4.represent-class` con
-   evidencia Math, Aura y Prestige separadas.
+3. [x] **4.º — Responsabilidad** (16 de septiembre de 2026). Cinco Templates y
+   dos Repasos sobre `grade-4-dev-1`, con la externalidad visible en la
+   matemática y no sólo en la copia —un puesto vacío, una cola en la vereda,
+   gente parada— sin cobrarla como Equipo; el cluster del evento escolar
+   aportando como máximo una Template puntuable; y `y4.represent-class` con la
+   acción matemática y la acción pública en campos distintos de la respuesta,
+   agendada con el rol `special` para reemplazar una oportunidad y no agregar
+   un beat. Prestige y elegibilidad condicional quedan para la integración.
+   [Implementación](01-game-design/grade-4-template-design.md#implementación-runtime).
 4. [ ] **5.º — Cierre y futuro**, con convergencia de carrera que enriquece sin
    condicionar, y `y5.next-step-options` sin prescribir ningún camino.
 5. [ ] **Integración de carrera completa**: catálogo real 7.º–5.º, composición de
@@ -13816,6 +13877,18 @@ Ejecución del gate sobre 1.º real. Ninguna decisión de producto se reabrió.
 | D-S08-065 | `y3.transport-pass` no declara Estilo: con cuatro formas de pagar, cada elección tiene un solo nivel y una etiqueta de estrategia sería el resultado dicho de nuevo | ACCEPTED · autoría | [diseño de 3.º](01-game-design/grade-3-template-design.md#implementación-runtime) |
 | D-S08-066 | 3.º queda implementado sobre `grade-3-dev-1`: cinco Templates, dos Repasos y práctica parcial `7.º → 3.º`, con Math/Equipo separada en el Día del Amigo y en la feria de tecnología | ACCEPTED · implementación | ídem |
 | D-S08-067 | La orquestación de rareza, los slots de Prestige y el epílogo se implementan una sola vez en la integración de carrera completa, no por año: `rare.y2.missing-player` y `rare.y3.offline-project` siguen siendo hooks sin runtime | ACCEPTED · secuencia | [eventos raros](01-game-design/rare-events-and-prestige.md); [roadmap](06-delivery/implementation-sequence.md#stage-08-contenido-incremental-de-1º-a-5º) |
+
+## STAGE-08 / Implementación de 4.º (2026-09-16)
+
+| ID | Decisión | Madurez | Fuente / estado |
+|---|---|---|---|
+| D-S08-068 | 4.º queda implementado sobre `grade-4-dev-1`: cinco Templates, dos Repasos y práctica parcial `7.º → 4.º`, con el cluster del evento escolar aportando como máximo una Template puntuable | ACCEPTED · implementación | [diseño de 4.º](01-game-design/grade-4-template-design.md#implementación-runtime) |
+| D-S08-069 | La externalidad de 4.º se muestra en la consecuencia y en la matemática —un puesto vacío, una cola en la vereda, gente parada— pero **no** se cobra como Equipo. Equipo aparece sólo donde hay preferencias de otras personas que medir, que es `shift-coverage` | ACCEPTED · autoría | ídem; `tests/unit/grade-4-event-flow.test.ts` |
+| D-S08-070 | `y4.school-event-flow` usa el motor `Allocate / Constrain` en vez del `Spatial / Graph Canvas` que sugiere la ficha: la respuesta es un reparto de ayudantes y un lienzo de red distorsionaría la matemática. Estrena la familia de razonamiento `SYSTEMS_OPTIMIZATION` | ACCEPTED · autoría | la ficha declara que sus nombres de interacción son modos, no capacidades runtime |
+| D-S08-071 | `y4.represent-class` se agenda con el rol `special`, que la composición usa **en lugar de** una secundaria compatible: el año conserva dos beats ordinarios y el techo de FairScore no se mueve. No otorga Prestige y aparecer vale cero | ACCEPTED · composición | `tests/integration/grade-4-run.test.ts`; `tests/unit/grade-4-represent-class.test.ts` |
+| D-S08-072 | La elegibilidad condicional de `y4.represent-class` y su evidencia de Prestige quedan para la integración de carrera completa, junto con el resto de la orquestación de rareza (D-S08-067); hoy la Template existe y es neutral en oportunidades | ACCEPTED · diferido | [roadmap](06-delivery/implementation-sequence.md#stage-08-contenido-incremental-de-1º-a-5º) |
+| D-S08-073 | Los niveles de `y4.event-floor-plan` se leen de hechos del salón —que sobre lugar para una mesa más, que entre la barra— y no de cuántas zonas se pusieron: con la capacidad decidiendo cuántas mesas hacen falta, contar zonas haría inalcanzable un nivel en la mitad de los salones | ACCEPTED · autoría | `tests/unit/grade-4-floor-plan.test.ts` |
+| D-S08-074 | La búsqueda de witnesses del salón tiene presupuesto de nodos y **rechaza** la variante si se agota, en vez de aprobarla a medias | ACCEPTED · fail-closed | `floorSearch`, `floorGates` |
 
 La integración de TG1 permanece histórica en [su acta y trazabilidad](06-delivery/teacher-gate-1/12-integracion-post-gate.md).
 Siguen pendientes la oficialización/freeze, validación empírica, autoría ejecutable,

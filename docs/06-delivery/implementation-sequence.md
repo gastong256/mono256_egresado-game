@@ -63,7 +63,7 @@ Tabla de navegación. Los contratos de cada etapa, más abajo, son la autoridad.
 | [STAGE-06](#stage-06-scorepolicy-competitiva) | ScorePolicy competitiva | `DONE` | STAGE-05 | — |
 | [GATE-TG1](#gate-tg1-teacher-gate-1) | **Teacher Gate 1** | `PASSED_WITH_REQUIRED_ADJUSTMENTS` | STAGE-04, STAGE-06 | externo |
 | [STAGE-07](#stage-07-invariante-de-egreso-fail-forward-y-recuperaciones) | Egreso, fail-forward y recuperaciones | `DONE` | GATE-TG1 | — |
-| [STAGE-08](#stage-08-contenido-incremental-de-1º-a-5º) | Contenido incremental 1.º → 5.º | `IN_PROGRESS` · **actual** · Phase 1 DONE · audit post-G1 PASSED · 2.º y 3.º DONE | STAGE-07 | auditoría tras 1.º |
+| [STAGE-08](#stage-08-contenido-incremental-de-1º-a-5º) | Contenido incremental 1.º → 5.º | `IN_PROGRESS` · **actual** · Phase 1 DONE · audit post-G1 PASSED · 2.º, 3.º y 4.º DONE | STAGE-07 | auditoría tras 1.º |
 | [STAGE-09](#stage-09-fair-mode-servidor-autoritativo-y-ranking) | Fair mode, servidor autoritativo y ranking | `NOT_STARTED` | STAGE-06, STAGE-08 | — |
 | [GATE-TG2](#gate-tg2-teacher-gate-2) | **Teacher Gate 2** | `TEACHER_GATE` | STAGE-09 | externo |
 | [FREEZE](#freeze-congelamiento-de-competencia) | Congelamiento de competencia | `NOT_STARTED` | GATE-TG2 | — |
@@ -775,7 +775,7 @@ a TG1. El techo de un Repaso por etapa sigue siendo estructura de ADR-024.
 ### STAGE-08 — Contenido incremental de 1.º a 5.º
 
 - **Estado:** `IN_PROGRESS` — **etapa actual; Phase 0 DONE / Phase 1 DONE /
-  audit post-G1 PASSED / Phase 2: 2.º y 3.º DONE, 4.º NEXT**
+  audit post-G1 PASSED / Phase 2: 2.º, 3.º y 4.º DONE, 5.º NEXT**
 - **Depende de:** STAGE-07 (`DONE`)
 - **Desbloquea:** STAGE-09
 
@@ -871,9 +871,15 @@ checkpoint y commit sólo si pasa.
    varios días de la agenda (engine `9.0.0`, action log `7`), y la preferencia
    blanda de diversidad cognitiva se implementó como objetivo del compositor.
    [Implementación](../01-game-design/grade-3-template-design.md#implementación-runtime).
-3. [ ] **4.º — Responsabilidad**, con la externalidad visible en el juego y no
-   sólo en la copia, el cluster del evento escolar y `y4.represent-class` con
-   evidencia Math, Aura y Prestige separadas.
+3. [x] **4.º — Responsabilidad** (16 de septiembre de 2026). Cinco Templates y
+   dos Repasos sobre `grade-4-dev-1`, con la externalidad visible en la
+   matemática y no sólo en la copia —un puesto vacío, una cola en la vereda,
+   gente parada— sin cobrarla como Equipo; el cluster del evento escolar
+   aportando como máximo una Template puntuable; y `y4.represent-class` con la
+   acción matemática y la acción pública en campos distintos de la respuesta,
+   agendada con el rol `special` para reemplazar una oportunidad y no agregar
+   un beat. Prestige y elegibilidad condicional quedan para la integración.
+   [Implementación](../01-game-design/grade-4-template-design.md#implementación-runtime).
 4. [ ] **5.º — Cierre y futuro**, con convergencia de carrera que enriquece sin
    condicionar, y `y5.next-step-options` sin prescribir ningún camino.
 5. [ ] **Integración de carrera completa**: catálogo real 7.º–5.º, composición de

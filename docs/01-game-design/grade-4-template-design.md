@@ -3,7 +3,8 @@
 - **Etapa académica:** 4.º
 - **Función narrativa:** responsabilidad
 - **Estado:** `DESIGN-CANDIDATE-APPROVED` · checkpoint #2, 9 de septiembre de 2026
-- **Implementación:** `NOT_STARTED`; aprobación de diseño, no de contenido ejecutable
+- **Implementación:** `IMPLEMENTED` en STAGE-08 (2026-09-16) como contenido de
+  desarrollo; ver [implementación runtime](#implementación-runtime)
 
 La pregunta del año es **«¿Qué pasa cuando otras personas dependen de mis
 decisiones?»**. El principio **Responsibility Externality — `LOCKED`** exige
@@ -122,6 +123,55 @@ aparece. Las rutas de diseño son `course-project-fundraiser → margin-review` 
 `none`, incluido el reemplazo raro.
 
 La [matriz](full-career-content-matrix.md) conserva placement y cobertura.
-Evaluadores, parámetros, feedback y variantes ejecutables siguen pendientes de
-producción bajo los
+Los evaluadores, parámetros, feedback y variantes ya existen —ver abajo— y
+siguen en estado `draft`: la revisión del Departamento de Matemática y el
+pacing empírico son gates de producción. Aplican los
 [requisitos editoriales de Phase 0](content-authoring-guide.md#diseño-aprobado-en-phase-0).
+
+## Implementación runtime
+
+Fuente: `src/content/grade-4/`. Mismas reglas que los años anteriores:
+generación por restricción, gates de autoría en el pipeline, oráculo
+independiente por evaluador y materialización sólo de direcciones aprobadas.
+
+| Template | Formas semánticas | Escalera 100/75/40/10 | Equipo / Aura / Estilo |
+|---|---|---|---|
+| `y4.shift-coverage` | Dos puestos en tres bloques seguidos y cuatro personas con disponibilidad por bloque; formas `llega-tarde`, `se-va-temprano` y `todos-parciales` | INVALID puesto vacío, choque de hora o alguien que no está · FUNCTIONAL cierra pero alguien se queda las tres horas · EFFICIENT todos descansan · OPTIMAL además ningún puesto cambia de manos más de una vez | **Equipo** 0–3 por los acuerdos del grupo, leído entre cronogramas que ya cierran (`LOCKED`) |
+| `y4.course-project-fundraiser` | Costo fijo, tres cosas para vender con su costo, precio y minutos de cocina, un objetivo y un colchón; formas `cocina-corta`, `objetivo-alto` y `margen-parejo` | INVALID se pasa de cocina o pierde plata · FUNCTIONAL cubre costos · EFFICIENT llega al objetivo · OPTIMAL llega con el colchón | Sin Equipo ni Aura. Estilo por la forma de la producción |
+| `y4.school-event-flow` | Tres puestos en fila con su tasa y lo que suma cada ayudante; formas `puerta-lenta`, `acreditacion-lenta` y `buffet-lento` | INVALID la cola crece o reparte ayudantes que no hay · FUNCTIONAL alcanza el ritmo pedido · EFFICIENT llega a la mitad del margen posible · OPTIMAL el mejor ritmo alcanzable | Ninguno: la consecuencia sobre otra gente se ve, pero no se cobra como gesto social |
+| `y4.event-floor-plan` | Salón con puerta, pasillo y a veces columnas; escenario, tres mesas y una barra; formas `salon-angosto`, `puerta-al-medio` y `con-columnas` | INVALID se sale, se pisa, tapa el pasillo, no sienta a todos o deja una zona encerrada · FUNCTIONAL entra y se circula · EFFICIENT además sobra lugar para una mesa más **o** entra la barra · OPTIMAL las dos | Ninguno |
+| `y4.represent-class` | Tres límites escritos —plata, minutos y lugar— y cinco propuestas; la situación declara a quién afecta lo que se propone | INVALID lleva al consejo algo que no entra · EFFICIENT deja una viable afuera · FUNCTIONAL deja dos o más · OPTIMAL exacta | **Aura** por la postura pública, leída de un campo distinto del de las etiquetas (`LOCKED`). Sin Equipo y sin Prestige |
+| `y4.margin-review` | Costo fijo contra lo que deja cada bandeja | OPTIMAL las bandejas justas · FUNCTIONAL dividir por el precio · EFFICIENT una de diferencia · INVALID el resto | Sin Estilo ni score |
+| `y4.spatial-capacity-review` | Salón, celdas reservadas y mesas de cuatro celdas | OPTIMAL descuenta lo reservado · FUNCTIONAL cuenta el salón entero · EFFICIENT una mesa de diferencia · INVALID el resto | Sin Estilo ni score |
+
+**Banda y metadata.** `bandOf(cognitive)` da: turnos 4 → CORE; peña, cola y
+consejo 7 → STANDARD; salón 8 → STRETCH; los dos Repasos 1 → CORE. Eso es
+1 CORE / 3 STANDARD / 1 STRETCH, la distribución que pide la matriz. El cluster
+`evento-escolar` lo declaran turnos, cola y salón, así que una run normal aporta
+como máximo una de las tres.
+
+**Externalidad, sin moraleja.** Las tres Templates del evento hacen visible que
+la cuenta le pasa a otra gente —un puesto vacío, una cola que sale a la vereda,
+gente parada— pero ninguna cobra Equipo por eso: repartir bien los ayudantes es
+una cuenta, no un gesto. Equipo aparece sólo donde hay preferencias de otras
+personas que medir, que es `shift-coverage`.
+
+**`represent-class` y el rol `special`.** La oportunidad se agenda con el rol
+`special`, que la composición usa **en lugar de** una secundaria compatible: el
+año sigue teniendo dos beats ordinarios y el techo de FairScore no se mueve. La
+elegibilidad condicional por varios caminos y la evidencia de Prestige quedan
+para la integración de carrera completa, donde la orquestación de rareza se
+implementa una sola vez (D-S08-067); hoy la Template no otorga Prestige y
+aparecer vale cero, que es lo que el diseño exige.
+
+**Motor de interacción de la cola.** El diseño la dirige a `Spatial / Graph
+Canvas`; la implementación usa el motor `Allocate / Constrain`, porque la
+respuesta es un reparto de ayudantes entre puestos y forzarla a un lienzo de red
+distorsionaría la matemática sin agregar nada. La ficha declara que sus nombres
+de interacción son modos, no capacidades runtime. La familia de razonamiento sí
+estrena `SYSTEMS_OPTIMIZATION`, que ninguna Template usaba.
+
+**Catálogo `grade-4-dev-1`.** 854 entradas, 173 de 4.º, construido con
+`pnpm game:variants build --content=grade-4`; re-aprueba los años anteriores sin
+tocar sus artefactos publicados. La práctica parcial `7.º → 4.º` es
+`official: false`.
