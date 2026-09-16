@@ -42,6 +42,8 @@ export default async function DevelopmentGameEnginePage({
       : 'harness-default'
 
   const content = params['content']
+  if (content === 'full-career')
+    return <Grade1Harness seed={seed} demo={false} content="full-career" />
   for (const set of [
     'grade-1',
     'grade-2',

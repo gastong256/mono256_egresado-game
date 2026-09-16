@@ -104,7 +104,7 @@ export function ChoiceCard({
       data-selected={selected}
       data-state={state.kind}
       className={cn(
-        'font-display motion-select relative flex min-h-[52px] items-center gap-[10px]',
+        'font-display motion-select relative flex min-h-[52px] flex-wrap items-center gap-x-[10px] gap-y-1',
         'cursor-pointer has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2',
         onDecision
           ? 'has-[:focus-visible]:outline-focus-ring-inverse px-2'
@@ -174,7 +174,11 @@ export function ChoiceCard({
         <span
           data-numeric
           className={cn(
-            'text-detail shrink-0',
+            // Cuando el detalle entra, queda en su columna numérica a la
+            // derecha; cuando no —un detalle con prosa en una pantalla de
+            // 320 px— baja a su propio renglón en vez de empujar la fila fuera
+            // de la pantalla. El piso de reflow de 320 px no es negociable.
+            'text-detail ml-auto max-w-full',
             onDecision
               ? selected || chosen
                 ? 'text-on-decision-strong'

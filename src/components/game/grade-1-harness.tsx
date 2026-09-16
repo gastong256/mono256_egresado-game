@@ -22,6 +22,11 @@ import {
   createGrade5RunDescriptor,
 } from '@/content/grade-5'
 import {
+  closeCareer,
+  createFullCareerDependencies,
+  createFullCareerRunDescriptor,
+} from '@/content/full-career'
+import {
   canonicalize,
   parseActionLog,
   replayRun,
@@ -36,6 +41,7 @@ import {
   type GameController,
   type ResumedSession,
 } from './controller'
+import { CareerEpilogueView } from './career-epilogue'
 import { GameCanvas } from './game-shell'
 import { RunView } from './run-view'
 import { useControllerSelector } from './use-game-run'
@@ -43,7 +49,7 @@ import type { EngineDependencies } from '@/game'
 
 /** Which career content set this harness plays. One entry per implemented year. */
 export type HarnessContent =
-  'grade-1' | 'grade-2' | 'grade-3' | 'grade-4' | 'grade-5'
+  'grade-1' | 'grade-2' | 'grade-3' | 'grade-4' | 'grade-5' | 'full-career'
 
 const SETS = {
   'grade-1': {
@@ -95,6 +101,18 @@ const SETS = {
       'Muestra las situaciones de los seis años; no respeta el presupuesto de una run normal.',
     partialDetail:
       'Doce situaciones ordinarias en los seis años, con Repaso fuera del presupuesto.',
+  },
+  'full-career': {
+    // La carrera real no tiene modo demo: su gracia es justamente respetar el
+    // presupuesto de nueve beats que la composición impone.
+    dependencies: () => createFullCareerDependencies(),
+    descriptor: (seed: string) => createFullCareerRunDescriptor(seed),
+    storage: 'career',
+    title: 'Carrera completa 7.º → 5.º',
+    demoDetail:
+      'Nueve situaciones puntuables repartidas por los seis años, como en una run normal.',
+    partialDetail:
+      'Nueve situaciones puntuables repartidas por los seis años, como en una run normal.',
   },
 } as const
 
@@ -240,7 +258,12 @@ export function Grade1Harness({
       {controller !== undefined && (
         <main>
           <GameCanvas>
-            <Grade1Run controller={controller} dependencies={dependencies} />
+            <Grade1Run
+              controller={controller}
+              dependencies={dependencies}
+              career={content === 'full-career'}
+              onPlayAgain={() => start(false)}
+            />
           </GameCanvas>
         </main>
       )}
@@ -251,20 +274,29 @@ export function Grade1Harness({
 function Grade1Run({
   controller,
   dependencies,
+  career,
+  onPlayAgain,
 }: {
   readonly controller: GameController
   readonly dependencies: EngineDependencies
+  /** Sólo la carrera completa egresa; los recorridos parciales cierran años. */
+  readonly career: boolean
+  readonly onPlayAgain: () => void
 }) {
-  const completed = useControllerSelector(
-    controller,
-    (current) => current.run.status === 'completed',
-  )
-  return completed ? (
-    <Callout title="Recorrido de desarrollo completado" tone="accent">
-      Cerraste los años de este recorrido. La carrera completa y el ranking
-      oficial todavía no están habilitados.
-    </Callout>
-  ) : (
-    <RunView controller={controller} dependencies={dependencies} />
+  const run = useControllerSelector(controller, (current) => current.run)
+  if (run.status !== 'completed')
+    return <RunView controller={controller} dependencies={dependencies} />
+  if (!career)
+    return (
+      <Callout title="Recorrido de desarrollo completado" tone="accent">
+        Cerraste los años de este recorrido. La carrera completa y el ranking
+        oficial todavía no están habilitados.
+      </Callout>
+    )
+  // El cierre se deriva del estado final, igual que lo recompone el servidor
+  // desde el log: la pantalla no guarda nada propio.
+  const closed = closeCareer(run)
+  return (
+    <CareerEpilogueView epilogue={closed.epilogue} onPlayAgain={onPlayAgain} />
   )
 }
