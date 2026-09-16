@@ -10,6 +10,10 @@ import {
   createGrade2RunDescriptor,
 } from '@/content/grade-2'
 import {
+  createGrade3Dependencies,
+  createGrade3RunDescriptor,
+} from '@/content/grade-3'
+import {
   canonicalize,
   parseActionLog,
   replayRun,
@@ -30,7 +34,7 @@ import { useControllerSelector } from './use-game-run'
 import type { EngineDependencies } from '@/game'
 
 /** Which career content set this harness plays. One entry per implemented year. */
-export type HarnessContent = 'grade-1' | 'grade-2'
+export type HarnessContent = 'grade-1' | 'grade-2' | 'grade-3'
 
 const SETS = {
   'grade-1': {
@@ -52,6 +56,16 @@ const SETS = {
       'Muestra las situaciones de primero y segundo; no respeta el presupuesto de una run normal.',
     partialDetail:
       'Seis situaciones ordinarias en tres años, con Repaso fuera del presupuesto.',
+  },
+  'grade-3': {
+    dependencies: createGrade3Dependencies,
+    descriptor: createGrade3RunDescriptor,
+    storage: 'grade3',
+    title: '7.º → 3.º',
+    demoDetail:
+      'Muestra las situaciones de primero, segundo y tercero; no respeta el presupuesto de una run normal.',
+    partialDetail:
+      'Ocho situaciones ordinarias en cuatro años, con Repaso fuera del presupuesto.',
   },
 } as const
 

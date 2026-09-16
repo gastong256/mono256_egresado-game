@@ -48,10 +48,25 @@ export const grade2Families: readonly ScenarioFamilyDefinition[] = [
   },
 ]
 
-export function createGrade2Catalog(): ContentCatalog {
+/**
+ * The career content through 2.º, as parts.
+ *
+ * Same reason as in 1.º: a later year extends this list instead of rebuilding
+ * the Grade-7 composition overlay, which would be a second place to keep in
+ * sync.
+ */
+export function grade2CatalogParts(): {
+  readonly families: readonly ScenarioFamilyDefinition[]
+  readonly challenges: readonly ChallengeDefinition[]
+} {
   const parts = grade1CatalogParts()
-  return createContentCatalog(
-    [...parts.families, ...grade2Families],
-    [...parts.challenges, ...grade2Challenges],
-  )
+  return {
+    families: [...parts.families, ...grade2Families],
+    challenges: [...parts.challenges, ...grade2Challenges],
+  }
+}
+
+export function createGrade2Catalog(): ContentCatalog {
+  const parts = grade2CatalogParts()
+  return createContentCatalog(parts.families, parts.challenges)
 }

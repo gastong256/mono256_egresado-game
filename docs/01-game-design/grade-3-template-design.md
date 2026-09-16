@@ -3,7 +3,8 @@
 - **Etapa académica:** 3.º
 - **Función narrativa:** autonomía
 - **Estado:** `DESIGN-CANDIDATE-APPROVED` · checkpoint #2, 9 de septiembre de 2026
-- **Implementación:** `NOT_STARTED`; aprobación de diseño, no de contenido ejecutable
+- **Implementación:** `IMPLEMENTED` en STAGE-08 (2026-09-15) como contenido de
+  desarrollo; ver [implementación runtime](#implementación-runtime)
 
 La pregunta del año es **«¿Cómo organizo mis propias decisiones?»**. El jugador
 organiza tiempo, recursos, movilidad y compromisos. Es deliberadamente el año más
@@ -119,6 +120,54 @@ ordinaria de Aura en 3.º. Las rutas aprobadas de diseño son
 `transport-pass → fixed-variable-review`; las otras tres Templates declaran
 `none`.
 
-La [matriz](full-career-content-matrix.md) reúne la cobertura. Parámetros,
-evaluadores, feedback y variantes ejecutables siguen sin producirse; aplican los
+La [matriz](full-career-content-matrix.md) reúne la cobertura. Los parámetros,
+evaluadores, feedback y variantes ya existen —ver abajo— y siguen en estado
+`draft`: la revisión del Departamento de Matemática y el pacing empírico son
+gates de producción. Aplican los
 [requisitos editoriales de Phase 0](content-authoring-guide.md#diseño-aprobado-en-phase-0).
+
+## Implementación runtime
+
+Fuente: `src/content/grade-3/`. Mismas reglas que 2.º: generación por
+restricción, gates de autoría en el pipeline, oráculo independiente por
+evaluador y materialización sólo de direcciones aprobadas.
+
+| Template | Formas semánticas | Escalera 100/75/40/10 | Equipo / Estilo |
+|---|---|---|---|
+| `y3.transport-pass` | Cuatro formas de pagar el mismo colectivo —boleto, tarjeta con costo único, combo con viajes incluidos y abono libre— contra cinco meses posibles, del corto al cargado, con los viajes del mes entre dos números | INVALID nunca gana y encima es la más cara para los viajes esperados · FUNCTIONAL nunca gana pero tampoco es la peor · EFFICIENT gana en otra cantidad posible del mes · OPTIMAL gana para los viajes esperados | Ninguno (D-S08-065). Ruta de Repaso a `y3.fixed-variable-review` |
+| `y3.course-project-tech` | Tres recursos compartidos —notebook prestada, lugar en el pendrive y rato de laboratorio a una tasa— y tres cosas que producir con consumos distintos; formas `pendrive-corto`, `laboratorio-corto` y `notebook-corta` | INVALID se pasa de un recurso o no llega al mínimo de la feria · FUNCTIONAL mínimos · EFFICIENT dos de lo prometido · OPTIMAL lo prometido entero | **Equipo** 0–3 por los acuerdos del grupo, leído por dueño sobre el mismo plan (`LOCKED`). Ruta de Repaso a `y3.rate-capacity-review` |
+| `y3.friend-day` | Cuatro personas con ventanas propias, dos lugares con viaje en el medio, dos bloques obligatorios y dos opcionales; formas `ventana-corta`, `traslado-largo` y `gustos-cruzados` | INVALID se pisa, no da el viaje o falta quien tiene que estar · FUNCTIONAL obligatorios · EFFICIENT un opcional · OPTIMAL los dos | **Equipo** 0–3: que nadie quede afuera, que lo que cada uno quería pase mientras está y que nadie espere de más (`LOCKED`). Estilo por la forma de la tarde |
+| `y3.week-planner` | Cuatro días de tarde libre, dos compromisos que ya tienen día y hora, dos pendientes con vencimiento y dos opcionales; formas `semana-cargada`, `vencimiento-temprano` y `tarde-ocupada` | INVALID falta, se pisa, se sale de la tarde o vence · FUNCTIONAL obligatorios · EFFICIENT un opcional · OPTIMAL los dos | Sin Equipo ni Aura. **Estilo fuerte**: pegado al vencimiento → Improvisador; con un día entero libre → Estratega; repartido con margen → Aplicado |
+| `y3.route-plan` | Cinco lugares del barrio en una cuadrícula de cuadras, con horario de apertura, rato adentro y hora de vuelta; formas `cierra-temprano`, `abre-tarde` y `lejos` | INVALID falta un mandado, llega cerrado o vuelve tarde · FUNCTIONAL los obligatorios · EFFICIENT uno opcional · OPTIMAL los dos | Ninguno: es Math sola |
+| `y3.rate-capacity-review` | Cuánto entra a un consumo dado, en MB o en minutos | OPTIMAL la parte entera · FUNCTIONAL redondear para arriba · EFFICIENT uno menos · INVALID el resto | Sin Estilo ni score |
+| `y3.fixed-variable-review` | A partir de cuántos viajes el abono sale más barato que el boleto | OPTIMAL el primer viaje en que ya conviene · FUNCTIONAL quedarse en la parte entera · EFFICIENT uno más · INVALID el resto | Sin Estilo ni score |
+
+**Contratos nuevos.** 3.º necesitó dos, y ninguno es un framework nuevo
+(D-S08-062): `route-builder` contrata el **orden** de las paradas como
+respuesta semántica —el mapa dibuja esquinas y no suma ninguna distancia— y la
+agenda gana un modo de varios días con minutos absolutos desde el primer día,
+así que solapar, ordenar y comparar contra un vencimiento siguen siendo
+comparaciones de enteros. Engine `9.0.0`, action log `7`, snapshot `7` intacto.
+
+**Banda y metadata.** `bandOf(cognitive)` da: colectivo 4 → CORE; Día del Amigo,
+feria y semana 7 → STANDARD; recorrido 8 → STRETCH; los dos Repasos 2 → CORE.
+Eso es 1 CORE / 3 STANDARD / 1 STRETCH, la distribución que pide la matriz.
+
+**Preferencia blanda.** La semana y el recorrido tienen casi el mismo vector de
+rasgos, y de ahí sale la preferencia de diversidad cognitiva del año. Se
+implementó como objetivo blando del compositor: cuenta las parejas de la etapa
+cuyos perfiles difieren en un rasgo o menos y prefiere las que tienen menos
+(D-S08-064). Contar en vez de maximizar la distancia importa: maximizarla tiene
+un ganador único y dejaba a 3.º con la misma pareja en las 200 seeds medidas,
+mientras que contando aparecen cuatro parejas distintas y la que el diseño
+quiere evitar no aparece ninguna vez. Sigue siendo blanda: ordena planes válidos
+y no filtra ninguno, así que cuando esa pareja es la única legal la carrera se
+compone igual.
+
+**Catálogo `grade-3-dev-1`.** 681 entradas, 173 de 3.º, construido con
+`pnpm game:variants build --content=grade-3`; re-aprueba 7.º, 1.º y 2.º sin
+tocar sus artefactos publicados. La práctica parcial `7.º → 3.º` es
+`official: false`.
+
+**Rareza.** `rare.y3.offline-project` sigue siendo hook, por la misma razón que
+el de 2.º (D-S08-067).

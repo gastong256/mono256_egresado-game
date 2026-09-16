@@ -16,6 +16,7 @@ import { createDevelopmentDependencies } from '../../src/game/testing/fixtures/d
 import { createGrade7Dependencies } from '../../src/content/grade-7'
 import { createGrade1Dependencies } from '../../src/content/grade-1'
 import { createGrade2Dependencies } from '../../src/content/grade-2'
+import { createGrade3Dependencies } from '../../src/content/grade-3'
 import type { EngineDependencies } from '../../src/game'
 
 /**
@@ -37,6 +38,8 @@ function selectDependencies(argv: readonly string[]): EngineDependencies {
   if (requested === 'grade-1-demo') return createGrade1Dependencies(true)
   if (requested === 'grade-2') return createGrade2Dependencies()
   if (requested === 'grade-2-demo') return createGrade2Dependencies(true)
+  if (requested === 'grade-3') return createGrade3Dependencies()
+  if (requested === 'grade-3-demo') return createGrade3Dependencies(true)
   if (requested !== undefined && requested !== 'grade-7') {
     throw new Error(`unknown content set: ${requested}`)
   }

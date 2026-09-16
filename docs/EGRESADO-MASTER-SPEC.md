@@ -2836,7 +2836,8 @@ y Prestige de aparición 0.
 - **Etapa académica:** 2.º
 - **Función narrativa:** pertenencia e identidad
 - **Estado:** `DESIGN-CANDIDATE-APPROVED` · checkpoint #2, 9 de septiembre de 2026
-- **Implementación:** `NOT_STARTED`; aprobación de diseño, no de contenido ejecutable
+- **Implementación:** `IMPLEMENTED` en STAGE-08 (2026-09-15) como contenido de
+  desarrollo; ver [implementación runtime](#implementación-runtime)
 
 La pregunta del año es **«¿Qué lugar tengo entre los demás?»**. Grupos,
 participación, intercurso y reputación hacen visible la pertenencia. Se conservan
@@ -2950,11 +2951,42 @@ Equipo aparece sólo en `intercurso-plan`; Aura sólo en `standings-claim`. La
 Todas las demás declaran `none` como diseño aprobado, sin inventar repasos por
 cuota. La [matriz](01-game-design/full-career-content-matrix.md) reúne placement y cobertura.
 
-Estas fichas conservan los invariantes aprobados; parámetros exactos,
-evaluadores ejecutables, copy de feedback y variantes todavía no están
-producidos. Aplican los
-[requisitos editoriales de Phase 0](01-game-design/content-authoring-guide.md#diseño-aprobado-en-phase-0)
-antes de avanzar hacia contenido revisado o de producción.
+Estas fichas conservan los invariantes aprobados. Los parámetros, evaluadores,
+copy de feedback y variantes ya existen —ver abajo— y siguen en estado `draft`:
+la revisión del Departamento de Matemática y el pacing empírico son gates de
+producción, no de esta implementación. Aplican los
+[requisitos editoriales de Phase 0](01-game-design/content-authoring-guide.md#diseño-aprobado-en-phase-0).
+
+## Implementación runtime
+
+Fuente: `src/content/grade-2/`. Cada Template declara su `VariantSourceSpec`
+generado por restricción, con los gates de autoría del pipeline decidiendo qué
+se aprueba, y cada evaluador tiene un oráculo independiente que los tests
+comparan sobre todos los planes. Las mecánicas compartidas se promovieron a
+`src/content/authoring.ts` (D-S08-059): 1.º las re-exporta sin cambiar nada.
+
+| Template | Formas semánticas | Escalera 100/75/40/10 | Equipo / Aura / Estilo |
+|---|---|---|---|
+| `y2.team-kit-order` | `exact-share` (el reparto proporcional da justo), `remainder` (deciden los restos mayores), `stock-capped` (a un equipo se le acaba el color). Tres equipos, tope de unidades y stock por color | INVALID excede stock, tope o deja a alguien sin pechera · FUNCTIONAL reparte parejo · EFFICIENT proporcional con un resto mal puesto · OPTIMAL proporcional por restos mayores | Ninguno |
+| `y2.course-project-survey` | Seis afirmaciones sobre la encuesta del nivel, con muestra y población distintas; formas `majority`, `margin` y `least-chosen` | INVALID publica lo que la muestra no sostiene · FUNCTIONAL retiene de más · EFFICIENT una sola confusión · OPTIMAL cada afirmación en su lugar | Ninguno. Ruta de Repaso a `y2.data-claim-review` |
+| `y2.standings-claim` | Tabla con partidos pendientes; afirmaciones seguras, posibles e imposibles mezcladas | INVALID llama seguro a lo que no lo es · FUNCTIONAL/EFFICIENT según cuántas fallan · OPTIMAL clasificación exacta | **Aura** por la postura pública, leída de un campo distinto del de las etiquetas: acertar la matemática nunca concede Aura (`LOCKED`) |
+| `y2.court-zones` | Zonas, distancias de Chebyshev y bordes de la cancha; formas `separation`, `margin` y `covered` | INVALID postas pisadas o fuera · FUNCTIONAL separación mínima · EFFICIENT una más · OPTIMAL la separación pedida | Ninguno |
+| `y2.intercurso-plan` | Tres actividades en dos turnos, cuatro personas con disponibilidad por turno; formas `tight-availability`, `clash` y `spare` | INVALID falta cobertura, choque de turno o alguien que no está · FUNCTIONAL obligaciones cubiertas · EFFICIENT una opcional · OPTIMAL todas | **Equipo** 0–3 por los acuerdos del grupo, leído entre planes que ya cierran (`LOCKED`). Estilo por la forma del reparto |
+| `y2.data-claim-review` | Una sola afirmación por pantalla, con el denominador a la vista | INVALID/FUNCTIONAL/EFFICIENT/OPTIMAL según la lectura del denominador | Sin Estilo ni score |
+
+**Banda y metadata.** `bandOf(cognitive)` da: pedido de pecheras 4 → CORE;
+encuesta, tabla y plan del Intercurso → STANDARD; postas 8 → STRETCH; el Repaso
+4 → CORE. El cluster `intercurso` lo declaran las tres Templates del evento, así
+que una run normal aporta como máximo una de ellas.
+
+**Catálogo `grade-2-dev-1`.** 508 entradas, 149 de 2.º, construido con
+`pnpm game:variants build --content=grade-2`; re-aprueba las de 7.º y 1.º sin
+tocar sus artefactos publicados. La práctica parcial `7.º → 2.º` es
+`official: false`.
+
+**Rareza.** `rare.y2.missing-player` sigue siendo hook: la orquestación de
+rareza se implementa una sola vez en la integración de carrera completa
+(D-S08-067), no por año.
 
 ---
 
@@ -2965,7 +2997,8 @@ antes de avanzar hacia contenido revisado o de producción.
 - **Etapa académica:** 3.º
 - **Función narrativa:** autonomía
 - **Estado:** `DESIGN-CANDIDATE-APPROVED` · checkpoint #2, 9 de septiembre de 2026
-- **Implementación:** `NOT_STARTED`; aprobación de diseño, no de contenido ejecutable
+- **Implementación:** `IMPLEMENTED` en STAGE-08 (2026-09-15) como contenido de
+  desarrollo; ver [implementación runtime](#implementación-runtime)
 
 La pregunta del año es **«¿Cómo organizo mis propias decisiones?»**. El jugador
 organiza tiempo, recursos, movilidad y compromisos. Es deliberadamente el año más
@@ -3081,9 +3114,57 @@ ordinaria de Aura en 3.º. Las rutas aprobadas de diseño son
 `transport-pass → fixed-variable-review`; las otras tres Templates declaran
 `none`.
 
-La [matriz](01-game-design/full-career-content-matrix.md) reúne la cobertura. Parámetros,
-evaluadores, feedback y variantes ejecutables siguen sin producirse; aplican los
+La [matriz](01-game-design/full-career-content-matrix.md) reúne la cobertura. Los parámetros,
+evaluadores, feedback y variantes ya existen —ver abajo— y siguen en estado
+`draft`: la revisión del Departamento de Matemática y el pacing empírico son
+gates de producción. Aplican los
 [requisitos editoriales de Phase 0](01-game-design/content-authoring-guide.md#diseño-aprobado-en-phase-0).
+
+## Implementación runtime
+
+Fuente: `src/content/grade-3/`. Mismas reglas que 2.º: generación por
+restricción, gates de autoría en el pipeline, oráculo independiente por
+evaluador y materialización sólo de direcciones aprobadas.
+
+| Template | Formas semánticas | Escalera 100/75/40/10 | Equipo / Estilo |
+|---|---|---|---|
+| `y3.transport-pass` | Cuatro formas de pagar el mismo colectivo —boleto, tarjeta con costo único, combo con viajes incluidos y abono libre— contra cinco meses posibles, del corto al cargado, con los viajes del mes entre dos números | INVALID nunca gana y encima es la más cara para los viajes esperados · FUNCTIONAL nunca gana pero tampoco es la peor · EFFICIENT gana en otra cantidad posible del mes · OPTIMAL gana para los viajes esperados | Ninguno (D-S08-065). Ruta de Repaso a `y3.fixed-variable-review` |
+| `y3.course-project-tech` | Tres recursos compartidos —notebook prestada, lugar en el pendrive y rato de laboratorio a una tasa— y tres cosas que producir con consumos distintos; formas `pendrive-corto`, `laboratorio-corto` y `notebook-corta` | INVALID se pasa de un recurso o no llega al mínimo de la feria · FUNCTIONAL mínimos · EFFICIENT dos de lo prometido · OPTIMAL lo prometido entero | **Equipo** 0–3 por los acuerdos del grupo, leído por dueño sobre el mismo plan (`LOCKED`). Ruta de Repaso a `y3.rate-capacity-review` |
+| `y3.friend-day` | Cuatro personas con ventanas propias, dos lugares con viaje en el medio, dos bloques obligatorios y dos opcionales; formas `ventana-corta`, `traslado-largo` y `gustos-cruzados` | INVALID se pisa, no da el viaje o falta quien tiene que estar · FUNCTIONAL obligatorios · EFFICIENT un opcional · OPTIMAL los dos | **Equipo** 0–3: que nadie quede afuera, que lo que cada uno quería pase mientras está y que nadie espere de más (`LOCKED`). Estilo por la forma de la tarde |
+| `y3.week-planner` | Cuatro días de tarde libre, dos compromisos que ya tienen día y hora, dos pendientes con vencimiento y dos opcionales; formas `semana-cargada`, `vencimiento-temprano` y `tarde-ocupada` | INVALID falta, se pisa, se sale de la tarde o vence · FUNCTIONAL obligatorios · EFFICIENT un opcional · OPTIMAL los dos | Sin Equipo ni Aura. **Estilo fuerte**: pegado al vencimiento → Improvisador; con un día entero libre → Estratega; repartido con margen → Aplicado |
+| `y3.route-plan` | Cinco lugares del barrio en una cuadrícula de cuadras, con horario de apertura, rato adentro y hora de vuelta; formas `cierra-temprano`, `abre-tarde` y `lejos` | INVALID falta un mandado, llega cerrado o vuelve tarde · FUNCTIONAL los obligatorios · EFFICIENT uno opcional · OPTIMAL los dos | Ninguno: es Math sola |
+| `y3.rate-capacity-review` | Cuánto entra a un consumo dado, en MB o en minutos | OPTIMAL la parte entera · FUNCTIONAL redondear para arriba · EFFICIENT uno menos · INVALID el resto | Sin Estilo ni score |
+| `y3.fixed-variable-review` | A partir de cuántos viajes el abono sale más barato que el boleto | OPTIMAL el primer viaje en que ya conviene · FUNCTIONAL quedarse en la parte entera · EFFICIENT uno más · INVALID el resto | Sin Estilo ni score |
+
+**Contratos nuevos.** 3.º necesitó dos, y ninguno es un framework nuevo
+(D-S08-062): `route-builder` contrata el **orden** de las paradas como
+respuesta semántica —el mapa dibuja esquinas y no suma ninguna distancia— y la
+agenda gana un modo de varios días con minutos absolutos desde el primer día,
+así que solapar, ordenar y comparar contra un vencimiento siguen siendo
+comparaciones de enteros. Engine `9.0.0`, action log `7`, snapshot `7` intacto.
+
+**Banda y metadata.** `bandOf(cognitive)` da: colectivo 4 → CORE; Día del Amigo,
+feria y semana 7 → STANDARD; recorrido 8 → STRETCH; los dos Repasos 2 → CORE.
+Eso es 1 CORE / 3 STANDARD / 1 STRETCH, la distribución que pide la matriz.
+
+**Preferencia blanda.** La semana y el recorrido tienen casi el mismo vector de
+rasgos, y de ahí sale la preferencia de diversidad cognitiva del año. Se
+implementó como objetivo blando del compositor: cuenta las parejas de la etapa
+cuyos perfiles difieren en un rasgo o menos y prefiere las que tienen menos
+(D-S08-064). Contar en vez de maximizar la distancia importa: maximizarla tiene
+un ganador único y dejaba a 3.º con la misma pareja en las 200 seeds medidas,
+mientras que contando aparecen cuatro parejas distintas y la que el diseño
+quiere evitar no aparece ninguna vez. Sigue siendo blanda: ordena planes válidos
+y no filtra ninguno, así que cuando esa pareja es la única legal la carrera se
+compone igual.
+
+**Catálogo `grade-3-dev-1`.** 681 entradas, 173 de 3.º, construido con
+`pnpm game:variants build --content=grade-3`; re-aprueba 7.º, 1.º y 2.º sin
+tocar sus artefactos publicados. La práctica parcial `7.º → 3.º` es
+`official: false`.
+
+**Rareza.** `rare.y3.offline-project` sigue siendo hook, por la misma razón que
+el de 2.º (D-S08-067).
 
 ---
 
@@ -9748,7 +9829,15 @@ STAGE-08                                      IN_PROGRESS · CURRENT
 │   ├── 5 Templates + 2 Repasos                RUNTIME · catálogo grade-1-dev-1
 │   └── Práctica 7.º → 1.º                     PARTIAL DEVELOPMENT · no oficial
 ├── POST-G1 SCALABILITY AUDIT                  PASSED · hardening resuelto
-└── 2.º–5.º                                    READY · NEXT
+├── PHASE 2 — IMPLEMENT GRADES 2–5             IN_PROGRESS
+│   ├── 2.º Pertenencia                        DONE · catálogo grade-2-dev-1
+│   ├── 3.º Autonomía                          DONE · catálogo grade-3-dev-1
+│   ├── 4.º Responsabilidad                    NEXT
+│   └── 5.º Cierre y futuro                    NOT_STARTED
+└── INTEGRACIÓN DE CARRERA COMPLETA            NOT_STARTED
+    ├── Catálogo real 7.º–5.º y composición    pendiente
+    ├── Rareza, Prestige y epílogo             pendiente · una sola vez
+    └── D-S08-056 con catálogo real            pendiente
 ```
 
 Phase 1 cerró el 11 de septiembre de 2026. Las cinco Templates de 1.º
@@ -9759,30 +9848,45 @@ evidencia Math/Equipo/Estilo separada, replay, reanudación y recomputación en
 servidor. Detalle en la [implementación de 1.º](01-game-design/grade-1-template-design.md#implementación-runtime-phase-1)
 y en [ADR-025](03-architecture/adr/ADR-025-full-career-contract-evolution.md#implementación-de-phase-1-2026-09-11).
 
+2.º cerró el 15 de septiembre de 2026 —pedido de pecheras, encuesta del
+Proyecto II, plan del Intercurso, tabla y postas de la cancha, más el Repaso del
+denominador— y 3.º el mismo día —colectivo, feria de tecnología, Día del Amigo,
+semana y recorrido del barrio, más dos Repasos—. Detalle en
+[2.º](01-game-design/grade-2-template-design.md#implementación-runtime) y
+[3.º](01-game-design/grade-3-template-design.md#implementación-runtime).
+
 **No significa que STAGE-08 esté terminada ni que exista una carrera oficial.**
-`7.º → 1.º` es práctica local de desarrollo (`official: false`,
-`partial-development`); 2.º–5.º no tienen contenido ejecutable. El contenido de 1.º
-está en estado `draft`: falta la revisión del Departamento de Matemática, el
-sign-off manual de la rueda y el pacing empírico, gates de producción de STAGE-08.
+`7.º → 3.º` es práctica local de desarrollo (`official: false`,
+`partial-development`); 4.º y 5.º no tienen contenido ejecutable y la carrera de
+nueve beats sigue sin componerse con el catálogo real. Rareza, Prestige y
+epílogo se implementan una sola vez en la integración, no por año (D-S08-067).
+El contenido de 1.º a 3.º está en estado `draft`: faltan la revisión del
+Departamento de Matemática, el sign-off manual de la rueda y el pacing empírico,
+gates de producción de STAGE-08.
 
 ## Baseline autoritativa
 
 STAGE-07 sigue `DONE`: toda run válida completada egresa, con un Repaso máximo
 por etapa fuera del presupuesto ordinario y de FairScore.
 
-- Versiones: engine `7.0.0`, action log `5`, snapshot `7`. 7.º conserva ruleset
+- Versiones: engine `9.0.0`, action log `7`, snapshot `7`. 7.º conserva ruleset
   `0.4.0-grade-7`, contenido `0.9.0-grade-7` y catálogo `grade-7-dev-5`.
-  `7.º → 1.º`: rulesets `1.0.0-grade-1-partial` y `1.0.0-grade-1-demo`, contenido
-  `1.0.0-grade-1`, catálogo `grade-1-dev-1`. Score
+  `7.º → 1.º`: contenido `1.0.0-grade-1`, catálogo `grade-1-dev-1`.
+  `7.º → 2.º`: contenido `2.0.0-grade-2`, catálogo `grade-2-dev-1`.
+  `7.º → 3.º`: rulesets `3.0.0-grade-3-partial` y `3.0.0-grade-3-demo`, contenido
+  `3.0.0-grade-3`, catálogo `grade-3-dev-1`. Score
   `fair-score-dev-2@2.0.0-post-tg1-candidate` sin cambios.
-- Huellas: motor `7e7e61eb`; ruleset `5b9b0bc5` y contenido `dbaf5094` del
-  fixture de desarrollo intactos.
-- Tests: 64 archivos y 1362 tests de Vitest; 88 E2E de Playwright en desktop y
-  mobile, incluidos los recorridos de 1.º y el barrido de accesibilidad del audit.
-- Simulación: 5000 runs de 7.º, 5000 de `7.º → 1.º` y 2000 del demo amplio
-  egresadas, 0 hallazgos, peor caso un Repaso por etapa.
+- Huellas: motor `c542afb3` —se movió con las dos respuestas nuevas—; ruleset
+  `5b9b0bc5` y contenido `dbaf5094` del fixture de desarrollo intactos.
+- Tests: 77 archivos y 1514 tests de Vitest; 104 E2E de Playwright en desktop y
+  mobile, incluidos los recorridos de 1.º, 2.º y 3.º y el barrido de
+  accesibilidad del audit.
+- Simulación: 5000 runs de 7.º, 5000 de `7.º → 1.º`, 2000 del demo amplio y 200
+  de cada práctica parcial de 2.º y 3.º egresadas, 0 hallazgos, peor caso un
+  Repaso por etapa.
 - Composición: 2000 seeds de `7.º → 1.º` dan 2000 planes distintos, 0 inválidos
-  y 0 diferencias al recomponer.
+  y 0 diferencias al recomponer; `7.º → 3.º` compone ocho beats ordinarios en
+  cuatro etapas y el validador independiente los acepta.
 
 ## Siguiente tarea canónica
 
@@ -9790,9 +9894,11 @@ por etapa fuera del presupuesto ordinario y de FairScore.
 STAGE-08
 PHASE 1 — DONE
 POST-G1 SCALABILITY AUDIT — PASSED
+2.º — DONE
+3.º — DONE
 
 Next:
-Implementar 2.º → 3.º → 4.º → 5.º
+Implementar 4.º → 5.º, después integrar la carrera completa
 ```
 
 El [audit posterior a 1.º](04-quality/post-grade-1-scalability-audit.md#resultado-de-la-ejecución-2026-09-14)
@@ -9980,7 +10086,7 @@ Tabla de navegación. Los contratos de cada etapa, más abajo, son la autoridad.
 | [STAGE-06](#stage-06-scorepolicy-competitiva) | ScorePolicy competitiva | `DONE` | STAGE-05 | — |
 | [GATE-TG1](#gate-tg1-teacher-gate-1) | **Teacher Gate 1** | `PASSED_WITH_REQUIRED_ADJUSTMENTS` | STAGE-04, STAGE-06 | externo |
 | [STAGE-07](#stage-07-invariante-de-egreso-fail-forward-y-recuperaciones) | Egreso, fail-forward y recuperaciones | `DONE` | GATE-TG1 | — |
-| [STAGE-08](#stage-08-contenido-incremental-de-1º-a-5º) | Contenido incremental 1.º → 5.º | `IN_PROGRESS` · **actual** · Phase 1 DONE · audit post-G1 PASSED | STAGE-07 | auditoría tras 1.º |
+| [STAGE-08](#stage-08-contenido-incremental-de-1º-a-5º) | Contenido incremental 1.º → 5.º | `IN_PROGRESS` · **actual** · Phase 1 DONE · audit post-G1 PASSED · 2.º y 3.º DONE | STAGE-07 | auditoría tras 1.º |
 | [STAGE-09](#stage-09-fair-mode-servidor-autoritativo-y-ranking) | Fair mode, servidor autoritativo y ranking | `NOT_STARTED` | STAGE-06, STAGE-08 | — |
 | [GATE-TG2](#gate-tg2-teacher-gate-2) | **Teacher Gate 2** | `TEACHER_GATE` | STAGE-09 | externo |
 | [FREEZE](#freeze-congelamiento-de-competencia) | Congelamiento de competencia | `NOT_STARTED` | GATE-TG2 | — |
@@ -10691,7 +10797,8 @@ a TG1. El techo de un Repaso por etapa sigue siendo estructura de ADR-024.
 
 ### STAGE-08 — Contenido incremental de 1.º a 5.º
 
-- **Estado:** `IN_PROGRESS` — **etapa actual; Phase 0 DONE / Phase 1 DONE / audit post-G1 PASSED**
+- **Estado:** `IN_PROGRESS` — **etapa actual; Phase 0 DONE / Phase 1 DONE /
+  audit post-G1 PASSED / Phase 2: 2.º y 3.º DONE, 4.º NEXT**
 - **Depende de:** STAGE-07 (`DONE`)
 - **Desbloquea:** STAGE-09
 
@@ -10766,6 +10873,36 @@ verificación y documentación de lo realmente implementado.
 o gramática de progresión. Rediseño visual o una sexta interacción sin decisión
 aparte. Servidor oficial, DB/auth, ranking e intentos (STAGE-09). Recalibración o
 freeze de score/rareza por conveniencia de código.
+
+#### Phase 2 — implementar 2.º–5.º
+
+**Estado: `IN_PROGRESS`.** Un año por vez, con auditoría liviana antes de cada
+checkpoint y commit sólo si pasa.
+
+1. [x] **2.º — Pertenencia** (15 de septiembre de 2026). Cinco Templates y el
+   Repaso del denominador sobre `grade-2-dev-1`, con Equipo independiente en el
+   plan del Intercurso, Aura separada de la matemática en la tabla y el cluster
+   `intercurso` aportando como máximo una Template puntuable. El motor contrató
+   la respuesta `classification` (engine `8.0.0`, action log `6`) y las
+   mecánicas de autoría se promovieron a `src/content/authoring.ts`.
+   [Implementación](01-game-design/grade-2-template-design.md#implementación-runtime).
+2. [x] **3.º — Autonomía** (15 de septiembre de 2026). Cinco Templates y dos
+   Repasos sobre `grade-3-dev-1`, con umbral de usos estructural en el
+   colectivo, más de un recurso apretando en la feria de tecnología, Equipo
+   independiente en el Día del Amigo y orden de visita que cambia la viabilidad
+   en el recorrido. El motor contrató la respuesta `route-builder` y el modo de
+   varios días de la agenda (engine `9.0.0`, action log `7`), y la preferencia
+   blanda de diversidad cognitiva se implementó como objetivo del compositor.
+   [Implementación](01-game-design/grade-3-template-design.md#implementación-runtime).
+3. [ ] **4.º — Responsabilidad**, con la externalidad visible en el juego y no
+   sólo en la copia, el cluster del evento escolar y `y4.represent-class` con
+   evidencia Math, Aura y Prestige separadas.
+4. [ ] **5.º — Cierre y futuro**, con convergencia de carrera que enriquece sin
+   condicionar, y `y5.next-step-options` sin prescribir ningún camino.
+5. [ ] **Integración de carrera completa**: catálogo real 7.º–5.º, composición de
+   nueve beats con el contenido real, rareza, slots de Prestige y epílogo
+   implementados **una sola vez** acá y no por año (D-S08-067), cierre de
+   D-S08-056 con el catálogo real y auditoría final de implementación.
 
 #### Después de G1 y aceptación de STAGE-08
 
@@ -13665,6 +13802,20 @@ Ejecución del gate sobre 1.º real. Ninguna decisión de producto se reabrió.
 |---|---|---|---|
 | D-S08-057 | El piso de reflow de la experiencia general es **320 px**: sin scroll horizontal de página, sin pérdida de información ni de funcionalidad, con teclado y alternativas sin arrastre intactas. `html` declara `min-width: 320px` | PRODUCT DECISION · implementada | [accesibilidad](09-design-system/accessibility.md); [cierre de F-03](04-quality/post-grade-1-scalability-audit.md#cierre-de-f-03-2026-09-15) |
 | D-S08-058 | Una representación que necesita dos dimensiones por significado puede scrollear **dentro de su propia región**, alcanzable por teclado; nunca la página, y nunca como única vía para completar el desafío | PRODUCT DECISION · implementada | plano de 1.º: los controles X/Y/orientación completan la respuesta |
+
+## STAGE-08 / Implementación de 2.º y 3.º (2026-09-15)
+
+| ID | Decisión | Madurez | Fuente / estado |
+|---|---|---|---|
+| D-S08-059 | La autoría deja de ser de 1.º: las mecánicas compartidas —ejes de candidato, escalera 100/75/40/10, gates de Estilo y witness— viven en `src/content/authoring.ts` y 1.º las re-exporta sin cambiar una línea | ACCEPTED · arquitectura | `src/content/authoring.ts`; `src/content/grade-1/authoring.ts` |
+| D-S08-060 | El motor contrata una sexta respuesta semántica, `classification`: enunciados etiquetados contra un conjunto común, con la acción pública en su propio campo para que Math y Aura no puedan pagarse dos veces. Engine `8.0.0`, action log `6` | ACCEPTED · contrato | `interactions.ts`, `commands.ts`, `y2.standings-claim` |
+| D-S08-061 | 2.º queda implementado sobre `grade-2-dev-1`: cinco Templates, un Repaso y práctica parcial `7.º → 2.º`, con evidencia Math/Equipo separada en el plan del Intercurso y Math/Aura separada en la tabla | ACCEPTED · implementación | [diseño de 2.º](01-game-design/grade-2-template-design.md#implementación-runtime) |
+| D-S08-062 | El motor contrata una séptima respuesta, `route-builder` —el orden de las paradas—, y un modo de varios días para la agenda, con minutos absolutos desde el primer día. Engine `9.0.0`, action log `7`; snapshot `7` sin cambios | ACCEPTED · contrato | `interactions.ts`, `commands.ts`, `y3.route-plan`, `y3.week-planner` |
+| D-S08-063 | Una política de composición **congela** sus objetivos blandos: agregar uno al vocabulario no puede cambiar en silencio qué plan gana en un content set ya publicado. 7.º y los fixtures declaran `PUBLISHED_OBJECTIVES_V1` | ACCEPTED · hardening | `composition-policy.ts`; `tests/unit/run-composer.test.ts` |
+| D-S08-064 | La preferencia blanda de diversidad cognitiva de 3.º se implementa como objetivo `cognitive-variety`: **cuenta** las parejas de la etapa cuyos perfiles difieren en un rasgo o menos, y prefiere menos. Contar en vez de maximizar la distancia es lo que evita fijar una sola pareja en todas las runs. Ordena planes válidos, nunca filtra, y el compositor sigue sin conocer un solo id de desafío | ACCEPTED · composición | `composer.ts` (`NEAR_PROFILE_DISTANCE`); `tests/unit/grade-3-composition.test.ts` |
+| D-S08-065 | `y3.transport-pass` no declara Estilo: con cuatro formas de pagar, cada elección tiene un solo nivel y una etiqueta de estrategia sería el resultado dicho de nuevo | ACCEPTED · autoría | [diseño de 3.º](01-game-design/grade-3-template-design.md#implementación-runtime) |
+| D-S08-066 | 3.º queda implementado sobre `grade-3-dev-1`: cinco Templates, dos Repasos y práctica parcial `7.º → 3.º`, con Math/Equipo separada en el Día del Amigo y en la feria de tecnología | ACCEPTED · implementación | ídem |
+| D-S08-067 | La orquestación de rareza, los slots de Prestige y el epílogo se implementan una sola vez en la integración de carrera completa, no por año: `rare.y2.missing-player` y `rare.y3.offline-project` siguen siendo hooks sin runtime | ACCEPTED · secuencia | [eventos raros](01-game-design/rare-events-and-prestige.md); [roadmap](06-delivery/implementation-sequence.md#stage-08-contenido-incremental-de-1º-a-5º) |
 
 La integración de TG1 permanece histórica en [su acta y trazabilidad](06-delivery/teacher-gate-1/12-integracion-post-gate.md).
 Siguen pendientes la oficialización/freeze, validación empírica, autoría ejecutable,

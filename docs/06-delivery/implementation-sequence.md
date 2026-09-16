@@ -63,7 +63,7 @@ Tabla de navegación. Los contratos de cada etapa, más abajo, son la autoridad.
 | [STAGE-06](#stage-06-scorepolicy-competitiva) | ScorePolicy competitiva | `DONE` | STAGE-05 | — |
 | [GATE-TG1](#gate-tg1-teacher-gate-1) | **Teacher Gate 1** | `PASSED_WITH_REQUIRED_ADJUSTMENTS` | STAGE-04, STAGE-06 | externo |
 | [STAGE-07](#stage-07-invariante-de-egreso-fail-forward-y-recuperaciones) | Egreso, fail-forward y recuperaciones | `DONE` | GATE-TG1 | — |
-| [STAGE-08](#stage-08-contenido-incremental-de-1º-a-5º) | Contenido incremental 1.º → 5.º | `IN_PROGRESS` · **actual** · Phase 1 DONE · audit post-G1 PASSED | STAGE-07 | auditoría tras 1.º |
+| [STAGE-08](#stage-08-contenido-incremental-de-1º-a-5º) | Contenido incremental 1.º → 5.º | `IN_PROGRESS` · **actual** · Phase 1 DONE · audit post-G1 PASSED · 2.º y 3.º DONE | STAGE-07 | auditoría tras 1.º |
 | [STAGE-09](#stage-09-fair-mode-servidor-autoritativo-y-ranking) | Fair mode, servidor autoritativo y ranking | `NOT_STARTED` | STAGE-06, STAGE-08 | — |
 | [GATE-TG2](#gate-tg2-teacher-gate-2) | **Teacher Gate 2** | `TEACHER_GATE` | STAGE-09 | externo |
 | [FREEZE](#freeze-congelamiento-de-competencia) | Congelamiento de competencia | `NOT_STARTED` | GATE-TG2 | — |
@@ -774,7 +774,8 @@ a TG1. El techo de un Repaso por etapa sigue siendo estructura de ADR-024.
 
 ### STAGE-08 — Contenido incremental de 1.º a 5.º
 
-- **Estado:** `IN_PROGRESS` — **etapa actual; Phase 0 DONE / Phase 1 DONE / audit post-G1 PASSED**
+- **Estado:** `IN_PROGRESS` — **etapa actual; Phase 0 DONE / Phase 1 DONE /
+  audit post-G1 PASSED / Phase 2: 2.º y 3.º DONE, 4.º NEXT**
 - **Depende de:** STAGE-07 (`DONE`)
 - **Desbloquea:** STAGE-09
 
@@ -849,6 +850,36 @@ verificación y documentación de lo realmente implementado.
 o gramática de progresión. Rediseño visual o una sexta interacción sin decisión
 aparte. Servidor oficial, DB/auth, ranking e intentos (STAGE-09). Recalibración o
 freeze de score/rareza por conveniencia de código.
+
+#### Phase 2 — implementar 2.º–5.º
+
+**Estado: `IN_PROGRESS`.** Un año por vez, con auditoría liviana antes de cada
+checkpoint y commit sólo si pasa.
+
+1. [x] **2.º — Pertenencia** (15 de septiembre de 2026). Cinco Templates y el
+   Repaso del denominador sobre `grade-2-dev-1`, con Equipo independiente en el
+   plan del Intercurso, Aura separada de la matemática en la tabla y el cluster
+   `intercurso` aportando como máximo una Template puntuable. El motor contrató
+   la respuesta `classification` (engine `8.0.0`, action log `6`) y las
+   mecánicas de autoría se promovieron a `src/content/authoring.ts`.
+   [Implementación](../01-game-design/grade-2-template-design.md#implementación-runtime).
+2. [x] **3.º — Autonomía** (15 de septiembre de 2026). Cinco Templates y dos
+   Repasos sobre `grade-3-dev-1`, con umbral de usos estructural en el
+   colectivo, más de un recurso apretando en la feria de tecnología, Equipo
+   independiente en el Día del Amigo y orden de visita que cambia la viabilidad
+   en el recorrido. El motor contrató la respuesta `route-builder` y el modo de
+   varios días de la agenda (engine `9.0.0`, action log `7`), y la preferencia
+   blanda de diversidad cognitiva se implementó como objetivo del compositor.
+   [Implementación](../01-game-design/grade-3-template-design.md#implementación-runtime).
+3. [ ] **4.º — Responsabilidad**, con la externalidad visible en el juego y no
+   sólo en la copia, el cluster del evento escolar y `y4.represent-class` con
+   evidencia Math, Aura y Prestige separadas.
+4. [ ] **5.º — Cierre y futuro**, con convergencia de carrera que enriquece sin
+   condicionar, y `y5.next-step-options` sin prescribir ningún camino.
+5. [ ] **Integración de carrera completa**: catálogo real 7.º–5.º, composición de
+   nueve beats con el contenido real, rareza, slots de Prestige y epílogo
+   implementados **una sola vez** acá y no por año (D-S08-067), cierre de
+   D-S08-056 con el catálogo real y auditoría final de implementación.
 
 #### Después de G1 y aceptación de STAGE-08
 
