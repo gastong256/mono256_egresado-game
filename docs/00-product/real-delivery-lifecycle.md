@@ -47,6 +47,16 @@ escalabilidad post-G1 se ejecutó el 14 de septiembre y pasó con hardening
 resuelto, así que producir 2.º–5.º queda autorizado. Epílogo, carrera oficial y ranking siguen sin implementar.
 Ver [etapa actual](../06-delivery/current-stage.md).
 
+**Validación matemática de Fase D (D-S08-095).** La revisión del Departamento de
+Matemática humano sobre 1.º–5.º **no se elimina: se difiere a Final Delivery /
+Pre-Release Acceptance**. Hasta entonces, el gate es un Departamento de
+Matemática provisional asistido por IA —pre-revisión, adjudicación independiente,
+remediación, re-auditoría independiente y sign-off provisional—, que reduce riesgo
+de contenido pero **no es aprobación docente** y no se presenta como tal. Cómo se
+ubica esa revisión humana respecto de Teacher Gate 2 es una
+[pregunta abierta](../07-reference/open-questions.md). Estado en la
+[adjudicación](../04-quality/mathematics-department-ai-adjudication.md).
+
 
 ### Fase E — Teacher Gate 2
 

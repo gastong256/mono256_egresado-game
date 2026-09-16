@@ -26,8 +26,13 @@ STAGE-08                                      IN_PROGRESS · CURRENT
 │   ├── Rareza, Prestige y epílogo             DONE · una sola vez
 │   └── D-S08-056 con catálogo real            CLOSED · aceptada con evidencia
 └── GATES DE PRODUCCIÓN                        IN_PROGRESS
-    ├── Pre-revisión de Matemática (IA)        DONE · 13 hallazgos, 0 bloqueantes
-    ├── Revisión del Depto. de Matemática      PENDING · humana, indelegable
+    ├── AI MATHEMATICS DEPARTMENT (provisional)  IN_PROGRESS
+    │   ├── Pre-Review                           DONE · 13 hallazgos, 0 bloqueantes
+    │   ├── Independent Adjudication             DONE · REMEDIATION REQUIRED
+    │   ├── Mathematics Remediation              NEXT · contrato canónico
+    │   ├── Independent Re-Audit                 PENDING
+    │   └── Provisional Sign-Off                 PENDING
+    ├── Revisión del Depto. de Matemática      DEFERRED · a Final Delivery / Pre-Release
     ├── Sign-off manual de la rueda            PENDING · humana
     └── Pacing empírico con jugadores          PENDING · humana
 ```
@@ -64,9 +69,10 @@ oficialización, el ranking y el servidor competitivo son STAGE-09. El techo de
 Prestige **ofrecido es 0** por decisión explícita (D-S08-084): la maquinaria
 existe y el servidor la recomputa, pero autorar una oportunidad competitiva
 exigiría inventar acciones de jugador que ninguna Template tiene. El contenido
-de 1.º a 5.º está en estado `draft`: faltan la revisión del Departamento de
-Matemática, el sign-off manual de la rueda y el pacing empírico, gates de
-producción de STAGE-08.
+de 1.º a 5.º está en estado `draft`: faltan la remediación matemática y su
+sign-off provisional de IA, el sign-off manual de la rueda y el pacing empírico,
+gates de producción de STAGE-08. La revisión del Departamento de Matemática
+humano no se eliminó: está diferida a la entrega final (D-S08-095).
 
 ## Baseline autoritativa
 
@@ -101,13 +107,32 @@ por etapa fuera del presupuesto ordinario y de FairScore.
 
 El 16 de septiembre se ejecutó además la
 [pre-revisión de Matemática asistida por IA](../04-quality/mathematics-department-pre-review.md):
-`PRE-REVIEW READY FOR HUMAN MATHEMATICS DEPARTMENT REVIEW`, con trece hallazgos
-—dos HIGH, seis MEDIUM, tres LOW y dos observaciones— y **ninguna corrección
-aplicada**, para que el Departamento revise el mismo objeto que se auditó. El
-material operativo está en el
-[paquete de revisión humana](../04-quality/mathematics-department-human-review-packet.md).
-La revisión del Departamento de Matemática **sigue pendiente**: esta pre-revisión
-no la reemplaza ni la aprueba.
+trece hallazgos —dos HIGH, seis MEDIUM, tres LOW y dos observaciones— y
+**ninguna corrección aplicada**.
+
+## Departamento de Matemática provisional
+
+Por decisión del Product Owner (D-S08-095), la revisión del Departamento de
+Matemática humano **se difiere a Final Delivery / Pre-Release Acceptance** y el
+gate vigente es un proceso provisional asistido por IA: pre-revisión, adjudicación
+independiente, remediación, re-auditoría independiente y sign-off provisional.
+**Un sign-off provisional de IA no es aprobación humana**: no pasa contenido a
+`math_reviewed` ni reemplaza los sign-offs manuales de la guía de autoría.
+
+La [adjudicación independiente](../04-quality/mathematics-department-ai-adjudication.md)
+se ejecutó el 16 de septiembre con tres revisores separados —matemática
+([A](../04-quality/mathematics-department-ai-reviewer-a.md)), didáctica
+([B](../04-quality/mathematics-department-ai-reviewer-b.md)) y validez de
+evaluación ([C](../04-quality/mathematics-department-ai-reviewer-c.md))— y un
+Chair que decidió sin mayoría: `ADJUDICATION COMPLETE — REMEDIATION REQUIRED`.
+De los trece hallazgos, 9 `REQUIRED_CORRECTION`, 1 `REQUIRED_CLARIFICATION`,
+1 `ACCEPT_AS_DESIGNED` y 2 `ACCEPT_WITH_DOCUMENTED_RISK`; se agregaron siete
+hallazgos nuevos, todos a corregir, entre ellos una respuesta constante que
+resuelve `y5.course-project-final` en 22 de 24 variantes y un feedback de
+`g7.notebook-offer` que afirma la comparación al revés en 14 de 26. **Nada de
+runtime, contenido, catálogos ni tests cambió en este gate.** El contrato de la
+siguiente tarea es la
+[especificación de remediación](../04-quality/mathematics-remediation-spec.md).
 
 ## Siguiente tarea canónica
 
@@ -121,11 +146,21 @@ POST-G1 SCALABILITY AUDIT — PASSED
 5.º — DONE
 INTEGRACIÓN DE CARRERA COMPLETA — DONE
 
-Pre-revisión de Matemática (IA) — DONE
+AI Mathematics Department Pre-Review — DONE
+AI Mathematics Department Independent Adjudication — DONE
+
+Mathematics Remediation — NEXT
+Independent Mathematics Re-Audit — PENDING
+AI Mathematics Department Provisional Sign-Off — PENDING
+
+Human Mathematics Department Review
+— DEFERRED TO FINAL DELIVERY / PRE-RELEASE
+
+Real-player pacing validation — PENDING
 
 Next:
-Gates humanos de STAGE-08: revisión del Departamento de Matemática sobre el
-paquete ya preparado, sign-off manual de la rueda y pacing empírico
+MATHEMATICS REMEDIATION IMPLEMENTATION, con
+docs/04-quality/mathematics-remediation-spec.md como contrato canónico
 ```
 
 La [auditoría de implementación de carrera completa](../04-quality/full-career-implementation-audit.md)
@@ -155,16 +190,21 @@ ni configuración oficial.
 
 El exit gate de implementación se cumplió: `7.º → 1.º → 2.º → 3.º → 4.º → 5.º →
 EGRESADO` se recorre entero, con contenido auditado y sin duplicar sistemas. Lo
-que queda de STAGE-08 son gates de producción que no dependen de código: la
-revisión del Departamento de Matemática sobre las 42 Templates, el sign-off
-manual de la rueda del Día del Estudiante y el pacing empírico con jugadores
-reales —el target de pacing sigue sin validarse con personas—. Hasta eso, el
-contenido permanece `draft` y la edición `official: false`.
+que queda de STAGE-08 son gates de producción: la remediación matemática
+adjudicada, su re-auditoría y el sign-off provisional de IA; el sign-off manual de
+la rueda del Día del Estudiante y el pacing empírico con jugadores reales —el
+target de pacing sigue sin validarse con personas—. La revisión del Departamento
+de Matemática humano sobre las 42 Templates queda diferida a la entrega final.
+Hasta eso, el contenido permanece `draft` y la edición `official: false`.
 
 ## Última reconciliación
 
-16 de septiembre de 2026: pre-revisión de Matemática asistida por IA, con su
-registro de hallazgos y el paquete para el Departamento humano; antes, la
+16 de septiembre de 2026: adjudicación independiente del Departamento de
+Matemática provisional —tres revisores, Chair, trece hallazgos adjudicados, siete
+nuevos y la especificación de remediación— y diferimiento de la revisión humana a
+la entrega final (D-S08-095 a D-S08-103), sólo documentación; antes, la
+pre-revisión de Matemática asistida por IA, con su registro de hallazgos y el
+paquete para el Departamento humano; antes, la
 integración de la carrera completa —composición de
 nueve beats sobre el catálogo real, eventos raros, Prestige con techo ofrecido
 0, hitos, callbacks y epílogo con su pantalla—, auditoría de Estilo, barrido por

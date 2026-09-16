@@ -121,6 +121,24 @@ Después del congelamiento, los años siguientes pueden agregar contenido e incl
 
 ---
 
+## Revisión matemática de 1.º–5.º
+
+**Estado:** revisión del Departamento de Matemática humano **diferida a Final
+Delivery / Pre-Release Acceptance** por decisión del Product Owner (D-S08-095). No
+se eliminó.
+
+Mientras tanto, el contenido de 1.º a 5.º pasa por un Departamento de Matemática
+provisional asistido por IA: [pre-revisión](../04-quality/mathematics-department-pre-review.md),
+[adjudicación independiente](../04-quality/mathematics-department-ai-adjudication.md),
+remediación, re-auditoría y sign-off provisional. Ese proceso **no valida lo que
+valida un gate docente** y no reemplaza su firma: el contenido sigue `draft` hasta
+la revisión humana, que recibe el
+[paquete de revisión](../04-quality/mathematics-department-human-review-packet.md)
+actualizado y las banderas que la adjudicación le deja. Su relación con Teacher
+Gate 2 es una [pregunta abierta](../07-reference/open-questions.md).
+
+---
+
 ## Teacher Gate 2 — aceptación del juego completo
 
 Ocurre cuando existen 1.º–5.º y el ranking. Es aceptación y último detalle, no otra exploración de concepto.

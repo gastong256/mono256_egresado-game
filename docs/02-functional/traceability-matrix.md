@@ -59,3 +59,32 @@ cierre; ninguna fila declara producción de 1.º–5.º.
 Orden y tareas técnicas: [Phase 1 en roadmap](../06-delivery/implementation-sequence.md#phase-1-implementar-1º-real).
 La implementación de G1 empieza después de este cierre documental; el gate post-G1
 sigue bloqueando producción amplia de 2.º–5.º hasta PASS.
+
+## STAGE-08 / Gobernanza matemática provisional
+
+Trazabilidad de la cadena `hallazgo → opiniones independientes → decisión del Chair
+→ contrato de remediación → implementación → re-auditoría → sign-off provisional →
+revisión humana final`. Adjudicado el 16 de septiembre de 2026; la implementación
+todavía no existe.
+
+| Hallazgos | Decisión canónica | Contrato | Implementación / verificación siguiente |
+|---|---|---|---|
+| MAT-001 | `REQUIRED_CORRECTION` P0 | [RS-MAT-001](../04-quality/mathematics-remediation-spec.md) | Remediación; re-audit con auditoría de estrategia ciega |
+| MAT-002 · MAT-003 · MAT-004 · MAT-AJ-NEW-006 | `REQUIRED_CORRECTION` P0 / P0 / P1 / P2 | RS-MAT-002, RS-MAT-003, RS-MAT-004, RS-NEW-006 | Remediación de la encuesta y su Repaso; ficha de 2.º |
+| MAT-005 · MAT-AJ-NEW-004 · MAT-AJ-NEW-005 | `REQUIRED_CORRECTION` P1 / P1 / P2 | RS-MAT-005 | Remediación de la tabla; gate de modelo del torneo |
+| MAT-006 | `REQUIRED_CORRECTION` P2 | RS-MAT-006 | Balance del catálogo de 7.º |
+| MAT-007 | `REQUIRED_CORRECTION` P2 | RS-MAT-007 | Remediación del consejo escolar |
+| MAT-008 | `REQUIRED_CORRECTION` P0 | RS-MAT-008 | Rediseño acotado de la pantalla |
+| MAT-009 · MAT-AJ-NEW-007 | `REQUIRED_CORRECTION` P1 | RS-MAT-009 | Remediación de «el año que viene»; guardrail vocacional |
+| MAT-010 | `ACCEPT_AS_DESIGNED` | — | Sin cambio; revisión humana final |
+| MAT-011 | `REQUIRED_CLARIFICATION` P2 | RS-MAT-011 | Consigna de la peña |
+| MAT-012 · MAT-013 | `ACCEPT_WITH_DOCUMENTED_RISK` | — | Banderas para la revisión humana final |
+| MAT-AJ-NEW-001 | `REQUIRED_CORRECTION` P0 | RS-NEW-001 | Remediación de la muestra final |
+| MAT-AJ-NEW-002 | `REQUIRED_CORRECTION` P0 | RS-NEW-002 | Feedback de la notebook |
+| MAT-AJ-NEW-003 | `REQUIRED_CORRECTION` P1 | RS-NEW-003 | Feedback de cinco Repasos numéricos |
+
+Fuentes: [adjudicación](../04-quality/mathematics-department-ai-adjudication.md),
+[revisor A](../04-quality/mathematics-department-ai-reviewer-a.md),
+[revisor B](../04-quality/mathematics-department-ai-reviewer-b.md),
+[revisor C](../04-quality/mathematics-department-ai-reviewer-c.md) y
+[decisiones D-S08-095 a D-S08-103](../07-reference/decision-register.md).

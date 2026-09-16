@@ -5,6 +5,12 @@
 - **Naturaleza:** pre-revisión asistida por IA. **No es** la revisión del
   Departamento de Matemática y no puede aprobarla
 - **Veredicto:** `PRE-REVIEW READY FOR HUMAN MATHEMATICS DEPARTMENT REVIEW`
+- **Adjudicado:** el 2026-09-16 por el
+  [Departamento de Matemática provisional](mathematics-department-ai-adjudication.md),
+  que decidió cada hallazgo, agregó siete nuevos y corrigió afirmaciones de este
+  informe —ver su sección R—. Este documento se conserva como registro de lo
+  ejecutado y **no se reescribe**. La revisión del Departamento humano quedó
+  diferida a Final Delivery / Pre-Release Acceptance (D-S08-095)
 
 ## A. Veredicto ejecutivo
 

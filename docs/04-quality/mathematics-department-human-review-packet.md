@@ -3,8 +3,14 @@
 - **Para:** el Departamento de Matemática que tiene que revisar y aprobar el
   contenido matemático de Egresado
 - **Fecha de preparación:** 16 de septiembre de 2026
-- **Estado del gate:** `PENDIENTE`. Este paquete organiza la evidencia; la
-  decisión es del Departamento
+- **Estado del gate:** `DIFERIDO` a Final Delivery / Pre-Release Acceptance
+  (D-S08-095). Este paquete organiza la evidencia; la decisión es del Departamento
+- **Vigencia:** describe el objeto **anterior** a la remediación matemática. La
+  [adjudicación provisional](mathematics-department-ai-adjudication.md) ordenó
+  correcciones, y este paquete se actualiza en el AI Mathematics Department
+  Provisional Sign-Off, antes de llegar al Departamento. Dos afirmaciones de acá
+  ya no se sostienen: `y5.course-project-final` no es una Template modelo, y el
+  feedback de `g7.notebook-offer` es falso en parte del catálogo
 
 Este documento se puede usar **sin leer una sola línea de código**. Todo lo que
 hace falta para revisar está acá o se abre desde el juego.

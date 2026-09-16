@@ -125,6 +125,14 @@ Permanecen pendientes pacing empírico, catálogo/logros ejecutables, calibraci�
 freeze y operación/privacidad. Project max 2 es LOCKED v1; contratos futuros en
 ADR-025 y STOP post-G1 preservado. No se declara runtime nuevo.
 
+## Gobernanza matemática provisional
+
+Abiertas por la [adjudicación del Departamento de Matemática provisional](../04-quality/mathematics-department-ai-adjudication.md) y por el diferimiento de la revisión humana (D-S08-095). No bloquean la remediación.
+
+63. ¿Cómo se ejecuta la revisión del Departamento de Matemática humano diferida a Final Delivery / Pre-Release Acceptance respecto de Teacher Gate 2: es parte de TG2, lo precede o es un gate propio? *Gate: planificar la aceptación de pre-release.* Mientras tanto, ningún documento la da por hecha ni la fusiona con TG2.
+64. ¿Los sign-offs manuales explícitos que la [guía de autoría](../01-game-design/content-authoring-guide.md#profundidad-de-variantes) exige para doce Templates —incluida la rueda del Día del Estudiante, que hoy figura como gate humano de STAGE-08— se ejecutan también en la revisión humana diferida, o conservan su momento actual? *Gate: cierre de STAGE-08.* La decisión D-S08-095 no los difirió.
+65. Las banderas de riesgo aceptado de la adjudicación —cobertura de probabilidad y funciones, memorización dentro de una edición Fair, piso de la opción segura del mural y de la escalera asimétrica— requieren juicio humano. *Gate: revisión humana diferida.* Ver [sección N](../04-quality/mathematics-department-ai-adjudication.md#n-riesgos-aceptados-y-banderas-para-la-revisión-humana-final).
+
 ## Diferidas a propósito
 
 No son preguntas abiertas: son alcance excluido. Se listan para que nadie las reabra como deuda.
