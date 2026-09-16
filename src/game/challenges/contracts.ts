@@ -220,6 +220,17 @@ export interface PublicChallengeView {
     readonly practised: readonly RecoveryNote[]
     readonly debriefed: readonly RecoveryNote[]
   }
+  /**
+   * Lo que un evento raro le agregó a esta escena, si apareció alguno.
+   *
+   * Es texto sobre la misma situación: la variante que se juega es una
+   * aprobada del catálogo y el evaluador no sabe que el evento existió.
+   */
+  readonly rareNote?: {
+    readonly id: string
+    readonly title: string
+    readonly text: string
+  }
 }
 
 /**

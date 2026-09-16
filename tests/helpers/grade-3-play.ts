@@ -54,14 +54,15 @@ export function grade3Answer(
   view: PublicChallengeView,
   deps: EngineDependencies,
   quality: SolutionQuality = 'optimal',
+  descriptor?: RunDescriptor,
 ): InteractionAnswer {
   const id = view.ref.templateId
   const params = paramsOf(view, deps)
 
   if (id === 'y3.friend-day') {
-    const plan = dayPlans(friendDaySchema.parse(params)).find(
-      (entry) => entry.quality === quality,
-    )
+    const plan = dayPlans(friendDaySchema.parse(params))
+      .filter((entry) => entry.quality === quality)
+      .sort((left, right) => right.team - left.team)[0]
     if (plan === undefined) throw new Error(`missing ${quality} for ${id}`)
     return { kind: 'schedule-builder', placements: plan.placements }
   }
@@ -83,9 +84,9 @@ export function grade3Answer(
     }
   }
   if (id === 'y3.course-project-tech') {
-    const plan = techPlans(techSchema.parse(params)).find(
-      (entry) => entry.quality === quality,
-    )
+    const plan = techPlans(techSchema.parse(params))
+      .filter((entry) => entry.quality === quality)
+      .sort((left, right) => right.team - left.team)[0]
     if (plan === undefined) throw new Error(`missing ${quality} for ${id}`)
     return { kind: 'quantity-builder', lines: plan.lines }
   }
@@ -133,7 +134,7 @@ export function grade3Answer(
       ),
     }
   }
-  return grade2Answer(view, deps, quality)
+  return grade2Answer(view, deps, quality, descriptor)
 }
 
 export function playGrade3(
@@ -162,6 +163,7 @@ export function playGrade3(
           view.value,
           deps,
           qualityFor(view.value.ref.templateId),
+          descriptor,
         ),
       }
     }

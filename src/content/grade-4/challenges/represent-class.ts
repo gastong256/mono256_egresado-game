@@ -109,8 +109,11 @@ export function blockedBy(
 export function stanceRisk(p: RepresentParams, stance: string): number {
   if (stance === 'consulta') return 0.4
   const shared = p.stakes === 'todo-el-colegio'
+  // Cada situación tiene una forma de decirlo que no expone a nadie: hablar
+  // como curso cuando la propuesta es de todos, y hablar por uno cuando es de
+  // uno. Si ninguna llegara a cero, el techo de Aura sería inalcanzable.
   if (stance === 'del-curso') return shared ? 0 : 0.8
-  return shared ? 0.8 : 0.1
+  return shared ? 0.8 : 0
 }
 
 export function auraPointsOf(p: RepresentParams, stance: string): number {
@@ -229,6 +232,11 @@ export function generateRepresent(index: number): RepresentParams {
 
 export function representGates(p: RepresentParams): readonly string[] {
   const issues: string[] = []
+  // Witness del máximo de Aura: alguna postura tiene que dejar riesgo cero. Sin
+  // eso, la variante tendría un techo competitivo inalcanzable y dos carreras
+  // competirían con máximos distintos.
+  if (!STANCES.some((stance) => stanceRisk(p, stance.id) === 0))
+    issues.push('ninguna postura llega al máximo de Aura')
   const viable = PROPOSALS.filter((_, index) => fits(p, index)).length
   if (viable === 0) issues.push('ninguna propuesta entra en los límites')
   if (viable === PROPOSALS.length) issues.push('todas las propuestas entran')

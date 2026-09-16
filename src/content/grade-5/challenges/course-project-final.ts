@@ -266,8 +266,11 @@ export function finalPlans(p: FinalParams): readonly FinalPlan[] {
 /** Qué tan expuesta queda la comunicación, contra a quién le cambia el día. */
 export function stanceRisk(p: FinalParams, stance: string): number {
   if (stance === 'pedir') return 0.5
+  // Avisar cuando el cambio se nota afuera y resolverlo sin ruido cuando no:
+  // las dos son la respuesta justa de su situación y las dos llegan a cero. Si
+  // ninguna lo hiciera, el techo de Aura de esa variante sería inalcanzable.
   if (stance === 'avisar') return p.visible ? 0 : 0.6
-  return p.visible ? 0.8 : 0.1
+  return p.visible ? 0.8 : 0
 }
 
 export function auraPointsOf(p: FinalParams, stance: string): number {
@@ -344,6 +347,11 @@ export function generateFinal(index: number): FinalParams {
 
 export function finalGates(p: FinalParams): readonly string[] {
   const issues: string[] = []
+  // Witness del máximo de Aura: alguna postura tiene que dejar riesgo cero. Sin
+  // eso, la variante tendría un techo competitivo inalcanzable y dos carreras
+  // competirían con máximos distintos.
+  if (!STANCES.some((stance) => stanceRisk(p, stance.id) === 0))
+    issues.push('ninguna postura llega al máximo de Aura')
   const plans = finalPlans(p)
   issues.push(...tierWitnessIssues(plans), ...styleGateIssues(plans))
 
@@ -358,6 +366,12 @@ export function finalGates(p: FinalParams): readonly string[] {
     issues.push('todos los planes óptimos dejan el mismo Equipo')
   if (!valid.some((plan) => plan.team === 3))
     issues.push('ningún plan válido cumple los tres acuerdos')
+  // Witness del máximo competitivo: tiene que existir una respuesta que sea
+  // Math óptima **y** deje el Equipo máximo. Sin eso, una carrera que sacara
+  // esta variante no podría llegar al tope de FairScore por más que jugara
+  // perfecto, y dos carreras tendrían techos distintos.
+  if (!plans.some((plan) => plan.quality === 'optimal' && plan.team === 3))
+    issues.push('ninguna respuesta óptima deja el Equipo máximo')
   if (!valid.some((plan) => plan.team <= 1))
     issues.push('ningún plan válido descuida los acuerdos')
 

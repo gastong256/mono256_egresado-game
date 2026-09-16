@@ -216,8 +216,12 @@ export function standingClaims(p: StandingsParams): readonly StandingClaim[] {
 /** How exposed a public stance is, given what the table actually allows. */
 export function stanceRisk(p: StandingsParams, stance: string): number {
   const champion = standingClaims(p).some((claim) => claim.truth === 'seguro')
+  // Toda tabla tiene una postura que no expone al curso: cantar el campeonato
+  // cuando está asegurado, y publicar la tabla cuando no. Si ninguna llegara a
+  // cero, la variante tendría un techo de Aura inalcanzable y dos carreras
+  // competirían con máximos distintos.
   if (stance === 'campeones') return champion ? 0 : 1
-  if (stance === 'tabla') return 0.2
+  if (stance === 'tabla') return champion ? 0.2 : 0
   return 0.5
 }
 
@@ -275,6 +279,11 @@ export function standingsPlans(p: StandingsParams): readonly StandingsPlan[] {
 
 export function standingsGates(p: StandingsParams): readonly string[] {
   const issues: string[] = []
+  // Witness del máximo de Aura: alguna postura tiene que dejar riesgo cero. Sin
+  // eso, la variante tendría un techo competitivo inalcanzable y dos carreras
+  // competirían con máximos distintos.
+  if (!STANCES.some((stance) => stanceRisk(p, stance.id) === 0))
+    issues.push('ninguna postura llega al máximo de Aura')
   const claims = standingClaims(p)
   const truths = new Set(claims.map((claim) => claim.truth))
 

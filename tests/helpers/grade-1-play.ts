@@ -1,6 +1,7 @@
 /** Authoring witnesses for tests, never imported by the player or server. */
 import {
   activeChallengeView,
+  materializeChallenge,
   appendAction,
   createRun,
   createVariantRng,
@@ -10,6 +11,7 @@ import {
   type EngineDependencies,
   type GameCommand,
   type InteractionAnswer,
+  type InteractionPresentation,
   type PublicChallengeView,
   type RunDescriptor,
   type SolutionQuality,
@@ -45,6 +47,53 @@ export function paramsOf(view: PublicChallengeView, deps: EngineDependencies) {
   )
 }
 
+/** La opción pública que alcanza ese nivel, si alguna lo alcanza. */
+function optionReaching(
+  descriptor: RunDescriptor,
+  view: PublicChallengeView,
+  deps: EngineDependencies,
+  options: readonly { readonly id: string }[],
+  quality: SolutionQuality,
+): { readonly id: string } | undefined {
+  const materialized = materializeChallenge(descriptor, view.ref, deps)
+  if (!materialized.ok) return undefined
+  return options.find((option) => {
+    const evaluated = materialized.value.evaluate(
+      {
+        kind: view.interaction.kind,
+        optionId: option.id,
+      } as InteractionAnswer,
+      [],
+    )
+    return evaluated.ok && evaluated.value.quality === quality
+  })
+}
+
+/** El número que alcanza ese nivel dentro del rango declarado, si existe. */
+function numericReaching(
+  descriptor: RunDescriptor,
+  view: PublicChallengeView,
+  deps: EngineDependencies,
+  presentation: Extract<InteractionPresentation, { kind: 'numeric-input' }>,
+  quality: SolutionQuality,
+): string | undefined {
+  const materialized = materializeChallenge(descriptor, view.ref, deps)
+  if (!materialized.ok) return undefined
+  const min = Number(presentation.min)
+  const max = Number(presentation.max)
+  const step = Math.max(1, Number(presentation.step))
+  if (!Number.isFinite(min) || !Number.isFinite(max)) return undefined
+  for (let value = min; value <= Math.min(max, min + 2000); value += step) {
+    const evaluated = materialized.value.evaluate(
+      { kind: 'numeric-input', value: String(value) },
+      [],
+    )
+    if (evaluated.ok && evaluated.value.quality === quality)
+      return String(value)
+  }
+  return undefined
+}
+
 /**
  * A semantic answer that reaches `quality`, taken from the Template's own
  * independent oracle. INVALID is the empty construction, which every Grade-1
@@ -54,6 +103,8 @@ export function grade1Answer(
   view: PublicChallengeView,
   deps: EngineDependencies,
   quality: SolutionQuality = 'optimal',
+  /** Sólo lo necesita la parte de 7.º, para poder probar sus opciones. */
+  descriptor?: RunDescriptor,
 ): InteractionAnswer {
   const p = view.interaction
   const params = paramsOf(view, deps)
@@ -121,13 +172,30 @@ export function grade1Answer(
           numbers: [...targetsFor(round.rule, round.numbers)],
         })),
       }
-    case 'numeric-input':
-      return { kind: p.kind, value: '30' }
+    case 'numeric-input': {
+      // El valor que alcanza el nivel pedido, buscado dentro del rango que la
+      // propia pantalla declara. Sin esto una carrera «perfecta» arrastraba un
+      // beat de 7.º en el piso de la escalera y el techo de FairScore no se
+      // podía demostrar alcanzable.
+      const value =
+        descriptor === undefined
+          ? undefined
+          : numericReaching(descriptor, view, deps, p, quality)
+      return { kind: p.kind, value: value ?? '30' }
+    }
     case 'timeline':
     case 'decision-card':
     case 'chart-interpretation':
     case 'information-request': {
-      const option = p.options[0]
+      // Entre las opciones públicas, la que alcanza el nivel pedido. Se prueba
+      // contra el evaluador de la propia Template —no hay un oráculo
+      // independiente de 7.º acá y no hace falta: lo que este helper necesita
+      // es una respuesta de ese nivel, no volver a demostrar la matemática—.
+      const chosen =
+        descriptor === undefined
+          ? undefined
+          : optionReaching(descriptor, view, deps, p.options, quality)
+      const option = chosen ?? p.options[0]
       if (option === undefined) throw new Error('no public option')
       return { kind: p.kind, optionId: option.id }
     }

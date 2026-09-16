@@ -31,6 +31,7 @@ import type { SelectionState } from '../narrative/selection'
 import type { ProfileResult } from '../profiles/policy'
 import type { StageId } from '../progression/stages'
 import type { ComposedRunPlan } from '../plan/composer'
+import type { RareOccurrence } from '../narrative/rare-events'
 import type { ProgressionState } from '../progression/recovery'
 import type { CareerChange, CareerState } from '../progression/career'
 import type { ScoreBreakdown } from '../scoring/policy'
@@ -128,6 +129,17 @@ export interface ActiveEvent {
    * rather than creating one, and the screen needs it to say so in words.
    */
   readonly recovery?: boolean
+  /**
+   * Lo que un evento raro le agregó a esta escena.
+   *
+   * Presentación y nada más: no toca parámetros, evaluación ni score. Está en
+   * el estado para que una reanudación vuelva a contar lo mismo.
+   */
+  readonly rareNote?: {
+    readonly id: string
+    readonly title: string
+    readonly text: string
+  }
 }
 
 /** Feedback awaiting acknowledgement, kept in state so a resume can restore it. */
@@ -224,6 +236,15 @@ export interface RunState {
   readonly activeEvent: ActiveEvent | undefined
   readonly pendingFeedback: PendingFeedback | undefined
   readonly history: readonly ResolvedEvent[]
+  /**
+   * Los eventos raros que aparecieron, en el orden en el que aparecieron.
+   *
+   * Es historia de la carrera, no una decisión pendiente: la selección es
+   * determinista desde la seed y el estado, así que un replay la reconstruye.
+   * Vive acá —y no en el plan— porque la elegibilidad mira cómo se viene
+   * jugando, que es algo que el plan no sabe.
+   */
+  readonly rare: readonly RareOccurrence[]
   /** Client-side preview only; ADR-004 keeps the official total on the server. */
   readonly scorePreview: number
   readonly optimalStreak: number

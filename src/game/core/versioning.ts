@@ -23,6 +23,16 @@ import { err, ok, type Result } from './result'
 /**
  * Engine/game version of this build. Also serialized as `gameVersion`.
  *
+ * `10.0.0` adds rare events: a run records which ones appeared, and a beat can
+ * carry the note one of them added. The selection is deterministic —eligibility
+ * first, then a draw on its own `rare-events` substream, then the career
+ * budget— so a replay reproduces it, and what a rare event may do is bounded by
+ * construction: tell something else, or swap **which approved variant** of the
+ * same Template is played. It never adds a beat, moves a score ceiling or
+ * decides graduation. Run state grew the record and the snapshot codec moved
+ * with it (`SNAPSHOT_SCHEMA_VERSION` 8). The action log did **not** move: a
+ * rare event needs no new command, because it is not something the player does.
+ *
  * `9.0.0` adds the route response — the stops of a trip in the order the player
  * chose, where the order *is* the answer — and a multi-day mode for the
  * schedule: its minutes are absolute from the first day, so a plan that spans a
@@ -104,7 +114,7 @@ import { err, ok, type Result } from './result'
  * reproduce its original result under this engine, and that is exactly what the
  * version triple exists to say out loud instead of discovering it in a replay.
  */
-export const ENGINE_VERSION = '9.0.0'
+export const ENGINE_VERSION = '10.0.0'
 
 export interface VersionTriple {
   readonly gameVersion: string

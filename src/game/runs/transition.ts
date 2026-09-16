@@ -70,6 +70,11 @@ import {
 } from './recovery-content'
 import { applyEffects } from '../narrative/effects'
 import type { NarrativeContext } from '../narrative/conditions'
+import type { PrestigeOpportunity, PrestigePolicy } from '../scoring/prestige'
+import {
+  selectRareEvent,
+  type RareEventDefinition,
+} from '../narrative/rare-events'
 import {
   emptySelectionState,
   recordSelection,
@@ -123,6 +128,25 @@ export interface EngineDependencies {
    * composition policy still gets.
    */
   readonly composition?: CompositionPolicy
+  /**
+   * Los eventos raros que este content set puede contar.
+   *
+   * Ausente significa que la run no sortea rareza, que es lo que hacen los
+   * fixtures de desarrollo. La calibración —probabilidades y presupuesto— vive
+   * en el ruleset, no acá: esto es contenido.
+   */
+  readonly rareEvents?: readonly RareEventDefinition[]
+  /**
+   * Las oportunidades de Prestige que esta edición ofrece, con su política.
+   *
+   * Ausente significa que la edición no ofrece Prestige, que es distinto de
+   * ofrecerlo y que dé cero: lo primero se reporta como «no hay», lo segundo
+   * como un resultado.
+   */
+  readonly prestige?: {
+    readonly policy: PrestigePolicy
+    readonly opportunities: readonly PrestigeOpportunity[]
+  }
   /**
    * How this run's performance becomes a competitive score.
    *
@@ -263,6 +287,9 @@ export function activeChallengeView(
     interaction: materialized.value.present(active.revealed),
     tools: materialized.value.tools,
     ...(review === undefined ? {} : { review }),
+    // Lo que el evento raro agregó viaja con la vista, no con los parámetros:
+    // el evaluador no sabe que existió.
+    ...(active.rareNote === undefined ? {} : { rareNote: active.rareNote }),
   })
 }
 
@@ -813,6 +840,55 @@ function beginEvent(
     )
   }
 
+  /*
+   * Rareza: elegibilidad primero, sorteo después, presupuesto al final.
+   *
+   * Pasa acá y no antes porque la elegibilidad mira cómo se viene jugando. Lo
+   * que un evento raro puede hacer está acotado por construcción: contar algo
+   * distinto, o cambiar **qué variante aprobada** de la misma Template se
+   * juega. El beat, la plantilla, su ruta de Repaso y su techo competitivo se
+   * quedan donde estaban.
+   */
+  const rarePolicy = dependencies.ruleset.rare
+  const occurrence =
+    dependencies.rareEvents === undefined || rarePolicy === undefined
+      ? undefined
+      : selectRareEvent({
+          seed: state.descriptor.seed,
+          stage: state.stage,
+          eventIndex: state.eventIndex,
+          templateId,
+          events: dependencies.rareEvents,
+          policy: rarePolicy,
+          occurred: state.rare,
+          // El contexto es el de **este** beat: los efectos del storylet que lo
+          // abre ya se aplicaron, así que una condición sobre una bandera que
+          // la escena acaba de poner se lee como corresponde.
+          context: narrativeContext(common as RunState),
+        })
+  const rareDefinition =
+    occurrence === undefined
+      ? undefined
+      : dependencies.rareEvents?.find((entry) => entry.id === occurrence.id)
+  if (occurrence?.treatment === 'variant-modifier') {
+    const pool = (
+      dependencies.approvedVariants === undefined
+        ? template.variants
+        : dependencies.approvedVariants.variantsFor(templateId)
+    ).filter((candidate) => candidate !== variantId)
+    if (pool.length > 0)
+      variantId = selectVariantId(
+        createRng(state.descriptor.seed, [
+          'rare-events',
+          state.stage,
+          state.eventIndex,
+          occurrence.id,
+          'variant',
+        ]),
+        pool,
+      )
+  }
+
   const difficulty: DifficultyLevel =
     state.descriptor.difficulty === 'fixed'
       ? stage.targetDifficulty
@@ -843,7 +919,22 @@ function beginEvent(
     state: {
       ...common,
       phase: 'challenge',
-      activeEvent: { ...baseEvent, challenge: ref },
+      ...(occurrence === undefined
+        ? {}
+        : { rare: [...state.rare, occurrence] }),
+      activeEvent: {
+        ...baseEvent,
+        challenge: ref,
+        ...(rareDefinition === undefined
+          ? {}
+          : {
+              rareNote: {
+                id: rareDefinition.id,
+                title: rareDefinition.note.title,
+                text: rareDefinition.note.text,
+              },
+            }),
+      },
     },
     events,
     effects: events.map((event) => ({ type: 'track', event })),
@@ -1212,6 +1303,7 @@ export function createRun(
 
   const seeded: RunState = {
     ...(plan === undefined ? {} : { plan }),
+    rare: [],
     progression: emptyProgression(),
     descriptor,
     phase: 'narrative',

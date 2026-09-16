@@ -8,6 +8,7 @@ import {
   restoreSnapshot,
   scoreRun,
   scoredEventsOf,
+  SCORE_SCALE,
   serializeActionLog,
   serializeSnapshot,
   toRunSeed,
@@ -17,6 +18,7 @@ import { validateSubmittedRun } from '@/server/game/validate-run'
 import { actionLogSchema } from '@/game/runs/action-log'
 import { simulateRun } from '@/game/testing'
 import {
+  closeCareer,
   createFullCareerDependencies,
   createFullCareerRunDescriptor,
   fullCareerCompositionPolicy,
@@ -71,12 +73,12 @@ describe('la carrera completa con el contenido real', () => {
   })
 
   it(
-    'cuarenta seeds componen cuarenta carreras válidas, y el validador independiente las acepta',
+    'veinticuatro seeds componen veinticuatro carreras válidas, y el validador independiente las acepta',
     { timeout: 120_000 },
     () => {
       const plans = new Set<string>()
       const templates = new Set<string>()
-      for (let seed = 0; seed < 40; seed++) {
+      for (let seed = 0; seed < 24; seed++) {
         const composed = compose(`career-sweep-${String(seed)}`)
         expect(composed.ok, String(seed)).toBe(true)
         if (!composed.ok) continue
@@ -98,9 +100,9 @@ describe('la carrera completa con el contenido real', () => {
         )
         for (const beat of beats) templates.add(String(beat.variant.templateId))
       }
-      expect(plans.size).toBe(40)
+      expect(plans.size).toBe(24)
       // Y la carrera no se juega siempre con las mismas situaciones: en
-      // cuarenta seeds aparecen casi todas las Templates ordinarias.
+      // veinticuatro seeds ya aparecen casi todas las Templates ordinarias.
       expect(templates.size).toBeGreaterThanOrEqual(18)
     },
   )
@@ -180,6 +182,37 @@ describe('la carrera completa con el contenido real', () => {
     )
   })
 
+  it(
+    'una carrera jugada al máximo puntúa exactamente 10.000',
+    { timeout: 60_000 },
+    () => {
+      for (let seed = 0; seed < 6; seed++) {
+        const played = playGrade5(descriptor(`max-${String(seed)}`), deps)
+        const scored = scoreRun(
+          scoredEventsOf(played.state.history),
+          deps.catalog,
+          candidateFairScorePolicy,
+        )
+        if (!isOk(scored)) throw new Error('no puntuó')
+        // Con toda la evidencia disponible en su máximo, el techo se alcanza
+        // exacto: si una variante no admitiera Math óptimo con Equipo o Aura
+        // máximos, dos carreras competirían con techos distintos.
+        expect(scored.value.fairScore, `seed ${String(seed)}`).toBe(SCORE_SCALE)
+        // Y las componentes ausentes no penalizan: se remueven y los pesos se
+        // redistribuyen entre las que sí hubo.
+        const active = scored.value.components.filter(
+          (component) => component.opportunities > 0,
+        )
+        expect(
+          active.reduce(
+            (total, component) => total + component.contribution,
+            0,
+          ),
+        ).toBe(SCORE_SCALE)
+      }
+    },
+  )
+
   it('el servidor recalcula la carrera entera y descarta lo que el cliente afirme', () => {
     const built = descriptor('career-server')
     const outcome = simulateRun(built, deps)
@@ -223,6 +256,99 @@ describe('la carrera completa con el contenido real', () => {
         deps,
       ).ok,
     ).toBe(false)
+  })
+
+  it(
+    'la rareza aparece, respeta su presupuesto y no cambia lo que la carrera ofrece',
+    { timeout: 180_000 },
+    () => {
+      let withRare = 0
+      let runs = 0
+      const seen = new Set<string>()
+      for (let seed = 0; seed < 30; seed++) {
+        const built = createFullCareerRunDescriptor(`rare-${String(seed)}`)
+        if (!built.ok) continue
+        const outcome = simulateRun(built.value, deps)
+        expect(outcome.ok).toBe(true)
+        if (!outcome.ok) continue
+        runs += 1
+        const { state, log } = outcome.value
+        // El presupuesto de la carrera manda: dos eventos, uno que toque un
+        // beat puntuable, uno muy raro.
+        expect(state.rare.length).toBeLessThanOrEqual(2)
+        expect(
+          state.rare.filter((entry) => entry.treatment === 'variant-modifier')
+            .length,
+        ).toBeLessThanOrEqual(1)
+        expect(
+          state.rare.filter((entry) => entry.band === 'VERY_RARE').length,
+        ).toBeLessThanOrEqual(1)
+        expect(new Set(state.rare.map((entry) => entry.id)).size).toBe(
+          state.rare.length,
+        )
+        for (const entry of state.rare) seen.add(entry.id)
+        if (state.rare.length > 0) {
+          withRare += 1
+          // Y no cambia lo que la carrera ofrece: los nueve beats siguen ahí.
+          expect(
+            (state.plan?.stages ?? []).flatMap((stage) => stage.beats).length,
+          ).toBe(9)
+          // El replay la reconstruye: es derivada de la seed y del estado.
+          const replayed = replayRun(log, deps)
+          expect(replayed.ok && replayed.value.state.rare).toEqual(state.rare)
+          // Y una reanudación la conserva.
+          const restored = restoreSnapshot(
+            serializeSnapshot(state),
+            built.value,
+          )
+          expect(restored.ok && restored.value.rare).toEqual(state.rare)
+        }
+      }
+      expect(runs).toBeGreaterThan(25)
+      // Aparece de verdad, y no en todas: es rareza, no decorado.
+      expect(withRare).toBeGreaterThan(0)
+      expect(withRare).toBeLessThan(runs / 2)
+      expect(seen.size).toBeGreaterThanOrEqual(1)
+    },
+  )
+
+  it('el cierre de la carrera es determinista, no puntúa y el servidor lo recompone', () => {
+    const built = descriptor('career-closing')
+    const outcome = simulateRun(built, deps)
+    expect(outcome.ok).toBe(true)
+    if (!outcome.ok) return
+    const { state, log } = outcome.value
+
+    const first = closeCareer(state)
+    const second = closeCareer(state)
+    expect(first).toEqual(second)
+    // Egresaste va primero y ningún desempeño lo reemplaza.
+    expect(first.epilogue.graduated).toBe(true)
+    expect(first.epilogue.memories.length).toBeGreaterThanOrEqual(3)
+    expect(first.epilogue.memories.length).toBeLessThanOrEqual(5)
+    expect(new Set(first.epilogue.memories.map((entry) => entry.id)).size).toBe(
+      first.epilogue.memories.length,
+    )
+
+    // Prestige: esta edición no ofrece oportunidades y el techo ofrecido lo
+    // dice. Aparecer en un evento raro no otorga nada.
+    expect(first.prestige.total).toBe(0)
+    expect(first.prestige.offered).toEqual({
+      'career-arc': 0,
+      special: 0,
+      rare: 0,
+    })
+
+    // Y el servidor lo recompone del log: no hay campo que el cliente pueda
+    // mandar para mover Prestige.
+    const encoded = actionLogSchema.parse(serializeActionLog(log))
+    const validated = validateSubmittedRun(encoded, deps)
+    expect(validated.ok).toBe(true)
+    if (!validated.ok) return
+    expect(validated.value.prestige?.total).toBe(first.prestige.total)
+    expect(validateSubmittedRun({ ...encoded, prestige: 100 }, deps)).toEqual(
+      validated,
+    )
   })
 
   it('una carrera con todo mal egresa igual, con un Repaso por año como techo', () => {

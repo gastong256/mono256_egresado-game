@@ -33,7 +33,7 @@ import {
   grade4RecoveryContent,
 } from '@/content/grade-4'
 import { createGrade5Catalog } from './registry'
-import artifact from './variant-catalog.grade-5-dev-1.json' with { type: 'json' }
+import artifact from './variant-catalog.grade-5-dev-2.json' with { type: 'json' }
 import { grade5CareerStorylets, grade5ReviewId } from './storylets'
 import { grade5CompositionPolicy } from './composition'
 import {

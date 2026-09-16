@@ -424,6 +424,12 @@ export function dayGates(p: FriendDayParams): readonly string[] {
     issues.push('todas las tardes óptimas dejan el mismo Equipo')
   if (!valid.some((plan) => plan.team === 3))
     issues.push('ninguna tarde válida cumple los tres acuerdos')
+  // Witness del máximo competitivo: tiene que existir una respuesta que sea
+  // Math óptima **y** deje el Equipo máximo. Sin eso, una carrera que sacara
+  // esta variante no podría llegar al tope de FairScore por más que jugara
+  // perfecto, y dos carreras tendrían techos distintos.
+  if (!plans.some((plan) => plan.quality === 'optimal' && plan.team === 3))
+    issues.push('ninguna respuesta óptima deja el Equipo máximo')
   if (!valid.some((plan) => plan.team <= 1))
     issues.push('ninguna tarde válida descuida los acuerdos')
 

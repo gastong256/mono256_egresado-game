@@ -31,7 +31,21 @@ import { createDevelopmentDependencies } from '@/game/testing'
 const dependencies = createDevelopmentDependencies()
 
 /*
- * 3.º: engine 9.0.0 / action log 7; snapshot 7 intacto. El motor contrata la
+ * Rareza: engine 10.0.0 / snapshot 8; action log 7 intacto. Se movieron dos de
+ * las tres huellas y la que no se movió vuelve a ser la evidencia:
+ *
+ * - **motor**: la versión y el codec de snapshot (8). Una run guarda ahora qué
+ *   eventos raros aparecieron, y un beat puede llevar la nota que uno de ellos
+ *   agregó. El action log **no** se movió: un evento raro no es algo que el
+ *   jugador haga, así que no necesita un comando.
+ * - **ruleset**: el digest cubre ahora la calibración de rareza. El content set
+ *   de desarrollo no sortea y su entrada dice `rare:none`; la huella igual se
+ *   mueve, porque el digest ganó un campo, y eso es preferible a un digest
+ *   ciego a una regla que decide qué carreras existen bajo la misma seed.
+ * - **contenido**: idéntico en `dbaf5094`. La rareza es de los años
+ *   implementados y el contenido de desarrollo no la tiene.
+ *
+ * El antecedente de 3.º: engine 9.0.0 / action log 7; snapshot 7 intacto. El motor contrata la
  * respuesta de recorrido —el orden de las paradas— y el modo de varios días de
  * la agenda, que no agrega campo alguno a la respuesta: los minutos son
  * absolutos desde el primer día. Se mueve **sólo el motor**: el ruleset y el
@@ -138,14 +152,14 @@ const dependencies = createDevelopmentDependencies()
  * golden quedaron **idénticos**.
  */
 const EXPECTED = {
-  engine: 'c542afb3',
-  ruleset: '5b9b0bc5',
+  engine: '4bcf054e',
+  ruleset: '326d882d',
   content: 'dbaf5094',
 } as const
 
 describe('version fingerprints', () => {
   it('pins the deterministic kernel to its engine version', () => {
-    expect(ENGINE_VERSION).toBe('9.0.0')
+    expect(ENGINE_VERSION).toBe('10.0.0')
     expect(engineFingerprint()).toBe(EXPECTED.engine)
   })
 

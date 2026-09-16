@@ -62,7 +62,7 @@ import type { RunState } from './state'
  * discarding the checkpoint and offering a fresh run; that is a better outcome
  * than resuming into numbers nobody earned.
  */
-export const SNAPSHOT_SCHEMA_VERSION = 7
+export const SNAPSHOT_SCHEMA_VERSION = 8
 
 // Built from the canonical tuples, so each schema infers the exact literal
 // union. That is what lets the restore path below be cast-free.
@@ -176,6 +176,13 @@ const activeEventSchema = z.object({
   // obligation instead of closing the old, which is the recursion this design
   // makes unrepresentable everywhere else.
   recovery: z.boolean(),
+  rareNote: z
+    .object({
+      id: z.string().regex(IDENTIFIER_PATTERN),
+      title: z.string().min(1).max(120),
+      text: z.string().min(1).max(600),
+    })
+    .nullable(),
 })
 
 const resolvedEventSchema = z.object({
@@ -232,6 +239,25 @@ const stateSchema = z.object({
   }),
   seenStorylets: z.array(z.string().regex(IDENTIFIER_PATTERN)).max(256),
   qualityHistory: z.array(qualitySchema).max(256),
+  /**
+   * Los eventos raros que aparecieron.
+   *
+   * Se persisten en vez de rederivarse: la elegibilidad mira el estado del
+   * momento, así que reconstruirlos desde una reanudación exigiría volver a
+   * jugar la carrera. El log de acciones sí los rederiva, porque ahí la
+   * carrera se vuelve a jugar entera.
+   */
+  rare: z
+    .array(
+      z.object({
+        id: z.string().regex(IDENTIFIER_PATTERN),
+        stage: stageSchema,
+        eventIndex: z.number().int().min(0),
+        band: z.enum(['UNCOMMON', 'RARE', 'VERY_RARE']),
+        treatment: z.enum(['narrative-only', 'variant-modifier']),
+      }),
+    )
+    .max(8),
   activeEvent: activeEventSchema.nullable(),
   pendingFeedback: z
     .object({
@@ -440,6 +466,7 @@ export function serializeSnapshot(state: RunState): RunSnapshot {
       selection: { lastSeenAt: { ...state.selection.lastSeenAt } },
       seenStorylets: [...state.seenStorylets],
       qualityHistory: [...state.qualityHistory],
+      rare: state.rare.map((entry) => ({ ...entry })),
       activeEvent:
         active === undefined
           ? null
@@ -453,6 +480,7 @@ export function serializeSnapshot(state: RunState): RunSnapshot {
               toolsUsed: [...active.toolsUsed],
               careerChange: careerChangeToJson(active.careerChange),
               recovery: active.recovery === true,
+              rareNote: active.rareNote === undefined ? null : active.rareNote,
             },
       pendingFeedback:
         feedback === undefined
@@ -598,6 +626,7 @@ export function restoreSnapshot(
     selection: raw.selection,
     seenStorylets: raw.seenStorylets.map(toStoryletId),
     qualityHistory: raw.qualityHistory,
+    rare: raw.rare.map((entry) => ({ ...entry })),
     activeEvent:
       raw.activeEvent === null
         ? undefined
@@ -628,6 +657,9 @@ export function restoreSnapshot(
             toolsUsed: raw.activeEvent.toolsUsed,
             careerChange: restoreCareerChange(raw.activeEvent.careerChange),
             recovery: raw.activeEvent.recovery,
+            ...(raw.activeEvent.rareNote === null
+              ? {}
+              : { rareNote: raw.activeEvent.rareNote }),
           },
     pendingFeedback:
       raw.pendingFeedback === null

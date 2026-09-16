@@ -15,9 +15,13 @@
 import {
   ENGINE_VERSION,
   EngineInvariantError,
-  PUBLISHED_OBJECTIVES_V1,
   candidateDifficultyCostPolicy,
+  buildEpilogue,
   candidateFairScorePolicy,
+  candidatePrestigePolicy,
+  candidateRarePolicy,
+  earnedMilestones,
+  scorePrestige,
   composeRun,
   createRuleset,
   fullCareerV1Constraints,
@@ -27,11 +31,15 @@ import {
   toRulesetId,
   toRunId,
   toRunSeed,
+  type CareerEpilogue,
   type CompositionFailure,
   type CompositionPolicy,
   type EngineDependencies,
+  type Milestone,
+  type PrestigeBreakdown,
   type Result,
   type RunDescriptor,
+  type RunState,
 } from '@/game'
 import { GRADE_7_HOSTABLE_TEMPLATES } from '@/content/grade-7/composition'
 import {
@@ -42,6 +50,12 @@ import {
   createGrade5Dependencies,
   grade5ApprovedVariants,
 } from '@/content/grade-5'
+import { careerRareEvents } from '@/content/rare-events'
+import {
+  careerMilestones,
+  careerPrestigeOpportunities,
+  iconicStorylets,
+} from '@/content/career-closing'
 
 /** Identidad propia: el contenido es el de 5.º, la política de carrera no. */
 export const FULL_CAREER_RULESET_VERSION = '1.0.0-full-career'
@@ -61,18 +75,21 @@ export const fullCareerCompositionPolicy: CompositionPolicy = {
   official: false,
   costPolicy: candidateDifficultyCostPolicy,
   /**
-   * Adentro del sobre de dificultad, la variedad manda.
+   * Adentro del sobre, decide el sorteo sembrado.
    *
-   * `difficulty-fit` no está en la lista, y eso es una decisión medida: con él
-   * primero, el óptimo global es único y las trescientas carreras que se
-   * compusieron usaban las mismas doce Templates. El sobre sigue siendo duro
-   * —el compositor no produce un plan fuera de la tolerancia de la etapa—; lo
-   * que cambia es qué prefiere **entre** los planes que ya entran, y ahí la
-   * carrera prefiere que dos runs no se parezcan.
+   * Las cuotas de variedad de la carrera —familias de razonamiento, motores de
+   * interacción, bandas, pacing, cluster y arco— son **duras**: el compositor
+   * no produce un plan que las incumpla. Lo que queda después es un conjunto de
+   * carreras igualmente legítimas, y ahí ordenar por más objetivos blandos no
+   * agrega calidad: elige siempre la misma.
+   *
+   * Está medido. Con la lista completa —empezando por `difficulty-fit`— las 300
+   * carreras compuestas usaban doce Templates y `y1.course-project-expo` no
+   * aparecía **nunca**; con `template-freshness` sola, que vale nueve en todo
+   * plan legal y por lo tanto empata siempre, aparecen las veintiocho y la
+   * expo entra en una de cada tres. El costo de composición no se movió.
    */
-  objectives: PUBLISHED_OBJECTIVES_V1.filter(
-    (objective) => objective !== 'difficulty-fit',
-  ).concat('cognitive-variety'),
+  objectives: ['template-freshness'],
   stages: [
     stageCompositionPolicy('grade-7', {
       difficulty: { target: 200, tolerance: 160 },
@@ -110,6 +127,10 @@ export function createFullCareerDependencies(): EngineDependencies {
     id: toRulesetId('full-career'),
     version: FULL_CAREER_RULESET_VERSION,
     composition: fullCareerCompositionPolicy,
+    // La calibración de rareza es una regla y vive en la ruleset; los eventos
+    // son contenido y viajan aparte. Los sets por año no sortean: la rareza es
+    // un sistema de la carrera.
+    rare: candidateRarePolicy,
   })
   if (!created.ok)
     throw new EngineInvariantError(
@@ -119,6 +140,11 @@ export function createFullCareerDependencies(): EngineDependencies {
     ...base,
     ruleset: created.value,
     composition: fullCareerCompositionPolicy,
+    rareEvents: careerRareEvents,
+    prestige: {
+      policy: candidatePrestigePolicy,
+      opportunities: careerPrestigeOpportunities,
+    },
   }
 }
 
@@ -147,4 +173,37 @@ export function createFullCareerRunDescriptor(
   return composed.ok
     ? ok({ ...base, planFingerprint: planFingerprint(composed.value) })
     : composed
+}
+
+/**
+ * El cierre de una carrera terminada: hitos, Prestige y epílogo.
+ *
+ * Puro y derivado: lee el estado final y no lo toca. El servidor recompone lo
+ * mismo desde el log de acciones, así que nada de esto es una afirmación del
+ * cliente.
+ */
+export function closeCareer(state: RunState): {
+  readonly milestones: readonly Milestone[]
+  readonly prestige: PrestigeBreakdown
+  readonly epilogue: CareerEpilogue
+} {
+  const dependencies = createFullCareerDependencies()
+  const milestones = earnedMilestones(state, careerMilestones)
+  const prestige = scorePrestige(
+    state,
+    careerPrestigeOpportunities,
+    candidatePrestigePolicy,
+  )
+  return {
+    milestones,
+    prestige,
+    epilogue: buildEpilogue({
+      state,
+      storylets: dependencies.storylets,
+      rareEvents: careerRareEvents,
+      milestones,
+      iconicStorylets,
+      prestige: prestige.total,
+    }),
+  }
 }

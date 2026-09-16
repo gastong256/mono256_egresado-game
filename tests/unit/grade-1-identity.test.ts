@@ -45,7 +45,7 @@ const fingerprint = () =>
 
 it('pins Grade-1 content, mappings, composition and narrative policy identity together', () => {
   expect(fingerprint()).toBe(
-    'a8dc52b3a4572d37d60dc33535c47b77aa43b4836342ff193d1c8ad0daa88aea',
+    '08f3455b6e52e2a9f92b9f8a92230539a2dc9d966b8dc5943aa486a031b1e5ff',
   )
 })
 it('metadata, global limits and recovery mapping changes all move their identity', () => {
@@ -124,7 +124,7 @@ it('uses new command codec but no redundant snapshot state; refuses old logs exp
   const d = createGrade1RunDescriptor('codec')
   if (!d.ok) throw new Error('no descriptor')
   expect(ACTION_LOG_VERSION).toBe(7)
-  expect(SNAPSHOT_SCHEMA_VERSION).toBe(7)
+  expect(SNAPSHOT_SCHEMA_VERSION).toBe(8)
   const encoded = serializeActionLog(emptyActionLog(d.value))
   if (typeof encoded !== 'object' || encoded === null)
     throw new Error('bad encoder')

@@ -1,6 +1,6 @@
 {
-  "catalogVersion": "grade-5-dev-1",
-  "contentVersion": "5.0.0-grade-5",
+  "catalogVersion": "grade-5-dev-2",
+  "contentVersion": "5.1.0-grade-5",
   "generators": [
     {
       "templateId": "g7.bus-latest-departure",
@@ -2038,13 +2038,6 @@
     {
       "familyId": "course-project",
       "templateId": "y3.course-project-tech",
-      "variantId": "c00020",
-      "source": "generated",
-      "fingerprint": "63628880482224dd22b066e4b825b824fe0903c8b90d45f66ffad7bc57c71060"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y3.course-project-tech",
       "variantId": "c00029",
       "source": "generated",
       "fingerprint": "2dee9f0885a09af68a523bf80dfbc953c8295f35ab4fd50665c7c97005c30fba"
@@ -2069,13 +2062,6 @@
       "variantId": "c00037",
       "source": "generated",
       "fingerprint": "adc9c56fea6d08accfa9010a9db6763cc47685f6117c6be9485659e03b6142c9"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y3.course-project-tech",
-      "variantId": "c00047",
-      "source": "generated",
-      "fingerprint": "4fb93c5aa1dae6a3537baeaa846216f7c816888e3822000231e0bdc20cdbab36"
     },
     {
       "familyId": "course-project",
@@ -2108,13 +2094,6 @@
     {
       "familyId": "course-project",
       "templateId": "y3.course-project-tech",
-      "variantId": "c00068",
-      "source": "generated",
-      "fingerprint": "de3df1529bc7bc24f343d7b12a0b4671602f7c30f0f47b8037769c5841752d88"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y3.course-project-tech",
       "variantId": "c00071",
       "source": "generated",
       "fingerprint": "4b91dca3f81dee21d578824c0d0b499867a3646c55b1432d5335e0c7c1e8540e"
@@ -2132,20 +2111,6 @@
       "variantId": "c00083",
       "source": "generated",
       "fingerprint": "736e0afdce5d6a7294f341bd5314cbcefd90dffcd1273ecada33d45b008db661"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y3.course-project-tech",
-      "variantId": "c00084",
-      "source": "generated",
-      "fingerprint": "a475c56add239c467e47b28b58a04c729905f8c028a24f6aef7c51640f251d67"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y3.course-project-tech",
-      "variantId": "c00095",
-      "source": "generated",
-      "fingerprint": "1b7d83d18125ce42ff492356af3f3a2c2229fa87c3e4b1730e6f3eb1e1521c10"
     },
     {
       "familyId": "course-project",
@@ -2174,6 +2139,41 @@
       "variantId": "c00120",
       "source": "generated",
       "fingerprint": "41c6f84e2365c35036fc297a2d2b05cc539af21ba124712a00db7f861857ad7c"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y3.course-project-tech",
+      "variantId": "c00121",
+      "source": "generated",
+      "fingerprint": "0110db31c8472c0350447086d07f9e2b4a9827c5cbef0168062f3a7a100d0ed4"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y3.course-project-tech",
+      "variantId": "c00122",
+      "source": "generated",
+      "fingerprint": "885816331ab996312ffb762910d82d4cac978974d3a55abca1bbc23399a7462a"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y3.course-project-tech",
+      "variantId": "c00131",
+      "source": "generated",
+      "fingerprint": "c92c44b05bb578d5c0e98739a551b4f98c809069eca44b423fd9cb1cf75752a9"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y3.course-project-tech",
+      "variantId": "c00132",
+      "source": "generated",
+      "fingerprint": "57e13a8742a14f434bb3889df4cb03f80baa8fa1951934c1c726656f9403620e"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y3.course-project-tech",
+      "variantId": "c00133",
+      "source": "generated",
+      "fingerprint": "c281a4d186ab9fcf6e3f1f053234957d0b6c0b1aa1c050bcfa714316d8fd3b9d"
     },
     {
       "familyId": "course-project",

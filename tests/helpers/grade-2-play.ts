@@ -51,6 +51,7 @@ export function grade2Answer(
   view: PublicChallengeView,
   deps: EngineDependencies,
   quality: SolutionQuality = 'optimal',
+  descriptor?: RunDescriptor,
 ): InteractionAnswer {
   const id = view.ref.templateId
   const params = paramsOf(view, deps)
@@ -100,13 +101,16 @@ export function grade2Answer(
     const claims = standingClaims(standingsSchema.parse(params))
     const wrong = quality === 'invalid'
     const notSure = claims.find((claim) => claim.truth !== 'seguro')
+    // La postura que más Aura deja: cantar el campeonato sólo cuando la tabla
+    // lo respalda, y publicar la tabla cuando no.
+    const champion = claims.some((claim) => claim.truth === 'seguro')
     return {
       kind: 'classification',
       entries: claims.map((claim) => ({
         statementId: claim.id,
         labelId: wrong && claim.id === notSure?.id ? 'seguro' : claim.truth,
       })),
-      stance: 'tabla',
+      stance: champion ? 'campeones' : 'tabla',
     }
   }
   if (id === 'y2.court-zones') {
@@ -117,13 +121,15 @@ export function grade2Answer(
     return { kind: 'spatial-layout', placements: plan.placements }
   }
   if (id === 'y2.intercurso-plan') {
-    const plan = planOptions(planSchema.parse(params)).find(
-      (entry) => entry.quality === quality,
-    )
+    // Entre los planes del nivel pedido, el que además deja el mejor Equipo:
+    // así una carrera puede demostrar que Math y Equipo máximos conviven.
+    const plan = planOptions(planSchema.parse(params))
+      .filter((entry) => entry.quality === quality)
+      .sort((left, right) => right.team - left.team)[0]
     if (plan === undefined) throw new Error(`missing ${quality} for ${id}`)
     return { kind: 'assignment-board', assignments: plan.assignments }
   }
-  return grade1Answer(view, deps, quality)
+  return grade1Answer(view, deps, quality, descriptor)
 }
 
 export function playGrade2(
@@ -152,6 +158,7 @@ export function playGrade2(
           view.value,
           deps,
           qualityFor(view.value.ref.templateId),
+          descriptor,
         ),
       }
     }

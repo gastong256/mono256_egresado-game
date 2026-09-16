@@ -56,14 +56,15 @@ export function grade4Answer(
   view: PublicChallengeView,
   deps: EngineDependencies,
   quality: SolutionQuality = 'optimal',
+  descriptor?: RunDescriptor,
 ): InteractionAnswer {
   const id = view.ref.templateId
   const params = paramsOf(view, deps)
 
   if (id === 'y4.shift-coverage') {
-    const plan = shiftPlans(shiftSchema.parse(params)).find(
-      (entry) => entry.quality === quality,
-    )
+    const plan = shiftPlans(shiftSchema.parse(params))
+      .filter((entry) => entry.quality === quality)
+      .sort((left, right) => right.team - left.team)[0]
     if (plan === undefined) throw new Error(`missing ${quality} for ${id}`)
     return { kind: 'assignment-board', assignments: plan.assignments }
   }
@@ -105,8 +106,8 @@ export function grade4Answer(
     return {
       kind: 'classification',
       entries: plan.entries,
-      // La postura se elige aparte a propósito: la respuesta de Math no la
-      // decide, y por eso el helper la fija en la misma para todos los niveles.
+      // La postura que más Aura deja para esa situación. Se elige aparte a
+      // propósito: la respuesta de Math no la decide.
       stance: p.stakes === 'todo-el-colegio' ? 'del-curso' : 'propia',
     }
   }
@@ -140,7 +141,7 @@ export function grade4Answer(
       ),
     }
   }
-  return grade3Answer(view, deps, quality)
+  return grade3Answer(view, deps, quality, descriptor)
 }
 
 /** Which proposals the limits actually allow, for tests that need the truth. */
@@ -178,6 +179,7 @@ export function playGrade4(
           view.value,
           deps,
           qualityFor(view.value.ref.templateId),
+          descriptor,
         ),
       }
     }

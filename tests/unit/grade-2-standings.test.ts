@@ -82,7 +82,10 @@ describe('2.º · la tabla del Intercurso', () => {
     for (const p of approved) {
       const champion = standingClaims(p).some((c) => c.truth === 'seguro')
       expect(stanceRisk(p, 'campeones')).toBe(champion ? 0 : 1)
-      expect(stanceRisk(p, 'tabla')).toBe(0.2)
+      // Publicar la tabla es la postura justa cuando no hay campeón —y ahí no
+      // expone nada—; con el campeonato asegurado, decirlo a medias sí deja
+      // algo sobre la mesa.
+      expect(stanceRisk(p, 'tabla')).toBe(champion ? 0.2 : 0)
       const result = evaluateStandings(p, perfect(p), 'campeones')
       if (!result.ok) throw new Error('rechazo inesperado')
       expect(result.value.careerEffects.aura).toBe(champion ? 300 : -300)

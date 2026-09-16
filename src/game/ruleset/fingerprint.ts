@@ -154,6 +154,29 @@ function recovery(ruleset: Ruleset): string {
   ].join(';')
 }
 
+/**
+ * La calibración de rareza, aplanada.
+ *
+ * Cambiar una probabilidad o un techo cambia qué carreras existen bajo la misma
+ * seed, así que entra al digest. Una ruleset que no sortea rareza dice `none`,
+ * y eso también es una afirmación.
+ */
+function rare(ruleset: Ruleset): string {
+  const policy = ruleset.rare
+  if (policy === undefined) {
+    return 'none'
+  }
+  const chances = Object.entries(policy.chancePerMille)
+    .sort(([left], [right]) => (left < right ? -1 : 1))
+    .map(([band, chance]) => `${band}=${String(chance)}`)
+    .join(',')
+  return [
+    `${policy.id}@${policy.version}:${String(policy.official)}`,
+    `chance:${chances}`,
+    `budget:${String(policy.budget.events)}/${String(policy.budget.scoring)}/${String(policy.budget.veryRare)}`,
+  ].join(';')
+}
+
 export function rulesetFingerprint(ruleset: Ruleset): string {
   const stages = ruleset.stages
     .map((stage) =>
@@ -176,6 +199,7 @@ export function rulesetFingerprint(ruleset: Ruleset): string {
       `pacing:${String(ruleset.narrative.cooldownEvents)}:${String(ruleset.narrative.allowRepeats)}`,
       `composition:${composition(ruleset)}`,
       `recovery:${recovery(ruleset)}`,
+      `rare:${rare(ruleset)}`,
       `official:${String(ruleset.official)}`,
       `stages:${stages}`,
     ].join('|'),

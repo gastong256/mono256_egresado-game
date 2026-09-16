@@ -1,6 +1,6 @@
 {
-  "catalogVersion": "grade-3-dev-1",
-  "contentVersion": "3.0.0-grade-3",
+  "catalogVersion": "grade-4-dev-2",
+  "contentVersion": "4.1.0-grade-4",
   "generators": [
     {
       "templateId": "g7.bus-latest-departure",
@@ -163,6 +163,48 @@
       "generatorId": "y3.week-planner.days",
       "generatorVersion": "1",
       "candidateSpace": 576
+    },
+    {
+      "templateId": "y4.course-project-fundraiser",
+      "generatorId": "y4.course-project-fundraiser.margin",
+      "generatorVersion": "1",
+      "candidateSpace": 2187
+    },
+    {
+      "templateId": "y4.event-floor-plan",
+      "generatorId": "y4.event-floor-plan.capacity",
+      "generatorVersion": "1",
+      "candidateSpace": 648
+    },
+    {
+      "templateId": "y4.margin-review",
+      "generatorId": "y4.margin-review.break-even",
+      "generatorVersion": "1",
+      "candidateSpace": 80
+    },
+    {
+      "templateId": "y4.represent-class",
+      "generatorId": "y4.represent-class.limits",
+      "generatorVersion": "1",
+      "candidateSpace": 1458
+    },
+    {
+      "templateId": "y4.school-event-flow",
+      "generatorId": "y4.school-event-flow.bottleneck",
+      "generatorVersion": "1",
+      "candidateSpace": 768
+    },
+    {
+      "templateId": "y4.shift-coverage",
+      "generatorId": "y4.shift-coverage.blocks",
+      "generatorVersion": "1",
+      "candidateSpace": 144
+    },
+    {
+      "templateId": "y4.spatial-capacity-review",
+      "generatorId": "y4.spatial-capacity-review.fits",
+      "generatorVersion": "1",
+      "candidateSpace": 48
     }
   ],
   "entries": [
@@ -1224,6 +1266,181 @@
       "fingerprint": "b7c97cd53469f13fb80ac0342676935e6d794c217ed8a7c5a9280dc272893e64"
     },
     {
+      "familyId": "consejo-escolar",
+      "templateId": "y4.represent-class",
+      "variantId": "c00002",
+      "source": "generated",
+      "fingerprint": "b814a3b58ba509ee85f06d262e36a6b4a2b2cd4638fb46a21da8b4dafd180c68"
+    },
+    {
+      "familyId": "consejo-escolar",
+      "templateId": "y4.represent-class",
+      "variantId": "c00003",
+      "source": "generated",
+      "fingerprint": "60b094be956a40c830307cf6c424476029078b641fb057e0d74604a583592cc4"
+    },
+    {
+      "familyId": "consejo-escolar",
+      "templateId": "y4.represent-class",
+      "variantId": "c00004",
+      "source": "generated",
+      "fingerprint": "077c01dce827d376c98eb013d3c2239739880750d64b8cf492db807c45789f64"
+    },
+    {
+      "familyId": "consejo-escolar",
+      "templateId": "y4.represent-class",
+      "variantId": "c00005",
+      "source": "generated",
+      "fingerprint": "c1d625ae002c32294d3f44ca6dc7d7def1ed269e72882e657f8be5ab6de1ed4e"
+    },
+    {
+      "familyId": "consejo-escolar",
+      "templateId": "y4.represent-class",
+      "variantId": "c00008",
+      "source": "generated",
+      "fingerprint": "393cfc98d4557b64d81d1087e5ac76897135107e1cf25a0cf7af7226bc4fac5a"
+    },
+    {
+      "familyId": "consejo-escolar",
+      "templateId": "y4.represent-class",
+      "variantId": "c00009",
+      "source": "generated",
+      "fingerprint": "a9bced95213a8d22f7751bcbf63e1dcb7233439201d9e57108275230b2987829"
+    },
+    {
+      "familyId": "consejo-escolar",
+      "templateId": "y4.represent-class",
+      "variantId": "c00012",
+      "source": "generated",
+      "fingerprint": "4cf5ee542a98a7ff32f2627ec03b2ec40d9f838e8cf54136b693377d23f34a48"
+    },
+    {
+      "familyId": "consejo-escolar",
+      "templateId": "y4.represent-class",
+      "variantId": "c00013",
+      "source": "generated",
+      "fingerprint": "b4a31f473e460580bc4e00ef366ba7d71284d1076d5f4784839f30121a940757"
+    },
+    {
+      "familyId": "consejo-escolar",
+      "templateId": "y4.represent-class",
+      "variantId": "c00014",
+      "source": "generated",
+      "fingerprint": "2b1a8959cd7990e56976f0c958b28aed5bdec3477c19bd706d7ee466e19f9f61"
+    },
+    {
+      "familyId": "consejo-escolar",
+      "templateId": "y4.represent-class",
+      "variantId": "c00015",
+      "source": "generated",
+      "fingerprint": "1dfad9e88fa959c944fa895ac2af6e157768a46b7a503f8a3226313372775d06"
+    },
+    {
+      "familyId": "consejo-escolar",
+      "templateId": "y4.represent-class",
+      "variantId": "c00016",
+      "source": "generated",
+      "fingerprint": "57bf74d18e5cb5e02d9d03fdb3e37f3eda5ba9c303b8a76a9c192db883883337"
+    },
+    {
+      "familyId": "consejo-escolar",
+      "templateId": "y4.represent-class",
+      "variantId": "c00019",
+      "source": "generated",
+      "fingerprint": "3f68b1d6490d1e49bd36ac8dce014b3eb94041bbde439abb47503db45583cdf5"
+    },
+    {
+      "familyId": "consejo-escolar",
+      "templateId": "y4.represent-class",
+      "variantId": "c00020",
+      "source": "generated",
+      "fingerprint": "55d1c3c4525af86df4228e2509b7b3f501a672ec247d1e8431595dbb39e3bcf0"
+    },
+    {
+      "familyId": "consejo-escolar",
+      "templateId": "y4.represent-class",
+      "variantId": "c00023",
+      "source": "generated",
+      "fingerprint": "028007d208a468e5ec21f33be19d38c835433ec95f21256fe6930bf6bbe7a439"
+    },
+    {
+      "familyId": "consejo-escolar",
+      "templateId": "y4.represent-class",
+      "variantId": "c00024",
+      "source": "generated",
+      "fingerprint": "174152127ca61578a483a0cea786acd7eb0ba6d038cb2ab52968f79c49214f74"
+    },
+    {
+      "familyId": "consejo-escolar",
+      "templateId": "y4.represent-class",
+      "variantId": "c00026",
+      "source": "generated",
+      "fingerprint": "58da2ae8704fde27db8377a92efca58a0b0af246237ddebe218facca15b84ad0"
+    },
+    {
+      "familyId": "consejo-escolar",
+      "templateId": "y4.represent-class",
+      "variantId": "c00027",
+      "source": "generated",
+      "fingerprint": "44e9ba78d8ded1df7808852af850fbb605abb013844b6a8e4b55c3261af60336"
+    },
+    {
+      "familyId": "consejo-escolar",
+      "templateId": "y4.represent-class",
+      "variantId": "c00029",
+      "source": "generated",
+      "fingerprint": "1417f00e13188bd091cb3bce06953fb426f3ea1b25c2b4c620700e53e423d586"
+    },
+    {
+      "familyId": "consejo-escolar",
+      "templateId": "y4.represent-class",
+      "variantId": "c00033",
+      "source": "generated",
+      "fingerprint": "e4648c4a77e8b9e03cdd520d77267419777a632097918fe071bf19f47619ec09"
+    },
+    {
+      "familyId": "consejo-escolar",
+      "templateId": "y4.represent-class",
+      "variantId": "c00035",
+      "source": "generated",
+      "fingerprint": "de88d06fe361b8ff6ba3ac0883538e7f801cec409a09dbdaa48357b86b13a2b5"
+    },
+    {
+      "familyId": "consejo-escolar",
+      "templateId": "y4.represent-class",
+      "variantId": "c00036",
+      "source": "generated",
+      "fingerprint": "0a515bebcab0c46116967865e80fd5edd9bc4b8e692211e1fc740b20f8398aa0"
+    },
+    {
+      "familyId": "consejo-escolar",
+      "templateId": "y4.represent-class",
+      "variantId": "c00038",
+      "source": "generated",
+      "fingerprint": "12d24a2b36a646b8a234bf29faa84885a92c9aa77198df3e6faedb89cfc833ab"
+    },
+    {
+      "familyId": "consejo-escolar",
+      "templateId": "y4.represent-class",
+      "variantId": "c00040",
+      "source": "generated",
+      "fingerprint": "110c7ee01d325fc4047015355c3adae236321a9308611332156f864252d90c7d"
+    },
+    {
+      "familyId": "consejo-escolar",
+      "templateId": "y4.represent-class",
+      "variantId": "c00042",
+      "source": "generated",
+      "fingerprint": "00acd75a1182792df8ca9a062f594de5191b30083dbc8b17ce930f8dd72824e9"
+    },
+    {
+      "familyId": "consejo-escolar",
+      "templateId": "y4.represent-class",
+      "variantId": "reference",
+      "source": "authored",
+      "fingerprint": "23d4459e02d009d8fbf23d6ae4022fc2306bdbe4bf96f9a99a0a182244bb974b"
+    },
+    {
       "familyId": "course-project",
       "templateId": "y1.course-project-expo",
       "variantId": "c00001",
@@ -1779,13 +1996,6 @@
     {
       "familyId": "course-project",
       "templateId": "y3.course-project-tech",
-      "variantId": "c00020",
-      "source": "generated",
-      "fingerprint": "63628880482224dd22b066e4b825b824fe0903c8b90d45f66ffad7bc57c71060"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y3.course-project-tech",
       "variantId": "c00029",
       "source": "generated",
       "fingerprint": "2dee9f0885a09af68a523bf80dfbc953c8295f35ab4fd50665c7c97005c30fba"
@@ -1810,13 +2020,6 @@
       "variantId": "c00037",
       "source": "generated",
       "fingerprint": "adc9c56fea6d08accfa9010a9db6763cc47685f6117c6be9485659e03b6142c9"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y3.course-project-tech",
-      "variantId": "c00047",
-      "source": "generated",
-      "fingerprint": "4fb93c5aa1dae6a3537baeaa846216f7c816888e3822000231e0bdc20cdbab36"
     },
     {
       "familyId": "course-project",
@@ -1849,13 +2052,6 @@
     {
       "familyId": "course-project",
       "templateId": "y3.course-project-tech",
-      "variantId": "c00068",
-      "source": "generated",
-      "fingerprint": "de3df1529bc7bc24f343d7b12a0b4671602f7c30f0f47b8037769c5841752d88"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y3.course-project-tech",
       "variantId": "c00071",
       "source": "generated",
       "fingerprint": "4b91dca3f81dee21d578824c0d0b499867a3646c55b1432d5335e0c7c1e8540e"
@@ -1873,20 +2069,6 @@
       "variantId": "c00083",
       "source": "generated",
       "fingerprint": "736e0afdce5d6a7294f341bd5314cbcefd90dffcd1273ecada33d45b008db661"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y3.course-project-tech",
-      "variantId": "c00084",
-      "source": "generated",
-      "fingerprint": "a475c56add239c467e47b28b58a04c729905f8c028a24f6aef7c51640f251d67"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y3.course-project-tech",
-      "variantId": "c00095",
-      "source": "generated",
-      "fingerprint": "1b7d83d18125ce42ff492356af3f3a2c2229fa87c3e4b1730e6f3eb1e1521c10"
     },
     {
       "familyId": "course-project",
@@ -1915,6 +2097,41 @@
       "variantId": "c00120",
       "source": "generated",
       "fingerprint": "41c6f84e2365c35036fc297a2d2b05cc539af21ba124712a00db7f861857ad7c"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y3.course-project-tech",
+      "variantId": "c00121",
+      "source": "generated",
+      "fingerprint": "0110db31c8472c0350447086d07f9e2b4a9827c5cbef0168062f3a7a100d0ed4"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y3.course-project-tech",
+      "variantId": "c00122",
+      "source": "generated",
+      "fingerprint": "885816331ab996312ffb762910d82d4cac978974d3a55abca1bbc23399a7462a"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y3.course-project-tech",
+      "variantId": "c00131",
+      "source": "generated",
+      "fingerprint": "c92c44b05bb578d5c0e98739a551b4f98c809069eca44b423fd9cb1cf75752a9"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y3.course-project-tech",
+      "variantId": "c00132",
+      "source": "generated",
+      "fingerprint": "57e13a8742a14f434bb3889df4cb03f80baa8fa1951934c1c726656f9403620e"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y3.course-project-tech",
+      "variantId": "c00133",
+      "source": "generated",
+      "fingerprint": "c281a4d186ab9fcf6e3f1f053234957d0b6c0b1aa1c050bcfa714316d8fd3b9d"
     },
     {
       "familyId": "course-project",
@@ -2090,6 +2307,356 @@
       "variantId": "reference",
       "source": "authored",
       "fingerprint": "5c7b33d37d14928b6ad53461c0fae64704c424c30c83b3c20cf25698c10e318e"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.course-project-fundraiser",
+      "variantId": "c00009",
+      "source": "generated",
+      "fingerprint": "11f8aa2f7eddaf7e9860e62dd8d004293158afff647e27eb149094f635ecaf3c"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.course-project-fundraiser",
+      "variantId": "c00010",
+      "source": "generated",
+      "fingerprint": "7ac6898106121979199a0cc88350623f8ecac5da25cdf8dcc911b5d4633b560d"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.course-project-fundraiser",
+      "variantId": "c00020",
+      "source": "generated",
+      "fingerprint": "67eec3513f703ef79e19421a44a9e5a15247c9ff422a8704121689bc50bb694e"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.course-project-fundraiser",
+      "variantId": "c00022",
+      "source": "generated",
+      "fingerprint": "5a4593a3898bb4784511568628f9b6d3d07516b5087de1ae641b4319d3816884"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.course-project-fundraiser",
+      "variantId": "c00040",
+      "source": "generated",
+      "fingerprint": "0c412b7c94388355dfb52e2638baddf750a4de2e9fa1ca84155553d742df1bfd"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.course-project-fundraiser",
+      "variantId": "c00046",
+      "source": "generated",
+      "fingerprint": "2eab3c256e66e2a3ef5bd518e8066605bb0e65f6dd59ab015fd6711bea532c79"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.course-project-fundraiser",
+      "variantId": "c00051",
+      "source": "generated",
+      "fingerprint": "371c03b150a3eb5d33bb492714ba9377522531b6faa3338c7f3ed899ffd105b4"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.course-project-fundraiser",
+      "variantId": "c00055",
+      "source": "generated",
+      "fingerprint": "651da9e667b43ee50051f4412e4371715c5871bd78dc2ba1a8599c4289149f1d"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.course-project-fundraiser",
+      "variantId": "c00059",
+      "source": "generated",
+      "fingerprint": "99636e6e4568fed3446180c42bbb33b06349fe5bc7316b5a48784023e3b21ef6"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.course-project-fundraiser",
+      "variantId": "c00066",
+      "source": "generated",
+      "fingerprint": "77b77e75a8491585d8b35c8eeb2a8f5dd221f1f66b91c367aa0a11cf30120f17"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.course-project-fundraiser",
+      "variantId": "c00076",
+      "source": "generated",
+      "fingerprint": "0a3b7b267906c1431d58fa4aa90af5ee7c1624aa8d14730e8b91ab7137e853af"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.course-project-fundraiser",
+      "variantId": "c00082",
+      "source": "generated",
+      "fingerprint": "1f3af5a32429847a8fcdc5647662797208c28545ee67e9223fdbd7137c2a2a6e"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.course-project-fundraiser",
+      "variantId": "c00086",
+      "source": "generated",
+      "fingerprint": "7fb10c6c2b8ac24ccd0bbb8856356d6aa7b73b33a3643bfb461cc8649155fbea"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.course-project-fundraiser",
+      "variantId": "c00090",
+      "source": "generated",
+      "fingerprint": "88e27ecdb683ae3e91a19b63c197610ede577f08dfe890be98954a97e29658c3"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.course-project-fundraiser",
+      "variantId": "c00092",
+      "source": "generated",
+      "fingerprint": "33f7de56c39b389aa7843378d9cb1f736b7e692b9574d743e0cf4281bf522b3a"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.course-project-fundraiser",
+      "variantId": "c00115",
+      "source": "generated",
+      "fingerprint": "dded9abbf07b75920a40e01de1d00524c94f96c8839263ee076b67ccc274e0b7"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.course-project-fundraiser",
+      "variantId": "c00123",
+      "source": "generated",
+      "fingerprint": "695db175ad9d63344f49abc34a83e2cf7179095e4fe3887e6cf5544e26a47d7c"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.course-project-fundraiser",
+      "variantId": "c00128",
+      "source": "generated",
+      "fingerprint": "ad28d462725d43110ac5ecdad5e5aaf52c075833af142f67a4f6c11ad39f8e94"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.course-project-fundraiser",
+      "variantId": "c00133",
+      "source": "generated",
+      "fingerprint": "8436e3c2d6f25d2183280472ff1cca284d16f1d7691073e48f11b1009a403280"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.course-project-fundraiser",
+      "variantId": "c00147",
+      "source": "generated",
+      "fingerprint": "e246d0d099146c13a038e015a2c2f49d7d13ca20ea33a43a7d0b3aefec39e72f"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.course-project-fundraiser",
+      "variantId": "c00148",
+      "source": "generated",
+      "fingerprint": "d5b05b12cbbe8aa630310cefb4acf26c8b09f4cbccd0fe60c476bed33cf15567"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.course-project-fundraiser",
+      "variantId": "c00169",
+      "source": "generated",
+      "fingerprint": "1317272f885a139e6fbefa62999f6c497b55e45c17750856819fc0d8d070ed06"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.course-project-fundraiser",
+      "variantId": "c00182",
+      "source": "generated",
+      "fingerprint": "d1b417d2d5505decb2dd1bdcc461f7ffa2cc0e12648b5c9057faf860c15dadb9"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.course-project-fundraiser",
+      "variantId": "c00184",
+      "source": "generated",
+      "fingerprint": "d8d61bdbfccd984eea39b81152569196455abfea698a9be8cc2a0ae6b4391119"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.course-project-fundraiser",
+      "variantId": "reference",
+      "source": "authored",
+      "fingerprint": "4c7b9268b10e4681fa745bedd4e37a632acbeafdbbf1297fa9681a9f6b6458cc"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.margin-review",
+      "variantId": "c00001",
+      "source": "generated",
+      "fingerprint": "9a2b583d63d7a6eae4efceb0177394ce963bcb99e386641984b6e610892d4442"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.margin-review",
+      "variantId": "c00002",
+      "source": "generated",
+      "fingerprint": "a3d37511af92f5a6c93aed5aeeb3de4b6278f68743236b37ee779a3b79e9bbda"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.margin-review",
+      "variantId": "c00003",
+      "source": "generated",
+      "fingerprint": "b6c60afee39cb5fd048f3a7997c50d4d1abc7bfa016c9600cc6545fcadf7e547"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.margin-review",
+      "variantId": "c00004",
+      "source": "generated",
+      "fingerprint": "38f05e392dca88a7c63731f61e03a4429f1c9e4ed48a2d70f88076dd69e27dd4"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.margin-review",
+      "variantId": "c00005",
+      "source": "generated",
+      "fingerprint": "d85f8cf30fa912d597ca39b2059d7730c93c4d5f96415a3ad178651002f393da"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.margin-review",
+      "variantId": "c00006",
+      "source": "generated",
+      "fingerprint": "fa93859c9e457f2bdbff409f25c9a40a1be19bec82ed169319f69c65bc99afde"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.margin-review",
+      "variantId": "c00007",
+      "source": "generated",
+      "fingerprint": "5eaee9e9d8a56993fa3215d45d7b2cf31c15d9ce1dd22b8b79d497d6ca296ab8"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.margin-review",
+      "variantId": "c00008",
+      "source": "generated",
+      "fingerprint": "1b3e748de0d331543cb61b21cc4bddfcdc0bd4fa7f4b285e43610cd8b06192f1"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.margin-review",
+      "variantId": "c00009",
+      "source": "generated",
+      "fingerprint": "bdce9c7999e2cc0a8c772848854b4acc03ea533c7f091f878ad0a01ea2a56515"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.margin-review",
+      "variantId": "c00010",
+      "source": "generated",
+      "fingerprint": "2f09afbc5c8f507bcd73d403d5f1e6adc75c5a2963a18801668c48ee2821d804"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.margin-review",
+      "variantId": "c00011",
+      "source": "generated",
+      "fingerprint": "91b0272f52a55754132b23216cb57c1d33d6386bccb482174b7a3e3a70ef5e9f"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.margin-review",
+      "variantId": "c00012",
+      "source": "generated",
+      "fingerprint": "f5f88ce2057884e46e5f6a7af69b29d8f8c0620bfd121dd94838121fc0e9ee00"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.margin-review",
+      "variantId": "c00013",
+      "source": "generated",
+      "fingerprint": "52200e4dcf9ea9a0c449b33c31afab7c145c49213e59423602a259da177d4c59"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.margin-review",
+      "variantId": "c00014",
+      "source": "generated",
+      "fingerprint": "1b07b9b9b21471274b27511566652bcf2c1acafdc2716e76865c2c88c5612697"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.margin-review",
+      "variantId": "c00015",
+      "source": "generated",
+      "fingerprint": "265a0de27299bdd2f9e2914e101334cf410751e70f9f53a50bd2284272ed64ec"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.margin-review",
+      "variantId": "c00016",
+      "source": "generated",
+      "fingerprint": "1d3197725ce0eccf3ad85b53ae06ff30937984ccd8e093b646694e3014493bc6"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.margin-review",
+      "variantId": "c00017",
+      "source": "generated",
+      "fingerprint": "2aaa240ef286dfb1ee55c5ad046e75d608f191b556cce5df37f81d15d88b461b"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.margin-review",
+      "variantId": "c00018",
+      "source": "generated",
+      "fingerprint": "0c08f4f17b1980944857ae1e15aeba7930bd6423261172aeaa08a1bb5c4fcc0a"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.margin-review",
+      "variantId": "c00019",
+      "source": "generated",
+      "fingerprint": "c1b2d243fcaee34c07fc2dee768e28e3216e1ddc4d5f70f148ce7c209fb93fde"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.margin-review",
+      "variantId": "c00020",
+      "source": "generated",
+      "fingerprint": "2b6661f169f34c009f00318a05c433cf0ed3678572397d75072b562f247b4f17"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.margin-review",
+      "variantId": "c00021",
+      "source": "generated",
+      "fingerprint": "53f3107bcc0e62174a574c38c6b04d67a4dd76e93c8abfb71fdbdd31f483ec24"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.margin-review",
+      "variantId": "c00022",
+      "source": "generated",
+      "fingerprint": "6f7d175c8cf05700d484a4d294afd8c645659c9eb5917faa48a992b7b6d87f0a"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.margin-review",
+      "variantId": "c00023",
+      "source": "generated",
+      "fingerprint": "bbe62e5f5b8452fa1d4a470950a231786e28c39c61cf47c2fa3b187eb9699155"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.margin-review",
+      "variantId": "c00024",
+      "source": "generated",
+      "fingerprint": "169e361d065c713fbf15a35cbee74430f4f0f41b580e5ae5b29bcbd0e8ca7d66"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.margin-review",
+      "variantId": "reference",
+      "source": "authored",
+      "fingerprint": "dbc36cd23bb290b271101bd7e16c040c096abeec7f55e99cb18e3b011a64f996"
     },
     {
       "familyId": "court-space",
@@ -2440,6 +3007,692 @@
       "variantId": "reference",
       "source": "authored",
       "fingerprint": "ea24091cf3535560d143c71d725b409caa77f654f2032563af33177f43c1cafd"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.event-floor-plan",
+      "variantId": "c00001",
+      "source": "generated",
+      "fingerprint": "cd6338b02773f33ef780a8ffeae523271ce8585b5e153afc3e00807900cc96f2"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.event-floor-plan",
+      "variantId": "c00002",
+      "source": "generated",
+      "fingerprint": "919693ac81d880b480d8bad638a74942d51c4d30df6bf3740c965b8aa95044e1"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.event-floor-plan",
+      "variantId": "c00004",
+      "source": "generated",
+      "fingerprint": "146fa8225973761f230ad4284d3130229228a07ac68b552e1fa75dc37326b12a"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.event-floor-plan",
+      "variantId": "c00005",
+      "source": "generated",
+      "fingerprint": "871370fad4fdf92874418eaa3cb766635899a7af87dbf05557c557a6282cde45"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.event-floor-plan",
+      "variantId": "c00007",
+      "source": "generated",
+      "fingerprint": "68def286cfe21f37b6d0644d94e10807d2c2d325a88ab1dc800bba59b89554e9"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.event-floor-plan",
+      "variantId": "c00009",
+      "source": "generated",
+      "fingerprint": "dce989ba5a5b5b216ddfd874dc9d91613eff6662c3ee1a708b1f6533cd1d68e5"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.event-floor-plan",
+      "variantId": "c00010",
+      "source": "generated",
+      "fingerprint": "d16ab9333727eedd4081fd52f1f1a1e8eeb46750f30116641ffb0b68c36a6708"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.event-floor-plan",
+      "variantId": "c00012",
+      "source": "generated",
+      "fingerprint": "8f15b1486f7c65f44fc0d9bee4af8a1845cf183e9e4e23ca1d43687909a729ec"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.event-floor-plan",
+      "variantId": "c00013",
+      "source": "generated",
+      "fingerprint": "57c782c0f5ee3b46081be9dfc68436cbf04cf35d6c6d3ab71c73a5890d746e09"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.event-floor-plan",
+      "variantId": "c00015",
+      "source": "generated",
+      "fingerprint": "08751989170d658faa8ebb0bb85220f12e484a65a0c19d00693732c815cc6ad0"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.event-floor-plan",
+      "variantId": "c00018",
+      "source": "generated",
+      "fingerprint": "7ff479d2af56d43221630e0f31856958ab7f59d6f0079c4b271b7525f7942d14"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.event-floor-plan",
+      "variantId": "c00020",
+      "source": "generated",
+      "fingerprint": "2920e7b9c9781e56628f4f3b727dc71228ec906a7988bcabc274867d83063efa"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.event-floor-plan",
+      "variantId": "c00021",
+      "source": "generated",
+      "fingerprint": "d74e903c3fe4e7adffe16887f61e066f515635e80d318f7e413e1811bcacfc2d"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.event-floor-plan",
+      "variantId": "c00022",
+      "source": "generated",
+      "fingerprint": "0e7b67dca43c16f5e85a0c2eedbbef1d77e6aeb38b3b06fe02d8a5a80b10fa89"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.event-floor-plan",
+      "variantId": "c00023",
+      "source": "generated",
+      "fingerprint": "9a7f5f43a4a2acf8ea8422b5d0a21d0e4d071c5a3635eb9fa18e7bc43e99ac26"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.event-floor-plan",
+      "variantId": "c00025",
+      "source": "generated",
+      "fingerprint": "d5cb54ea7a7980934d3b57fd75dadc12e6fae5a73a396016f9865601fdd41ae3"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.event-floor-plan",
+      "variantId": "c00026",
+      "source": "generated",
+      "fingerprint": "53d8df8b590aef80e24c52b29eeefd6f415d51a4b210e267a1c84a02ca292afd"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.event-floor-plan",
+      "variantId": "c00028",
+      "source": "generated",
+      "fingerprint": "8a091ca8336d48d5396ca013c20090ae622fd8dc8f8e7e28c8c55c734b9f63b1"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.event-floor-plan",
+      "variantId": "c00030",
+      "source": "generated",
+      "fingerprint": "fe0d7e995eed40c727edc235d8ea6cbc1f883704136c7d99d9139609ffc55eb6"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.event-floor-plan",
+      "variantId": "c00031",
+      "source": "generated",
+      "fingerprint": "59e9566701ead9103391cc3c55210f706832be48c90afb7207df1a1821605982"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.event-floor-plan",
+      "variantId": "c00033",
+      "source": "generated",
+      "fingerprint": "ebefd01d03549c595460f95695406ad7d01b8b403cd13eacc97a1c5843b0e8f7"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.event-floor-plan",
+      "variantId": "c00034",
+      "source": "generated",
+      "fingerprint": "4eaec8afde721bcec02519cbbb192078a3903275b7ec60024200d1b218f0355e"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.event-floor-plan",
+      "variantId": "c00036",
+      "source": "generated",
+      "fingerprint": "aabc17216d54b36470b03a164494728ad5c99f803b47e4523e5e8aeaec6ce248"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.event-floor-plan",
+      "variantId": "c00038",
+      "source": "generated",
+      "fingerprint": "8d984b33df796579e90f665d8fdded330fe801abb143cf1947c09ce69ce3a68e"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.event-floor-plan",
+      "variantId": "reference",
+      "source": "authored",
+      "fingerprint": "5016d1d2281c392c6831534159c9eb64cce302e0304bac4b5b04e93039b071b8"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.school-event-flow",
+      "variantId": "c00007",
+      "source": "generated",
+      "fingerprint": "19a0cf8f9690886fca11a3233cb7f03a5aab915f69df212b68d8888726ea692f"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.school-event-flow",
+      "variantId": "c00011",
+      "source": "generated",
+      "fingerprint": "705d0bb51fc08dbc32a1f00568b29430971f70ead31018c245d54c13a3948f7f"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.school-event-flow",
+      "variantId": "c00017",
+      "source": "generated",
+      "fingerprint": "a0a1a1768a3984dfb14fdf0bff81d351d2cc1d7b8a2b94d287790cc16ea34316"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.school-event-flow",
+      "variantId": "c00026",
+      "source": "generated",
+      "fingerprint": "696e7a7dac793b1c196168a1e162b57e3ccc108afa37024d138482af63d3aa65"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.school-event-flow",
+      "variantId": "c00035",
+      "source": "generated",
+      "fingerprint": "c57d3fac84dc513f3bb098f90a065747f93474c0011b0bd4ceab5c274e76da5b"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.school-event-flow",
+      "variantId": "c00043",
+      "source": "generated",
+      "fingerprint": "91144463e25c5c73cd32088f045770662884115ddbe9ffbe60bd0326b2a286dc"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.school-event-flow",
+      "variantId": "c00047",
+      "source": "generated",
+      "fingerprint": "2835de864cbece09b9ff1f0eaaf38a00473d8e750f6eeaf6495a34742996b505"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.school-event-flow",
+      "variantId": "c00055",
+      "source": "generated",
+      "fingerprint": "aabcd07b056b57a350164ddb835f9447cc34453e33c65c2720dc4883b22951db"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.school-event-flow",
+      "variantId": "c00059",
+      "source": "generated",
+      "fingerprint": "ddeb92086046f31b97f6859b72cc816ea3a78ad90c520acd773c16034cf4b568"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.school-event-flow",
+      "variantId": "c00061",
+      "source": "generated",
+      "fingerprint": "eacf3f739b2cb9bce812ca488f84f07c1f694c8cea220083ac5300c596d3012d"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.school-event-flow",
+      "variantId": "c00065",
+      "source": "generated",
+      "fingerprint": "c54672c028eb677732c59b20eeadc44ff40353556d253c77b274fe93c2bdefa8"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.school-event-flow",
+      "variantId": "c00066",
+      "source": "generated",
+      "fingerprint": "37b47e9d3242bb1f3239bd38d7ad957e637c883bb4cec029baa7ac8f51d2f9cc"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.school-event-flow",
+      "variantId": "c00069",
+      "source": "generated",
+      "fingerprint": "be37956fb80e3cb40cba757d07e3fe91d1a0564d648650975a2e0c37a1016f31"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.school-event-flow",
+      "variantId": "c00073",
+      "source": "generated",
+      "fingerprint": "e7087823233409b0f0a00def4bf533675ffc01768023a9c940f6bed9ae35c665"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.school-event-flow",
+      "variantId": "c00074",
+      "source": "generated",
+      "fingerprint": "352b95884341d535e02ca69ea941da6146d0094a283c80e54e417c2b4c559432"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.school-event-flow",
+      "variantId": "c00081",
+      "source": "generated",
+      "fingerprint": "27a4b84aa4c88c3c92f975867037f16adf35a4856a38eae5b0b6a782b911aeba"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.school-event-flow",
+      "variantId": "c00082",
+      "source": "generated",
+      "fingerprint": "d937dbff298d2d0e9280d09f332e219dcf3616c94c236518472bc60c21ca87c4"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.school-event-flow",
+      "variantId": "c00083",
+      "source": "generated",
+      "fingerprint": "b26f8bd99d5ebf1df484f5baa42e1909a29f97f59a7a9fad910c21fb4ab9f2d5"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.school-event-flow",
+      "variantId": "c00091",
+      "source": "generated",
+      "fingerprint": "2b91514f8226f64c21a898ef0e88fa556a6e85c8ff7d62a9613a123d61505e85"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.school-event-flow",
+      "variantId": "c00095",
+      "source": "generated",
+      "fingerprint": "e8bf39eb0f308b00daa01cf3960eb8d93189676e8f46e518b64d48658cf3a340"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.school-event-flow",
+      "variantId": "c00106",
+      "source": "generated",
+      "fingerprint": "a5800b90f6f541f669aebdcd8ac8a75787f3704c6fefe2c9e50ddd889157addb"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.school-event-flow",
+      "variantId": "c00110",
+      "source": "generated",
+      "fingerprint": "f2da4fd2e0f3c17bdff945f8734f493c64d477f999e10322ca73b0de0dc51a75"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.school-event-flow",
+      "variantId": "c00114",
+      "source": "generated",
+      "fingerprint": "2312159dceab360e8250312b5b6127e19779d0457d9934f1312a2116f19ac508"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.school-event-flow",
+      "variantId": "c00121",
+      "source": "generated",
+      "fingerprint": "f2a577897b174ac42e17831c08b2f3487aa5e291ebdb73a4bf55fb12c1b5079b"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.shift-coverage",
+      "variantId": "c00001",
+      "source": "generated",
+      "fingerprint": "450d54a7f8712778f8b3d01335da6a52586f25f0eeaa893dbfb8d44a7d966650"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.shift-coverage",
+      "variantId": "c00002",
+      "source": "generated",
+      "fingerprint": "76ead60c3fb1ecb868a4c8592f9638c69ce3b3c85188efe61b0a4e96371924d3"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.shift-coverage",
+      "variantId": "c00003",
+      "source": "generated",
+      "fingerprint": "47e785c03daefd68b68bd2eda2d329718f17939a47466819ce494196cdbe029b"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.shift-coverage",
+      "variantId": "c00004",
+      "source": "generated",
+      "fingerprint": "e3a196252365c7d13cb51af9b01a52c1b2295fde43f9cef796c1cd3904a6b099"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.shift-coverage",
+      "variantId": "c00005",
+      "source": "generated",
+      "fingerprint": "9510294c4e6dc61b45ff7b066df49f97fbaa6d8a0d1acf374ceba7d3a2e803dc"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.shift-coverage",
+      "variantId": "c00006",
+      "source": "generated",
+      "fingerprint": "c668fbeab1c1fc76b9cd22f4f5fbdfd537bf12650719070574b12738a2b128fe"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.shift-coverage",
+      "variantId": "c00007",
+      "source": "generated",
+      "fingerprint": "d4b181c03bc9719553ba0d577f41e215c03a8edadec15d539f87fc390ad9e305"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.shift-coverage",
+      "variantId": "c00008",
+      "source": "generated",
+      "fingerprint": "57094e386619adbc6041be2666447d438e822bee84078dca4334f5b8e792408b"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.shift-coverage",
+      "variantId": "c00009",
+      "source": "generated",
+      "fingerprint": "64868ab7a82abf1ed317c52e4cfa9a02e45a9a34dd7541bbb460aeaa4b73c22c"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.shift-coverage",
+      "variantId": "c00010",
+      "source": "generated",
+      "fingerprint": "083d608d335311475d531792aff0e72983360070a0f5e13d7853f4b10f7e279a"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.shift-coverage",
+      "variantId": "c00011",
+      "source": "generated",
+      "fingerprint": "ef5b03e6b32473d8f3940e58140a1aec37c61b9a38d7f652e24de3f942b15461"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.shift-coverage",
+      "variantId": "c00012",
+      "source": "generated",
+      "fingerprint": "c32844eead30b75f0d3286c7900ece2ae9a0f1e2bb48506b276dfe99b9148f9a"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.shift-coverage",
+      "variantId": "c00013",
+      "source": "generated",
+      "fingerprint": "24d5d55094b4bf3f962c5bed3cbea52eb20ca1c2e759a35db82d5b54ded907bf"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.shift-coverage",
+      "variantId": "c00014",
+      "source": "generated",
+      "fingerprint": "45ce8be2e6a013656ea41282a9f7114ebf963ccf912831259840bcdcdaf8f44e"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.shift-coverage",
+      "variantId": "c00015",
+      "source": "generated",
+      "fingerprint": "ae72dc5a3c912ad33826149210075366074abb73cd816940e705de238d42ea80"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.shift-coverage",
+      "variantId": "c00016",
+      "source": "generated",
+      "fingerprint": "b1926286846d2f644edf859ec976f1e1b05a28e96b2391995911577a66373dba"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.shift-coverage",
+      "variantId": "c00017",
+      "source": "generated",
+      "fingerprint": "a889202352272849cdfd51184826cc880b511edcc0a4611134f77ebcd5220a4f"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.shift-coverage",
+      "variantId": "c00020",
+      "source": "generated",
+      "fingerprint": "f3a97f7ba98488b7b488a706cc7c5229f66174fc237c3491c9e37b4c2671840a"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.shift-coverage",
+      "variantId": "c00021",
+      "source": "generated",
+      "fingerprint": "5e234fb2b0f511a19345d81fc0607e62fac998619f8a96013f878a0fd32857cf"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.shift-coverage",
+      "variantId": "c00022",
+      "source": "generated",
+      "fingerprint": "bee6f91818530d0447b845a4a5d666a7ab5b10e94fc4c327f8941d24ebd61c1d"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.shift-coverage",
+      "variantId": "c00023",
+      "source": "generated",
+      "fingerprint": "fd8adb5855495bb063ec1bfeb8d54a5de4a87a5c07cac2f890b5e46d6847a63f"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.shift-coverage",
+      "variantId": "c00024",
+      "source": "generated",
+      "fingerprint": "d9dd30dce744ae82dea2221a5cc5df6f3a2a9e079f4057410664cf205146cdec"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.shift-coverage",
+      "variantId": "c00025",
+      "source": "generated",
+      "fingerprint": "d861f6a0e7836be613778ac9fb046bdd882c96f6951305cfc357f86c49ba7fd2"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.shift-coverage",
+      "variantId": "c00026",
+      "source": "generated",
+      "fingerprint": "1c2bc9da2565d3a33b712eb866f773ad147ecc1bf6b4949e3c63e2be8f29903e"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.spatial-capacity-review",
+      "variantId": "c00001",
+      "source": "generated",
+      "fingerprint": "477d758d3c332d6334ecdfa9af1b3b996fecc6adca755b56eaa062e2974d2b2f"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.spatial-capacity-review",
+      "variantId": "c00002",
+      "source": "generated",
+      "fingerprint": "d7d80f6b433863cdbee7e63fd4d17b83735622208bc718b29a310bbfc14a8d5d"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.spatial-capacity-review",
+      "variantId": "c00003",
+      "source": "generated",
+      "fingerprint": "78a0ef23af6f819a57e1b04e14106e6c17adef30f70b14a0cc049c43e9ac64df"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.spatial-capacity-review",
+      "variantId": "c00004",
+      "source": "generated",
+      "fingerprint": "7999bf9bf1d8dd60cdf8c50d078fef115ff6235ff1eeb2d9fc53d519429bf30d"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.spatial-capacity-review",
+      "variantId": "c00005",
+      "source": "generated",
+      "fingerprint": "7ee35e508f8aae6f4c58908423c06b0e12740e8dbc1bc6e8538c105e4cce9977"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.spatial-capacity-review",
+      "variantId": "c00006",
+      "source": "generated",
+      "fingerprint": "5d6994c32dc8ba1dfc57f9cf1e727e4be9470777353ec19424780e29b02a5428"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.spatial-capacity-review",
+      "variantId": "c00007",
+      "source": "generated",
+      "fingerprint": "458f71afcc461da71dec0f15f27b2ddd1a9da39fb969629f74742ba89e072250"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.spatial-capacity-review",
+      "variantId": "c00008",
+      "source": "generated",
+      "fingerprint": "497e2bd75cd51586b7065d2a7537a00b7d24c2619bfec249fd017ff53551af01"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.spatial-capacity-review",
+      "variantId": "c00009",
+      "source": "generated",
+      "fingerprint": "0fece03fae169bf23f7052f655851201a041e8544d8d747a290bd9d8f5e9ba28"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.spatial-capacity-review",
+      "variantId": "c00010",
+      "source": "generated",
+      "fingerprint": "2f4fcfbbc1fe9e1bd69c8d03b12464bb98c8c59f83b2785642d97c26810cbf24"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.spatial-capacity-review",
+      "variantId": "c00011",
+      "source": "generated",
+      "fingerprint": "44a1dced9e3a9ef2d00aaa92b1db6d6f7cd499b130e62d579775f0e7868ff70a"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.spatial-capacity-review",
+      "variantId": "c00012",
+      "source": "generated",
+      "fingerprint": "572c9498273c23117a358855ad38296ee91f3d9a3461363bb131f7e1606f7268"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.spatial-capacity-review",
+      "variantId": "c00014",
+      "source": "generated",
+      "fingerprint": "d760b1ac5423fc35f5fe4381393bff9f0e3c0c1d70b0818547e20aacddcad55e"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.spatial-capacity-review",
+      "variantId": "c00015",
+      "source": "generated",
+      "fingerprint": "51156822a6f5a5c9c8989b2d308288db71b2212c6604da96696c914f4376e999"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.spatial-capacity-review",
+      "variantId": "c00016",
+      "source": "generated",
+      "fingerprint": "5401becc9ebe5ee355e5516c9f9e3a40ca7bb41ac83e5aeae51c2f8e6e1443c4"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.spatial-capacity-review",
+      "variantId": "c00017",
+      "source": "generated",
+      "fingerprint": "e0b91338d65c759cb0accf90d1fe6beb8e65e0962fa6fde8d8abe647a60c6321"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.spatial-capacity-review",
+      "variantId": "c00018",
+      "source": "generated",
+      "fingerprint": "749150364794e0615766a82765bf77ab7e3cbbc2f3d1ede405660a8abd9d7ef4"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.spatial-capacity-review",
+      "variantId": "c00019",
+      "source": "generated",
+      "fingerprint": "5a71a7ea0262c8ef6b7cd89fe08f9acd67c0eaa897baa65f5fc92c953bec93c9"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.spatial-capacity-review",
+      "variantId": "c00020",
+      "source": "generated",
+      "fingerprint": "3feaf68f88bd1c1002517f0358bfe5ba9e0ffc8de326fca230241802e6e39ad8"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.spatial-capacity-review",
+      "variantId": "c00021",
+      "source": "generated",
+      "fingerprint": "dcd9b534a1010791c210f246979bc2efc9d5910821b3a7b6417a3fb7edc3ad84"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.spatial-capacity-review",
+      "variantId": "c00022",
+      "source": "generated",
+      "fingerprint": "0cb50e4f9d582690883ae11bd3bb5d9684f029e3182d52e22e2935d223b1da40"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.spatial-capacity-review",
+      "variantId": "c00024",
+      "source": "generated",
+      "fingerprint": "74873227496b439da6e0f48eb584e12b3cf97dc38be8721adb9384b3b60c64af"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.spatial-capacity-review",
+      "variantId": "c00025",
+      "source": "generated",
+      "fingerprint": "d6ef9dcdc85bc01ecc7b186cc9219cbad3da781aa36723a44d59ec2baf401463"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.spatial-capacity-review",
+      "variantId": "c00026",
+      "source": "generated",
+      "fingerprint": "175375c7e951a962eaf030aaa8f33ff9d7f96ffb04dc6e36b845174354200e5b"
+    },
+    {
+      "familyId": "evento-escolar",
+      "templateId": "y4.spatial-capacity-review",
+      "variantId": "reference",
+      "source": "authored",
+      "fingerprint": "6ee6d581b47735ebc13d0dcb1dad7256221f04bb18def310fe2bbe244c08c5ef"
     },
     {
       "familyId": "group-project",

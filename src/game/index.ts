@@ -596,6 +596,50 @@ export type {
 } from './narrative/conditions'
 export { CAREER_DIMENSIONS } from './narrative/conditions'
 export type { StoryletEffect } from './narrative/effects'
+export {
+  MEMORY_KINDS,
+  buildEpilogue,
+  careerMemories,
+  narrativeProfile,
+  selectSalientMemories,
+  type CareerEpilogue,
+  type CareerMemory,
+  type MemoryKind,
+  type MemorySegment,
+} from './narrative/epilogue'
+export {
+  earnedMilestones,
+  milestoneIssues,
+  type Milestone,
+  type MilestoneDefinition,
+} from './narrative/milestones'
+export {
+  PRESTIGE_MAX,
+  PRESTIGE_TRACKS,
+  candidatePrestigePolicy,
+  prestigeOpportunityIssues,
+  prestigePolicyIssues,
+  scorePrestige,
+  type PrestigeAward,
+  type PrestigeBreakdown,
+  type PrestigeOpportunity,
+  type PrestigePolicy,
+  type PrestigeTrack,
+} from './scoring/prestige'
+export {
+  RARE_BANDS,
+  RARE_TREATMENTS,
+  candidateRarePolicy,
+  rareBudgetLeft,
+  rareEventIssues,
+  rarePolicyIssues,
+  selectRareEvent,
+  type RareBand,
+  type RareEventDefinition,
+  type RareOccurrence,
+  type RarePolicy,
+  type RareTreatment,
+} from './narrative/rare-events'
 
 // Content validation
 export {

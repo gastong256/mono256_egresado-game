@@ -53,6 +53,7 @@ export function grade5Answer(
   view: PublicChallengeView,
   deps: EngineDependencies,
   quality: SolutionQuality = 'optimal',
+  descriptor?: RunDescriptor,
 ): InteractionAnswer {
   const id = view.ref.templateId
   const params = paramsOf(view, deps)
@@ -93,7 +94,9 @@ export function grade5Answer(
   }
   if (id === 'y5.course-project-final') {
     const p = finalSchema.parse(params)
-    const plan = finalPlans(p).find((entry) => entry.quality === quality)
+    const plan = finalPlans(p)
+      .filter((entry) => entry.quality === quality)
+      .sort((left, right) => right.team - left.team)[0]
     if (plan === undefined) throw new Error(`missing ${quality} for ${id}`)
     return {
       kind: 'classification',
@@ -132,7 +135,7 @@ export function grade5Answer(
       ),
     }
   }
-  return grade4Answer(view, deps, quality)
+  return grade4Answer(view, deps, quality, descriptor)
 }
 
 export function playGrade5(
@@ -161,6 +164,7 @@ export function playGrade5(
           view.value,
           deps,
           qualityFor(view.value.ref.templateId),
+          descriptor,
         ),
       }
     }

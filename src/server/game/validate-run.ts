@@ -19,6 +19,8 @@ import 'server-only'
  */
 
 import {
+  scorePrestige,
+  type PrestigeBreakdown,
   assertCompatibleVersions,
   ENGINE_VERSION,
   isErr,
@@ -81,6 +83,15 @@ export interface AuthoritativeRunResult {
    * to influence it.
    */
   readonly competitiveScore?: FairScoreResult
+  /**
+   * El Prestige de la carrera, recomputado acá.
+   *
+   * Presente sólo cuando el content set declara oportunidades y el servidor las
+   * tiene. Como el score, sale de volver a jugar la run: no hay campo que un
+   * cliente pueda mandar para moverlo, y los eventos raros que la carrera tuvo
+   * se reconstruyen del replay, no de lo que la submission afirme.
+   */
+  readonly prestige?: PrestigeBreakdown
 }
 
 /**
@@ -236,6 +247,18 @@ export function validateSubmittedRun(
     }
   }
 
+  // El Prestige se recompone del estado que el replay produjo. Si el content
+  // set no ofrece oportunidades, no hay Prestige que reportar y decirlo así es
+  // más honesto que reportar un cero que parezca un resultado.
+  const prestige =
+    dependencies.prestige === undefined
+      ? undefined
+      : scorePrestige(
+          state,
+          dependencies.prestige.opportunities,
+          dependencies.prestige.policy,
+        )
+
   return ok({
     runId: state.descriptor.runId,
     officialScore: state.completion.totalScore,
@@ -254,5 +277,6 @@ export function validateSubmittedRun(
     recoveries: state.progression.history.length,
     previas: state.progression.history.filter((entry) => entry.previa).length,
     ...(competitiveScore === undefined ? {} : { competitiveScore }),
+    ...(prestige === undefined ? {} : { prestige }),
   })
 }

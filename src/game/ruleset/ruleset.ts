@@ -22,6 +22,7 @@ import {
   recoveryPolicyIssues,
   type RecoveryPolicy,
 } from '../progression/recovery'
+import { rarePolicyIssues, type RarePolicy } from '../narrative/rare-events'
 import { compositionPolicyIssues } from '../plan/composition-policy'
 import type { ProfilePolicy } from '../profiles/policy'
 import type { ScoringPolicy } from '../scoring/policy'
@@ -66,6 +67,15 @@ export interface Ruleset {
    * — a poor result has its score and career consequence and nothing else.
    */
   readonly recovery?: RecoveryPolicy
+  /**
+   * Con qué calibración esta ruleset sortea eventos raros.
+   *
+   * Es una regla, no contenido: decide cuántas veces y con qué probabilidad
+   * aparece algo raro, y dos jugadores bajo calibraciones distintas no están
+   * jugando al mismo juego. Ausente significa que la ruleset no sortea rareza,
+   * y el contenido raro que el content set declare no aparece.
+   */
+  readonly rare?: RarePolicy
   readonly narrative: NarrativePacing
   /**
    * True when this ruleset may produce official, ranked results.
@@ -123,6 +133,15 @@ export interface RulesetInput {
    * — a poor result has its score and career consequence and nothing else.
    */
   readonly recovery?: RecoveryPolicy
+  /**
+   * Con qué calibración esta ruleset sortea eventos raros.
+   *
+   * Es una regla, no contenido: decide cuántas veces y con qué probabilidad
+   * aparece algo raro, y dos jugadores bajo calibraciones distintas no están
+   * jugando al mismo juego. Ausente significa que la ruleset no sortea rareza,
+   * y el contenido raro que el content set declare no aparece.
+   */
+  readonly rare?: RarePolicy
   readonly narrative: NarrativePacing
   /** Request an official ruleset; refused unless every policy is production. */
   readonly official?: boolean
@@ -214,6 +233,16 @@ export function createRuleset(
     }
   }
 
+  if (input.rare !== undefined) {
+    const issues = rarePolicyIssues(input.rare)
+    if (issues.length > 0) {
+      return err({
+        kind: 'invalid-ruleset',
+        detail: `rare policy ${input.rare.id}: ${issues.join('; ')}`,
+      })
+    }
+  }
+
   if (input.narrative.cooldownEvents < 0) {
     return err({
       kind: 'invalid-ruleset',
@@ -242,6 +271,9 @@ export function createRuleset(
       input.recovery === undefined || input.recovery.official
         ? undefined
         : `recovery policy ${input.recovery.id}`,
+      input.rare === undefined || input.rare.official
+        ? undefined
+        : `rare policy ${input.rare.id}`,
     ].filter((entry): entry is string => entry !== undefined)
 
     if (development.length > 0) {
@@ -266,6 +298,7 @@ export function createRuleset(
       ? {}
       : { composition: input.composition }),
     ...(input.recovery === undefined ? {} : { recovery: input.recovery }),
+    ...(input.rare === undefined ? {} : { rare: input.rare }),
     official,
   })
 }
