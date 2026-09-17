@@ -908,7 +908,7 @@ Ese cambio llevó el generador a versión `2`. `grade-7-dev-1` conserva las core
 
 **Fail-forward.** No hay game over. El peor acto deja Aura negativa, evidencia de Improvisador y una consecuencia narrativa, y el año sigue.
 
-**Determinismo.** El `runSeed` selecciona una dirección de la lista jugable actual, pero no define sus grillas. Una vez elegida `familia/plantilla/variante`, los parámetros salen del seed fijo del espacio de contenido y de esa dirección, independientes de la run, el año y el slot. Bajo la misma versión de contenido/generador, la misma dirección es siempre el mismo problema; ver [ADR-019](03-architecture/adr/ADR-019-scenario-family-template-variant.md) y [ADR-020](03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md). Desde [ADR-021](03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md) la lista jugable **es el catálogo aprobado**: el seed elige dentro de lo que pasó el pipeline, no dentro de las tres grillas curadas. El contenido llegó a `0.8.0-grade-7` con los perfiles de score y a `0.9.0-grade-7` con `g7.bus-travel-review`. El catálogo vigente `grade-7-dev-5` conserva intactas las 159 direcciones de `dev-4` y suma las 26 variantes del repaso; las versiones anteriores siguen publicadas. Ver [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md) y [ADR-024](03-architecture/adr/ADR-024-progression-recovery-and-graduation.md).
+**Determinismo.** El `runSeed` selecciona una dirección de la lista jugable actual, pero no define sus grillas. Una vez elegida `familia/plantilla/variante`, los parámetros salen del seed fijo del espacio de contenido y de esa dirección, independientes de la run, el año y el slot. Bajo la misma versión de contenido/generador, la misma dirección es siempre el mismo problema; ver [ADR-019](03-architecture/adr/ADR-019-scenario-family-template-variant.md) y [ADR-020](03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md). Desde [ADR-021](03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md) la lista jugable **es el catálogo aprobado**: el seed elige dentro de lo que pasó el pipeline, no dentro de las tres grillas curadas. El contenido llegó a `0.8.0-grade-7` con los perfiles de score y a `0.9.0-grade-7` con `g7.bus-travel-review`. `grade-7-dev-5` conservó intactas las 159 direcciones de `dev-4` y sumó las 26 variantes del repaso; el vigente es `grade-7-dev-6`, que conserva las direcciones de `dev-5` salvo las del mural, rebalanceadas por la [remediación matemática](04-quality/mathematics-remediation-implementation.md) bajo `contentVersion 0.10.0-grade-7`. Las versiones anteriores siguen publicadas. Ver [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md) y [ADR-024](03-architecture/adr/ADR-024-progression-recovery-and-graduation.md).
 
 **Accesibilidad.** Cada celda es una casilla nativa de 56 px: se recorre con Tab y se marca con Espacio. La regla siempre está en texto y nunca es sólo un color. Los cuatro estados corregidos cambian relleno, trazo de borde y glifo a la vez, y llevan además la palabra para lector de pantalla, así que la grilla se lee entera en escala de grises.
 
@@ -1018,7 +1018,7 @@ El principio viene de STACK, que recomienda pregenerar, testear y desplegar vari
 
 **Implementado.** `ApprovedVariantCatalog` guarda la dirección, el origen `authored`/`generated` y el fingerprint de cada variante aprobada. No guarda parámetros ni posiciones: los parámetros se reconstruyen desde la dirección y la huella comprueba que siguen siendo los mismos.
 
-El artefacto vigente es `grade-7-dev-5`, con 185 entradas para las ocho plantillas de producción — las 159 de `dev-4` intactas más las 26 de `g7.bus-travel-review`. `dev-1`, con 133, y `dev-2`/`dev-3`/`dev-4`, con 159, siguen publicados sin cambios. **Una versión publicada no se edita**: cuando el contenido cambia se construye la siguiente y la anterior queda tal cual, porque una run tiene que poder resolverse contra el conjunto que realmente jugó. Los cinco catálogos son reproducibles byte a byte y `pnpm game:variants check` verifica la integridad del vigente dentro de `pnpm verify`.
+El artefacto vigente es `grade-7-dev-6`, con 185 entradas para las ocho plantillas de producción: las de `dev-5` salvo las 26 del mural, cuya población se rebalanceó para que 2 L y 4 L sean la respuesta óptima en partes casi iguales (remediación matemática, MAT-006), bajo `contentVersion 0.10.0-grade-7`. `dev-5` —las 159 de `dev-4` más las 26 de `g7.bus-travel-review`—, `dev-1`, con 133, y `dev-2`/`dev-3`/`dev-4`, con 159, siguen publicados sin cambios. **Una versión publicada no se edita**: cuando el contenido cambia se construye la siguiente y la anterior queda tal cual, porque una run tiene que poder resolverse contra el conjunto que realmente jugó. Los seis catálogos son reproducibles byte a byte y `pnpm game:variants check` verifica la integridad del vigente dentro de `pnpm verify`.
 
 `grade-7-dev-2` no es un superconjunto **semántico exacto** de `dev-1`: las plantillas cuyo contrato de generación no cambió conservan direcciones y huellas, pero el generador del acto del 25 de Mayo pasó a versión `2` y puede materializar otro contenido en una misma dirección bajo el contrato nuevo. `dev-1` conserva la versión anterior; no se reescribe. Ver [ADR-021](03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md).
 
@@ -1056,7 +1056,7 @@ Los criterios de aceptación de estos controles están en [validación y auditor
 | Fuentes híbridas `authored` / `generated`, ambas validadas | **implementadas** — siete plantillas generadas y `g7.group-tasks` autorada |
 | Generador por restricción como abstracción reutilizable | **implementado** — [ADR-020](03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md) |
 | Validación, fingerprint, deduplicación y auditoría de población | **implementados** para el catálogo de desarrollo |
-| Catálogo aprobado y versionado de variantes | **implementado** con `dev-1` a `dev-5` inmutables; `grade-7-dev-5` es el vigente y el oficial de la feria sigue sin congelar |
+| Catálogo aprobado y versionado de variantes | **implementado** con `dev-1` a `dev-6` inmutables; `grade-7-dev-6` es el vigente y el oficial de la feria sigue sin congelar |
 | `variantCatalogVersion` en la identidad de la run | **implementado** como campo opcional: una run que juega variantes curadas no salió de ningún catálogo y lo dice omitiéndolo |
 | Perfil cognitivo, banda derivada y costo de scheduling | **implementados**; la calibración exacta sigue en Teacher Gate |
 | Compositor normal por presupuesto y `RunPlan` concreto | **implementados**; `grade-7-composed` prueba el camino real y la genericidad de seis etapas se prueba sólo con fixtures sintéticos |
@@ -1190,7 +1190,7 @@ El patrón de generación de arriba evita que una variante salga rota. No evita 
 
 La arquitectura vigente agrega un nivel intermedio —**plantillas**: estructuras de razonamiento distintas dentro del mismo escenario— y un catálogo aprobado de variantes prevalidado. Ver [familias, plantillas y variantes](01-game-design/challenge-families-and-variants.md) para la jerarquía, la generación por restricción y los controles anti-memorización, y [validación y auditoría de variantes](04-quality/variant-validation-and-audit.md) para los invariantes que una variante aprobada debe cumplir.
 
-La jerarquía y el pipeline están **implementados** por [ADR-019](03-architecture/adr/ADR-019-scenario-family-template-variant.md) y [ADR-020](03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md): siete plantillas de producción tienen fuente generada y `g7.group-tasks` conserva deliberadamente una fuente autorada, todas validadas. Desde [ADR-021](03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md), el catálogo aprobado alimenta la partida real; el vigente es `grade-7-dev-5`, con 185 direcciones: las 159 de `dev-4` intactas más 26 de `g7.bus-travel-review`. La familia `bus` demuestra variación cognitiva con `g7.bus-timing` y `g7.bus-latest-departure`, que preguntan y se responden de maneras distintas. Es la primera prueba de producción; ampliar esa profundidad al resto del catálogo sigue siendo trabajo futuro de contenido.
+La jerarquía y el pipeline están **implementados** por [ADR-019](03-architecture/adr/ADR-019-scenario-family-template-variant.md) y [ADR-020](03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md): siete plantillas de producción tienen fuente generada y `g7.group-tasks` conserva deliberadamente una fuente autorada, todas validadas. Desde [ADR-021](03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md), el catálogo aprobado alimenta la partida real; el vigente es `grade-7-dev-6`, con 185 direcciones: las de `dev-5` —159 de `dev-4` más 26 de `g7.bus-travel-review`— con el mural rebalanceado por la [remediación matemática](04-quality/mathematics-remediation-implementation.md). La familia `bus` demuestra variación cognitiva con `g7.bus-timing` y `g7.bus-latest-departure`, que preguntan y se responden de maneras distintas. Es la primera prueba de producción; ampliar esa profundidad al resto del catálogo sigue siendo trabajo futuro de contenido.
 
 ## Bandas de dificultad
 
@@ -1622,7 +1622,7 @@ dominio paramétrico + generador constraint-first → materializar
 
 `GENERATED` no significa producir números arbitrarios durante una partida. Bajo un contrato versionado de contenido y generador, cada candidato es una función pura de su dirección y del seed fijo del espacio de contenido; sólo una variante aprobada puede entrar al catálogo. Los siete generadores actuales se ejecutan y auditan con tooling offline. El browser materializa una dirección conocida, no improvisa contenido sin validar.
 
-Cambiar el contrato de un generador exige una versión nueva de generador, contenido y catálogo. La versión publicada anterior permanece reconstruible: no se la regenera para adoptar la semántica nueva. El acto del 25 de Mayo, versión `1` en `grade-7-dev-1` y versión `2` desde `grade-7-dev-2`, es el caso vigente; `dev-3` y `dev-4` preservaron las direcciones previas al alinear nuevas identidades de contenido, y el catálogo actual `dev-5` conserva las 159 entradas de `dev-4` y suma 26 de `g7.bus-travel-review` bajo `contentVersion 0.9.0-grade-7`.
+Cambiar el contrato de un generador exige una versión nueva de generador, contenido y catálogo. La versión publicada anterior permanece reconstruible: no se la regenera para adoptar la semántica nueva. El acto del 25 de Mayo, versión `1` en `grade-7-dev-1` y versión `2` desde `grade-7-dev-2`, es el caso vigente; `dev-3` y `dev-4` preservaron las direcciones previas al alinear nuevas identidades de contenido, `dev-5` conservó las 159 entradas de `dev-4` y sumó 26 de `g7.bus-travel-review` bajo `contentVersion 0.9.0-grade-7`, y el actual `dev-6` rebalancea el mural con un gate de catálogo, sin cambiar su generador, bajo `0.10.0-grade-7`.
 
 La estrategia matemática no obliga a proceduralizar la escena. Una plantilla puede mantener autorados narrativa, personajes, copy y estructura de interacción mientras genera sus parámetros concretos. El acto del 25 de Mayo conserva autoradas la coreografía y sus tres reglas; las grillas numéricas son la parte generada.
 
@@ -2978,21 +2978,30 @@ comparan sobre todos los planes. Las mecánicas compartidas se promovieron a
 | Template | Formas semánticas | Escalera 100/75/40/10 | Equipo / Aura / Estilo |
 |---|---|---|---|
 | `y2.team-kit-order` | `exact-share` (el reparto proporcional da justo), `remainder` (deciden los restos mayores), `stock-capped` (a un equipo se le acaba el color). Tres equipos, tope de unidades y stock por color | INVALID excede stock, tope o deja a alguien sin pechera · FUNCTIONAL reparte parejo · EFFICIENT proporcional con un resto mal puesto · OPTIMAL proporcional por restos mayores | Ninguno |
-| `y2.course-project-survey` | Seis afirmaciones sobre la encuesta del nivel, con muestra y población distintas; formas `majority`, `margin` y `least-chosen` | INVALID publica lo que la muestra no sostiene · FUNCTIONAL retiene de más · EFFICIENT una sola confusión · OPTIMAL cada afirmación en su lugar | Ninguno. Ruta de Repaso a `y2.data-claim-review` |
-| `y2.standings-claim` | Tabla con partidos pendientes; afirmaciones seguras, posibles e imposibles mezcladas | INVALID llama seguro a lo que no lo es · FUNCTIONAL/EFFICIENT según cuántas fallan · OPTIMAL clasificación exacta | **Aura** por la postura pública, leída de un campo distinto del de las etiquetas: acertar la matemática nunca concede Aura (`LOCKED`) |
+| `y2.course-project-survey` | Seis afirmaciones sobre la encuesta del nivel —más elegida entre quienes contestaron, más de la mitad de las respuestas, más de la mitad del nivel, «el nivel entero prefiere», le ganó a la segunda según la regla del curso, la menos elegida—. Formas `denominator` (mayoría entre respuestas y no del nivel), `missing-data` (contestó menos de la mitad), `margin` (la diferencia con la segunda no cumple la regla) y `high-response` (contestó al menos el 85 %). **Regla de publicación** en pantalla y como constante única: una opción le ganó a otra sólo si le saca más de 1 de cada 10 respuestas (`diferencia × 10 > respuestas`), sin variantes a una respuesta del borde. **`year-prefers`** por cota de peor caso: cierta sólo si la primera le saca a cada otra más que toda la gente que no contestó, y sólo en `high-response`. Un ciclo de diez papeles reparte forma y vector de verdad: 7 claves en el catálogo, ninguna forma con clave única y el contraste del denominador en el 60 % | INVALID publica algo que los datos no sostienen · FUNCTIONAL retiene dos o más ciertas · EFFICIENT retiene una · OPTIMAL cada afirmación en su lugar. Los cuatro niveles, en toda variante | Ninguno. Ruta de Repaso a `y2.data-claim-review` |
+| `y2.standings-claim` | Tabla de cuatro cursos con puntos, partidos pendientes y puntos por victoria; cuatro afirmaciones —dos de «termina primero» y dos de «termina arriba de»— clasificadas como seguro, posible o imposible. Formas `settled`, `open` y `eliminated`. Los pendientes se juegan **entre estos cuatro cursos** y cada partido lo gana uno —la consigna lo dice—: suma par y ningún curso con más pendientes que los otros tres. **Gate de modelo**: la categoría por cotas de cada curso es idéntica a la del torneo conjunto bajo todo fixture y todo resultado. «Arriba» es estricto —empatar no es terminar arriba— y se rechaza toda tabla donde contar el empate como arriba cambiaría una categoría. Ninguna afirmación tiene la misma categoría en más del 70 % del catálogo | INVALID llama seguro a lo que no lo es · FUNCTIONAL dos o más categorías mal · EFFICIENT una · OPTIMAL clasificación exacta | **Aura** por la postura pública, leída de un campo distinto del de las etiquetas: acertar la matemática nunca concede Aura (`LOCKED`) |
 | `y2.court-zones` | Zonas, distancias de Chebyshev y bordes de la cancha; formas `separation`, `margin` y `covered` | INVALID postas pisadas o fuera · FUNCTIONAL separación mínima · EFFICIENT una más · OPTIMAL la separación pedida | Ninguno |
 | `y2.intercurso-plan` | Tres actividades en dos turnos, cuatro personas con disponibilidad por turno; formas `tight-availability`, `clash` y `spare` | INVALID falta cobertura, choque de turno o alguien que no está · FUNCTIONAL obligaciones cubiertas · EFFICIENT una opcional · OPTIMAL todas | **Equipo** 0–3 por los acuerdos del grupo, leído entre planes que ya cierran (`LOCKED`). Estilo por la forma del reparto |
-| `y2.data-claim-review` | Una sola afirmación por pantalla, con el denominador a la vista | INVALID/FUNCTIONAL/EFFICIENT/OPTIMAL según la lectura del denominador | Sin Estilo ni score |
+| `y2.data-claim-review` | Una cifra, quienes contestaron y el nivel, con tres afirmaciones: más de la mitad de quienes contestaron, más de la mitad del nivel y «sabemos qué eligió quien no contestó» (control siempre falso). Vectores de las dos primeras: `TF` en la mitad del catálogo (el contraste del denominador), `TT` y `FF` en un cuarto cada uno; ninguna cifra en la mitad exacta | INVALID publica una falsa · FUNCTIONAL dos ciertas retenidas (sólo en `TT`) · EFFICIENT una · OPTIMAL exacta. `FF` sólo tiene OPTIMAL e INVALID: es un Repaso, no se le exige witness de niveles | Sin Estilo ni score |
 
 **Banda y metadata.** `bandOf(cognitive)` da: pedido de pecheras 4 → CORE;
 encuesta, tabla y plan del Intercurso → STANDARD; postas 8 → STRETCH; el Repaso
 4 → CORE. El cluster `intercurso` lo declaran las tres Templates del evento, así
 que una run normal aporta como máximo una de ellas.
 
-**Catálogo `grade-2-dev-1`.** 508 entradas, 149 de 2.º, construido con
+**Catálogo `grade-2-dev-3`.** 508 entradas, construido con
 `pnpm game:variants build --content=grade-2`; re-aprueba las de 7.º y 1.º sin
 tocar sus artefactos publicados. La práctica parcial `7.º → 2.º` es
-`official: false`.
+`official: false`. Reemplaza a `grade-2-dev-2` por la
+[remediación matemática](04-quality/mathematics-remediation-implementation.md):
+encuesta, Repaso del denominador y tabla generados por papel —el gate
+`addressGates` comprueba que cada dirección juegue el suyo—, contenido
+`2.2.0-grade-2`.
+
+**Incertidumbre, sin probabilidad.** La encuesta y la tabla trabajan con datos y
+cotas: lo que la gente que no contestó podría haber elegido, lo que los partidos
+que faltan podrían dar. No hay probabilidad cuantificada ni vocabulario
+inferencial (MAT-012).
 
 **Rareza.** `rare.y2.missing-player` sigue siendo hook: la orquestación de
 rareza se implementa una sola vez en la integración de carrera completa
@@ -3138,7 +3147,7 @@ evaluador y materialización sólo de direcciones aprobadas.
 
 | Template | Formas semánticas | Escalera 100/75/40/10 | Equipo / Estilo |
 |---|---|---|---|
-| `y3.transport-pass` | Cuatro formas de pagar el mismo colectivo —boleto, tarjeta con costo único, combo con viajes incluidos y abono libre— contra cinco meses posibles, del corto al cargado, con los viajes del mes entre dos números | INVALID nunca gana y encima es la más cara para los viajes esperados · FUNCTIONAL nunca gana pero tampoco es la peor · EFFICIENT gana en otra cantidad posible del mes · OPTIMAL gana para los viajes esperados | Ninguno (D-S08-065). Ruta de Repaso a `y3.fixed-variable-review` |
+| `y3.transport-pass` | Cuatro formas de pagar el mismo colectivo —boleto, tarjeta con costo único, combo con viajes incluidos y abono libre— contra seis formas de mes, de `pocos-viajes` a `mes-cargado`, con los viajes del mes pasado como estimación y un rango de cuánto puede cambiar este mes. Los precios son de la ciudad y del mes: ninguno se calcula con el rango. Cada dirección tiene el papel de una forma de pagar óptima, así que las cuatro son óptimas en el catálogo y ninguna en más del 40 %; en `likely` la más barata le saca a la segunda al menos $100 y el 2 % | INVALID nunca gana y encima es la más cara para los viajes esperados · FUNCTIONAL nunca gana pero tampoco es la peor · EFFICIENT gana en otra cantidad posible del mes, y el feedback dice a partir de cuántos viajes · OPTIMAL gana para los viajes esperados | Ninguno (D-S08-065). Ruta de Repaso a `y3.fixed-variable-review` |
 | `y3.course-project-tech` | Tres recursos compartidos —notebook prestada, lugar en el pendrive y rato de laboratorio a una tasa— y tres cosas que producir con consumos distintos; formas `pendrive-corto`, `laboratorio-corto` y `notebook-corta` | INVALID se pasa de un recurso o no llega al mínimo de la feria · FUNCTIONAL mínimos · EFFICIENT dos de lo prometido · OPTIMAL lo prometido entero | **Equipo** 0–3 por los acuerdos del grupo, leído por dueño sobre el mismo plan (`LOCKED`). Ruta de Repaso a `y3.rate-capacity-review` |
 | `y3.friend-day` | Cuatro personas con ventanas propias, dos lugares con viaje en el medio, dos bloques obligatorios y dos opcionales; formas `ventana-corta`, `traslado-largo` y `gustos-cruzados` | INVALID se pisa, no da el viaje o falta quien tiene que estar · FUNCTIONAL obligatorios · EFFICIENT un opcional · OPTIMAL los dos | **Equipo** 0–3: que nadie quede afuera, que lo que cada uno quería pase mientras está y que nadie espere de más (`LOCKED`). Estilo por la forma de la tarde |
 | `y3.week-planner` | Cuatro días de tarde libre, dos compromisos que ya tienen día y hora, dos pendientes con vencimiento y dos opcionales; formas `semana-cargada`, `vencimiento-temprano` y `tarde-ocupada` | INVALID falta, se pisa, se sale de la tarde o vence · FUNCTIONAL obligatorios · EFFICIENT un opcional · OPTIMAL los dos | Sin Equipo ni Aura. **Estilo fuerte**: pegado al vencimiento → Improvisador; con un día entero libre → Estratega; repartido con margen → Aplicado |
@@ -3168,9 +3177,11 @@ quiere evitar no aparece ninguna vez. Sigue siendo blanda: ordena planes válido
 y no filtra ninguno, así que cuando esa pareja es la única legal la carrera se
 compone igual.
 
-**Catálogo `grade-3-dev-1`.** 681 entradas, 173 de 3.º, construido con
+**Catálogo `grade-3-dev-3`.** 681 entradas, construido con
 `pnpm game:variants build --content=grade-3`; re-aprueba 7.º, 1.º y 2.º sin
-tocar sus artefactos publicados. La práctica parcial `7.º → 3.º` es
+tocar sus artefactos publicados. Reemplaza a `grade-3-dev-2` por la
+[remediación matemática](04-quality/mathematics-remediation-implementation.md): colectivo generado por papel y los dos Repasos con feedback de dirección
+según el signo del error, contenido `3.2.0-grade-3`. La práctica parcial `7.º → 3.º` es
 `official: false`.
 
 **Rareza.** `rare.y3.offline-project` sigue siendo hook, por la misma razón que
@@ -3319,10 +3330,10 @@ independiente por evaluador y materialización sólo de direcciones aprobadas.
 | Template | Formas semánticas | Escalera 100/75/40/10 | Equipo / Aura / Estilo |
 |---|---|---|---|
 | `y4.shift-coverage` | Dos puestos en tres bloques seguidos y cuatro personas con disponibilidad por bloque; formas `llega-tarde`, `se-va-temprano` y `todos-parciales` | INVALID puesto vacío, choque de hora o alguien que no está · FUNCTIONAL cierra pero alguien se queda las tres horas · EFFICIENT todos descansan · OPTIMAL además ningún puesto cambia de manos más de una vez | **Equipo** 0–3 por los acuerdos del grupo, leído entre cronogramas que ya cierran (`LOCKED`) |
-| `y4.course-project-fundraiser` | Costo fijo, tres cosas para vender con su costo, precio y minutos de cocina, un objetivo y un colchón; formas `cocina-corta`, `objetivo-alto` y `margen-parejo` | INVALID se pasa de cocina o pierde plata · FUNCTIONAL cubre costos · EFFICIENT llega al objetivo · OPTIMAL llega con el colchón | Sin Equipo ni Aura. Estilo por la forma de la producción |
+| `y4.course-project-fundraiser` | Costo fijo, tres cosas para vender con su costo, precio y minutos de cocina, un objetivo y un colchón; formas `cocina-corta`, `objetivo-alto` y `margen-parejo`. La consigna nombra las tres condiciones en orden —no perder plata, llegar al objetivo, llegar con el colchón—, explica el punto de equilibrio en palabras y dice que todo lo que se prepara se vende | INVALID se pasa de cocina o pierde plata · FUNCTIONAL cubre costos · EFFICIENT llega al objetivo · OPTIMAL llega con el colchón | Sin Equipo ni Aura. Estilo por la forma de la producción |
 | `y4.school-event-flow` | Tres puestos en fila con su tasa y lo que suma cada ayudante; formas `puerta-lenta`, `acreditacion-lenta` y `buffet-lento` | INVALID la cola crece o reparte ayudantes que no hay · FUNCTIONAL alcanza el ritmo pedido · EFFICIENT llega a la mitad del margen posible · OPTIMAL el mejor ritmo alcanzable | Ninguno: la consecuencia sobre otra gente se ve, pero no se cobra como gesto social |
 | `y4.event-floor-plan` | Salón con puerta, pasillo y a veces columnas; escenario, tres mesas y una barra; formas `salon-angosto`, `puerta-al-medio` y `con-columnas` | INVALID se sale, se pisa, tapa el pasillo, no sienta a todos o deja una zona encerrada · FUNCTIONAL entra y se circula · EFFICIENT además sobra lugar para una mesa más **o** entra la barra · OPTIMAL las dos | Ninguno |
-| `y4.represent-class` | Tres límites escritos —plata, minutos y lugar— y cinco propuestas; la situación declara a quién afecta lo que se propone | INVALID lleva al consejo algo que no entra · EFFICIENT deja una viable afuera · FUNCTIONAL deja dos o más · OPTIMAL exacta | **Aura** por la postura pública, leída de un campo distinto del de las etiquetas (`LOCKED`). Sin Equipo y sin Prestige |
+| `y4.represent-class` | Tres límites escritos —plata, minutos y lugar— y cinco propuestas; la situación declara a quién afecta lo que se propone. Toda variante tiene al menos dos propuestas viables, así que no llevar ninguna nunca es casi exacto | INVALID lleva al consejo algo que no entra · EFFICIENT deja una viable afuera · FUNCTIONAL deja dos o más —incluido no llevar ninguna, que la consecuencia narra como tal— · OPTIMAL exacta | **Aura** por la postura pública, leída de un campo distinto del de las etiquetas (`LOCKED`). Sin Equipo y sin Prestige |
 | `y4.margin-review` | Costo fijo contra lo que deja cada bandeja | OPTIMAL las bandejas justas · FUNCTIONAL dividir por el precio · EFFICIENT una de diferencia · INVALID el resto | Sin Estilo ni score |
 | `y4.spatial-capacity-review` | Salón, celdas reservadas y mesas de cuatro celdas | OPTIMAL descuenta lo reservado · FUNCTIONAL cuenta el salón entero · EFFICIENT una mesa de diferencia · INVALID el resto | Sin Estilo ni score |
 
@@ -3353,9 +3364,12 @@ distorsionaría la matemática sin agregar nada. La ficha declara que sus nombre
 de interacción son modos, no capacidades runtime. La familia de razonamiento sí
 estrena `SYSTEMS_OPTIMIZATION`, que ninguna Template usaba.
 
-**Catálogo `grade-4-dev-1`.** 854 entradas, 173 de 4.º, construido con
+**Catálogo `grade-4-dev-3`.** 853 entradas, construido con
 `pnpm game:variants build --content=grade-4`; re-aprueba los años anteriores sin
-tocar sus artefactos publicados. La práctica parcial `7.º → 4.º` es
+tocar sus artefactos publicados. Reemplaza a `grade-4-dev-2` por la
+[remediación matemática](04-quality/mathematics-remediation-implementation.md): gate de dos propuestas viables en el consejo —una variante menos—, consigna
+de la peña, dirección del error en los dos Repasos y feedback de la cola,
+contenido `4.2.0-grade-4`. La práctica parcial `7.º → 4.º` es
 `official: false`.
 
 ---
@@ -3525,10 +3539,10 @@ independiente por evaluador y materialización sólo de direcciones aprobadas.
 | Template | Formas semánticas | Escalera 100/75/40/10 | Equipo / Aura / Estilo |
 |---|---|---|---|
 | `y5.final-trip-or-event` | Cuatro paquetes contra el fondo del curso, los días que da el colegio y los lugares que hacen falta; formas `fondo-corto`, `pocos-dias` y `curso-grande` | INVALID no se puede hacer · FUNCTIONAL se puede pero falta lo que el curso pidió · EFFICIENT trae todo y deja el fondo al límite · OPTIMAL trae todo y deja la reserva | Ninguno |
-| `y5.course-project-final` | Seis tareas con dueño y horas, alguien que no va a estar, y tres destinos por tarea: mantener, repartir o recortar; formas `se-cae-el-video`, `menos-horas` y `todo-esencial` | INVALID recorta algo esencial, deja la tarea de quien no está o pasa las horas de alguien · FUNCTIONAL el plan cierra · EFFICIENT sobrevive parte de lo no esencial · OPTIMAL sobrevive todo | **Equipo** por los acuerdos del grupo y **Aura** por lo que el curso dice del cambio, en campos distintos de la respuesta (`LOCKED`). Estilo por la forma de la reconstrucción |
+| `y5.course-project-final` | Seis tareas con dueño y horas, alguien que no va a estar, y tres destinos por tarea: mantener, repartir o recortar; formas `se-cae-el-video`, `menos-horas` y `todo-esencial`. Una de las personas que quedan tiene pocas horas, así que repartir parejo sobrecarga a alguien; cada dirección rota forma y dueño de la primera tarea, y ningún plan de «repartir todo» es ya el óptimo | INVALID recorta algo esencial, deja la tarea de quien no está o pasa las horas de alguien · FUNCTIONAL el plan cierra · EFFICIENT sobrevive parte de lo no esencial · OPTIMAL sobrevive todo | **Equipo** por los acuerdos del grupo y **Aura** por lo que el curso dice del cambio, en campos distintos de la respuesta (`LOCKED`). Estilo por la forma de la reconstrucción |
 | `y5.stage-screen` | Pantalla e imagen en centímetros, el cartel del curso de un lado con su aire, y cinco formas de proyectar; formas `pantalla-ancha`, `imagen-alta` y `cartel-grande` | INVALID deforma o se come el cartel · FUNCTIONAL deja media pantalla vacía · EFFICIENT llena casi todo · OPTIMAL llena la pantalla con el cartel entero | Ninguno |
 | `y5.yearbook` | Páginas exactas de imprenta, mínimos pactados, un tope y material por sección; formas `tope-apretado`, `minimos-altos` y `material-desparejo` | INVALID no suma exacto o rompe lo pactado · FUNCTIONAL cierra sin completar ninguna sección · EFFICIENT completa alguna · OPTIMAL completa todas las que se podían | Ninguno |
-| `y5.next-step-options` | Cinco escenarios ya escritos contra las horas libres, el viaje diario y el día tomado; formas `horas-justas`, `viaje-largo` y `compromiso-fijo` | INVALID marca como viable algo que no entra · EFFICIENT deja uno viable afuera · FUNCTIONAL deja dos o más · OPTIMAL exacta | Ninguno. La preferencia personal **no se puntúa de ninguna forma** |
+| `y5.next-step-options` | Cinco escenarios ya escritos contra las horas libres, el viaje diario y el día tomado; las horas de cada escenario **incluyen** su viaje y la pantalla lo dice. Ocho vectores de viabilidad rotan por dirección: cada escenario entra en el 25 % a 75 % del catálogo, alguna opción de estudio entra en al menos la mitad y lo que las deja afuera se reparte entre horas, viaje y día | INVALID marca como viable algo que no entra · EFFICIENT deja uno viable afuera · FUNCTIONAL deja dos o más · OPTIMAL exacta | Ninguno. La preferencia personal **no se puntúa de ninguna forma** |
 | `y5.multi-option-comparison-review` | Un paquete que no incluye el micro, que se cobra por persona | OPTIMAL el total con el micro de cada uno · FUNCTIONAL sumarlo una sola vez · EFFICIENT una persona de diferencia · INVALID el resto | Sin Estilo ni score |
 | `y5.proportion-capacity-review` | Material de una sección contra lo que entra por página | OPTIMAL sube al entero · FUNCTIONAL se queda en la parte entera · EFFICIENT una página de diferencia · INVALID el resto | Sin Estilo ni score |
 
@@ -3555,9 +3569,18 @@ decisión es elegir entre formas de proyectar y toda la geometría está escrita
 La familia de razonamiento declarada sigue siendo `SPATIAL`, que es de lo que
 trata la cuenta.
 
-**Catálogo `grade-5-dev-1`.** 1025 entradas, 172 de 5.º, construido con
+**Catálogo `grade-5-dev-3`.** 1026 entradas, construido con
 `pnpm game:variants build --content=grade-5`; re-aprueba los años anteriores sin
-tocar sus artefactos publicados. `7.º → 5.º` es el primer set con los seis años
+tocar sus artefactos publicados. Reemplaza a `grade-5-dev-2` por la
+[remediación matemática](04-quality/mathematics-remediation-implementation.md): muestra final y año que viene generados por papel, dirección del error en
+los dos Repasos y feedback del viaje, contenido `5.2.0-grade-5`.
+
+**La pantalla del acto no se remedió.** RS-MAT-008 quedó detenido por STOP: con
+seis formas de proyectar y la escalera del contrato, exigir los tres niveles no
+inválidos en cada variante vuelve imposible que la imagen entera sea la óptima y,
+con eso, el reparto de óptimas y la heurística de lado que el mismo contrato pide.
+La Template sigue como estaba —sólo el texto de la restricción nombra ahora el
+lado real del cartel— hasta que se decida el punto abierto. `7.º → 5.º` es el primer set con los seis años
 y sigue siendo `official: false`.
 
 **Lo que 5.º todavía no trae.** La convergencia de carrera se cumple hoy por
@@ -5102,30 +5125,32 @@ sigue bloqueando producción amplia de 2.º–5.º hasta PASS.
 
 Trazabilidad de la cadena `hallazgo → opiniones independientes → decisión del Chair
 → contrato de remediación → implementación → re-auditoría → sign-off provisional →
-revisión humana final`. Adjudicado el 16 de septiembre de 2026; la implementación
-todavía no existe.
+revisión humana final`. Adjudicado el 16 de septiembre de 2026; implementado el 17
+con veredicto `BLOCKED` (D-S08-104). La re-auditoría todavía no existe.
 
-| Hallazgos | Decisión canónica | Contrato | Implementación / verificación siguiente |
-|---|---|---|---|
-| MAT-001 | `REQUIRED_CORRECTION` P0 | [RS-MAT-001](04-quality/mathematics-remediation-spec.md) | Remediación; re-audit con auditoría de estrategia ciega |
-| MAT-002 · MAT-003 · MAT-004 · MAT-AJ-NEW-006 | `REQUIRED_CORRECTION` P0 / P0 / P1 / P2 | RS-MAT-002, RS-MAT-003, RS-MAT-004, RS-NEW-006 | Remediación de la encuesta y su Repaso; ficha de 2.º |
-| MAT-005 · MAT-AJ-NEW-004 · MAT-AJ-NEW-005 | `REQUIRED_CORRECTION` P1 / P1 / P2 | RS-MAT-005 | Remediación de la tabla; gate de modelo del torneo |
-| MAT-006 | `REQUIRED_CORRECTION` P2 | RS-MAT-006 | Balance del catálogo de 7.º |
-| MAT-007 | `REQUIRED_CORRECTION` P2 | RS-MAT-007 | Remediación del consejo escolar |
-| MAT-008 | `REQUIRED_CORRECTION` P0 | RS-MAT-008 | Rediseño acotado de la pantalla |
-| MAT-009 · MAT-AJ-NEW-007 | `REQUIRED_CORRECTION` P1 | RS-MAT-009 | Remediación de «el año que viene»; guardrail vocacional |
-| MAT-010 | `ACCEPT_AS_DESIGNED` | — | Sin cambio; revisión humana final |
-| MAT-011 | `REQUIRED_CLARIFICATION` P2 | RS-MAT-011 | Consigna de la peña |
-| MAT-012 · MAT-013 | `ACCEPT_WITH_DOCUMENTED_RISK` | — | Banderas para la revisión humana final |
-| MAT-AJ-NEW-001 | `REQUIRED_CORRECTION` P0 | RS-NEW-001 | Remediación de la muestra final |
-| MAT-AJ-NEW-002 | `REQUIRED_CORRECTION` P0 | RS-NEW-002 | Feedback de la notebook |
-| MAT-AJ-NEW-003 | `REQUIRED_CORRECTION` P1 | RS-NEW-003 | Feedback de cinco Repasos numéricos |
+| Hallazgos | Decisión canónica | Contrato | Implementación | Verificación |
+|---|---|---|---|---|
+| MAT-001 | `REQUIRED_CORRECTION` P0 | [RS-MAT-001](04-quality/mathematics-remediation-spec.md) | DONE · colectivo por papel | `unit/grade-3-transport-pass`, auditoría de estrategia ciega |
+| MAT-002 · MAT-003 · MAT-004 · MAT-AJ-NEW-006 | `REQUIRED_CORRECTION` P0 / P0 / P1 / P2 | RS-MAT-002, RS-MAT-003, RS-MAT-004, RS-NEW-006 | DONE · encuesta, Repaso y ficha de 2.º | `unit/grade-2-survey`, auditoría |
+| MAT-005 · MAT-AJ-NEW-004 · MAT-AJ-NEW-005 | `REQUIRED_CORRECTION` P1 / P1 / P2 | RS-MAT-005 | DONE · gate de modelo del torneo, empate estricto | `unit/grade-2-standings`, auditoría |
+| MAT-006 | `REQUIRED_CORRECTION` P2 | RS-MAT-006 | DONE · `grade-7-dev-6` | `integration/mathematics-remediation`, auditoría |
+| MAT-007 | `REQUIRED_CORRECTION` P2 | RS-MAT-007 | DONE | `integration/mathematics-remediation`, auditoría |
+| MAT-008 | `REQUIRED_CORRECTION` P0 | RS-MAT-008 | **BLOCKED · STOP** ([D-S08-105](04-quality/mathematics-remediation-implementation.md#stop-1-rs-mat-008-y5stage-screen)) | `it.todo` en la auditoría; pregunta abierta 66 |
+| MAT-009 · MAT-AJ-NEW-007 | `REQUIRED_CORRECTION` P1 | RS-MAT-009 | DONE | `integration/mathematics-remediation`, auditoría |
+| MAT-010 | `ACCEPT_AS_DESIGNED` | — | Sin cambio | Revisión humana final |
+| MAT-011 | `REQUIRED_CLARIFICATION` P2 | RS-MAT-011 | DONE · consigna de la peña | `integration/mathematics-remediation`, E2E 320 px |
+| MAT-012 · MAT-013 | `ACCEPT_WITH_DOCUMENTED_RISK` | — | Sin cambio | Banderas para la revisión humana final |
+| MAT-AJ-NEW-001 | `REQUIRED_CORRECTION` P0 | RS-NEW-001 | **PARTIAL** · criterios 1, 2, 4 y techos; criterio 3 **STOP** ([D-S08-106](04-quality/mathematics-remediation-implementation.md#stop-2-rs-new-001-criterio-3-y5course-project-final)) | `integration/mathematics-remediation`, auditoría; pregunta abierta 67 |
+| MAT-AJ-NEW-002 | `REQUIRED_CORRECTION` P0 | RS-NEW-002 | DONE | `integration/mathematics-remediation` |
+| MAT-AJ-NEW-003 | `REQUIRED_CORRECTION` P1 | RS-NEW-003 | DONE · seis Repasos | `integration/mathematics-remediation` |
+| Regla 2.9 | Inventario de feedback afirmativo | — | DONE · seis textos falsos más corregidos (D-S08-110) | [inventario](04-quality/mathematics-remediation-feedback-inventory.md) |
 
 Fuentes: [adjudicación](04-quality/mathematics-department-ai-adjudication.md),
 [revisor A](04-quality/mathematics-department-ai-reviewer-a.md),
 [revisor B](04-quality/mathematics-department-ai-reviewer-b.md),
-[revisor C](04-quality/mathematics-department-ai-reviewer-c.md) y
-[decisiones D-S08-095 a D-S08-103](07-reference/decision-register.md).
+[revisor C](04-quality/mathematics-department-ai-reviewer-c.md),
+[implementación](04-quality/mathematics-remediation-implementation.md) y
+[decisiones D-S08-095 a D-S08-111](07-reference/decision-register.md).
 
 ---
 
@@ -8213,7 +8238,7 @@ Opcional. `canonicalize(state)` produce la forma estable sobre la que se puede c
 
 Una instancia de desafío se direcciona por su identidad de contenido completa —familia de escenario, plantilla y variante— más dónde la ubicó la run. Una `ChallengeDefinition` **es** una plantilla; el catálogo de contenido disponible (`ContentCatalog`) está separado del plan de contenido de una run (`RunPlan`), y la elegibilidad por etapa y el rol de colocación son metadata declarativa del contenido, no conocimiento del motor.
 
-Cada plantilla declara una fuente híbrida: registros autorados y, opcionalmente, un espacio generado por restricción. Ambas pasan por validadores genéricos y matemáticos, canonización, fingerprint SHA-256 y deduplicación antes de entrar en un `ApprovedVariantCatalog`. El catálogo vigente es `grade-7-dev-5`; es de desarrollo y la partida real de 7.º lo consume mediante `ApprovedVariantLookup`. Conserva intactas las 159 direcciones de `dev-4` y suma 26 de `g7.bus-travel-review`, para 185 entradas bajo `contentVersion 0.9.0-grade-7`; `dev-1` a `dev-4` siguen publicados sin cambios. El content set de desarrollo `grade-7-through-1` usa su propio catálogo, `grade-1-dev-1`: 174 variantes de las siete plantillas de 1.º más las de 7.º re-aprobadas bajo `contentVersion 1.0.0-grade-1`.
+Cada plantilla declara una fuente híbrida: registros autorados y, opcionalmente, un espacio generado por restricción. Ambas pasan por validadores genéricos y matemáticos, canonización, fingerprint SHA-256 y deduplicación antes de entrar en un `ApprovedVariantCatalog`. El catálogo vigente es `grade-7-dev-6`; es de desarrollo y la partida real de 7.º lo consume mediante `ApprovedVariantLookup`. Tiene 185 entradas bajo `contentVersion 0.10.0-grade-7`: las de `dev-5` —159 de `dev-4` más 26 de `g7.bus-travel-review`— con el mural rebalanceado por la [remediación matemática](04-quality/mathematics-remediation-implementation.md); `dev-1` a `dev-5` siguen publicados sin cambios. El content set de desarrollo `grade-7-through-1` usa su propio catálogo, `grade-1-dev-1`: 174 variantes de las siete plantillas de 1.º más las de 7.º re-aprobadas bajo `contentVersion 1.0.0-grade-1`.
 
 `DemoPlan` es otro artefacto: declara qué muestra una demostración docente y su validador exige que no pueda pasar por `StageContentPlan`. No construye una run ni relaja el presupuesto normal de uno a dos beats. La composición normal ya existe como `RunComposer` + `ComposedRunPlan`; son caminos separados.
 
@@ -8668,7 +8693,7 @@ Un challenge con matemática correcta pero gameplay pobre no está listo.
 
 ## Del desafío al catálogo
 
-Este pipeline editorial valida **un desafío**. Desde STAGE-03, el pipeline de [ADR-020](03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md) agrega sobre la población concreta invariantes transversales, chequeos matemáticos por plantilla, fingerprint canónico, deduplicación, integridad del catálogo y auditoría estadística. Eso ya se aplica al catálogo aprobado de desarrollo vigente `grade-7-dev-5`, que además alimenta gameplay; conserva las 159 entradas de `dev-4` y suma 26 variantes de recuperación bajo `contentVersion 0.9.0-grade-7`. Desde STAGE-08 / Phase 1 el mismo pipeline construye `grade-1-dev-1` para `7.º → 1.º`, con gates de autoría ejecutables por Template —witnesses de cada nivel, señuelos del Intrinsic Math Gate, Estilo independiente de la calidad— y un witness óptimo probado para cada variante aprobada ([detalle](01-game-design/grade-1-template-design.md#implementación-runtime-phase-1)).
+Este pipeline editorial valida **un desafío**. Desde STAGE-03, el pipeline de [ADR-020](03-architecture/adr/ADR-020-variant-generation-and-approved-catalog.md) agrega sobre la población concreta invariantes transversales, chequeos matemáticos por plantilla, fingerprint canónico, deduplicación, integridad del catálogo y auditoría estadística. Eso ya se aplica al catálogo aprobado de desarrollo vigente `grade-7-dev-6`, que además alimenta gameplay: las 159 entradas de `dev-4` y las 26 variantes de recuperación de `dev-5`, con el mural rebalanceado bajo `contentVersion 0.10.0-grade-7`. Desde STAGE-08 / Phase 1 el mismo pipeline construye `grade-1-dev-1` para `7.º → 1.º`, con gates de autoría ejecutables por Template —witnesses de cada nivel, señuelos del Intrinsic Math Gate, Estilo independiente de la calidad— y un witness óptimo probado para cada variante aprobada ([detalle](01-game-design/grade-1-template-design.md#implementación-runtime-phase-1)).
 
 Una plantilla ordinaria no queda incompleta por declarar `none`: el ruteo de recuperación se decide por plantilla y debe tener una razón pedagógica. Cuando declare recovery, se valida como contenido aprobado y debe aislar matemática relevante al error de origen. El [contrato de auditoría posterior a 1.º](04-quality/post-grade-1-scalability-audit.md) ejerce explícitamente `classroom-layout` y `rehearsal-schedule` fallidas dentro de una etapa y verifica que el único repaso estructural siga siendo coherente; valida la semántica de producto cerrada: uno seleccionado, debrief del resto y cierre total.
 
@@ -12377,6 +12402,800 @@ El paquete operativo para el Departamento está en
 
 ---
 
+# FILE: 04-quality/mathematics-remediation-feedback-inventory.md
+
+# Inventario de feedback afirmativo
+
+- **Estado:** `EXECUTED` — 2026-09-17, dentro de la
+  [implementación de la remediación matemática](04-quality/mathematics-remediation-implementation.md)
+- **Regla que lo exige:** [especificación de remediación, regla 2.9](04-quality/mathematics-remediation-spec.md#2-reglas-transversales)
+- **Alcance:** las 42 Templates del catálogo `grade-5-dev-3` —no sólo las de la
+  especificación—, sobre los tres campos de texto fijo del feedback:
+  `consequence`, `optimalComparison` y `violatedConstraint`
+- **Consumidor:** `Independent Mathematics Re-Audit`
+
+## Método
+
+1. Se extrajeron del código, con el AST de TypeScript, **las 136 asignaciones** de
+   esos tres campos en los 33 archivos de `src/content/` que los escriben.
+2. Se descartaron los textos que no afirman una comparación, una dirección o una
+   causa: narración de consecuencia social («el acto sigue sin vos»), nombres de
+   restricción («hora de entrada») y cierres sin contenido matemático («Queda
+   anotado, y el año sigue»).
+3. Cada texto que sí afirma algo quedó en uno de dos estados:
+   - **A — probado:** es verdadero en toda variante aprobada donde se muestra,
+     porque la escalera o un gate lo garantizan, y se dice cuál;
+   - **B — calculado:** se arma desde los parámetros o la respuesta de la
+     variante, así que no puede afirmar algo que la variante no tiene.
+4. Donde la garantía no era evidente se midió sobre el catálogo publicado y, si
+   el texto resultó falso, **se corrigió** y quedó un test.
+
+Ningún texto queda en estado «falso»: los que lo eran se corrigieron en esta
+implementación (sección [Correcciones](#correcciones)).
+
+## Correcciones
+
+| Template | Texto anterior | Por qué era falso | Ahora | Test |
+|---|---|---|---|---|
+| `g7.notebook-offer` | «El descuento en porcentaje era mayor que el descuento fijo, aunque sonara al revés.», fijo en el acierto | En 14 de 26 variantes el descuento fijo era el mayor (MAT-AJ-NEW-002) | B: nombra los dos descuentos en pesos y cuál era mayor | `mathematics-remediation.test.ts` · RS-NEW-002 |
+| `y3.fixed-variable-review`, `y4.margin-review`, `y3.rate-capacity-review`, `y4.spatial-capacity-review`, `y5.proportion-capacity-review` | Una sola frase de dirección para todo lo que no era exacto —por ejemplo «El abono rinde un viaje más adelante de lo que dijiste», «Contar de más deja gente parada»— | La dirección era falsa del otro lado del valor exacto (MAT-AJ-NEW-003) | B: frase según el signo de `respuesta − exacta`; el error con nombre propio conserva su explicación | RS-NEW-003, enumeración del rango en cada variante |
+| `y5.multi-option-comparison-review` | «Comparar precios que no incluyen lo mismo es lo que hace que después falte plata.» para toda respuesta no exacta | Afirmaba que faltaba parte del micro también cuando la respuesta sumaba de más; encontrado por el inventario | B: por signo | RS-NEW-003 |
+| `y2.court-zones` | Óptimo: «Las postas quedan lo más separadas que permite la cancha…» | El óptimo es `separación ≥ pedido + 2`; en 17 de 25 variantes la cancha permitía más | A: «quedan con dos celdas o más de separación sobre lo pedido» | inventario · `court-zones` |
+| `y4.school-event-flow` | Inválido: «La cola sale a la vereda y N personas no entran a tiempo.» | Afirmaba que no entraba **nadie** de las N, y también se mostraba al repartir ayudantes que no hay, donde no hay cola que medir | B: distingue ayudantes que no hay de ritmo insuficiente, con la cantidad de personas | inventario · `school-event-flow` |
+| `y1.classroom-layout` (franja) | Óptimo: «Entran las tres cosas: la cuenta en celdas cerró justo.» | En variantes con una celda de sobra no cerraba justo | B: «cerró justo» sólo si el ancho es exacto; si no, «sobra una celda» | la rama compara el ancho con la suma de los objetos |
+| `y5.final-trip-or-event` | Funcional: nombraba sólo el primer faltante | Con micro y comidas afuera decía sólo «el micro» | B: «el micro y las comidas» cuando faltan las dos | inventario · `final-trip` |
+| `y5.stage-screen` | Inválido: «El recorte de arriba se come el cartel del curso.» | El cartel está arriba o abajo según la variante: con el cartel abajo nombraba el lado equivocado | B: «El recorte de {lado} se come el cartel del curso.» | inventario · `stage-screen` |
+| `g7.bus-timing` | Funcional: «sin ningún colchón: cualquier demora extra te dejaba afuera» | En 18 de las 21 opciones funcionales publicadas había 1 a 4 min de margen | B: con margen 0 lo dice; si no, «una demora de más de N min te dejaba afuera» | inventario · `bus-timing` |
+
+## Inventario por Template
+
+### 7.º
+
+| Template | Campo · nivel | Afirma | Estado | Garantía |
+|---|---|---|---|---|
+| `g7.bus-timing` | `optimalComparison` · functional | margen y demora que deja afuera | B | margen de la opción elegida |
+| `g7.bus-timing` | `optimalComparison` · optimal «sin madrugar de más» | no había un margen suficiente más chico | A | óptimo = `margen === mejorMargen` |
+| `g7.bus-timing` | `optimalComparison` · efficient | con `best` min alcanzaba | B | `bestMargin(model)` |
+| `g7.bus-latest-departure` | `optimalComparison` · invalid, efficient, functional | minutos necesarios y de más | B | `model.requiredMinutes`, holgura calculada |
+| `g7.bus-latest-departure` | `optimalComparison` · optimal «el número que hacía falta» | exactitud | A | óptimo = respuesta exacta |
+| `g7.bus-latest-departure` | `consequence` · invalid | tarde por la entrada o sin el margen pedido | B | rama por `arrival > entrada` |
+| `g7.bus-travel-review` | `optimalComparison` · cuatro niveles | minutos de la demora y del viaje | B | `model.extraMinutes`, `model.travelMinutes` |
+| `g7.bus-travel-review` | `consequence` · «Faltaba sumarle el viaje normal» | causa del error | A | se muestra sólo si la respuesta es la demora sola |
+| `g7.mural-paint` | `optimalComparison` · optimal «el envase más barato entre los que alcanzaban» | mínimo entre suficientes | A | óptimo = `smallestSufficientTin` más barato |
+| `g7.mural-paint` | `optimalComparison` · functional | con el envase de $X alcanzaba | B | precio del más barato suficiente |
+| `g7.notebook-offer` | `optimalComparison` · optimal | qué descuento era mayor | B | `discountComparison` |
+| `g7.notebook-offer` | `optimalComparison` · invalid | precio de la otra oferta | B | `cheapest` |
+| `g7.stand-supplies` | `optimalComparison` · optimal «ninguna combinación cubría por menos» | mínimo de costo | A | óptimo = costo mínimo enumerado |
+| `g7.stand-supplies` | `optimalComparison` · efficient | costo de la mejor combinación | B | `model.optimalCostMinor` |
+| `g7.group-tasks` | `optimalComparison` · optimal «cada parte en manos de quien mejor la hacía» | asignación por mejor afinidad | A | las dos variantes son autoradas; su único óptimo suma 12 = 4 × 3 estrellas, así que cada tarea queda con una afinidad máxima |
+| `g7.group-tasks` | `optimalComparison` · efficient, functional | afinidad sumada contra la mejor | B | `model.bestSkill` |
+| `g7.may-25-act` | `optimalComparison` · cuatro niveles | qué regla se siguió o no | B/A | `missedRule` calculado; el óptimo es seguir todas |
+
+### 1.º
+
+| Template | Campo · nivel | Afirma | Estado | Garantía |
+|---|---|---|---|---|
+| `y1.student-day-challenge-wheel` | `violatedConstraint`, `consequence` | posiciones, regla, tipos, veces esperadas | B | parámetros y reparto |
+| `y1.course-project-expo` | `consequence` · efficient | nadie libre puede presentar si falta quien presenta | B/A | nombre calculado; efficient = sin plan B |
+| `y1.mobile-data` | `violatedConstraint`, `optimalComparison`, `consequence` | días sin material, MB usados, alternativa | B | `decoyText`, `used`, `capacity` |
+| `y1.rehearsal-schedule` | `consequence` · efficient, optimal | margen logrado contra el pedido | B | `result.margin`, `p.margin` |
+| `y1.schedule-review` | `optimalComparison` | cuenta hacia atrás desde el límite | B | `backwards` |
+| `y1.schedule-review` | `consequence` · functional «sin ningún minuto de margen» | margen cero | A | efficient es `margen > 0` y un margen negativo es violación: functional sólo con margen 0 |
+| `y1.classroom-layout` | `consequence` · functional | lugares logrados contra el ideal | B | `found.seats`, `p.targetSeats` |
+| `y1.classroom-layout` | `consequence` · franja optimal | cuenta justa o con una celda de sobra | B | ancho contra suma de objetos |
+| `y1.scale-fit-review` | `violatedConstraint` | violaciones | B | `found.violations` |
+
+### 2.º
+
+| Template | Campo · nivel | Afirma | Estado | Garantía |
+|---|---|---|---|---|
+| `y2.course-project-survey` | `violatedConstraint` · invalid | qué afirmación no se sostiene y con qué datos | B | primera publicada falsa |
+| `y2.course-project-survey` | `optimalComparison` · efficient, functional | qué más se podía afirmar | B | primera cierta retenida |
+| `y2.course-project-survey` | `consequence` · optimal «dice exactamente lo que la encuesta sostiene» | exactitud | A | óptimo = cero publicadas falsas y cero ciertas retenidas |
+| `y2.course-project-survey` | `consequence` · efficient, functional «se guarda cosas que sí permitían decir» | hubo ciertas retenidas | A | efficient/functional = al menos una cierta retenida |
+| `y2.data-claim-review` | `optimalComparison` «la misma cifra cambia según sobre cuánta gente» | contraste de denominador | A | gate: `answered < population` en toda variante |
+| `y2.standings-claim` | `violatedConstraint` · invalid «todavía no está asegurado» | categoría | A | invalid = marcar seguro lo que no es seguro |
+| `y2.standings-claim` | `consequence` · postura «campeones» | si los números lo respaldan | B | `champion` calculado |
+| `y2.team-kit-order` | `optimalComparison` | reparto proporcional por equipo | B | `target` |
+| `y2.team-kit-order` | `consequence` · efficient, functional | repuestos no quedan donde hay más gente | A | niveles definidos por distancia al reparto por restos mayores |
+| `y2.court-zones` | `violatedConstraint` · invalid | margen, celda repetida, techo, separación lograda | B | rama por falla y `spread` |
+| `y2.court-zones` | `optimalComparison` · optimal, efficient | con pedido + 2 celdas las colas quedan sueltas | A | `tierOf`: óptimo = `spread ≥ apart + 2` |
+| `y2.court-zones` | `consequence` · optimal | dos celdas o más sobre lo pedido | A | `tierOf` |
+| `y2.court-zones` | `consequence` · efficient, functional «más juntas de lo que la cancha permitía» | había una ubicación mejor | A | witness de nivel `optimal` por variante |
+| `y2.intercurso-plan` | `violatedConstraint`, `consequence` | qué actividad falta, Equipo | B | cobertura y `read.team` |
+
+### 3.º
+
+| Template | Campo · nivel | Afirma | Estado | Garantía |
+|---|---|---|---|---|
+| `y3.transport-pass` | `violatedConstraint` · invalid «más caro que otra forma, viajes cualquiera» | dominada en todo el rango | A | invalid = más cara que la óptima en todo el rango (gate `LOCKED`) |
+| `y3.transport-pass` | `consequence` · optimal «ninguna otra te sale menos» | mínimo en `likely` | A | óptimo = más barata en `likely`, única, sin empates (gates) |
+| `y3.transport-pass` | `consequence` · efficient | viajes a partir de los cuales conviene, y hacia dónde | B | `efficientConsequence`, test de dirección en toda variante |
+| `y3.transport-pass` | `consequence` · functional «siempre hay otra que te sale menos» | nunca gana | A | functional = no es la más barata en ningún viaje del rango y no hay empates |
+| `y3.fixed-variable-review` | `violatedConstraint` · functional | boletos de `exacta − 1` todavía menos | B | `exact`, `p.ticket` |
+| `y3.fixed-variable-review` | `consequence` · resto | dirección del error | B | signo, test RS-NEW-003 |
+| `y3.course-project-tech` | `violatedConstraint` · invalid | qué recurso no alcanza | B | `read.over` |
+| `y3.course-project-tech` | `consequence` · optimal «entró todo lo prometido» | completo | A | óptimo = lo prometido entero |
+| `y3.rate-capacity-review` | `violatedConstraint`, `consequence` | uno más no entra; dirección | B | `whole`, signo |
+| `y3.friend-day` | `violatedConstraint`, `consequence` | quién falta; Equipo | B | `missing`, `read.team` |
+| `y3.week-planner` | `violatedConstraint` | tipo de falla | B | `read.failure` |
+| `y3.week-planner` | `consequence` · optimal «encima lo que querías» | opcionales dentro | A | óptimo = los dos opcionales |
+| `y3.route-plan` | `violatedConstraint` | qué quedó sin hacer o cerrado | B | `read.missing`, `read.failure` |
+| `y3.route-plan` | `consequence` · optimal «las dos vueltas de más» | opcionales dentro | A | óptimo = los dos opcionales |
+
+### 4.º
+
+| Template | Campo · nivel | Afirma | Estado | Garantía |
+|---|---|---|---|---|
+| `y4.course-project-fundraiser` | `violatedConstraint` · invalid | cocina o pérdida | B | `read.minutes` contra cocina |
+| `y4.course-project-fundraiser` | `consequence` · por nivel | cubre, llega, colchón | A | escalera: functional cubre, efficient objetivo, optimal colchón |
+| `y4.margin-review` | `violatedConstraint` · functional | precio contra lo que deja | B | `p.price − p.cost` |
+| `y4.margin-review` | `consequence` · resto | dirección del error | B | signo, test RS-NEW-003 |
+| `y4.school-event-flow` | `violatedConstraint`, `consequence` · invalid | ayudantes que no hay o ritmo del cuello de botella | B | `read.overstaffed`, `read.rate` |
+| `y4.school-event-flow` | `consequence` · efficient «con aire de sobra» | llega a la mitad del margen posible | A | efficient = mitad del margen posible |
+| `y4.school-event-flow` | `consequence` · optimal «el mejor ritmo que se puede sostener» | máximo | A | óptimo = mejor ritmo alcanzable |
+| `y4.event-floor-plan` | `violatedConstraint` | tipo de falla, asientos contra invitados | B | `read.failure`, `read.seats` |
+| `y4.event-floor-plan` | `consequence` · optimal «entraron las dos zonas de más» | completo | A | óptimo = mesa más y barra |
+| `y4.spatial-capacity-review` | `violatedConstraint` · functional | celdas reservadas | B | `p.reserved` |
+| `y4.spatial-capacity-review` | `consequence` · resto | dirección del error | B | signo, test RS-NEW-003 |
+| `y4.represent-class` | `violatedConstraint` · invalid | qué límite deja afuera la propuesta | B | `blockedBy` |
+| `y4.represent-class` | `consequence` · ninguna marcada | no llevó propuesta aunque había viables | B/A | rama calculada; gate de dos viables por variante |
+| `y4.represent-class` | `consequence` · postura | a quién afectaba | B | `p.stakes` |
+| `y4.shift-coverage` | `violatedConstraint` | puesto y bloque vacío | B | `empty` |
+| `y4.shift-coverage` | `consequence` · por nivel | descanso y cambios de manos | A | escalera por descanso y cambios |
+
+### 5.º
+
+| Template | Campo · nivel | Afirma | Estado | Garantía |
+|---|---|---|---|---|
+| `y5.final-trip-or-event` | `violatedConstraint` · invalid | fondo, días o lugares | B | `reason` |
+| `y5.final-trip-or-event` | `consequence` · functional | qué falta | B | `offer.micro`, `offer.comidas` |
+| `y5.final-trip-or-event` | `consequence` · efficient, optimal | fondo al límite o con reserva | A | escalera por reserva |
+| `y5.multi-option-comparison-review` | `violatedConstraint` · functional | micro por persona y cantidad | B | `p.perPerson`, `p.people` |
+| `y5.multi-option-comparison-review` | `consequence` · resto | dirección del error | B | signo, test RS-NEW-003 |
+| `y5.course-project-final` | `violatedConstraint` · invalid | esencial, ausente u horas | B | `read.failure` |
+| `y5.course-project-final` | `consequence` · postura | si el cambio se notó | B | `p.visible` |
+| `y5.stage-screen` | `violatedConstraint` · invalid | deforma o lado del recorte | B | `shown.deforms`, `p.bannerAt` |
+| `y5.stage-screen` | `consequence` · efficient «con unas bandas al costado» | bandas laterales | A | medido y con test: efficient es siempre «entera» con bandas sólo a los costados (25 de 25) |
+| `y5.stage-screen` | `consequence` · functional «media pantalla vacía» | usa como mucho la mitad | A | medido y con test: «sin agrandar» usa entre 9 % y 30 % |
+| `y5.yearbook` | `violatedConstraint` | total, mínimo o tope | B | `read.failure` |
+| `y5.yearbook` | `consequence` · efficient, functional «algo del material quedó afuera» | incompleto | A | escalera por secciones completas |
+| `y5.proportion-capacity-review` | `violatedConstraint` · functional | páginas de `exacta − 1` no alcanzan | B | `exact`, `p.perPage` |
+| `y5.proportion-capacity-review` | `consequence` · resto | dirección del error | B | signo, test RS-NEW-003 |
+| `y5.next-step-options` | `violatedConstraint` · invalid | qué dato deja afuera el escenario | B | `blockedBy` |
+
+## Lo que el inventario no cubre
+
+- Textos de **pantalla** (`present`, `narrate`): los revisan los contratos que los
+  nombran —regla del colectivo, regla de publicación de la encuesta, consigna de
+  la peña, horas con viaje—, no este inventario.
+- `facts`: son números de la variante, no afirmaciones.
+- Storylets y epílogo: no dan feedback matemático.
+
+---
+
+# FILE: 04-quality/mathematics-remediation-implementation.md
+
+# Implementación de la remediación matemática
+
+- **Estado:** `EXECUTED` — 2026-09-17, sobre `main` en `326ab36`
+- **Gate:** `MATHEMATICS REMEDIATION IMPLEMENTATION`
+- **Contrato:** [especificación de remediación](04-quality/mathematics-remediation-spec.md), canónica
+- **Veredicto:** `MATHEMATICS REMEDIATION IMPLEMENTATION — BLOCKED`
+  (`MATHEMATICS REMEDIATION BLOCKED — CONTRACT CONFLICT` en dos criterios)
+- **Siguiente gate:** `Independent Mathematics Re-Audit`, **no habilitado** hasta
+  que se resuelvan los dos puntos de decisión de la sección
+  [H](#h-stop-registrados)
+- **Naturaleza:** implementación. No es re-auditoría ni sign-off: ningún contenido
+  pasa a `math_reviewed` y la revisión del Departamento de Matemática humano sigue
+  diferida a Final Delivery / Pre-Release Acceptance (D-S08-095)
+
+## A. Veredicto
+
+`MATHEMATICS REMEDIATION IMPLEMENTATION — BLOCKED`.
+
+De los catorce contratos, **doce se implementaron completos** y verificados por
+test. Dos quedaron detenidos por la regla de STOP (2.11), porque un criterio es
+imposible de cumplir sin violar otra regla del mismo contrato:
+
+| STOP | Contrato | Criterio imposible | Regla con la que choca | Estado del paquete |
+|---|---|---|---|---|
+| 1 | RS-MAT-008 · `y5.stage-screen` | Puntos 4, 7, 8 y 9, y los techos K ≤ 70 · S ≤ 40 % | Regla 2.6: witness de los tres niveles no inválidos por variante (`tierWitnessIssues`) | **No implementado.** La Template queda como estaba, salvo un texto falso de feedback corregido por el inventario |
+| 2 | RS-NEW-001 · `y5.course-project-final` | Criterio 3: «recortar» entre los planes óptimos | La escalera de la Template, que el mismo contrato prohíbe cambiar | Criterios 1, 2 y 4 y los techos, **cumplidos**; el 3, bloqueado |
+
+Ningún techo se relajó. Los dos tests que corresponderían quedaron como `it.todo`
+con el STOP nombrado, no como afirmaciones más débiles.
+
+Lo que la implementación **sí** deja resuelto:
+
+- la auditoría permanente de estrategia ciega, con la línea de base de la
+  adjudicación reproducida exactamente;
+- las dos claves únicas de 2.º —el Repaso del denominador, antes K 100 · S 100 %,
+  y la encuesta, antes K 66,4 · S 56 %— y la regla de publicación visible;
+- el colectivo con precios independientes del rango y las cuatro formas de pagar
+  óptimas;
+- la tabla del Intercurso con pendientes realizables, el gate de modelo del
+  torneo y la semántica estricta de empate;
+- la respuesta constante de la muestra final (K 92,5 → 56,8);
+- el feedback falso de la notebook, de los seis Repasos numéricos y de seis textos
+  más encontrados por el inventario;
+- el reparto 2 L / 4 L del mural, la abstención del consejo escolar, el guardrail
+  vocacional del año que viene y la consigna de la peña.
+
+FairScore, escalera, dificultad, bandas, pacing, placement, clusters, arcos,
+motor, action log, snapshot y ruleset de la carrera completa **no cambiaron**.
+
+## B. Baseline
+
+Medida antes de tocar contenido, en un worktree limpio de `326ab36` con su propia
+instalación.
+
+| Dato | Valor |
+|---|---|
+| Versiones | engine `10.0.0` · action log `7` · snapshot `8` · carrera completa `1.0.0-full-career` · contenido `5.1.0-grade-5` · catálogo `grade-5-dev-2` |
+| Huellas | motor `4bcf054e` · ruleset de carrera `7d41fddb` · contenido de carrera `e2c61b62` |
+| `pnpm verify` | exit 0 en 6 min 31 s |
+| Vitest | 93 archivos · 1663 tests · cobertura 85,05 / 76,53 / 87,01 / 85,17 |
+| Playwright | 146 E2E |
+| Catálogos | 7.º 185 · 1.º 359 · 2.º 508 · 3.º 681 · 4.º 854 · 5.º 1025 · integridad ok |
+| `game:simulate:deep` | 5000 / 5000 egresadas · 0 hallazgos |
+| `game:score` | perfecta = 10 000 en todas las poblaciones |
+
+## C. WP-AUDIT — auditoría permanente de estrategia ciega
+
+- `tests/helpers/blind-strategy.ts` materializa cada variante aprobada con
+  `materializeVariant` y evalúa **con el evaluador real** cada respuesta del
+  espacio finito: opciones de tarjeta y línea de tiempo, clasificaciones de hasta
+  50.000 respuestas —con la postura pública fija y un chequeo de que la postura
+  nunca cambia Math— y entradas numéricas de hasta 5000 valores enteros.
+- Calcula R, K y S por identificador o, cuando los identificadores cambian entre
+  variantes, por posición, y los niveles alcanzables por variante.
+- `tests/integration/blind-strategy-audit.test.ts` afirma los techos de la
+  sección 3 sobre el catálogo vigente de carrera completa y que las posturas no
+  filtran calidad (0 fugas en todas las Templates).
+- `pnpm game:blind-audit` imprime la tabla; con `--keys`, también las respuestas
+  K y S.
+
+**Medición inicial.** Sobre `grade-5-dev-2` reprodujo los valores de referencia de
+la adjudicación: transporte K 78,0 · R 56,3 · S 40 %; Repaso del denominador
+K 100 · S 100 %; encuesta K 66,4 · S 56 %; tabla K 80,0 · S 56 %; pantalla K 75,0 ·
+S 52 %; muestra final K 92,5 · S 91,7 %; año que viene K 76,5 · S 70,8 %; consejo
+K 58,2; mural K 76,9 · S 61,5 %. No hubo STOP por herramienta.
+
+La auditoría es **medición, no oráculo**: el re-audit debe repetir la enumeración
+con herramientas propias.
+
+## D. Estado por paquete de trabajo
+
+| Orden | Paquete | Estado | Resumen |
+|---|---|---|---|
+| 1 | WP-AUDIT | DONE | Sección C |
+| 2 | WP-TRANSPORT | DONE | Precios del mes y de la ciudad; forma `pocos-viajes`; generación dirigida por papel |
+| 3 | WP-SURVEY | DONE | Regla de publicación como constante única; `year-prefers` por cota de peor caso; cuatro formas; Repaso con tres vectores |
+| 4 | WP-SCREEN | **BLOCKED — STOP 1** | Sin cambios de regla; sólo el texto del lado del cartel |
+| 5 | WP-FINAL | **PARTIAL — STOP 2** | Criterios 1, 2, 4 y techos; criterio 3 bloqueado |
+| 6 | WP-NOTEBOOK | DONE | Feedback de acierto calculado |
+| 7 | WP-STANDINGS | DONE | Realizabilidad, gate de modelo, empate estricto, discriminación |
+| 8 | WP-NEXT | DONE | Horas con viaje incluido, viabilidad 25–75 % por escenario, motivos repartidos, «mié» |
+| 9 | WP-REVIEWS | DONE | Seis Repasos con dirección por signo, incluido uno que el inventario agregó |
+| 10 | WP-MURAL | DONE | Gate de balance por dirección; generador y evaluador sin cambios |
+| 11 | WP-COUNCIL | DONE | Dos viables por variante; consecuencia sin presentación |
+| 12 | WP-FUNDRAISER | DONE | Tres condiciones en orden, equilibrio explicado, supuesto de venta |
+| 13 | WP-CATALOGS | DONE | Seis catálogos republicados una sola vez (sección J) |
+| 14 | WP-DOCS | DONE | Ficha de 2.º reescrita contra el código y fichas afectadas (sección O) |
+
+**Mecanismo común.** Varios contratos piden distribuciones sobre el catálogo —cada
+opción óptima en al menos 3 variantes, ninguna clave en más del 35 %—, y el
+pipeline aprueba las primeras direcciones que pasan los gates. Filtrar después
+habría sido frágil, así que `generatedSource` aceptó un gate opcional por
+dirección, `addressGates(params, index)`: cada dirección tiene un **papel** —qué
+opción debe ser la óptima, qué vector de verdad o qué forma—, el generador busca de
+forma determinista parámetros que lo jueguen y el gate de dirección lo comprueba.
+Se usa en el colectivo, la encuesta, el Repaso del denominador, la tabla y la
+muestra final. `y5.next-step-options` construye cada papel directamente. No es un
+motor nuevo ni cambia la forma del catálogo: sólo decide qué direcciones se
+aprueban.
+
+## E. Matriz de evidencia por contrato
+
+Tests en `tests/`. «Catálogo» = cada catálogo publicado que contiene la Template:
+se comprobó que las variantes de cada Template son **idénticas** en todos ellos, así
+que un criterio medido en uno vale para todos.
+
+### RS-MAT-001 — `y3.transport-pass` · DONE
+
+| Criterio | Evidencia | Medición |
+|---|---|---|
+| 1. Precios independientes del rango | `unit/grade-3-transport-pass` · «ningún precio depende de los viajes del mes»: 4000 direcciones agrupadas por ejes de precio | forma y precios en ejes separados; `PASS_TRIPS × tarifa` no lee `high` |
+| 2. Mes de pocos viajes con el suelto óptimo | «existe un mes de pocos viajes…» | `pocos-viajes` en 8 de 25 |
+| 3. Cada opción óptima en ≥ 3 y ≤ 40 % | «cada forma de pago es la óptima…» y auditoría | suelto 7 · recargable 6 · combo 6 · abono 6 |
+| 4. ≥ 30 % con cambio a ≤ 3 viajes de `likely` | «en al menos el 30 %…» | 15 de 25 (60 %) |
+| 5. Diferencia ≥ max($100; 2 %) | «la más barata le saca a la segunda…» | mínima $100 |
+| 6. Regla en pantalla | «la pantalla dice que se decide con los viajes del mes pasado»; E2E 320 / 412 px | — |
+| 7. Dirección del feedback `efficient` | «el feedback de una apuesta dice hacia dónde…», en toda opción `efficient` de toda variante | — |
+| 8. Gates `LOCKED` | «LOCKED: la conveniencia cambia…», «la elección equivocada cuesta más…», oráculo | — |
+| Techos K ≤ R + 10, S ≤ 40 % | `integration/blind-strategy-audit` | K 64,2 ≤ 66,3 · S 28 % |
+| Reglas alternativas | «peor caso y costo medio nunca eligen la inválida» | peor caso: 8 óptima, 17 efficient · costo medio: 23 óptima, 2 efficient |
+
+Formas publicadas: `mes-corto` 7, `pocos-viajes` 8, `arranque` 5, `con-salidas` 3,
+`mes-completo` 2. La sexta forma del espacio no quedó entre las 25 primeras
+aprobadas; el contrato no pide formas mínimas.
+
+### RS-MAT-002 — `y2.data-claim-review` · DONE
+
+| Criterio | Evidencia | Medición |
+|---|---|---|
+| 1–2. Tres vectores, TF 40–60 %, TT y FF ≥ 15 % | `unit/grade-2-survey` · «el catálogo trae los tres casos posibles…» | TF 13 (52 %) · TT 6 (24 %) · FF 6 (24 %) |
+| 3. Nunca en la mitad exacta | «ninguna variante pone la cifra exactamente en la mitad» | — |
+| 4–5. Control siempre falso; pantalla conservada | «aísla el concepto…» | tres afirmaciones, dos etiquetas |
+| Oráculo y `functional` en TT | «las 8 clasificaciones coinciden con un oráculo independiente…» | `functional` alcanzable en las 6 TT |
+| Techos K ≤ 75, S ≤ 60 % | auditoría | K 72,6 · S 52 % |
+
+### RS-MAT-003 — `y2.course-project-survey`, criterio visible · DONE
+
+| Criterio | Evidencia |
+|---|---|
+| 1. «Entre quienes contestaron» | «la afirmación del margen está acotada a quienes contestaron…» |
+| 2. Regla declarada en pantalla | `PUBLICATION_RULE_TEXT`: «le saca más de 1 de cada 10 respuestas», en las instrucciones |
+| 3. Misma constante en pantalla, evaluador y oráculo | «pantalla, evaluador y oráculo leen la misma regla» |
+| 4. Ninguna variante a una respuesta del borde | «ninguna variante queda a una respuesta del borde»; gate en `surveyGates` |
+| 5. Forma `margin` con líder sin la regla | «el contraste de denominador sigue… y la trampa del margen existe»; 5 variantes `margin` |
+| 6. Tres trampas conservadas | formas `denominator`, `missing-data`, `margin` |
+| Prohibido: vocabulario inferencial | «la consigna no usa vocabulario inferencial ni criterios ocultos» |
+
+### RS-MAT-004 — `y2.course-project-survey`, variedad de claves · DONE
+
+| Criterio | Evidencia | Medición |
+|---|---|---|
+| 1. `year-prefers` por cota de peor caso, sin igualdad | «“el nivel entero prefiere” se decide con la cota de peor caso…» | cierta en 5 de 25 |
+| 2. `half-of-year` calculado | oráculo de las 64 clasificaciones | — |
+| 3. ≥ 4 afirmaciones con los dos valores | «al menos cuatro afirmaciones varían…» | varían `half-of-answers` 15, `year-prefers` 5, `beats-runner-up` 20, `least-chosen` 13 |
+| 4. ≥ 4 claves óptimas | ídem | 7 claves |
+| 5. Ninguna forma con clave única | «ninguna forma semántica determina la clave» | cada forma, 2 o 3 claves |
+| 6. Contraste de denominador ≥ 50 % | «el contraste de denominador sigue en al menos la mitad…» | 15 de 25 (60 %) |
+| 7. La opción publicada es la más elegida | «la opción que el curso publica es siempre la más elegida…» | — |
+| 8. ≥ 2 ciertas y ≥ 2 que no | ídem | — |
+| Techos K ≤ 60, S ≤ 35 % | auditoría | K 52,8 · S 32 % |
+
+### RS-MAT-005 — `y2.standings-claim` · DONE
+
+| Criterio | Evidencia | Medición |
+|---|---|---|
+| 1. Pendientes realizables | `unit/grade-2-standings` · «los partidos que faltan se juegan entre estos cuatro cursos» | suma par, ningún curso con más que los otros tres |
+| 2. Gate de modelo bajo todo fixture y resultado | «pensar cada curso por separado da lo mismo que el torneo entero, bajo todo fixture»: enumera fixtures y resultados con un oráculo de torneo propio | — |
+| 3. Consigna | «la consigna dice contra quién se juega y que no hay empates de partido» | — |
+| 4. Empate estricto y gate de lectura del empate | «terminar arriba es estricto, y ninguna tabla publicada depende de cómo se lea un empate», con casos límite construidos | — |
+| 5. Ninguna afirmación con la misma categoría en > 70 % | «ninguna afirmación tiene la misma categoría en más del 70 %» | máximos: 17, 14, 15 y 12 de 25 |
+| 6. Posturas, Aura y separación | «LOCKED · la postura no cambia la calidad matemática…», «Aura entra a FairScore por su propio canal…» | — |
+| 7. Cotas por curso bastan | sin fixture en pantalla; el gate 2 lo garantiza | — |
+| Techos K ≤ 65, S ≤ 35 % | auditoría | K 56,6 · S 20 % |
+
+### RS-MAT-006 — `g7.mural-paint` · DONE
+
+| Criterio | Evidencia | Medición |
+|---|---|---|
+| 1. 2 L y 4 L entre 45 % y 55 % en cada catálogo | `integration/mathematics-remediation` · RS-MAT-006, en `grade-7-dev-6` y en los cinco catálogos de 1.º a 5.º | 14 / 26 y 12 / 26 (53,8 % · 46,2 %) |
+| 2. Por gate de catálogo | `validateMuralBalance` en los validadores de variantes; generador, precios, consigna y evaluador sin cambios | — |
+| K reportado | auditoría | K 67,7 (≤ 73) · S 53,8 % |
+
+`grade-7-dev-5` sigue publicado y sin cambios (test «grade-7-dev-5 queda publicado
+tal como estaba»).
+
+### RS-MAT-007 — `y4.represent-class` · DONE
+
+| Criterio | Evidencia | Medición |
+|---|---|---|
+| 1. ≥ 2 viables por variante | RS-MAT-007 · «toda variante publicada tiene al menos dos propuestas viables» | 2 viables en 19, 3 en 5 |
+| 2. Todo «No entra» nunca `efficient` | ídem y auditoría | siempre `functional` |
+| 3. Consecuencia sin presentación | «…la consecuencia no narra una presentación» | — |
+| 4. Gates y witness de Aura | gates existentes en verde | — |
+| K | auditoría | 58,2 → 59,6; la mejor constante ya no es la abstención |
+
+El consejo publica 24 variantes en vez de 25: el gate de dos viables rechaza
+direcciones que antes se aprobaban.
+
+### RS-MAT-008 — `y5.stage-screen` · BLOCKED
+
+Ver [STOP 1](#stop-1-rs-mat-008-y5stage-screen). Ningún punto implementado; los
+techos quedan como `it.todo`. Medición vigente: K 75,0 · S 52 %.
+
+### RS-MAT-009 — `y5.next-step-options` · DONE
+
+| Criterio | Evidencia | Medición |
+|---|---|---|
+| 1. Horas con viaje incluido, dicho en pantalla | RS-MAT-009 · «las horas incluyen el viaje…»; gate `horas × 60 ≥ días × (viaje + 60)` | — |
+| 2. Cada escenario viable 25–75 % | «cada escenario entra en al menos el 25 %…» | facultad 13 · terciario 16 · trabajo 12 · oficio 15 · mixto 12, de 25 |
+| 3. Opción de estudio viable ≥ 50 % | MAT-AJ-NEW-007 · «alguna opción de estudio…» | 22 de 25 (88 %) |
+| 4. Ningún motivo > 60 % | «lo que deja afuera a cada opción de estudio se reparte…» | facultad 4 · 4 · 4; terciario 3 · 3 · 3 |
+| 5. Gates de dos viables y dos motivos | gates conservados | — |
+| 6. «mié» | «…no `mie`» | — |
+| 7. Preferencia sin puntuar | «la preferencia sigue sin puntuar» | — |
+| Techos K ≤ 65, S ≤ 35 % | auditoría | K 40,0 · S 16 % |
+
+### RS-MAT-011 — `y4.course-project-fundraiser` · DONE
+
+| Criterio | Evidencia |
+|---|---|
+| 1. Tres condiciones en orden | RS-MAT-011 · «nombra las tres condiciones en orden…» (índices crecientes en la consigna) |
+| 2. Punto de equilibrio con significado | ídem: «que lo que dejan las bandejas vendidas alcance para pagar el costo fijo» |
+| 3. Todo lo que se prepara se vende | ídem; E2E 320 / 412 px |
+| 4. Sin contradicción | la instrucción del costo fijo habla de bandejas **vendidas** |
+| Catálogo sin cambio en la peña | evaluador, parámetros y gates sin cambios; las entradas de la peña son las mismas direcciones |
+
+### RS-NEW-001 — `y5.course-project-final` · PARTIAL (STOP 2)
+
+| Criterio | Evidencia | Medición |
+|---|---|---|
+| 1. Repartir todo óptimo ≤ 30 % | RS-NEW-001 · «repartir todo es óptimo en a lo sumo el 30 %» | 0 de 25 |
+| 2. Repartir parejo sobrecarga en la mayoría | «…le da a alguien más horas de las que tiene» | 25 de 25 |
+| 3. Mantener, repartir y recortar entre óptimos | **BLOCKED** — `it.todo`; test de la imposibilidad | óptimos: {mantener, repartir}; válidos: las tres |
+| 4. Gates actuales | witness de Math óptima con Equipo 3 y los demás gates en verde; `style-audit` y `full-career` en verde | — |
+| Techos K ≤ 65, S ≤ 35 % | auditoría | K 56,8 · S 28 % |
+
+### RS-NEW-002 — `g7.notebook-offer` · DONE
+
+| Criterio | Evidencia |
+|---|---|
+| 1. Texto de acierto verdadero | RS-NEW-002 · en toda variante publicada de 7.º, el texto nombra el descuento que de verdad era mayor, calculado con `discountComparison` |
+| 2. Resto del feedback en el inventario | [inventario](04-quality/mathematics-remediation-feedback-inventory.md) |
+| Sin cambios de decisión ni catálogo | población de la notebook igual en `grade-7-dev-6` |
+
+### RS-NEW-003 — Repasos numéricos · DONE
+
+| Criterio | Evidencia |
+|---|---|
+| 1. Dirección = signo de `respuesta − exacta` en todo el rango y toda variante | RS-NEW-003 · un test por Repaso: `y3.fixed-variable-review`, `y4.margin-review`, `y3.rate-capacity-review`, `y4.spatial-capacity-review`, `y5.proportion-capacity-review` y, por el inventario, `y5.multi-option-comparison-review` alrededor del total exacto y del error de sumar el micro una vez |
+| 2. Error con nombre propio conservado | niveles y `violatedConstraint` sin cambios; tests de nivel existentes en verde |
+
+### RS-NEW-006 — Ficha de 2.º · DONE
+
+La tabla de implementación de la [ficha de 2.º](01-game-design/grade-2-template-design.md#implementación-runtime)
+se reescribió contra el código: formas reales de la encuesta, regla de
+publicación, cálculo de `year-prefers`, las tres afirmaciones del Repaso, sus
+vectores y niveles alcanzables, y la tabla con su gate de modelo. Validación del
+workspace y sincronización de la especificación maestra en la sección N.
+
+## F. Estrategia ciega antes y después
+
+`pnpm game:blind-audit`. Antes: `grade-5-dev-2` · `5.1.0-grade-5`. Después:
+`grade-5-dev-3` · `5.2.0-grade-5`. Todas las Templates enumerables.
+
+| Template | Motor | Var. antes → después | R antes → después | K antes → después | S antes → después | Techo |
+|---|---|---|---|---|---|---|
+| `g7.bus-latest-departure` | numeric-input | 26 → 26 | 32,4 → 32,4 | 53,5 → 53,5 | 19,2 % → 19,2 % | — |
+| `g7.bus-timing` | timeline (posición) | 26 → 26 | 48,6 → 48,6 | 84,6 → 84,6 | 57,7 % → 57,7 % | — (sección M) |
+| `g7.bus-travel-review` | numeric-input | 26 → 26 | 13,4 → 13,4 | 29,6 → 29,6 | 11,5 % → 11,5 % | — |
+| `g7.mural-paint` | decision-card | 26 → 26 | 43,8 → 45,4 | 76,9 → **67,7** | 61,5 % → 53,8 % | K ≤ 73 ✓ |
+| `g7.notebook-offer` | decision-card | 26 → 26 | 55,0 → 55,0 | 58,5 → 58,5 | 53,8 % → 53,8 % | — |
+| `y2.course-project-survey` | classification | 25 → 25 | 17,7 → 17,2 | 66,4 → **52,8** | 56,0 % → **32,0 %** | K ≤ 60 · S ≤ 35 % ✓ |
+| `y2.data-claim-review` | classification | 25 → 25 | 29,4 → 30,3 | 100,0 → **72,6** | 100,0 % → **52,0 %** | K ≤ 75 · S ≤ 60 % ✓ |
+| `y2.standings-claim` | classification | 25 → 25 | 20,4 → 19,6 | 80,0 → **56,6** | 56,0 % → **20,0 %** | K ≤ 65 · S ≤ 35 % ✓ |
+| `y3.fixed-variable-review` | numeric-input | 25 → 25 | 11,9 → 11,9 | 24,4 → 24,4 | 16,0 % → 16,0 % | — |
+| `y3.rate-capacity-review` | numeric-input | 25 → 25 | 11,8 → 11,8 | 40,8 → 40,8 | 20,0 % → 20,0 % | — |
+| `y3.transport-pass` | decision-card | 25 → 25 | 56,3 → 56,3 | 78,0 → **64,2** | 40,0 % → **28,0 %** | K ≤ R + 10 · S ≤ 40 % ✓ |
+| `y4.margin-review` | numeric-input | 25 → 25 | 12,4 → 12,4 | 49,8 → 49,8 | 40,0 % → 40,0 % | — |
+| `y4.represent-class` | classification | 25 → 24 | 16,5 → 18,8 | 58,2 → 59,6 | 16,0 % → 29,2 % | abstención nunca ≥ efficient ✓ |
+| `y4.spatial-capacity-review` | numeric-input | 25 → 25 | 12,8 → 12,8 | 41,4 → 41,4 | 20,0 % → 20,0 % | — |
+| `y5.course-project-final` | classification | 24 → 25 | 17,5 → 14,0 | 92,5 → **56,8** | 91,7 % → **28,0 %** | K ≤ 65 · S ≤ 35 % ✓ |
+| `y5.final-trip-or-event` | decision-card | 25 → 25 | 56,3 → 56,3 | 59,4 → 59,4 | 28,0 % → 28,0 % | — |
+| `y5.next-step-options` | classification | 24 → 25 | 18,0 → 21,3 | 76,5 → **40,0** | 70,8 % → **16,0 %** | K ≤ 65 · S ≤ 35 % ✓ |
+| `y5.proportion-capacity-review` | numeric-input | 23 → 23 | 11,8 → 11,8 | 34,1 → 34,1 | 13,0 % → 13,0 % | — |
+| `y5.stage-screen` | decision-card | 25 → 25 | 40,8 → 40,8 | 75,0 → 75,0 | 52,0 % → 52,0 % | K ≤ 70 · S ≤ 40 % **BLOCKED** |
+
+No enumerables: las Templates de construcción (`assignment-board`, `number-grid`,
+`budget-builder`, `spatial-layout`, `quantity-builder`, `schedule-builder`,
+`route-builder`) y `y5.multi-option-comparison-review`, cuyo rango numérico tiene
+10.000.000 valores. Sus respuestas ingenuas quedan para el re-audit (sección 7 de
+la especificación).
+
+Las mejores respuestas constantes cambiaron de sentido: en la muestra final la K ya
+no es «repartir todo»; en el año que viene es marcar todo «No entra», que rinde 40;
+en el consejo, la abstención total dejó de ser la mejor constante.
+
+## G. Inventario de feedback afirmativo
+
+[Inventario completo](04-quality/mathematics-remediation-feedback-inventory.md): 136
+asignaciones extraídas del código con el AST; cada texto que afirma una
+comparación, una dirección o una causa quedó **probado (A)** o **calculado (B)**.
+Además de los contratos RS-NEW-002 y RS-NEW-003, el inventario encontró y corrigió
+seis textos falsos:
+
+| Template | Qué afirmaba mal |
+|---|---|
+| `y2.court-zones` | «lo más separadas que permite la cancha» en 17 de 25 variantes donde la cancha permitía más |
+| `y4.school-event-flow` | que no entraba ninguna de las N personas, y la misma frase al repartir ayudantes que no hay |
+| `y1.classroom-layout` | «cerró justo» con una celda de sobra |
+| `y5.final-trip-or-event` | sólo «el micro» cuando faltaban el micro y las comidas |
+| `y5.stage-screen` | «el recorte de arriba» con el cartel abajo |
+| `g7.bus-timing` | «cualquier demora extra te dejaba afuera» con 1 a 4 min de margen, en 18 de 21 opciones funcionales |
+
+Y extendió RS-NEW-003 a `y5.multi-option-comparison-review`, con el mismo patrón.
+
+## H. STOP registrados
+
+### STOP 1 — RS-MAT-008 · `y5.stage-screen`
+
+`MATHEMATICS REMEDIATION BLOCKED — CONTRACT CONFLICT`
+
+- **Paquete:** WP-SCREEN.
+- **Contrato:** RS-MAT-008.
+- **Criterios imposibles:** punto 4 (imagen entera óptima cuando ningún recorte
+  vale), punto 7 (ninguna óptima en más del 40 %), punto 8 (ninguna opción salvo
+  estirar con nivel constante) y punto 9 (heurística de lado ≤ 50 %), y con ellos
+  los techos K ≤ 70 · S ≤ 40 % de la sección 3.
+- **Regla con la que chocan:** regla 2.6, «witness por nivel
+  (`tierWitnessIssues`)», que exige en **cada** variante un plan `optimal`, uno
+  `efficient` y uno `functional`.
+
+**Demostración.** Con la escalera del punto 4 y las seis opciones del punto 2:
+
+1. Los tres recortes llenan el ancho y recortan lo que sobra del alto, así que
+   muestran **el mismo rectángulo**: usan la misma pantalla. Si dos recortes son
+   válidos, empatan en el óptimo y el gate de óptima única (punto 4) rechaza la
+   variante. Toda variante aprobada tiene **cero o un** recorte válido.
+2. **Sin recorte válido:** las válidas son «entera» y «sin agrandar» —estirar es
+   siempre inválida—. Hay como mucho dos niveles no inválidos y
+   `tierWitnessIssues` falla. Entonces la regla 2.6 **prohíbe toda variante con la
+   imagen entera óptima**, que es justo lo que el punto 4 autoriza.
+3. **Con un recorte válido:** las válidas son ese recorte (óptimo), «entera» y «sin
+   agrandar». Para tener `efficient` y `functional`, como «entera» agranda hasta el
+   borde y nunca usa menos pantalla que «sin agrandar», «entera» tiene que ser
+   `efficient` y «sin agrandar» `functional` **en toda variante**. «Entera» queda con
+   nivel constante: **viola el punto 8**.
+4. **Heurística de lado.** Si el único recorte válido es de un lado X, recortar todo
+   de X cabe en el aire de X y no cabe en el de Y: X tiene más aire, y la heurística
+   «recortar todo del lado con más aire» acierta. Sólo falla cuando el óptimo es
+   recortar por el medio. Como «entera» nunca es óptima (paso 2), la heurística
+   acierta exactamente en las variantes de recorte de un lado. El punto 9 (≤ 50 %)
+   exige entonces recorte por el medio óptimo en **al menos el 50 %**, y el punto 7
+   exige **a lo sumo el 40 %**. Contradicción.
+
+**Evidencia medida.** Se construyó un prototipo completo —dos elementos protegidos
+con alto y aire propios, seis opciones con el lado del recorte en la etiqueta,
+validez exacta con fracciones, escalera del punto 4, papeles en un ciclo de diez
+con la óptima y el nivel de «entera»— y se barrió con el generador:
+
+| Medición | Valor |
+|---|---|
+| Variantes candidatas con «entera» óptima | 854 |
+| De ellas, con los tres niveles no inválidos | **0** |
+| Aprobaciones del prototipo con el ciclo de papeles del contrato | 0: el witness de niveles rechaza todo papel con «entera» óptima |
+
+**Prototipos intentados.** El prototipo completo del contrato, con el ciclo de
+papeles que incluye «entera» óptima: 0 aprobaciones. Quitar esos papeles no se
+prototipó porque los pasos 3 y 4 de la demostración ya muestran que viola los
+puntos 7, 8 y 9 para cualquier parámetro: no depende de los números, sino de que
+los tres recortes usan la misma pantalla y de la escalera fijada.
+
+**Qué se dejó.** `src/content/grade-5/challenges/stage-screen.ts` volvió al estado
+de `326ab36`, con una sola diferencia: el texto de la restricción violada nombra
+el lado real del cartel (inventario). Catálogo, pantalla, evaluador y E2E de la
+pantalla sin cambios. En la auditoría quedó
+`it.todo('y5.stage-screen: K ≤ 70 y S ≤ 40 % — BLOQUEADO por el STOP de RS-MAT-008')`.
+
+**Punto de decisión mínimo.** Una de dos, a decidir por quien emitió el contrato:
+
+- **(a)** Eximir a `y5.stage-screen` del witness de tres niveles **sólo** en las
+  variantes donde ningún recorte es válido, que tendrían «entera» óptima,
+  «sin agrandar» en `efficient` o `functional` y estirar inválida. Es coherente con
+  D-S08-099 —no se fabrica un nivel donde el espacio no lo tiene— y con el propio
+  punto 4. Con esa excepción ninguno de los pasos 2 a 4 aplica, pero **la
+  factibilidad de los puntos 7 a 10 no está demostrada**: habría que medirla antes
+  de implementar.
+- **(b)** Conservar la regla 2.6 y reescribir los puntos 7, 8 y 9 —y los techos—
+  para un espacio donde «entera» nunca es óptima.
+
+Esta implementación no elige: cualquiera de las dos cambia una regla del contrato.
+
+### STOP 2 — RS-NEW-001 criterio 3 · `y5.course-project-final`
+
+`MATHEMATICS REMEDIATION BLOCKED — CONTRACT CONFLICT`
+
+- **Paquete:** WP-FINAL.
+- **Contrato:** RS-NEW-001.
+- **Criterio imposible:** 3, «en el conjunto de planes óptimos del catálogo
+  aparecen las tres disposiciones: mantener, repartir y recortar».
+- **Regla con la que choca:** la escalera de la Template —`optimal` = «sobrevive
+  todo lo no esencial»; recortar algo esencial es `invalid`— que el mismo contrato
+  prohíbe cambiar («cambiar Equipo, Aura, Estilo o la escalera»; «volver recortable
+  una tarea esencial»).
+
+**Demostración.** Recortar una tarea esencial hace el plan inválido. Recortar una
+no esencial hace que no sobreviva todo lo no esencial, así que el plan no es
+óptimo. Ningún plan óptimo contiene «recortar», en ninguna variante posible.
+
+**Evidencia.** `tests/integration/mathematics-remediation.test.ts` enumera todos
+los planes de las 25 variantes publicadas: los planes óptimos usan
+{mantener, repartir}; los válidos, las tres disposiciones; ningún plan con
+«recortar» es óptimo. El criterio quedó como
+`it.todo('RS-NEW-001 criterio 3: las tres disposiciones entre los planes óptimos — BLOQUEADO por STOP')`.
+
+**Prototipos intentados.** Ninguno cambia el resultado sin tocar la escalera: el
+criterio no depende de parámetros, sino de la definición de `optimal`.
+
+**Lo que sí se cumple.** Criterios 1, 2 y 4 y los techos K 56,8 ≤ 65 y
+S 28 % ≤ 35 %. «Recortar» aparece en planes válidos y la mejor respuesta constante
+lo usa en dos tareas.
+
+**Punto de decisión mínimo.** Reformular el criterio 3 sobre planes **válidos**
+(o `efficient` o mejores), donde ya se cumple, o autorizar un cambio de escalera
+que el contrato hoy prohíbe. Se recomienda lo primero: el propósito del criterio
+—que «recortar» no sea una disposición muerta— se cumple así.
+
+## I. Qué no se cambió
+
+- `fair-score-dev-2@2.0.0-post-tg1-candidate`, 85 / 10 / 5, escalera 100 / 75 /
+  40 / 10: sin cambios; `pnpm game:score` sigue dando 10 000 para la carrera
+  perfecta.
+- Perfil cognitivo, banda, pacing, placement, cluster y arco de toda Template: sin
+  cambios.
+- Motor `10.0.0`, action log `7`, snapshot `8`, huella de motor `4bcf054e`,
+  ruleset de carrera completa `1.0.0-full-career` con huella `7d41fddb`: sin
+  cambios.
+- Templates, motores de interacción, `official`, Prestige, rareza, epílogo,
+  composición: sin cambios. Ningún contenido pasa a `math_reviewed`.
+- Decisiones `ACCEPT_AS_DESIGNED` y riesgos aceptados de la sección 5 de la
+  especificación: sin tocar.
+
+## J. Catálogos y versiones
+
+Convención: un catálogo publicado no se edita. De 1.º a 5.º se sigue la de
+D-S08-088: el artefacto pasa a la siguiente `-dev-N` y el contenido sube una
+versión menor, con sus rulesets de práctica parcial y demo. 7.º conserva **todos**
+sus catálogos históricos: `grade-7-dev-6` se agrega junto a `grade-7-dev-5`.
+
+| Identidad | Antes | Después | Por qué |
+|---|---|---|---|
+| Contenido 7.º | `0.9.0-grade-7` | `0.10.0-grade-7` | Feedback de la notebook y de `bus-timing`; gate de balance del mural |
+| Catálogo 7.º | `grade-7-dev-5` (185) | `grade-7-dev-6` (185); dev-5 sigue publicado | Nueva población del mural |
+| Ruleset 7.º | `0.4.0-grade-7` | sin cambios | Ninguna política cambió |
+| Contenido · rulesets · catálogo 1.º | `1.0.0` · `grade-1-dev-1` (359) | `1.1.0` · `grade-1-dev-2` (359) | Re-aprueba 7.º; texto de la franja |
+| 2.º | `2.1.0` · `grade-2-dev-2` (508) | `2.2.0` · `grade-2-dev-3` (508) | Encuesta, Repaso, tabla, postas |
+| 3.º | `3.1.0` · `grade-3-dev-2` (681) | `3.2.0` · `grade-3-dev-3` (681) | Colectivo y dos Repasos |
+| 4.º | `4.1.0` · `grade-4-dev-2` (854) | `4.2.0` · `grade-4-dev-3` (853) | Consejo (una variante menos), peña, dos Repasos, cola |
+| 5.º | `5.1.0` · `grade-5-dev-2` (1025) | `5.2.0` · `grade-5-dev-3` (1026) | Muestra final, año que viene, Repasos, viaje, pantalla (texto) |
+| Huella de contenido de la carrera completa | `e2c61b62` | `72435ee3` | Consecuencia de lo anterior |
+| Carrera completa · motor · action log · snapshot | `1.0.0-full-career` · `10.0.0` · `7` · `8` | sin cambios | — |
+
+Generadores que suben a versión `2` porque su espacio cambió:
+`y3.transport-pass.threshold`, `y2.course-project-survey.denominator-claims`,
+`y2.data-claim-review.denominator`, `y2.standings-claim.bounds`,
+`y5.course-project-final.contingency` y `y5.next-step-options.scenarios`. El mural
+y el consejo no cambian de generador: la corrección es un gate.
+
+`authoring.ts` ganó `addressGates` en `generatedSource`: opcional y sin efecto en
+las Templates que no lo declaran.
+
+La reconstrucción final de los seis catálogos no produjo diferencias contra los
+artefactos versionados (sha256 idénticos) y `pnpm game:variants check` dio
+integridad `ok` en los seis.
+
+## K. Replay, servidor y FairScore
+
+- Replay, reanudación y recomputación de servidor se cubren con los tests
+  existentes de cada año, que corren sobre los catálogos nuevos y en verde.
+- Una run registrada con los catálogos anteriores de 1.º a 5.º **no** se reanuda
+  sobre las versiones nuevas: el harness la rechaza como checkpoint incompatible,
+  que es el comportamiento documentado de un cambio de versión de contenido (los
+  E2E lo mostraron hasta reconstruir el build). Todas esas superficies son
+  `official: false`.
+- La carrera perfecta llega a 10 000 en `pnpm game:score`, y `style-audit` y
+  `full-career` siguen en verde: los papeles nuevos conservan los witnesses de Math
+  óptima con Equipo 3 y de Aura máxima.
+
+## L. Accesibilidad
+
+- E2E nuevos a 320 y 412 px, en desktop y mobile: `Grade 3: pagar el colectivo`
+  —regla de estimación visible, cuatro opciones, teclado, axe, reflow antes y
+  después de contestar— y `Grade 4: la peña` —las tres condiciones y el supuesto de
+  venta visibles, entrada numérica por teclado, axe, reflow—.
+- Los textos nuevos de la encuesta, la tabla y el año que viene corren dentro de
+  los E2E existentes de cada año.
+- Se corrigió un desborde a 320 px en `DecisionBlock` (sección M): el `fieldset`
+  del bloque de decisión llevaba el ancho mínimo de su contenido.
+- Notación es-AR en los números nuevos (`mil` en pesos y personas).
+
+## M. Hallazgos de la implementación
+
+1. **`g7.bus-timing` por posición.** Elegir siempre la primera salida de la línea
+   de tiempo rinde K 84,6 y es óptima en el 57,7 %. Ningún contrato la cubre y no se
+   corrigió; se reporta para el re-audit.
+2. **Seis textos de feedback falsos** fuera de los contratos, corregidos por la
+   regla 2.9 (sección G).
+3. **Una forma del colectivo no publicada.** El espacio tiene seis formas de mes;
+   el catálogo publica cinco —falta `mes-cargado`—. No es un criterio del contrato.
+4. **La auditoría de 7.º** perdió una comparación frágil: el test de selección
+   estable excluye ahora las entradas generadas del mural, cuya población cambió a
+   propósito, y su umbral pasó de 100 a 80 comparaciones con el motivo escrito.
+5. **Desborde real a 320 px en `DecisionBlock`.** Al cambiar el catálogo, la
+   carrera de la seed `browser-career` cayó en otra variante de
+   `g7.bus-latest-departure` y la página desbordó a 339 px. La causa no era el
+   contenido: un `<fieldset>` arranca en `min-inline-size: min-content`, así que
+   el bloque a sangre se ensanchaba con la entrada numérica y su unidad al lado.
+   Se agregó `min-w-0` —que los demás `fieldset` de interacción ya tenían— y los
+   nueve beats de esa carrera vuelven a entrar en 320 px. Es un defecto de
+   maquetado que existía antes y que ninguna seed había expuesto.
+6. **Un E2E asumía qué Templates compone una seed.** «Una carrera con
+   recuperaciones» fallaba a propósito los beats de 1.º porque *esa* seed traía
+   uno con ruta de Repaso; con el catálogo nuevo le tocó
+   `y1.student-day-challenge-wheel`, que declara `none`, y la carrera terminaba
+   con 0 recuperaciones. Ahora la lista de beats a fallar sale de
+   `recoveryContent.reviews` del propio contenido: la prueba pasó a depender de
+   lo que el contenido declara y no de qué le toca a una seed. Dos
+   recuperaciones, egreso igual.
+
+## N. Verificación
+
+Con Node 24.19.0.
+
+| Gate | Resultado |
+|---|---|
+| `pnpm game:validate-content` | exit 0 · 0 errores · 0 warnings |
+| `pnpm game:variants check` (7.º y 1.º a 5.º) | exit 0 · integridad `ok` en los seis |
+| Reconstrucción de catálogos | 0 diferencias |
+| Auditoría de estrategia ciega | techos en verde salvo el `todo` del STOP 1 · 0 fugas de postura |
+| `pnpm game:simulate:deep` | 5000 / 5000 egresadas · 0 hallazgos |
+| `pnpm game:score` | perfecta 10 000 en todas las formas de plan · 0 empates de redondeo |
+| `pnpm test:e2e:only` | 154 E2E en desktop y mobile, 0 fallas |
+| `pnpm verify` | **exit 0**: toolchain, workspace, sync del master spec, secretos, formato, lint, typecheck, tokens del sistema de diseño, 95 archivos y 1723 tests de Vitest más 2 `todo`, cobertura 85,01 / 76,78 / 86,93 / 85,13, validación de contenido y catálogos de los seis años, cinco simulaciones deterministas, build de producción y los 154 E2E |
+| `node scripts/validate-agent-workspace.mjs` | 6 skills, 236 archivos documentados, enlaces y JSON OK |
+| `node scripts/sync-master-spec.mjs --check` | 116 fuentes sincronizadas |
+| `git diff --check` | sin espacios en blanco erróneos |
+
+La primera corrida completa dio **exit 1** con tres fallas de E2E en
+`tests/e2e/full-career.spec.ts`, ambas causadas por el cambio de catálogo y
+corregidas (sección M); la segunda dio exit 0. Baseline: 93 archivos y 1663
+tests; ahora 95 y 1723.
+
+## O. Documentación actualizada
+
+- Este informe y el [inventario de feedback](04-quality/mathematics-remediation-feedback-inventory.md).
+- [Ficha de 2.º](01-game-design/grade-2-template-design.md) (RS-NEW-006),
+  [3.º](01-game-design/grade-3-template-design.md),
+  [4.º](01-game-design/grade-4-template-design.md) y
+  [5.º](01-game-design/grade-5-template-design.md): tablas de implementación y
+  catálogos.
+- [Validación y auditoría de variantes](04-quality/variant-validation-and-audit.md): auditoría
+  de estrategia ciega, gate de balance del mural y generación por papel.
+- [Registro de decisiones](07-reference/decision-register.md) D-S08-104 a
+  D-S08-111, [preguntas abiertas](07-reference/open-questions.md) 66 y 67,
+  [etapa actual](06-delivery/current-stage.md),
+  [roadmap](06-delivery/implementation-sequence.md),
+  [trazabilidad](02-functional/traceability-matrix.md), índice y manifiesto.
+
+## P. Git
+
+Commits en `main`, sin push, sin reescribir historia. El worktree temporal de la
+línea de base se eliminó con `git worktree remove`.
+
+## Q. Entradas para el re-audit
+
+Cuando se resuelvan los dos puntos de decisión, el re-audit recibe:
+
+1. la tabla R / K / S de la sección F;
+2. la evidencia por criterio de la sección E;
+3. el [inventario de feedback](04-quality/mathematics-remediation-feedback-inventory.md);
+4. las versiones de la sección J;
+5. los dos STOP de la sección H, con su demostración y sus mediciones.
+
+Y además debe, por la sección 7 de la especificación: repetir la enumeración sin
+usar `tests/helpers/blind-strategy.ts` como única fuente, probar respuestas
+ingenuas en las Templates de construcción y confirmar que ninguna decisión
+`ACCEPT_AS_DESIGNED` cambió.
+
+## R. Estado de gobernanza
+
+```text
+Mathematics Remediation Implementation   BLOCKED · 12 de 14 contratos DONE · 2 STOP
+Independent Mathematics Re-Audit         PENDING · requiere decidir STOP 1 y STOP 2
+AI Mathematics Dept. Provisional Sign-Off PENDING
+Human Mathematics Department Review      DEFERRED · Final Delivery / Pre-Release
+Real-player pacing validation            PENDING
+STAGE-08                                 IN_PROGRESS
+```
+
+---
+
 # FILE: 04-quality/mathematics-remediation-spec.md
 
 # Especificación de remediación matemática
@@ -13869,6 +14688,43 @@ nivel de resultado, aulas donde apilar en orden bastaba. `check` revalida cada
 entrada; el desglose por plantilla está en el
 [diseño de 1.º](01-game-design/grade-1-template-design.md#implementación-runtime-phase-1).
 
+### Estrategia ciega — R, K y S
+
+**Implementada** en la [remediación matemática](04-quality/mathematics-remediation-implementation.md).
+Una variante puede ser correcta y el catálogo, contestable sin mirar los números.
+`tests/integration/blind-strategy-audit.test.ts` recorre el catálogo vigente de
+carrera completa y, en cada Template cuyo espacio de respuestas es finito
+—tarjetas, líneas de tiempo, clasificaciones de hasta 50.000 respuestas y
+entradas numéricas de hasta 5000 valores—, evalúa **con el evaluador real** todas
+las respuestas de todas las variantes:
+
+- **R**: lo que rinde contestar al azar;
+- **K**: lo que rinde repetir la mejor respuesta constante en todo el catálogo,
+  por identificador o, si los identificadores cambian, por posición;
+- **S**: la mayor proporción de variantes que comparten la misma respuesta
+  óptima;
+- los niveles alcanzables por variante y si la postura pública cambia la calidad
+  matemática, que debe ser nunca.
+
+Los techos son por Template y los fija la
+[especificación de remediación](04-quality/mathematics-remediation-spec.md#3-auditoría-permanente-de-estrategia-ciega-wp-audit);
+no hay un umbral universal (D-S08-100). `pnpm game:blind-audit` imprime la tabla
+completa, y `--keys` las respuestas que logran K y S. Es medición, no oráculo.
+
+**Distribución por dirección.** Cuando un criterio es sobre el catálogo —cada
+opción óptima en al menos tres variantes, ninguna clave en más del 35 %—, filtrar
+después de aprobar es frágil. `generatedSource` acepta un gate por dirección,
+`addressGates(params, index)`: la dirección fija un **papel** —qué opción es la
+óptima, qué vector de verdad, qué forma—, el generador busca de forma determinista
+parámetros que lo jueguen y el gate lo comprueba. Lo usan el colectivo, la
+encuesta y su Repaso, la tabla del Intercurso y la muestra final.
+
+**Gate de balance del mural.** El mural no cambió de generador: un validador de
+catálogo alterna por dirección la lata óptima, 2 L o 4 L, y deja el reparto entre
+el 45 % y el 55 % en todo catálogo que lo contiene (`grade-7-dev-6` en adelante).
+Sus diagnósticos empiezan con «balance del catálogo» y los tests de propiedad del
+generador los distinguen de un problema matemático.
+
 Los umbrales son **heurísticas de revisión, no constantes universales**. Su función es levantar la mano; la aprobación sigue requiriendo que cada variante pase sus validaciones y que la integridad del artefacto sea reproducible.
 
 ## Auditoría Monte Carlo del armado de runs
@@ -14263,8 +15119,8 @@ STAGE-08                                      IN_PROGRESS · CURRENT
     ├── AI MATHEMATICS DEPARTMENT (provisional)  IN_PROGRESS
     │   ├── Pre-Review                           DONE · 13 hallazgos, 0 bloqueantes
     │   ├── Independent Adjudication             DONE · REMEDIATION REQUIRED
-    │   ├── Mathematics Remediation              NEXT · contrato canónico
-    │   ├── Independent Re-Audit                 PENDING
+    │   ├── Mathematics Remediation              BLOCKED · 12/14 contratos · 2 STOP
+    │   ├── Independent Re-Audit                 PENDING · requiere decidir los STOP
     │   └── Provisional Sign-Off                 PENDING
     ├── Revisión del Depto. de Matemática      DEFERRED · a Final Delivery / Pre-Release
     ├── Sign-off manual de la rueda            PENDING · humana
@@ -14305,7 +15161,8 @@ existe y el servidor la recomputa, pero autorar una oportunidad competitiva
 exigiría inventar acciones de jugador que ninguna Template tiene. El contenido
 de 1.º a 5.º está en estado `draft`: faltan la remediación matemática y su
 sign-off provisional de IA, el sign-off manual de la rueda y el pacing empírico,
-gates de producción de STAGE-08. La revisión del Departamento de Matemática
+gates de producción de STAGE-08; la remediación quedó bloqueada en dos criterios
+que requieren decisión (D-S08-104). La revisión del Departamento de Matemática
 humano no se eliminó: está diferida a la entrega final (D-S08-095).
 
 ## Baseline autoritativa
@@ -14314,18 +15171,22 @@ STAGE-07 sigue `DONE`: toda run válida completada egresa, con un Repaso máximo
 por etapa fuera del presupuesto ordinario y de FairScore.
 
 - Versiones: engine `10.0.0`, action log `7`, snapshot `8`. 7.º conserva ruleset
-  `0.4.0-grade-7`, contenido `0.9.0-grade-7` y catálogo `grade-7-dev-5`.
-  `7.º → 1.º`: contenido `1.0.0-grade-1`, catálogo `grade-1-dev-1`.
-  `7.º → 2.º`: contenido `2.1.0-grade-2`, catálogo `grade-2-dev-2`.
-  `7.º → 3.º`: contenido `3.1.0-grade-3`, catálogo `grade-3-dev-2`.
-  `7.º → 4.º`: contenido `4.1.0-grade-4`, catálogo `grade-4-dev-2`.
-  `7.º → 5.º`: rulesets `5.1.0-grade-5-partial` y `5.1.0-grade-5-demo`, contenido
-  `5.1.0-grade-5`, catálogo `grade-5-dev-2`. Carrera completa: ruleset
+  `0.4.0-grade-7`; contenido `0.10.0-grade-7` y catálogo `grade-7-dev-6`, con
+  `dev-1` a `dev-5` publicados sin cambios.
+  `7.º → 1.º`: contenido `1.1.0-grade-1`, catálogo `grade-1-dev-2`.
+  `7.º → 2.º`: contenido `2.2.0-grade-2`, catálogo `grade-2-dev-3`.
+  `7.º → 3.º`: contenido `3.2.0-grade-3`, catálogo `grade-3-dev-3`.
+  `7.º → 4.º`: contenido `4.2.0-grade-4`, catálogo `grade-4-dev-3`.
+  `7.º → 5.º`: rulesets `5.2.0-grade-5-partial` y `5.2.0-grade-5-demo`, contenido
+  `5.2.0-grade-5`, catálogo `grade-5-dev-3`. Carrera completa: ruleset
   `1.0.0-full-career` sobre ese mismo contenido y catálogo. Score
-  `fair-score-dev-2@2.0.0-post-tg1-candidate` sin cambios.
+  `fair-score-dev-2@2.0.0-post-tg1-candidate` sin cambios. Los catálogos y
+  contenidos subieron con la remediación matemática (D-S08-109).
 - Huellas: motor `4bcf054e` —se movió con la respuesta de recorrido y con la
-  política de rareza—; ruleset de la carrera completa `7d41fddb`.
-- Tests: 93 archivos y 1662 tests de Vitest; 146 E2E de Playwright en desktop y
+  política de rareza—; ruleset de la carrera completa `7d41fddb`; contenido de la
+  carrera `72435ee3`.
+- Tests: 95 archivos y 1723 tests de Vitest, más 2 `todo` que registran los dos
+  STOP de la remediación; 154 E2E de Playwright en desktop y
   mobile, incluidos los recorridos de 1.º a 5.º, la carrera completa y el
   barrido de accesibilidad del audit.
 - Simulación: 5000 runs de 7.º, 5000 de `7.º → 1.º`, 2000 del demo amplio y 200
@@ -14368,6 +15229,22 @@ runtime, contenido, catálogos ni tests cambió en este gate.** El contrato de l
 siguiente tarea es la
 [especificación de remediación](04-quality/mathematics-remediation-spec.md).
 
+La [implementación de la remediación](04-quality/mathematics-remediation-implementation.md)
+se ejecutó el 17 de septiembre y dio `MATHEMATICS REMEDIATION IMPLEMENTATION —
+BLOCKED`. Doce de los catorce contratos quedaron implementados y verificados por
+test: la auditoría permanente de estrategia ciega, el colectivo, la encuesta y su
+Repaso, la tabla del Intercurso, la notebook, el año que viene, los Repasos
+numéricos, el mural, el consejo, la peña y la ficha de 2.º. La muestra final bajó
+de K 92,5 a 56,8 y ya no se resuelve repartiendo todo. Un
+[inventario de feedback afirmativo](04-quality/mathematics-remediation-feedback-inventory.md)
+sobre las 42 Templates corrigió además seis textos falsos. Dos criterios quedaron
+detenidos por STOP, porque contradicen otra regla del mismo contrato: toda la
+pantalla del acto (RS-MAT-008, D-S08-105) y «recortar entre los planes óptimos» de
+la muestra final (RS-NEW-001, D-S08-106). Ningún techo se relajó; los dos puntos de
+decisión son las preguntas abiertas 66 y 67. FairScore, escalera, dificultad,
+motor, action log, snapshot y ruleset de carrera no cambiaron; los catálogos se
+republicaron una sola vez (D-S08-109).
+
 ## Siguiente tarea canónica
 
 ```text
@@ -14383,7 +15260,10 @@ INTEGRACIÓN DE CARRERA COMPLETA — DONE
 AI Mathematics Department Pre-Review — DONE
 AI Mathematics Department Independent Adjudication — DONE
 
-Mathematics Remediation — NEXT
+Mathematics Remediation Implementation — BLOCKED
+  12 de 14 contratos DONE
+  STOP 1: RS-MAT-008 (y5.stage-screen) — decisión requerida
+  STOP 2: RS-NEW-001 criterio 3 (y5.course-project-final) — decisión requerida
 Independent Mathematics Re-Audit — PENDING
 AI Mathematics Department Provisional Sign-Off — PENDING
 
@@ -14393,8 +15273,9 @@ Human Mathematics Department Review
 Real-player pacing validation — PENDING
 
 Next:
-MATHEMATICS REMEDIATION IMPLEMENTATION, con
-docs/04-quality/mathematics-remediation-spec.md como contrato canónico
+DECIDIR los puntos de decisión de los dos STOP (preguntas abiertas 66 y 67),
+completar lo que esa decisión habilite y recién entonces
+INDEPENDENT MATHEMATICS RE-AUDIT
 ```
 
 La [auditoría de implementación de carrera completa](04-quality/full-career-implementation-audit.md)
@@ -14432,6 +15313,11 @@ de Matemática humano sobre las 42 Templates queda diferida a la entrega final.
 Hasta eso, el contenido permanece `draft` y la edición `official: false`.
 
 ## Última reconciliación
+
+17 de septiembre de 2026: implementación de la remediación matemática —doce de
+catorce contratos, auditoría permanente de estrategia ciega, inventario de
+feedback afirmativo y republicación de los seis catálogos— con veredicto
+`BLOCKED` por dos STOP que requieren decisión (D-S08-104 a D-S08-111). Sin push.
 
 16 de septiembre de 2026: adjudicación independiente del Departamento de
 Matemática provisional —tres revisores, Chair, trece hallazgos adjudicados, siete
@@ -14554,9 +15440,12 @@ Si el roadmap y el código difieren, **el código gana** y el roadmap se corrige
 - Fases de validación externa y congelamiento: [ciclo de entrega real](00-product/real-delivery-lifecycle.md).
 - Qué se construye por capas de alcance: [alcance y roadmap](00-product/scope-and-roadmap.md) y [backlog](06-delivery/mvp-backlog.md).
 
-**Última reconciliación:** 16 de septiembre de 2026, adjudicación independiente
-del Departamento de Matemática provisional (IA) con remediación requerida y
-revisión humana de Matemática diferida a la entrega final (D-S08-095). Antecedente
+**Última reconciliación:** 17 de septiembre de 2026, implementación de la
+remediación matemática con veredicto `BLOCKED`: doce de catorce contratos y dos
+STOP que requieren decisión (D-S08-104 a D-S08-106). Antecedente del 16 de
+septiembre: adjudicación independiente del Departamento de Matemática provisional
+(IA) con remediación requerida y revisión humana de Matemática diferida a la
+entrega final (D-S08-095). Antecedente
 del 14 de septiembre: Post-Grade-1 Scalability Audit ejecutado con `PASS WITH REQUIRED HARDENING — RESOLVED`; 2.º–5.º
 desbloqueados. Antecedente del 11 de septiembre, STAGE-08 / Phase 1 `DONE`:
 1.º implementado sobre `grade-1-dev-1`, contratos acotados de ADR-025 en runtime y
@@ -14602,7 +15491,7 @@ Tabla de navegación. Los contratos de cada etapa, más abajo, son la autoridad.
 | [STAGE-06](#stage-06-scorepolicy-competitiva) | ScorePolicy competitiva | `DONE` | STAGE-05 | — |
 | [GATE-TG1](#gate-tg1-teacher-gate-1) | **Teacher Gate 1** | `PASSED_WITH_REQUIRED_ADJUSTMENTS` | STAGE-04, STAGE-06 | externo |
 | [STAGE-07](#stage-07-invariante-de-egreso-fail-forward-y-recuperaciones) | Egreso, fail-forward y recuperaciones | `DONE` | GATE-TG1 | — |
-| [STAGE-08](#stage-08-contenido-incremental-de-1º-a-5º) | Contenido incremental 1.º → 5.º | `IN_PROGRESS` · **actual** · implementación e integración DONE · remediación matemática NEXT | STAGE-07 | auditoría tras 1.º · gates matemáticos provisionales |
+| [STAGE-08](#stage-08-contenido-incremental-de-1º-a-5º) | Contenido incremental 1.º → 5.º | `IN_PROGRESS` · **actual** · implementación e integración DONE · remediación matemática BLOCKED por dos STOP | STAGE-07 | auditoría tras 1.º · gates matemáticos provisionales |
 | [STAGE-09](#stage-09-fair-mode-servidor-autoritativo-y-ranking) | Fair mode, servidor autoritativo y ranking | `NOT_STARTED` | STAGE-06, STAGE-08 | — |
 | [GATE-TG2](#gate-tg2-teacher-gate-2) | **Teacher Gate 2** | `TEACHER_GATE` | STAGE-09 | externo |
 | [FREEZE](#freeze-congelamiento-de-competencia) | Congelamiento de competencia | `NOT_STARTED` | GATE-TG2 | — |
@@ -15315,7 +16204,7 @@ a TG1. El techo de un Repaso por etapa sigue siendo estructura de ADR-024.
 
 - **Estado:** `IN_PROGRESS` — **etapa actual; Phase 0 DONE / Phase 1 DONE /
   audit post-G1 PASSED / Phase 2 e integración de carrera completa DONE; gates
-  matemáticos provisionales en curso: remediación NEXT**
+  matemáticos provisionales en curso: remediación BLOCKED por dos STOP**
 - **Depende de:** STAGE-07 (`DONE`)
 - **Desbloquea:** STAGE-09
 
@@ -15456,7 +16345,7 @@ cerrar la integración de carrera completa):
 - [x] Epílogo de carrera real con saliencia determinista, datos ausentes no dibujados y Hitos display-only distinguibles.
 - [x] Accesibilidad teclado/tap, móvil, reduced motion, replay/snapshot/reanudación y E2E por año. — Más el E2E de carrera completa a 320 px.
 - [ ] Auditoría de composición completa, cobertura/exploits y playtests de pacing según [validación de contenido](04-quality/content-validation.md). — La [auditoría de implementación](04-quality/full-career-implementation-audit.md) está ejecutada y los exploits barridos; **los playtests de pacing con jugadores reales no**.
-- [ ] Revisión matemática, documentación por año y cero sistemas fundamentales duplicados. — Documentación por año completa y sin sistemas duplicados. El gate provisional es el **AI Mathematics Department** (D-S08-095): [pre-revisión](04-quality/mathematics-department-pre-review.md) y [adjudicación independiente](04-quality/mathematics-department-ai-adjudication.md) ejecutadas, con `REMEDIATION REQUIRED`; faltan la remediación según la [especificación](04-quality/mathematics-remediation-spec.md), la re-auditoría independiente y el sign-off provisional. **La revisión del Departamento de Matemática humano no se reemplaza: se difiere a Final Delivery / Pre-Release Acceptance.**
+- [ ] Revisión matemática, documentación por año y cero sistemas fundamentales duplicados. — Documentación por año completa y sin sistemas duplicados. El gate provisional es el **AI Mathematics Department** (D-S08-095): [pre-revisión](04-quality/mathematics-department-pre-review.md) y [adjudicación independiente](04-quality/mathematics-department-ai-adjudication.md) ejecutadas, con `REMEDIATION REQUIRED`; la [implementación de la remediación](04-quality/mathematics-remediation-implementation.md) quedó `BLOCKED` con doce de catorce contratos de la [especificación](04-quality/mathematics-remediation-spec.md) y dos STOP; faltan decidirlos, la re-auditoría independiente y el sign-off provisional. **La revisión del Departamento de Matemática humano no se reemplaza: se difiere a Final Delivery / Pre-Release Acceptance.**
 
 **Lectura requerida.** [Matriz](01-game-design/full-career-content-matrix.md) ·
 [diseño G1](01-game-design/grade-1-template-design.md) ·
@@ -15469,12 +16358,12 @@ cerrar la integración de carrera completa):
 sustituyen estos gates. Objetivos editoriales y calibraciones versionadas conservan
 la madurez del [registro](07-reference/decision-register.md).
 
-**Siguiente tarea.** `MATHEMATICS REMEDIATION IMPLEMENTATION`, con la
-[especificación de remediación](04-quality/mathematics-remediation-spec.md)
-como contrato canónico: dieciséis correcciones y una aclaración adjudicadas sobre
-`MAT-001 … MAT-013` y `MAT-AJ-NEW-001 … 007`, en catorce contratos y sin
-recalibrar FairScore. Después,
-Independent Mathematics Re-Audit y AI Mathematics Department Provisional
+**Siguiente tarea.** Decidir los dos puntos abiertos por los STOP de la
+[implementación de la remediación](04-quality/mathematics-remediation-implementation.md) —la pantalla del acto (RS-MAT-008) y
+«recortar» entre los planes óptimos de la muestra final (RS-NEW-001, criterio 3);
+preguntas abiertas 66 y 67— y completar lo que esa decisión habilite. Los otros
+doce contratos están implementados y verificados, sin recalibrar FairScore.
+Después, Independent Mathematics Re-Audit y AI Mathematics Department Provisional
 Sign-Off. Siguen además los gates humanos de STAGE-08 que no se difirieron:
 sign-off manual de la rueda del Día del Estudiante y playtests de pacing con
 jugadores reales. La revisión del Departamento de Matemática humano sobre las 42
@@ -15489,8 +16378,8 @@ juego, se recompone en servidor y pasa accesibilidad a 320 px, con la
 en `PASS WITH REQUIRED HARDENING — RESOLVED`. **El pacing sigue sin medirse con
 jugadores reales**, y la [adjudicación matemática](04-quality/mathematics-department-ai-adjudication.md)
 exige remediación antes del sign-off provisional, así que la etapa no cierra: la
-implementación está completa; la remediación matemática y la validación empírica
-no.
+implementación está completa; la remediación matemática quedó bloqueada en dos
+criterios y la validación empírica no empezó.
 
 ---
 
@@ -17817,7 +18706,7 @@ Son **ocho plantillas** y seis situaciones por partida: el slot del colectivo al
 | `g7.group-tasks` | Repartir el trabajo grupal entre cuatro personas | asignación con restricciones | `assignment-board` | horas disponibles contra horas requeridas, más afinidad |
 | `g7.stand-supplies` | Comprar la merienda del stand sin pasarse del presupuesto | combinación y costo unitario | `budget-builder` | cubrir las porciones necesarias al menor costo |
 
-Ambos rulesets seleccionan **dentro del catálogo aprobado de desarrollo** vigente `grade-7-dev-5`: 26 o 27 direcciones por plantilla generada, y las dos autoradas de `g7.group-tasks`. Siete plantillas declaran generadores por restricción y `g7.group-tasks` es autorada; las dos estrategias pasan por validación, fingerprint y deduplicación, y ninguna produce azar procedural libre en runtime. El seed de la run elige **cuál** variante sale; qué contiene esa dirección no depende de la run. El repaso sale del **mismo** catálogo aprobado: lo juega la misma persona bajo las mismas reglas y no le corresponde uno más laxo. `dev-5` conserva intactas las 159 entradas de `dev-4` y suma las 26 de `g7.bus-travel-review` para `contentVersion 0.9.0-grade-7`. Ver [ADR-021](03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md), [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) y [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md).
+Ambos rulesets seleccionan **dentro del catálogo aprobado de desarrollo** vigente `grade-7-dev-6`: 26 o 27 direcciones por plantilla generada, y las dos autoradas de `g7.group-tasks`. Siete plantillas declaran generadores por restricción y `g7.group-tasks` es autorada; las dos estrategias pasan por validación, fingerprint y deduplicación, y ninguna produce azar procedural libre en runtime. El seed de la run elige **cuál** variante sale; qué contiene esa dirección no depende de la run. El repaso sale del **mismo** catálogo aprobado: lo juega la misma persona bajo las mismas reglas y no le corresponde uno más laxo. `dev-5` conserva intactas las 159 entradas de `dev-4` y suma las 26 de `g7.bus-travel-review` para `contentVersion 0.9.0-grade-7`; `dev-6` rebalancea las del mural para `contentVersion 0.10.0-grade-7` ([remediación matemática](04-quality/mathematics-remediation-implementation.md)). Ver [ADR-021](03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md), [ADR-022](03-architecture/adr/ADR-022-difficulty-model-and-run-composer.md) y [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md).
 
 ### Calidades de resolución
 
@@ -17945,7 +18834,7 @@ Tiene que probar ocho cosas:
 
 ### Variación: qué demostró STAGE-04 y qué sigue abierto
 
-La diversidad **paramétrica** ya llega al gameplay desde el catálogo vigente `grade-7-dev-5`, que conserva la población de `dev-4` y le suma la de la plantilla de repaso. La diversidad **cognitiva** tiene su primera prueba de producción en la familia `bus`: `g7.bus-timing` pide elegir una salida en un timeline y `g7.bus-latest-departure` pide producir una anticipación numérica recorriendo la relación al revés. Seeds distintas pueden elegir cualquiera de las dos dentro del slot del colectivo.
+La diversidad **paramétrica** ya llega al gameplay desde el catálogo vigente `grade-7-dev-6`: la población de `dev-4`, la de la plantilla de repaso y el mural rebalanceado por la remediación matemática. La diversidad **cognitiva** tiene su primera prueba de producción en la familia `bus`: `g7.bus-timing` pide elegir una salida en un timeline y `g7.bus-latest-departure` pide producir una anticipación numérica recorriendo la relación al revés. Seeds distintas pueden elegir cualquiera de las dos dentro del slot del colectivo.
 
 Eso demuestra la capacidad, no completa el inventario. Las otras cinco familias siguen con una plantilla cada una, y cuántas familias y plantillas necesita el juego final permanece **OPEN**. Ver [la migración](03-architecture/content-model-migration.md), [familias y variantes](01-game-design/challenge-families-and-variants.md) y [ADR-021](03-architecture/adr/ADR-021-approved-catalog-in-play-and-teacher-demo.md).
 
@@ -18455,6 +19344,15 @@ contenido, catálogos ni tests.
 | D-S08-101 | En Fair v1 los reintentos repiten las mismas variantes por diseño `LOCKED`: la memorización dentro de una edición es posible en toda Template y no se corrige con catálogo. Lo corregible es el atajo transferible entre seeds. MAT-013 queda como riesgo documentado para la revisión humana final | ACCEPTED · riesgo documentado | MAT-013; [modo feria](05-operations/fair-mode-and-competition-freeze.md) |
 | D-S08-102 | Los gaps de probabilidad de sucesos y de representación explícita de funciones **no** comprometen los objetivos propios del juego —el año no es barrera curricular— y no se ordenan Templates nuevas. Riesgo documentado para uso institucional | ACCEPTED · riesgo documentado | MAT-012 |
 | D-S08-103 | Correcciones al pre-review: existía feedback que afirma algo falso (MAT-AJ-NEW-002, 003); `y5.course-project-final` no es modelo a imitar (MAT-AJ-NEW-001); MAT-009 no es LOW; el argumento de error estándar de MAT-003 no aplica a respuesta voluntaria. El pre-review se conserva como registro ejecutado | ACCEPTED · registro | [adjudicación, sección R](04-quality/mathematics-department-ai-adjudication.md#r-correcciones-al-pre-review) |
+| D-S08-104 | Veredicto `MATHEMATICS REMEDIATION IMPLEMENTATION — BLOCKED`. Doce de los catorce contratos de la [especificación](04-quality/mathematics-remediation-spec.md) quedan implementados y verificados por test; RS-MAT-008 no se implementó y el criterio 3 de RS-NEW-001 quedó sin cumplir, los dos por STOP. Ningún techo se relajó: los tests que corresponderían son `it.todo` con el STOP nombrado. El Independent Mathematics Re-Audit **no** se habilita hasta decidir los dos puntos abiertos | BLOCKED · gate | [implementación](04-quality/mathematics-remediation-implementation.md) |
+| D-S08-105 | **STOP de RS-MAT-008** (`y5.stage-screen`). Los tres recortes muestran el mismo rectángulo, así que una variante aprobada tiene cero o un recorte válido. Sin recorte válido quedan dos niveles no inválidos y la regla 2.6 (`tierWitnessIssues`) rechaza la variante: la imagen entera nunca puede ser óptima (punto 4). Con un recorte válido, «entera» es `efficient` en toda variante (punto 8) y la heurística de lado acierta en todo recorte de un lado, así que ≤ 50 % (punto 9) exige recorte por el medio ≥ 50 % contra ≤ 40 % (punto 7). Prototipo completo: 854 variantes con «entera» óptima, 0 con los tres niveles. **Decisión requerida:** (a) eximir del witness de tres niveles las variantes sin recorte válido, o (b) reescribir los puntos 7–9 y los techos | BLOCKED · requiere decisión | [implementación](04-quality/mathematics-remediation-implementation.md#stop-1-rs-mat-008-y5stage-screen); pregunta 66 |
+| D-S08-106 | **STOP de RS-NEW-001, criterio 3** (`y5.course-project-final`). `optimal` es «sobrevive todo lo no esencial» y recortar algo esencial es `invalid`: ningún plan óptimo puede contener «recortar», y el contrato prohíbe cambiar la escalera. Criterios 1, 2 y 4 y los techos, cumplidos (repartir todo óptimo en 0 de 25; K 92,5 → 56,8; S 91,7 % → 28 %). **Decisión requerida:** reformular el criterio sobre planes válidos —recomendado, ya se cumple— o autorizar un cambio de escalera | BLOCKED · requiere decisión | [implementación](04-quality/mathematics-remediation-implementation.md#stop-2-rs-new-001-criterio-3-y5course-project-final); pregunta 67 |
+| D-S08-107 | La auditoría de estrategia ciega es un test permanente del repositorio (`tests/integration/blind-strategy-audit.test.ts`, `pnpm game:blind-audit`) que evalúa con el evaluador real cada respuesta de cada variante enumerable. Reprodujo exactamente los valores de la adjudicación sobre `grade-5-dev-2` antes de tocar contenido. Es medición, no oráculo: el re-audit repite la enumeración con herramientas propias | ACCEPTED · método | [auditoría de variantes](04-quality/variant-validation-and-audit.md#estrategia-ciega-r-k-y-s) |
+| D-S08-108 | Las distribuciones sobre el catálogo se garantizan **por dirección**, no filtrando después: `generatedSource` acepta `addressGates(params, index)`, la dirección fija un papel —óptima, vector de verdad o forma— y el generador lo busca de forma determinista. No es un motor ni cambia la forma del catálogo. Los seis generadores cuyo espacio cambió suben a versión `2` | ACCEPTED · autoría | `src/content/authoring.ts` |
+| D-S08-109 | Republicación única de catálogos. 1.º a 5.º siguen D-S08-088: `grade-1-dev-2`, `grade-2-dev-3`, `grade-3-dev-3`, `grade-4-dev-3` y `grade-5-dev-3`, con contenido y rulesets de práctica `x.(y+1).0`. 7.º conserva todos sus catálogos: `grade-7-dev-6` se publica junto a `dev-5`, con contenido `0.10.0-grade-7` y ruleset `0.4.0-grade-7` sin cambios. Motor `10.0.0`, action log `7`, snapshot `8`, huella de motor `4bcf054e` y ruleset de carrera completa `1.0.0-full-career` / `7d41fddb`, sin cambios; la huella de contenido de la carrera pasa de `e2c61b62` a `72435ee3` | ACCEPTED · versionado | [implementación](04-quality/mathematics-remediation-implementation.md#j-catálogos-y-versiones) |
+| D-S08-110 | Inventario de feedback afirmativo ejecutado sobre las 42 Templates (regla 2.9): todo texto fijo que afirma una comparación, una dirección o una causa queda probado o calculado. Además de la notebook y los Repasos, corrigió seis textos falsos —postas, cola del evento, franja del aula, viaje, lado del cartel y margen del colectivo de 7.º— y extendió la dirección del error a `y5.multi-option-comparison-review` | ACCEPTED · contenido | [inventario](04-quality/mathematics-remediation-feedback-inventory.md) |
+| D-S08-111 | Hallazgo de implementación sin contrato: en `g7.bus-timing`, elegir siempre la primera salida rinde K 84,6 y es óptima en el 57,7 % de las variantes. No se corrigió —ningún contrato lo pide y la remediación no redecide producto—; queda para el re-audit | OPEN · para re-audit | [implementación](04-quality/mathematics-remediation-implementation.md#m-hallazgos-de-la-implementación) |
+| D-S08-112 | Dos defectos que el cambio de catálogo dejó a la vista, corregidos dentro del gate: el `fieldset` de `DecisionBlock` arrancaba en `min-inline-size: min-content` y desbordaba la página a 320 px con una entrada numérica y su unidad al lado —se le agregó `min-w-0`, que los demás `fieldset` de interacción ya tenían—; y el E2E de recuperaciones de carrera elegía los beats a fallar por prefijo de año en vez de por las rutas que declara `recoveryContent.reviews` | ACCEPTED · defecto | [implementación](04-quality/mathematics-remediation-implementation.md#m-hallazgos-de-la-implementación) |
 
 La integración de TG1 permanece histórica en [su acta y trazabilidad](06-delivery/teacher-gate-1/12-integracion-post-gate.md).
 Siguen pendientes la oficialización/freeze, validación empírica, autoría ejecutable,
@@ -19037,11 +19935,13 @@ ADR-025 y STOP post-G1 preservado. No se declara runtime nuevo.
 
 ## Gobernanza matemática provisional
 
-Abiertas por la [adjudicación del Departamento de Matemática provisional](04-quality/mathematics-department-ai-adjudication.md) y por el diferimiento de la revisión humana (D-S08-095). No bloquean la remediación.
+Abiertas por la [adjudicación del Departamento de Matemática provisional](04-quality/mathematics-department-ai-adjudication.md) y por el diferimiento de la revisión humana (D-S08-095). Las 63–65 no bloquean la remediación; las 66 y 67 son los puntos de decisión de sus dos STOP y bloquean el re-audit.
 
 63. ¿Cómo se ejecuta la revisión del Departamento de Matemática humano diferida a Final Delivery / Pre-Release Acceptance respecto de Teacher Gate 2: es parte de TG2, lo precede o es un gate propio? *Gate: planificar la aceptación de pre-release.* Mientras tanto, ningún documento la da por hecha ni la fusiona con TG2.
 64. ¿Los sign-offs manuales explícitos que la [guía de autoría](01-game-design/content-authoring-guide.md#profundidad-de-variantes) exige para doce Templates —incluida la rueda del Día del Estudiante, que hoy figura como gate humano de STAGE-08— se ejecutan también en la revisión humana diferida, o conservan su momento actual? *Gate: cierre de STAGE-08.* La decisión D-S08-095 no los difirió.
 65. Las banderas de riesgo aceptado de la adjudicación —cobertura de probabilidad y funciones, memorización dentro de una edición Fair, piso de la opción segura del mural y de la escalera asimétrica— requieren juicio humano. *Gate: revisión humana diferida.* Ver [sección N](04-quality/mathematics-department-ai-adjudication.md#n-riesgos-aceptados-y-banderas-para-la-revisión-humana-final).
+66. **STOP de RS-MAT-008** (`y5.stage-screen`): ¿se exime a la pantalla del acto del witness de tres niveles no inválidos **sólo** en las variantes donde ningún recorte es válido —la imagen entera óptima que el punto 4 autoriza—, o se conserva la regla 2.6 y se reescriben los puntos 7, 8 y 9 y los techos K ≤ 70 · S ≤ 40 %? La primera es coherente con D-S08-099, pero su factibilidad no está medida. *Gate: bloquea el Independent Mathematics Re-Audit.* Ver [STOP 1](04-quality/mathematics-remediation-implementation.md#stop-1-rs-mat-008-y5stage-screen) y D-S08-105.
+67. **STOP de RS-NEW-001, criterio 3** (`y5.course-project-final`): ¿el criterio «mantener, repartir y recortar entre los planes óptimos» se reformula sobre planes válidos —donde ya se cumple—, o se autoriza un cambio de escalera que el contrato hoy prohíbe? *Gate: bloquea el Independent Mathematics Re-Audit.* Ver [STOP 2](04-quality/mathematics-remediation-implementation.md#stop-2-rs-new-001-criterio-3-y5course-project-final) y D-S08-106.
 
 ## Diferidas a propósito
 
@@ -19344,6 +20244,7 @@ no sustituyen ni se presentan como playtest real con estudiantes.
 - [x] Contrato de auditoría de escalabilidad posterior a 1.º, marcado requerido y todavía no ejecutado.
 - [x] Full-Career Product Audit integrado y conformidad técnica PASS con deltas entendidos, sin confundirlos con validación empírica.
 - [x] Departamento de Matemática provisional (IA): pre-revisión, adjudicación independiente con tres revisores y Chair, y especificación de remediación; revisión humana diferida a la entrega final, sin presentarla como hecha.
+- [x] Implementación de la remediación matemática documentada con veredicto `BLOCKED`, evidencia por contrato, inventario de feedback y los dos STOP como puntos de decisión abiertos, sin presentar re-auditoría ni sign-off como hechos.
 
 ## Operación
 - [x] Runbook de feria.
@@ -19532,7 +20433,9 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 - `mathematics-department-ai-reviewer-c.md`: opinión independiente y congelada del Revisor C, sobre validez de evaluación y diseño de juegos educativos.
 - `mathematics-department-ai-adjudication.md`: adjudicación del Chair sobre MAT-001…MAT-013 y los hallazgos nuevos, con gobernanza, evidencia y banderas para la revisión humana final.
 - `mathematics-remediation-spec.md`: contrato canónico de la remediación matemática, con criterios de aceptación, tests, mediciones y superficie de versión por hallazgo.
-- `variant-validation-and-audit.md`: invariantes de variante y auditoría estadística del catálogo.
+- `mathematics-remediation-implementation.md`: implementación de la remediación matemática, con veredicto `BLOCKED`, evidencia por contrato, estrategia ciega antes y después, versiones y los dos STOP con su punto de decisión.
+- `mathematics-remediation-feedback-inventory.md`: inventario de los textos fijos de feedback que afirman una comparación, una dirección o una causa, probados o calculados, con las correcciones.
+- `variant-validation-and-audit.md`: invariantes de variante, auditoría estadística del catálogo y auditoría de estrategia ciega.
 - `testing-strategy.md`: unit, property-based, integration, E2E y pruebas de contenido.
 - `non-functional-requirements.md`: performance, resiliencia, accesibilidad y compatibilidad.
 - `threat-model.md`: amenazas y mitigaciones.

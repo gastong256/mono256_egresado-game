@@ -64,27 +64,29 @@ sigue bloqueando producción amplia de 2.º–5.º hasta PASS.
 
 Trazabilidad de la cadena `hallazgo → opiniones independientes → decisión del Chair
 → contrato de remediación → implementación → re-auditoría → sign-off provisional →
-revisión humana final`. Adjudicado el 16 de septiembre de 2026; la implementación
-todavía no existe.
+revisión humana final`. Adjudicado el 16 de septiembre de 2026; implementado el 17
+con veredicto `BLOCKED` (D-S08-104). La re-auditoría todavía no existe.
 
-| Hallazgos | Decisión canónica | Contrato | Implementación / verificación siguiente |
-|---|---|---|---|
-| MAT-001 | `REQUIRED_CORRECTION` P0 | [RS-MAT-001](../04-quality/mathematics-remediation-spec.md) | Remediación; re-audit con auditoría de estrategia ciega |
-| MAT-002 · MAT-003 · MAT-004 · MAT-AJ-NEW-006 | `REQUIRED_CORRECTION` P0 / P0 / P1 / P2 | RS-MAT-002, RS-MAT-003, RS-MAT-004, RS-NEW-006 | Remediación de la encuesta y su Repaso; ficha de 2.º |
-| MAT-005 · MAT-AJ-NEW-004 · MAT-AJ-NEW-005 | `REQUIRED_CORRECTION` P1 / P1 / P2 | RS-MAT-005 | Remediación de la tabla; gate de modelo del torneo |
-| MAT-006 | `REQUIRED_CORRECTION` P2 | RS-MAT-006 | Balance del catálogo de 7.º |
-| MAT-007 | `REQUIRED_CORRECTION` P2 | RS-MAT-007 | Remediación del consejo escolar |
-| MAT-008 | `REQUIRED_CORRECTION` P0 | RS-MAT-008 | Rediseño acotado de la pantalla |
-| MAT-009 · MAT-AJ-NEW-007 | `REQUIRED_CORRECTION` P1 | RS-MAT-009 | Remediación de «el año que viene»; guardrail vocacional |
-| MAT-010 | `ACCEPT_AS_DESIGNED` | — | Sin cambio; revisión humana final |
-| MAT-011 | `REQUIRED_CLARIFICATION` P2 | RS-MAT-011 | Consigna de la peña |
-| MAT-012 · MAT-013 | `ACCEPT_WITH_DOCUMENTED_RISK` | — | Banderas para la revisión humana final |
-| MAT-AJ-NEW-001 | `REQUIRED_CORRECTION` P0 | RS-NEW-001 | Remediación de la muestra final |
-| MAT-AJ-NEW-002 | `REQUIRED_CORRECTION` P0 | RS-NEW-002 | Feedback de la notebook |
-| MAT-AJ-NEW-003 | `REQUIRED_CORRECTION` P1 | RS-NEW-003 | Feedback de cinco Repasos numéricos |
+| Hallazgos | Decisión canónica | Contrato | Implementación | Verificación |
+|---|---|---|---|---|
+| MAT-001 | `REQUIRED_CORRECTION` P0 | [RS-MAT-001](../04-quality/mathematics-remediation-spec.md) | DONE · colectivo por papel | `unit/grade-3-transport-pass`, auditoría de estrategia ciega |
+| MAT-002 · MAT-003 · MAT-004 · MAT-AJ-NEW-006 | `REQUIRED_CORRECTION` P0 / P0 / P1 / P2 | RS-MAT-002, RS-MAT-003, RS-MAT-004, RS-NEW-006 | DONE · encuesta, Repaso y ficha de 2.º | `unit/grade-2-survey`, auditoría |
+| MAT-005 · MAT-AJ-NEW-004 · MAT-AJ-NEW-005 | `REQUIRED_CORRECTION` P1 / P1 / P2 | RS-MAT-005 | DONE · gate de modelo del torneo, empate estricto | `unit/grade-2-standings`, auditoría |
+| MAT-006 | `REQUIRED_CORRECTION` P2 | RS-MAT-006 | DONE · `grade-7-dev-6` | `integration/mathematics-remediation`, auditoría |
+| MAT-007 | `REQUIRED_CORRECTION` P2 | RS-MAT-007 | DONE | `integration/mathematics-remediation`, auditoría |
+| MAT-008 | `REQUIRED_CORRECTION` P0 | RS-MAT-008 | **BLOCKED · STOP** ([D-S08-105](../04-quality/mathematics-remediation-implementation.md#stop-1-rs-mat-008-y5stage-screen)) | `it.todo` en la auditoría; pregunta abierta 66 |
+| MAT-009 · MAT-AJ-NEW-007 | `REQUIRED_CORRECTION` P1 | RS-MAT-009 | DONE | `integration/mathematics-remediation`, auditoría |
+| MAT-010 | `ACCEPT_AS_DESIGNED` | — | Sin cambio | Revisión humana final |
+| MAT-011 | `REQUIRED_CLARIFICATION` P2 | RS-MAT-011 | DONE · consigna de la peña | `integration/mathematics-remediation`, E2E 320 px |
+| MAT-012 · MAT-013 | `ACCEPT_WITH_DOCUMENTED_RISK` | — | Sin cambio | Banderas para la revisión humana final |
+| MAT-AJ-NEW-001 | `REQUIRED_CORRECTION` P0 | RS-NEW-001 | **PARTIAL** · criterios 1, 2, 4 y techos; criterio 3 **STOP** ([D-S08-106](../04-quality/mathematics-remediation-implementation.md#stop-2-rs-new-001-criterio-3-y5course-project-final)) | `integration/mathematics-remediation`, auditoría; pregunta abierta 67 |
+| MAT-AJ-NEW-002 | `REQUIRED_CORRECTION` P0 | RS-NEW-002 | DONE | `integration/mathematics-remediation` |
+| MAT-AJ-NEW-003 | `REQUIRED_CORRECTION` P1 | RS-NEW-003 | DONE · seis Repasos | `integration/mathematics-remediation` |
+| Regla 2.9 | Inventario de feedback afirmativo | — | DONE · seis textos falsos más corregidos (D-S08-110) | [inventario](../04-quality/mathematics-remediation-feedback-inventory.md) |
 
 Fuentes: [adjudicación](../04-quality/mathematics-department-ai-adjudication.md),
 [revisor A](../04-quality/mathematics-department-ai-reviewer-a.md),
 [revisor B](../04-quality/mathematics-department-ai-reviewer-b.md),
-[revisor C](../04-quality/mathematics-department-ai-reviewer-c.md) y
-[decisiones D-S08-095 a D-S08-103](../07-reference/decision-register.md).
+[revisor C](../04-quality/mathematics-department-ai-reviewer-c.md),
+[implementación](../04-quality/mathematics-remediation-implementation.md) y
+[decisiones D-S08-095 a D-S08-111](../07-reference/decision-register.md).

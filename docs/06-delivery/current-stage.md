@@ -29,8 +29,8 @@ STAGE-08                                      IN_PROGRESS · CURRENT
     ├── AI MATHEMATICS DEPARTMENT (provisional)  IN_PROGRESS
     │   ├── Pre-Review                           DONE · 13 hallazgos, 0 bloqueantes
     │   ├── Independent Adjudication             DONE · REMEDIATION REQUIRED
-    │   ├── Mathematics Remediation              NEXT · contrato canónico
-    │   ├── Independent Re-Audit                 PENDING
+    │   ├── Mathematics Remediation              BLOCKED · 12/14 contratos · 2 STOP
+    │   ├── Independent Re-Audit                 PENDING · requiere decidir los STOP
     │   └── Provisional Sign-Off                 PENDING
     ├── Revisión del Depto. de Matemática      DEFERRED · a Final Delivery / Pre-Release
     ├── Sign-off manual de la rueda            PENDING · humana
@@ -71,7 +71,8 @@ existe y el servidor la recomputa, pero autorar una oportunidad competitiva
 exigiría inventar acciones de jugador que ninguna Template tiene. El contenido
 de 1.º a 5.º está en estado `draft`: faltan la remediación matemática y su
 sign-off provisional de IA, el sign-off manual de la rueda y el pacing empírico,
-gates de producción de STAGE-08. La revisión del Departamento de Matemática
+gates de producción de STAGE-08; la remediación quedó bloqueada en dos criterios
+que requieren decisión (D-S08-104). La revisión del Departamento de Matemática
 humano no se eliminó: está diferida a la entrega final (D-S08-095).
 
 ## Baseline autoritativa
@@ -80,18 +81,22 @@ STAGE-07 sigue `DONE`: toda run válida completada egresa, con un Repaso máximo
 por etapa fuera del presupuesto ordinario y de FairScore.
 
 - Versiones: engine `10.0.0`, action log `7`, snapshot `8`. 7.º conserva ruleset
-  `0.4.0-grade-7`, contenido `0.9.0-grade-7` y catálogo `grade-7-dev-5`.
-  `7.º → 1.º`: contenido `1.0.0-grade-1`, catálogo `grade-1-dev-1`.
-  `7.º → 2.º`: contenido `2.1.0-grade-2`, catálogo `grade-2-dev-2`.
-  `7.º → 3.º`: contenido `3.1.0-grade-3`, catálogo `grade-3-dev-2`.
-  `7.º → 4.º`: contenido `4.1.0-grade-4`, catálogo `grade-4-dev-2`.
-  `7.º → 5.º`: rulesets `5.1.0-grade-5-partial` y `5.1.0-grade-5-demo`, contenido
-  `5.1.0-grade-5`, catálogo `grade-5-dev-2`. Carrera completa: ruleset
+  `0.4.0-grade-7`; contenido `0.10.0-grade-7` y catálogo `grade-7-dev-6`, con
+  `dev-1` a `dev-5` publicados sin cambios.
+  `7.º → 1.º`: contenido `1.1.0-grade-1`, catálogo `grade-1-dev-2`.
+  `7.º → 2.º`: contenido `2.2.0-grade-2`, catálogo `grade-2-dev-3`.
+  `7.º → 3.º`: contenido `3.2.0-grade-3`, catálogo `grade-3-dev-3`.
+  `7.º → 4.º`: contenido `4.2.0-grade-4`, catálogo `grade-4-dev-3`.
+  `7.º → 5.º`: rulesets `5.2.0-grade-5-partial` y `5.2.0-grade-5-demo`, contenido
+  `5.2.0-grade-5`, catálogo `grade-5-dev-3`. Carrera completa: ruleset
   `1.0.0-full-career` sobre ese mismo contenido y catálogo. Score
-  `fair-score-dev-2@2.0.0-post-tg1-candidate` sin cambios.
+  `fair-score-dev-2@2.0.0-post-tg1-candidate` sin cambios. Los catálogos y
+  contenidos subieron con la remediación matemática (D-S08-109).
 - Huellas: motor `4bcf054e` —se movió con la respuesta de recorrido y con la
-  política de rareza—; ruleset de la carrera completa `7d41fddb`.
-- Tests: 93 archivos y 1662 tests de Vitest; 146 E2E de Playwright en desktop y
+  política de rareza—; ruleset de la carrera completa `7d41fddb`; contenido de la
+  carrera `72435ee3`.
+- Tests: 95 archivos y 1723 tests de Vitest, más 2 `todo` que registran los dos
+  STOP de la remediación; 154 E2E de Playwright en desktop y
   mobile, incluidos los recorridos de 1.º a 5.º, la carrera completa y el
   barrido de accesibilidad del audit.
 - Simulación: 5000 runs de 7.º, 5000 de `7.º → 1.º`, 2000 del demo amplio y 200
@@ -134,6 +139,22 @@ runtime, contenido, catálogos ni tests cambió en este gate.** El contrato de l
 siguiente tarea es la
 [especificación de remediación](../04-quality/mathematics-remediation-spec.md).
 
+La [implementación de la remediación](../04-quality/mathematics-remediation-implementation.md)
+se ejecutó el 17 de septiembre y dio `MATHEMATICS REMEDIATION IMPLEMENTATION —
+BLOCKED`. Doce de los catorce contratos quedaron implementados y verificados por
+test: la auditoría permanente de estrategia ciega, el colectivo, la encuesta y su
+Repaso, la tabla del Intercurso, la notebook, el año que viene, los Repasos
+numéricos, el mural, el consejo, la peña y la ficha de 2.º. La muestra final bajó
+de K 92,5 a 56,8 y ya no se resuelve repartiendo todo. Un
+[inventario de feedback afirmativo](../04-quality/mathematics-remediation-feedback-inventory.md)
+sobre las 42 Templates corrigió además seis textos falsos. Dos criterios quedaron
+detenidos por STOP, porque contradicen otra regla del mismo contrato: toda la
+pantalla del acto (RS-MAT-008, D-S08-105) y «recortar entre los planes óptimos» de
+la muestra final (RS-NEW-001, D-S08-106). Ningún techo se relajó; los dos puntos de
+decisión son las preguntas abiertas 66 y 67. FairScore, escalera, dificultad,
+motor, action log, snapshot y ruleset de carrera no cambiaron; los catálogos se
+republicaron una sola vez (D-S08-109).
+
 ## Siguiente tarea canónica
 
 ```text
@@ -149,7 +170,10 @@ INTEGRACIÓN DE CARRERA COMPLETA — DONE
 AI Mathematics Department Pre-Review — DONE
 AI Mathematics Department Independent Adjudication — DONE
 
-Mathematics Remediation — NEXT
+Mathematics Remediation Implementation — BLOCKED
+  12 de 14 contratos DONE
+  STOP 1: RS-MAT-008 (y5.stage-screen) — decisión requerida
+  STOP 2: RS-NEW-001 criterio 3 (y5.course-project-final) — decisión requerida
 Independent Mathematics Re-Audit — PENDING
 AI Mathematics Department Provisional Sign-Off — PENDING
 
@@ -159,8 +183,9 @@ Human Mathematics Department Review
 Real-player pacing validation — PENDING
 
 Next:
-MATHEMATICS REMEDIATION IMPLEMENTATION, con
-docs/04-quality/mathematics-remediation-spec.md como contrato canónico
+DECIDIR los puntos de decisión de los dos STOP (preguntas abiertas 66 y 67),
+completar lo que esa decisión habilite y recién entonces
+INDEPENDENT MATHEMATICS RE-AUDIT
 ```
 
 La [auditoría de implementación de carrera completa](../04-quality/full-career-implementation-audit.md)
@@ -198,6 +223,11 @@ de Matemática humano sobre las 42 Templates queda diferida a la entrega final.
 Hasta eso, el contenido permanece `draft` y la edición `official: false`.
 
 ## Última reconciliación
+
+17 de septiembre de 2026: implementación de la remediación matemática —doce de
+catorce contratos, auditoría permanente de estrategia ciega, inventario de
+feedback afirmativo y republicación de los seis catálogos— con veredicto
+`BLOCKED` por dos STOP que requieren decisión (D-S08-104 a D-S08-111). Sin push.
 
 16 de septiembre de 2026: adjudicación independiente del Departamento de
 Matemática provisional —tres revisores, Chair, trece hallazgos adjudicados, siete

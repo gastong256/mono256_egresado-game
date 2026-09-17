@@ -72,6 +72,8 @@
 04-quality/mathematics-department-ai-reviewer-c.md
 04-quality/mathematics-department-human-review-packet.md
 04-quality/mathematics-department-pre-review.md
+04-quality/mathematics-remediation-feedback-inventory.md
+04-quality/mathematics-remediation-implementation.md
 04-quality/mathematics-remediation-spec.md
 04-quality/non-functional-requirements.md
 04-quality/post-grade-1-scalability-audit.md

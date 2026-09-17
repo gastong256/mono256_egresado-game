@@ -134,7 +134,7 @@ evaluador y materialización sólo de direcciones aprobadas.
 
 | Template | Formas semánticas | Escalera 100/75/40/10 | Equipo / Estilo |
 |---|---|---|---|
-| `y3.transport-pass` | Cuatro formas de pagar el mismo colectivo —boleto, tarjeta con costo único, combo con viajes incluidos y abono libre— contra cinco meses posibles, del corto al cargado, con los viajes del mes entre dos números | INVALID nunca gana y encima es la más cara para los viajes esperados · FUNCTIONAL nunca gana pero tampoco es la peor · EFFICIENT gana en otra cantidad posible del mes · OPTIMAL gana para los viajes esperados | Ninguno (D-S08-065). Ruta de Repaso a `y3.fixed-variable-review` |
+| `y3.transport-pass` | Cuatro formas de pagar el mismo colectivo —boleto, tarjeta con costo único, combo con viajes incluidos y abono libre— contra seis formas de mes, de `pocos-viajes` a `mes-cargado`, con los viajes del mes pasado como estimación y un rango de cuánto puede cambiar este mes. Los precios son de la ciudad y del mes: ninguno se calcula con el rango. Cada dirección tiene el papel de una forma de pagar óptima, así que las cuatro son óptimas en el catálogo y ninguna en más del 40 %; en `likely` la más barata le saca a la segunda al menos $100 y el 2 % | INVALID nunca gana y encima es la más cara para los viajes esperados · FUNCTIONAL nunca gana pero tampoco es la peor · EFFICIENT gana en otra cantidad posible del mes, y el feedback dice a partir de cuántos viajes · OPTIMAL gana para los viajes esperados | Ninguno (D-S08-065). Ruta de Repaso a `y3.fixed-variable-review` |
 | `y3.course-project-tech` | Tres recursos compartidos —notebook prestada, lugar en el pendrive y rato de laboratorio a una tasa— y tres cosas que producir con consumos distintos; formas `pendrive-corto`, `laboratorio-corto` y `notebook-corta` | INVALID se pasa de un recurso o no llega al mínimo de la feria · FUNCTIONAL mínimos · EFFICIENT dos de lo prometido · OPTIMAL lo prometido entero | **Equipo** 0–3 por los acuerdos del grupo, leído por dueño sobre el mismo plan (`LOCKED`). Ruta de Repaso a `y3.rate-capacity-review` |
 | `y3.friend-day` | Cuatro personas con ventanas propias, dos lugares con viaje en el medio, dos bloques obligatorios y dos opcionales; formas `ventana-corta`, `traslado-largo` y `gustos-cruzados` | INVALID se pisa, no da el viaje o falta quien tiene que estar · FUNCTIONAL obligatorios · EFFICIENT un opcional · OPTIMAL los dos | **Equipo** 0–3: que nadie quede afuera, que lo que cada uno quería pase mientras está y que nadie espere de más (`LOCKED`). Estilo por la forma de la tarde |
 | `y3.week-planner` | Cuatro días de tarde libre, dos compromisos que ya tienen día y hora, dos pendientes con vencimiento y dos opcionales; formas `semana-cargada`, `vencimiento-temprano` y `tarde-ocupada` | INVALID falta, se pisa, se sale de la tarde o vence · FUNCTIONAL obligatorios · EFFICIENT un opcional · OPTIMAL los dos | Sin Equipo ni Aura. **Estilo fuerte**: pegado al vencimiento → Improvisador; con un día entero libre → Estratega; repartido con margen → Aplicado |
@@ -164,9 +164,11 @@ quiere evitar no aparece ninguna vez. Sigue siendo blanda: ordena planes válido
 y no filtra ninguno, así que cuando esa pareja es la única legal la carrera se
 compone igual.
 
-**Catálogo `grade-3-dev-1`.** 681 entradas, 173 de 3.º, construido con
+**Catálogo `grade-3-dev-3`.** 681 entradas, construido con
 `pnpm game:variants build --content=grade-3`; re-aprueba 7.º, 1.º y 2.º sin
-tocar sus artefactos publicados. La práctica parcial `7.º → 3.º` es
+tocar sus artefactos publicados. Reemplaza a `grade-3-dev-2` por la
+[remediación matemática](../04-quality/mathematics-remediation-implementation.md): colectivo generado por papel y los dos Repasos con feedback de dirección
+según el signo del error, contenido `3.2.0-grade-3`. La práctica parcial `7.º → 3.º` es
 `official: false`.
 
 **Rareza.** `rare.y3.offline-project` sigue siendo hook, por la misma razón que

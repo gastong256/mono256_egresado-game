@@ -69,6 +69,43 @@ nivel de resultado, aulas donde apilar en orden bastaba. `check` revalida cada
 entrada; el desglose por plantilla está en el
 [diseño de 1.º](../01-game-design/grade-1-template-design.md#implementación-runtime-phase-1).
 
+### Estrategia ciega — R, K y S
+
+**Implementada** en la [remediación matemática](mathematics-remediation-implementation.md).
+Una variante puede ser correcta y el catálogo, contestable sin mirar los números.
+`tests/integration/blind-strategy-audit.test.ts` recorre el catálogo vigente de
+carrera completa y, en cada Template cuyo espacio de respuestas es finito
+—tarjetas, líneas de tiempo, clasificaciones de hasta 50.000 respuestas y
+entradas numéricas de hasta 5000 valores—, evalúa **con el evaluador real** todas
+las respuestas de todas las variantes:
+
+- **R**: lo que rinde contestar al azar;
+- **K**: lo que rinde repetir la mejor respuesta constante en todo el catálogo,
+  por identificador o, si los identificadores cambian, por posición;
+- **S**: la mayor proporción de variantes que comparten la misma respuesta
+  óptima;
+- los niveles alcanzables por variante y si la postura pública cambia la calidad
+  matemática, que debe ser nunca.
+
+Los techos son por Template y los fija la
+[especificación de remediación](mathematics-remediation-spec.md#3-auditoría-permanente-de-estrategia-ciega-wp-audit);
+no hay un umbral universal (D-S08-100). `pnpm game:blind-audit` imprime la tabla
+completa, y `--keys` las respuestas que logran K y S. Es medición, no oráculo.
+
+**Distribución por dirección.** Cuando un criterio es sobre el catálogo —cada
+opción óptima en al menos tres variantes, ninguna clave en más del 35 %—, filtrar
+después de aprobar es frágil. `generatedSource` acepta un gate por dirección,
+`addressGates(params, index)`: la dirección fija un **papel** —qué opción es la
+óptima, qué vector de verdad, qué forma—, el generador busca de forma determinista
+parámetros que lo jueguen y el gate lo comprueba. Lo usan el colectivo, la
+encuesta y su Repaso, la tabla del Intercurso y la muestra final.
+
+**Gate de balance del mural.** El mural no cambió de generador: un validador de
+catálogo alterna por dirección la lata óptima, 2 L o 4 L, y deja el reparto entre
+el 45 % y el 55 % en todo catálogo que lo contiene (`grade-7-dev-6` en adelante).
+Sus diagnósticos empiezan con «balance del catálogo» y los tests de propiedad del
+generador los distinguen de un problema matemático.
+
 Los umbrales son **heurísticas de revisión, no constantes universales**. Su función es levantar la mano; la aprobación sigue requiriendo que cada variante pase sus validaciones y que la integridad del artefacto sea reproducible.
 
 ## Auditoría Monte Carlo del armado de runs

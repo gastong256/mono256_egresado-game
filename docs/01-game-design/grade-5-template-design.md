@@ -161,10 +161,10 @@ independiente por evaluador y materialización sólo de direcciones aprobadas.
 | Template | Formas semánticas | Escalera 100/75/40/10 | Equipo / Aura / Estilo |
 |---|---|---|---|
 | `y5.final-trip-or-event` | Cuatro paquetes contra el fondo del curso, los días que da el colegio y los lugares que hacen falta; formas `fondo-corto`, `pocos-dias` y `curso-grande` | INVALID no se puede hacer · FUNCTIONAL se puede pero falta lo que el curso pidió · EFFICIENT trae todo y deja el fondo al límite · OPTIMAL trae todo y deja la reserva | Ninguno |
-| `y5.course-project-final` | Seis tareas con dueño y horas, alguien que no va a estar, y tres destinos por tarea: mantener, repartir o recortar; formas `se-cae-el-video`, `menos-horas` y `todo-esencial` | INVALID recorta algo esencial, deja la tarea de quien no está o pasa las horas de alguien · FUNCTIONAL el plan cierra · EFFICIENT sobrevive parte de lo no esencial · OPTIMAL sobrevive todo | **Equipo** por los acuerdos del grupo y **Aura** por lo que el curso dice del cambio, en campos distintos de la respuesta (`LOCKED`). Estilo por la forma de la reconstrucción |
+| `y5.course-project-final` | Seis tareas con dueño y horas, alguien que no va a estar, y tres destinos por tarea: mantener, repartir o recortar; formas `se-cae-el-video`, `menos-horas` y `todo-esencial`. Una de las personas que quedan tiene pocas horas, así que repartir parejo sobrecarga a alguien; cada dirección rota forma y dueño de la primera tarea, y ningún plan de «repartir todo» es ya el óptimo | INVALID recorta algo esencial, deja la tarea de quien no está o pasa las horas de alguien · FUNCTIONAL el plan cierra · EFFICIENT sobrevive parte de lo no esencial · OPTIMAL sobrevive todo | **Equipo** por los acuerdos del grupo y **Aura** por lo que el curso dice del cambio, en campos distintos de la respuesta (`LOCKED`). Estilo por la forma de la reconstrucción |
 | `y5.stage-screen` | Pantalla e imagen en centímetros, el cartel del curso de un lado con su aire, y cinco formas de proyectar; formas `pantalla-ancha`, `imagen-alta` y `cartel-grande` | INVALID deforma o se come el cartel · FUNCTIONAL deja media pantalla vacía · EFFICIENT llena casi todo · OPTIMAL llena la pantalla con el cartel entero | Ninguno |
 | `y5.yearbook` | Páginas exactas de imprenta, mínimos pactados, un tope y material por sección; formas `tope-apretado`, `minimos-altos` y `material-desparejo` | INVALID no suma exacto o rompe lo pactado · FUNCTIONAL cierra sin completar ninguna sección · EFFICIENT completa alguna · OPTIMAL completa todas las que se podían | Ninguno |
-| `y5.next-step-options` | Cinco escenarios ya escritos contra las horas libres, el viaje diario y el día tomado; formas `horas-justas`, `viaje-largo` y `compromiso-fijo` | INVALID marca como viable algo que no entra · EFFICIENT deja uno viable afuera · FUNCTIONAL deja dos o más · OPTIMAL exacta | Ninguno. La preferencia personal **no se puntúa de ninguna forma** |
+| `y5.next-step-options` | Cinco escenarios ya escritos contra las horas libres, el viaje diario y el día tomado; las horas de cada escenario **incluyen** su viaje y la pantalla lo dice. Ocho vectores de viabilidad rotan por dirección: cada escenario entra en el 25 % a 75 % del catálogo, alguna opción de estudio entra en al menos la mitad y lo que las deja afuera se reparte entre horas, viaje y día | INVALID marca como viable algo que no entra · EFFICIENT deja uno viable afuera · FUNCTIONAL deja dos o más · OPTIMAL exacta | Ninguno. La preferencia personal **no se puntúa de ninguna forma** |
 | `y5.multi-option-comparison-review` | Un paquete que no incluye el micro, que se cobra por persona | OPTIMAL el total con el micro de cada uno · FUNCTIONAL sumarlo una sola vez · EFFICIENT una persona de diferencia · INVALID el resto | Sin Estilo ni score |
 | `y5.proportion-capacity-review` | Material de una sección contra lo que entra por página | OPTIMAL sube al entero · FUNCTIONAL se queda en la parte entera · EFFICIENT una página de diferencia · INVALID el resto | Sin Estilo ni score |
 
@@ -191,9 +191,18 @@ decisión es elegir entre formas de proyectar y toda la geometría está escrita
 La familia de razonamiento declarada sigue siendo `SPATIAL`, que es de lo que
 trata la cuenta.
 
-**Catálogo `grade-5-dev-1`.** 1025 entradas, 172 de 5.º, construido con
+**Catálogo `grade-5-dev-3`.** 1026 entradas, construido con
 `pnpm game:variants build --content=grade-5`; re-aprueba los años anteriores sin
-tocar sus artefactos publicados. `7.º → 5.º` es el primer set con los seis años
+tocar sus artefactos publicados. Reemplaza a `grade-5-dev-2` por la
+[remediación matemática](../04-quality/mathematics-remediation-implementation.md): muestra final y año que viene generados por papel, dirección del error en
+los dos Repasos y feedback del viaje, contenido `5.2.0-grade-5`.
+
+**La pantalla del acto no se remedió.** RS-MAT-008 quedó detenido por STOP: con
+seis formas de proyectar y la escalera del contrato, exigir los tres niveles no
+inválidos en cada variante vuelve imposible que la imagen entera sea la óptima y,
+con eso, el reparto de óptimas y la heurística de lado que el mismo contrato pide.
+La Template sigue como estaba —sólo el texto de la restricción nombra ahora el
+lado real del cartel— hasta que se decida el punto abierto. `7.º → 5.º` es el primer set con los seis años
 y sigue siendo `official: false`.
 
 **Lo que 5.º todavía no trae.** La convergencia de carrera se cumple hoy por

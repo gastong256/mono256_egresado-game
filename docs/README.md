@@ -101,7 +101,9 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 - `mathematics-department-ai-reviewer-c.md`: opinión independiente y congelada del Revisor C, sobre validez de evaluación y diseño de juegos educativos.
 - `mathematics-department-ai-adjudication.md`: adjudicación del Chair sobre MAT-001…MAT-013 y los hallazgos nuevos, con gobernanza, evidencia y banderas para la revisión humana final.
 - `mathematics-remediation-spec.md`: contrato canónico de la remediación matemática, con criterios de aceptación, tests, mediciones y superficie de versión por hallazgo.
-- `variant-validation-and-audit.md`: invariantes de variante y auditoría estadística del catálogo.
+- `mathematics-remediation-implementation.md`: implementación de la remediación matemática, con veredicto `BLOCKED`, evidencia por contrato, estrategia ciega antes y después, versiones y los dos STOP con su punto de decisión.
+- `mathematics-remediation-feedback-inventory.md`: inventario de los textos fijos de feedback que afirman una comparación, una dirección o una causa, probados o calculados, con las correcciones.
+- `variant-validation-and-audit.md`: invariantes de variante, auditoría estadística del catálogo y auditoría de estrategia ciega.
 - `testing-strategy.md`: unit, property-based, integration, E2E y pruebas de contenido.
 - `non-functional-requirements.md`: performance, resiliencia, accesibilidad y compatibilidad.
 - `threat-model.md`: amenazas y mitigaciones.

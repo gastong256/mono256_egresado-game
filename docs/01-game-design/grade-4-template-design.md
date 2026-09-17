@@ -137,10 +137,10 @@ independiente por evaluador y materialización sólo de direcciones aprobadas.
 | Template | Formas semánticas | Escalera 100/75/40/10 | Equipo / Aura / Estilo |
 |---|---|---|---|
 | `y4.shift-coverage` | Dos puestos en tres bloques seguidos y cuatro personas con disponibilidad por bloque; formas `llega-tarde`, `se-va-temprano` y `todos-parciales` | INVALID puesto vacío, choque de hora o alguien que no está · FUNCTIONAL cierra pero alguien se queda las tres horas · EFFICIENT todos descansan · OPTIMAL además ningún puesto cambia de manos más de una vez | **Equipo** 0–3 por los acuerdos del grupo, leído entre cronogramas que ya cierran (`LOCKED`) |
-| `y4.course-project-fundraiser` | Costo fijo, tres cosas para vender con su costo, precio y minutos de cocina, un objetivo y un colchón; formas `cocina-corta`, `objetivo-alto` y `margen-parejo` | INVALID se pasa de cocina o pierde plata · FUNCTIONAL cubre costos · EFFICIENT llega al objetivo · OPTIMAL llega con el colchón | Sin Equipo ni Aura. Estilo por la forma de la producción |
+| `y4.course-project-fundraiser` | Costo fijo, tres cosas para vender con su costo, precio y minutos de cocina, un objetivo y un colchón; formas `cocina-corta`, `objetivo-alto` y `margen-parejo`. La consigna nombra las tres condiciones en orden —no perder plata, llegar al objetivo, llegar con el colchón—, explica el punto de equilibrio en palabras y dice que todo lo que se prepara se vende | INVALID se pasa de cocina o pierde plata · FUNCTIONAL cubre costos · EFFICIENT llega al objetivo · OPTIMAL llega con el colchón | Sin Equipo ni Aura. Estilo por la forma de la producción |
 | `y4.school-event-flow` | Tres puestos en fila con su tasa y lo que suma cada ayudante; formas `puerta-lenta`, `acreditacion-lenta` y `buffet-lento` | INVALID la cola crece o reparte ayudantes que no hay · FUNCTIONAL alcanza el ritmo pedido · EFFICIENT llega a la mitad del margen posible · OPTIMAL el mejor ritmo alcanzable | Ninguno: la consecuencia sobre otra gente se ve, pero no se cobra como gesto social |
 | `y4.event-floor-plan` | Salón con puerta, pasillo y a veces columnas; escenario, tres mesas y una barra; formas `salon-angosto`, `puerta-al-medio` y `con-columnas` | INVALID se sale, se pisa, tapa el pasillo, no sienta a todos o deja una zona encerrada · FUNCTIONAL entra y se circula · EFFICIENT además sobra lugar para una mesa más **o** entra la barra · OPTIMAL las dos | Ninguno |
-| `y4.represent-class` | Tres límites escritos —plata, minutos y lugar— y cinco propuestas; la situación declara a quién afecta lo que se propone | INVALID lleva al consejo algo que no entra · EFFICIENT deja una viable afuera · FUNCTIONAL deja dos o más · OPTIMAL exacta | **Aura** por la postura pública, leída de un campo distinto del de las etiquetas (`LOCKED`). Sin Equipo y sin Prestige |
+| `y4.represent-class` | Tres límites escritos —plata, minutos y lugar— y cinco propuestas; la situación declara a quién afecta lo que se propone. Toda variante tiene al menos dos propuestas viables, así que no llevar ninguna nunca es casi exacto | INVALID lleva al consejo algo que no entra · EFFICIENT deja una viable afuera · FUNCTIONAL deja dos o más —incluido no llevar ninguna, que la consecuencia narra como tal— · OPTIMAL exacta | **Aura** por la postura pública, leída de un campo distinto del de las etiquetas (`LOCKED`). Sin Equipo y sin Prestige |
 | `y4.margin-review` | Costo fijo contra lo que deja cada bandeja | OPTIMAL las bandejas justas · FUNCTIONAL dividir por el precio · EFFICIENT una de diferencia · INVALID el resto | Sin Estilo ni score |
 | `y4.spatial-capacity-review` | Salón, celdas reservadas y mesas de cuatro celdas | OPTIMAL descuenta lo reservado · FUNCTIONAL cuenta el salón entero · EFFICIENT una mesa de diferencia · INVALID el resto | Sin Estilo ni score |
 
@@ -171,7 +171,10 @@ distorsionaría la matemática sin agregar nada. La ficha declara que sus nombre
 de interacción son modos, no capacidades runtime. La familia de razonamiento sí
 estrena `SYSTEMS_OPTIMIZATION`, que ninguna Template usaba.
 
-**Catálogo `grade-4-dev-1`.** 854 entradas, 173 de 4.º, construido con
+**Catálogo `grade-4-dev-3`.** 853 entradas, construido con
 `pnpm game:variants build --content=grade-4`; re-aprueba los años anteriores sin
-tocar sus artefactos publicados. La práctica parcial `7.º → 4.º` es
+tocar sus artefactos publicados. Reemplaza a `grade-4-dev-2` por la
+[remediación matemática](../04-quality/mathematics-remediation-implementation.md): gate de dos propuestas viables en el consejo —una variante menos—, consigna
+de la peña, dirección del error en los dos Repasos y feedback de la cola,
+contenido `4.2.0-grade-4`. La práctica parcial `7.º → 4.º` es
 `official: false`.

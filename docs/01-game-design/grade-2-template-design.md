@@ -135,21 +135,30 @@ comparan sobre todos los planes. Las mecánicas compartidas se promovieron a
 | Template | Formas semánticas | Escalera 100/75/40/10 | Equipo / Aura / Estilo |
 |---|---|---|---|
 | `y2.team-kit-order` | `exact-share` (el reparto proporcional da justo), `remainder` (deciden los restos mayores), `stock-capped` (a un equipo se le acaba el color). Tres equipos, tope de unidades y stock por color | INVALID excede stock, tope o deja a alguien sin pechera · FUNCTIONAL reparte parejo · EFFICIENT proporcional con un resto mal puesto · OPTIMAL proporcional por restos mayores | Ninguno |
-| `y2.course-project-survey` | Seis afirmaciones sobre la encuesta del nivel, con muestra y población distintas; formas `majority`, `margin` y `least-chosen` | INVALID publica lo que la muestra no sostiene · FUNCTIONAL retiene de más · EFFICIENT una sola confusión · OPTIMAL cada afirmación en su lugar | Ninguno. Ruta de Repaso a `y2.data-claim-review` |
-| `y2.standings-claim` | Tabla con partidos pendientes; afirmaciones seguras, posibles e imposibles mezcladas | INVALID llama seguro a lo que no lo es · FUNCTIONAL/EFFICIENT según cuántas fallan · OPTIMAL clasificación exacta | **Aura** por la postura pública, leída de un campo distinto del de las etiquetas: acertar la matemática nunca concede Aura (`LOCKED`) |
+| `y2.course-project-survey` | Seis afirmaciones sobre la encuesta del nivel —más elegida entre quienes contestaron, más de la mitad de las respuestas, más de la mitad del nivel, «el nivel entero prefiere», le ganó a la segunda según la regla del curso, la menos elegida—. Formas `denominator` (mayoría entre respuestas y no del nivel), `missing-data` (contestó menos de la mitad), `margin` (la diferencia con la segunda no cumple la regla) y `high-response` (contestó al menos el 85 %). **Regla de publicación** en pantalla y como constante única: una opción le ganó a otra sólo si le saca más de 1 de cada 10 respuestas (`diferencia × 10 > respuestas`), sin variantes a una respuesta del borde. **`year-prefers`** por cota de peor caso: cierta sólo si la primera le saca a cada otra más que toda la gente que no contestó, y sólo en `high-response`. Un ciclo de diez papeles reparte forma y vector de verdad: 7 claves en el catálogo, ninguna forma con clave única y el contraste del denominador en el 60 % | INVALID publica algo que los datos no sostienen · FUNCTIONAL retiene dos o más ciertas · EFFICIENT retiene una · OPTIMAL cada afirmación en su lugar. Los cuatro niveles, en toda variante | Ninguno. Ruta de Repaso a `y2.data-claim-review` |
+| `y2.standings-claim` | Tabla de cuatro cursos con puntos, partidos pendientes y puntos por victoria; cuatro afirmaciones —dos de «termina primero» y dos de «termina arriba de»— clasificadas como seguro, posible o imposible. Formas `settled`, `open` y `eliminated`. Los pendientes se juegan **entre estos cuatro cursos** y cada partido lo gana uno —la consigna lo dice—: suma par y ningún curso con más pendientes que los otros tres. **Gate de modelo**: la categoría por cotas de cada curso es idéntica a la del torneo conjunto bajo todo fixture y todo resultado. «Arriba» es estricto —empatar no es terminar arriba— y se rechaza toda tabla donde contar el empate como arriba cambiaría una categoría. Ninguna afirmación tiene la misma categoría en más del 70 % del catálogo | INVALID llama seguro a lo que no lo es · FUNCTIONAL dos o más categorías mal · EFFICIENT una · OPTIMAL clasificación exacta | **Aura** por la postura pública, leída de un campo distinto del de las etiquetas: acertar la matemática nunca concede Aura (`LOCKED`) |
 | `y2.court-zones` | Zonas, distancias de Chebyshev y bordes de la cancha; formas `separation`, `margin` y `covered` | INVALID postas pisadas o fuera · FUNCTIONAL separación mínima · EFFICIENT una más · OPTIMAL la separación pedida | Ninguno |
 | `y2.intercurso-plan` | Tres actividades en dos turnos, cuatro personas con disponibilidad por turno; formas `tight-availability`, `clash` y `spare` | INVALID falta cobertura, choque de turno o alguien que no está · FUNCTIONAL obligaciones cubiertas · EFFICIENT una opcional · OPTIMAL todas | **Equipo** 0–3 por los acuerdos del grupo, leído entre planes que ya cierran (`LOCKED`). Estilo por la forma del reparto |
-| `y2.data-claim-review` | Una sola afirmación por pantalla, con el denominador a la vista | INVALID/FUNCTIONAL/EFFICIENT/OPTIMAL según la lectura del denominador | Sin Estilo ni score |
+| `y2.data-claim-review` | Una cifra, quienes contestaron y el nivel, con tres afirmaciones: más de la mitad de quienes contestaron, más de la mitad del nivel y «sabemos qué eligió quien no contestó» (control siempre falso). Vectores de las dos primeras: `TF` en la mitad del catálogo (el contraste del denominador), `TT` y `FF` en un cuarto cada uno; ninguna cifra en la mitad exacta | INVALID publica una falsa · FUNCTIONAL dos ciertas retenidas (sólo en `TT`) · EFFICIENT una · OPTIMAL exacta. `FF` sólo tiene OPTIMAL e INVALID: es un Repaso, no se le exige witness de niveles | Sin Estilo ni score |
 
 **Banda y metadata.** `bandOf(cognitive)` da: pedido de pecheras 4 → CORE;
 encuesta, tabla y plan del Intercurso → STANDARD; postas 8 → STRETCH; el Repaso
 4 → CORE. El cluster `intercurso` lo declaran las tres Templates del evento, así
 que una run normal aporta como máximo una de ellas.
 
-**Catálogo `grade-2-dev-1`.** 508 entradas, 149 de 2.º, construido con
+**Catálogo `grade-2-dev-3`.** 508 entradas, construido con
 `pnpm game:variants build --content=grade-2`; re-aprueba las de 7.º y 1.º sin
 tocar sus artefactos publicados. La práctica parcial `7.º → 2.º` es
-`official: false`.
+`official: false`. Reemplaza a `grade-2-dev-2` por la
+[remediación matemática](../04-quality/mathematics-remediation-implementation.md):
+encuesta, Repaso del denominador y tabla generados por papel —el gate
+`addressGates` comprueba que cada dirección juegue el suyo—, contenido
+`2.2.0-grade-2`.
+
+**Incertidumbre, sin probabilidad.** La encuesta y la tabla trabajan con datos y
+cotas: lo que la gente que no contestó podría haber elegido, lo que los partidos
+que faltan podrían dar. No hay probabilidad cuantificada ni vocabulario
+inferencial (MAT-012).
 
 **Rareza.** `rare.y2.missing-player` sigue siendo hook: la orquestación de
 rareza se implementa una sola vez en la integración de carrera completa
