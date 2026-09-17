@@ -54,6 +54,7 @@ export const passSchema = z
   .strictObject({
     /** Qué forma tiene el mes: cuánta incertidumbre hay sobre los viajes. */
     shape: z.enum([
+      'pocos-viajes',
       'mes-corto',
       'arranque',
       'mes-completo',
@@ -61,9 +62,9 @@ export const passSchema = z
       'mes-cargado',
     ]),
     /** Viajes posibles del mes y los del mes pasado, que es la referencia. */
-    low: z.number().int().min(10).max(80),
-    likely: z.number().int().min(10).max(80),
-    high: z.number().int().min(10).max(80),
+    low: z.number().int().min(1).max(80),
+    likely: z.number().int().min(1).max(80),
+    high: z.number().int().min(1).max(80),
     ticket: money,
     /** Lo que sale la tarjeta una vez, más lo que cobra por viaje. */
     card: money,
@@ -156,13 +157,16 @@ export function passChoices(p: PassParams): readonly PassChoice[] {
 }
 
 /**
- * Cinco meses posibles, y no sólo cinco rangos.
+ * Seis meses posibles, y no sólo seis rangos.
  *
  * El nivel de uso es lo que decide cuál conviene, así que los meses van de uno
- * de pocos viajes a uno cargado: sin eso, la misma opción ganaría siempre y el
- * desafío se contestaría de memoria a la segunda variante.
+ * de muy pocos viajes a uno cargado. El de pocos viajes existe para que pagar
+ * por viaje pueda ser lo más barato: sin él, el catálogo enseñaría que el
+ * boleto suelto nunca conviene, que es la regla contraria a la del umbral
+ * (MAT-001).
  */
 const SHAPES = [
+  { id: 'pocos-viajes', low: 4, likely: 7, high: 11 },
   { id: 'mes-corto', low: 12, likely: 16, high: 24 },
   { id: 'arranque', low: 20, likely: 26, high: 34 },
   { id: 'mes-completo', low: 36, likely: 42, high: 48 },
@@ -181,33 +185,45 @@ const COMBO_FACTORS = [70, 85, 100, 115, 130] as const
  * mes se estira, y eso es exactamente lo que el umbral tiene que hacer visible.
  */
 const EXTRA_FACTORS = [90, 105, 120] as const
-const PASS_FACTORS = [72, 84, 96, 108] as const
-const CARD_FACTORS = [50, 100, 200] as const
-const RADICES = [
+/**
+ * El abono se cotiza en viajes de tarjeta, y esa cotización es de la ciudad.
+ *
+ * Antes salía del tope de viajes del jugador, así que el abono quedaba casi
+ * siempre a la par de la tarjeta en el extremo alto del mes y «siempre abono»
+ * rendía 78 sin mirar un número. Un precio no depende de cuánto va a viajar
+ * quien lo paga.
+ */
+const PASS_TRIPS = [14, 20, 28, 36, 44] as const
+/** Lo que sale la tarjeta una vez, en porcentaje de un boleto. */
+const CARD_FACTORS = [100, 200, 300, 400] as const
+export const PASS_RADICES: readonly number[] = [
   SHAPES.length,
   TICKETS.length,
   FARE_DROPS.length,
   INCLUDED.length,
   COMBO_FACTORS.length,
-  PASS_FACTORS.length,
+  PASS_TRIPS.length,
   CARD_FACTORS.length,
   EXTRA_FACTORS.length,
 ]
-export const PASS_SPACE = spaceOf(RADICES)
+export const PASS_SPACE = spaceOf(PASS_RADICES)
+export const PASS_STRIDE = 1493
 
 /** Redondeo a la decena, que es como se escriben los precios del boleto. */
 const round10 = (value: number): number => Math.round(value / 10) * 10
 
-export function generatePass(index: number): PassParams {
-  const axes = candidateAxes(index, RADICES, 1493)
+/**
+ * Los precios de una dirección del espacio, sin mirar qué forma de pago gana.
+ *
+ * Ningún precio sale de `low`, `likely` ni `high`: la forma del mes es un eje y
+ * los precios son otros.
+ */
+export function passPricesAt(index: number): PassParams {
+  const axes = candidateAxes(index, PASS_RADICES, PASS_STRIDE)
   const shape = at(SHAPES, digit(axes, 0))
   const ticket = at(TICKETS, digit(axes, 1))
   const fare = ticket - at(FARE_DROPS, digit(axes, 2))
   const included = at(INCLUDED, digit(axes, 3))
-  const extra = Math.min(
-    ticket,
-    round10((fare * at(EXTRA_FACTORS, digit(axes, 7))) / 100),
-  )
   return passSchema.parse({
     shape: shape.id,
     low: shape.low,
@@ -218,12 +234,69 @@ export function generatePass(index: number): PassParams {
     fare,
     combo: round10((included * fare * at(COMBO_FACTORS, digit(axes, 4))) / 100),
     included,
-    extra,
-    pass: round10((shape.high * fare * at(PASS_FACTORS, digit(axes, 5))) / 100),
+    extra: Math.min(
+      ticket,
+      round10((fare * at(EXTRA_FACTORS, digit(axes, 7))) / 100),
+    ),
+    pass: round10(at(PASS_TRIPS, digit(axes, 5)) * fare),
   })
 }
 
-export function passGates(p: PassParams): readonly string[] {
+/**
+ * Qué forma de pago tiene que ser la óptima en cada dirección.
+ *
+ * Rota con la dirección, así que las primeras aprobaciones del catálogo reparten
+ * el óptimo entre las cuatro en vez de dejarlo a lo que el espacio produzca más
+ * seguido.
+ */
+export function roleOf(index: number): OptionId {
+  return at(
+    ['suelto', 'recargable', 'combo', 'abono'] as const,
+    Math.abs(index) % 4,
+  )
+}
+
+/** Cuántas direcciones del espacio se miran para encontrar un mes del papel pedido. */
+const ROLE_SEARCH = 97
+
+/**
+ * Generación por papel: la primera combinación de precios, en un recorrido
+ * determinista del espacio, donde la forma de pago del papel es la más barata
+ * para los viajes esperados y la variante pasa todos los gates. Si no aparece,
+ * devuelve la última probada y el gate de papel la rechaza.
+ */
+export function generatePass(index: number): PassParams {
+  const role = roleOf(index)
+  let last = passPricesAt(index)
+  for (let attempt = 0; attempt < ROLE_SEARCH; attempt++) {
+    const candidate = passPricesAt((index * 31 + attempt * 7919) % PASS_SPACE)
+    last = candidate
+    if (
+      cheapestAt(candidate, candidate.likely) === role &&
+      mathGates(candidate).length === 0
+    )
+      return candidate
+  }
+  return last
+}
+
+/**
+ * Diferencia mínima visible, en `likely`, entre la más barata y la segunda:
+ * cien pesos o el 2 % del costo de la más barata, lo que sea mayor. Debajo de
+ * eso el nivel depende de precisión de cuenta y no del umbral.
+ */
+export function likelyGap(p: PassParams): {
+  readonly gap: number
+  readonly cheapest: number
+} {
+  const costs = OPTIONS.map((option) => costOf(p, option.id, p.likely)).sort(
+    (a, b) => a - b,
+  )
+  const cheapest = costs[0] ?? 0
+  return { gap: (costs[1] ?? cheapest) - cheapest, cheapest }
+}
+
+function mathGates(p: PassParams): readonly string[] {
   const issues: string[] = []
   const choices = passChoices(p)
   issues.push(...tierWitnessIssues(choices))
@@ -257,7 +330,58 @@ export function passGates(p: PassParams): readonly string[] {
       index > 0 && cheapestAt(p, trips) !== cheapestAt(p, all[index - 1] ?? 0),
   )
   if (crossings.length === 0) issues.push('el umbral queda fuera del rango')
+
+  const { gap, cheapest } = likelyGap(p)
+  if (gap < 100 || gap * 50 < cheapest)
+    issues.push('la más barata le saca muy poco a la segunda')
   return issues
+}
+
+/**
+ * Gate de dirección: la óptima es la del papel que le toca a esa dirección.
+ */
+export function passRoleGates(p: PassParams, index: number): readonly string[] {
+  return cheapestAt(p, p.likely) === roleOf(index)
+    ? []
+    : ['la óptima no es la del papel de esta dirección']
+}
+
+/** Los gates matemáticos, sin el papel: lo que toda variante tiene que cumplir. */
+export function passGates(p: PassParams): readonly string[] {
+  return mathGates(p)
+}
+
+/**
+ * Hacia dónde gana una forma de pago que no es la óptima: las cantidades del
+ * rango, por debajo y por encima de los viajes esperados, en las que es la más
+ * barata. Es lo que el feedback `efficient` tiene que decir, calculado de la
+ * variante y nunca escrito de antemano.
+ */
+export function winningSides(
+  p: PassParams,
+  option: OptionId,
+): { readonly below?: number; readonly above?: number } {
+  const wins = tripRange(p).filter((trips) => cheapestAt(p, trips) === option)
+  const below = wins.filter((trips) => trips < p.likely)
+  const above = wins.filter((trips) => trips > p.likely)
+  return {
+    ...(below.length > 0 ? { below: Math.max(...below) } : {}),
+    ...(above.length > 0 ? { above: Math.min(...above) } : {}),
+  }
+}
+
+/** La frase de apuesta de una opción `efficient`, con la dirección real. */
+export function efficientConsequence(p: PassParams, option: OptionId): string {
+  const { below, above } = winningSides(p, option)
+  const fewer =
+    below === undefined ? undefined : `viajás ${String(below)} veces o menos`
+  const more =
+    above === undefined ? undefined : `viajás ${String(above)} veces o más`
+  const when =
+    fewer !== undefined && more !== undefined
+      ? `${fewer}, o si ${more}`
+      : (fewer ?? more ?? '')
+  return `Te conviene si este mes ${when}; es una apuesta, no un error.`
 }
 
 export function evaluatePass(p: PassParams, optionId: string) {
@@ -304,7 +428,7 @@ export function evaluatePass(p: PassParams, optionId: string) {
           quality === 'optimal'
             ? 'Con los viajes que venís haciendo, ninguna otra forma de pagar te sale menos.'
             : quality === 'efficient'
-              ? 'Te conviene si viajás bastante más o bastante menos que el mes pasado; es una apuesta, no un error.'
+              ? efficientConsequence(p, option.id)
               : quality === 'functional'
                 ? 'Funciona, aunque siempre hay otra que te sale menos.'
                 : 'Pagaste de más todo el mes sin ganar nada a cambio.',
@@ -317,11 +441,12 @@ export function evaluatePass(p: PassParams, optionId: string) {
 
 export const passVariants = generatedSource({
   id: 'y3.transport-pass.threshold',
-  version: '1',
+  version: '2',
   schema: passSchema,
   size: PASS_SPACE,
   generate: generatePass,
   gates: passGates,
+  addressGates: passRoleGates,
 })
 
 const TRANSPORT_FAMILY = toScenarioFamilyId('transporte')
@@ -361,8 +486,8 @@ export const transportPass: ChallengeDefinition = defineChallenge<
   narrate: () => ({
     title: 'Cómo pagar el colectivo',
     setup:
-      'Arranca el mes y hay que decidir cómo vas a pagar los viajes a la escuela.',
-    goal: 'Elegí la forma de pagar que te deje gastando menos este mes.',
+      'Arranca el mes y hay que decidir cómo vas a pagar los viajes a la escuela. Los viajes del mes pasado son tu mejor estimación; el rango dice cuánto puede cambiar este mes.',
+    goal: 'Elegí la forma de pagar que te deje gastando menos si este mes viajás como el pasado.',
   }),
   present: (p) => ({
     kind: 'decision-card',
@@ -506,10 +631,14 @@ export function evaluateReview(p: ReviewParams, value: string) {
             violatedConstraint: `Con ${String(exact - 1)} viajes los boletos salen $${mil(p.ticket * (exact - 1))}, todavía menos que el abono.`,
           }
         : {}),
+      // La dirección del error sale de la respuesta: antes una sola frase le
+      // decía «más adelante» también a quien se había pasado (MAT-AJ-NEW-003).
       consequence:
         quality === 'optimal'
           ? 'Ese es el viaje a partir del cual el abono empieza a rendir.'
-          : 'El abono rinde un viaje más adelante de lo que dijiste.',
+          : answered < exact
+            ? 'El abono empieza a rendir más adelante de lo que dijiste.'
+            : 'El abono ya rinde desde antes de lo que dijiste.',
     }),
   )
 }

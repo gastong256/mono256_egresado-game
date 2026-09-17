@@ -1,8 +1,12 @@
 import { describe, expect, it } from 'vitest'
 import { bandOf, cognitiveLoad } from '@/game'
+import { materializeVariant } from '@/game/testing'
+import { candidateAxes } from '@/content/authoring'
 import {
   OPTIONS,
+  PASS_RADICES,
   PASS_SPACE,
+  PASS_STRIDE,
   REVIEW_SPACE,
   breakEvenTrips,
   cheapestAt,
@@ -10,40 +14,42 @@ import {
   evaluatePass,
   evaluateReview,
   fixedVariableReview,
-  generatePass,
   generateReview,
+  likelyGap,
   passChoices,
-  passGates,
+  passPricesAt,
+  passSchema,
   reviewGates,
+  tierOf,
   transportPass,
   tripRange,
+  type OptionId,
   type PassParams,
 } from '@/content/grade-3/challenges/transport-pass'
-import { grade3VariantCatalog } from '@/content/grade-3'
+import {
+  createGrade3Dependencies,
+  grade3VariantCatalog,
+} from '@/content/grade-3'
+import { publishedParams } from '../helpers/published-params'
 
-/**
- * Una ventana del espacio de candidatas, no el espacio entero.
- *
- * Barrer los once mil quinientos meses posibles en cada corrida sería repetir
- * acá lo que el pipeline ya hace al aprobar; `pnpm game:variants check` cubre
- * el resto.
- */
-const WINDOW = 1_200
-const approved: readonly PassParams[] = Array.from(
-  { length: WINDOW },
-  (_, index) => generatePass(index),
-).filter((params) => passGates(params).length === 0)
+const published: readonly PassParams[] = publishedParams(
+  createGrade3Dependencies(),
+  grade3VariantCatalog,
+  'y3.transport-pass',
+  (params) => passSchema.parse(params),
+)
 
-/** Las primeras que el catálogo publicaría: es lo que un jugador puede ver. */
-const published = Array.from({ length: 400 }, (_, index) => generatePass(index))
-  .filter((params) => passGates(params).length === 0)
-  .slice(0, 24)
+const optimalOf = (p: PassParams) =>
+  passChoices(p).find((choice) => choice.quality === 'optimal')?.optionId
 
 describe('3.º · cómo pagar el colectivo', () => {
-  it('aprueba un catálogo suficiente en los cinco meses y es el CORE del año', () => {
-    expect(approved.length).toBeGreaterThanOrEqual(24)
-    expect(PASS_SPACE).toBeGreaterThan(WINDOW)
-    expect(new Set(approved.map((p) => p.shape)).size).toBe(5)
+  it('publica un catálogo suficiente en varias formas de mes y es el CORE del año', () => {
+    expect(published.length).toBeGreaterThanOrEqual(24)
+    expect(PASS_SPACE).toBeGreaterThan(published.length)
+    // Template de alto riesgo: al menos cuatro formas semánticas publicadas.
+    expect(new Set(published.map((p) => p.shape)).size).toBeGreaterThanOrEqual(
+      4,
+    )
     expect(transportPass.band).toBe('core')
     expect(bandOf(transportPass.cognitive)).toBe('core')
     expect(cognitiveLoad(transportPass.cognitive)).toBeLessThanOrEqual(4)
@@ -54,8 +60,134 @@ describe('3.º · cómo pagar el colectivo', () => {
     })
   })
 
+  it('RS-MAT-001: ningún precio depende de los viajes del mes', () => {
+    // Dos direcciones que sólo difieren en la forma del mes tienen los mismos
+    // precios: la forma es un eje y los precios, otros.
+    const groups = new Map<string, Set<string>>()
+    for (let index = 0; index < 4000; index++) {
+      const axes = candidateAxes(index, PASS_RADICES, PASS_STRIDE)
+      const p = passPricesAt(index)
+      const key = axes.slice(1).join('.')
+      const prices = [
+        p.ticket,
+        p.card,
+        p.fare,
+        p.combo,
+        p.included,
+        p.extra,
+        p.pass,
+      ].join('.')
+      const seen = groups.get(key) ?? new Set<string>()
+      seen.add(prices)
+      groups.set(key, seen)
+    }
+    for (const prices of groups.values()) expect(prices.size).toBe(1)
+  })
+
+  it('RS-MAT-001: existe un mes de pocos viajes donde el boleto suelto es lo más barato', () => {
+    expect(published.some((p) => p.shape === 'pocos-viajes')).toBe(true)
+    expect(
+      published.some(
+        (p) => p.shape === 'pocos-viajes' && optimalOf(p) === 'suelto',
+      ),
+    ).toBe(true)
+  })
+
+  it('RS-MAT-001: cada forma de pago es la óptima en al menos 3 variantes y ninguna en más del 40 %', () => {
+    for (const option of OPTIONS) {
+      const count = published.filter((p) => optimalOf(p) === option.id).length
+      expect(count).toBeGreaterThanOrEqual(3)
+      expect(count * 100).toBeLessThanOrEqual(published.length * 40)
+    }
+  })
+
+  it('RS-MAT-001: en al menos el 30 % del catálogo el cambio de conveniencia está a 3 viajes o menos de lo esperado', () => {
+    const near = published.filter((p) => {
+      const trips = tripRange(p)
+      const winners = trips.map((n) => cheapestAt(p, n))
+      const crossings = trips.filter(
+        (_, k) => k > 0 && winners[k] !== winners[k - 1],
+      )
+      return crossings.some((n) => Math.abs(n - p.likely) <= 3)
+    })
+    expect(near.length * 100).toBeGreaterThanOrEqual(published.length * 30)
+  })
+
+  it('RS-MAT-001: la más barata le saca a la segunda al menos $100 y el 2 %', () => {
+    for (const p of published) {
+      const costs = OPTIONS.map((o) => costOf(p, o.id, p.likely)).sort(
+        (a, b) => a - b,
+      )
+      const gap = costs[1]! - costs[0]!
+      expect(gap).toBeGreaterThanOrEqual(100)
+      expect(gap * 50).toBeGreaterThanOrEqual(costs[0]!)
+      expect(likelyGap(p)).toEqual({ gap, cheapest: costs[0] })
+    }
+  })
+
+  it('RS-MAT-001: la pantalla dice que se decide con los viajes del mes pasado', () => {
+    const entry = grade3VariantCatalog.entries.find(
+      (candidate) => (candidate.templateId as string) === 'y3.transport-pass',
+    )!
+    const instance = materializeVariant(transportPass, {
+      variantId: entry.variantId,
+      seed: 'regla',
+    })
+    expect(instance.narrative.setup).toContain(
+      'Los viajes del mes pasado son tu mejor estimación',
+    )
+    expect(instance.narrative.setup).toContain(
+      'el rango dice cuánto puede cambiar',
+    )
+    expect(instance.narrative.goal).toContain(
+      'si este mes viajás como el pasado',
+    )
+  })
+
+  it('RS-MAT-001: el feedback de una apuesta dice hacia dónde gana esa forma de pago, y es cierto', () => {
+    let checked = 0
+    for (const p of published)
+      for (const option of OPTIONS) {
+        if (tierOf(p, option.id) !== 'efficient') continue
+        const wins = tripRange(p).filter((n) => cheapestAt(p, n) === option.id)
+        const below = wins.filter((n) => n < p.likely)
+        const above = wins.filter((n) => n > p.likely)
+        const result = evaluatePass(p, option.id)
+        if (!result.ok) throw new Error('evaluación rechazada')
+        const text = result.value.feedback.consequence ?? ''
+        if (below.length > 0)
+          expect(text).toContain(
+            `viajás ${String(Math.max(...below))} veces o menos`,
+          )
+        else expect(text).not.toContain('o menos')
+        if (above.length > 0)
+          expect(text).toContain(
+            `viajás ${String(Math.min(...above))} veces o más`,
+          )
+        else expect(text).not.toContain('o más')
+        checked += 1
+      }
+    expect(checked).toBeGreaterThanOrEqual(published.length)
+  })
+
+  it('RS-MAT-001: las reglas alternativas —peor caso y costo medio— nunca eligen la forma inválida', () => {
+    for (const p of published) {
+      const trips = tripRange(p)
+      const worst = (o: OptionId) =>
+        Math.max(...trips.map((n) => costOf(p, o, n)))
+      const mean = (o: OptionId) =>
+        trips.reduce((total, n) => total + costOf(p, o, n), 0)
+      const pick = (measure: (o: OptionId) => number) =>
+        OPTIONS.map((o) => o.id).reduce((a, b) =>
+          measure(b) < measure(a) ? b : a,
+        )
+      expect(tierOf(p, pick(worst))).not.toBe('invalid')
+      expect(tierOf(p, pick(mean))).not.toBe('invalid')
+    }
+  })
+
   it('LOCKED: la conveniencia cambia dentro del rango posible de viajes', () => {
-    for (const params of approved) {
+    for (const params of published) {
       const winners = new Set(
         tripRange(params).map((trips) => cheapestAt(params, trips)),
       )
@@ -65,7 +197,7 @@ describe('3.º · cómo pagar el colectivo', () => {
   })
 
   it('la elección equivocada cuesta más que la correcta en todo el rango', () => {
-    for (const params of approved) {
+    for (const params of published) {
       const choices = passChoices(params)
       const best = choices.find((choice) => choice.quality === 'optimal')
       const wrong = choices.find((choice) => choice.quality === 'invalid')
@@ -79,37 +211,21 @@ describe('3.º · cómo pagar el colectivo', () => {
     }
   })
 
-  it('no se contesta de memoria: ninguna opción es la correcta en más de la mitad del catálogo publicado', () => {
-    const winners = new Map<string, number>()
-    for (const params of published) {
-      const best = passChoices(params).find(
-        (choice) => choice.quality === 'optimal',
-      )
-      if (best !== undefined)
-        winners.set(best.optionId, (winners.get(best.optionId) ?? 0) + 1)
-    }
-    expect(published.length).toBe(24)
-    expect(winners.size).toBeGreaterThanOrEqual(3)
-    for (const count of winners.values())
-      expect(count).toBeLessThanOrEqual(published.length / 2)
-  })
-
   it('el evaluador reproduce la escalera del oráculo y rechaza lo que no es una opción', () => {
-    const params = approved[0]
-    if (params === undefined) throw new Error('sin variante aprobada')
-    for (const choice of passChoices(params)) {
-      const result = evaluatePass(params, choice.optionId)
-      expect(result.ok).toBe(true)
-      if (result.ok) expect(result.value.quality).toBe(choice.quality)
+    for (const params of published) {
+      for (const choice of passChoices(params)) {
+        const result = evaluatePass(params, choice.optionId)
+        expect(result.ok).toBe(true)
+        if (result.ok) expect(result.value.quality).toBe(choice.quality)
+      }
     }
-    const rejected = evaluatePass(params, 'bicicleta')
-    expect(rejected.ok).toBe(false)
+    expect(evaluatePass(published[0]!, 'bicicleta').ok).toBe(false)
   })
 
   it('no reparte Equipo, Aura ni Estilo: la decisión es de una persona sobre su mes', () => {
     expect(transportPass.scoring?.team).toBe('none')
     expect(transportPass.scoring?.aura).toBe('none')
-    const params = approved[0]
+    const params = published[0]
     if (params === undefined) throw new Error('sin variante aprobada')
     for (const option of OPTIONS) {
       const result = evaluatePass(params, option.id)

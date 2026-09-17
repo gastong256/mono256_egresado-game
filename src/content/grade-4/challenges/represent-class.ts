@@ -240,6 +240,10 @@ export function representGates(p: RepresentParams): readonly string[] {
   const viable = PROPOSALS.filter((_, index) => fits(p, index)).length
   if (viable === 0) issues.push('ninguna propuesta entra en los límites')
   if (viable === PROPOSALS.length) issues.push('todas las propuestas entran')
+  // Con una sola viable, marcar todas como «No entra» quedaba en el segundo
+  // nivel: 75 por no llevar nada al consejo (MAT-007).
+  if (viable < 2)
+    issues.push('entra una sola propuesta: no hay nada que comparar')
 
   // Los tres límites tienen que decidir algo, o dos de ellos son decorado.
   const reasons = new Set(
@@ -325,15 +329,17 @@ export function evaluateRepresent(
       consequence:
         quality === 'invalid'
           ? 'El curso llevó al consejo algo que no se puede sostener, y volvió sin nada.'
-          : stance === 'del-curso'
-            ? p.stakes === 'todo-el-colegio'
-              ? 'El curso habló por algo que le importa a todo el colegio, y se notó.'
-              : 'El curso pidió como curso algo que sólo le servía al curso.'
-            : stance === 'propia'
+          : !entries.some((entry) => entry.labelId === 'entra')
+            ? 'El curso no llevó ninguna propuesta al consejo, aunque había varias que se podían sostener.'
+            : stance === 'del-curso'
               ? p.stakes === 'todo-el-colegio'
-                ? 'Te pusiste al frente de algo que era de todos.'
-                : 'Lo presentaste como tuyo, y era tuyo.'
-              : 'El curso prefirió que decidiera la dirección.',
+                ? 'El curso habló por algo que le importa a todo el colegio, y se notó.'
+                : 'El curso pidió como curso algo que sólo le servía al curso.'
+              : stance === 'propia'
+                ? p.stakes === 'todo-el-colegio'
+                  ? 'Te pusiste al frente de algo que era de todos.'
+                  : 'Lo presentaste como tuyo, y era tuyo.'
+                : 'El curso prefirió que decidiera la dirección.',
     },
     { aura: auraPoints },
     [

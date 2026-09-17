@@ -268,8 +268,10 @@ export const notebookOffer: ChallengeDefinition = defineChallenge<
             value: pesos(model.budgetMinor - chosen.totalMinor),
           },
         ],
-        optimalComparison:
-          'El descuento en porcentaje era mayor que el descuento fijo, aunque sonara al revés.',
+        optimalComparison: discountComparison(
+          percentValue,
+          model.fixedOffMinor,
+        ),
       },
       metrics: metrics({
         efficiency: efficiencyFromUsage(
@@ -287,6 +289,22 @@ export const notebookOffer: ChallengeDefinition = defineChallenge<
     })
   },
 })
+
+/**
+ * Qué descuento era mayor en pesos, dicho con los dos montos de esta variante.
+ *
+ * Antes era una frase fija que afirmaba siempre que ganaba el porcentaje, y en
+ * 14 de 26 variantes ganaba el descuento fijo (MAT-AJ-NEW-002). Los dos montos
+ * nunca son iguales: el generador exige una diferencia visible.
+ */
+export function discountComparison(
+  percentValueMinor: number,
+  fixedOffMinor: number,
+): string {
+  return percentValueMinor > fixedOffMinor
+    ? `El porcentaje descontaba ${pesos(percentValueMinor)} y el descuento fijo ${pesos(fixedOffMinor)}: convenía el porcentaje.`
+    : `El porcentaje descontaba ${pesos(percentValueMinor)} y el descuento fijo ${pesos(fixedOffMinor)}: convenía el descuento fijo.`
+}
 
 /** Expuesto para los tests de contenido. */
 export const notebookOfferReference = {

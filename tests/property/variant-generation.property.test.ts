@@ -100,8 +100,19 @@ describe('every generated candidate is approvable', () => {
           definition,
           candidateVariantId(index),
         )
-        expect(evaluated.diagnostics).toEqual([])
-        expect(evaluated.fingerprint).toBeDefined()
+        // El mural rechaza a propósito la mitad de las direcciones: su gate de
+        // balance alterna 2 L y 4 L con la paridad de la dirección (MAT-006).
+        // Ese rechazo no es una variante inválida, así que no cuenta acá.
+        const invalid = evaluated.diagnostics.filter(
+          (diagnostic) =>
+            !(
+              id === 'g7.mural-paint' &&
+              diagnostic.detail.startsWith('balance del catálogo')
+            ),
+        )
+        expect(invalid).toEqual([])
+        if (evaluated.diagnostics.length === 0)
+          expect(evaluated.fingerprint).toBeDefined()
       }),
       { numRuns: SAMPLE },
     )

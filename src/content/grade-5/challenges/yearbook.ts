@@ -552,7 +552,9 @@ export function evaluateProportionReview(
       consequence:
         quality === 'optimal'
           ? 'Con eso ya sabés cuánto pedirle a la sección.'
-          : 'Contar una página de menos deja material afuera del anuario.',
+          : answered < exact
+            ? 'Contar páginas de menos deja material afuera del anuario.'
+            : 'Con menos páginas ya entraba todo: se pidieron de más.',
     }),
   )
 }

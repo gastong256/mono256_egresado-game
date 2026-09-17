@@ -311,7 +311,9 @@ export function evaluateFlow(p: FlowParams, lines: readonly BudgetLine[]) {
           : {}),
         consequence:
           read.quality === 'invalid'
-            ? `La cola sale a la vereda y ${mil(p.people)} personas no entran a tiempo.`
+            ? read.overstaffed
+              ? 'Ese reparto usa ayudantes que no hay: así la entrada no se puede armar.'
+              : `La cola sale a la vereda: no todas las ${mil(p.people)} personas entran a tiempo.`
             : read.quality === 'functional'
               ? 'Entra todo el mundo, justo: cualquier demora se nota.'
               : read.quality === 'efficient'

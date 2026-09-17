@@ -52,7 +52,10 @@ export function DecisionBlock({
       data-surface="decision"
       data-testid="decision-block"
       className={cn(
-        'bg-decision -mx-4 mt-0.5 -mb-[18px] flex flex-col gap-[11px] px-4 pt-4 pb-[18px]',
+        // `min-w-0`: un fieldset arranca en `min-inline-size: min-content`, así
+        // que sin esto una entrada numérica con su unidad al lado ensancha el
+        // bloque a sangre y la página desborda a 320 px.
+        'bg-decision -mx-4 mt-0.5 -mb-[18px] flex min-w-0 flex-col gap-[11px] px-4 pt-4 pb-[18px]',
         className,
       )}
     >

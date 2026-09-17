@@ -732,7 +732,9 @@ export function evaluateCapacityReview(p: CapacityReviewParams, value: string) {
       consequence:
         quality === 'optimal'
           ? 'Con eso ya sabés cuánta gente podés sentar.'
-          : 'Contar de más deja gente parada el día del evento.',
+          : answered > exact
+            ? 'Contar de más deja gente parada el día del evento.'
+            : 'Entra más gente de la que contaste: quedan lugares sin usar.',
     }),
   )
 }

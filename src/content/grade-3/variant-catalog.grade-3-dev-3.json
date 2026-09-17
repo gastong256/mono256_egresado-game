@@ -1,6 +1,6 @@
 {
-  "catalogVersion": "grade-3-dev-2",
-  "contentVersion": "3.1.0-grade-3",
+  "catalogVersion": "grade-3-dev-3",
+  "contentVersion": "3.2.0-grade-3",
   "generators": [
     {
       "templateId": "g7.bus-latest-departure",
@@ -89,8 +89,8 @@
     {
       "templateId": "y2.course-project-survey",
       "generatorId": "y2.course-project-survey.denominator-claims",
-      "generatorVersion": "1",
-      "candidateSpace": 144
+      "generatorVersion": "2",
+      "candidateSpace": 6912
     },
     {
       "templateId": "y2.court-zones",
@@ -101,8 +101,8 @@
     {
       "templateId": "y2.data-claim-review",
       "generatorId": "y2.data-claim-review.denominator",
-      "generatorVersion": "1",
-      "candidateSpace": 48
+      "generatorVersion": "2",
+      "candidateSpace": 320
     },
     {
       "templateId": "y2.intercurso-plan",
@@ -113,8 +113,8 @@
     {
       "templateId": "y2.standings-claim",
       "generatorId": "y2.standings-claim.bounds",
-      "generatorVersion": "1",
-      "candidateSpace": 90
+      "generatorVersion": "2",
+      "candidateSpace": 2097152
     },
     {
       "templateId": "y2.team-kit-order",
@@ -155,8 +155,8 @@
     {
       "templateId": "y3.transport-pass",
       "generatorId": "y3.transport-pass.threshold",
-      "generatorVersion": "1",
-      "candidateSpace": 64800
+      "generatorVersion": "2",
+      "candidateSpace": 129600
     },
     {
       "templateId": "y3.week-planner",
@@ -1403,350 +1403,350 @@
       "templateId": "y2.course-project-survey",
       "variantId": "c00001",
       "source": "generated",
-      "fingerprint": "f117e3b20d3c4359f53f3f845ddad1d93551308e975fc607d49994a539983ec2"
+      "fingerprint": "5af5ac756c23dc8a952825a8b4bc0ef76b0151cc19b8c883aebb5ed27b6828a0"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.course-project-survey",
       "variantId": "c00002",
       "source": "generated",
-      "fingerprint": "ac4e481c2d626070f50d6cfcb1e702e58eef625f937292da0ec44778bba24360"
+      "fingerprint": "275e9cb4c07d2956b788cb206fa67c6cd4b6bb242971529c6f1ac9e596a7001f"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.course-project-survey",
       "variantId": "c00003",
       "source": "generated",
-      "fingerprint": "919f1cd39ee4a86be1794af253105ee9d8024d8975b2b35dd224a631ca76c21e"
+      "fingerprint": "afae57d5aa9e2253a99d075c388ca250f8f6a88a83ee1ea9b2b18b7f4061ad83"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.course-project-survey",
       "variantId": "c00004",
       "source": "generated",
-      "fingerprint": "bfcb50d05bac965aaa15d91a6bafd73101bdebab300fec057329e01d294780a8"
+      "fingerprint": "c58d3fe82b66d2d993a54b0ea3d560d7479d2d6d1af60c21cbe4948bf458bb22"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.course-project-survey",
       "variantId": "c00005",
       "source": "generated",
-      "fingerprint": "134a1655a55c2d72859922e6e4b7703b432aad93120e2f44740d23c73938a241"
+      "fingerprint": "554bf1571eedc71db28e5ec926fe9e91535e9bae7534aabc5d04d404814c9ae0"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.course-project-survey",
       "variantId": "c00006",
       "source": "generated",
-      "fingerprint": "316e1c3e2028ac0989c2d551db2d0d51f15939e8275fb02a7b6c33546942be9e"
+      "fingerprint": "a8931aef927fd05b2be409a2734d56f0a783ddaf03c7bd62136091c58bde944f"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y2.course-project-survey",
+      "variantId": "c00007",
+      "source": "generated",
+      "fingerprint": "4a51783eae72cbb6aec3a7038477a179d084a388364b6a8f1607ec3f66f99a99"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.course-project-survey",
       "variantId": "c00008",
       "source": "generated",
-      "fingerprint": "c9b9b514f6e6cabb014611ecbea46dcda3940ea69fb6505723991c0ea8f49a2f"
+      "fingerprint": "deb96021030b5ef1ce2ff439eb26505afe5281ef0fdc0af0bd086fa5b44bcb11"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.course-project-survey",
       "variantId": "c00009",
       "source": "generated",
-      "fingerprint": "b063acb85e87b0fd967df85eadb832b9e78a9485366154bfc2ff2e3c78ec32e9"
+      "fingerprint": "0d7662723e7525e128a77e26eba487f17fb206f17b2a574d9cdd58eaea633f6c"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y2.course-project-survey",
+      "variantId": "c00010",
+      "source": "generated",
+      "fingerprint": "0288818004b2ef6dc93884f7ec0802ab2316085c3e9a8188a6e31f2402a332f4"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.course-project-survey",
       "variantId": "c00011",
       "source": "generated",
-      "fingerprint": "8560e4980e857b22c38652efe6f613d2d83a7923b2da93213f034e7af1dcb7a9"
+      "fingerprint": "271e136bdeb62fb9b05606990f74bdcd5073d9fffdbb471df1d6ddde5eb9904a"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.course-project-survey",
       "variantId": "c00012",
       "source": "generated",
-      "fingerprint": "4a81fa88de66087a1a0662e9f191feeeaa37048693b65575878776d727fa7b6c"
+      "fingerprint": "fb54b0cf03b61c2420f90774e7109a27a78c0169a08b51c083e025ca86aa753c"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.course-project-survey",
       "variantId": "c00013",
       "source": "generated",
-      "fingerprint": "f0b9c293a91f664f7cb567fce1977aa5bc15337248f25e45af1ba30499b71caf"
+      "fingerprint": "1a0a3ac754b7ef79d34927277999b1d7b237e1cf71a55822a54ef93d48ab2e6a"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.course-project-survey",
       "variantId": "c00014",
       "source": "generated",
-      "fingerprint": "81bdda382de4aedb6a869ad1b7520e3219a170b6d290de8fa9f4661fb2896308"
+      "fingerprint": "c66c49e930df2cfd376b23c6a37af58ebe2c674a2287cc092fac34e03aa86d9e"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y2.course-project-survey",
+      "variantId": "c00015",
+      "source": "generated",
+      "fingerprint": "cc2fe349b8f6179210b4e12db54642280457bae3971a5e24646b201ff50c4982"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.course-project-survey",
       "variantId": "c00016",
       "source": "generated",
-      "fingerprint": "0a806cd008b15224963b0f865afd48e1f444de349d45c58faebb118907d381a0"
+      "fingerprint": "cde9232ba87aaa4eb0b2995da3d46c5f3a2d013adc3ded8101ed51cbebd0a327"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.course-project-survey",
       "variantId": "c00017",
       "source": "generated",
-      "fingerprint": "6bf412ff059f088640cb92887cdb2f3c53051cb632f1d603e79a811b1db8876c"
+      "fingerprint": "fabdbe62d6f17c4eed5d6c5d68567807df213049ed4cbe7535ee988cc9329d33"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.course-project-survey",
       "variantId": "c00018",
       "source": "generated",
-      "fingerprint": "62f1866434f4fd5bc13610f83ba12613b0b070c54ec55cec1152249f1be19e23"
+      "fingerprint": "9a2a778c6040ac284e7988044a2caff6603657cc84180e715feb78d080196513"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y2.course-project-survey",
+      "variantId": "c00019",
+      "source": "generated",
+      "fingerprint": "08acee9ee1b0c6a5e73a4f9f7c653f461ffcb1e090005b607740ca5bf6e1559c"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.course-project-survey",
       "variantId": "c00020",
       "source": "generated",
-      "fingerprint": "9b30059c78d887c8c0685600d34d56678984f3ebabcbf26b09c461b230b03d21"
+      "fingerprint": "913f711972f8864d3f7300d4bb3e50855142bcab7dc19587041321c1b53d91bd"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.course-project-survey",
       "variantId": "c00021",
       "source": "generated",
-      "fingerprint": "f1a4de1568f0a46630f72558cc05b1f7d822bfcb7a0f1fe1c88b1b2e72fd675a"
+      "fingerprint": "810b95cc2b108ae35bdcdac6e725bad6e72a1f447625e2acfdb59fe4da06d86c"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y2.course-project-survey",
+      "variantId": "c00022",
+      "source": "generated",
+      "fingerprint": "d974c82dba98a14c7e83a359de1635e7f956d3f4b3271b10aa1cf48ea5719231"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.course-project-survey",
       "variantId": "c00023",
       "source": "generated",
-      "fingerprint": "78d6872166a5d192bb636c885c3b5d5c68b69956423f561edfbe269bcb9671b9"
+      "fingerprint": "b28a07cd711fbbbad9a61f7256b7f1c19d062b625adfe8cdcf682099044f8c63"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.course-project-survey",
       "variantId": "c00024",
       "source": "generated",
-      "fingerprint": "391e86f11daa7a88aa2253812072dfb32479e2c34015fa21963e17d87ed830bb"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y2.course-project-survey",
-      "variantId": "c00026",
-      "source": "generated",
-      "fingerprint": "6b338749f15b628b43597c92c8f1f36e0161c82b1ffaba89d406c42c6ccdf4d2"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y2.course-project-survey",
-      "variantId": "c00027",
-      "source": "generated",
-      "fingerprint": "8a7d3fa87aef8ef7b399078299536c57ab03316bc6fa642186b123d859135655"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y2.course-project-survey",
-      "variantId": "c00029",
-      "source": "generated",
-      "fingerprint": "d13d55b18a7a70920aea378797a342f85b760278cc6d81e31abf19ed19b90488"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y2.course-project-survey",
-      "variantId": "c00032",
-      "source": "generated",
-      "fingerprint": "40c825dce9e19f757414e484e37fe10d6f3cfd362d6282d8d7a0d125e3152d0c"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y2.course-project-survey",
-      "variantId": "c00033",
-      "source": "generated",
-      "fingerprint": "7189cf8f1621402ca9c7e7a87572f8beae52be63bcd299256bb5f5813b775b2c"
+      "fingerprint": "0f9521b1cade02a2ac83fcea8553cb0ae283cd1ad396b780ce5f7484e9a56863"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.course-project-survey",
       "variantId": "reference",
       "source": "authored",
-      "fingerprint": "dc9b577ee433f20d09f17b6250412c57c770134e3607a83108e177643323057e"
+      "fingerprint": "8979356f79186c5b251ee462c0f4daa4397c99ff4e9d6cb39247ed7985f9c3b1"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.data-claim-review",
       "variantId": "c00001",
       "source": "generated",
-      "fingerprint": "c0e107b6cf97accf4f4c89c1b8c50657ec491158aef5cfa1ad6c846bc8b02e4a"
+      "fingerprint": "b5c96bb4347e5c784efe98cf9c9b7bfcb2fd1edb2970b04fc1d9200c65cf194e"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.data-claim-review",
       "variantId": "c00002",
       "source": "generated",
-      "fingerprint": "40faca0f8905dba24f45365805c21624f1c44cdf711a5062a70086b79aa52c4f"
+      "fingerprint": "acae005ad43f82385204e10fbb293e4ee6d41f4e9fc8e3e0a7c24fc6223281f4"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.data-claim-review",
       "variantId": "c00003",
       "source": "generated",
-      "fingerprint": "49a1a1e72b2b90afc9a4d44e7ebe8dec9ab8eac74556fec47cf7dedcc83b37ea"
+      "fingerprint": "dd98520483acf404349b67dac4a615b1f455408d070053b978d4cf83d2322cb1"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.data-claim-review",
       "variantId": "c00004",
       "source": "generated",
-      "fingerprint": "1c981e50250762fa6ddc3186e541990fafe48682c9dc717e9461da9cb101f745"
+      "fingerprint": "0c7bd1753c4bf70c9becc75d4fac24ede0e57794587add9f17c3f26f549f155b"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.data-claim-review",
       "variantId": "c00005",
       "source": "generated",
-      "fingerprint": "18845ededd9c9ee8eb02da18f3b8dfa360fcb0617e7f6229bf4255eaa54bc4bf"
+      "fingerprint": "1d4add98eea48d709941c6b80ec3b05b7b2745e50ab5d0f25e991576b2dfdd41"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.data-claim-review",
       "variantId": "c00006",
       "source": "generated",
-      "fingerprint": "0c7bd1753c4bf70c9becc75d4fac24ede0e57794587add9f17c3f26f549f155b"
+      "fingerprint": "09356a78618b8a15d8720346d3687e9b19ee445be7ba3ef9b27a33beef2e9171"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.data-claim-review",
       "variantId": "c00007",
       "source": "generated",
-      "fingerprint": "e92f76f1f2a1521e0e5cc0816424d9ed0bcdf16c797fd264b95fb2a6f47994ea"
+      "fingerprint": "17f96491cf2d75e666680a628d55d899ef99939697cfb1fc9591e9e87831f9e7"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.data-claim-review",
       "variantId": "c00008",
       "source": "generated",
-      "fingerprint": "fe5f1883caa41fff174700a6e11d1aa6e42201e3e4cc7637927847d47f716cb6"
+      "fingerprint": "035b80e300324849068cb4bed1bb3083c9c8c5db689cb4f3bd1853ec177b437c"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.data-claim-review",
       "variantId": "c00009",
       "source": "generated",
-      "fingerprint": "e9b63395e58cedeeac1b2cdca8c57dd9612862f69e6eba72561621081d74f1ed"
+      "fingerprint": "e52c415f042856cf807fdede2a4f5d120120520822969e4f158c0a767a40eed2"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.data-claim-review",
       "variantId": "c00010",
       "source": "generated",
-      "fingerprint": "bedffc731ce5d9debd36b1b70f71697752eda4bcfd35a6f2ca06c7645dec6960"
+      "fingerprint": "1e44ad90d6dce1579c09dafae01b0fb2f9194f260c5a5067b1b5d9cc61ec5823"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.data-claim-review",
       "variantId": "c00011",
       "source": "generated",
-      "fingerprint": "b8f9e2b337f24012931750a22bf706695fc5d348c7bcb7f7d7f2b1b66e08c529"
+      "fingerprint": "c6840ce5c8ef9c19c653d34ff73d5eaee5202c644d6f338867380afea25c494d"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.data-claim-review",
       "variantId": "c00012",
       "source": "generated",
-      "fingerprint": "d2e20726873a48e6f62ecd0371dcfb9427a432c5616b0febab989af822b33a49"
+      "fingerprint": "ca3e418c8b8d240d01659f4c8d9d1db304ab3939efab08dde56d32daf0a3cf9a"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.data-claim-review",
       "variantId": "c00013",
       "source": "generated",
-      "fingerprint": "54b02fc6b3fa9c84f1bc6377f2d53de4ee1d92be749696c336d609f266079fd9"
+      "fingerprint": "c864a1d1a01aa6988e2a3f1cb48a4a6eba959ee38de8eeee40d57495c9650ce4"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.data-claim-review",
       "variantId": "c00014",
       "source": "generated",
-      "fingerprint": "e93b09cbb254438502a6e3ef5809411a68c685b655b9c723754beefde6979ad0"
+      "fingerprint": "628c4ec96cce7127eef30fe37a808fe6af492afaf58465b4067b7328d4a5d0c4"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.data-claim-review",
       "variantId": "c00015",
       "source": "generated",
-      "fingerprint": "15796909ddaf149e1e5440a4bd934786a7499dd5e7ea0f8da2f19ad57f00a8da"
+      "fingerprint": "e48c4e46b9c2935a44d87251f7a98d213407c6980e5f657e00b1e3a9bb14f0f8"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.data-claim-review",
       "variantId": "c00016",
       "source": "generated",
-      "fingerprint": "6bbe00ffa4a529c1c822afcdf68756e23b8b979906315d1277060d19671359ce"
+      "fingerprint": "57e9139feda4252d1182ab9a234b6e81dc5839f1fa06ee214ad83ffff1bc98c3"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.data-claim-review",
       "variantId": "c00017",
       "source": "generated",
-      "fingerprint": "b190d12a102a058db763627ff6b4e6191dc9c3b8c6f76018d0cd533ac3f7e8cc"
+      "fingerprint": "f2e2d3f91a2fc2ee681691d77134d6ce706223af2c5618b2d4ac04c6876ca9a4"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.data-claim-review",
       "variantId": "c00018",
       "source": "generated",
-      "fingerprint": "09356a78618b8a15d8720346d3687e9b19ee445be7ba3ef9b27a33beef2e9171"
+      "fingerprint": "7844d9c8a2123a0a1584df83548b57bcc95135cfd7a5a3268896e919d1d2c754"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.data-claim-review",
       "variantId": "c00019",
       "source": "generated",
-      "fingerprint": "7844d9c8a2123a0a1584df83548b57bcc95135cfd7a5a3268896e919d1d2c754"
+      "fingerprint": "4dd9cbd79063b3b4a944af8af4bbe508e488a9fa17bbff1b837797a8de2c7ebf"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.data-claim-review",
       "variantId": "c00020",
       "source": "generated",
-      "fingerprint": "d04922ad2331ee375beb34db7d7281556802bffbb2f649d376ae8b50ecd920ef"
+      "fingerprint": "8ce7afb9e488da7da8542e16d3760f4f29954c4c40b5c5982a635ce0b2cf7d90"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.data-claim-review",
       "variantId": "c00021",
       "source": "generated",
-      "fingerprint": "09c89004d60d96b565865ccee238765b40e674d792ce898a228cc34900a6e7cc"
+      "fingerprint": "86f1329669db0f290d9ac2541f6f585a92d664158996f4a351d52a30f9066ef9"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.data-claim-review",
       "variantId": "c00022",
       "source": "generated",
-      "fingerprint": "b57a8a5d17e95b78ecc1ad498f7e8a8fdbf7283295bd139ca9eb9be1966c1abc"
+      "fingerprint": "54461d4c910985daaa9c4572932d4c9e094e7bc3cd4d99bd8c826cf339b7951b"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.data-claim-review",
       "variantId": "c00023",
       "source": "generated",
-      "fingerprint": "e16e4f5f481ab27a31bf88f777f21a606b6223d6652cb612bab25045936909b0"
+      "fingerprint": "94371b74be21764d3300166f833a09618e6462f3202ef1fe83b001aea7ddb881"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.data-claim-review",
       "variantId": "c00024",
       "source": "generated",
-      "fingerprint": "d6c311bac3546feb72c4c826b8a1ddf1c8a55cd79be4a43f26cea007f5343a8b"
+      "fingerprint": "6da107ba96fcc99d672df7eb27566686da0c87f338cd49c449668dd6b8663fe4"
     },
     {
       "familyId": "course-project",
       "templateId": "y2.data-claim-review",
       "variantId": "reference",
       "source": "authored",
-      "fingerprint": "18e449a21a88eecf6c0f429ab1399b6b4f580c2285f3e1c31cd3f6ac7a936ab5"
+      "fingerprint": "f03c26ef85427be2a257768cff3e9ba617697a1236d6ef4092028a005692e9fb"
     },
     {
       "familyId": "course-project",
@@ -2633,177 +2633,177 @@
     {
       "familyId": "intercurso",
       "templateId": "y2.standings-claim",
+      "variantId": "c00001",
+      "source": "generated",
+      "fingerprint": "1e8ff74340c16f59542ba508ab5599eed16c2a33198ca5ddf04d73bb7b0577f3"
+    },
+    {
+      "familyId": "intercurso",
+      "templateId": "y2.standings-claim",
+      "variantId": "c00002",
+      "source": "generated",
+      "fingerprint": "3fd4d4aa83391f2b8b2c6cba6518a57804c4b24c65755026dcb8cbd424a33aaa"
+    },
+    {
+      "familyId": "intercurso",
+      "templateId": "y2.standings-claim",
+      "variantId": "c00003",
+      "source": "generated",
+      "fingerprint": "46e6ab13b5e69e7934edc2d6083425c428d9b6ba98ca9fd8e8a0bdf55e368fc6"
+    },
+    {
+      "familyId": "intercurso",
+      "templateId": "y2.standings-claim",
+      "variantId": "c00004",
+      "source": "generated",
+      "fingerprint": "ad11d49372b3919ac3d1bc07e0f9224db8071899f1985b37a7f345faa2c11298"
+    },
+    {
+      "familyId": "intercurso",
+      "templateId": "y2.standings-claim",
+      "variantId": "c00005",
+      "source": "generated",
+      "fingerprint": "b095e64637adebeb804e2a9952a6d867b2c54536a2f1cebb9753f03183b4ad70"
+    },
+    {
+      "familyId": "intercurso",
+      "templateId": "y2.standings-claim",
+      "variantId": "c00006",
+      "source": "generated",
+      "fingerprint": "a7dd9b660bbf827d3caac422c02715c5863fc5f8233e3a184f1184451d611dca"
+    },
+    {
+      "familyId": "intercurso",
+      "templateId": "y2.standings-claim",
       "variantId": "c00007",
       "source": "generated",
-      "fingerprint": "13e19b4b4cc5a924f51c8a272efe6a4a1cbea608ae2e1301d4b3db0be154d885"
+      "fingerprint": "dfb43657e9ceb5f278dda13398518afd96872e9c34c9e49e42a02b17d89acbd9"
+    },
+    {
+      "familyId": "intercurso",
+      "templateId": "y2.standings-claim",
+      "variantId": "c00008",
+      "source": "generated",
+      "fingerprint": "e31b78064f409c778dd3d1fedbae8273c512c777cb0e1fb959139516da550685"
+    },
+    {
+      "familyId": "intercurso",
+      "templateId": "y2.standings-claim",
+      "variantId": "c00009",
+      "source": "generated",
+      "fingerprint": "015ee4770fe55b75f285ed8bbd114ea268d4348b69da904b4d39b3369ebdd066"
     },
     {
       "familyId": "intercurso",
       "templateId": "y2.standings-claim",
       "variantId": "c00010",
       "source": "generated",
-      "fingerprint": "106ccc0305311a9bead16b6fe6e4d2058e17cd4a871a500f3a45dde97a19cf79"
+      "fingerprint": "f1d31fa471d79c48a741c19bd9fd0674aeca4d4a0ce579aeaa42c5f109b98023"
     },
     {
       "familyId": "intercurso",
       "templateId": "y2.standings-claim",
       "variantId": "c00011",
       "source": "generated",
-      "fingerprint": "60eb23e19e4180b9bf0dcda971811958c54ad2c5104a0f6feb1830f66f2d5021"
+      "fingerprint": "6f745a01ba215a70fd773cde630d0f6d3bee1905354c7a4f0365cd8601a36f50"
+    },
+    {
+      "familyId": "intercurso",
+      "templateId": "y2.standings-claim",
+      "variantId": "c00012",
+      "source": "generated",
+      "fingerprint": "b93d937f4bf64c7889a650edf11461ecb5f3d38f23b61f219eb753dbbac6ae69"
     },
     {
       "familyId": "intercurso",
       "templateId": "y2.standings-claim",
       "variantId": "c00013",
       "source": "generated",
-      "fingerprint": "4d3236909ca9a5b672a967d3cb25021229bb2fecfa38620ea577b67675e0d0e9"
+      "fingerprint": "20ac8210ccf27c8cdd37351e0ed82a935503d53d13e9e3b496983bd3dc6db04b"
     },
     {
       "familyId": "intercurso",
       "templateId": "y2.standings-claim",
       "variantId": "c00014",
       "source": "generated",
-      "fingerprint": "80568508d36a666167d1fffcbe8000da671fa9368d952c92a89cb71017a208d3"
+      "fingerprint": "49102d2dd537ab0b5cfbfc6eb334da3d6b20b44d0fe44f453da0a5e0794e47f9"
     },
     {
       "familyId": "intercurso",
       "templateId": "y2.standings-claim",
       "variantId": "c00015",
       "source": "generated",
-      "fingerprint": "94c5926e5998aabc897d6a51d48a80ae8bb52289bec1623245c19042ddf92399"
+      "fingerprint": "c5ce1c5c34cf1f0acda7ad44ec060f2b98dde98b867827c50e0bb4f87c690fb1"
+    },
+    {
+      "familyId": "intercurso",
+      "templateId": "y2.standings-claim",
+      "variantId": "c00016",
+      "source": "generated",
+      "fingerprint": "36dd580f16b15ddb7ca383a025256889fe38db09f3c1bacab6e38d564a58f187"
     },
     {
       "familyId": "intercurso",
       "templateId": "y2.standings-claim",
       "variantId": "c00017",
       "source": "generated",
-      "fingerprint": "ac21082febdf54e18fcba71e7b27428385cc42ed33d186244219746d3a1a9097"
+      "fingerprint": "bc7fe44b79a202c9c698144a227f04d5a4f32f18f167d4ae1236da80c38a2caf"
     },
     {
       "familyId": "intercurso",
       "templateId": "y2.standings-claim",
       "variantId": "c00018",
       "source": "generated",
-      "fingerprint": "348af8510889e2346b59d3006f84461b872cabca06aa7b156f24786d22cb8e4c"
+      "fingerprint": "b8fce00cbd5378fd3f244b9aa5f85b8e37e4df616db34ed65f312a164ad70af2"
     },
     {
       "familyId": "intercurso",
       "templateId": "y2.standings-claim",
       "variantId": "c00019",
       "source": "generated",
-      "fingerprint": "9a773871cfa19b042852e6a83762a5cb7b0a0e3b65762cc47e9af34fa469cb2e"
+      "fingerprint": "c86383ef8358bc4e158dee720d8ce1b75932bb8e59defa171baba9444685218d"
     },
     {
       "familyId": "intercurso",
       "templateId": "y2.standings-claim",
       "variantId": "c00020",
       "source": "generated",
-      "fingerprint": "6fcba0190ad97abbe84f8a9b17e9393213898318ebeecee780577d11a007b517"
+      "fingerprint": "1c950a49967253469e8b78ca41cb47806a38392eafe95c296d7e708d7bd2de6d"
     },
     {
       "familyId": "intercurso",
       "templateId": "y2.standings-claim",
       "variantId": "c00021",
       "source": "generated",
-      "fingerprint": "677bf7b88497460d754cbe5cd18f0d01b07d7fd4c6b41508e14dff6383b367c6"
+      "fingerprint": "6dd4b258a5445d09fc3a279b89122adec357adba871bd8f2ea76b6ac8dbda8ba"
     },
     {
       "familyId": "intercurso",
       "templateId": "y2.standings-claim",
-      "variantId": "c00028",
+      "variantId": "c00022",
       "source": "generated",
-      "fingerprint": "9569eb7f8377f82fb8e68996b78e3fa622b5930c115f742a0ab325de3c5286af"
+      "fingerprint": "c93bda169c7830b8aba48fecc16994e96ee654360f12506634d9ec8aea7ecebf"
     },
     {
       "familyId": "intercurso",
       "templateId": "y2.standings-claim",
-      "variantId": "c00029",
+      "variantId": "c00023",
       "source": "generated",
-      "fingerprint": "67dc8a94f45a104c4c666d10cdb3a651fb49cc49a34d4ef65cef65323f315757"
+      "fingerprint": "92710df35ed0bab097ecceca4f7127b91303c070687e67afdd442ab22da3a95c"
     },
     {
       "familyId": "intercurso",
       "templateId": "y2.standings-claim",
-      "variantId": "c00036",
+      "variantId": "c00024",
       "source": "generated",
-      "fingerprint": "f2b36cbb4323a6c7d81ee4dc8d5a3fb31dcfd4d854d24642705aee92c2968d18"
-    },
-    {
-      "familyId": "intercurso",
-      "templateId": "y2.standings-claim",
-      "variantId": "c00037",
-      "source": "generated",
-      "fingerprint": "eccd81b1f2507cadc848d5c9225729cf00ea58bfe8c96d941271a17689118633"
-    },
-    {
-      "familyId": "intercurso",
-      "templateId": "y2.standings-claim",
-      "variantId": "c00041",
-      "source": "generated",
-      "fingerprint": "81e6db3b3cf5a96c0d08d99de35b813ed607d523c84957f5bf8e6424a4932ea8"
-    },
-    {
-      "familyId": "intercurso",
-      "templateId": "y2.standings-claim",
-      "variantId": "c00044",
-      "source": "generated",
-      "fingerprint": "9f84d853c894bb2d42cc668652ae133905ef24df1e97e9fd904e9fa6cf1c51e1"
-    },
-    {
-      "familyId": "intercurso",
-      "templateId": "y2.standings-claim",
-      "variantId": "c00045",
-      "source": "generated",
-      "fingerprint": "c01bd4500434ff3e7f57ae0293a0d161a3dd7ebbf2799fe8b363f0f3468568b7"
-    },
-    {
-      "familyId": "intercurso",
-      "templateId": "y2.standings-claim",
-      "variantId": "c00046",
-      "source": "generated",
-      "fingerprint": "4a84fd32941245efae1cca0356eb97b6fc5f11c647f0b7a57bffb2442a051c1b"
-    },
-    {
-      "familyId": "intercurso",
-      "templateId": "y2.standings-claim",
-      "variantId": "c00047",
-      "source": "generated",
-      "fingerprint": "d35a3a960b498dcf6cd696af3c3e72a7d294051d998b92c8b57bce6c48f1451d"
-    },
-    {
-      "familyId": "intercurso",
-      "templateId": "y2.standings-claim",
-      "variantId": "c00048",
-      "source": "generated",
-      "fingerprint": "5fc464c78aef6c87294f4493ecf8262193375254741b8385a24696949d71e469"
-    },
-    {
-      "familyId": "intercurso",
-      "templateId": "y2.standings-claim",
-      "variantId": "c00050",
-      "source": "generated",
-      "fingerprint": "f50a8526c102652043e1641bc021a1270495d787a025862c27f2c3d2c846c5ca"
-    },
-    {
-      "familyId": "intercurso",
-      "templateId": "y2.standings-claim",
-      "variantId": "c00051",
-      "source": "generated",
-      "fingerprint": "80768da54fd5a6a5b4e6dca08f613da63dba1594a5020ad909e6908005af7027"
-    },
-    {
-      "familyId": "intercurso",
-      "templateId": "y2.standings-claim",
-      "variantId": "c00058",
-      "source": "generated",
-      "fingerprint": "46e687b40118c871c797d1f560cbfac0e736a2ecf4096b3c332cea2dd32196da"
+      "fingerprint": "18850d52c415b866c5ef3f2d1e3857c7b4e1d0a4c5dabb35b773eec4c043ac85"
     },
     {
       "familyId": "intercurso",
       "templateId": "y2.standings-claim",
       "variantId": "reference",
       "source": "authored",
-      "fingerprint": "23927275a5a3a46c7b79585bd24d5808f30570e90b920c2ca91c82cd5a7fce5c"
+      "fingerprint": "3734caf4d6ced851102f96032bfd24cdee664e4889fd4dc960c36358e28bd8d0"
     },
     {
       "familyId": "may-25",
@@ -3200,20 +3200,6 @@
     {
       "familyId": "mural",
       "templateId": "g7.mural-paint",
-      "variantId": "c00004",
-      "source": "generated",
-      "fingerprint": "5200ccb0f7501fa081c22b124f27227bb9be72dac452c78ea00920f5f6857b96"
-    },
-    {
-      "familyId": "mural",
-      "templateId": "g7.mural-paint",
-      "variantId": "c00005",
-      "source": "generated",
-      "fingerprint": "f9971761adb10121ca5a6cc1166ecfa83f2b19b1a9c610540b8f557b13877dc5"
-    },
-    {
-      "familyId": "mural",
-      "templateId": "g7.mural-paint",
       "variantId": "c00006",
       "source": "generated",
       "fingerprint": "a8e49c3666f4385f1770ab266fd4196b36388203b584b0a374ce459f06a34971"
@@ -3228,30 +3214,9 @@
     {
       "familyId": "mural",
       "templateId": "g7.mural-paint",
-      "variantId": "c00008",
-      "source": "generated",
-      "fingerprint": "c775213f5f5c4f1f80139de0931f444c89d246cec71534458107da748aaa821a"
-    },
-    {
-      "familyId": "mural",
-      "templateId": "g7.mural-paint",
       "variantId": "c00009",
       "source": "generated",
       "fingerprint": "edc4d4fd967515ce3e4bf6476ff06fde1f61172bac4a870bf33a4bdffd9e87df"
-    },
-    {
-      "familyId": "mural",
-      "templateId": "g7.mural-paint",
-      "variantId": "c00010",
-      "source": "generated",
-      "fingerprint": "65667003c95e619ebb9f5e534965ed9111606b9730725f838cbe102576f046a6"
-    },
-    {
-      "familyId": "mural",
-      "templateId": "g7.mural-paint",
-      "variantId": "c00011",
-      "source": "generated",
-      "fingerprint": "f7824378e71b28460bbb3089c00a7b2dd8c4d788119c63994f28383ef64b1810"
     },
     {
       "familyId": "mural",
@@ -3277,23 +3242,9 @@
     {
       "familyId": "mural",
       "templateId": "g7.mural-paint",
-      "variantId": "c00016",
-      "source": "generated",
-      "fingerprint": "f072e49b30f50e4a2cfca8ff3ed0876e1bd5c85e7548cd007a63847223cc2822"
-    },
-    {
-      "familyId": "mural",
-      "templateId": "g7.mural-paint",
       "variantId": "c00017",
       "source": "generated",
       "fingerprint": "6ad0e59db39ceb4a2d99f7ccc4471a95670d6745f47b2fbca4042b43fc5a4b5d"
-    },
-    {
-      "familyId": "mural",
-      "templateId": "g7.mural-paint",
-      "variantId": "c00018",
-      "source": "generated",
-      "fingerprint": "433d7850c03d89140ef6658908c2e139e81abfe052766784db8bc856395866d8"
     },
     {
       "familyId": "mural",
@@ -3305,13 +3256,6 @@
     {
       "familyId": "mural",
       "templateId": "g7.mural-paint",
-      "variantId": "c00020",
-      "source": "generated",
-      "fingerprint": "5ca593d6d3f7d09c6ef4f3187ad82e14d4ae332d6536a562da886a1354cedf64"
-    },
-    {
-      "familyId": "mural",
-      "templateId": "g7.mural-paint",
       "variantId": "c00021",
       "source": "generated",
       "fingerprint": "a74620e3bb95d0d65c0a48b4b43c9b56540282a8deb03c563d12f0031b6803b9"
@@ -3319,23 +3263,79 @@
     {
       "familyId": "mural",
       "templateId": "g7.mural-paint",
-      "variantId": "c00022",
-      "source": "generated",
-      "fingerprint": "b6a63e20aaf81f7ce77891d24f9774bebc3837947502ffb7c0a97130e9d73a86"
-    },
-    {
-      "familyId": "mural",
-      "templateId": "g7.mural-paint",
-      "variantId": "c00023",
-      "source": "generated",
-      "fingerprint": "58e8af0baf97d4c16fbafdc799f5f9297eb541aa1d788999bc034d7fe3e72a29"
-    },
-    {
-      "familyId": "mural",
-      "templateId": "g7.mural-paint",
       "variantId": "c00024",
       "source": "generated",
       "fingerprint": "b83c9ea71a54ba413078288b09d8f88c3ef2100eeba1afef0ab92eaee924dc6a"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00028",
+      "source": "generated",
+      "fingerprint": "fc13c092046b48716c23ddeacd9f20e0611dabd37acd8c50271fa92877c5e3a9"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00030",
+      "source": "generated",
+      "fingerprint": "416eafecbd2e90e25313a9956be2e59ff5c3247c0e452ee4c2783c40fa477a71"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00034",
+      "source": "generated",
+      "fingerprint": "23110f9ccd6592f28896e8ccaa79f43c8eee155f1b7e939257b25bf774fd612d"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00036",
+      "source": "generated",
+      "fingerprint": "ffbf03ecc5d511ab95ae986365adbb3ec38e868c11c9274e3d3cbb5f0f9b1dd1"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00038",
+      "source": "generated",
+      "fingerprint": "4e94854c22f7801bf98c3845dcf904ffbc1df19e19a82fd711bfdb56b4c1a418"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00039",
+      "source": "generated",
+      "fingerprint": "08974c224f212b4ca0c9b9ae3b6f9fe967192113d4c184108025bdde4def8ef2"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00041",
+      "source": "generated",
+      "fingerprint": "a393c9e498be18c871686e8d1f68fe15920bd41661de8725934344df1c3705c9"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00046",
+      "source": "generated",
+      "fingerprint": "c4559372ce15ed15fe84791a51e72dd253d26a9a5fb43a230d8ff7985c7f898c"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00047",
+      "source": "generated",
+      "fingerprint": "48a39c894b5674b74516562219202f12cfda3e7d5dcaac2760b35a5417f9aefb"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00050",
+      "source": "generated",
+      "fingerprint": "ef40e935c1a705f193d9c24d087c0f83fe729b8afea427cf5c8f7a2c99ce7047"
     },
     {
       "familyId": "mural",
@@ -4763,175 +4763,175 @@
       "templateId": "y3.transport-pass",
       "variantId": "c00001",
       "source": "generated",
-      "fingerprint": "dc14a3068aeb6a57c8bf06d1142e15ec4df0232a672f0098ddb62cf130dbade7"
+      "fingerprint": "c54c0c2b1f58a7d7019159a75c623af4a6906b5992c0bcfd88dfe6c2f0e75d74"
+    },
+    {
+      "familyId": "transporte",
+      "templateId": "y3.transport-pass",
+      "variantId": "c00002",
+      "source": "generated",
+      "fingerprint": "2ce09206519785bdf4d99588eea7986afc7fe6c785ea6c357cd56410d5928950"
+    },
+    {
+      "familyId": "transporte",
+      "templateId": "y3.transport-pass",
+      "variantId": "c00003",
+      "source": "generated",
+      "fingerprint": "07c19135b14015d325b2a578383749f6adab8e683812bb869825461b976c4f01"
+    },
+    {
+      "familyId": "transporte",
+      "templateId": "y3.transport-pass",
+      "variantId": "c00004",
+      "source": "generated",
+      "fingerprint": "59445c97bd5338b64898cf39f4b9bf763c62e11af0ab8ff52f6cda94f7b5efe6"
+    },
+    {
+      "familyId": "transporte",
+      "templateId": "y3.transport-pass",
+      "variantId": "c00005",
+      "source": "generated",
+      "fingerprint": "2aee2aec96a7993ff869ef2433d92d25557d47748a978ad4232ae18fe3742da5"
     },
     {
       "familyId": "transporte",
       "templateId": "y3.transport-pass",
       "variantId": "c00006",
       "source": "generated",
-      "fingerprint": "788e6037f46f05e8e8db7aecfcdabd4837015deea870b2cd3d0b46b8d24f5fbc"
+      "fingerprint": "d4c74baae25b6fa0d58b644563fa19385a366bd46005bcd08111e002c8165ca2"
     },
     {
       "familyId": "transporte",
       "templateId": "y3.transport-pass",
       "variantId": "c00007",
       "source": "generated",
-      "fingerprint": "3e39f136f3545b3b770369d303bce05caae24bec308b357ce16b2f5a4c0820ab"
+      "fingerprint": "c74b0a8737333ddc81c638c1fabeffad683c097436878b617e454695c98366ba"
+    },
+    {
+      "familyId": "transporte",
+      "templateId": "y3.transport-pass",
+      "variantId": "c00008",
+      "source": "generated",
+      "fingerprint": "f3f9ea2a4ffe28ef5ff5aef9729d677f468bb84901f1d30b4758d2cd7fadecdb"
+    },
+    {
+      "familyId": "transporte",
+      "templateId": "y3.transport-pass",
+      "variantId": "c00009",
+      "source": "generated",
+      "fingerprint": "f46d33e38f10a57c55c5f92dca2da1a94ad0c4b7148cd9be22b8ea93fd49a03f"
     },
     {
       "familyId": "transporte",
       "templateId": "y3.transport-pass",
       "variantId": "c00010",
       "source": "generated",
-      "fingerprint": "c8765fbb9ca40ea174afbda26d80b593636fc6f0a7e8a468183dff009b321c0f"
+      "fingerprint": "5fce63afcda23ed4ed14ca4c498e6731acffd4eda719181afeb6ff5bb1cc4ef2"
+    },
+    {
+      "familyId": "transporte",
+      "templateId": "y3.transport-pass",
+      "variantId": "c00011",
+      "source": "generated",
+      "fingerprint": "f4e0402cf15c1b8f1a128e6fe3d3d08a446a6f6b679b3e2f7970b1506db57a89"
     },
     {
       "familyId": "transporte",
       "templateId": "y3.transport-pass",
       "variantId": "c00012",
       "source": "generated",
-      "fingerprint": "b35ea4d48400f24701a9e31a2d2b96f39e276a7b3eab1b273b8894cd23edf9d5"
+      "fingerprint": "791b5d1b48f4f2901fb77a66b1473aa752315151514c4c5b7c9016416b06e89d"
     },
     {
       "familyId": "transporte",
       "templateId": "y3.transport-pass",
       "variantId": "c00013",
       "source": "generated",
-      "fingerprint": "b99eaaf968ee86e0da5da24c9885c578b13c25821140221768d7151209785dc6"
+      "fingerprint": "eba9af8b7351faa05242608289bf4be121514b32cf6909facfd304c11d630834"
+    },
+    {
+      "familyId": "transporte",
+      "templateId": "y3.transport-pass",
+      "variantId": "c00014",
+      "source": "generated",
+      "fingerprint": "ba080b6aa23a8185be5d1aa8f09a36d8bf8e2f55de53cba91260c4063edb59af"
     },
     {
       "familyId": "transporte",
       "templateId": "y3.transport-pass",
       "variantId": "c00015",
       "source": "generated",
-      "fingerprint": "61504ea40783ed62eaf170d02781f1d02b549406f7ba8f4a8324adc57dc496be"
+      "fingerprint": "9a2035c9a586199faf304dc25bbdc8344d3c832badbdd6c534ec75ca035199eb"
     },
     {
       "familyId": "transporte",
       "templateId": "y3.transport-pass",
       "variantId": "c00016",
       "source": "generated",
-      "fingerprint": "ce82c8eac96a35cdf04a3cdb13c47c3e092ff4a747207235182938d1c355bba0"
+      "fingerprint": "dca9dda51189f0528ac9ec167b416519c4a2bd50f047d506e6dbcd7b48586242"
+    },
+    {
+      "familyId": "transporte",
+      "templateId": "y3.transport-pass",
+      "variantId": "c00017",
+      "source": "generated",
+      "fingerprint": "7c180818362faea7fe5f1ae68174348648c8e02edca93b588e624285afa0f0ad"
+    },
+    {
+      "familyId": "transporte",
+      "templateId": "y3.transport-pass",
+      "variantId": "c00018",
+      "source": "generated",
+      "fingerprint": "2ddef50864e2dcdcf1c2ca72962d839f0ba97f6b861795404b046020d0c2565c"
+    },
+    {
+      "familyId": "transporte",
+      "templateId": "y3.transport-pass",
+      "variantId": "c00019",
+      "source": "generated",
+      "fingerprint": "b4a74607b53e0baa8aedcab74586fce42ed796fe32d0fc89c9f027a1daf0911f"
     },
     {
       "familyId": "transporte",
       "templateId": "y3.transport-pass",
       "variantId": "c00020",
       "source": "generated",
-      "fingerprint": "9439d74214e5edd6b30c78c309842683c9352ac6431c56f5f382d1ff685b00d2"
+      "fingerprint": "7b42003226ae7f5eb241fd72c757a93105bb40efb4e3b06619e002d907bd5176"
+    },
+    {
+      "familyId": "transporte",
+      "templateId": "y3.transport-pass",
+      "variantId": "c00021",
+      "source": "generated",
+      "fingerprint": "6212882c068b99cebe6b26983e35746dd4c4e35dad0587492df1afc8c5e8c57a"
     },
     {
       "familyId": "transporte",
       "templateId": "y3.transport-pass",
       "variantId": "c00022",
       "source": "generated",
-      "fingerprint": "db310f956d9346903179d096d31f7efeceb535dc09af904ade1ced1fff17536f"
+      "fingerprint": "9c9e5985d7a7d067b8b51d37f22a4800c39295e8c26fdb2d7e3e7f509197aea3"
     },
     {
       "familyId": "transporte",
       "templateId": "y3.transport-pass",
-      "variantId": "c00025",
+      "variantId": "c00023",
       "source": "generated",
-      "fingerprint": "7c41a3f3b3fd0949071975bed90f0ab30dd7fca63052ef14ef36ae4414e7aad3"
+      "fingerprint": "e6cf338508feb997104f6f37ed8c02557cef577ddfc7b5430d11850f5b64a835"
     },
     {
       "familyId": "transporte",
       "templateId": "y3.transport-pass",
-      "variantId": "c00026",
+      "variantId": "c00024",
       "source": "generated",
-      "fingerprint": "e8ac222193e1072c4795726727bc9ebbf622c10ca2bc0516becfcb93033b8a1c"
-    },
-    {
-      "familyId": "transporte",
-      "templateId": "y3.transport-pass",
-      "variantId": "c00029",
-      "source": "generated",
-      "fingerprint": "6da96312617d0687c16b28773232a9a307450c19b7fe971ccff0f8974fa7a130"
-    },
-    {
-      "familyId": "transporte",
-      "templateId": "y3.transport-pass",
-      "variantId": "c00030",
-      "source": "generated",
-      "fingerprint": "2834f25712e4c49e7b4745b85f088dcd88f9b74b13161decfd0fd9764a9af55f"
-    },
-    {
-      "familyId": "transporte",
-      "templateId": "y3.transport-pass",
-      "variantId": "c00031",
-      "source": "generated",
-      "fingerprint": "c591ab602b7c64aa59e2fea208608753c9aad64078640cd2cbe3d4d2e49f8ce9"
-    },
-    {
-      "familyId": "transporte",
-      "templateId": "y3.transport-pass",
-      "variantId": "c00033",
-      "source": "generated",
-      "fingerprint": "b6dbcd01bb0ef4fe2b2ad9da104a6e2a55c1b5a4a55a3da4c2cebe208decb0b6"
-    },
-    {
-      "familyId": "transporte",
-      "templateId": "y3.transport-pass",
-      "variantId": "c00036",
-      "source": "generated",
-      "fingerprint": "2294ff3387502a7263e074bf71c1f36eeeea3d92ba6ea321ec65b3043d7c921e"
-    },
-    {
-      "familyId": "transporte",
-      "templateId": "y3.transport-pass",
-      "variantId": "c00037",
-      "source": "generated",
-      "fingerprint": "eea4035353e716b41c98d0985b5701eb7521e53f83b9a96f3053d34bdb894372"
-    },
-    {
-      "familyId": "transporte",
-      "templateId": "y3.transport-pass",
-      "variantId": "c00042",
-      "source": "generated",
-      "fingerprint": "75cb27a182bbc9ffed5d2dbe42a568946094d52d05939b42388d25107837f74a"
-    },
-    {
-      "familyId": "transporte",
-      "templateId": "y3.transport-pass",
-      "variantId": "c00044",
-      "source": "generated",
-      "fingerprint": "db194cd19ed5c14203f7bcf3c15852bbfb44b77e88918a92d67ee8c7eda38031"
-    },
-    {
-      "familyId": "transporte",
-      "templateId": "y3.transport-pass",
-      "variantId": "c00047",
-      "source": "generated",
-      "fingerprint": "e413be8194bd583e7d5b0f13c8fbf4d5130e03168467a404d03fca85a873b0fc"
-    },
-    {
-      "familyId": "transporte",
-      "templateId": "y3.transport-pass",
-      "variantId": "c00058",
-      "source": "generated",
-      "fingerprint": "ac2597a082bff5c091df885055caa72ed23373f49bcf68b0868888e5ebd3c4f1"
-    },
-    {
-      "familyId": "transporte",
-      "templateId": "y3.transport-pass",
-      "variantId": "c00060",
-      "source": "generated",
-      "fingerprint": "8d6c619d09a2855406c738f45a0a724fc1e3682805f5ffe7b945090ad5a78f45"
-    },
-    {
-      "familyId": "transporte",
-      "templateId": "y3.transport-pass",
-      "variantId": "c00062",
-      "source": "generated",
-      "fingerprint": "40c47c0f0da992d849a76d1a5ab90a294bba52478c98ea38776b6a4ceba8a987"
+      "fingerprint": "71ffcc23f15920ee564d36617a60b54b7244f23312fffc711b99254b475a1476"
     },
     {
       "familyId": "transporte",
       "templateId": "y3.transport-pass",
       "variantId": "reference",
       "source": "authored",
-      "fingerprint": "9abd5836efe8ed023b7f954ecb812f8e57d4d429a70f82120c3408f4b62d1523"
+      "fingerprint": "46994889b33f1e697adb48740e2b668eabd67c2f48cab4be33fd770d39a0d1b5"
     }
   ]
 }

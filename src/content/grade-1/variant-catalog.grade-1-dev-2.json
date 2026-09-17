@@ -1,6 +1,6 @@
 {
-  "catalogVersion": "grade-1-dev-1",
-  "contentVersion": "1.0.0-grade-1",
+  "catalogVersion": "grade-1-dev-2",
+  "contentVersion": "1.1.0-grade-1",
   "generators": [
     {
       "templateId": "g7.bus-latest-departure",
@@ -1561,20 +1561,6 @@
     {
       "familyId": "mural",
       "templateId": "g7.mural-paint",
-      "variantId": "c00004",
-      "source": "generated",
-      "fingerprint": "5200ccb0f7501fa081c22b124f27227bb9be72dac452c78ea00920f5f6857b96"
-    },
-    {
-      "familyId": "mural",
-      "templateId": "g7.mural-paint",
-      "variantId": "c00005",
-      "source": "generated",
-      "fingerprint": "f9971761adb10121ca5a6cc1166ecfa83f2b19b1a9c610540b8f557b13877dc5"
-    },
-    {
-      "familyId": "mural",
-      "templateId": "g7.mural-paint",
       "variantId": "c00006",
       "source": "generated",
       "fingerprint": "a8e49c3666f4385f1770ab266fd4196b36388203b584b0a374ce459f06a34971"
@@ -1589,30 +1575,9 @@
     {
       "familyId": "mural",
       "templateId": "g7.mural-paint",
-      "variantId": "c00008",
-      "source": "generated",
-      "fingerprint": "c775213f5f5c4f1f80139de0931f444c89d246cec71534458107da748aaa821a"
-    },
-    {
-      "familyId": "mural",
-      "templateId": "g7.mural-paint",
       "variantId": "c00009",
       "source": "generated",
       "fingerprint": "edc4d4fd967515ce3e4bf6476ff06fde1f61172bac4a870bf33a4bdffd9e87df"
-    },
-    {
-      "familyId": "mural",
-      "templateId": "g7.mural-paint",
-      "variantId": "c00010",
-      "source": "generated",
-      "fingerprint": "65667003c95e619ebb9f5e534965ed9111606b9730725f838cbe102576f046a6"
-    },
-    {
-      "familyId": "mural",
-      "templateId": "g7.mural-paint",
-      "variantId": "c00011",
-      "source": "generated",
-      "fingerprint": "f7824378e71b28460bbb3089c00a7b2dd8c4d788119c63994f28383ef64b1810"
     },
     {
       "familyId": "mural",
@@ -1638,23 +1603,9 @@
     {
       "familyId": "mural",
       "templateId": "g7.mural-paint",
-      "variantId": "c00016",
-      "source": "generated",
-      "fingerprint": "f072e49b30f50e4a2cfca8ff3ed0876e1bd5c85e7548cd007a63847223cc2822"
-    },
-    {
-      "familyId": "mural",
-      "templateId": "g7.mural-paint",
       "variantId": "c00017",
       "source": "generated",
       "fingerprint": "6ad0e59db39ceb4a2d99f7ccc4471a95670d6745f47b2fbca4042b43fc5a4b5d"
-    },
-    {
-      "familyId": "mural",
-      "templateId": "g7.mural-paint",
-      "variantId": "c00018",
-      "source": "generated",
-      "fingerprint": "433d7850c03d89140ef6658908c2e139e81abfe052766784db8bc856395866d8"
     },
     {
       "familyId": "mural",
@@ -1666,13 +1617,6 @@
     {
       "familyId": "mural",
       "templateId": "g7.mural-paint",
-      "variantId": "c00020",
-      "source": "generated",
-      "fingerprint": "5ca593d6d3f7d09c6ef4f3187ad82e14d4ae332d6536a562da886a1354cedf64"
-    },
-    {
-      "familyId": "mural",
-      "templateId": "g7.mural-paint",
       "variantId": "c00021",
       "source": "generated",
       "fingerprint": "a74620e3bb95d0d65c0a48b4b43c9b56540282a8deb03c563d12f0031b6803b9"
@@ -1680,23 +1624,79 @@
     {
       "familyId": "mural",
       "templateId": "g7.mural-paint",
-      "variantId": "c00022",
-      "source": "generated",
-      "fingerprint": "b6a63e20aaf81f7ce77891d24f9774bebc3837947502ffb7c0a97130e9d73a86"
-    },
-    {
-      "familyId": "mural",
-      "templateId": "g7.mural-paint",
-      "variantId": "c00023",
-      "source": "generated",
-      "fingerprint": "58e8af0baf97d4c16fbafdc799f5f9297eb541aa1d788999bc034d7fe3e72a29"
-    },
-    {
-      "familyId": "mural",
-      "templateId": "g7.mural-paint",
       "variantId": "c00024",
       "source": "generated",
       "fingerprint": "b83c9ea71a54ba413078288b09d8f88c3ef2100eeba1afef0ab92eaee924dc6a"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00028",
+      "source": "generated",
+      "fingerprint": "fc13c092046b48716c23ddeacd9f20e0611dabd37acd8c50271fa92877c5e3a9"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00030",
+      "source": "generated",
+      "fingerprint": "416eafecbd2e90e25313a9956be2e59ff5c3247c0e452ee4c2783c40fa477a71"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00034",
+      "source": "generated",
+      "fingerprint": "23110f9ccd6592f28896e8ccaa79f43c8eee155f1b7e939257b25bf774fd612d"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00036",
+      "source": "generated",
+      "fingerprint": "ffbf03ecc5d511ab95ae986365adbb3ec38e868c11c9274e3d3cbb5f0f9b1dd1"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00038",
+      "source": "generated",
+      "fingerprint": "4e94854c22f7801bf98c3845dcf904ffbc1df19e19a82fd711bfdb56b4c1a418"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00039",
+      "source": "generated",
+      "fingerprint": "08974c224f212b4ca0c9b9ae3b6f9fe967192113d4c184108025bdde4def8ef2"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00041",
+      "source": "generated",
+      "fingerprint": "a393c9e498be18c871686e8d1f68fe15920bd41661de8725934344df1c3705c9"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00046",
+      "source": "generated",
+      "fingerprint": "c4559372ce15ed15fe84791a51e72dd253d26a9a5fb43a230d8ff7985c7f898c"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00047",
+      "source": "generated",
+      "fingerprint": "48a39c894b5674b74516562219202f12cfda3e7d5dcaac2760b35a5417f9aefb"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00050",
+      "source": "generated",
+      "fingerprint": "ef40e935c1a705f193d9c24d087c0f83fe729b8afea427cf5c8f7a2c99ce7047"
     },
     {
       "familyId": "mural",

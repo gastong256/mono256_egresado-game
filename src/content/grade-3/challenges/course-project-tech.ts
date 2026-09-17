@@ -636,7 +636,9 @@ export function evaluateRateReview(p: RateReviewParams, value: string) {
       consequence:
         quality === 'optimal'
           ? `Con eso ya sabés cuántos ${unit} podés contar.`
-          : 'Contar uno de más es justo lo que hace que después no entre.',
+          : answered > whole
+            ? 'Contar de más es justo lo que hace que después no entre.'
+            : 'Entra más de lo que contaste: queda lugar sin usar.',
     }),
   )
 }

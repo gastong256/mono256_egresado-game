@@ -807,7 +807,13 @@ export function evaluateLayout(
                   ? 'Entran todos los lugares; la caja de materiales quedó afuera.'
                   : 'Entran todos los lugares, la caja y el paso libre. Hay más de una disposición posible.'
               : extras === 2
-                ? 'Entran las tres cosas: la cuenta en celdas cerró justo.'
+                ? p.width ===
+                  p.objects.reduce(
+                    (total, object) => total + object.widthCm / p.cellCm,
+                    0,
+                  )
+                  ? 'Entran las tres cosas: la cuenta en celdas cerró justo.'
+                  : 'Entran las tres cosas, y sobra una celda: la cuenta en celdas cierra.'
                 : extras === 1
                   ? 'Entran la mesa y una cosa más.'
                   : 'La mesa entra; el estante y la caja quedaron afuera.',

@@ -386,12 +386,12 @@ export const courseProjectFundraiser: ChallengeDefinition = defineChallenge<
   narrate: (_p, context) => ({
     title: 'Proyecto del Curso: la peña',
     setup: `${projectArcCallback(context.flags)}El curso alquila el salón para la peña y hay que decidir cuánto preparar de cada cosa.`,
-    goal: 'Armá la producción: que cubra los costos y llegue a lo que el curso necesita juntar.',
+    goal: 'Armá la producción: primero, no perder plata; después, llegar al objetivo; y lo mejor, llegar con el colchón.',
   }),
   present: (p) => ({
     kind: 'quantity-builder',
     instructions:
-      'Poné cuántas bandejas prepara el curso. El costo fijo se paga igual, se venda o no.',
+      'Poné cuántas bandejas prepara el curso: todo lo que se prepara se vende. No perder plata es cubrir los costos —el punto de equilibrio—: que lo que dejan las bandejas vendidas alcance para pagar el costo fijo.',
     data: [
       {
         label: 'Costo fijo',
@@ -523,7 +523,9 @@ export function evaluateMarginReview(p: MarginReviewParams, value: string) {
       consequence:
         quality === 'optimal'
           ? 'Recién a partir de ahí la peña empieza a juntar.'
-          : 'Con esa cuenta el curso cree que ya cubrió y todavía está poniendo plata.',
+          : answered < exact
+            ? 'Con esa cuenta el curso cree que ya cubrió y todavía está poniendo plata.'
+            : 'El costo fijo ya se cubría con menos bandejas de las que dijiste.',
     }),
   )
 }

@@ -44,8 +44,11 @@ const fingerprint = () =>
   )
 
 it('pins Grade-1 content, mappings, composition and narrative policy identity together', () => {
+  // Se movió con la remediación matemática del 2026-09-17: ruleset y contenido
+  // `1.1.0-grade-1`, el feedback del Repaso de escala que ahora dice si sobra
+  // una celda, y los cambios de 7.º (feedback de la notebook).
   expect(fingerprint()).toBe(
-    '08f3455b6e52e2a9f92b9f8a92230539a2dc9d966b8dc5943aa486a031b1e5ff',
+    '44cdca980989e688ada68ad9eb45491ee0ec5fcb7d61bb622ba0a83fcfd0cf71',
   )
 })
 it('metadata, global limits and recovery mapping changes all move their identity', () => {

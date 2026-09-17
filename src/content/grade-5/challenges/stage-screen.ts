@@ -312,7 +312,7 @@ export function evaluateScreen(p: ScreenParams, optionId: string) {
           ? {
               violatedConstraint: shown.deforms
                 ? 'Estirada, la imagen queda deformada.'
-                : 'El recorte de arriba se come el cartel del curso.',
+                : `El recorte de ${p.bannerAt} se come el cartel del curso.`,
             }
           : {}),
         consequence:

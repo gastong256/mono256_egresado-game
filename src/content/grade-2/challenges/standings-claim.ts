@@ -87,18 +87,6 @@ export const standingsSchema = z.discriminatedUnion('shape', [
 ])
 export type StandingsParams = z.infer<typeof standingsSchema>
 
-const SHAPES = ['settled', 'open', 'eliminated'] as const
-const BASES = [
-  [12, 9, 7, 4],
-  [15, 11, 8, 5],
-  [10, 9, 8, 3],
-  [14, 10, 6, 6],
-  [13, 12, 5, 4],
-] as const
-const PER_WIN = [2, 3] as const
-const RADICES = [SHAPES.length, BASES.length, PER_WIN.length, 3]
-export const STANDINGS_SPACE = spaceOf(RADICES)
-
 /** Most and least each team can finish with, in integer points. */
 export function bounds(p: StandingsParams) {
   return CLAIM_TEAMS.map((_, index) => {
@@ -108,77 +96,244 @@ export function bounds(p: StandingsParams) {
   })
 }
 
-export function generateStandings(index: number): StandingsParams {
-  const axes = candidateAxes(index, RADICES, 11)
-  const shape = at(SHAPES, digit(axes, 0))
-  const base = at(BASES, digit(axes, 1))
-  const perWin = at(PER_WIN, digit(axes, 2))
-  const spread = digit(axes, 3)
+export type Truth = 'seguro' | 'posible' | 'imposible'
 
-  if (shape === 'settled') {
-    // Nobody can reach the leader: everyone else has too little left.
-    const left = [1, 1, 1, 1]
-    const lead = (base[1] ?? 0) + 1 * perWin + 1 + spread
-    return standingsSchema.parse({
-      shape,
-      points: [lead, base[1] ?? 0, base[2] ?? 0, base[3] ?? 0],
-      remaining: left,
-      perWin,
-    })
+/** Las cuatro afirmaciones: quién termina primero y quién termina arriba de quién. */
+export const CLAIM_SHAPES = [
+  { id: 'a-first', kind: 'first', team: 0 },
+  { id: 'd-first', kind: 'first', team: 3 },
+  { id: 'b-over-c', kind: 'above', team: 1, other: 2 },
+  { id: 'c-over-a', kind: 'above', team: 2, other: 0 },
+] as const
+
+/**
+ * Categoría de cada afirmación por cotas de cada curso, con «terminar arriba»
+ * **estricto**: empatar no es terminar arriba (MAT-AJ-NEW-005).
+ *
+ * - seguro: el mínimo propio supera el máximo del otro;
+ * - imposible: el máximo propio no supera el mínimo del otro;
+ * - posible: el resto.
+ *
+ * `tiesCountAsAbove` lee el empate al revés; sólo lo usa el gate que rechaza las
+ * tablas donde esa lectura cambiaría alguna categoría.
+ */
+export function independentTruths(
+  p: StandingsParams,
+  tiesCountAsAbove = false,
+): readonly Truth[] {
+  const limits = bounds(p)
+  const beats = (a: number, b: number) => (tiesCountAsAbove ? a >= b : a > b)
+  const above = (left: number, right: number): Truth => {
+    const one = limits[left]
+    const other = limits[right]
+    if (one === undefined || other === undefined) return 'imposible'
+    if (beats(one.min, other.max)) return 'seguro'
+    if (!beats(one.max, other.min)) return 'imposible'
+    return 'posible'
   }
-  if (shape === 'eliminated') {
-    // The last team cannot catch the leader's current points any more.
-    const left = [2, 2, 2, 1]
-    const lead = (base[0] ?? 0) + 4 + spread
-    return standingsSchema.parse({
-      shape,
-      points: [lead, base[1] ?? 0, base[2] ?? 0, base[3] ?? 0],
-      remaining: left,
-      perWin,
-    })
+  const first = (team: number): Truth => {
+    const own = limits[team]
+    if (own === undefined) return 'imposible'
+    const others = limits.filter((_, position) => position !== team)
+    if (others.every((other) => beats(own.min, other.max))) return 'seguro'
+    if (others.some((other) => !beats(own.max, other.min))) return 'imposible'
+    return 'posible'
   }
-  const left = [2 + spread, 3, 3, 3]
-  return standingsSchema.parse({
-    shape,
-    points: [...base],
-    remaining: left,
+  return CLAIM_SHAPES.map((claim) =>
+    claim.kind === 'first' ? first(claim.team) : above(claim.team, claim.other),
+  )
+}
+
+/** Los partidos posibles entre los cuatro cursos, como pares de posiciones. */
+const PAIRS = [
+  [0, 1],
+  [0, 2],
+  [0, 3],
+  [1, 2],
+  [1, 3],
+  [2, 3],
+] as const
+
+/**
+ * Todos los fixtures entre los cuatro cursos compatibles con los partidos que
+ * le faltan a cada uno: cuántas veces se enfrenta cada par.
+ */
+export function fixturesOf(remaining: readonly number[]): readonly number[][] {
+  const fixtures: number[][] = []
+  const counts = PAIRS.map(() => 0)
+  const visit = (pair: number, left: readonly number[]) => {
+    if (pair === PAIRS.length) {
+      if (left.every((value) => value === 0)) fixtures.push([...counts])
+      return
+    }
+    const [a, b] = PAIRS[pair] ?? [0, 0]
+    const most = Math.min(left[a] ?? 0, left[b] ?? 0)
+    for (let times = 0; times <= most; times++) {
+      counts[pair] = times
+      const next = [...left]
+      next[a] = (next[a] ?? 0) - times
+      next[b] = (next[b] ?? 0) - times
+      visit(pair + 1, next)
+    }
+    counts[pair] = 0
+  }
+  visit(0, remaining)
+  return fixtures
+}
+
+/**
+ * Categoría de cada afirmación bajo un fixture concreto, enumerando todo
+ * resultado: cada partido lo gana uno de los dos y suma `perWin`.
+ */
+export function jointTruths(
+  p: StandingsParams,
+  fixture: readonly number[],
+): readonly Truth[] {
+  const games = fixture.flatMap((times, pair) =>
+    Array.from({ length: times }, () => PAIRS[pair] ?? ([0, 0] as const)),
+  )
+  const finals: number[][] = []
+  for (let mask = 0; mask < 2 ** games.length; mask++) {
+    const points: number[] = [...p.points]
+    games.forEach(([a, b], game) => {
+      const winner = (mask >> game) % 2 === 1 ? a : b
+      points[winner] = (points[winner] ?? 0) + p.perWin
+    })
+    finals.push(points)
+  }
+  const truthOf = (holds: (points: readonly number[]) => boolean): Truth =>
+    finals.every(holds)
+      ? 'seguro'
+      : finals.some(holds)
+        ? 'posible'
+        : 'imposible'
+  return CLAIM_SHAPES.map((claim) =>
+    claim.kind === 'first'
+      ? truthOf((points) =>
+          points.every(
+            (value, position) =>
+              position === claim.team || (points[claim.team] ?? 0) > value,
+          ),
+        )
+      : truthOf(
+          (points) => (points[claim.team] ?? 0) > (points[claim.other] ?? 0),
+        ),
+  )
+}
+
+const SHAPES = ['settled', 'open', 'eliminated'] as const
+const POINTS = [3, 5, 6, 8, 9, 11, 12, 14] as const
+const REMAINING = [0, 1, 2, 3] as const
+const PER_WIN = [2, 3] as const
+const RADICES = [
+  POINTS.length,
+  POINTS.length,
+  POINTS.length,
+  POINTS.length,
+  REMAINING.length,
+  REMAINING.length,
+  REMAINING.length,
+  REMAINING.length,
+  PER_WIN.length,
+]
+export const STANDINGS_SPACE = spaceOf(RADICES)
+
+/** Tope de partidos pendientes en toda la tabla: la enumeración es chica. */
+const MAX_GAMES = 5
+
+function tableAt(index: number): StandingsParams | undefined {
+  const axes = candidateAxes(index, RADICES, 1009)
+  const points = [0, 1, 2, 3].map((team) => at(POINTS, digit(axes, team)))
+  const remaining: number[] = [0, 1, 2, 3].map((team) =>
+    at(REMAINING, digit(axes, 4 + team)),
+  )
+  const total = remaining.reduce((sum, value) => sum + value, 0)
+  if (total === 0 || total % 2 === 1 || total / 2 > MAX_GAMES) return undefined
+  const perWin = at(PER_WIN, digit(axes, 8))
+  const truths = independentTruths({
+    shape: 'open',
+    points: points as [number, number, number, number],
+    remaining: remaining as [number, number, number, number],
     perWin,
   })
+  // Las formas: alguien ya ganó; ninguno ganó y alguno ya no puede terminar
+  // primero; o los dos que se nombran para el primer puesto siguen en carrera.
+  const shape = truths.includes('seguro')
+    ? 'settled'
+    : truths[0] === 'imposible' || truths[1] === 'imposible'
+      ? 'eliminated'
+      : 'open'
+  const parsed = standingsSchema.safeParse({
+    shape,
+    points,
+    remaining,
+    perWin,
+  })
+  return parsed.success ? parsed.data : undefined
+}
+
+/**
+ * Papeles del catálogo: la forma que le toca a cada dirección, rotando. Sin
+ * rotación, las primeras aprobaciones de un barrido quedan en la forma que el
+ * espacio produce más seguido.
+ */
+export function standingsRoleOf(index: number): (typeof SHAPES)[number] {
+  return at(SHAPES, Math.abs(index) % SHAPES.length)
+}
+
+/** Direcciones del espacio que se miran para encontrar el papel pedido. */
+const ROLE_SEARCH = 800
+
+/**
+ * Generación por papel: la primera tabla, en un recorrido determinista del
+ * espacio, con la forma de su dirección y que pasa todos los gates.
+ */
+export function generateStandings(index: number): StandingsParams {
+  const role = standingsRoleOf(index)
+  let last: StandingsParams = {
+    shape: role,
+    points: [12, 9, 7, 4],
+    remaining: [1, 1, 1, 1],
+    perWin: 2,
+  }
+  for (let attempt = 0; attempt < ROLE_SEARCH; attempt++) {
+    const candidate = tableAt((index * 61 + attempt * 7919) % STANDINGS_SPACE)
+    if (candidate === undefined) continue
+    last = candidate
+    if (candidate.shape === role && standingsGates(candidate).length === 0)
+      return candidate
+  }
+  return last
+}
+
+/** Gate de dirección: la tabla tiene la forma de su papel. */
+export function standingsRoleGates(
+  p: StandingsParams,
+  index: number,
+): readonly string[] {
+  return p.shape === standingsRoleOf(index)
+    ? []
+    : ['la tabla no juega el papel de su dirección']
 }
 
 export interface StandingClaim {
   readonly id: string
   readonly label: string
   readonly detail: string
-  readonly truth: 'seguro' | 'posible' | 'imposible'
+  readonly truth: Truth
 }
 
 /**
- * The claims, resolved with integer bounds.
+ * The claims, resolved with integer bounds and strict «above».
  *
  * A team is champion for sure when its floor beats everyone's ceiling, and it
- * is out when its ceiling cannot reach someone's floor. Everything else is
- * still possible, which is the category players collapse first.
+ * is out when its ceiling cannot beat someone's floor. Everything else is still
+ * possible, which is the category players collapse first. The authoring gates
+ * guarantee that reasoning about the tournament among the four courses gives the
+ * same categories.
  */
 export function standingClaims(p: StandingsParams): readonly StandingClaim[] {
-  const limits = bounds(p)
-  const claimFor = (index: number): 'seguro' | 'posible' | 'imposible' => {
-    const own = limits[index]
-    if (own === undefined) return 'imposible'
-    const others = limits.filter((_, position) => position !== index)
-    if (others.every((other) => own.min > other.max)) return 'seguro'
-    if (others.some((other) => other.min > own.max)) return 'imposible'
-    return 'posible'
-  }
-  /** Whether one team can still end above another, with the same bounds. */
-  const above = (left: number, right: number): StandingClaim['truth'] => {
-    const one = limits[left]
-    const other = limits[right]
-    if (one === undefined || other === undefined) return 'imposible'
-    if (one.min > other.max) return 'seguro'
-    if (other.min > one.max) return 'imposible'
-    return 'posible'
-  }
+  const truths = independentTruths(p)
   const detailOf = (index: number) =>
     `${String(p.points[index] ?? 0)} puntos y le quedan ${String(p.remaining[index] ?? 0)} partidos`
 
@@ -190,25 +345,25 @@ export function standingClaims(p: StandingsParams): readonly StandingClaim[] {
       id: 'a-first',
       label: `${CLAIM_TEAMS[0].label} termina primero.`,
       detail: detailOf(0),
-      truth: claimFor(0),
+      truth: truths[0] ?? 'imposible',
     },
     {
       id: 'd-first',
       label: `${CLAIM_TEAMS[3].label} termina primero.`,
       detail: detailOf(3),
-      truth: claimFor(3),
+      truth: truths[1] ?? 'imposible',
     },
     {
       id: 'b-over-c',
       label: `${CLAIM_TEAMS[1].label} termina arriba de ${CLAIM_TEAMS[2].label}.`,
       detail: `${detailOf(1)} · ${detailOf(2)}`,
-      truth: above(1, 2),
+      truth: truths[2] ?? 'imposible',
     },
     {
       id: 'c-over-a',
       label: `${CLAIM_TEAMS[2].label} termina arriba de ${CLAIM_TEAMS[0].label}.`,
       detail: `${detailOf(2)} · ${detailOf(0)}`,
-      truth: above(2, 0),
+      truth: truths[3] ?? 'imposible',
     },
   ]
 }
@@ -313,6 +468,35 @@ export function standingsGates(p: StandingsParams): readonly string[] {
   if (claims.every((claim, index) => claim.truth === after[index]?.truth))
     issues.push('los partidos que faltan no cambian ninguna categoría')
 
+  // El torneo es entre estos cuatro cursos: cada curso no puede tener más
+  // partidos pendientes que los otros tres juntos, y la suma es par.
+  const total = p.remaining.reduce((sum, value) => sum + value, 0)
+  if (total % 2 === 1)
+    issues.push('los partidos que faltan no forman un fixture')
+  if (p.remaining.some((value) => value * 2 > total))
+    issues.push('un curso tiene más partidos pendientes que los otros juntos')
+
+  // Gate de modelo (MAT-005): pensar cada curso por separado da lo mismo que
+  // pensar el torneo entero, con cualquier fixture y cualquier resultado.
+  const independent = independentTruths(p)
+  const fixtures = fixturesOf(p.remaining)
+  if (fixtures.length === 0) issues.push('no hay fixture posible')
+  if (
+    fixtures.some((fixture) =>
+      jointTruths(p, fixture).some(
+        (truth, index) => truth !== independent[index],
+      ),
+    )
+  )
+    issues.push(
+      'las cotas por curso no coinciden con el torneo entre los cuatro',
+    )
+
+  // Empate (MAT-AJ-NEW-005): ninguna categoría depende de cómo se lea un empate.
+  const tieReading = independentTruths(p, true)
+  if (tieReading.some((truth, index) => truth !== independent[index]))
+    issues.push('una categoría cambia si el empate cuenta como terminar arriba')
+
   issues.push(...tierWitnessIssues(standingsPlans(p)))
   return issues
 }
@@ -416,11 +600,12 @@ export function evaluateStandings(
 
 export const standingsVariants = generatedSource({
   id: 'y2.standings-claim.bounds',
-  version: '1',
+  version: '2',
   schema: standingsSchema,
   size: STANDINGS_SPACE,
   generate: generateStandings,
   gates: standingsGates,
+  addressGates: standingsRoleGates,
 })
 
 export const standingsClaim = defineChallenge<StandingsParams, StandingsParams>(
@@ -469,7 +654,7 @@ export const standingsClaim = defineChallenge<StandingsParams, StandingsParams>(
         : ['la tabla tiene valores negativos'],
     narrate: (p) => ({
       title: 'La tabla del Intercurso',
-      setup: `Faltan partidos y el curso quiere publicar algo. Cada partido ganado suma ${String(p.perWin)} puntos.`,
+      setup: `Faltan partidos entre estos cuatro cursos y el curso quiere publicar algo. Cada partido lo gana uno de los dos, y el que gana suma ${String(p.perWin)} puntos.`,
       goal: 'Separá lo que ya está asegurado de lo que puede pasar y de lo que ya no, y decidí qué publica el curso.',
     }),
     present: (p) => ({

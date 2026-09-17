@@ -279,8 +279,11 @@ export const busTiming: ChallengeDefinition = defineChallenge<
           outcomeKey: 'bus.tight',
           stamp: 'Llegaste',
           facts: [...facts, marginFact],
+          // Calculado: con margen de 1 a 4 min, «cualquier demora» era falso.
           optimalComparison:
-            'Llegaste, pero sin ningún colchón: cualquier demora extra te dejaba afuera.',
+            margin === 0
+              ? 'Llegaste sin ningún minuto de margen: cualquier demora extra te dejaba afuera.'
+              : `Llegaste con ${String(margin)} min de margen: una demora de más de ${String(margin)} min te dejaba afuera.`,
           consequence: 'Entrás justo, sin tiempo para nada más que sentarte.',
         },
         metrics: metrics({ efficiency: 0.5, precision: 0.6, risk: 0.7 }),

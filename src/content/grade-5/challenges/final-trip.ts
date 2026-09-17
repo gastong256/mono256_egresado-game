@@ -296,7 +296,11 @@ export function evaluateTrip(p: TripParams, optionId: string) {
             ? 'Con ese paquete el viaje no se puede reservar.'
             : quality === 'functional'
               ? `Se puede hacer, pero hay que poner aparte ${
-                  offer?.micro === false ? 'el micro' : 'las comidas'
+                  offer?.micro === false && offer.comidas === false
+                    ? 'el micro y las comidas'
+                    : offer?.micro === false
+                      ? 'el micro'
+                      : 'las comidas'
                 }.`
               : quality === 'efficient'
                 ? 'Entra todo lo que el curso pidió, aunque el fondo queda al límite.'
@@ -507,7 +511,9 @@ export function evaluateComparisonReview(
       consequence:
         quality === 'optimal'
           ? 'Con ese total ya se pueden comparar los paquetes de verdad.'
-          : 'Comparar precios que no incluyen lo mismo es lo que hace que después falte plata.',
+          : answered < exact
+            ? 'Ese total deja afuera parte del micro: comparar precios que no incluyen lo mismo es lo que hace que después falte plata.'
+            : 'Ese total suma de más: con el micro de cada uno, el paquete sale menos.',
     }),
   )
 }

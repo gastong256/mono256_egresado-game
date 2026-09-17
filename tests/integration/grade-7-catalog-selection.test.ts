@@ -246,16 +246,39 @@ describe('una versión publicada del catálogo no se toca', () => {
       ]),
     )
 
+    // El acto cambió de generador en dev-2 y el mural ganó un gate de balance
+    // en dev-6: sus direcciones generadas pueden moverse. El resto, no.
     const stable = previous.entries.filter(
       (entry) =>
-        (entry.templateId as string) !== 'g7.may-25-act' ||
-        entry.source === 'authored',
+        !['g7.may-25-act', 'g7.mural-paint'].includes(
+          entry.templateId as string,
+        ) || entry.source === 'authored',
     )
 
-    expect(stable.length).toBeGreaterThan(100)
+    // 85 de las 133 direcciones de dev-1 quedan fuera del acto y del mural
+    // generados; antes del gate de balance del mural eran más de 100.
+    expect(stable.length).toBeGreaterThan(80)
     for (const entry of stable) {
       expect(current.get(formatVariantAddress(entry))).toBe(entry.fingerprint)
     }
+  })
+
+  it('publica dev-6 al lado de dev-5: el balance del mural mueve direcciones y dev-5 queda como estaba', () => {
+    const dev5 = grade7VariantCatalogs['grade-7-dev-5']
+    const dev6 = grade7VariantCatalogs['grade-7-dev-6']
+    if (dev5 === undefined || dev6 === undefined) throw new Error('faltan')
+    expect(dev5.contentVersion).toBe('0.9.0-grade-7')
+    expect(dev6.contentVersion).toBe('0.10.0-grade-7')
+    const murals = (catalog: typeof dev5) =>
+      catalog.entries
+        .filter((entry) => (entry.templateId as string) === 'g7.mural-paint')
+        .map((entry) => formatVariantAddress(entry))
+    expect(murals(dev6)).not.toEqual(murals(dev5))
+    const others = (catalog: typeof dev5) =>
+      catalog.entries.filter(
+        (entry) => (entry.templateId as string) !== 'g7.mural-paint',
+      )
+    expect(others(dev6)).toEqual(others(dev5))
   })
 
   it('mueve las del acto, porque su generador cambió', () => {

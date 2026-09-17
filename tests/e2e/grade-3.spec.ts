@@ -137,6 +137,39 @@ for (const width of [320, 360, 390, 412]) {
 }
 
 for (const width of [320, 412]) {
+  test(`Grade 3: pagar el colectivo a ${String(width)} px, con la regla de estimación a la vista`, async ({
+    page,
+  }) => {
+    test.setTimeout(180_000)
+    await page.setViewportSize({ width, height: 900 })
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await openAt(page, 'browser-g3-pase', 'y3.transport-pass')
+
+    // RS-MAT-001: la regla con la que se decide está escrita en pantalla.
+    await expect(
+      page.getByText('Los viajes del mes pasado son tu mejor estimación', {
+        exact: false,
+      }),
+    ).toBeVisible()
+    const radios = page.getByRole('radio')
+    await expect(radios).toHaveCount(4)
+    await reflow(page, `transport · empty · ${String(width)}`)
+
+    await tabTo(page, radios.first())
+    await page.keyboard.press('Space')
+    await expect(radios.first()).toBeChecked()
+    await reflow(page, `transport · answered · ${String(width)}`)
+    await noAxeViolations(page)
+
+    const submit = page.getByTestId('submit-answer')
+    await tabTo(page, submit)
+    await page.keyboard.press('Enter')
+    await expect(page.getByTestId('feedback-heading')).toBeFocused()
+    await reflow(page, `transport · result · ${String(width)}`)
+  })
+}
+
+for (const width of [320, 412]) {
   test(`Grade 3: armar la semana a ${String(width)} px, con días y vencimientos`, async ({
     page,
   }) => {

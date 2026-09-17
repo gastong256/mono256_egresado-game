@@ -47,10 +47,10 @@ export const SCENARIOS = [
 export type ScenarioId = (typeof SCENARIOS)[number]['id']
 
 /** Los días de la semana que un escenario puede ocupar. */
-export const DAYS = ['lun', 'mar', 'mie', 'jue', 'vie'] as const
+export const DAYS = ['lun', 'mar', 'mié', 'jue', 'vie'] as const
 
 const scenario = z.strictObject({
-  /** Horas por semana que ocupa. */
+  /** Horas por semana que ocupa, con el viaje ya incluido. */
   hours: z.number().int().min(2).max(45),
   /** Minutos de viaje por día. */
   travel: z.number().int().min(0).max(180).multipleOf(5),
@@ -146,64 +146,138 @@ export function nextStepPlans(p: NextStepParams): readonly NextStepPlan[] {
 }
 
 const SHAPES = ['horas-justas', 'viaje-largo', 'compromiso-fijo'] as const
-const HOURS = [
-  [26, 16, 22, 8, 30],
-  [22, 12, 26, 10, 24],
-  [30, 18, 14, 6, 20],
-] as const
-const TRAVELS = [
-  [90, 30, 45, 20, 60],
-  [60, 25, 80, 15, 40],
-  [120, 40, 30, 10, 70],
-] as const
-const DAY_SETS = [
-  [
-    [true, true, false, true, true],
-    [true, false, true, false, true],
-    [true, true, false, true, true],
-    [false, true, false, true, false],
-    [true, false, true, false, true],
-  ],
-  [
-    [true, false, true, true, false],
-    [false, true, true, false, true],
-    [true, true, false, true, false],
-    [true, false, false, true, true],
-    [false, true, false, true, true],
-  ],
-] as const
+type Reason = 'horas' | 'viaje' | 'dia'
+/** El motivo con el que abre cada forma: el dato que aprieta primero. */
+const REASONS: readonly Reason[] = ['horas', 'viaje', 'dia']
+
+/**
+ * Qué escenarios entran en cada papel, en el orden de `SCENARIOS`: facultad,
+ * terciario, trabajo, curso de oficio y mixto.
+ *
+ * Antes la facultad no entraba en ninguna variante del catálogo y el terciario
+ * en tres de veinticuatro: el año de egreso le mostraba al jugador, una y otra
+ * vez, que estudiar no le entraba en la semana (MAT-AJ-NEW-007). El ciclo deja a
+ * cada escenario entrando entre la mitad y cinco de cada ocho papeles, a alguna
+ * opción de estudio entrando en siete de cada ocho, y ninguna respuesta repetida
+ * en más de uno de cada ocho.
+ */
+export const NEXT_STEP_ROLES: readonly (readonly boolean[])[] = [
+  [true, true, false, false, false],
+  [false, true, true, false, true],
+  [true, false, true, true, false],
+  [false, false, true, true, true],
+  [true, true, false, true, false],
+  [false, true, false, true, true],
+  [true, false, false, true, true],
+  [false, true, true, false, false],
+]
+
+/** Horas libres, viaje diario tolerable y el día ya tomado. */
 const FREE_HOURS = [24, 30, 34] as const
 const MAX_TRAVEL = [45, 60, 80] as const
-const TAKEN = [1, 3] as const
+/** Cuánto le falta a un escenario que entra, o le sobra a uno que no. */
+const HOUR_SLACK = [2, 4, 6] as const
+const TRAVEL_SLACK = [5, 10, 15] as const
+/** Días de la semana que puede ocupar un escenario, como índices de `DAYS`. */
+const DAY_PATTERNS: readonly (readonly number[])[] = [
+  [0, 2, 4],
+  [1, 3],
+  [0, 1, 3, 4],
+  [2, 3, 4],
+  [0, 2],
+  [1, 2, 3],
+]
 const RADICES = [
-  SHAPES.length,
-  HOURS.length,
-  TRAVELS.length,
-  DAY_SETS.length,
   FREE_HOURS.length,
   MAX_TRAVEL.length,
-  TAKEN.length,
+  DAYS.length,
+  HOUR_SLACK.length,
+  TRAVEL_SLACK.length,
+  DAY_PATTERNS.length,
 ]
-export const NEXT_STEP_SPACE = spaceOf(RADICES)
+/** Direcciones distintas: el ciclo de papeles por el de motivos, por los ejes. */
+export const NEXT_STEP_SPACE =
+  NEXT_STEP_ROLES.length * REASONS.length * spaceOf(RADICES)
 
+/** El papel de una dirección: qué entra y con qué motivo empiezan las exclusiones. */
+export function nextStepRoleOf(index: number) {
+  const cycle = Math.abs(index)
+  return {
+    viable:
+      NEXT_STEP_ROLES[cycle % NEXT_STEP_ROLES.length] ?? NEXT_STEP_ROLES[0]!,
+    offset: Math.floor(cycle / NEXT_STEP_ROLES.length) % REASONS.length,
+  }
+}
+
+/**
+ * Construcción por papel.
+ *
+ * Cada escenario que entra respeta las tres restricciones con algo de margen;
+ * cada uno que no entra viola exactamente la que le toca —las exclusiones de
+ * una variante rotan entre horas, viaje y día desde el motivo de su papel—, así
+ * que ninguna opción queda afuera siempre por la misma razón.
+ */
 export function generateNextStep(index: number): NextStepParams {
+  const role = nextStepRoleOf(index)
   const axes = candidateAxes(index, RADICES, 101)
-  const shape = at(SHAPES, digit(axes, 0))
-  const hours = at(HOURS, digit(axes, 1))
-  const travels = at(TRAVELS, digit(axes, 2))
-  const days = at(DAY_SETS, digit(axes, 3))
-  // La forma dice qué dato aprieta primero, y cada una tiene su firma: menos
-  // horas libres, menos viaje tolerado o el día tomado en el medio de la semana.
+  const freeHours = at(FREE_HOURS, digit(axes, 0))
+  const maxTravel = at(MAX_TRAVEL, digit(axes, 1))
+  const takenDay = digit(axes, 2) % DAYS.length
+  const withDay = DAY_PATTERNS.filter((days) => days.includes(takenDay))
+  const withoutDay = DAY_PATTERNS.filter((days) => !days.includes(takenDay))
+  let excluded = 0
+  const scenarios = SCENARIOS.map((_, position) => {
+    const shift = digit(axes, 3) + position
+    const hoursOk = freeHours - at(HOUR_SLACK, shift)
+    const travelOk = Math.max(
+      0,
+      maxTravel - at(TRAVEL_SLACK, digit(axes, 4) + position),
+    )
+    const freeDays = at(
+      withoutDay as [readonly number[], ...(readonly number[])[]],
+      digit(axes, 5) + position,
+    )
+    const pattern = (days: readonly number[]) =>
+      DAYS.map((_, day) => days.includes(day)) as [
+        boolean,
+        boolean,
+        boolean,
+        boolean,
+        boolean,
+      ]
+    if (role.viable[position] === true)
+      return { hours: hoursOk, travel: travelOk, days: pattern(freeDays) }
+    const reason = REASONS[(role.offset + excluded) % REASONS.length] ?? 'horas'
+    excluded += 1
+    if (reason === 'horas')
+      return {
+        hours: freeHours + at(HOUR_SLACK, shift),
+        travel: travelOk,
+        days: pattern(freeDays),
+      }
+    if (reason === 'viaje')
+      return {
+        hours: hoursOk,
+        travel: maxTravel + at(TRAVEL_SLACK, digit(axes, 4) + position),
+        days: pattern(freeDays),
+      }
+    return {
+      hours: hoursOk,
+      travel: travelOk,
+      days: pattern(
+        at(
+          withDay as [readonly number[], ...(readonly number[])[]],
+          digit(axes, 5) + position,
+        ),
+      ),
+    }
+  })
   return nextStepSchema.parse({
-    shape,
-    freeHours: shape === 'horas-justas' ? 20 : at(FREE_HOURS, digit(axes, 4)),
-    maxTravel: shape === 'viaje-largo' ? 35 : at(MAX_TRAVEL, digit(axes, 5)),
-    takenDay: shape === 'compromiso-fijo' ? 2 : at(TAKEN, digit(axes, 6)),
-    scenarios: SCENARIOS.map((_, position) => ({
-      hours: hours[position] ?? 20,
-      travel: travels[position] ?? 40,
-      days: [...(days[position] ?? [true, true, true, true, true])],
-    })),
+    shape: at(SHAPES, role.offset),
+    freeHours,
+    maxTravel,
+    takenDay,
+    scenarios,
   })
 }
 
@@ -222,6 +296,16 @@ export function nextStepGates(p: NextStepParams): readonly string[] {
   )
   if (reasons.size < 2)
     issues.push('un solo dato deja afuera a todos los que no entran')
+
+  // Las horas de un escenario incluyen su viaje: tienen que alcanzar para el
+  // viaje de todos sus días y al menos una hora de actividad por día.
+  p.scenarios.forEach((entry, index) => {
+    const days = entry.days.filter(Boolean).length
+    if (entry.hours * 60 < days * (entry.travel + 60))
+      issues.push(
+        `las horas de ${SCENARIOS[index]?.id ?? ''} no alcanzan para su viaje`,
+      )
+  })
   return issues
 }
 
@@ -302,7 +386,7 @@ export function evaluateNextStep(
 
 export const nextStepVariants = generatedSource({
   id: 'y5.next-step-options.scenarios',
-  version: '1',
+  version: '2',
   schema: nextStepSchema,
   size: NEXT_STEP_SPACE,
   generate: generateNextStep,
@@ -354,7 +438,7 @@ export const nextStepOptions = defineChallenge<NextStepParams, NextStepParams>({
   present: (p) => ({
     kind: 'classification',
     instructions:
-      'Marcá cuáles entran con tus horas, tu viaje y el día que ya está tomado.',
+      'Marcá cuáles entran con tus horas, tu viaje y el día que ya está tomado. Las horas de cada opción ya incluyen el viaje.',
     data: [
       {
         label: 'Horas libres',
@@ -380,7 +464,7 @@ export const nextStepOptions = defineChallenge<NextStepParams, NextStepParams>({
       return {
         id: entry.id,
         label: entry.label,
-        detail: `${String(data?.hours ?? 0)} h por semana · ${String(data?.travel ?? 0)} min de viaje · ${days || 'sin días fijos'}`,
+        detail: `${String(data?.hours ?? 0)} h por semana con el viaje incluido · ${String(data?.travel ?? 0)} min de viaje por día · ${days || 'sin días fijos'}`,
       }
     }),
     labels: [

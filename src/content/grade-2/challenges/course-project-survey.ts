@@ -44,26 +44,22 @@ export const CLAIM_LABELS = [
 ] as const
 
 const count = z.number().int().min(1).max(200)
+const counts = {
+  population: count,
+  answers: z.tuple([count, count, count]),
+}
 export const surveySchema = z.discriminatedUnion('shape', [
-  /** The headline is true among answers and false about the whole year. */
-  z.strictObject({
-    shape: z.literal('denominator'),
-    population: count,
-    answers: z.tuple([count, count, count]),
-  }),
-  /** So many people did not answer that the year's preference is unknown. */
-  z.strictObject({
-    shape: z.literal('missing-data'),
-    population: count,
-    answers: z.tuple([count, count, count]),
-  }),
-  /** The gap between the first two options is inside the margin. */
-  z.strictObject({
-    shape: z.literal('margin'),
-    population: count,
-    answers: z.tuple([count, count, count]),
-  }),
+  /** The headline is a majority among answers and not about the whole year. */
+  z.strictObject({ shape: z.literal('denominator'), ...counts }),
+  /** Fewer than half the year answered, so nothing about the year is known. */
+  z.strictObject({ shape: z.literal('missing-data'), ...counts }),
+  /** The lead over the other option does not meet the publication rule. */
+  z.strictObject({ shape: z.literal('margin'), ...counts }),
+  /** Almost the whole year answered: the lead survives any silent vote. */
+  z.strictObject({ shape: z.literal('high-response'), ...counts }),
 ])
+export type SurveyShape =
+  'denominator' | 'missing-data' | 'margin' | 'high-response'
 export type SurveyParams = z.infer<typeof surveySchema>
 
 export const SURVEY_OPTIONS = [
@@ -72,57 +68,30 @@ export const SURVEY_OPTIONS = [
   { id: 'musica', label: 'comprar equipo de música' },
 ] as const
 
-const SHAPES = ['denominator', 'missing-data', 'margin'] as const
-const POPULATIONS = [80, 96, 120, 150] as const
-const SPLITS = [
-  [24, 10, 6],
-  [26, 12, 7],
-  [30, 14, 8],
-  [22, 18, 5],
-  [28, 20, 9],
-  [25, 23, 6],
-] as const
-const RADICES = [SHAPES.length, POPULATIONS.length, SPLITS.length, 2]
-export const SURVEY_SPACE = spaceOf(RADICES)
+/**
+ * La regla de publicación del curso, única fuente del criterio.
+ *
+ * Una opción «le ganó» a otra sólo si le saca **más de una de cada diez**
+ * respuestas. El evaluador, el oráculo y el texto de la pantalla leen esta
+ * constante: antes el criterio vivía sólo en el evaluador y el jugador tenía que
+ * adivinar qué contaba como «con claridad» (MAT-003).
+ */
+export const PUBLICATION_RULE = { oneIn: 10 } as const
+
+/** Si una diferencia cumple la regla, con enteros: `diferencia × 10 > respuestas`. */
+export function meetsPublicationRule(difference: number, answers: number) {
+  return difference * PUBLICATION_RULE.oneIn > answers
+}
+
+/** La regla, en palabras y números, como la lee el jugador. */
+export const PUBLICATION_RULE_TEXT = `Regla del curso: una opción le ganó a otra sólo si le saca más de 1 de cada ${String(PUBLICATION_RULE.oneIn)} respuestas.`
+
+/** El principio de no respuesta, en palabras. */
+export const WHOLE_YEAR_RULE_TEXT =
+  'Sobre el nivel entero sólo vale lo que seguiría siendo cierto aunque todos los que no contestaron hubieran elegido una misma opción distinta.'
 
 const sum = (values: readonly number[]): number =>
   values.reduce((total, value) => total + value, 0)
-
-/**
- * Constraint-first materialisation.
- *
- * Every shape keeps the leading option above half of the answers — that is the
- * headline the course wants to publish — and then bends one relation: the year
- * denominator, the people who never answered, or the gap with the runner-up.
- */
-export function generateSurvey(index: number): SurveyParams {
-  const axes = candidateAxes(index, RADICES, 19)
-  const shape = at(SHAPES, digit(axes, 0))
-  const population = at(POPULATIONS, digit(axes, 1))
-  const split = at(SPLITS, digit(axes, 2))
-  const nudge = digit(axes, 3)
-
-  if (shape === 'margin') {
-    // Second option within one or two answers of the first.
-    const first = (split[0] ?? 20) + nudge
-    const second = first - 1
-    const third = split[2] ?? 5
-    return surveySchema.parse({
-      shape,
-      population,
-      answers: [first, second, third],
-    })
-  }
-  if (shape === 'missing-data') {
-    // Fewer than half the year answered, so nothing about the year is known.
-    const scaled = split.map((value) => value + nudge)
-    return surveySchema.parse({ shape, population, answers: scaled })
-  }
-  const scaled = split.map((value, position) =>
-    position === 0 ? (split[0] ?? 20) + 2 + nudge : value,
-  )
-  return surveySchema.parse({ shape, population, answers: scaled })
-}
 
 /** A claim the course wants to publish, with the truth the data gives it. */
 export interface SurveyClaim {
@@ -140,9 +109,9 @@ export interface SurveyClaim {
  */
 export function surveyClaims(p: SurveyParams): readonly SurveyClaim[] {
   const answers = sum(p.answers)
-  const [first = 0, second = 0] = p.answers
+  const [first = 0, second = 0, third = 0] = p.answers
   const lead = SURVEY_OPTIONS[0]?.label ?? ''
-  const runnerUp = SURVEY_OPTIONS[1]?.label ?? ''
+  const other = SURVEY_OPTIONS[1]?.label ?? ''
   const least = SURVEY_OPTIONS[2]?.label ?? ''
   const silent = p.population - answers
   return [
@@ -150,7 +119,7 @@ export function surveyClaims(p: SurveyParams): readonly SurveyClaim[] {
       id: 'among-answers',
       label: `Entre quienes contestaron, ${lead} fue lo más elegido.`,
       detail: `${String(first)} de ${String(answers)} respuestas`,
-      supported: first > second && first >= (p.answers[2] ?? 0),
+      supported: first > second && first > third,
     },
     {
       id: 'half-of-answers',
@@ -165,22 +134,24 @@ export function surveyClaims(p: SurveyParams): readonly SurveyClaim[] {
       supported: first * 2 > p.population,
     },
     {
+      // Cota de peor caso: aunque toda la gente que no contestó hubiera elegido
+      // la misma otra opción, la primera sigue arriba (MAT-004).
       id: 'year-prefers',
       label: `El nivel entero prefiere ${lead}.`,
-      detail: `${String(silent)} personas del nivel no contestaron`,
-      supported: false,
+      detail: `${String(first)} contra ${String(Math.max(second, third))} de la segunda, y ${String(silent)} personas del nivel no contestaron`,
+      supported: first - Math.max(second, third) > silent,
     },
     {
       id: 'beats-runner-up',
-      label: `${lead} le ganó a ${runnerUp} con claridad.`,
-      detail: `${String(first)} contra ${String(second)} respuestas`,
-      supported: (first - second) * 10 > answers,
+      label: `Entre quienes contestaron, ${lead} le ganó a ${other} según la regla del curso.`,
+      detail: `${String(first)} contra ${String(second)} de ${String(answers)} respuestas`,
+      supported: meetsPublicationRule(first - second, answers),
     },
     {
       id: 'least-chosen',
       label: `${least} fue lo menos elegido entre quienes contestaron.`,
-      detail: `${String(p.answers[2] ?? 0)} de ${String(answers)} respuestas`,
-      supported: (p.answers[2] ?? 0) < first && (p.answers[2] ?? 0) < second,
+      detail: `${String(third)} de ${String(answers)} respuestas`,
+      supported: third < first && third < second,
     },
   ]
 }
@@ -228,22 +199,135 @@ export function surveyPlans(p: SurveyParams): readonly SurveyPlan[] {
   return plans
 }
 
+/** El vector de verdad de las seis afirmaciones, como `TTFFTT`. */
+export function surveyKey(p: SurveyParams): string {
+  return surveyClaims(p)
+    .map((claim) => (claim.supported ? 'T' : 'F'))
+    .join('')
+}
+
+/**
+ * Papeles del catálogo: forma semántica y vector de verdad que le toca a cada
+ * dirección, en un ciclo de diez.
+ *
+ * Con dos claves en todo el catálogo, la encuesta se contestaba reconociendo la
+ * forma (MAT-004). El ciclo reparte ocho claves, ninguna en más de tres de cada
+ * diez direcciones, cada forma con al menos dos, y deja el contraste del
+ * denominador —mayoría entre respuestas, no del nivel— en seis de cada diez.
+ */
+export const SURVEY_ROLES: readonly {
+  readonly shape: SurveyShape
+  readonly key: string
+}[] = [
+  { shape: 'denominator', key: 'TTFFTT' },
+  { shape: 'high-response', key: 'TFFTTT' },
+  { shape: 'missing-data', key: 'TTFFTF' },
+  { shape: 'margin', key: 'TFFFFT' },
+  { shape: 'denominator', key: 'TTFFTF' },
+  { shape: 'missing-data', key: 'TFFFTF' },
+  { shape: 'margin', key: 'TTFFFT' },
+  { shape: 'high-response', key: 'TFFTTF' },
+  { shape: 'missing-data', key: 'TTFFTT' },
+  { shape: 'denominator', key: 'TTFFTF' },
+]
+
+export function surveyRoleOf(index: number) {
+  return SURVEY_ROLES[Math.abs(index) % SURVEY_ROLES.length] ?? SURVEY_ROLES[0]!
+}
+
+const POPULATIONS = [80, 96, 120, 150] as const
+/** Qué parte del nivel contestó, en por ciento. */
+const RESPONSE_RATES = [35, 40, 45, 55, 60, 70, 88, 92, 96] as const
+/** Qué parte de las respuestas se lleva la primera opción, en por ciento. */
+const LEAD_SHARES = [36, 40, 44, 48, 52, 56, 60, 64] as const
+/** Cuántas respuestas le saca la primera a la biblioteca. */
+const GAPS = [1, 2, 3, 4, 5, 6, 8, 10, 12, 15, 18, 22] as const
+/** Si la biblioteca queda segunda o tercera entre las otras dos. */
+const ORDERS = [0, 1] as const
+const RADICES = [
+  POPULATIONS.length,
+  RESPONSE_RATES.length,
+  LEAD_SHARES.length,
+  GAPS.length,
+  ORDERS.length,
+]
+export const SURVEY_SPACE = spaceOf(RADICES)
+
+function surveyAt(index: number, shape: SurveyShape): SurveyParams | undefined {
+  const axes = candidateAxes(index, RADICES, 19)
+  const population = at(POPULATIONS, digit(axes, 0))
+  const answers = Math.round(
+    (population * at(RESPONSE_RATES, digit(axes, 1))) / 100,
+  )
+  const first = Math.round((answers * at(LEAD_SHARES, digit(axes, 2))) / 100)
+  const runnerUp = first - at(GAPS, digit(axes, 3))
+  const rest = answers - first - runnerUp
+  if (runnerUp < 1 || rest < 1) return undefined
+  // La biblioteca es la opción con la que se compara la regla; la música, la de
+  // «lo menos elegido». Cuál de las dos quedó segunda también varía.
+  const [second, third] =
+    digit(axes, 4) === 0 ? [runnerUp, rest] : [rest, runnerUp]
+  return { shape, population, answers: [first, second, third] }
+}
+
+/** Direcciones del espacio que se miran para encontrar el papel pedido. */
+const ROLE_SEARCH = 400
+
+/**
+ * Generación por papel: la primera encuesta, en un recorrido determinista del
+ * espacio, con la forma y el vector de verdad de su dirección y que pasa todos
+ * los gates. Si no aparece, la última probada, que el gate de papel rechaza.
+ */
+export function generateSurvey(index: number): SurveyParams {
+  const role = surveyRoleOf(index)
+  let last: SurveyParams = {
+    shape: role.shape,
+    population: 80,
+    answers: [30, 20, 10],
+  }
+  for (let attempt = 0; attempt < ROLE_SEARCH; attempt++) {
+    const candidate = surveyAt(
+      (index * 53 + attempt * 97) % SURVEY_SPACE,
+      role.shape,
+    )
+    if (candidate === undefined) continue
+    last = candidate
+    if (
+      surveyKey(candidate) === role.key &&
+      surveyGates(candidate).length === 0
+    )
+      return surveySchema.parse(candidate)
+  }
+  return surveySchema.parse(last)
+}
+
+/** Gate de dirección: la encuesta tiene la forma y la clave de su papel. */
+export function surveyRoleGates(
+  p: SurveyParams,
+  index: number,
+): readonly string[] {
+  const role = surveyRoleOf(index)
+  return p.shape === role.shape && surveyKey(p) === role.key
+    ? []
+    : ['la encuesta no juega el papel de su dirección']
+}
+
 /** Authoring gates. A variant that fails any of them is never approved. */
 export function surveyGates(p: SurveyParams): readonly string[] {
   const issues: string[] = []
   const answers = sum(p.answers)
   const claims = surveyClaims(p)
+  const truth = (id: string) =>
+    claims.find((claim) => claim.id === id)?.supported === true
   const [first = 0, second = 0, third = 0] = p.answers
+  const silent = p.population - answers
 
   if (answers >= p.population)
     issues.push('contestó más gente de la que hay en el nivel')
-  if (first < second || first < third)
+  // La opción que el curso quiere publicar es la más elegida, siempre.
+  if (!(first > second && first > third))
     issues.push('la opción que se quiere publicar no es la más elegida')
-  // Una mayoría entre las respuestas es lo que hace interesante al denominador.
-  // La forma `margin` es justamente la que no la tiene: ahí lo que se discute
-  // es si una pluralidad ajustada alcanza para decir que una opción ganó.
-  if (p.shape !== 'margin' && !(first * 2 > answers))
-    issues.push('el titular ni siquiera pasa la mitad de las respuestas')
+  if (second === third) issues.push('las otras dos opciones empatan')
 
   const supported = claims.filter((claim) => claim.supported).length
   if (supported < 2)
@@ -253,27 +337,51 @@ export function surveyGates(p: SurveyParams): readonly string[] {
       'hacen falta al menos dos afirmaciones que los datos no sostienen',
     )
 
-  // Intrinsic Math Gate: the denominator has to change the answer, so the
-  // headline holds among answers and fails about the whole year.
-  const amongAnswers = claims.find((claim) => claim.id === 'half-of-answers')
-  const amongYear = claims.find((claim) => claim.id === 'half-of-year')
-  if (p.shape !== 'margin') {
-    if (amongAnswers?.supported !== true || amongYear?.supported !== false)
-      issues.push('el denominador no cambia la respuesta: no hay cuenta')
-  } else if (amongAnswers?.supported === true) {
-    issues.push('con margen ajustado el titular no puede ser mayoría')
-  }
+  // Ningún borde exacto: ni la mitad justa, ni la cota del nivel justa, ni una
+  // diferencia a una respuesta de cambiar la regla del curso.
+  if (first * 2 === answers || first * 2 === p.population)
+    issues.push('la cifra cae justo en la mitad')
+  if (first - Math.max(second, third) === silent)
+    issues.push('la diferencia iguala a la gente que no contestó')
+  const difference = first - second
+  if (
+    meetsPublicationRule(difference, answers) !==
+      meetsPublicationRule(difference - 1, answers) ||
+    meetsPublicationRule(difference, answers) !==
+      meetsPublicationRule(difference + 1, answers)
+  )
+    issues.push('la diferencia está a una respuesta del borde de la regla')
 
-  if (p.shape === 'margin') {
-    const close = claims.find((claim) => claim.id === 'beats-runner-up')
-    if (close?.supported !== false)
-      issues.push('la diferencia con la segunda no es chica')
-    const leads = claims.find((claim) => claim.id === 'among-answers')
-    if (leads?.supported !== true)
-      issues.push('la opción del titular no encabeza las respuestas')
+  // Cada forma semántica tiene su firma.
+  switch (p.shape) {
+    case 'denominator':
+      if (answers * 2 < p.population)
+        issues.push('la forma denominador pide que conteste al menos la mitad')
+      if (!truth('half-of-answers') || truth('half-of-year'))
+        issues.push('el denominador no cambia la respuesta: no hay cuenta')
+      if (!truth('beats-runner-up'))
+        issues.push('la forma denominador no discute el margen')
+      break
+    case 'missing-data':
+      if (answers * 2 >= p.population)
+        issues.push('contestó la mitad del nivel: la no respuesta no pesa')
+      if (!truth('beats-runner-up'))
+        issues.push('la forma de no respuesta no discute el margen')
+      break
+    case 'margin':
+      if (truth('beats-runner-up'))
+        issues.push('la diferencia con la biblioteca cumple la regla')
+      break
+    case 'high-response':
+      if (answers * 100 < p.population * 85)
+        issues.push('con respuesta alta contesta al menos el 85 % del nivel')
+      if (!truth('year-prefers'))
+        issues.push('con respuesta alta la ventaja sobrevive a la no respuesta')
+      break
   }
-  if (p.shape === 'missing-data' && answers * 2 >= p.population)
-    issues.push('contestó la mitad del nivel: la no respuesta no pesa')
+  // La no respuesta tiene que poder decidir algo sobre el nivel.
+  if (truth('year-prefers') && p.shape !== 'high-response')
+    issues.push('sólo la respuesta alta sostiene una afirmación sobre el nivel')
 
   issues.push(...tierWitnessIssues(surveyPlans(p)))
   return issues
@@ -380,11 +488,12 @@ export function evaluateSurvey(
 
 export const surveyVariants = generatedSource({
   id: 'y2.course-project-survey.denominator-claims',
-  version: '1',
+  version: '2',
   schema: surveySchema,
   size: SURVEY_SPACE,
   generate: generateSurvey,
   gates: surveyGates,
+  addressGates: surveyRoleGates,
 })
 
 export const courseProjectSurvey = defineChallenge<SurveyParams, SurveyParams>({
@@ -449,8 +558,7 @@ export const courseProjectSurvey = defineChallenge<SurveyParams, SurveyParams>({
       detail: claim.detail,
     })),
     labels: CLAIM_LABELS.map((label) => ({ id: label.id, label: label.label })),
-    instructions:
-      'Para cada afirmación, decidí si los números de la encuesta alcanzan para publicarla. Publicar algo que los datos no sostienen es peor que guardarse una afirmación cierta.',
+    instructions: `Para cada afirmación, decidí si los números de la encuesta alcanzan para publicarla. ${PUBLICATION_RULE_TEXT} ${WHOLE_YEAR_RULE_TEXT} Publicar algo que los datos no sostienen es peor que guardarse una afirmación cierta.`,
   }),
   evaluate: (p, answer: InteractionAnswer) =>
     answer.kind === 'classification'
@@ -476,18 +584,78 @@ export const reviewSchema = z.strictObject({
 })
 export type ReviewParams = z.infer<typeof reviewSchema>
 
-const REVIEW_RADICES = [4, 4, 3]
+const REVIEW_POPULATIONS = [60, 80, 100, 120] as const
+/** Qué parte del nivel contestó, en por ciento. */
+const REVIEW_RATES = [25, 30, 40, 50, 60, 70, 80, 90] as const
+/** Qué parte de las respuestas eligió la opción, en por ciento. */
+const REVIEW_SHARES = [30, 36, 42, 46, 54, 58, 64, 70, 80, 90] as const
+const REVIEW_RADICES = [
+  REVIEW_POPULATIONS.length,
+  REVIEW_RATES.length,
+  REVIEW_SHARES.length,
+]
 export const REVIEW_SPACE = spaceOf(REVIEW_RADICES)
 
-export function generateReview(index: number): ReviewParams {
+/**
+ * El papel de cada dirección: qué dicen las dos cuentas del denominador.
+ *
+ * Con una sola respuesta correcta en todo el catálogo, el Repaso se cerraba
+ * recordando el patrón «sí, no, no» (MAT-002). El ciclo reparte los tres casos
+ * posibles —`TF` la cifra supera la mitad de las respuestas y no la del nivel,
+ * `TT` supera las dos, `FF` no supera ninguna— y deja al contraste `TF`, que es
+ * el error que el Repaso vino a reparar, en la mitad.
+ */
+export const REVIEW_ROLES = ['TF', 'TT', 'TF', 'FF'] as const
+
+export function reviewRoleOf(index: number): (typeof REVIEW_ROLES)[number] {
+  return REVIEW_ROLES[Math.abs(index) % REVIEW_ROLES.length] ?? 'TF'
+}
+
+function reviewAt(index: number): ReviewParams {
   const axes = candidateAxes(index, REVIEW_RADICES, 7)
-  const population = at([60, 80, 100, 120] as const, digit(axes, 0))
+  const population = at(REVIEW_POPULATIONS, digit(axes, 0))
   const answered = Math.round(
-    (population * at([25, 30, 40, 50] as const, digit(axes, 1))) / 100,
+    (population * at(REVIEW_RATES, digit(axes, 1))) / 100,
   )
-  // Above half of the answers and below half of the year: the whole point.
-  const chose = Math.floor(answered / 2) + 1 + digit(axes, 2)
+  const chose = Math.max(
+    1,
+    Math.round((answered * at(REVIEW_SHARES, digit(axes, 2))) / 100),
+  )
   return reviewSchema.parse({ population, answered, chose })
+}
+
+/** Las dos cuentas del denominador, como `TF`. */
+export function reviewKey(p: ReviewParams): string {
+  return reviewClaims(p)
+    .slice(0, 2)
+    .map((claim) => (claim.supported ? 'T' : 'F'))
+    .join('')
+}
+
+/**
+ * Generación por papel, igual que la encuesta: el primer Repaso del recorrido
+ * determinista con las dos cuentas de su dirección y que pasa los gates.
+ */
+export function generateReview(index: number): ReviewParams {
+  const role = reviewRoleOf(index)
+  let last = reviewAt(index)
+  for (let attempt = 0; attempt < REVIEW_SPACE; attempt++) {
+    const candidate = reviewAt((index * 11 + attempt * 13) % REVIEW_SPACE)
+    last = candidate
+    if (reviewKey(candidate) === role && reviewGates(candidate).length === 0)
+      return candidate
+  }
+  return last
+}
+
+/** Gate de dirección: el Repaso tiene las dos cuentas de su papel. */
+export function reviewRoleGates(
+  p: ReviewParams,
+  index: number,
+): readonly string[] {
+  return reviewKey(p) === reviewRoleOf(index)
+    ? []
+    : ['el Repaso no juega el papel de su dirección']
 }
 
 export function reviewClaims(p: ReviewParams): readonly SurveyClaim[] {
@@ -592,21 +760,21 @@ export function evaluateReview(
 export function reviewGates(p: ReviewParams): readonly string[] {
   const issues: string[] = []
   if (p.answered >= p.population) issues.push('contestaron más de los que hay')
-  if (!(p.chose * 2 > p.answered))
-    issues.push('la cifra no supera la mitad de las respuestas')
-  if (p.chose * 2 > p.population)
-    issues.push('la cifra también supera la mitad del nivel: no hay contraste')
   if (p.chose > p.answered) issues.push('eligieron más de los que contestaron')
+  // Ningún borde exacto: «más de la mitad» no se decide en la mitad justa.
+  if (p.chose * 2 === p.answered || p.chose * 2 === p.population)
+    issues.push('la cifra cae justo en la mitad')
   return issues
 }
 
 export const reviewVariants = generatedSource({
   id: 'y2.data-claim-review.denominator',
-  version: '1',
+  version: '2',
   schema: reviewSchema,
   size: REVIEW_SPACE,
   generate: generateReview,
   gates: reviewGates,
+  addressGates: reviewRoleGates,
 })
 
 export const dataClaimReview = defineChallenge<ReviewParams, ReviewParams>({

@@ -13,6 +13,7 @@
 import { z } from 'zod'
 import {
   EngineInvariantError,
+  candidateIndexOf,
   fromInteger,
   metrics,
   variantDiagnostic,
@@ -120,6 +121,13 @@ export function parameters<P extends object>(
  * are the Template's full authoring checks — witnesses, Intrinsic Math Gate
  * decoys, Style independence — and run where a variant is approved, not where
  * a known approved address is materialised in a browser.
+ *
+ * `addressGates`, when present, also see the candidate address. They exist for
+ * catalog balance by construction: a Template that rotates a role with the
+ * address —which option has to be the optimal one here— rejects an address
+ * whose parameters do not play that role, so the first approvals of a sweep
+ * spread the role instead of following whatever the space produces most often.
+ * The authored `reference` is `generate(0)`, so it is checked as address 0.
  */
 export function generatedSource<P extends object>(input: {
   readonly id: string
@@ -128,6 +136,7 @@ export function generatedSource<P extends object>(input: {
   readonly size: number
   readonly generate: (index: number) => P
   readonly gates: (params: P) => readonly string[]
+  readonly addressGates?: (params: P, index: number) => readonly string[]
 }): VariantSourceSpec<P> {
   return {
     authored: [{ id: 'reference', ...input.generate(0) }],
@@ -152,9 +161,17 @@ export function generatedSource<P extends object>(input: {
             ),
           ]
         }
-        return input
-          .gates(parsed)
-          .map((issue) => variantDiagnostic('template-invariant', ref, issue))
+        const index =
+          ref.variantId === 'reference' ? 0 : candidateIndexOf(ref.variantId)
+        const issues = [
+          ...input.gates(parsed),
+          ...(input.addressGates === undefined || index === undefined
+            ? []
+            : input.addressGates(parsed, index)),
+        ]
+        return issues.map((issue) =>
+          variantDiagnostic('template-invariant', ref, issue),
+        )
       },
     ],
   }

@@ -299,6 +299,18 @@ const AVAILABLE = [
 const MISSING = ['lu', 'mateo', 'nadia', 'octa'] as const
 const SPREADS = [3, 5] as const
 const VISIBLE = [true, false] as const
+/**
+ * Las horas de quien menos tiene entre los que quedan.
+ *
+ * Con disponibilidades parejas, repartir las seis tareas entre los tres que
+ * quedan cerraba casi siempre y era el plan óptimo en 22 de 24 variantes: la
+ * contingencia no obligaba a decidir nada (MAT-AJ-NEW-001). Con alguien que
+ * tiene pocas horas, repartir todo lo sobrecarga, y el plan hay que rehacerlo
+ * de verdad: qué mantiene su dueño, qué se reparte y qué se recorta.
+ */
+const SHORT_HOURS = [4, 5, 6, 7] as const
+/** Cuál de los que quedan tiene pocas horas, contado desde quien falta. */
+const SHORT_OFFSETS = [1, 2, 3] as const
 const RADICES = [
   SHAPES.length,
   HOURS.length,
@@ -307,10 +319,65 @@ const RADICES = [
   MISSING.length,
   SPREADS.length,
   VISIBLE.length,
+  SHORT_HOURS.length,
+  SHORT_OFFSETS.length,
 ]
 export const FINAL_SPACE = spaceOf(RADICES)
 
+/** Direcciones del espacio que se miran para encontrar una variante que pase los gates. */
+const GATE_SEARCH = 400
+
+/**
+ * Generación con búsqueda: la primera contingencia, en un recorrido determinista
+ * del espacio, que pasa todos los gates. El espacio tiene muchas combinaciones
+ * que no cierran, y sin la búsqueda un barrido de catálogo no llegaría a su
+ * cuota de aprobaciones.
+ */
 export function generateFinal(index: number): FinalParams {
+  let last = contingencyAt(index)
+  for (let attempt = 0; attempt < GATE_SEARCH; attempt++) {
+    const candidate = contingencyAt((index * 29 + attempt * 101) % FINAL_SPACE)
+    last = candidate
+    if (
+      finalRoleGates(candidate, index).length === 0 &&
+      finalGates(candidate).length === 0
+    )
+      return candidate
+  }
+  return last
+}
+
+/**
+ * El papel de cada dirección: la forma y quién tenía cada tarea, rotando en un
+ * ciclo de nueve. Sin rotación, la búsqueda se queda con la combinación que más
+ * seguido pasa los gates, y un mismo plan termina siendo óptimo en demasiadas
+ * variantes.
+ */
+export function finalRoleOf(index: number): {
+  readonly shape: (typeof SHAPES)[number]
+  readonly owners: number
+} {
+  const cycle = Math.abs(index) % (SHAPES.length * OWNERS.length)
+  return {
+    shape: at(SHAPES, cycle % SHAPES.length),
+    owners: Math.floor(cycle / SHAPES.length),
+  }
+}
+
+/** Gate de dirección: la contingencia tiene la forma y el reparto de su papel. */
+export function finalRoleGates(
+  p: FinalParams,
+  index: number,
+): readonly string[] {
+  const role = finalRoleOf(index)
+  // La primera tarea nunca es la que se cae, así que su dueño identifica el reparto.
+  const owners = OWNERS.findIndex((row) => row[0] === p.tasks[0]?.owner)
+  return p.shape === role.shape && owners === role.owners
+    ? []
+    : ['la contingencia no juega el papel de su dirección']
+}
+
+function contingencyAt(index: number): FinalParams {
   const axes = candidateAxes(index, RADICES, 373)
   const shape = at(SHAPES, digit(axes, 0))
   const hours = at(HOURS, digit(axes, 1))
@@ -318,6 +385,11 @@ export function generateFinal(index: number): FinalParams {
   const available = at(AVAILABLE, digit(axes, 3))
   const missing = at(MISSING, digit(axes, 4))
   const keeps = MISSING[(MISSING.indexOf(missing) + 1) % MISSING.length] ?? 'lu'
+  const short =
+    MISSING[
+      (MISSING.indexOf(missing) + at(SHORT_OFFSETS, digit(axes, 8))) %
+        MISSING.length
+    ] ?? 'lu'
   // La forma dice qué aprieta: la tarea más pesada se queda sin dueño, el
   // grupo tiene menos horas, o casi todo es imprescindible.
   return finalSchema.parse({
@@ -329,9 +401,11 @@ export function generateFinal(index: number): FinalParams {
     available: CREW.map((person, index) =>
       person.id === missing
         ? 0
-        : shape === 'menos-horas'
-          ? Math.max(1, (available[index] ?? 12) - 3)
-          : (available[index] ?? 12),
+        : person.id === short
+          ? at(SHORT_HOURS, digit(axes, 7))
+          : shape === 'menos-horas'
+            ? Math.max(1, (available[index] ?? 12) - 3)
+            : (available[index] ?? 12),
     ),
     tasks: TASKS.map((task, position) => ({
       hours:
@@ -380,6 +454,15 @@ export function finalGates(p: FinalParams): readonly string[] {
   // ninguna puede depender de cómo se rehízo el plan.
   const auras = new Set(STANCES.map((stance) => auraPointsOf(p, stance.id)))
   if (auras.size < 3) issues.push('dos posturas dejan exactamente lo mismo')
+
+  // La contingencia tiene que obligar a decidir: repartir las seis tareas entre
+  // los que quedan no puede ser el plan óptimo (MAT-AJ-NEW-001).
+  const shareAll = TASKS.map((task) => ({
+    statementId: task.id,
+    labelId: 'repartir',
+  }))
+  if (readFinal(p, shareAll).quality === 'optimal')
+    issues.push('repartir todo entre los que quedan ya es el plan óptimo')
 
   // La contingencia tiene que apretar: mantener todo como estaba no puede
   // seguir cerrando.
@@ -478,11 +561,12 @@ export function evaluateFinal(
 
 export const finalVariants = generatedSource({
   id: 'y5.course-project-final.contingency',
-  version: '1',
+  version: '2',
   schema: finalSchema,
   size: FINAL_SPACE,
   generate: generateFinal,
   gates: finalGates,
+  addressGates: finalRoleGates,
 })
 
 export const courseProjectFinal = defineChallenge<FinalParams, FinalParams>({

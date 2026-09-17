@@ -29,7 +29,7 @@ import {
   GRADE_1_DEMO_RULESET_VERSION,
   GRADE_1_VARIANT_CATALOG_VERSION,
 } from './versions'
-import artifact from './variant-catalog.grade-1-dev-1.json' with { type: 'json' }
+import artifact from './variant-catalog.grade-1-dev-2.json' with { type: 'json' }
 
 const parsed = parseApprovedVariantCatalog(artifact)
 if (!parsed.ok)

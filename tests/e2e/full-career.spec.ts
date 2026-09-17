@@ -144,10 +144,19 @@ test('una carrera con recuperaciones egresa igual y el epílogo lo dice sin humi
   await page.setViewportSize({ width: 320, height: 900 })
   await page.emulateMedia({ reducedMotion: 'reduce' })
 
-  // Falla dirigida sobre los beats ordinarios de primero, que sí tienen ruta
-  // de Repaso: fallar donde no hay ruta no probaría nada sobre recuperación.
+  // Falla dirigida sobre los beats que **declaran** ruta de Repaso: fallar donde
+  // no hay ruta no probaría nada sobre recuperación, y qué Template le toca a
+  // una seed depende del catálogo vigente, así que la lista sale del contenido.
+  const routed = new Set(
+    Object.entries(
+      createFullCareerDependencies().recoveryContent?.reviews ?? {},
+    )
+      .filter(([, reviews]) => reviews.length > 0)
+      .map(([templateId]) => templateId),
+  )
+  expect(routed.size).toBeGreaterThan(0)
   const run = playCareer('browser-career-repaso', (id) =>
-    id.startsWith('y1.') && !id.includes('review') ? 'invalid' : 'optimal',
+    routed.has(id) ? 'invalid' : 'optimal',
   )
   expect(run.final.completion?.graduated).toBe(true)
   expect(run.final.completion?.recoveries).toBeGreaterThan(0)

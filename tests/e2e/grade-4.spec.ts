@@ -136,6 +136,39 @@ for (const width of [320, 360, 390, 412]) {
 }
 
 for (const width of [320, 412]) {
+  test(`Grade 4: la peña a ${String(width)} px, con las tres condiciones y el punto de equilibrio`, async ({
+    page,
+  }) => {
+    test.setTimeout(180_000)
+    await page.setViewportSize({ width, height: 900 })
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await openAt(page, 'browser-g4-pena', 'y4.course-project-fundraiser')
+
+    // RS-MAT-011: la consigna nombra el supuesto de venta y el equilibrio.
+    await expect(
+      page.getByText('todo lo que se prepara se vende', { exact: false }),
+    ).toBeVisible()
+    await expect(
+      page.getByText('llegar con el colchón', { exact: false }),
+    ).toBeVisible()
+    const fields = page.getByRole('spinbutton')
+    await expect(fields.first()).toBeVisible()
+    await reflow(page, `fundraiser · empty · ${String(width)}`)
+
+    await tabTo(page, fields.first())
+    await page.keyboard.type('1')
+    await reflow(page, `fundraiser · answered · ${String(width)}`)
+    await noAxeViolations(page)
+
+    const submit = page.getByTestId('submit-answer')
+    await tabTo(page, submit)
+    await page.keyboard.press('Enter')
+    await expect(page.getByTestId('feedback-heading')).toBeFocused()
+    await reflow(page, `fundraiser · result · ${String(width)}`)
+  })
+}
+
+for (const width of [320, 412]) {
   test(`Grade 4: armar el salón a ${String(width)} px, con capacidad y circulación`, async ({
     page,
   }) => {

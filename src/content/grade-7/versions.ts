@@ -6,7 +6,21 @@
  */
 
 /*
- * El contenido sube a 0.9.0 y **el ruleset también**, por primera vez desde que
+ * El contenido sube a 0.10.0 por la remediación matemática del 2026-09-17. Tres
+ * cosas cambian y ninguna es una regla:
+ *
+ * - el feedback de acierto de `g7.notebook-offer` ahora dice qué descuento era
+ *   mayor en pesos, calculado de la variante, en vez de afirmar siempre el del
+ *   porcentaje (MAT-AJ-NEW-002);
+ * - el catálogo del mural reparte por igual las paredes que se resuelven con 2 L
+ *   y con 4 L, con un gate de balance por dirección (MAT-006);
+ * - el feedback de llegar justo en `g7.bus-timing` dice el margen real, en vez
+ *   de afirmar que cualquier demora dejaba afuera (inventario de feedback).
+ *
+ * El ruleset **no** sube: ninguna política de score, dificultad, perfil ni
+ * progresión cambió.
+ *
+ * El contexto anterior, de cuando el contenido subió a 0.9.0 y **el ruleset también**, por primera vez desde que
  * existe el modelo de contenido.
  *
  * El contenido, porque el año gana una plantilla: `g7.bus-travel-review`, con
@@ -49,7 +63,7 @@
  * cambió algo que no cambió.
  */
 export const GRADE_7_RULESET_VERSION = '0.4.0-grade-7'
-export const GRADE_7_CONTENT_VERSION = '0.9.0-grade-7'
+export const GRADE_7_CONTENT_VERSION = '0.10.0-grade-7'
 
 /**
  * El ruleset de una partida **compuesta** de 7.º.
@@ -82,5 +96,10 @@ export const GRADE_7_COMPOSED_RULESET_VERSION = '0.2.0-grade-7-composed'
  * Publicar al lado igual es lo correcto —la regla no admite excepciones
  * «chicas»— y hay un test que comprueba que la única diferencia entre versiones
  * consecutivas es contra qué contenido se construyeron.
+ *
+ * `grade-7-dev-6` es la primera versión donde **sí** se movieron direcciones
+ * aprobadas: el gate de balance del mural rechaza direcciones que antes se
+ * aprobaban, así que parte de sus entradas generadas es otra. `dev-5` queda
+ * publicado tal como estaba.
  */
-export const GRADE_7_VARIANT_CATALOG_VERSION = 'grade-7-dev-5'
+export const GRADE_7_VARIANT_CATALOG_VERSION = 'grade-7-dev-6'

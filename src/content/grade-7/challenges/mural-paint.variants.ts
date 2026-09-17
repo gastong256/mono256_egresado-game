@@ -23,6 +23,7 @@
  */
 
 import {
+  candidateIndexOf,
   paramsValidator,
   variantDiagnostic,
   type CandidateContext,
@@ -159,6 +160,44 @@ const validateMural = paramsValidator<MuralParams>((params, ref) => {
   return diagnostics
 })
 
+/** El envase más chico que alcanza, o `undefined` si ninguno. */
+export function smallestSufficientTin(params: MuralParams): number | undefined {
+  const required = requiredCentilitres(params)
+  return TIN_LITRES.find((litres) => litres * 100 >= required)
+}
+
+/**
+ * Qué envase tiene que resolver la pared de una dirección generada.
+ *
+ * El generador sortea 2 L y 4 L por igual, pero las primeras aprobaciones de
+ * un barrido no heredan ese equilibrio: `grade-7-dev-5` quedó con 4 L en 16 de
+ * 26 variantes, y «4 L siempre» rendía 76,9 sin hacer ninguna cuenta (MAT-006).
+ * Alternar el envase con la paridad de la dirección reparte el catálogo sin
+ * tocar cómo se genera ni cómo se evalúa una pared.
+ */
+export function balancedTinFor(index: number): number {
+  return index % 2 === 0 ? 2 : 4
+}
+
+/**
+ * Gate de balance del catálogo: una dirección generada se aprueba sólo si su
+ * pared se resuelve con el envase que le toca. Las paredes autoradas no llevan
+ * dirección y no se filtran.
+ */
+const validateMuralBalance = paramsValidator<MuralParams>((params, ref) => {
+  const index = candidateIndexOf(ref.variantId)
+  if (index === undefined) return []
+  const tin = smallestSufficientTin(params)
+  if (tin === undefined || tin === balancedTinFor(index)) return []
+  return [
+    variantDiagnostic(
+      'template-invariant',
+      ref,
+      `balance del catálogo: esta dirección es de ${String(balancedTinFor(index))} L y la pared se resuelve con ${String(tin)} L`,
+    ),
+  ]
+})
+
 const AUTHORED: readonly (MuralParams & { readonly id: string })[] = [
   { id: 'pared-6x24', width: '6', height: '2.4', coverage: 8 },
   { id: 'pared-5x24', width: '5', height: '2.4', coverage: 8 },
@@ -172,7 +211,7 @@ export const muralPaintVariants: VariantSourceSpec<MuralParams> = {
     candidateSpace: 20_000,
     generate: generateMural,
   },
-  validators: [validateMural],
+  validators: [validateMural, validateMuralBalance],
   canonical: (params) => ({
     width: params.width,
     height: params.height,
