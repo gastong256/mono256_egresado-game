@@ -335,18 +335,54 @@ describe('RS-NEW-001 · la muestra final', () => {
     expect(valid).toEqual(new Set(['mantener', 'repartir', 'recortar']))
   })
 
-  it('STOP RS-NEW-001 criterio 3: la escalera hace imposible un plan óptimo que recorte', () => {
+  it('la escalera hace imposible un plan óptimo que recorte: es la premisa de la enmienda', () => {
     // Óptimo es «sobrevive todo lo no esencial» y recortar algo esencial es
     // inválido: un plan con «recortar» nunca es óptimo, en ninguna variante.
+    // Ésa es la razón por la que el criterio 3 se reformuló sobre planes
+    // válidos (D-S08-113), no una carencia del catálogo.
     for (const p of finals)
       for (const plan of finalPlans(p))
         if (plan.entries.some((entry) => entry.labelId === 'recortar'))
           expect(plan.quality).not.toBe('optimal')
   })
 
-  it.todo(
-    'RS-NEW-001 criterio 3: las tres disposiciones entre los planes óptimos — BLOQUEADO por STOP',
-  )
+  it('RS-NEW-001 criterio 3 enmendado: recortar es una decisión viva en toda variante y forma', () => {
+    const forms = new Map<string, number>()
+    for (const p of finals) {
+      const plans = finalPlans(p).filter((plan) => plan.quality !== 'invalid')
+      const uses = (labelId: string) =>
+        plans.filter((plan) =>
+          plan.entries.some((entry) => entry.labelId === labelId),
+        )
+      // 1 · Las tres disposiciones aparecen en planes matemáticamente válidos.
+      for (const labelId of ['mantener', 'repartir', 'recortar'])
+        expect(uses(labelId).length, `${p.shape}/${labelId}`).toBeGreaterThan(0)
+      // 2 · Recortar no sobrevive sólo en el peor nivel: hay planes efficient
+      // que recortan algo no esencial, que es el intercambio real que la
+      // Template enseña.
+      expect(
+        uses('recortar').some((plan) => plan.quality === 'efficient'),
+        p.shape,
+      ).toBe(true)
+      // 3 · La estrategia óptima sigue siendo no trivial: usa las dos
+      // disposiciones que la escalera permite que sean óptimas.
+      const optimal = plans.filter((plan) => plan.quality === 'optimal')
+      for (const labelId of ['mantener', 'repartir'])
+        expect(
+          optimal.some((plan) =>
+            plan.entries.some((entry) => entry.labelId === labelId),
+          ),
+          `${p.shape}/óptimo/${labelId}`,
+        ).toBe(true)
+      forms.set(p.shape, (forms.get(p.shape) ?? 0) + 1)
+    }
+    // Ninguna forma semántica queda sin recortar viable.
+    expect([...forms.keys()].sort()).toEqual([
+      'menos-horas',
+      'se-cae-el-video',
+      'todo-esencial',
+    ])
+  })
 
   it('el witness de Math óptima con los tres acuerdos del grupo sigue en toda variante', () => {
     for (const p of finals)

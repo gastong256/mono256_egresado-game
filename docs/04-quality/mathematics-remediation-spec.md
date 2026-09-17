@@ -2,6 +2,10 @@
 
 - **Estado:** `CANONICAL CONTRACT` — emitida el 2026-09-16 por la
   [adjudicación del Departamento de Matemática provisional](mathematics-department-ai-adjudication.md)
+- **Enmiendas:** 2026-09-17, por la
+  [adjudicación de conflictos de contrato](mathematics-remediation-contract-conflict-adjudication.md):
+  criterio 3 de RS-NEW-001 reformulado sobre planes válidos (D-S08-113); RS-MAT-008
+  detenido con su techo intacto y su punto de decisión abierto (D-S08-114)
 - **Gate que la consume:** `MATHEMATICS REMEDIATION IMPLEMENTATION`
 - **Gate que la verifica:** `Independent Mathematics Re-Audit`
 - **Base:** `main` en `9ea3896`; catálogo `grade-5-dev-2`; motor `10.0.0`;
@@ -492,6 +496,16 @@ contenido de 4.º y posteriores; catálogos de 4.º y 5.º.
 11. El detalle de cada opción puede decir el tamaño que queda en pantalla, pero no
     cuánto recorta de cada lado ni si un elemento protegido sobrevive.
 
+> **Nota de enmienda, 2026-09-17 (D-S08-114).** Este contrato está **detenido**.
+> La excepción estrecha del witness que resolvía su primera contradicción no
+> vuelve factible el resto: con seis opciones y esta escalera, «entera» es siempre
+> válida y nunca baja de `efficient` donde algún recorte vale, así que
+> `K = 75 + 25·w` y, con los puntos 7 y 9, el piso demostrado es **K = 78** contra
+> un techo de 70. Ningún criterio de este contrato se relajó; la decisión mínima
+> requerida está en la
+> [adjudicación de conflictos de contrato](mathematics-remediation-contract-conflict-adjudication.md#d6-punto-de-decisión-mínimo)
+> y sigue abierta como pregunta 66.
+
 **Comportamiento prohibido.** Jerga de relación de aspecto, formatos como 16:9 o
 vocabulario audiovisual (invariante `LOCKED`); hacer válido estirar; cambiar el
 motor de interacción `decision-card`; cambiar banda STRETCH, pacing QUICK o
@@ -609,8 +623,19 @@ convención; catálogo sin cambio de población esperado.
 2. El generador produce contingencias donde repartir en partes iguales sobrecarga a
    alguien en la mayoría de las variantes —por ejemplo, disponibilidad desigual
    entre quienes quedan— sin agregar disposiciones.
-3. En el conjunto de planes óptimos del catálogo aparecen las tres disposiciones:
-   mantener, repartir y recortar.
+3. **Enmendado el 2026-09-17 (D-S08-113).** Las tres disposiciones están vivas.
+   En el catálogo aprobado, y en cada variante: mantener, repartir y recortar
+   aparecen en planes matemáticamente válidos; «recortar» alcanza al menos el
+   nivel `efficient` —aparece como intercambio legítimo, no sólo en planes
+   inválidos—; y el conjunto de planes óptimos sigue siendo no trivial, con
+   mantener y repartir, las dos disposiciones que la escalera permite que sean
+   óptimas, presentes entre ellos. La escalera no cambia.
+
+   El texto original —«en el conjunto de planes óptimos aparecen las tres
+   disposiciones»— era imposible bajo la escalera `LOCKED`: recortar algo esencial
+   es `invalid` y recortar algo no esencial impide que sobreviva todo lo no
+   esencial, así que ningún plan óptimo puede recortar. Ver la
+   [adjudicación de conflictos de contrato](mathematics-remediation-contract-conflict-adjudication.md#e-oq-67-y5course-project-final).
 4. Se conservan todos los gates actuales: witness de Aura máxima, witness de Math
    óptima con Equipo 3, Equipos distintos entre óptimos, algún plan válido con
    Equipo ≤ 1, gate de Estilo, el plan anterior sin cambios es inválido, posturas

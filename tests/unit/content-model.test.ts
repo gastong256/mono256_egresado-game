@@ -88,6 +88,70 @@ describe('scenario family', () => {
     expect(bus.stages.length).toBeGreaterThan(1)
   })
 
+  /**
+   * El fixture de desarrollo rechaza respuestas fuera de contrato.
+   *
+   * Sus ramas de rechazo sólo las tocaban los tests de propiedad, que sortean
+   * su semilla en cada corrida: la cobertura del fixture —y con ella el total
+   * del repositorio, que corre al filo del umbral— se movía de una corrida a
+   * otra. Acá se ejercitan de forma determinista.
+   */
+  it('rechaza respuestas que no son del contrato de la plantilla de desarrollo', () => {
+    const bus = template(devCatalog, toChallengeId('dev.bus-departure'))
+    const instance = materializeVariant(bus, {
+      variantId: toVariantId('base'),
+      seed: 'contract',
+    })
+
+    const wrongEngine = instance.evaluate(
+      { kind: 'decision-card', optionId: 'cualquiera' } as InteractionAnswer,
+      [],
+    )
+    expect(wrongEngine.ok).toBe(false)
+    if (!wrongEngine.ok) expect(wrongEngine.error.kind).toBe('invalid-answer')
+
+    const notANumber = instance.evaluate(
+      { kind: 'numeric-input', value: 'veinte' },
+      [],
+    )
+    expect(notANumber.ok).toBe(false)
+    if (!notANumber.ok) expect(notANumber.error.kind).toBe('invalid-answer')
+
+    const negative = instance.evaluate(
+      { kind: 'numeric-input', value: '-1' },
+      [],
+    )
+    expect(negative.ok).toBe(false)
+    if (!negative.ok) expect(negative.error.kind).toBe('invalid-answer')
+
+    // Y la escalera completa, desde la misma dirección. Contestar 0 minutos
+    // llega tarde por exactamente el viaje con demora, así que el propio
+    // feedback dice cuál es la respuesta exacta.
+    const late = instance.evaluate({ kind: 'numeric-input', value: '0' }, [])
+    if (!late.ok) throw new Error('rechazo inesperado')
+    expect(late.value.quality).toBe('invalid')
+    const missing = late.value.feedback.facts.find(
+      (fact) => fact.label === 'Llegás tarde por',
+    )
+    const exact = Number.parseInt(
+      (missing?.value ?? '').replace(' min', ''),
+      10,
+    )
+    expect(exact).toBeGreaterThan(0)
+
+    const quality = (value: number) => {
+      const result = instance.evaluate(
+        { kind: 'numeric-input', value: String(value) },
+        [],
+      )
+      if (!result.ok) throw new Error('rechazo inesperado')
+      return result.value.quality
+    }
+    expect(quality(exact)).toBe('optimal')
+    expect(quality(exact + 1)).toBe('efficient')
+    expect(quality(exact + 30)).toBe('functional')
+  })
+
   it('refuses a template whose family the catalog does not know', () => {
     expect(() => createContentCatalog([], grade7Challenges)).toThrow(
       /unknown family/,

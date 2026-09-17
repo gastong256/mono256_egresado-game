@@ -29,8 +29,9 @@ STAGE-08                                      IN_PROGRESS · CURRENT
     ├── AI MATHEMATICS DEPARTMENT (provisional)  IN_PROGRESS
     │   ├── Pre-Review                           DONE · 13 hallazgos, 0 bloqueantes
     │   ├── Independent Adjudication             DONE · REMEDIATION REQUIRED
-    │   ├── Mathematics Remediation              BLOCKED · 12/14 contratos · 2 STOP
-    │   ├── Independent Re-Audit                 PENDING · requiere decidir los STOP
+    │   ├── Mathematics Remediation              BLOCKED · 13/14 contratos · 1 STOP
+    │   ├── Contract Conflict Adjudication       DONE · OQ-67 cerrada · OQ-66 abierta
+    │   ├── Independent Re-Audit                 PENDING · requiere decidir OQ-66
     │   └── Provisional Sign-Off                 PENDING
     ├── Revisión del Depto. de Matemática      DEFERRED · a Final Delivery / Pre-Release
     ├── Sign-off manual de la rueda            PENDING · humana
@@ -71,8 +72,8 @@ existe y el servidor la recomputa, pero autorar una oportunidad competitiva
 exigiría inventar acciones de jugador que ninguna Template tiene. El contenido
 de 1.º a 5.º está en estado `draft`: faltan la remediación matemática y su
 sign-off provisional de IA, el sign-off manual de la rueda y el pacing empírico,
-gates de producción de STAGE-08; la remediación quedó bloqueada en dos criterios
-que requieren decisión (D-S08-104). La revisión del Departamento de Matemática
+gates de producción de STAGE-08; la remediación quedó bloqueada en un criterio
+que requiere decisión (D-S08-104 y D-S08-114). La revisión del Departamento de Matemática
 humano no se eliminó: está diferida a la entrega final (D-S08-095).
 
 ## Baseline autoritativa
@@ -150,8 +151,18 @@ de K 92,5 a 56,8 y ya no se resuelve repartiendo todo. Un
 sobre las 42 Templates corrigió además seis textos falsos. Dos criterios quedaron
 detenidos por STOP, porque contradicen otra regla del mismo contrato: toda la
 pantalla del acto (RS-MAT-008, D-S08-105) y «recortar entre los planes óptimos» de
-la muestra final (RS-NEW-001, D-S08-106). Ningún techo se relajó; los dos puntos de
-decisión son las preguntas abiertas 66 y 67. FairScore, escalera, dificultad,
+la muestra final (RS-NEW-001, D-S08-106). Ningún techo se relajó.
+
+La [adjudicación de esos conflictos](../04-quality/mathematics-remediation-contract-conflict-adjudication.md) se ejecutó el mismo día.
+Cerró la pregunta 67: el criterio 3 se reformuló sobre planes matemáticamente
+válidos —«recortar» aparece en planes válidos y alcanza `efficient` en 25 de 25
+variantes, y los óptimos siguen usando mantener y repartir—, sin tocar la escalera
+y sin cambiar contenido, así que **RS-NEW-001 quedó PASS**. No cerró la 66: el
+prototipo completo de la excepción de witness autorizada resuelve la contradicción
+que la motivó, pero deja ver otra —«entera» nunca baja de `efficient` donde algún
+recorte vale, así que `K = 75 + 25·w` y el piso demostrado es 78 contra un techo de
+70—, de modo que RS-MAT-008 sigue detenido y el techo sigue sin relajarse
+(D-S08-113 y D-S08-114). FairScore, escalera, dificultad,
 motor, action log, snapshot y ruleset de carrera no cambiaron; los catálogos se
 republicaron una sola vez (D-S08-109).
 
@@ -171,9 +182,10 @@ AI Mathematics Department Pre-Review — DONE
 AI Mathematics Department Independent Adjudication — DONE
 
 Mathematics Remediation Implementation — BLOCKED
-  12 de 14 contratos DONE
-  STOP 1: RS-MAT-008 (y5.stage-screen) — decisión requerida
-  STOP 2: RS-NEW-001 criterio 3 (y5.course-project-final) — decisión requerida
+  13 de 14 contratos DONE
+  STOP 1: RS-MAT-008 (y5.stage-screen) — techo K inalcanzable, decisión requerida
+  STOP 2: RS-NEW-001 criterio 3 — RESUELTO por enmienda (D-S08-113)
+Contract Conflict Adjudication — DONE
 Independent Mathematics Re-Audit — PENDING
 AI Mathematics Department Provisional Sign-Off — PENDING
 
@@ -183,8 +195,8 @@ Human Mathematics Department Review
 Real-player pacing validation — PENDING
 
 Next:
-DECIDIR los puntos de decisión de los dos STOP (preguntas abiertas 66 y 67),
-completar lo que esa decisión habilite y recién entonces
+DECIDIR el techo de estrategia ciega de y5.stage-screen (pregunta abierta 66),
+completar RS-MAT-008 con esa decisión y recién entonces
 INDEPENDENT MATHEMATICS RE-AUDIT
 ```
 
@@ -223,6 +235,14 @@ de Matemática humano sobre las 42 Templates queda diferida a la entrega final.
 Hasta eso, el contenido permanece `draft` y la edición `official: false`.
 
 ## Última reconciliación
+
+17 de septiembre de 2026, más tarde: adjudicación de los dos conflictos de
+contrato. La pregunta 67 se cerró reformulando el criterio 3 de RS-NEW-001 sobre
+planes válidos —el catálogo vigente ya lo cumple— y RS-NEW-001 quedó PASS. La
+pregunta 66 no se cerró: el prototipo de la excepción de witness autorizada
+—2.826.450 direcciones barridas— probó que resuelve la contradicción del witness
+pero deja el techo `K ≤ 70` inalcanzable, con piso demostrado de 78. La remediación
+queda en 13 de 14 contratos (D-S08-113, D-S08-114). Sin push.
 
 17 de septiembre de 2026: implementación de la remediación matemática —doce de
 catorce contratos, auditoría permanente de estrategia ciega, inventario de

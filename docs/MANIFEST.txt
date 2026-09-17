@@ -72,6 +72,7 @@
 04-quality/mathematics-department-ai-reviewer-c.md
 04-quality/mathematics-department-human-review-packet.md
 04-quality/mathematics-department-pre-review.md
+04-quality/mathematics-remediation-contract-conflict-adjudication.md
 04-quality/mathematics-remediation-feedback-inventory.md
 04-quality/mathematics-remediation-implementation.md
 04-quality/mathematics-remediation-spec.md

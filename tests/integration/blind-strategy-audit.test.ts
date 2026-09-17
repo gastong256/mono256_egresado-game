@@ -80,11 +80,14 @@ describe('auditoría de estrategia ciega sobre el catálogo de carrera completa'
     expect(standings.S).toBeLessThanOrEqual(0.35)
   })
 
-  // RS-MAT-008 está detenido por STOP: sus puntos 4, 7, 8 y 9 son imposibles
-  // de cumplir junto con la regla 2.6 (witness de los cuatro niveles por
-  // variante). Ver docs/04-quality/mathematics-remediation-implementation.md.
+  // RS-MAT-008 sigue detenido. La adjudicación de conflictos de contrato
+  // (D-S08-114) probó que la excepción de witness autorizada resuelve la
+  // contradicción original pero no el techo: «entera» es siempre válida y nunca
+  // baja de efficient donde algún recorte vale, así que K = 75 + 25·w, con piso
+  // demostrado de 78 contra un techo de 70. El techo no se relaja acá: se decide
+  // en la pregunta abierta 66.
   it.todo(
-    'y5.stage-screen: K ≤ 70 y S ≤ 40 % — BLOQUEADO por el STOP de RS-MAT-008',
+    'y5.stage-screen: K ≤ 70 y S ≤ 40 % — BLOQUEADO: techo inalcanzable, pregunta abierta 66',
   )
 
   it('y5.course-project-final: K ≤ 65 y S ≤ 35 %', () => {
