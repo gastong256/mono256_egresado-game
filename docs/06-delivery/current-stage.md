@@ -32,8 +32,9 @@ STAGE-08                                      IN_PROGRESS · CURRENT
     │   ├── Mathematics Remediation              DONE · 14/14 contratos PASS
     │   ├── Contract Conflict Adjudication       DONE · OQ-67 cerrada
     │   ├── RS-MAT-008 Blind Ceiling Adjudication DONE · OQ-66 cerrada
-    │   ├── Independent Re-Audit                 NEXT
-    │   └── Provisional Sign-Off                 PENDING
+    │   ├── Independent Re-Audit                 FAILED · 3 bloqueantes
+    │   ├── Remediación 2 (MAT-RA)                NEXT
+    │   └── Provisional Sign-Off                  NOT READY
     ├── Revisión del Depto. de Matemática      DEFERRED · a Final Delivery / Pre-Release
     ├── Sign-off manual de la rueda            PENDING · humana
     └── Pacing empírico con jugadores          PENDING · humana
@@ -73,9 +74,12 @@ existe y el servidor la recomputa, pero autorar una oportunidad competitiva
 exigiría inventar acciones de jugador que ninguna Template tiene. El contenido
 de 1.º a 5.º está en estado `draft`: faltan la remediación matemática y su
 sign-off provisional de IA, el sign-off manual de la rueda y el pacing empírico,
-gates de producción de STAGE-08. La remediación matemática cerró completa el 18 de
-septiembre, con sus catorce contratos en PASS. La revisión del Departamento de Matemática
-humano no se eliminó: está diferida a la entrega final (D-S08-095).
+gates de producción de STAGE-08. La remediación matemática cerró sus catorce
+contratos el 18 de septiembre, y la **re-auditoría independiente** del mismo día
+confirmó trece de los catorce —incluido el techo `K = 78` de la pantalla del
+acto— pero **falló el gate** por tres hallazgos bloqueantes propios (D-S08-117).
+La revisión del Departamento de Matemática humano no se eliminó: está diferida a
+la entrega final (D-S08-095).
 
 ## Baseline autoritativa
 
@@ -97,10 +101,10 @@ por etapa fuera del presupuesto ordinario y de FairScore.
 - Huellas: motor `4bcf054e` —se movió con la respuesta de recorrido y con la
   política de rareza—; ruleset de la carrera completa `7d41fddb`; contenido de la
   carrera `72435ee3`.
-- Tests: 95 archivos y 1723 tests de Vitest, más 2 `todo` que registran los dos
-  STOP de la remediación; 154 E2E de Playwright en desktop y
-  mobile, incluidos los recorridos de 1.º a 5.º, la carrera completa y el
-  barrido de accesibilidad del audit.
+- Tests: 95 archivos y **1739 tests** de Vitest, **0 `todo`**; **158 E2E** de
+  Playwright en desktop y mobile, incluidos los recorridos de 1.º a 5.º, la
+  carrera completa y el barrido de accesibilidad del audit. Conteos remedidos por
+  la re-auditoría independiente el 18 de septiembre (MAT-RA-010).
 - Simulación: 5000 runs de 7.º, 5000 de `7.º → 1.º`, 2000 del demo amplio y 200
   de cada práctica parcial de 2.º a 5.º egresadas, 0 hallazgos, peor caso un
   Repaso por etapa. La carrera completa se barre con seis políticas de juego
@@ -165,6 +169,31 @@ recorte vale, así que `K = 75 + 25·w` y el piso demostrado es 78 contra un tec
 70—, de modo que RS-MAT-008 siguió detenido sin relajar el techo
 (D-S08-113 y D-S08-114).
 
+La [re-auditoría independiente](../04-quality/independent-mathematics-reaudit.md)
+se ejecutó el 18 de septiembre y dio `INDEPENDENT MATHEMATICS RE-AUDIT — FAILED —
+REMEDIATION REQUIRED`. Re-derivó la evidencia desde cero —reimplementó los
+generadores y validó la materialización contra las **huellas SHA-256 publicadas**,
+350 de 350— y **trece de los catorce contratos se sostienen**. El techo
+`K = 78` de `y5.stage-screen` quedó **re-probado**, ahora con una demostración
+deductiva: el witness estricto obliga a que «entera» use al menos tres cuartos de
+pantalla donde algún recorte vale, así que `K = 75 + 25·w`, y la enumeración entera
+de los 338 repartos factibles da mínimo exacto 78,000. La hipótesis contraria
+—que el punto 10 permitiera dejar «entera» en `functional` y bajar el techo— se
+probó **falsa** sobre 392 751 variantes admisibles.
+
+El gate falló por lo que la instrumentación de la remediación **no podía ver**: su
+auditoría permanente mide sólo tarjeta de decisión, clasificación y entrada
+numérica, y deja fuera las **22** Templates de construcción, el 52 % del catálogo.
+Ahí aparecieron `y3.course-project-tech` con una respuesta **constante** de
+`K 95,83 · S 83 %` y `y4.course-project-fundraiser` con `K 92,80 · S 92 %`, las dos
+puntuables, por encima de todo techo que la remediación fijó. El tercero es
+`g7.bus-travel-review`: su detección de la concepción errónea usa un valor
+absoluto, así que dispara también en el valor gemelo y le dice «faltaba sumarle el
+viaje normal» a quien se pasó, en 26 de 26 variantes — y el inventario de feedback
+lo había clasificado como probado verdadero. Diez hallazgos en total, tres
+bloqueantes. **Nada de runtime, contenido, catálogos ni tests cambió en este
+gate.**
+
 La [adjudicación final del techo](../04-quality/rs-mat-008-blind-ceiling-final-adjudication.md) la cerró el 18 de septiembre:
 el techo de la pantalla del acto pasó a ser ese mínimo probado, `K ≤ 78`, con la
 excepción estrecha del witness conservada y sin tocar la escalera, FairScore ni la
@@ -196,8 +225,13 @@ Mathematics Remediation Implementation — DONE
   STOP 2: RS-NEW-001 criterio 3 — RESUELTO por enmienda (D-S08-113)
 Contract Conflict Adjudication — DONE
 RS-MAT-008 Blind Ceiling Final Adjudication — DONE
-Independent Mathematics Re-Audit — NEXT
-AI Mathematics Department Provisional Sign-Off — PENDING
+Independent Mathematics Re-Audit — FAILED — REMEDIATION REQUIRED
+  13 de 14 contratos PASS · RS-NEW-003 FAIL
+  K = 78 de y5.stage-screen re-probado y correcto
+  MAT-RA-001 HIGH   g7.bus-travel-review, feedback falso en 26/26
+  MAT-RA-002 BLOCKER y3.course-project-tech, constante K 95,83 · S 83 %
+  MAT-RA-003 BLOCKER y4.course-project-fundraiser, constante K 92,80 · S 92 %
+AI Mathematics Department Provisional Sign-Off — NOT READY
 
 Human Mathematics Department Review
 — DEFERRED TO FINAL DELIVERY / PRE-RELEASE
@@ -205,8 +239,8 @@ Human Mathematics Department Review
 Real-player pacing validation — PENDING
 
 Next:
-INDEPENDENT MATHEMATICS RE-AUDIT sobre la remediación completa,
-re-derivando la evidencia de forma independiente
+ADJUDICACIÓN Y REMEDIACIÓN DE LOS HALLAZGOS MAT-RA,
+empezando por los tres bloqueantes
 ```
 
 La [auditoría de implementación de carrera completa](../04-quality/full-career-implementation-audit.md)
@@ -244,6 +278,16 @@ de Matemática humano sobre las 42 Templates queda diferida a la entrega final.
 Hasta eso, el contenido permanece `draft` y la edición `official: false`.
 
 ## Última reconciliación
+
+18 de septiembre de 2026, más tarde: **re-auditoría matemática independiente**.
+Veredicto `FAILED — REMEDIATION REQUIRED`. Trece de los catorce contratos
+verificados de forma independiente; `K = 78` de la pantalla del acto re-probado y
+correcto, y mínimo al tamaño del catálogo publicado. Tres hallazgos bloqueantes
+—MAT-RA-001 en `g7.bus-travel-review`, MAT-RA-002 en `y3.course-project-tech` y
+MAT-RA-003 en `y4.course-project-fundraiser`— más siete no bloqueantes, entre
+ellos la clasificación de `g7.bus-timing` (`K 84,62`) como hallazgo de validez de
+evaluación no bloqueante y el punto ciego del 52 % del catálogo en la auditoría
+permanente. Sólo documentación: ningún archivo de producto cambió. Sin push.
 
 18 de septiembre de 2026: adjudicación final del techo de estrategia ciega de
 `y5.stage-screen` y cierre de la remediación matemática en **14 de 14 contratos**.

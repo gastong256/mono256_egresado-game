@@ -108,6 +108,15 @@ generador los distinguen de un problema matemático.
 
 Los umbrales son **heurísticas de revisión, no constantes universales**. Su función es levantar la mano; la aprobación sigue requiriendo que cada variante pase sus validaciones y que la integridad del artefacto sea reproducible.
 
+> **Punto ciego conocido (MAT-RA-006, D-S08-120).** El alcance de esta auditoría son
+> tres motores de interacción, así que las **22** Templates de construcción —el 52 %
+> del catálogo— quedan fuera y se imprimen como «no enumerable». Para las siete de
+> `quantity-builder` eso es **falso**: su espacio de vectores constantes tiene entre
+> 125 y 1573 elementos y se recorre entero en segundos. La
+> [re-auditoría independiente](independent-mathematics-reaudit.md) lo recorrió y
+> encontró ahí dos respuestas constantes de `K 95,83` y `K 92,80` en Templates
+> puntuables. Extender el alcance es la pregunta abierta 69.
+
 ## Auditoría Monte Carlo del armado de runs
 
 **Implementada en forma reducida.** `pnpm game:compose` audita composición y `pnpm game:score` cruza planes con perfiles sintéticos; `--compare` mantiene constantes las runs al mover las calibraciones candidatas. La auditoría completa sobre catálogo de feria, policy aprobada y operación real sigue futura.

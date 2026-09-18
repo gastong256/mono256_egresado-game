@@ -66,6 +66,7 @@
 04-quality/content-validation.md
 04-quality/full-career-implementation-audit.md
 04-quality/full-career-technical-conformance.md
+04-quality/independent-mathematics-reaudit.md
 04-quality/mathematics-department-ai-adjudication.md
 04-quality/mathematics-department-ai-reviewer-a.md
 04-quality/mathematics-department-ai-reviewer-b.md
