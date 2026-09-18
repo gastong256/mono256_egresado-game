@@ -29,9 +29,10 @@ STAGE-08                                      IN_PROGRESS · CURRENT
     ├── AI MATHEMATICS DEPARTMENT (provisional)  IN_PROGRESS
     │   ├── Pre-Review                           DONE · 13 hallazgos, 0 bloqueantes
     │   ├── Independent Adjudication             DONE · REMEDIATION REQUIRED
-    │   ├── Mathematics Remediation              BLOCKED · 13/14 contratos · 1 STOP
-    │   ├── Contract Conflict Adjudication       DONE · OQ-67 cerrada · OQ-66 abierta
-    │   ├── Independent Re-Audit                 PENDING · requiere decidir OQ-66
+    │   ├── Mathematics Remediation              DONE · 14/14 contratos PASS
+    │   ├── Contract Conflict Adjudication       DONE · OQ-67 cerrada
+    │   ├── RS-MAT-008 Blind Ceiling Adjudication DONE · OQ-66 cerrada
+    │   ├── Independent Re-Audit                 NEXT
     │   └── Provisional Sign-Off                 PENDING
     ├── Revisión del Depto. de Matemática      DEFERRED · a Final Delivery / Pre-Release
     ├── Sign-off manual de la rueda            PENDING · humana
@@ -72,8 +73,8 @@ existe y el servidor la recomputa, pero autorar una oportunidad competitiva
 exigiría inventar acciones de jugador que ninguna Template tiene. El contenido
 de 1.º a 5.º está en estado `draft`: faltan la remediación matemática y su
 sign-off provisional de IA, el sign-off manual de la rueda y el pacing empírico,
-gates de producción de STAGE-08; la remediación quedó bloqueada en un criterio
-que requiere decisión (D-S08-104 y D-S08-114). La revisión del Departamento de Matemática
+gates de producción de STAGE-08. La remediación matemática cerró completa el 18 de
+septiembre, con sus catorce contratos en PASS. La revisión del Departamento de Matemática
 humano no se eliminó: está diferida a la entrega final (D-S08-095).
 
 ## Baseline autoritativa
@@ -88,8 +89,8 @@ por etapa fuera del presupuesto ordinario y de FairScore.
   `7.º → 2.º`: contenido `2.2.0-grade-2`, catálogo `grade-2-dev-3`.
   `7.º → 3.º`: contenido `3.2.0-grade-3`, catálogo `grade-3-dev-3`.
   `7.º → 4.º`: contenido `4.2.0-grade-4`, catálogo `grade-4-dev-3`.
-  `7.º → 5.º`: rulesets `5.2.0-grade-5-partial` y `5.2.0-grade-5-demo`, contenido
-  `5.2.0-grade-5`, catálogo `grade-5-dev-3`. Carrera completa: ruleset
+  `7.º → 5.º`: rulesets `5.3.0-grade-5-partial` y `5.3.0-grade-5-demo`, contenido
+  `5.3.0-grade-5`, catálogo `grade-5-dev-4`. Carrera completa: ruleset
   `1.0.0-full-career` sobre ese mismo contenido y catálogo. Score
   `fair-score-dev-2@2.0.0-post-tg1-candidate` sin cambios. Los catálogos y
   contenidos subieron con la remediación matemática (D-S08-109).
@@ -161,8 +162,16 @@ y sin cambiar contenido, así que **RS-NEW-001 quedó PASS**. No cerró la 66: e
 prototipo completo de la excepción de witness autorizada resuelve la contradicción
 que la motivó, pero deja ver otra —«entera» nunca baja de `efficient` donde algún
 recorte vale, así que `K = 75 + 25·w` y el piso demostrado es 78 contra un techo de
-70—, de modo que RS-MAT-008 sigue detenido y el techo sigue sin relajarse
-(D-S08-113 y D-S08-114). FairScore, escalera, dificultad,
+70—, de modo que RS-MAT-008 siguió detenido sin relajar el techo
+(D-S08-113 y D-S08-114).
+
+La [adjudicación final del techo](../04-quality/rs-mat-008-blind-ceiling-final-adjudication.md) la cerró el 18 de septiembre:
+el techo de la pantalla del acto pasó a ser ese mínimo probado, `K ≤ 78`, con la
+excepción estrecha del witness conservada y sin tocar la escalera, FairScore ni la
+validez geométrica. `y5.stage-screen` se reescribió con los dos elementos
+protegidos y el catálogo de 5.º se republicó como `grade-5-dev-4`. Medido: K 78,0
+· S 40 % · óptima repartida en cuatro formas · heurística de lado 48 %
+(D-S08-116). **La remediación matemática quedó completa: 14 de 14 contratos.** FairScore, escalera, dificultad,
 motor, action log, snapshot y ruleset de carrera no cambiaron; los catálogos se
 republicaron una sola vez (D-S08-109).
 
@@ -181,12 +190,13 @@ INTEGRACIÓN DE CARRERA COMPLETA — DONE
 AI Mathematics Department Pre-Review — DONE
 AI Mathematics Department Independent Adjudication — DONE
 
-Mathematics Remediation Implementation — BLOCKED
-  13 de 14 contratos DONE
-  STOP 1: RS-MAT-008 (y5.stage-screen) — techo K inalcanzable, decisión requerida
+Mathematics Remediation Implementation — DONE
+  14 de 14 contratos PASS
+  STOP 1: RS-MAT-008 — RESUELTO: techo probado K ≤ 78 (D-S08-114, D-S08-116)
   STOP 2: RS-NEW-001 criterio 3 — RESUELTO por enmienda (D-S08-113)
 Contract Conflict Adjudication — DONE
-Independent Mathematics Re-Audit — PENDING
+RS-MAT-008 Blind Ceiling Final Adjudication — DONE
+Independent Mathematics Re-Audit — NEXT
 AI Mathematics Department Provisional Sign-Off — PENDING
 
 Human Mathematics Department Review
@@ -195,9 +205,8 @@ Human Mathematics Department Review
 Real-player pacing validation — PENDING
 
 Next:
-DECIDIR el techo de estrategia ciega de y5.stage-screen (pregunta abierta 66),
-completar RS-MAT-008 con esa decisión y recién entonces
-INDEPENDENT MATHEMATICS RE-AUDIT
+INDEPENDENT MATHEMATICS RE-AUDIT sobre la remediación completa,
+re-derivando la evidencia de forma independiente
 ```
 
 La [auditoría de implementación de carrera completa](../04-quality/full-career-implementation-audit.md)
@@ -236,13 +245,21 @@ Hasta eso, el contenido permanece `draft` y la edición `official: false`.
 
 ## Última reconciliación
 
+18 de septiembre de 2026: adjudicación final del techo de estrategia ciega de
+`y5.stage-screen` y cierre de la remediación matemática en **14 de 14 contratos**.
+El techo `K ≤ 70` era imposible; el mínimo factible, probado por enumeración
+exhaustiva y alcanzado por el catálogo publicado, es `K ≤ 78`. La Template se
+reescribió con dos elementos protegidos, seis formas y geometría exacta en
+enteros, y 5.º se republicó como `grade-5-dev-4` / `5.3.0-grade-5` (D-S08-116).
+Sin push.
+
 17 de septiembre de 2026, más tarde: adjudicación de los dos conflictos de
 contrato. La pregunta 67 se cerró reformulando el criterio 3 de RS-NEW-001 sobre
 planes válidos —el catálogo vigente ya lo cumple— y RS-NEW-001 quedó PASS. La
-pregunta 66 no se cerró: el prototipo de la excepción de witness autorizada
-—2.826.450 direcciones barridas— probó que resuelve la contradicción del witness
-pero deja el techo `K ≤ 70` inalcanzable, con piso demostrado de 78. La remediación
-queda en 13 de 14 contratos (D-S08-113, D-S08-114). Sin push.
+pregunta 66 no se cerró ese día: el prototipo de la excepción de witness
+autorizada —2.826.450 direcciones barridas— probó que resuelve la contradicción del
+witness pero deja el techo `K ≤ 70` inalcanzable, con piso demostrado de 78
+(D-S08-113, D-S08-114). Sin push.
 
 17 de septiembre de 2026: implementación de la remediación matemática —doce de
 catorce contratos, auditoría permanente de estrategia ciega, inventario de

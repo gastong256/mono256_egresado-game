@@ -272,13 +272,35 @@ export function styleGateIssues(
   return [...new Set(issues)]
 }
 
+/**
+ * Cuándo una variante puede quedarse sin uno de los dos niveles intermedios.
+ *
+ * El default es `strict`: toda variante aprobada tiene un plan `optimal`, uno
+ * `efficient` y uno `functional`. `allowOneMissingIntermediate` es una excepción
+ * **por variante**, que sólo puede pedir una Template cuyo espacio matemático no
+ * contenga ese estado —nunca para fabricar crédito parcial (D-S08-099)—: la
+ * variante sigue necesitando una óptima única, alguna respuesta válida por
+ * debajo de ella y alguna inválida, y pierde como mucho **uno** de los dos
+ * niveles del medio. Hoy la usa `y5.stage-screen` cuando ningún recorte es
+ * válido (D-S08-114).
+ */
+export type TierWitnessMode = 'strict' | 'allowOneMissingIntermediate'
+
 /** Distinct witnesses for the three non-invalid tiers, the minimum an evaluator must reach. */
 export function tierWitnessIssues(
   plans: readonly { readonly quality: SolutionQuality }[],
+  mode: TierWitnessMode = 'strict',
 ): readonly string[] {
-  return (['optimal', 'efficient', 'functional'] as const).flatMap((quality) =>
+  const has = (quality: SolutionQuality) =>
     plans.some((plan) => plan.quality === quality)
-      ? []
-      : [`falta un plan ${quality} alcanzable`],
-  )
+  if (mode === 'strict')
+    return (['optimal', 'efficient', 'functional'] as const).flatMap(
+      (quality) =>
+        has(quality) ? [] : [`falta un plan ${quality} alcanzable`],
+    )
+  const issues: string[] = []
+  if (!has('optimal')) issues.push('falta un plan optimal alcanzable')
+  if (!has('efficient') && !has('functional'))
+    issues.push('falta un plan válido por debajo del óptimo')
+  return issues
 }

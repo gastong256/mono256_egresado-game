@@ -3540,7 +3540,7 @@ independiente por evaluador y materialización sólo de direcciones aprobadas.
 |---|---|---|---|
 | `y5.final-trip-or-event` | Cuatro paquetes contra el fondo del curso, los días que da el colegio y los lugares que hacen falta; formas `fondo-corto`, `pocos-dias` y `curso-grande` | INVALID no se puede hacer · FUNCTIONAL se puede pero falta lo que el curso pidió · EFFICIENT trae todo y deja el fondo al límite · OPTIMAL trae todo y deja la reserva | Ninguno |
 | `y5.course-project-final` | Seis tareas con dueño y horas, alguien que no va a estar, y tres destinos por tarea: mantener, repartir o recortar; formas `se-cae-el-video`, `menos-horas` y `todo-esencial`. Una de las personas que quedan tiene pocas horas, así que repartir parejo sobrecarga a alguien; cada dirección rota forma y dueño de la primera tarea, y ningún plan de «repartir todo» es ya el óptimo | INVALID recorta algo esencial, deja la tarea de quien no está o pasa las horas de alguien · FUNCTIONAL el plan cierra · EFFICIENT sobrevive parte de lo no esencial · OPTIMAL sobrevive todo | **Equipo** por los acuerdos del grupo y **Aura** por lo que el curso dice del cambio, en campos distintos de la respuesta (`LOCKED`). Estilo por la forma de la reconstrucción |
-| `y5.stage-screen` | Pantalla e imagen en centímetros, el cartel del curso de un lado con su aire, y cinco formas de proyectar; formas `pantalla-ancha`, `imagen-alta` y `cartel-grande` | INVALID deforma o se come el cartel · FUNCTIONAL deja media pantalla vacía · EFFICIENT llena casi todo · OPTIMAL llena la pantalla con el cartel entero | Ninguno |
+| `y5.stage-screen` | Pantalla e imagen en centímetros y **dos elementos protegidos**: el cartel del curso arriba y la fecha del acto abajo, cada uno con su aire. Seis formas de proyectar —entera con bandas, llenar el ancho y recortar mitad y mitad, sólo de arriba o sólo de abajo, dejarla como está, estirarla—. Los tres recortes usan la misma pantalla: lo que los separa es de qué lado sacan lo que sobra, comparado con el aire de ese lado en enteros. Formas `aire-parejo`, `aire-arriba`, `aire-abajo` y `sin-aire`; en esta última ningún recorte entra y la imagen entera es la mejor | INVALID deforma o se come el cartel o la fecha · FUNCTIONAL válida con menos de tres cuartos de pantalla · EFFICIENT válida con tres cuartos o más · OPTIMAL la que más pantalla usa, única por gate | Ninguno |
 | `y5.yearbook` | Páginas exactas de imprenta, mínimos pactados, un tope y material por sección; formas `tope-apretado`, `minimos-altos` y `material-desparejo` | INVALID no suma exacto o rompe lo pactado · FUNCTIONAL cierra sin completar ninguna sección · EFFICIENT completa alguna · OPTIMAL completa todas las que se podían | Ninguno |
 | `y5.next-step-options` | Cinco escenarios ya escritos contra las horas libres, el viaje diario y el día tomado; las horas de cada escenario **incluyen** su viaje y la pantalla lo dice. Ocho vectores de viabilidad rotan por dirección: cada escenario entra en el 25 % a 75 % del catálogo, alguna opción de estudio entra en al menos la mitad y lo que las deja afuera se reparte entre horas, viaje y día | INVALID marca como viable algo que no entra · EFFICIENT deja uno viable afuera · FUNCTIONAL deja dos o más · OPTIMAL exacta | Ninguno. La preferencia personal **no se puntúa de ninguna forma** |
 | `y5.multi-option-comparison-review` | Un paquete que no incluye el micro, que se cobra por persona | OPTIMAL el total con el micro de cada uno · FUNCTIONAL sumarlo una sola vez · EFFICIENT una persona de diferencia · INVALID el resto | Sin Estilo ni score |
@@ -3569,18 +3569,24 @@ decisión es elegir entre formas de proyectar y toda la geometría está escrita
 La familia de razonamiento declarada sigue siendo `SPATIAL`, que es de lo que
 trata la cuenta.
 
-**Catálogo `grade-5-dev-3`.** 1026 entradas, construido con
+**Catálogo `grade-5-dev-4`.** 1026 entradas, construido con
 `pnpm game:variants build --content=grade-5`; re-aprueba los años anteriores sin
 tocar sus artefactos publicados. Reemplaza a `grade-5-dev-2` por la
 [remediación matemática](04-quality/mathematics-remediation-implementation.md): muestra final y año que viene generados por papel, dirección del error en
-los dos Repasos y feedback del viaje, contenido `5.2.0-grade-5`.
+los dos Repasos y feedback del viaje. Y a `grade-5-dev-3` por la
+[adjudicación final del techo de la pantalla](04-quality/rs-mat-008-blind-ceiling-final-adjudication.md),
+que reescribió `y5.stage-screen`: contenido `5.3.0-grade-5`.
 
-**La pantalla del acto no se remedió.** RS-MAT-008 quedó detenido por STOP: con
-seis formas de proyectar y la escalera del contrato, exigir los tres niveles no
-inválidos en cada variante vuelve imposible que la imagen entera sea la óptima y,
-con eso, el reparto de óptimas y la heurística de lado que el mismo contrato pide.
-La Template sigue como estaba —sólo el texto de la restricción nombra ahora el
-lado real del cartel— hasta que se decida el punto abierto. `7.º → 5.º` es el primer set con los seis años
+**La pantalla del acto y su piso de estrategia ciega.** «Entera» no recorta nada,
+así que es válida en toda variante y, donde algún recorte vale, la escalera la
+deja en `efficient`: repetirla siempre rinde `75 + 25·w`, con `w` la proporción de
+variantes donde ningún recorte entra. Ese piso es de la matemática, no del
+catálogo, y por eso el techo de esta Template es **78** —el mínimo factible
+demostrado— y no 70 (D-S08-116). El catálogo lo toca exacto: la óptima se reparte
+en cuatro formas (10 · 6 · 6 · 3), el atajo de «recortar del lado con más aire»
+acierta en 12 de 25, y las tres variantes sin recorte válido son las únicas que
+usan la excepción de witness, cada una con un solo nivel intermedio ausente
+(D-S08-114). La escalera no cambió. `7.º → 5.º` es el primer set con los seis años
 y sigue siendo `official: false`.
 
 **Lo que 5.º todavía no trae.** La convergencia de carrera se cumple hoy por
@@ -5128,8 +5134,8 @@ Trazabilidad de la cadena `hallazgo → opiniones independientes → decisión d
 revisión humana final`. Adjudicado el 16 de septiembre de 2026; implementado el 17
 con veredicto `BLOCKED` (D-S08-104) y, ese mismo día, con los dos conflictos de
 contrato adjudicados: la pregunta 67 cerrada por enmienda (D-S08-113) y la 66
-abierta (D-S08-114). Quedan trece de catorce contratos en PASS. La re-auditoría
-todavía no existe.
+cerrada el 18 con el techo probado de `y5.stage-screen` (D-S08-116). Los catorce
+contratos quedan en PASS. La re-auditoría todavía no existe.
 
 | Hallazgos | Decisión canónica | Contrato | Implementación | Verificación |
 |---|---|---|---|---|
@@ -5138,7 +5144,7 @@ todavía no existe.
 | MAT-005 · MAT-AJ-NEW-004 · MAT-AJ-NEW-005 | `REQUIRED_CORRECTION` P1 / P1 / P2 | RS-MAT-005 | DONE · gate de modelo del torneo, empate estricto | `unit/grade-2-standings`, auditoría |
 | MAT-006 | `REQUIRED_CORRECTION` P2 | RS-MAT-006 | DONE · `grade-7-dev-6` | `integration/mathematics-remediation`, auditoría |
 | MAT-007 | `REQUIRED_CORRECTION` P2 | RS-MAT-007 | DONE | `integration/mathematics-remediation`, auditoría |
-| MAT-008 | `REQUIRED_CORRECTION` P0 | RS-MAT-008 | **BLOCKED · STOP** ([D-S08-105](04-quality/mathematics-remediation-implementation.md#stop-1-rs-mat-008-y5stage-screen)), confirmado por la [adjudicación de conflictos](04-quality/mathematics-remediation-contract-conflict-adjudication.md#d-oq-66-y5stage-screen) (D-S08-114) | `it.todo` en la auditoría; pregunta abierta 66 |
+| MAT-008 | `REQUIRED_CORRECTION` P0 | RS-MAT-008 (techo enmendado a `K ≤ 78`, D-S08-116) | **DONE** · dos elementos protegidos, seis formas, geometría exacta y catálogo `grade-5-dev-4` | `unit/grade-5-screen-yearbook-next`, `integration/mathematics-remediation` · RS-MAT-008, auditoría de estrategia ciega, E2E a 320 px |
 | MAT-009 · MAT-AJ-NEW-007 | `REQUIRED_CORRECTION` P1 | RS-MAT-009 | DONE | `integration/mathematics-remediation`, auditoría |
 | MAT-010 | `ACCEPT_AS_DESIGNED` | — | Sin cambio | Revisión humana final |
 | MAT-011 | `REQUIRED_CLARIFICATION` P2 | RS-MAT-011 | DONE · consigna de la peña | `integration/mathematics-remediation`, E2E 320 px |
@@ -5153,8 +5159,9 @@ Fuentes: [adjudicación](04-quality/mathematics-department-ai-adjudication.md),
 [revisor B](04-quality/mathematics-department-ai-reviewer-b.md),
 [revisor C](04-quality/mathematics-department-ai-reviewer-c.md),
 [implementación](04-quality/mathematics-remediation-implementation.md),
-[adjudicación de conflictos de contrato](04-quality/mathematics-remediation-contract-conflict-adjudication.md) y
-[decisiones D-S08-095 a D-S08-114](07-reference/decision-register.md).
+[adjudicación de conflictos de contrato](04-quality/mathematics-remediation-contract-conflict-adjudication.md),
+[adjudicación final del techo](04-quality/rs-mat-008-blind-ceiling-final-adjudication.md) y
+[decisiones D-S08-095 a D-S08-116](07-reference/decision-register.md).
 
 ---
 
@@ -12742,7 +12749,7 @@ especificación prohíbe.
 - **Estado:** `EXECUTED` — 2026-09-17, dentro de la
   [implementación de la remediación matemática](04-quality/mathematics-remediation-implementation.md)
 - **Regla que lo exige:** [especificación de remediación, regla 2.9](04-quality/mathematics-remediation-spec.md#2-reglas-transversales)
-- **Alcance:** las 42 Templates del catálogo `grade-5-dev-3` —no sólo las de la
+- **Alcance:** las 42 Templates del catálogo de carrera completa —`grade-5-dev-3` al ejecutarlo, `grade-5-dev-4` desde la reescritura de la pantalla del acto— —no sólo las de la
   especificación—, sobre los tres campos de texto fijo del feedback:
   `consequence`, `optimalComparison` y `violatedConstraint`
 - **Consumidor:** `Independent Mathematics Re-Audit`
@@ -12888,9 +12895,9 @@ implementación (sección [Correcciones](#correcciones)).
 | `y5.multi-option-comparison-review` | `consequence` · resto | dirección del error | B | signo, test RS-NEW-003 |
 | `y5.course-project-final` | `violatedConstraint` · invalid | esencial, ausente u horas | B | `read.failure` |
 | `y5.course-project-final` | `consequence` · postura | si el cambio se notó | B | `p.visible` |
-| `y5.stage-screen` | `violatedConstraint` · invalid | deforma o lado del recorte | B | `shown.deforms`, `p.bannerAt` |
-| `y5.stage-screen` | `consequence` · efficient «con unas bandas al costado» | bandas laterales | A | medido y con test: efficient es siempre «entera» con bandas sólo a los costados (25 de 25) |
-| `y5.stage-screen` | `consequence` · functional «media pantalla vacía» | usa como mucho la mitad | A | medido y con test: «sin agrandar» usa entre 9 % y 30 % |
+| `y5.stage-screen` | `violatedConstraint` · invalid | deforma, o qué elemento protegido se come el recorte | B | recorte de cada lado contra su aire |
+| `y5.stage-screen` | `consequence` · efficient «bandas a los costados» | bandas laterales | A | con test: sólo «entera» llega a efficient, y su alto es el de la pantalla |
+| `y5.stage-screen` | `consequence` · functional «chica en el medio» | usa menos de tres cuartos | A | con test: el nivel functional es exactamente «usa menos de 3/4 de la pantalla» |
 | `y5.yearbook` | `violatedConstraint` | total, mínimo o tope | B | `read.failure` |
 | `y5.yearbook` | `consequence` · efficient, functional «algo del material quedó afuera» | incompleto | A | escalera por secciones completas |
 | `y5.proportion-capacity-review` | `violatedConstraint` · functional | páginas de `exacta − 1` no alcanzan | B | `exact`, `p.perPage` |
@@ -12914,33 +12921,36 @@ implementación (sección [Correcciones](#correcciones)).
 - **Estado:** `EXECUTED` — 2026-09-17, sobre `main` en `326ab36`
 - **Gate:** `MATHEMATICS REMEDIATION IMPLEMENTATION`
 - **Contrato:** [especificación de remediación](04-quality/mathematics-remediation-spec.md), canónica
-- **Veredicto:** `MATHEMATICS REMEDIATION IMPLEMENTATION — BLOCKED`
-  (`MATHEMATICS REMEDIATION BLOCKED — CONTRACT CONFLICT`; desde el 2026-09-17,
-  **13 de 14 contratos PASS**: sólo RS-MAT-008 sigue detenido)
-- **Adjudicación posterior:** los dos STOP se adjudicaron el 2026-09-17 en la
-  [adjudicación de conflictos de contrato](04-quality/mathematics-remediation-contract-conflict-adjudication.md). El STOP 2 quedó
-  **resuelto** por enmienda del criterio 3 (D-S08-113); el STOP 1 sigue
-  **bloqueado**, ahora por el techo `K ≤ 70` y no por el witness (D-S08-114)
-- **Siguiente gate:** `Independent Mathematics Re-Audit`, **no habilitado** hasta
-  que se resuelvan los dos puntos de decisión de la sección
-  [H](#h-stop-registrados)
+- **Veredicto:** `MATHEMATICS REMEDIATION IMPLEMENTATION — DONE`
+  — **14 de 14 contratos PASS** desde el 2026-09-18, cuando RS-MAT-008 cerró con
+  su techo probado. El veredicto anterior fue `BLOCKED`, y el rastro de cómo se
+  levantó cada STOP se conserva en las secciones H y N
+- **Adjudicaciones posteriores:** los dos STOP se adjudicaron el 2026-09-17 en la
+  [adjudicación de conflictos de contrato](04-quality/mathematics-remediation-contract-conflict-adjudication.md)
+  —STOP 2 resuelto por enmienda del criterio 3 (D-S08-113); STOP 1 acotado al
+  techo (D-S08-114)— y el techo se resolvió el 2026-09-18 en la
+  [adjudicación final del techo](04-quality/rs-mat-008-blind-ceiling-final-adjudication.md), que probó el mínimo
+  factible `K ≤ 78` e implementó WP-SCREEN (D-S08-116)
+- **Siguiente gate:** `Independent Mathematics Re-Audit`, ahora habilitado: los
+  dos puntos de decisión de la sección [H](#h-stop-registrados) se resolvieron por
+  enmienda de contrato
 - **Naturaleza:** implementación. No es re-auditoría ni sign-off: ningún contenido
   pasa a `math_reviewed` y la revisión del Departamento de Matemática humano sigue
   diferida a Final Delivery / Pre-Release Acceptance (D-S08-095)
 
 ## A. Veredicto
 
-`MATHEMATICS REMEDIATION IMPLEMENTATION — BLOCKED`.
+`MATHEMATICS REMEDIATION IMPLEMENTATION — DONE`.
 
-De los catorce contratos, **trece están implementados y verificados por test**
-—doce en la implementación original y RS-NEW-001 al completarse su criterio 3
-enmendado— y uno sigue detenido por la regla de STOP (2.11), porque un criterio es
-imposible de cumplir sin violar otra regla del mismo contrato. La tabla registra
-los dos STOP tal como se levantaron, con su resolución posterior:
+Los catorce contratos están implementados y verificados por test: doce en la
+implementación original, RS-NEW-001 al reformularse su criterio 3 sobre planes
+válidos, y RS-MAT-008 al probarse e implementarse su techo mínimo factible. Los
+dos STOP que la implementación levantó se resolvieron por enmienda de contrato,
+nunca relajando un criterio en silencio. La tabla registra cómo quedó cada uno:
 
 | STOP | Contrato | Criterio imposible | Regla con la que choca | Estado del paquete |
 |---|---|---|---|---|
-| 1 | RS-MAT-008 · `y5.stage-screen` | Puntos 4, 7, 8 y 9, y los techos K ≤ 70 · S ≤ 40 % | Regla 2.6: witness de los tres niveles no inválidos por variante (`tierWitnessIssues`) | **No implementado.** La Template queda como estaba, salvo un texto falso de feedback corregido por el inventario |
+| 1 | RS-MAT-008 · `y5.stage-screen` | Puntos 4, 7, 8 y 9, y los techos K ≤ 70 · S ≤ 40 % | Regla 2.6: witness de los tres niveles no inválidos por variante (`tierWitnessIssues`) | **RESUELTO el 2026-09-18** (D-S08-114 y D-S08-116): excepción estrecha del witness donde ningún recorte es válido, y techo enmendado al mínimo factible probado `K ≤ 78`. WP-SCREEN implementado; RS-MAT-008 PASS |
 | 2 | RS-NEW-001 · `y5.course-project-final` | Criterio 3: «recortar» entre los planes óptimos | La escalera de la Template, que el mismo contrato prohíbe cambiar | **RESUELTO el 2026-09-17** (D-S08-113): el criterio se reformuló sobre planes válidos y el catálogo vigente ya lo cumple. RS-NEW-001 PASS |
 
 Ningún techo se relajó. Los dos tests que corresponderían quedaron como `it.todo`
@@ -13012,7 +13022,7 @@ con herramientas propias.
 | 1 | WP-AUDIT | DONE | Sección C |
 | 2 | WP-TRANSPORT | DONE | Precios del mes y de la ciudad; forma `pocos-viajes`; generación dirigida por papel |
 | 3 | WP-SURVEY | DONE | Regla de publicación como constante única; `year-prefers` por cota de peor caso; cuatro formas; Repaso con tres vectores |
-| 4 | WP-SCREEN | **BLOCKED — STOP 1** | Sin cambios de regla; sólo el texto del lado del cartel. La adjudicación posterior mantiene el bloqueo (D-S08-114) |
+| 4 | WP-SCREEN | **DONE** | Dos elementos protegidos, seis formas, geometría exacta en enteros, generación por papel y catálogo `grade-5-dev-4`: K 78,0 · S 40 % (D-S08-116) |
 | 5 | WP-FINAL | **DONE** | Criterios 1, 2, 4 y techos en la implementación; criterio 3 cerrado por enmienda el 2026-09-17 |
 | 6 | WP-NOTEBOOK | DONE | Feedback de acierto calculado |
 | 7 | WP-STANDINGS | DONE | Realizabilidad, gate de modelo, empate estricto, discriminación |
@@ -13134,19 +13144,28 @@ tal como estaba»).
 El consejo publica 24 variantes en vez de 25: el gate de dos viables rechaza
 direcciones que antes se aprobaban.
 
-### RS-MAT-008 — `y5.stage-screen` · BLOCKED
+### RS-MAT-008 — `y5.stage-screen` · DONE
 
-Ver [STOP 1](#stop-1-rs-mat-008-y5stage-screen). Ningún punto implementado; los
-techos quedan como `it.todo`. Medición vigente: K 75,0 · S 52 %.
+Implementado el 2026-09-18, después de dos adjudicaciones. El rastro completo
+está en [STOP 1](#stop-1-rs-mat-008-y5stage-screen), en la
+[adjudicación de conflictos](04-quality/mathematics-remediation-contract-conflict-adjudication.md#d-oq-66-y5stage-screen)
+y en la [adjudicación final del techo](04-quality/rs-mat-008-blind-ceiling-final-adjudication.md).
 
-La [adjudicación de conflictos de contrato](04-quality/mathematics-remediation-contract-conflict-adjudication.md#d-oq-66-y5stage-screen)
-del 2026-09-17 mantuvo el bloqueo con evidencia nueva: la excepción de witness
-autorizada resuelve la contradicción original —33.035 variantes con la imagen
-entera óptima pasan a ser admisibles, y un catálogo dirigido cumple los puntos 7,
-8, 9, 10, IM-1, óptima única y `S ≤ 40 %`— pero el techo `K ≤ 70` tiene un piso
-estructural de **78**, porque «entera» es siempre válida y nunca baja de
-`efficient` donde algún recorte vale. La decisión queda en la pregunta abierta 66
-(D-S08-114).
+| Criterio | Evidencia | Medición |
+|---|---|---|
+| 1. Dos elementos protegidos | schema con cartel y fecha, cada uno con su alto y su aire; E2E los muestra | — |
+| 2. Seis formas con el lado en la etiqueta | `WAYS`; E2E a 320 y 412 px | 6 opciones |
+| 3. Validez exacta | `unit/grade-5-screen-yearbook-next` · «la validez se decide con enteros, en el borde exacto del aire» | comparaciones entre enteros, sin escala redondeada |
+| 4. Escalera y óptima única | «los tres recortes usan la misma pantalla…» y «la escalera coincide con un oráculo independiente» | 0 variantes con dos recortes válidos |
+| 5. Consigna con el objetivo completo | «LOCKED: toda la geometría está dada…» | — |
+| 6. IM-1 por variante | «mover ±15 % el aire cambia la validez de algún recorte» | 25 / 25 |
+| 7. Reparto de la óptima | `integration/mathematics-remediation` · RS-MAT-008 punto 7 | centro 10 · arriba 6 · abajo 6 · entera 3, máx. 40 % |
+| 8. Sin niveles constantes | punto 8 | «entera» 2 niveles · «sin agrandar» 2 · los tres recortes 2 · estirar constante inválida |
+| 9. Heurística de lado | punto 9 | 12 / 25 = 48 % |
+| 10. Sin filo en el 75 % | punto 10 | uso de «entera» de 69,5 % a 86,5 %, 0 en (70, 80) |
+| 11. Detalle sin revelar el recorte | «LOCKED…»: el detalle no nombra recorte, cartel ni fecha | — |
+| Techos K ≤ 78 · S ≤ 40 % | auditoría de estrategia ciega, en enteros | **K 78,0 = 1950/25** · S 40 % |
+| Excepción de witness | «la excepción de witness sólo alcanza a las variantes sin recorte válido» | 3 exentas, cada una con un solo nivel intermedio ausente |
 
 ### RS-MAT-009 — `y5.next-step-options` · DONE
 
@@ -13229,13 +13248,21 @@ workspace y sincronización de la especificación maestra en la sección N.
 | `y5.final-trip-or-event` | decision-card | 25 → 25 | 56,3 → 56,3 | 59,4 → 59,4 | 28,0 % → 28,0 % | — |
 | `y5.next-step-options` | classification | 24 → 25 | 18,0 → 21,3 | 76,5 → **40,0** | 70,8 % → **16,0 %** | K ≤ 65 · S ≤ 35 % ✓ |
 | `y5.proportion-capacity-review` | numeric-input | 23 → 23 | 11,8 → 11,8 | 34,1 → 34,1 | 13,0 % → 13,0 % | — |
-| `y5.stage-screen` | decision-card | 25 → 25 | 40,8 → 40,8 | 75,0 → 75,0 | 52,0 % → 52,0 % | K ≤ 70 · S ≤ 40 % **BLOCKED** |
+| `y5.stage-screen` | decision-card | 25 → 25 | 40,8 → 39,8 | 75,0 → **78,0** | 52,0 % → **40,0 %** | K ≤ 78 · S ≤ 40 % ✓ |
 
 No enumerables: las Templates de construcción (`assignment-board`, `number-grid`,
 `budget-builder`, `spatial-layout`, `quantity-builder`, `schedule-builder`,
 `route-builder`) y `y5.multi-option-comparison-review`, cuyo rango numérico tiene
 10.000.000 valores. Sus respuestas ingenuas quedan para el re-audit (sección 7 de
 la especificación).
+
+La pantalla del acto es el único caso donde K **sube**: su Template se rediseñó
+entera y su techo pasó a ser el mínimo factible probado, 78. No es una pérdida de
+dificultad —antes «entera» era `efficient` en las 25 variantes y la respuesta
+constante rendía 75 sin que ninguna otra cosa cambiara—; ahora la óptima se
+reparte en cuatro opciones, S baja de 52 % a 40 % y el atajo del lado con más aire
+acierta en menos de la mitad. Ver la
+[adjudicación final del techo](04-quality/rs-mat-008-blind-ceiling-final-adjudication.md).
 
 Las mejores respuestas constantes cambiaron de sentido: en la muestra final la K ya
 no es «repartir todo»; en el año que viene es marcar todo «No entra», que rinde 40;
@@ -13417,6 +13444,7 @@ sus catálogos históricos: `grade-7-dev-6` se agrega junto a `grade-7-dev-5`.
 | 3.º | `3.1.0` · `grade-3-dev-2` (681) | `3.2.0` · `grade-3-dev-3` (681) | Colectivo y dos Repasos |
 | 4.º | `4.1.0` · `grade-4-dev-2` (854) | `4.2.0` · `grade-4-dev-3` (853) | Consejo (una variante menos), peña, dos Repasos, cola |
 | 5.º | `5.1.0` · `grade-5-dev-2` (1025) | `5.2.0` · `grade-5-dev-3` (1026) | Muestra final, año que viene, Repasos, viaje, pantalla (texto) |
+| 5.º, segunda republicación | `5.2.0` · `grade-5-dev-3` (1026) | `5.3.0` · `grade-5-dev-4` (1026) | `y5.stage-screen` reescrita: dos elementos protegidos, geometría exacta y generación por papel (D-S08-116). Generador `y5.stage-screen.fit` a versión `2`; rulesets de práctica y demo a `5.3.0` |
 | Huella de contenido de la carrera completa | `e2c61b62` | `72435ee3` | Consecuencia de lo anterior |
 | Carrera completa · motor · action log · snapshot | `1.0.0-full-career` · `10.0.0` · `7` · `8` | sin cambios | — |
 
@@ -13505,7 +13533,7 @@ Con Node 24.19.0.
 | `pnpm game:simulate:deep` | 5000 / 5000 egresadas · 0 hallazgos |
 | `pnpm game:score` | perfecta 10 000 en todas las formas de plan · 0 empates de redondeo |
 | `pnpm test:e2e:only` | 154 E2E en desktop y mobile, 0 fallas |
-| `pnpm verify` | **exit 0**: toolchain, workspace, sync del master spec, secretos, formato, lint, typecheck, tokens del sistema de diseño, 95 archivos y 1723 tests de Vitest más 2 `todo`, cobertura 85,01 / 76,78 / 86,93 / 85,13, validación de contenido y catálogos de los seis años, cinco simulaciones deterministas, build de producción y los 154 E2E |
+| `pnpm verify` | **exit 0**: toolchain, workspace, sync del master spec, secretos, formato, lint, typecheck, tokens del sistema de diseño, la suite completa de Vitest, validación de contenido y catálogos de los seis años, cinco simulaciones deterministas, build de producción y los E2E. Los conteos finales, con RS-MAT-008 ya implementado, están en la [adjudicación final del techo](04-quality/rs-mat-008-blind-ceiling-final-adjudication.md) y en la sección N de este informe |
 | `node scripts/validate-agent-workspace.mjs` | 6 skills, 236 archivos documentados, enlaces y JSON OK |
 | `node scripts/sync-master-spec.mjs --check` | 116 fuentes sincronizadas |
 | `git diff --check` | sin espacios en blanco erróneos |
@@ -13554,9 +13582,10 @@ ingenuas en las Templates de construcción y confirmar que ninguna decisión
 ## R. Estado de gobernanza
 
 ```text
-Mathematics Remediation Implementation   BLOCKED · 13 de 14 contratos DONE · 1 STOP
-Contract Conflict Adjudication           DONE · OQ-67 resuelta · OQ-66 abierta
-Independent Mathematics Re-Audit         PENDING · requiere decidir el techo de RS-MAT-008
+Mathematics Remediation Implementation   DONE · 14 de 14 contratos PASS
+Contract Conflict Adjudication           DONE · OQ-67 cerrada (D-S08-113)
+RS-MAT-008 Blind Ceiling Final Adjudication  DONE · OQ-66 cerrada (D-S08-116)
+Independent Mathematics Re-Audit         NEXT
 AI Mathematics Dept. Provisional Sign-Off PENDING
 Human Mathematics Department Review      DEFERRED · Final Delivery / Pre-Release
 Real-player pacing validation            PENDING
@@ -13574,7 +13603,9 @@ STAGE-08                                 IN_PROGRESS
 - **Enmiendas:** 2026-09-17, por la
   [adjudicación de conflictos de contrato](04-quality/mathematics-remediation-contract-conflict-adjudication.md):
   criterio 3 de RS-NEW-001 reformulado sobre planes válidos (D-S08-113); RS-MAT-008
-  detenido con su techo intacto y su punto de decisión abierto (D-S08-114)
+  detenido con su techo intacto y su punto de decisión abierto (D-S08-114). 2026-09-18,
+  por la [adjudicación final del techo](04-quality/rs-mat-008-blind-ceiling-final-adjudication.md): el techo de
+  `y5.stage-screen` pasa a `K ≤ 78`, el mínimo factible demostrado (D-S08-116)
 - **Gate que la consume:** `MATHEMATICS REMEDIATION IMPLEMENTATION`
 - **Gate que la verifica:** `Independent Mathematics Re-Audit`
 - **Base:** `main` en `9ea3896`; catálogo `grade-5-dev-2`; motor `10.0.0`;
@@ -13693,7 +13724,7 @@ vigente de carrera completa:
 | `y2.data-claim-review` | K ≤ 75; S ≤ 60 % |
 | `y2.course-project-survey` | K ≤ 60; S ≤ 35 % |
 | `y2.standings-claim` | K ≤ 65; S ≤ 35 % |
-| `y5.stage-screen` | K ≤ 70; S ≤ 40 % |
+| `y5.stage-screen` | K ≤ 78 —el mínimo factible demostrado, D-S08-116—; S ≤ 40 % |
 | `y5.course-project-final` | K ≤ 65; S ≤ 35 % |
 | `y5.next-step-options` | K ≤ 65; S ≤ 35 % |
 | `y4.represent-class` | abstención total nunca ≥ `efficient` |
@@ -14065,15 +14096,22 @@ contenido de 4.º y posteriores; catálogos de 4.º y 5.º.
 11. El detalle de cada opción puede decir el tamaño que queda en pantalla, pero no
     cuánto recorta de cada lado ni si un elemento protegido sobrevive.
 
-> **Nota de enmienda, 2026-09-17 (D-S08-114).** Este contrato está **detenido**.
-> La excepción estrecha del witness que resolvía su primera contradicción no
-> vuelve factible el resto: con seis opciones y esta escalera, «entera» es siempre
-> válida y nunca baja de `efficient` donde algún recorte vale, así que
-> `K = 75 + 25·w` y, con los puntos 7 y 9, el piso demostrado es **K = 78** contra
-> un techo de 70. Ningún criterio de este contrato se relajó; la decisión mínima
-> requerida está en la
-> [adjudicación de conflictos de contrato](04-quality/mathematics-remediation-contract-conflict-adjudication.md#d6-punto-de-decisión-mínimo)
-> y sigue abierta como pregunta 66.
+> **Enmienda, 2026-09-18 (D-S08-116).** El techo de este contrato pasa de
+> `K ≤ 70` a **`K ≤ 78`**, que es el **mínimo factible demostrado** y no una
+> relajación de conveniencia: «entera» no recorta nada, así que es válida en toda
+> variante y, donde algún recorte vale, la escalera la deja en `efficient`; por lo
+> tanto `K = 75 + 25·w`, y los puntos 7 y 9 fuerzan `w ≥ 1/10`, de donde
+> `K ≥ 1950 / 25 = 78`. La excepción estrecha del witness (D-S08-114) —sólo donde
+> ningún recorte es válido— se conserva. Todos los demás criterios siguen
+> vigentes y se cumplen. Prueba, catálogo testigo y mediciones en la
+> [adjudicación final del techo](04-quality/rs-mat-008-blind-ceiling-final-adjudication.md).
+>
+> Contexto: el techo original venía de la adjudicación de 2026-09-16; su
+> imposibilidad se descubrió en la
+> [implementación](04-quality/mathematics-remediation-implementation.md#stop-1-rs-mat-008-y5stage-screen)
+> (STOP, D-S08-105) y se acotó en la
+> [adjudicación de conflictos](04-quality/mathematics-remediation-contract-conflict-adjudication.md#d-oq-66-y5stage-screen)
+> (D-S08-114).
 
 **Comportamiento prohibido.** Jerga de relación de aspecto, formatos como 16:9 o
 vocabulario audiovisual (invariante `LOCKED`); hacer válido estirar; cambiar el
@@ -14084,7 +14122,8 @@ cluster `egreso`; desempates ocultos.
 schema, `project`, validez, `tierOf`, generador, gates, `narrate`, `present`,
 feedback.
 
-**Criterios de aceptación.** Puntos 1–11 y los techos de la sección 3.
+**Criterios de aceptación.** Puntos 1–11 y los techos de la sección 3, con el
+techo `K ≤ 78` de la enmienda D-S08-116.
 
 **Tests requeridos.** En `tests/unit/grade-5-screen-yearbook-next.test.ts`:
 validez exacta con casos límite construidos; escalera por variante contra un
@@ -14733,6 +14772,215 @@ Estilo y Promedio no son inputs de `scoreRun`; sus deltas directos son 0. Los te
 - Los factores 1,00/1,08/1,15 siguen candidatos.
 - La política final, el desempate, el inventario y la configuración de evento siguen abiertos.
 - La barrida prueba invariantes de ingeniería, no equidad observada con estudiantes.
+
+---
+
+# FILE: 04-quality/rs-mat-008-blind-ceiling-final-adjudication.md
+
+# Adjudicación final del techo de estrategia ciega de `y5.stage-screen`
+
+- **Estado:** `EXECUTED` — 2026-09-18, sobre `main` en `3d88c69`
+- **Gate:** `RS-MAT-008 — BLIND CEILING FINAL ADJUDICATION`
+- **Rol:** Chair / Head of Mathematics Department provisional
+- **Entrada:** la pregunta abierta 66, dejada por la
+  [adjudicación de conflictos de contrato](04-quality/mathematics-remediation-contract-conflict-adjudication.md#d-oq-66-y5stage-screen)
+  (D-S08-114)
+- **Veredicto:** `RS-MAT-008 BLIND CEILING FINAL ADJUDICATION — RESOLVED`
+
+## A. Veredicto
+
+El techo `K ≤ 70` era **estructuralmente imposible**. El menor techo factible,
+demostrado y alcanzado, es:
+
+```text
+K_min_feasible = 1950 / 25 = 78,0
+```
+
+`y5.stage-screen` queda implementada y aprobada con ese techo y con todos los
+demás criterios de RS-MAT-008 intactos. La remediación matemática cierra en
+**14 / 14 contratos PASS**.
+
+Nada se movió para bajar K: ni la escalera 100 / 75 / 40 / 10, ni FairScore, ni
+la validez geométrica, ni el objetivo de la Template.
+
+## B. Baseline
+
+`main` en `3d88c69`, worktree limpio. Engine `10.0.0`, action log `7`, snapshot
+`8`, ruleset de carrera `1.0.0-full-career`, score
+`fair-score-dev-2@2.0.0-post-tg1-candidate`. Al empezar: contenido
+`5.2.0-grade-5`, catálogo `grade-5-dev-3`, `y5.stage-screen` con R 40,8 · K 75,0
+· S 52 %, un solo elemento protegido y un `it.todo` en la auditoría de estrategia
+ciega. 13 de 14 contratos en PASS.
+
+## C. El problema, formalizado
+
+**Universo de candidatas.** Cada dirección del generador produce una variante con
+pantalla, imagen, los dos elementos protegidos y su aire. Una variante es
+**admisible** si pasa todos los gates por variante de RS-MAT-008: validez exacta,
+óptima única, estirar inválida, imagen más alta de forma que la pantalla, imagen
+que entra sin agrandar, punto 10, IM-1 y el witness —estricto, o con la excepción
+estrecha de D-S08-114 donde ningún recorte es válido—.
+
+**Selección.** El catálogo es una selección binaria `x_v ∈ {0,1}` con
+`Σ x_v = N`. `N = 25` por la convención del pipeline: 24 aprobaciones generadas
+más la variante autorada `reference`.
+
+**Objetivo.** Para cada respuesta constante `a` de las seis:
+
+```text
+score_a = Σ_v x_v · score(v, a)      con  100 / 75 / 40 / 10
+K       = max_a score_a / N
+```
+
+Se minimiza `K` sujeto a: punto 7 (óptima en ≥ 3 opciones, ninguna > 40 %),
+punto 8 (ninguna opción salvo estirar con nivel constante), punto 9 (la heurística
+del lado con más aire óptima en ≤ 50 %), punto 10, IM-1, óptima única, `S ≤ 40 %`
+y aritmética exacta. Todo en enteros: se minimiza el numerador `K_num`, y
+`K = K_num / 25`.
+
+## D. Método exacto
+
+No hizo falta un solver externo, y no se agregó ninguna dependencia: el problema
+se reduce **exactamente** a un conteo, y la reducción es la prueba.
+
+1. **Barrido del universo con los gates reales del repositorio.** Se enumeraron
+   las combinaciones de pantalla, imagen y aire sobre las siete pantallas del
+   diseño y se filtraron con `screenGates`, la función que el pipeline usa para
+   aprobar. Resultado: **116.045 variantes admisibles**, y en todas ellas el nivel
+   de «entera» es `optimal` (64.846) o `efficient` (51.199). **Nunca `functional`,
+   nunca `invalid`.**
+2. **Reducción.** Como «entera» no recorta nada, es válida siempre; y donde algún
+   recorte es válido, ese recorte llena la pantalla y es la óptima, mientras
+   «entera» y «sin agrandar» se reparten `efficient` y `functional` —«entera»
+   nunca usa menos pantalla que «sin agrandar»—. Entonces, llamando `w` a la
+   proporción de variantes sin recorte válido:
+
+   ```text
+   score_entera / N = 100·w + 75·(1 − w) = 75 + 25·w
+   ```
+
+   y `K ≥ 75 + 25·w` para cualquier catálogo.
+3. **Enumeración exhaustiva de los repartos.** Con `N = 25`, se recorrieron
+   **todos** los vectores enteros `(entera, centro, arriba, abajo)` que suman 25
+   y cumplen los puntos 7, 8 y 9. El mínimo de `75 + 25·w` sobre ese conjunto es
+   **78,0**, y se alcanza con `entera = 3`.
+
+La búsqueda es determinista y no usa azar: es una enumeración completa, no una
+heurística.
+
+## E. Prueba de la cota inferior
+
+`K < 78` es imposible:
+
+- **`w ≥ 1/25`.** El punto 8 prohíbe que «entera» tenga el mismo nivel en todas
+  las variantes, y sus dos únicos niveles posibles son `optimal` (sin recorte
+  válido) y `efficient` (con recorte válido). Hacen falta las dos clases.
+- **`w ≥ 1/10`.** La heurística «recortar todo del lado con más aire» acierta
+  **exactamente** en las variantes cuyo único recorte válido es de un lado: si
+  recortar todo de un lado entra en el aire de ese lado y no en el del otro, ese
+  lado es el que más aire tiene. El punto 9 acota esas variantes al 50 %; el punto
+  7 acota las de recorte por el medio al 40 %; y «entera» es óptima en el resto,
+  así que `w ≥ 1 − 0,5 − 0,4 = 0,1`.
+- Con `N = 25`, `w ≥ 0,1` obliga a `entera ≥ 3` y por lo tanto
+
+  ```text
+  K ≥ (3·100 + 22·75) / 25 = 1950 / 25 = 78,0
+  ```
+
+- Y `K` es un **máximo** sobre respuestas constantes, así que `K ≥ score_entera`
+  sin importar cómo queden las otras cinco.
+
+Para `N = 24` el mismo argumento da `K ≥ 78,125`, peor: 25 es el tamaño que
+minimiza el techo.
+
+## F. Catálogo testigo
+
+`K = 78` es alcanzable, y lo alcanza el catálogo publicado —no un modelo
+paralelo—. El reparto sale de `SCREEN_ROLES`, un ciclo de 25 papeles que el gate
+de dirección comprueba, así que el catálogo es reproducible byte a byte desde las
+direcciones:
+
+| Papel | Variantes | Óptima |
+|---|---|---|
+| `aire-parejo` | 10 | recortar mitad y mitad |
+| `aire-arriba` | 6 | recortar sólo de arriba |
+| `aire-abajo` | 6 | recortar sólo de abajo |
+| `sin-aire` | 2 | la imagen entera |
+| `sin-aire-grande` | 1 | la imagen entera, con «sin agrandar» aceptable |
+
+## G. Métricas del catálogo publicado (`grade-5-dev-4`)
+
+| Medición | Valor | Criterio |
+|---|---|---|
+| R | 39,8 | — |
+| **K** | **78,0** (numerador 1950 / 25) | **= techo probado** ✓ |
+| S | 40,0 % | ≤ 40 % ✓ |
+| Óptima por opción | centro 10 · arriba 6 · abajo 6 · entera 3 | ≥ 3 opciones, ninguna > 40 % ✓ |
+| Nivel de «entera» | `efficient` 22 · `optimal` 3 | no constante ✓ |
+| Nivel de «sin agrandar» | `functional` 24 · `efficient` 1 | no constante ✓ |
+| Nivel de los tres recortes | óptima o inválida, según la variante | no constantes ✓ |
+| Nivel de «estirar» | `invalid` 25 | única constante permitida ✓ |
+| Heurística del lado con más aire | óptima en 12 / 25 = 48 % | ≤ 50 % ✓ |
+| Uso de «entera» | de 69,5 % a 86,5 %; 0 dentro de (70 %, 80 %) | punto 10 ✓ |
+| Recortes válidos por variante | 0 → 3 · 1 → 22 · ≥ 2 → 0 | óptima única ✓ |
+| Niveles alcanzables | o 25 · e 23 · f 24 · i 25 | witness ✓ |
+| IM-1 | 25 / 25 | ✓ |
+
+Las tres variantes sin recorte válido son las únicas que usan la excepción de
+witness, y cada una pierde **un solo** nivel intermedio.
+
+## H. Decisión
+
+```text
+OQ-66 — CERRADA
+
+1. El techo K ≤ 70 de la sección 3 era imposible bajo la matemática LOCKED de
+   y5.stage-screen y la escalera 100/75/40/10: «entera» es siempre válida y
+   nunca baja de `efficient` donde algún recorte vale.
+
+2. La excepción estrecha del witness —sólo donde ningún recorte es válido— se
+   conserva: es necesaria y suficiente para la primera contradicción, y es
+   coherente con D-S08-099, que prohíbe fabricar crédito parcial donde el
+   espacio matemático no tiene ese estado.
+
+3. El techo de esta Template pasa a ser el mínimo factible demostrado:
+   K ≤ 78 sobre 25 variantes, escrito en enteros como K_num ≤ 1950.
+
+4. No cambian la escalera, FairScore, la validez geométrica, el objetivo, la
+   banda STRETCH, el pacing QUICK, el cluster `egreso` ni el motor
+   `decision-card`.
+
+5. El resto de los criterios de RS-MAT-008 sigue vigente y se cumple:
+   S ≤ 40 %, reparto de la óptima, tope por opción, niveles no constantes,
+   heurística de lado, punto 10, punto 11, IM-1 y óptima única.
+```
+
+## I. Lo que no cambia
+
+D-S08-099 queda intacto —no se fabricó ningún nivel—; OQ-67 y su enmienda del
+criterio 3 de RS-NEW-001 no se tocaron; los doce contratos restantes no se
+reabrieron; `g7.bus-timing` (D-S08-111) sigue sin remediar, como entrada del
+re-audit; y el hardening aceptado en D-S08-112 sigue en su lugar.
+
+## J. Autorización de implementación
+
+```text
+WP-SCREEN — EJECUTADO
+```
+
+`y5.stage-screen` se reescribió con los dos elementos protegidos, las seis formas,
+la geometría exacta en enteros y la generación dirigida por papel; el catálogo de
+5.º se republicó como `grade-5-dev-4`; el `it.todo` se reemplazó por la afirmación
+real del techo.
+
+## K. Siguiente gate
+
+```text
+Independent Mathematics Re-Audit — NEXT
+```
+
+Con la remediación completa: 14 / 14 contratos, la tabla R/K/S, el inventario de
+feedback y esta adjudicación como evidencia a re-derivar de forma independiente.
 
 ---
 
@@ -15513,9 +15761,10 @@ STAGE-08                                      IN_PROGRESS · CURRENT
     ├── AI MATHEMATICS DEPARTMENT (provisional)  IN_PROGRESS
     │   ├── Pre-Review                           DONE · 13 hallazgos, 0 bloqueantes
     │   ├── Independent Adjudication             DONE · REMEDIATION REQUIRED
-    │   ├── Mathematics Remediation              BLOCKED · 13/14 contratos · 1 STOP
-    │   ├── Contract Conflict Adjudication       DONE · OQ-67 cerrada · OQ-66 abierta
-    │   ├── Independent Re-Audit                 PENDING · requiere decidir OQ-66
+    │   ├── Mathematics Remediation              DONE · 14/14 contratos PASS
+    │   ├── Contract Conflict Adjudication       DONE · OQ-67 cerrada
+    │   ├── RS-MAT-008 Blind Ceiling Adjudication DONE · OQ-66 cerrada
+    │   ├── Independent Re-Audit                 NEXT
     │   └── Provisional Sign-Off                 PENDING
     ├── Revisión del Depto. de Matemática      DEFERRED · a Final Delivery / Pre-Release
     ├── Sign-off manual de la rueda            PENDING · humana
@@ -15556,8 +15805,8 @@ existe y el servidor la recomputa, pero autorar una oportunidad competitiva
 exigiría inventar acciones de jugador que ninguna Template tiene. El contenido
 de 1.º a 5.º está en estado `draft`: faltan la remediación matemática y su
 sign-off provisional de IA, el sign-off manual de la rueda y el pacing empírico,
-gates de producción de STAGE-08; la remediación quedó bloqueada en un criterio
-que requiere decisión (D-S08-104 y D-S08-114). La revisión del Departamento de Matemática
+gates de producción de STAGE-08. La remediación matemática cerró completa el 18 de
+septiembre, con sus catorce contratos en PASS. La revisión del Departamento de Matemática
 humano no se eliminó: está diferida a la entrega final (D-S08-095).
 
 ## Baseline autoritativa
@@ -15572,8 +15821,8 @@ por etapa fuera del presupuesto ordinario y de FairScore.
   `7.º → 2.º`: contenido `2.2.0-grade-2`, catálogo `grade-2-dev-3`.
   `7.º → 3.º`: contenido `3.2.0-grade-3`, catálogo `grade-3-dev-3`.
   `7.º → 4.º`: contenido `4.2.0-grade-4`, catálogo `grade-4-dev-3`.
-  `7.º → 5.º`: rulesets `5.2.0-grade-5-partial` y `5.2.0-grade-5-demo`, contenido
-  `5.2.0-grade-5`, catálogo `grade-5-dev-3`. Carrera completa: ruleset
+  `7.º → 5.º`: rulesets `5.3.0-grade-5-partial` y `5.3.0-grade-5-demo`, contenido
+  `5.3.0-grade-5`, catálogo `grade-5-dev-4`. Carrera completa: ruleset
   `1.0.0-full-career` sobre ese mismo contenido y catálogo. Score
   `fair-score-dev-2@2.0.0-post-tg1-candidate` sin cambios. Los catálogos y
   contenidos subieron con la remediación matemática (D-S08-109).
@@ -15645,8 +15894,16 @@ y sin cambiar contenido, así que **RS-NEW-001 quedó PASS**. No cerró la 66: e
 prototipo completo de la excepción de witness autorizada resuelve la contradicción
 que la motivó, pero deja ver otra —«entera» nunca baja de `efficient` donde algún
 recorte vale, así que `K = 75 + 25·w` y el piso demostrado es 78 contra un techo de
-70—, de modo que RS-MAT-008 sigue detenido y el techo sigue sin relajarse
-(D-S08-113 y D-S08-114). FairScore, escalera, dificultad,
+70—, de modo que RS-MAT-008 siguió detenido sin relajar el techo
+(D-S08-113 y D-S08-114).
+
+La [adjudicación final del techo](04-quality/rs-mat-008-blind-ceiling-final-adjudication.md) la cerró el 18 de septiembre:
+el techo de la pantalla del acto pasó a ser ese mínimo probado, `K ≤ 78`, con la
+excepción estrecha del witness conservada y sin tocar la escalera, FairScore ni la
+validez geométrica. `y5.stage-screen` se reescribió con los dos elementos
+protegidos y el catálogo de 5.º se republicó como `grade-5-dev-4`. Medido: K 78,0
+· S 40 % · óptima repartida en cuatro formas · heurística de lado 48 %
+(D-S08-116). **La remediación matemática quedó completa: 14 de 14 contratos.** FairScore, escalera, dificultad,
 motor, action log, snapshot y ruleset de carrera no cambiaron; los catálogos se
 republicaron una sola vez (D-S08-109).
 
@@ -15665,12 +15922,13 @@ INTEGRACIÓN DE CARRERA COMPLETA — DONE
 AI Mathematics Department Pre-Review — DONE
 AI Mathematics Department Independent Adjudication — DONE
 
-Mathematics Remediation Implementation — BLOCKED
-  13 de 14 contratos DONE
-  STOP 1: RS-MAT-008 (y5.stage-screen) — techo K inalcanzable, decisión requerida
+Mathematics Remediation Implementation — DONE
+  14 de 14 contratos PASS
+  STOP 1: RS-MAT-008 — RESUELTO: techo probado K ≤ 78 (D-S08-114, D-S08-116)
   STOP 2: RS-NEW-001 criterio 3 — RESUELTO por enmienda (D-S08-113)
 Contract Conflict Adjudication — DONE
-Independent Mathematics Re-Audit — PENDING
+RS-MAT-008 Blind Ceiling Final Adjudication — DONE
+Independent Mathematics Re-Audit — NEXT
 AI Mathematics Department Provisional Sign-Off — PENDING
 
 Human Mathematics Department Review
@@ -15679,9 +15937,8 @@ Human Mathematics Department Review
 Real-player pacing validation — PENDING
 
 Next:
-DECIDIR el techo de estrategia ciega de y5.stage-screen (pregunta abierta 66),
-completar RS-MAT-008 con esa decisión y recién entonces
-INDEPENDENT MATHEMATICS RE-AUDIT
+INDEPENDENT MATHEMATICS RE-AUDIT sobre la remediación completa,
+re-derivando la evidencia de forma independiente
 ```
 
 La [auditoría de implementación de carrera completa](04-quality/full-career-implementation-audit.md)
@@ -15720,13 +15977,21 @@ Hasta eso, el contenido permanece `draft` y la edición `official: false`.
 
 ## Última reconciliación
 
+18 de septiembre de 2026: adjudicación final del techo de estrategia ciega de
+`y5.stage-screen` y cierre de la remediación matemática en **14 de 14 contratos**.
+El techo `K ≤ 70` era imposible; el mínimo factible, probado por enumeración
+exhaustiva y alcanzado por el catálogo publicado, es `K ≤ 78`. La Template se
+reescribió con dos elementos protegidos, seis formas y geometría exacta en
+enteros, y 5.º se republicó como `grade-5-dev-4` / `5.3.0-grade-5` (D-S08-116).
+Sin push.
+
 17 de septiembre de 2026, más tarde: adjudicación de los dos conflictos de
 contrato. La pregunta 67 se cerró reformulando el criterio 3 de RS-NEW-001 sobre
 planes válidos —el catálogo vigente ya lo cumple— y RS-NEW-001 quedó PASS. La
-pregunta 66 no se cerró: el prototipo de la excepción de witness autorizada
-—2.826.450 direcciones barridas— probó que resuelve la contradicción del witness
-pero deja el techo `K ≤ 70` inalcanzable, con piso demostrado de 78. La remediación
-queda en 13 de 14 contratos (D-S08-113, D-S08-114). Sin push.
+pregunta 66 no se cerró ese día: el prototipo de la excepción de witness
+autorizada —2.826.450 direcciones barridas— probó que resuelve la contradicción del
+witness pero deja el techo `K ≤ 70` inalcanzable, con piso demostrado de 78
+(D-S08-113, D-S08-114). Sin push.
 
 17 de septiembre de 2026: implementación de la remediación matemática —doce de
 catorce contratos, auditoría permanente de estrategia ciega, inventario de
@@ -15854,10 +16119,11 @@ Si el roadmap y el código difieren, **el código gana** y el roadmap se corrige
 - Fases de validación externa y congelamiento: [ciclo de entrega real](00-product/real-delivery-lifecycle.md).
 - Qué se construye por capas de alcance: [alcance y roadmap](00-product/scope-and-roadmap.md) y [backlog](06-delivery/mvp-backlog.md).
 
-**Última reconciliación:** 17 de septiembre de 2026, adjudicación de los dos
-conflictos de contrato de la remediación: la pregunta 67 se cerró por enmienda y la
-66 sigue abierta, así que la remediación queda en trece de catorce contratos
-(D-S08-113 y D-S08-114). Antes, ese mismo día, la implementación de la remediación
+**Última reconciliación:** 18 de septiembre de 2026, adjudicación final del techo
+de estrategia ciega de `y5.stage-screen` —`K ≤ 78`, el mínimo factible demostrado—
+e implementación de WP-SCREEN: la remediación matemática cierra en **catorce de
+catorce contratos** (D-S08-116). Antecedente del 17 de septiembre: adjudicación de
+los dos conflictos de contrato (D-S08-113 y D-S08-114). Antes, ese mismo día, la implementación de la remediación
 matemática con veredicto `BLOCKED` (D-S08-104 a D-S08-106). Antecedente del 16 de
 septiembre: adjudicación independiente del Departamento de Matemática provisional
 (IA) con remediación requerida y revisión humana de Matemática diferida a la
@@ -15907,7 +16173,7 @@ Tabla de navegación. Los contratos de cada etapa, más abajo, son la autoridad.
 | [STAGE-06](#stage-06-scorepolicy-competitiva) | ScorePolicy competitiva | `DONE` | STAGE-05 | — |
 | [GATE-TG1](#gate-tg1-teacher-gate-1) | **Teacher Gate 1** | `PASSED_WITH_REQUIRED_ADJUSTMENTS` | STAGE-04, STAGE-06 | externo |
 | [STAGE-07](#stage-07-invariante-de-egreso-fail-forward-y-recuperaciones) | Egreso, fail-forward y recuperaciones | `DONE` | GATE-TG1 | — |
-| [STAGE-08](#stage-08-contenido-incremental-de-1º-a-5º) | Contenido incremental 1.º → 5.º | `IN_PROGRESS` · **actual** · implementación e integración DONE · remediación matemática BLOCKED: 13/14, falta decidir el techo de y5.stage-screen | STAGE-07 | auditoría tras 1.º · gates matemáticos provisionales |
+| [STAGE-08](#stage-08-contenido-incremental-de-1º-a-5º) | Contenido incremental 1.º → 5.º | `IN_PROGRESS` · **actual** · implementación e integración DONE · remediación matemática DONE 14/14 · re-auditoría independiente NEXT | STAGE-07 | auditoría tras 1.º · gates matemáticos provisionales |
 | [STAGE-09](#stage-09-fair-mode-servidor-autoritativo-y-ranking) | Fair mode, servidor autoritativo y ranking | `NOT_STARTED` | STAGE-06, STAGE-08 | — |
 | [GATE-TG2](#gate-tg2-teacher-gate-2) | **Teacher Gate 2** | `TEACHER_GATE` | STAGE-09 | externo |
 | [FREEZE](#freeze-congelamiento-de-competencia) | Congelamiento de competencia | `NOT_STARTED` | GATE-TG2 | — |
@@ -16620,7 +16886,7 @@ a TG1. El techo de un Repaso por etapa sigue siendo estructura de ADR-024.
 
 - **Estado:** `IN_PROGRESS` — **etapa actual; Phase 0 DONE / Phase 1 DONE /
   audit post-G1 PASSED / Phase 2 e integración de carrera completa DONE; gates
-  matemáticos provisionales en curso: remediación BLOCKED, 13 de 14 contratos**
+  matemáticos provisionales en curso: remediación DONE, 14 de 14 contratos**
 - **Depende de:** STAGE-07 (`DONE`)
 - **Desbloquea:** STAGE-09
 
@@ -16761,7 +17027,7 @@ cerrar la integración de carrera completa):
 - [x] Epílogo de carrera real con saliencia determinista, datos ausentes no dibujados y Hitos display-only distinguibles.
 - [x] Accesibilidad teclado/tap, móvil, reduced motion, replay/snapshot/reanudación y E2E por año. — Más el E2E de carrera completa a 320 px.
 - [ ] Auditoría de composición completa, cobertura/exploits y playtests de pacing según [validación de contenido](04-quality/content-validation.md). — La [auditoría de implementación](04-quality/full-career-implementation-audit.md) está ejecutada y los exploits barridos; **los playtests de pacing con jugadores reales no**.
-- [ ] Revisión matemática, documentación por año y cero sistemas fundamentales duplicados. — Documentación por año completa y sin sistemas duplicados. El gate provisional es el **AI Mathematics Department** (D-S08-095): [pre-revisión](04-quality/mathematics-department-pre-review.md) y [adjudicación independiente](04-quality/mathematics-department-ai-adjudication.md) ejecutadas, con `REMEDIATION REQUIRED`; la [implementación de la remediación](04-quality/mathematics-remediation-implementation.md) quedó `BLOCKED` y la [adjudicación de sus conflictos](04-quality/mathematics-remediation-contract-conflict-adjudication.md) la dejó en trece de catorce contratos de la [especificación](04-quality/mathematics-remediation-spec.md); falta decidir el techo de estrategia ciega de `y5.stage-screen`, la re-auditoría independiente y el sign-off provisional. **La revisión del Departamento de Matemática humano no se reemplaza: se difiere a Final Delivery / Pre-Release Acceptance.**
+- [ ] Revisión matemática, documentación por año y cero sistemas fundamentales duplicados. — Documentación por año completa y sin sistemas duplicados. El gate provisional es el **AI Mathematics Department** (D-S08-095): [pre-revisión](04-quality/mathematics-department-pre-review.md) y [adjudicación independiente](04-quality/mathematics-department-ai-adjudication.md) ejecutadas, con `REMEDIATION REQUIRED`; la [implementación de la remediación](04-quality/mathematics-remediation-implementation.md) cerró en `DONE` con los catorce contratos de la [especificación](04-quality/mathematics-remediation-spec.md), después de dos adjudicaciones de contrato —la [de sus conflictos](04-quality/mathematics-remediation-contract-conflict-adjudication.md) y la [del techo de la pantalla del acto](04-quality/rs-mat-008-blind-ceiling-final-adjudication.md)—; faltan la re-auditoría independiente y el sign-off provisional. **La revisión del Departamento de Matemática humano no se reemplaza: se difiere a Final Delivery / Pre-Release Acceptance.**
 
 **Lectura requerida.** [Matriz](01-game-design/full-career-content-matrix.md) ·
 [diseño G1](01-game-design/grade-1-template-design.md) ·
@@ -16774,11 +17040,10 @@ cerrar la integración de carrera completa):
 sustituyen estos gates. Objetivos editoriales y calibraciones versionadas conservan
 la madurez del [registro](07-reference/decision-register.md).
 
-**Siguiente tarea.** Decidir el techo de estrategia ciega de `y5.stage-screen`
-—pregunta abierta 66, con las tres salidas que mide la
-[adjudicación de conflictos de contrato](04-quality/mathematics-remediation-contract-conflict-adjudication.md)— y completar RS-MAT-008
-con esa decisión. Los otros trece contratos están implementados y verificados, sin
-recalibrar FairScore.
+**Siguiente tarea.** `INDEPENDENT MATHEMATICS RE-AUDIT` sobre la remediación
+completa: los catorce contratos están implementados y verificados, sin recalibrar
+FairScore, y el re-audit tiene que re-derivar esa evidencia de forma independiente,
+incluido el hallazgo abierto de `g7.bus-timing` (D-S08-111).
 Después, Independent Mathematics Re-Audit y AI Mathematics Department Provisional
 Sign-Off. Siguen además los gates humanos de STAGE-08 que no se difirieron:
 sign-off manual de la rueda del Día del Estudiante y playtests de pacing con
@@ -16794,8 +17059,8 @@ juego, se recompone en servidor y pasa accesibilidad a 320 px, con la
 en `PASS WITH REQUIRED HARDENING — RESOLVED`. **El pacing sigue sin medirse con
 jugadores reales**, y la [adjudicación matemática](04-quality/mathematics-department-ai-adjudication.md)
 exige remediación antes del sign-off provisional, así que la etapa no cierra: la
-implementación está completa; la remediación matemática quedó bloqueada en un
-criterio —el techo de `y5.stage-screen`— y la validación empírica no empezó.
+implementación y la remediación matemática están completas; faltan la re-auditoría
+independiente, el sign-off provisional y la validación empírica de pacing.
 
 ---
 
@@ -19772,6 +20037,7 @@ contenido, catálogos ni tests.
 | D-S08-113 | **Cierra la pregunta 67.** El criterio 3 de RS-NEW-001 se reformula sobre planes **matemáticamente válidos**: las tres disposiciones aparecen en planes válidos, «recortar» alcanza al menos `efficient` y los óptimos siguen usando mantener y repartir. La escalera no cambia y no se exige «recortar» óptimo, que es imposible por definición de `optimal`. El catálogo `grade-5-dev-3` ya lo cumple en 25 de 25 variantes y en las tres formas: sin cambios de contenido, generador, catálogo ni versión | ACCEPTED · enmienda de contrato | [../04-quality/mathematics-remediation-contract-conflict-adjudication.md#e-oq-67-y5course-project-final) |
 | D-S08-114 | **La pregunta 66 no se cierra.** La excepción estrecha del witness para `y5.stage-screen` —autorizada como opción (a)— resuelve la contradicción del witness pero **no** vuelve factible RS-MAT-008: «entera» es siempre válida y nunca baja de `efficient` donde algún recorte vale, así que `K = 75 + 25·w`, y con los puntos 7 y 9 el piso es **K = 78** contra un techo de 70. Prototipo: 2.826.450 direcciones barridas con aritmética exacta, 68.370 admisibles, «entera» `functional` en 0. Un catálogo dirigido cumple todos los demás criterios con K 80 y S 32 %. RS-MAT-008 sigue BLOCKED; no se relaja el techo ni se adopta la opción (b) sin decisión del Product Owner | BLOCKED · requiere decisión | [../04-quality/mathematics-remediation-contract-conflict-adjudication.md#d-oq-66-y5stage-screen); pregunta 66 |
 | D-S08-115 | Hallazgo de ejecución, corregido dentro del gate: la cobertura total del repositorio corría al filo del umbral de 85 % y **cambiaba de corrida a corrida**, porque las ramas de rechazo del fixture de desarrollo `dev.bus-departure` sólo las tocaban los tests de propiedad, que sortean su semilla en cada ejecución (84,99 % en una corrida, 85,01 % en la anterior). Se agregó un test determinista de esas ramas y de su escalera en `tests/unit/content-model.test.ts`; la cobertura queda en 85,09 % y **el umbral no se tocó** | ACCEPTED · defecto | [../04-quality/mathematics-remediation-contract-conflict-adjudication.md#i-hallazgo-de-la-ejecución) |
+| D-S08-116 | **Cierra la pregunta 66.** El techo de estrategia ciega de `y5.stage-screen` pasa de `K ≤ 70` —imposible— a **`K ≤ 78`**, el mínimo factible demostrado: «entera» no recorta nada, así que es válida siempre y, donde algún recorte vale, la escalera la deja en `efficient`, de modo que `K = 75 + 25·w`; el punto 9 acota los recortes de un lado al 50 % y el punto 7 el del medio al 40 %, así que `w ≥ 1/10` y `K ≥ 1950/25 = 78`. Barrido con los gates reales: 116.045 variantes admisibles, «entera» `functional` en 0. El catálogo publicado toca el piso: K 78,0 · S 40 % · óptima 10/6/6/3 · heurística 48 % · 3 variantes exentas del witness. Se conserva la excepción estrecha de D-S08-114 y no cambian escalera, FairScore, validez ni objetivo | ACCEPTED · enmienda de contrato | [../04-quality/rs-mat-008-blind-ceiling-final-adjudication.md) |
 
 La integración de TG1 permanece histórica en [su acta y trazabilidad](06-delivery/teacher-gate-1/12-integracion-post-gate.md).
 Siguen pendientes la oficialización/freeze, validación empírica, autoría ejecutable,
@@ -20354,12 +20620,12 @@ ADR-025 y STOP post-G1 preservado. No se declara runtime nuevo.
 
 ## Gobernanza matemática provisional
 
-Abiertas por la [adjudicación del Departamento de Matemática provisional](04-quality/mathematics-department-ai-adjudication.md) y por el diferimiento de la revisión humana (D-S08-095). Las 63–65 no bloquean la remediación. La 67 se cerró con la enmienda del criterio 3; la 66 sigue abierta y es lo único que bloquea el cierre de la remediación y el re-audit.
+Abiertas por la [adjudicación del Departamento de Matemática provisional](04-quality/mathematics-department-ai-adjudication.md) y por el diferimiento de la revisión humana (D-S08-095). Las 63–65 no bloquean la remediación. La 66 y la 67 se cerraron el 17 y el 18 de septiembre con sus enmiendas de contrato, y con ellas cerró la remediación matemática completa.
 
 63. ¿Cómo se ejecuta la revisión del Departamento de Matemática humano diferida a Final Delivery / Pre-Release Acceptance respecto de Teacher Gate 2: es parte de TG2, lo precede o es un gate propio? *Gate: planificar la aceptación de pre-release.* Mientras tanto, ningún documento la da por hecha ni la fusiona con TG2.
 64. ¿Los sign-offs manuales explícitos que la [guía de autoría](01-game-design/content-authoring-guide.md#profundidad-de-variantes) exige para doce Templates —incluida la rueda del Día del Estudiante, que hoy figura como gate humano de STAGE-08— se ejecutan también en la revisión humana diferida, o conservan su momento actual? *Gate: cierre de STAGE-08.* La decisión D-S08-095 no los difirió.
 65. Las banderas de riesgo aceptado de la adjudicación —cobertura de probabilidad y funciones, memorización dentro de una edición Fair, piso de la opción segura del mural y de la escalera asimétrica— requieren juicio humano. *Gate: revisión humana diferida.* Ver [sección N](04-quality/mathematics-department-ai-adjudication.md#n-riesgos-aceptados-y-banderas-para-la-revisión-humana-final).
-66. **RS-MAT-008 · `y5.stage-screen`: ¿con qué techo de estrategia ciega se mide la pantalla del acto?** La [adjudicación de conflictos de contrato](04-quality/mathematics-remediation-contract-conflict-adjudication.md#d-oq-66-y5stage-screen) resolvió la contradicción del witness —se autoriza la excepción estrecha de la opción (a)— y **descubrió que no alcanza**: «entera» es siempre válida y nunca baja de `efficient` donde algún recorte vale, así que `K = 75 + 25·w` y, con los puntos 7 y 9, el piso demostrado es **K = 78** contra un techo de 70 (D-S08-114). Las tres salidas posibles son: fijar el techo de esta Template en su piso estructural —recomendado—, ampliar la excepción del witness a cualquier variante que omita un nivel intermedio, o cambiar el conjunto de opciones, que el contrato prohíbe. *Gate: bloquea RS-MAT-008 y, con él, el Independent Mathematics Re-Audit.*
+66. ~~**RS-MAT-008 · `y5.stage-screen`: ¿con qué techo de estrategia ciega se mide la pantalla del acto?**~~ **Cerrada el 2026-09-18 (D-S08-116):** con el mínimo factible demostrado, `K ≤ 78` sobre veinticinco variantes. «Entera» es válida en toda variante y nunca baja de `efficient` donde algún recorte vale, así que `K = 75 + 25·w`, y los puntos 7 y 9 obligan a `w ≥ 1/10`. El catálogo publicado toca ese piso exacto. Ver la [adjudicación final del techo](04-quality/rs-mat-008-blind-ceiling-final-adjudication.md).
 67. ~~**STOP de RS-NEW-001, criterio 3**~~ **Cerrada el 2026-09-17 (D-S08-113):** el criterio se reformuló sobre planes matemáticamente válidos —las tres disposiciones aparecen en planes válidos, «recortar» alcanza `efficient` y los óptimos siguen usando mantener y repartir—, sin tocar la escalera. El catálogo vigente ya lo cumple en 25 de 25 variantes. Ver la [adjudicación](04-quality/mathematics-remediation-contract-conflict-adjudication.md#e-oq-67-y5course-project-final).
 
 ## Diferidas a propósito
@@ -20665,6 +20931,7 @@ no sustituyen ni se presentan como playtest real con estudiantes.
 - [x] Departamento de Matemática provisional (IA): pre-revisión, adjudicación independiente con tres revisores y Chair, y especificación de remediación; revisión humana diferida a la entrega final, sin presentarla como hecha.
 - [x] Implementación de la remediación matemática documentada con veredicto `BLOCKED`, evidencia por contrato, inventario de feedback y los dos STOP como puntos de decisión abiertos, sin presentar re-auditoría ni sign-off como hechos.
 - [x] Adjudicación de los conflictos de contrato: qué enmienda se probó factible, cuál no, y qué decisión queda abierta, sin relajar ningún techo en silencio.
+- [x] Techo de estrategia ciega de la pantalla del acto: el mínimo factible, probado y alcanzado, con la remediación matemática cerrada en catorce contratos.
 
 ## Operación
 - [x] Runbook de feria.
@@ -20853,6 +21120,7 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 - `mathematics-department-ai-reviewer-c.md`: opinión independiente y congelada del Revisor C, sobre validez de evaluación y diseño de juegos educativos.
 - `mathematics-department-ai-adjudication.md`: adjudicación del Chair sobre MAT-001…MAT-013 y los hallazgos nuevos, con gobernanza, evidencia y banderas para la revisión humana final.
 - `mathematics-remediation-spec.md`: contrato canónico de la remediación matemática, con criterios de aceptación, tests, mediciones y superficie de versión por hallazgo.
+- `rs-mat-008-blind-ceiling-final-adjudication.md`: prueba del menor techo de estrategia ciega factible para la pantalla del acto, con el catálogo testigo que lo alcanza y la enmienda que cierra la remediación.
 - `mathematics-remediation-contract-conflict-adjudication.md`: adjudicación de los dos conflictos internos del contrato de remediación, con el prototipo que mide la factibilidad, la enmienda del criterio 3 y el punto de decisión que sigue abierto.
 - `mathematics-remediation-implementation.md`: implementación de la remediación matemática, con veredicto `BLOCKED`, evidencia por contrato, estrategia ciega antes y después, versiones y los dos STOP con su punto de decisión.
 - `mathematics-remediation-feedback-inventory.md`: inventario de los textos fijos de feedback que afirman una comparación, una dirección o una causa, probados o calculados, con las correcciones.

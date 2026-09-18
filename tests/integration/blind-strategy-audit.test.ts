@@ -18,6 +18,9 @@ import {
   type BlindStrategyRow,
 } from '../helpers/blind-strategy'
 
+/** El techo probado de `y5.stage-screen`: 78 × 25 variantes (D-S08-116). */
+const SCREEN_K_NUMERATOR = 1950
+
 let rows: readonly BlindStrategyRow[] = []
 const row = (templateId: string) => {
   const found = rows.find((entry) => entry.templateId === templateId)
@@ -80,15 +83,21 @@ describe('auditoría de estrategia ciega sobre el catálogo de carrera completa'
     expect(standings.S).toBeLessThanOrEqual(0.35)
   })
 
-  // RS-MAT-008 sigue detenido. La adjudicación de conflictos de contrato
-  // (D-S08-114) probó que la excepción de witness autorizada resuelve la
-  // contradicción original pero no el techo: «entera» es siempre válida y nunca
-  // baja de efficient donde algún recorte vale, así que K = 75 + 25·w, con piso
-  // demostrado de 78 contra un techo de 70. El techo no se relaja acá: se decide
-  // en la pregunta abierta 66.
-  it.todo(
-    'y5.stage-screen: K ≤ 70 y S ≤ 40 % — BLOQUEADO: techo inalcanzable, pregunta abierta 66',
-  )
+  // RS-MAT-008: el techo de esta Template es 78, no 70, y es el mínimo
+  // demostrado, no una relajación. «Entera» no recorta nada, así que es válida
+  // en toda variante y, donde algún recorte vale, la escalera la deja en
+  // `efficient`: K = 75 + 25·w. Con la óptima repartida (punto 7) y la
+  // heurística de lado acotada (punto 9), w ≥ 1/10 y el piso entero sobre 25
+  // variantes es 78 (D-S08-116).
+  it('y5.stage-screen: K ≤ 78 —el mínimo factible— y S ≤ 40 %', () => {
+    const screen = row('y5.stage-screen')
+    // En enteros: el puntaje total de la mejor respuesta constante sobre las 25
+    // variantes no pasa de 1950 centésimos de escalera.
+    expect(Math.round(screen.K * screen.variants)).toBeLessThanOrEqual(
+      SCREEN_K_NUMERATOR,
+    )
+    expect(screen.S).toBeLessThanOrEqual(0.4)
+  })
 
   it('y5.course-project-final: K ≤ 65 y S ≤ 35 %', () => {
     const final = row('y5.course-project-final')

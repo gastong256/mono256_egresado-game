@@ -66,9 +66,22 @@ export function grade5Answer(
     return { kind: 'decision-card', optionId: choice.packageId }
   }
   if (id === 'y5.stage-screen') {
-    const choice = screenChoices(screenSchema.parse(params)).find(
-      (entry) => entry.quality === quality,
-    )
+    // Una variante sin ningún recorte válido no tiene los dos niveles del medio
+    // —el espacio matemático no los contiene, D-S08-114—, así que el nivel
+    // pedido puede no existir. En ese caso se juega el más cercano hacia abajo,
+    // de forma determinista, en vez de romper la partida.
+    const choices = screenChoices(screenSchema.parse(params))
+    const ladder: readonly SolutionQuality[] = [
+      'optimal',
+      'efficient',
+      'functional',
+      'invalid',
+    ]
+    const from = ladder.indexOf(quality)
+    const choice = ladder
+      .slice(from)
+      .concat([...ladder.slice(0, from)].reverse())
+      .flatMap((tier) => choices.filter((entry) => entry.quality === tier))[0]
     if (choice === undefined) throw new Error(`missing ${quality} for ${id}`)
     return { kind: 'decision-card', optionId: choice.wayId }
   }

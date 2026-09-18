@@ -162,7 +162,7 @@ independiente por evaluador y materialización sólo de direcciones aprobadas.
 |---|---|---|---|
 | `y5.final-trip-or-event` | Cuatro paquetes contra el fondo del curso, los días que da el colegio y los lugares que hacen falta; formas `fondo-corto`, `pocos-dias` y `curso-grande` | INVALID no se puede hacer · FUNCTIONAL se puede pero falta lo que el curso pidió · EFFICIENT trae todo y deja el fondo al límite · OPTIMAL trae todo y deja la reserva | Ninguno |
 | `y5.course-project-final` | Seis tareas con dueño y horas, alguien que no va a estar, y tres destinos por tarea: mantener, repartir o recortar; formas `se-cae-el-video`, `menos-horas` y `todo-esencial`. Una de las personas que quedan tiene pocas horas, así que repartir parejo sobrecarga a alguien; cada dirección rota forma y dueño de la primera tarea, y ningún plan de «repartir todo» es ya el óptimo | INVALID recorta algo esencial, deja la tarea de quien no está o pasa las horas de alguien · FUNCTIONAL el plan cierra · EFFICIENT sobrevive parte de lo no esencial · OPTIMAL sobrevive todo | **Equipo** por los acuerdos del grupo y **Aura** por lo que el curso dice del cambio, en campos distintos de la respuesta (`LOCKED`). Estilo por la forma de la reconstrucción |
-| `y5.stage-screen` | Pantalla e imagen en centímetros, el cartel del curso de un lado con su aire, y cinco formas de proyectar; formas `pantalla-ancha`, `imagen-alta` y `cartel-grande` | INVALID deforma o se come el cartel · FUNCTIONAL deja media pantalla vacía · EFFICIENT llena casi todo · OPTIMAL llena la pantalla con el cartel entero | Ninguno |
+| `y5.stage-screen` | Pantalla e imagen en centímetros y **dos elementos protegidos**: el cartel del curso arriba y la fecha del acto abajo, cada uno con su aire. Seis formas de proyectar —entera con bandas, llenar el ancho y recortar mitad y mitad, sólo de arriba o sólo de abajo, dejarla como está, estirarla—. Los tres recortes usan la misma pantalla: lo que los separa es de qué lado sacan lo que sobra, comparado con el aire de ese lado en enteros. Formas `aire-parejo`, `aire-arriba`, `aire-abajo` y `sin-aire`; en esta última ningún recorte entra y la imagen entera es la mejor | INVALID deforma o se come el cartel o la fecha · FUNCTIONAL válida con menos de tres cuartos de pantalla · EFFICIENT válida con tres cuartos o más · OPTIMAL la que más pantalla usa, única por gate | Ninguno |
 | `y5.yearbook` | Páginas exactas de imprenta, mínimos pactados, un tope y material por sección; formas `tope-apretado`, `minimos-altos` y `material-desparejo` | INVALID no suma exacto o rompe lo pactado · FUNCTIONAL cierra sin completar ninguna sección · EFFICIENT completa alguna · OPTIMAL completa todas las que se podían | Ninguno |
 | `y5.next-step-options` | Cinco escenarios ya escritos contra las horas libres, el viaje diario y el día tomado; las horas de cada escenario **incluyen** su viaje y la pantalla lo dice. Ocho vectores de viabilidad rotan por dirección: cada escenario entra en el 25 % a 75 % del catálogo, alguna opción de estudio entra en al menos la mitad y lo que las deja afuera se reparte entre horas, viaje y día | INVALID marca como viable algo que no entra · EFFICIENT deja uno viable afuera · FUNCTIONAL deja dos o más · OPTIMAL exacta | Ninguno. La preferencia personal **no se puntúa de ninguna forma** |
 | `y5.multi-option-comparison-review` | Un paquete que no incluye el micro, que se cobra por persona | OPTIMAL el total con el micro de cada uno · FUNCTIONAL sumarlo una sola vez · EFFICIENT una persona de diferencia · INVALID el resto | Sin Estilo ni score |
@@ -191,18 +191,24 @@ decisión es elegir entre formas de proyectar y toda la geometría está escrita
 La familia de razonamiento declarada sigue siendo `SPATIAL`, que es de lo que
 trata la cuenta.
 
-**Catálogo `grade-5-dev-3`.** 1026 entradas, construido con
+**Catálogo `grade-5-dev-4`.** 1026 entradas, construido con
 `pnpm game:variants build --content=grade-5`; re-aprueba los años anteriores sin
 tocar sus artefactos publicados. Reemplaza a `grade-5-dev-2` por la
 [remediación matemática](../04-quality/mathematics-remediation-implementation.md): muestra final y año que viene generados por papel, dirección del error en
-los dos Repasos y feedback del viaje, contenido `5.2.0-grade-5`.
+los dos Repasos y feedback del viaje. Y a `grade-5-dev-3` por la
+[adjudicación final del techo de la pantalla](../04-quality/rs-mat-008-blind-ceiling-final-adjudication.md),
+que reescribió `y5.stage-screen`: contenido `5.3.0-grade-5`.
 
-**La pantalla del acto no se remedió.** RS-MAT-008 quedó detenido por STOP: con
-seis formas de proyectar y la escalera del contrato, exigir los tres niveles no
-inválidos en cada variante vuelve imposible que la imagen entera sea la óptima y,
-con eso, el reparto de óptimas y la heurística de lado que el mismo contrato pide.
-La Template sigue como estaba —sólo el texto de la restricción nombra ahora el
-lado real del cartel— hasta que se decida el punto abierto. `7.º → 5.º` es el primer set con los seis años
+**La pantalla del acto y su piso de estrategia ciega.** «Entera» no recorta nada,
+así que es válida en toda variante y, donde algún recorte vale, la escalera la
+deja en `efficient`: repetirla siempre rinde `75 + 25·w`, con `w` la proporción de
+variantes donde ningún recorte entra. Ese piso es de la matemática, no del
+catálogo, y por eso el techo de esta Template es **78** —el mínimo factible
+demostrado— y no 70 (D-S08-116). El catálogo lo toca exacto: la óptima se reparte
+en cuatro formas (10 · 6 · 6 · 3), el atajo de «recortar del lado con más aire»
+acierta en 12 de 25, y las tres variantes sin recorte válido son las únicas que
+usan la excepción de witness, cada una con un solo nivel intermedio ausente
+(D-S08-114). La escalera no cambió. `7.º → 5.º` es el primer set con los seis años
 y sigue siendo `official: false`.
 
 **Lo que 5.º todavía no trae.** La convergencia de carrera se cumple hoy por

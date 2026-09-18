@@ -17,10 +17,11 @@ Si el roadmap y el código difieren, **el código gana** y el roadmap se corrige
 - Fases de validación externa y congelamiento: [ciclo de entrega real](../00-product/real-delivery-lifecycle.md).
 - Qué se construye por capas de alcance: [alcance y roadmap](../00-product/scope-and-roadmap.md) y [backlog](mvp-backlog.md).
 
-**Última reconciliación:** 17 de septiembre de 2026, adjudicación de los dos
-conflictos de contrato de la remediación: la pregunta 67 se cerró por enmienda y la
-66 sigue abierta, así que la remediación queda en trece de catorce contratos
-(D-S08-113 y D-S08-114). Antes, ese mismo día, la implementación de la remediación
+**Última reconciliación:** 18 de septiembre de 2026, adjudicación final del techo
+de estrategia ciega de `y5.stage-screen` —`K ≤ 78`, el mínimo factible demostrado—
+e implementación de WP-SCREEN: la remediación matemática cierra en **catorce de
+catorce contratos** (D-S08-116). Antecedente del 17 de septiembre: adjudicación de
+los dos conflictos de contrato (D-S08-113 y D-S08-114). Antes, ese mismo día, la implementación de la remediación
 matemática con veredicto `BLOCKED` (D-S08-104 a D-S08-106). Antecedente del 16 de
 septiembre: adjudicación independiente del Departamento de Matemática provisional
 (IA) con remediación requerida y revisión humana de Matemática diferida a la
@@ -70,7 +71,7 @@ Tabla de navegación. Los contratos de cada etapa, más abajo, son la autoridad.
 | [STAGE-06](#stage-06-scorepolicy-competitiva) | ScorePolicy competitiva | `DONE` | STAGE-05 | — |
 | [GATE-TG1](#gate-tg1-teacher-gate-1) | **Teacher Gate 1** | `PASSED_WITH_REQUIRED_ADJUSTMENTS` | STAGE-04, STAGE-06 | externo |
 | [STAGE-07](#stage-07-invariante-de-egreso-fail-forward-y-recuperaciones) | Egreso, fail-forward y recuperaciones | `DONE` | GATE-TG1 | — |
-| [STAGE-08](#stage-08-contenido-incremental-de-1º-a-5º) | Contenido incremental 1.º → 5.º | `IN_PROGRESS` · **actual** · implementación e integración DONE · remediación matemática BLOCKED: 13/14, falta decidir el techo de y5.stage-screen | STAGE-07 | auditoría tras 1.º · gates matemáticos provisionales |
+| [STAGE-08](#stage-08-contenido-incremental-de-1º-a-5º) | Contenido incremental 1.º → 5.º | `IN_PROGRESS` · **actual** · implementación e integración DONE · remediación matemática DONE 14/14 · re-auditoría independiente NEXT | STAGE-07 | auditoría tras 1.º · gates matemáticos provisionales |
 | [STAGE-09](#stage-09-fair-mode-servidor-autoritativo-y-ranking) | Fair mode, servidor autoritativo y ranking | `NOT_STARTED` | STAGE-06, STAGE-08 | — |
 | [GATE-TG2](#gate-tg2-teacher-gate-2) | **Teacher Gate 2** | `TEACHER_GATE` | STAGE-09 | externo |
 | [FREEZE](#freeze-congelamiento-de-competencia) | Congelamiento de competencia | `NOT_STARTED` | GATE-TG2 | — |
@@ -783,7 +784,7 @@ a TG1. El techo de un Repaso por etapa sigue siendo estructura de ADR-024.
 
 - **Estado:** `IN_PROGRESS` — **etapa actual; Phase 0 DONE / Phase 1 DONE /
   audit post-G1 PASSED / Phase 2 e integración de carrera completa DONE; gates
-  matemáticos provisionales en curso: remediación BLOCKED, 13 de 14 contratos**
+  matemáticos provisionales en curso: remediación DONE, 14 de 14 contratos**
 - **Depende de:** STAGE-07 (`DONE`)
 - **Desbloquea:** STAGE-09
 
@@ -924,7 +925,7 @@ cerrar la integración de carrera completa):
 - [x] Epílogo de carrera real con saliencia determinista, datos ausentes no dibujados y Hitos display-only distinguibles.
 - [x] Accesibilidad teclado/tap, móvil, reduced motion, replay/snapshot/reanudación y E2E por año. — Más el E2E de carrera completa a 320 px.
 - [ ] Auditoría de composición completa, cobertura/exploits y playtests de pacing según [validación de contenido](../04-quality/content-validation.md). — La [auditoría de implementación](../04-quality/full-career-implementation-audit.md) está ejecutada y los exploits barridos; **los playtests de pacing con jugadores reales no**.
-- [ ] Revisión matemática, documentación por año y cero sistemas fundamentales duplicados. — Documentación por año completa y sin sistemas duplicados. El gate provisional es el **AI Mathematics Department** (D-S08-095): [pre-revisión](../04-quality/mathematics-department-pre-review.md) y [adjudicación independiente](../04-quality/mathematics-department-ai-adjudication.md) ejecutadas, con `REMEDIATION REQUIRED`; la [implementación de la remediación](../04-quality/mathematics-remediation-implementation.md) quedó `BLOCKED` y la [adjudicación de sus conflictos](../04-quality/mathematics-remediation-contract-conflict-adjudication.md) la dejó en trece de catorce contratos de la [especificación](../04-quality/mathematics-remediation-spec.md); falta decidir el techo de estrategia ciega de `y5.stage-screen`, la re-auditoría independiente y el sign-off provisional. **La revisión del Departamento de Matemática humano no se reemplaza: se difiere a Final Delivery / Pre-Release Acceptance.**
+- [ ] Revisión matemática, documentación por año y cero sistemas fundamentales duplicados. — Documentación por año completa y sin sistemas duplicados. El gate provisional es el **AI Mathematics Department** (D-S08-095): [pre-revisión](../04-quality/mathematics-department-pre-review.md) y [adjudicación independiente](../04-quality/mathematics-department-ai-adjudication.md) ejecutadas, con `REMEDIATION REQUIRED`; la [implementación de la remediación](../04-quality/mathematics-remediation-implementation.md) cerró en `DONE` con los catorce contratos de la [especificación](../04-quality/mathematics-remediation-spec.md), después de dos adjudicaciones de contrato —la [de sus conflictos](../04-quality/mathematics-remediation-contract-conflict-adjudication.md) y la [del techo de la pantalla del acto](../04-quality/rs-mat-008-blind-ceiling-final-adjudication.md)—; faltan la re-auditoría independiente y el sign-off provisional. **La revisión del Departamento de Matemática humano no se reemplaza: se difiere a Final Delivery / Pre-Release Acceptance.**
 
 **Lectura requerida.** [Matriz](../01-game-design/full-career-content-matrix.md) ·
 [diseño G1](../01-game-design/grade-1-template-design.md) ·
@@ -937,11 +938,10 @@ cerrar la integración de carrera completa):
 sustituyen estos gates. Objetivos editoriales y calibraciones versionadas conservan
 la madurez del [registro](../07-reference/decision-register.md).
 
-**Siguiente tarea.** Decidir el techo de estrategia ciega de `y5.stage-screen`
-—pregunta abierta 66, con las tres salidas que mide la
-[adjudicación de conflictos de contrato](../04-quality/mathematics-remediation-contract-conflict-adjudication.md)— y completar RS-MAT-008
-con esa decisión. Los otros trece contratos están implementados y verificados, sin
-recalibrar FairScore.
+**Siguiente tarea.** `INDEPENDENT MATHEMATICS RE-AUDIT` sobre la remediación
+completa: los catorce contratos están implementados y verificados, sin recalibrar
+FairScore, y el re-audit tiene que re-derivar esa evidencia de forma independiente,
+incluido el hallazgo abierto de `g7.bus-timing` (D-S08-111).
 Después, Independent Mathematics Re-Audit y AI Mathematics Department Provisional
 Sign-Off. Siguen además los gates humanos de STAGE-08 que no se difirieron:
 sign-off manual de la rueda del Día del Estudiante y playtests de pacing con
@@ -957,8 +957,8 @@ juego, se recompone en servidor y pasa accesibilidad a 320 px, con la
 en `PASS WITH REQUIRED HARDENING — RESOLVED`. **El pacing sigue sin medirse con
 jugadores reales**, y la [adjudicación matemática](../04-quality/mathematics-department-ai-adjudication.md)
 exige remediación antes del sign-off provisional, así que la etapa no cierra: la
-implementación está completa; la remediación matemática quedó bloqueada en un
-criterio —el techo de `y5.stage-screen`— y la validación empírica no empezó.
+implementación y la remediación matemática están completas; faltan la re-auditoría
+independiente, el sign-off provisional y la validación empírica de pacing.
 
 ---
 

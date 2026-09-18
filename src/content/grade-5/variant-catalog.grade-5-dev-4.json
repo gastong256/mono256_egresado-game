@@ -1,6 +1,6 @@
 {
-  "catalogVersion": "grade-5-dev-3",
-  "contentVersion": "5.2.0-grade-5",
+  "catalogVersion": "grade-5-dev-4",
+  "contentVersion": "5.3.0-grade-5",
   "generators": [
     {
       "templateId": "g7.bus-latest-departure",
@@ -239,7 +239,7 @@
     {
       "templateId": "y5.stage-screen",
       "generatorId": "y5.stage-screen.fit",
-      "generatorVersion": "1",
+      "generatorVersion": "2",
       "candidateSpace": 1944
     },
     {
@@ -3909,175 +3909,175 @@
       "templateId": "y5.stage-screen",
       "variantId": "c00001",
       "source": "generated",
-      "fingerprint": "520b7a25baa9cff6702bf0c4ce28e4fd9b6134db14c25263576c9c768254d09b"
+      "fingerprint": "64c1348762d3e42d797c4963b45c8af83a45f1b27bd71cc91947d544f44595c1"
     },
     {
       "familyId": "egreso",
       "templateId": "y5.stage-screen",
       "variantId": "c00002",
       "source": "generated",
-      "fingerprint": "1501703b64d0a2087794ed74fc223082ee06d36614be05e7b85c59b4a4f932dd"
+      "fingerprint": "0365df32829b28d3e32b0f68875c78fe4c76d665929a88117ef5efd8be2c502f"
     },
     {
       "familyId": "egreso",
       "templateId": "y5.stage-screen",
       "variantId": "c00003",
       "source": "generated",
-      "fingerprint": "e5b9789f45559637723080fd9815afa412a635ed4ca97b31b72395463b079a5d"
+      "fingerprint": "0ac0570e343e13ed63d508682addd8e9c43dc5311da06c76f2c6889ebc7a07e4"
     },
     {
       "familyId": "egreso",
       "templateId": "y5.stage-screen",
       "variantId": "c00004",
       "source": "generated",
-      "fingerprint": "95e3f7efa72929045d3cb87e98cff97b4f8afce771f09ff8f334e8ac096d4e60"
+      "fingerprint": "b4b26e767c28033f259ab5bda2c77cb76ec6f373d24284f6330194d223a69b8c"
     },
     {
       "familyId": "egreso",
       "templateId": "y5.stage-screen",
       "variantId": "c00005",
       "source": "generated",
-      "fingerprint": "d4d1137ed72e84df92a4891e9e409f17030f7a2ad45a67388deb0330d5bfa65d"
+      "fingerprint": "f611031625624fc78a286ed405e8449a7e2d0a700ecd5ddf1e4a8dbf4deeffd9"
     },
     {
       "familyId": "egreso",
       "templateId": "y5.stage-screen",
       "variantId": "c00006",
       "source": "generated",
-      "fingerprint": "947e2e448c7291bf9f261e8b6d4cbdba6f7af32aee517331cec4504a5992c1a6"
+      "fingerprint": "05c83c5ed978463000d2d144bd17a268d6fb3b1fb7f2a5eb8c790a1cbb46599a"
     },
     {
       "familyId": "egreso",
       "templateId": "y5.stage-screen",
       "variantId": "c00007",
       "source": "generated",
-      "fingerprint": "c0760528f7551aebeb51b96306fada47771acf3d16ae41b5075db9c406125e7c"
+      "fingerprint": "78d75346e14eafd86a7bf5275fd414276fdbddee35fb382618b2e72e44b7d0d0"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.stage-screen",
+      "variantId": "c00008",
+      "source": "generated",
+      "fingerprint": "be28aa9c9802f151e3d05f578c67f1b44db11596880fda1d7811fb860bc0fa30"
     },
     {
       "familyId": "egreso",
       "templateId": "y5.stage-screen",
       "variantId": "c00009",
       "source": "generated",
-      "fingerprint": "78b7139fe6ec77db4c5a46edf780faff2b93ded31a0e33052a4725fba5fa405f"
+      "fingerprint": "7534193b07747bbe29bbe9dad2fb4c1a0b0e25f6a7e368b6cea44dc2330fc1ce"
     },
     {
       "familyId": "egreso",
       "templateId": "y5.stage-screen",
       "variantId": "c00010",
       "source": "generated",
-      "fingerprint": "d57fbdd70961477ff5432c485e01cb85620993e363d1b22fe4d97e4085c2fc14"
+      "fingerprint": "f4ce87ffc06fd819cb91d49cab85fbee3b12e7402275a2360b8fdd2385ed3fa5"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.stage-screen",
+      "variantId": "c00011",
+      "source": "generated",
+      "fingerprint": "a9619203681344a155faf3a3e27835cb636bdf552ac3b65ed20a8750e2b24360"
     },
     {
       "familyId": "egreso",
       "templateId": "y5.stage-screen",
       "variantId": "c00012",
       "source": "generated",
-      "fingerprint": "fc36ba4953e66877dafc6582580a8d38ec62e7dcb04773ed04b3390140a39867"
+      "fingerprint": "128f44b2ea0e894736672d8eaefc8fd4d91d0b1a53988bc12a88ed6ccf8a199b"
     },
     {
       "familyId": "egreso",
       "templateId": "y5.stage-screen",
       "variantId": "c00013",
       "source": "generated",
-      "fingerprint": "127de6c83ca43b15562164dde34ce699589b4a1840abbfc77c1eb92f56e4d447"
+      "fingerprint": "e415d30c0c7c7ed714a6e29765316f03ea5cb8983feaada8eb8f4c740f92018c"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.stage-screen",
+      "variantId": "c00014",
+      "source": "generated",
+      "fingerprint": "248822c1e4a31338f948211007051ac0de1c9b0323c3b91abb7efc33ef3c08ec"
     },
     {
       "familyId": "egreso",
       "templateId": "y5.stage-screen",
       "variantId": "c00015",
       "source": "generated",
-      "fingerprint": "255e5630589742128869623c7a1d675580499ecaa156eee2ae5787636a5a6c05"
+      "fingerprint": "20152625e14bc1fe0d92674bbee993fd65e8a316a80141447611b1ab8d08494a"
     },
     {
       "familyId": "egreso",
       "templateId": "y5.stage-screen",
       "variantId": "c00016",
       "source": "generated",
-      "fingerprint": "2e57b1fcb28c8ea8c9997ba2efe9d3bb72d3b24106bcfc6fd5f4c7e51f9901ca"
+      "fingerprint": "9d1dff3ded5445b036cd98d0de7167bfd2e8b5ea8c87ee53ba9a337ac3f6882c"
     },
     {
       "familyId": "egreso",
       "templateId": "y5.stage-screen",
       "variantId": "c00017",
       "source": "generated",
-      "fingerprint": "fa39815dd55394baa2c74069cb961eb99ce5fd2c03a3643c0ae61b8cf761ccd2"
+      "fingerprint": "3571b8733c859043b6a3e7591ddc047a2e4ebebd38b45982fa1629cf97e9b9e7"
     },
     {
       "familyId": "egreso",
       "templateId": "y5.stage-screen",
       "variantId": "c00018",
       "source": "generated",
-      "fingerprint": "db38a381ebbf234d8449e7cb7603627cb56bd2129e34259c0c231f5da71e4d97"
+      "fingerprint": "06eea129cb219df46df94757a028d66ca5f7811d4c1b118fbaa56c57f68ea36a"
     },
     {
       "familyId": "egreso",
       "templateId": "y5.stage-screen",
       "variantId": "c00019",
       "source": "generated",
-      "fingerprint": "bd0f8fc581804c4682b173705d4798cad13c05d06354dfcc2e31c1d9c8d3659e"
+      "fingerprint": "0d13c7766973be6a836971d597eda2f880bbf8a1f82b9ae3c164365d8dcaee4a"
     },
     {
       "familyId": "egreso",
       "templateId": "y5.stage-screen",
       "variantId": "c00020",
       "source": "generated",
-      "fingerprint": "7cbfa58971aa627e96c3edd5ab6399afefc28d06924c546fdca4fcaf6d4aa39c"
+      "fingerprint": "fc054bc640134313728446caa4d8301428fa5409ef4b84122927dc0c1cf2f6fd"
     },
     {
       "familyId": "egreso",
       "templateId": "y5.stage-screen",
       "variantId": "c00021",
       "source": "generated",
-      "fingerprint": "fc917cb2f7d093a916c38ad10460baaf101f1b485f3ad9537d387a05044505b1"
+      "fingerprint": "5e75c016dc978e81a9e5be1161ae16505ab7f31f2d020cfcf99940acb564725a"
     },
     {
       "familyId": "egreso",
       "templateId": "y5.stage-screen",
       "variantId": "c00022",
       "source": "generated",
-      "fingerprint": "f92cc83f7e02f8940da6d4d799e6260f5188206d2471d8748c965a2138016d0d"
+      "fingerprint": "df540d33870cd3b53c42551dcd7170a34b9f98d06c0da36ab3a5a5f78fc0b641"
     },
     {
       "familyId": "egreso",
       "templateId": "y5.stage-screen",
       "variantId": "c00023",
       "source": "generated",
-      "fingerprint": "19e68853e470ccff88ac6274a08427234c10140a3096b9898c4dbb8b0dc421e5"
+      "fingerprint": "86d32ea729f63a1a960b4cde0260e5b24b72ce5ad3e353bd4645a9c8cf93e2bf"
     },
     {
       "familyId": "egreso",
       "templateId": "y5.stage-screen",
       "variantId": "c00024",
       "source": "generated",
-      "fingerprint": "3437b886d7b1ad205230010e7a76e8ddb55fe9e887970de5bf68d86eaf84d87b"
-    },
-    {
-      "familyId": "egreso",
-      "templateId": "y5.stage-screen",
-      "variantId": "c00025",
-      "source": "generated",
-      "fingerprint": "a7e72ab4b5fca517a34613ef3103b96084c546b61ccf1d11064a3ef0224c6373"
-    },
-    {
-      "familyId": "egreso",
-      "templateId": "y5.stage-screen",
-      "variantId": "c00026",
-      "source": "generated",
-      "fingerprint": "8910d84ff461e767cf311b42e784e81daab2480d6591c067f20c0f5e33d7bbfb"
-    },
-    {
-      "familyId": "egreso",
-      "templateId": "y5.stage-screen",
-      "variantId": "c00027",
-      "source": "generated",
-      "fingerprint": "0a574b6913312486588f9da4ad8e4460d7c5cc32186fda9a83a7ec8619bd93cf"
+      "fingerprint": "202aa018cac7f5262cbfdb59859970cc5daf1cfd27231c969ea44dfd0cca4105"
     },
     {
       "familyId": "egreso",
       "templateId": "y5.stage-screen",
       "variantId": "reference",
       "source": "authored",
-      "fingerprint": "fae3c173a5edfadef16632053c7fd72bbd702e4e85dff421ef3284335e46be87"
+      "fingerprint": "e7e426a84c35f798eccc84d70f1f128b70b7357e16288fe8bb477da936c57581"
     },
     {
       "familyId": "egreso",

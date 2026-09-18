@@ -70,6 +70,7 @@
 - [x] Departamento de Matemática provisional (IA): pre-revisión, adjudicación independiente con tres revisores y Chair, y especificación de remediación; revisión humana diferida a la entrega final, sin presentarla como hecha.
 - [x] Implementación de la remediación matemática documentada con veredicto `BLOCKED`, evidencia por contrato, inventario de feedback y los dos STOP como puntos de decisión abiertos, sin presentar re-auditoría ni sign-off como hechos.
 - [x] Adjudicación de los conflictos de contrato: qué enmienda se probó factible, cuál no, y qué decisión queda abierta, sin relajar ningún techo en silencio.
+- [x] Techo de estrategia ciega de la pantalla del acto: el mínimo factible, probado y alcanzado, con la remediación matemática cerrada en catorce contratos.
 
 ## Operación
 - [x] Runbook de feria.

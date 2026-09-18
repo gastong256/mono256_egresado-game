@@ -67,8 +67,8 @@ Trazabilidad de la cadena `hallazgo → opiniones independientes → decisión d
 revisión humana final`. Adjudicado el 16 de septiembre de 2026; implementado el 17
 con veredicto `BLOCKED` (D-S08-104) y, ese mismo día, con los dos conflictos de
 contrato adjudicados: la pregunta 67 cerrada por enmienda (D-S08-113) y la 66
-abierta (D-S08-114). Quedan trece de catorce contratos en PASS. La re-auditoría
-todavía no existe.
+cerrada el 18 con el techo probado de `y5.stage-screen` (D-S08-116). Los catorce
+contratos quedan en PASS. La re-auditoría todavía no existe.
 
 | Hallazgos | Decisión canónica | Contrato | Implementación | Verificación |
 |---|---|---|---|---|
@@ -77,7 +77,7 @@ todavía no existe.
 | MAT-005 · MAT-AJ-NEW-004 · MAT-AJ-NEW-005 | `REQUIRED_CORRECTION` P1 / P1 / P2 | RS-MAT-005 | DONE · gate de modelo del torneo, empate estricto | `unit/grade-2-standings`, auditoría |
 | MAT-006 | `REQUIRED_CORRECTION` P2 | RS-MAT-006 | DONE · `grade-7-dev-6` | `integration/mathematics-remediation`, auditoría |
 | MAT-007 | `REQUIRED_CORRECTION` P2 | RS-MAT-007 | DONE | `integration/mathematics-remediation`, auditoría |
-| MAT-008 | `REQUIRED_CORRECTION` P0 | RS-MAT-008 | **BLOCKED · STOP** ([D-S08-105](../04-quality/mathematics-remediation-implementation.md#stop-1-rs-mat-008-y5stage-screen)), confirmado por la [adjudicación de conflictos](../04-quality/mathematics-remediation-contract-conflict-adjudication.md#d-oq-66-y5stage-screen) (D-S08-114) | `it.todo` en la auditoría; pregunta abierta 66 |
+| MAT-008 | `REQUIRED_CORRECTION` P0 | RS-MAT-008 (techo enmendado a `K ≤ 78`, D-S08-116) | **DONE** · dos elementos protegidos, seis formas, geometría exacta y catálogo `grade-5-dev-4` | `unit/grade-5-screen-yearbook-next`, `integration/mathematics-remediation` · RS-MAT-008, auditoría de estrategia ciega, E2E a 320 px |
 | MAT-009 · MAT-AJ-NEW-007 | `REQUIRED_CORRECTION` P1 | RS-MAT-009 | DONE | `integration/mathematics-remediation`, auditoría |
 | MAT-010 | `ACCEPT_AS_DESIGNED` | — | Sin cambio | Revisión humana final |
 | MAT-011 | `REQUIRED_CLARIFICATION` P2 | RS-MAT-011 | DONE · consigna de la peña | `integration/mathematics-remediation`, E2E 320 px |
@@ -92,5 +92,6 @@ Fuentes: [adjudicación](../04-quality/mathematics-department-ai-adjudication.md
 [revisor B](../04-quality/mathematics-department-ai-reviewer-b.md),
 [revisor C](../04-quality/mathematics-department-ai-reviewer-c.md),
 [implementación](../04-quality/mathematics-remediation-implementation.md),
-[adjudicación de conflictos de contrato](../04-quality/mathematics-remediation-contract-conflict-adjudication.md) y
-[decisiones D-S08-095 a D-S08-114](../07-reference/decision-register.md).
+[adjudicación de conflictos de contrato](../04-quality/mathematics-remediation-contract-conflict-adjudication.md),
+[adjudicación final del techo](../04-quality/rs-mat-008-blind-ceiling-final-adjudication.md) y
+[decisiones D-S08-095 a D-S08-116](../07-reference/decision-register.md).

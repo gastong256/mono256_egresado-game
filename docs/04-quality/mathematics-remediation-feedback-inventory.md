@@ -3,7 +3,7 @@
 - **Estado:** `EXECUTED` — 2026-09-17, dentro de la
   [implementación de la remediación matemática](mathematics-remediation-implementation.md)
 - **Regla que lo exige:** [especificación de remediación, regla 2.9](mathematics-remediation-spec.md#2-reglas-transversales)
-- **Alcance:** las 42 Templates del catálogo `grade-5-dev-3` —no sólo las de la
+- **Alcance:** las 42 Templates del catálogo de carrera completa —`grade-5-dev-3` al ejecutarlo, `grade-5-dev-4` desde la reescritura de la pantalla del acto— —no sólo las de la
   especificación—, sobre los tres campos de texto fijo del feedback:
   `consequence`, `optimalComparison` y `violatedConstraint`
 - **Consumidor:** `Independent Mathematics Re-Audit`
@@ -149,9 +149,9 @@ implementación (sección [Correcciones](#correcciones)).
 | `y5.multi-option-comparison-review` | `consequence` · resto | dirección del error | B | signo, test RS-NEW-003 |
 | `y5.course-project-final` | `violatedConstraint` · invalid | esencial, ausente u horas | B | `read.failure` |
 | `y5.course-project-final` | `consequence` · postura | si el cambio se notó | B | `p.visible` |
-| `y5.stage-screen` | `violatedConstraint` · invalid | deforma o lado del recorte | B | `shown.deforms`, `p.bannerAt` |
-| `y5.stage-screen` | `consequence` · efficient «con unas bandas al costado» | bandas laterales | A | medido y con test: efficient es siempre «entera» con bandas sólo a los costados (25 de 25) |
-| `y5.stage-screen` | `consequence` · functional «media pantalla vacía» | usa como mucho la mitad | A | medido y con test: «sin agrandar» usa entre 9 % y 30 % |
+| `y5.stage-screen` | `violatedConstraint` · invalid | deforma, o qué elemento protegido se come el recorte | B | recorte de cada lado contra su aire |
+| `y5.stage-screen` | `consequence` · efficient «bandas a los costados» | bandas laterales | A | con test: sólo «entera» llega a efficient, y su alto es el de la pantalla |
+| `y5.stage-screen` | `consequence` · functional «chica en el medio» | usa menos de tres cuartos | A | con test: el nivel functional es exactamente «usa menos de 3/4 de la pantalla» |
 | `y5.yearbook` | `violatedConstraint` | total, mínimo o tope | B | `read.failure` |
 | `y5.yearbook` | `consequence` · efficient, functional «algo del material quedó afuera» | incompleto | A | escalera por secciones completas |
 | `y5.proportion-capacity-review` | `violatedConstraint` · functional | páginas de `exacta − 1` no alcanzan | B | `exact`, `p.perPage` |

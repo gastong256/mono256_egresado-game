@@ -3,33 +3,36 @@
 - **Estado:** `EXECUTED` — 2026-09-17, sobre `main` en `326ab36`
 - **Gate:** `MATHEMATICS REMEDIATION IMPLEMENTATION`
 - **Contrato:** [especificación de remediación](mathematics-remediation-spec.md), canónica
-- **Veredicto:** `MATHEMATICS REMEDIATION IMPLEMENTATION — BLOCKED`
-  (`MATHEMATICS REMEDIATION BLOCKED — CONTRACT CONFLICT`; desde el 2026-09-17,
-  **13 de 14 contratos PASS**: sólo RS-MAT-008 sigue detenido)
-- **Adjudicación posterior:** los dos STOP se adjudicaron el 2026-09-17 en la
-  [adjudicación de conflictos de contrato](mathematics-remediation-contract-conflict-adjudication.md). El STOP 2 quedó
-  **resuelto** por enmienda del criterio 3 (D-S08-113); el STOP 1 sigue
-  **bloqueado**, ahora por el techo `K ≤ 70` y no por el witness (D-S08-114)
-- **Siguiente gate:** `Independent Mathematics Re-Audit`, **no habilitado** hasta
-  que se resuelvan los dos puntos de decisión de la sección
-  [H](#h-stop-registrados)
+- **Veredicto:** `MATHEMATICS REMEDIATION IMPLEMENTATION — DONE`
+  — **14 de 14 contratos PASS** desde el 2026-09-18, cuando RS-MAT-008 cerró con
+  su techo probado. El veredicto anterior fue `BLOCKED`, y el rastro de cómo se
+  levantó cada STOP se conserva en las secciones H y N
+- **Adjudicaciones posteriores:** los dos STOP se adjudicaron el 2026-09-17 en la
+  [adjudicación de conflictos de contrato](mathematics-remediation-contract-conflict-adjudication.md)
+  —STOP 2 resuelto por enmienda del criterio 3 (D-S08-113); STOP 1 acotado al
+  techo (D-S08-114)— y el techo se resolvió el 2026-09-18 en la
+  [adjudicación final del techo](rs-mat-008-blind-ceiling-final-adjudication.md), que probó el mínimo
+  factible `K ≤ 78` e implementó WP-SCREEN (D-S08-116)
+- **Siguiente gate:** `Independent Mathematics Re-Audit`, ahora habilitado: los
+  dos puntos de decisión de la sección [H](#h-stop-registrados) se resolvieron por
+  enmienda de contrato
 - **Naturaleza:** implementación. No es re-auditoría ni sign-off: ningún contenido
   pasa a `math_reviewed` y la revisión del Departamento de Matemática humano sigue
   diferida a Final Delivery / Pre-Release Acceptance (D-S08-095)
 
 ## A. Veredicto
 
-`MATHEMATICS REMEDIATION IMPLEMENTATION — BLOCKED`.
+`MATHEMATICS REMEDIATION IMPLEMENTATION — DONE`.
 
-De los catorce contratos, **trece están implementados y verificados por test**
-—doce en la implementación original y RS-NEW-001 al completarse su criterio 3
-enmendado— y uno sigue detenido por la regla de STOP (2.11), porque un criterio es
-imposible de cumplir sin violar otra regla del mismo contrato. La tabla registra
-los dos STOP tal como se levantaron, con su resolución posterior:
+Los catorce contratos están implementados y verificados por test: doce en la
+implementación original, RS-NEW-001 al reformularse su criterio 3 sobre planes
+válidos, y RS-MAT-008 al probarse e implementarse su techo mínimo factible. Los
+dos STOP que la implementación levantó se resolvieron por enmienda de contrato,
+nunca relajando un criterio en silencio. La tabla registra cómo quedó cada uno:
 
 | STOP | Contrato | Criterio imposible | Regla con la que choca | Estado del paquete |
 |---|---|---|---|---|
-| 1 | RS-MAT-008 · `y5.stage-screen` | Puntos 4, 7, 8 y 9, y los techos K ≤ 70 · S ≤ 40 % | Regla 2.6: witness de los tres niveles no inválidos por variante (`tierWitnessIssues`) | **No implementado.** La Template queda como estaba, salvo un texto falso de feedback corregido por el inventario |
+| 1 | RS-MAT-008 · `y5.stage-screen` | Puntos 4, 7, 8 y 9, y los techos K ≤ 70 · S ≤ 40 % | Regla 2.6: witness de los tres niveles no inválidos por variante (`tierWitnessIssues`) | **RESUELTO el 2026-09-18** (D-S08-114 y D-S08-116): excepción estrecha del witness donde ningún recorte es válido, y techo enmendado al mínimo factible probado `K ≤ 78`. WP-SCREEN implementado; RS-MAT-008 PASS |
 | 2 | RS-NEW-001 · `y5.course-project-final` | Criterio 3: «recortar» entre los planes óptimos | La escalera de la Template, que el mismo contrato prohíbe cambiar | **RESUELTO el 2026-09-17** (D-S08-113): el criterio se reformuló sobre planes válidos y el catálogo vigente ya lo cumple. RS-NEW-001 PASS |
 
 Ningún techo se relajó. Los dos tests que corresponderían quedaron como `it.todo`
@@ -101,7 +104,7 @@ con herramientas propias.
 | 1 | WP-AUDIT | DONE | Sección C |
 | 2 | WP-TRANSPORT | DONE | Precios del mes y de la ciudad; forma `pocos-viajes`; generación dirigida por papel |
 | 3 | WP-SURVEY | DONE | Regla de publicación como constante única; `year-prefers` por cota de peor caso; cuatro formas; Repaso con tres vectores |
-| 4 | WP-SCREEN | **BLOCKED — STOP 1** | Sin cambios de regla; sólo el texto del lado del cartel. La adjudicación posterior mantiene el bloqueo (D-S08-114) |
+| 4 | WP-SCREEN | **DONE** | Dos elementos protegidos, seis formas, geometría exacta en enteros, generación por papel y catálogo `grade-5-dev-4`: K 78,0 · S 40 % (D-S08-116) |
 | 5 | WP-FINAL | **DONE** | Criterios 1, 2, 4 y techos en la implementación; criterio 3 cerrado por enmienda el 2026-09-17 |
 | 6 | WP-NOTEBOOK | DONE | Feedback de acierto calculado |
 | 7 | WP-STANDINGS | DONE | Realizabilidad, gate de modelo, empate estricto, discriminación |
@@ -223,19 +226,28 @@ tal como estaba»).
 El consejo publica 24 variantes en vez de 25: el gate de dos viables rechaza
 direcciones que antes se aprobaban.
 
-### RS-MAT-008 — `y5.stage-screen` · BLOCKED
+### RS-MAT-008 — `y5.stage-screen` · DONE
 
-Ver [STOP 1](#stop-1-rs-mat-008-y5stage-screen). Ningún punto implementado; los
-techos quedan como `it.todo`. Medición vigente: K 75,0 · S 52 %.
+Implementado el 2026-09-18, después de dos adjudicaciones. El rastro completo
+está en [STOP 1](#stop-1-rs-mat-008-y5stage-screen), en la
+[adjudicación de conflictos](mathematics-remediation-contract-conflict-adjudication.md#d-oq-66-y5stage-screen)
+y en la [adjudicación final del techo](rs-mat-008-blind-ceiling-final-adjudication.md).
 
-La [adjudicación de conflictos de contrato](mathematics-remediation-contract-conflict-adjudication.md#d-oq-66-y5stage-screen)
-del 2026-09-17 mantuvo el bloqueo con evidencia nueva: la excepción de witness
-autorizada resuelve la contradicción original —33.035 variantes con la imagen
-entera óptima pasan a ser admisibles, y un catálogo dirigido cumple los puntos 7,
-8, 9, 10, IM-1, óptima única y `S ≤ 40 %`— pero el techo `K ≤ 70` tiene un piso
-estructural de **78**, porque «entera» es siempre válida y nunca baja de
-`efficient` donde algún recorte vale. La decisión queda en la pregunta abierta 66
-(D-S08-114).
+| Criterio | Evidencia | Medición |
+|---|---|---|
+| 1. Dos elementos protegidos | schema con cartel y fecha, cada uno con su alto y su aire; E2E los muestra | — |
+| 2. Seis formas con el lado en la etiqueta | `WAYS`; E2E a 320 y 412 px | 6 opciones |
+| 3. Validez exacta | `unit/grade-5-screen-yearbook-next` · «la validez se decide con enteros, en el borde exacto del aire» | comparaciones entre enteros, sin escala redondeada |
+| 4. Escalera y óptima única | «los tres recortes usan la misma pantalla…» y «la escalera coincide con un oráculo independiente» | 0 variantes con dos recortes válidos |
+| 5. Consigna con el objetivo completo | «LOCKED: toda la geometría está dada…» | — |
+| 6. IM-1 por variante | «mover ±15 % el aire cambia la validez de algún recorte» | 25 / 25 |
+| 7. Reparto de la óptima | `integration/mathematics-remediation` · RS-MAT-008 punto 7 | centro 10 · arriba 6 · abajo 6 · entera 3, máx. 40 % |
+| 8. Sin niveles constantes | punto 8 | «entera» 2 niveles · «sin agrandar» 2 · los tres recortes 2 · estirar constante inválida |
+| 9. Heurística de lado | punto 9 | 12 / 25 = 48 % |
+| 10. Sin filo en el 75 % | punto 10 | uso de «entera» de 69,5 % a 86,5 %, 0 en (70, 80) |
+| 11. Detalle sin revelar el recorte | «LOCKED…»: el detalle no nombra recorte, cartel ni fecha | — |
+| Techos K ≤ 78 · S ≤ 40 % | auditoría de estrategia ciega, en enteros | **K 78,0 = 1950/25** · S 40 % |
+| Excepción de witness | «la excepción de witness sólo alcanza a las variantes sin recorte válido» | 3 exentas, cada una con un solo nivel intermedio ausente |
 
 ### RS-MAT-009 — `y5.next-step-options` · DONE
 
@@ -318,13 +330,21 @@ workspace y sincronización de la especificación maestra en la sección N.
 | `y5.final-trip-or-event` | decision-card | 25 → 25 | 56,3 → 56,3 | 59,4 → 59,4 | 28,0 % → 28,0 % | — |
 | `y5.next-step-options` | classification | 24 → 25 | 18,0 → 21,3 | 76,5 → **40,0** | 70,8 % → **16,0 %** | K ≤ 65 · S ≤ 35 % ✓ |
 | `y5.proportion-capacity-review` | numeric-input | 23 → 23 | 11,8 → 11,8 | 34,1 → 34,1 | 13,0 % → 13,0 % | — |
-| `y5.stage-screen` | decision-card | 25 → 25 | 40,8 → 40,8 | 75,0 → 75,0 | 52,0 % → 52,0 % | K ≤ 70 · S ≤ 40 % **BLOCKED** |
+| `y5.stage-screen` | decision-card | 25 → 25 | 40,8 → 39,8 | 75,0 → **78,0** | 52,0 % → **40,0 %** | K ≤ 78 · S ≤ 40 % ✓ |
 
 No enumerables: las Templates de construcción (`assignment-board`, `number-grid`,
 `budget-builder`, `spatial-layout`, `quantity-builder`, `schedule-builder`,
 `route-builder`) y `y5.multi-option-comparison-review`, cuyo rango numérico tiene
 10.000.000 valores. Sus respuestas ingenuas quedan para el re-audit (sección 7 de
 la especificación).
+
+La pantalla del acto es el único caso donde K **sube**: su Template se rediseñó
+entera y su techo pasó a ser el mínimo factible probado, 78. No es una pérdida de
+dificultad —antes «entera» era `efficient` en las 25 variantes y la respuesta
+constante rendía 75 sin que ninguna otra cosa cambiara—; ahora la óptima se
+reparte en cuatro opciones, S baja de 52 % a 40 % y el atajo del lado con más aire
+acierta en menos de la mitad. Ver la
+[adjudicación final del techo](rs-mat-008-blind-ceiling-final-adjudication.md).
 
 Las mejores respuestas constantes cambiaron de sentido: en la muestra final la K ya
 no es «repartir todo»; en el año que viene es marcar todo «No entra», que rinde 40;
@@ -506,6 +526,7 @@ sus catálogos históricos: `grade-7-dev-6` se agrega junto a `grade-7-dev-5`.
 | 3.º | `3.1.0` · `grade-3-dev-2` (681) | `3.2.0` · `grade-3-dev-3` (681) | Colectivo y dos Repasos |
 | 4.º | `4.1.0` · `grade-4-dev-2` (854) | `4.2.0` · `grade-4-dev-3` (853) | Consejo (una variante menos), peña, dos Repasos, cola |
 | 5.º | `5.1.0` · `grade-5-dev-2` (1025) | `5.2.0` · `grade-5-dev-3` (1026) | Muestra final, año que viene, Repasos, viaje, pantalla (texto) |
+| 5.º, segunda republicación | `5.2.0` · `grade-5-dev-3` (1026) | `5.3.0` · `grade-5-dev-4` (1026) | `y5.stage-screen` reescrita: dos elementos protegidos, geometría exacta y generación por papel (D-S08-116). Generador `y5.stage-screen.fit` a versión `2`; rulesets de práctica y demo a `5.3.0` |
 | Huella de contenido de la carrera completa | `e2c61b62` | `72435ee3` | Consecuencia de lo anterior |
 | Carrera completa · motor · action log · snapshot | `1.0.0-full-career` · `10.0.0` · `7` · `8` | sin cambios | — |
 
@@ -594,7 +615,7 @@ Con Node 24.19.0.
 | `pnpm game:simulate:deep` | 5000 / 5000 egresadas · 0 hallazgos |
 | `pnpm game:score` | perfecta 10 000 en todas las formas de plan · 0 empates de redondeo |
 | `pnpm test:e2e:only` | 154 E2E en desktop y mobile, 0 fallas |
-| `pnpm verify` | **exit 0**: toolchain, workspace, sync del master spec, secretos, formato, lint, typecheck, tokens del sistema de diseño, 95 archivos y 1723 tests de Vitest más 2 `todo`, cobertura 85,01 / 76,78 / 86,93 / 85,13, validación de contenido y catálogos de los seis años, cinco simulaciones deterministas, build de producción y los 154 E2E |
+| `pnpm verify` | **exit 0**: toolchain, workspace, sync del master spec, secretos, formato, lint, typecheck, tokens del sistema de diseño, la suite completa de Vitest, validación de contenido y catálogos de los seis años, cinco simulaciones deterministas, build de producción y los E2E. Los conteos finales, con RS-MAT-008 ya implementado, están en la [adjudicación final del techo](rs-mat-008-blind-ceiling-final-adjudication.md) y en la sección N de este informe |
 | `node scripts/validate-agent-workspace.mjs` | 6 skills, 236 archivos documentados, enlaces y JSON OK |
 | `node scripts/sync-master-spec.mjs --check` | 116 fuentes sincronizadas |
 | `git diff --check` | sin espacios en blanco erróneos |
@@ -643,9 +664,10 @@ ingenuas en las Templates de construcción y confirmar que ninguna decisión
 ## R. Estado de gobernanza
 
 ```text
-Mathematics Remediation Implementation   BLOCKED · 13 de 14 contratos DONE · 1 STOP
-Contract Conflict Adjudication           DONE · OQ-67 resuelta · OQ-66 abierta
-Independent Mathematics Re-Audit         PENDING · requiere decidir el techo de RS-MAT-008
+Mathematics Remediation Implementation   DONE · 14 de 14 contratos PASS
+Contract Conflict Adjudication           DONE · OQ-67 cerrada (D-S08-113)
+RS-MAT-008 Blind Ceiling Final Adjudication  DONE · OQ-66 cerrada (D-S08-116)
+Independent Mathematics Re-Audit         NEXT
 AI Mathematics Dept. Provisional Sign-Off PENDING
 Human Mathematics Department Review      DEFERRED · Final Delivery / Pre-Release
 Real-player pacing validation            PENDING

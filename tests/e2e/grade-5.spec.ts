@@ -136,6 +136,44 @@ for (const width of [320, 360, 390, 412]) {
 }
 
 for (const width of [320, 412]) {
+  test(`Grade 5: proyectar la pantalla del acto a ${String(width)} px, con las seis formas`, async ({
+    page,
+  }) => {
+    test.setTimeout(180_000)
+    await page.setViewportSize({ width, height: 900 })
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await openAt(page, 'browser-g5-pantalla', 'y5.stage-screen')
+
+    // RS-MAT-008: seis formas de proyectar, y los dos elementos protegidos a la
+    // vista con su aire.
+    const options = page.getByRole('radio')
+    await expect(options).toHaveCount(6)
+    await expect(
+      page.getByText('Cartel del curso', { exact: true }),
+    ).toBeVisible()
+    await expect(
+      page.getByText('Fecha del acto', { exact: true }),
+    ).toBeVisible()
+    await expect(
+      page.getByText('sin cortar el cartel ni la fecha', { exact: false }),
+    ).toBeVisible()
+    await reflow(page, `stage-screen · empty · ${String(width)}`)
+
+    await tabTo(page, options.first())
+    await page.keyboard.press('Space')
+    await expect(options.first()).toBeChecked()
+    await reflow(page, `stage-screen · answered · ${String(width)}`)
+    await noAxeViolations(page)
+
+    const submit = page.getByTestId('submit-answer')
+    await tabTo(page, submit)
+    await page.keyboard.press('Enter')
+    await expect(page.getByTestId('feedback-heading')).toBeFocused()
+    await reflow(page, `stage-screen · result · ${String(width)}`)
+  })
+}
+
+for (const width of [320, 412]) {
   test(`Grade 5: elegir el año que viene a ${String(width)} px, sin puntuar la preferencia`, async ({
     page,
   }) => {

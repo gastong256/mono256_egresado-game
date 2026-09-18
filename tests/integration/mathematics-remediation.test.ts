@@ -100,10 +100,13 @@ import {
   usedHelpers,
 } from '@/content/grade-4/challenges/school-event-flow'
 import {
+  cuts,
   evaluateScreen,
-  project,
+  moreAirSide,
   screenSchema,
+  screenShare,
   tierOf as screenTierOf,
+  validCrops,
   WAYS,
 } from '@/content/grade-5/challenges/stage-screen'
 import { publishedParams } from '../helpers/published-params'
@@ -225,6 +228,90 @@ describe('RS-MAT-007 · el consejo escolar', () => {
         'no llevó ninguna propuesta',
       )
     }
+  })
+})
+
+describe('RS-MAT-008 · la pantalla del acto', () => {
+  const screens = published('y5.stage-screen', (x) => screenSchema.parse(x))
+  const optimalOf = (p: (typeof screens)[number]) =>
+    WAYS.map((way) => way.id).find(
+      (wayId) => screenTierOf(p, wayId) === 'optimal',
+    )
+  const SCORE = {
+    optimal: 100,
+    efficient: 75,
+    functional: 40,
+    invalid: 10,
+  } as const
+
+  it('punto 7: la óptima se reparte en al menos tres opciones y ninguna pasa del 40 %', () => {
+    expect(screens.length).toBe(25)
+    const counts = new Map<string, number>()
+    for (const p of screens) {
+      const best = optimalOf(p)
+      expect(best).toBeDefined()
+      counts.set(best ?? '', (counts.get(best ?? '') ?? 0) + 1)
+    }
+    expect(counts.size).toBeGreaterThanOrEqual(3)
+    for (const [wayId, count] of counts)
+      expect(count * 100, wayId).toBeLessThanOrEqual(screens.length * 40)
+  })
+
+  it('punto 8: ninguna forma salvo estirar tiene el mismo nivel en todo el catálogo', () => {
+    for (const way of WAYS) {
+      const tiers = new Set(screens.map((p) => screenTierOf(p, way.id)))
+      if (way.id === 'estirar') expect([...tiers]).toEqual(['invalid'])
+      else expect(tiers.size, way.id).toBeGreaterThan(1)
+    }
+  })
+
+  it('punto 9: recortar todo del lado con más aire es óptimo en a lo sumo la mitad', () => {
+    const right = screens.filter((p) => moreAirSide(p) === optimalOf(p)).length
+    expect(right * 2).toBeLessThanOrEqual(screens.length)
+  })
+
+  it('punto 10: la pantalla que usa «entera» nunca queda pegada al 75 %', () => {
+    for (const p of screens) {
+      const share = screenShare(p, 'entera')
+      expect(
+        share.num * 20 <= share.den * 14 || share.num * 5 >= share.den * 4,
+      ).toBe(true)
+    }
+  })
+
+  it('D-S08-116: el techo probado, en enteros — ninguna respuesta constante pasa de 1950 / 25', () => {
+    for (const way of WAYS) {
+      const total = screens.reduce(
+        (sum, p) => sum + SCORE[screenTierOf(p, way.id)],
+        0,
+      )
+      expect(total, way.id).toBeLessThanOrEqual(1950)
+    }
+    // Y el piso se toca: «entera» es exactamente la mejor respuesta constante.
+    const whole = screens.reduce(
+      (sum, p) => sum + SCORE[screenTierOf(p, 'entera')],
+      0,
+    )
+    expect(whole).toBe(1950)
+  })
+
+  it('la excepción de witness sólo alcanza a las variantes sin recorte válido', () => {
+    let exempt = 0
+    for (const p of screens) {
+      const tiers = new Set(WAYS.map((way) => screenTierOf(p, way.id)))
+      expect(tiers.has('optimal')).toBe(true)
+      expect(tiers.has('invalid')).toBe(true)
+      if (validCrops(p).length === 0) {
+        exempt += 1
+        expect(tiers.has('efficient') || tiers.has('functional')).toBe(true)
+      } else {
+        expect(tiers.has('efficient')).toBe(true)
+        expect(tiers.has('functional')).toBe(true)
+      }
+    }
+    // Tres variantes sin recorte válido: las que hacen que «entera» no sea
+    // siempre `efficient` y las únicas que usan la excepción.
+    expect(exempt).toBe(3)
   })
 })
 
@@ -602,34 +689,49 @@ describe('inventario de feedback afirmativo · correcciones en el mismo alcance'
       })
   })
 
-  it('y5.stage-screen: la restricción violada nombra el lado donde está el cartel', () => {
+  it('y5.stage-screen: la restricción violada nombra el elemento que se come el recorte', () => {
     const screens = published('y5.stage-screen', (x) => screenSchema.parse(x))
+    let checked = 0
     for (const p of screens)
       for (const way of WAYS) {
-        if (way.id === 'estirar' || screenTierOf(p, way.id) !== 'invalid')
-          continue
+        if (screenTierOf(p, way.id) !== 'invalid') continue
         const result = evaluateScreen(p, way.id)
         if (!result.ok) throw new Error('rechazo inesperado')
-        expect(result.value.feedback.violatedConstraint).toBe(
-          `El recorte de ${p.bannerAt} se come el cartel del curso.`,
+        const text = result.value.feedback.violatedConstraint ?? ''
+        if (way.id === 'estirar') {
+          expect(text).toContain('deformada')
+          continue
+        }
+        // Calculado: el recorte que se pasa dice de qué lado se pasó.
+        const cut = cuts(p, way.id)
+        const eatsBanner = cut.top > 2 * p.bannerAir * p.screenWidth
+        expect(text).toContain(
+          eatsBanner ? 'el cartel del curso' : 'la fecha del acto',
         )
+        checked += 1
       }
+    expect(checked).toBeGreaterThan(0)
   })
 
-  it('y5.stage-screen: «bandas al costado» y «media pantalla vacía» son ciertos donde se muestran', () => {
+  it('y5.stage-screen: «bandas a los costados» y «chica en el medio» son ciertos donde se muestran', () => {
     const screens = published('y5.stage-screen', (x) => screenSchema.parse(x))
     for (const p of screens)
       for (const way of WAYS) {
         const quality = screenTierOf(p, way.id)
         if (quality !== 'efficient' && quality !== 'functional') continue
-        const shown = project(p, way.id)
-        const used = shown.shownWidth * shown.shownHeight
-        const screen = p.screenWidth * p.screenHeight
+        const share = screenShare(p, way.id)
+        const result = evaluateScreen(p, way.id)
+        if (!result.ok) throw new Error('rechazo inesperado')
+        const text = result.value.feedback.consequence ?? ''
         if (quality === 'efficient') {
-          // Bandas a los costados y ninguna arriba o abajo.
-          expect(shown.shownWidth).toBeLessThan(p.screenWidth)
-          expect(shown.shownHeight).toBe(p.screenHeight)
-        } else expect(used * 2).toBeLessThanOrEqual(screen)
+          // Sólo «entera» llega a efficient, y deja bandas sólo a los costados:
+          // su alto es el de la pantalla.
+          expect(text).toContain('bandas a los costados')
+          expect(share.num * 4).toBeGreaterThanOrEqual(share.den * 3)
+        } else {
+          expect(text).toContain('chica en el medio')
+          expect(share.num * 4).toBeLessThan(share.den * 3)
+        }
       }
   })
 

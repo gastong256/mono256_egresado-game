@@ -5,7 +5,9 @@
 - **Enmiendas:** 2026-09-17, por la
   [adjudicación de conflictos de contrato](mathematics-remediation-contract-conflict-adjudication.md):
   criterio 3 de RS-NEW-001 reformulado sobre planes válidos (D-S08-113); RS-MAT-008
-  detenido con su techo intacto y su punto de decisión abierto (D-S08-114)
+  detenido con su techo intacto y su punto de decisión abierto (D-S08-114). 2026-09-18,
+  por la [adjudicación final del techo](rs-mat-008-blind-ceiling-final-adjudication.md): el techo de
+  `y5.stage-screen` pasa a `K ≤ 78`, el mínimo factible demostrado (D-S08-116)
 - **Gate que la consume:** `MATHEMATICS REMEDIATION IMPLEMENTATION`
 - **Gate que la verifica:** `Independent Mathematics Re-Audit`
 - **Base:** `main` en `9ea3896`; catálogo `grade-5-dev-2`; motor `10.0.0`;
@@ -124,7 +126,7 @@ vigente de carrera completa:
 | `y2.data-claim-review` | K ≤ 75; S ≤ 60 % |
 | `y2.course-project-survey` | K ≤ 60; S ≤ 35 % |
 | `y2.standings-claim` | K ≤ 65; S ≤ 35 % |
-| `y5.stage-screen` | K ≤ 70; S ≤ 40 % |
+| `y5.stage-screen` | K ≤ 78 —el mínimo factible demostrado, D-S08-116—; S ≤ 40 % |
 | `y5.course-project-final` | K ≤ 65; S ≤ 35 % |
 | `y5.next-step-options` | K ≤ 65; S ≤ 35 % |
 | `y4.represent-class` | abstención total nunca ≥ `efficient` |
@@ -496,15 +498,22 @@ contenido de 4.º y posteriores; catálogos de 4.º y 5.º.
 11. El detalle de cada opción puede decir el tamaño que queda en pantalla, pero no
     cuánto recorta de cada lado ni si un elemento protegido sobrevive.
 
-> **Nota de enmienda, 2026-09-17 (D-S08-114).** Este contrato está **detenido**.
-> La excepción estrecha del witness que resolvía su primera contradicción no
-> vuelve factible el resto: con seis opciones y esta escalera, «entera» es siempre
-> válida y nunca baja de `efficient` donde algún recorte vale, así que
-> `K = 75 + 25·w` y, con los puntos 7 y 9, el piso demostrado es **K = 78** contra
-> un techo de 70. Ningún criterio de este contrato se relajó; la decisión mínima
-> requerida está en la
-> [adjudicación de conflictos de contrato](mathematics-remediation-contract-conflict-adjudication.md#d6-punto-de-decisión-mínimo)
-> y sigue abierta como pregunta 66.
+> **Enmienda, 2026-09-18 (D-S08-116).** El techo de este contrato pasa de
+> `K ≤ 70` a **`K ≤ 78`**, que es el **mínimo factible demostrado** y no una
+> relajación de conveniencia: «entera» no recorta nada, así que es válida en toda
+> variante y, donde algún recorte vale, la escalera la deja en `efficient`; por lo
+> tanto `K = 75 + 25·w`, y los puntos 7 y 9 fuerzan `w ≥ 1/10`, de donde
+> `K ≥ 1950 / 25 = 78`. La excepción estrecha del witness (D-S08-114) —sólo donde
+> ningún recorte es válido— se conserva. Todos los demás criterios siguen
+> vigentes y se cumplen. Prueba, catálogo testigo y mediciones en la
+> [adjudicación final del techo](rs-mat-008-blind-ceiling-final-adjudication.md).
+>
+> Contexto: el techo original venía de la adjudicación de 2026-09-16; su
+> imposibilidad se descubrió en la
+> [implementación](mathematics-remediation-implementation.md#stop-1-rs-mat-008-y5stage-screen)
+> (STOP, D-S08-105) y se acotó en la
+> [adjudicación de conflictos](mathematics-remediation-contract-conflict-adjudication.md#d-oq-66-y5stage-screen)
+> (D-S08-114).
 
 **Comportamiento prohibido.** Jerga de relación de aspecto, formatos como 16:9 o
 vocabulario audiovisual (invariante `LOCKED`); hacer válido estirar; cambiar el
@@ -515,7 +524,8 @@ cluster `egreso`; desempates ocultos.
 schema, `project`, validez, `tierOf`, generador, gates, `narrate`, `present`,
 feedback.
 
-**Criterios de aceptación.** Puntos 1–11 y los techos de la sección 3.
+**Criterios de aceptación.** Puntos 1–11 y los techos de la sección 3, con el
+techo `K ≤ 78` de la enmienda D-S08-116.
 
 **Tests requeridos.** En `tests/unit/grade-5-screen-yearbook-next.test.ts`:
 validez exacta con casos límite construidos; escalera por variante contra un

@@ -79,6 +79,7 @@
 04-quality/non-functional-requirements.md
 04-quality/post-grade-1-scalability-audit.md
 04-quality/post-teacher-gate-1-score-audit.md
+04-quality/rs-mat-008-blind-ceiling-final-adjudication.md
 04-quality/testing-strategy.md
 04-quality/threat-model.md
 04-quality/variant-validation-and-audit.md
