@@ -32,9 +32,12 @@ STAGE-08                                      IN_PROGRESS · CURRENT
     │   ├── Mathematics Remediation              DONE · 14/14 contratos PASS
     │   ├── Contract Conflict Adjudication       DONE · OQ-67 cerrada
     │   ├── RS-MAT-008 Blind Ceiling Adjudication DONE · OQ-66 cerrada
-    │   ├── Independent Re-Audit                 FAILED · 3 bloqueantes
-    │   ├── Remediación 2 (MAT-RA)                NEXT
-    │   └── Provisional Sign-Off                  NOT READY
+    │   ├── Remediación Ronda 1                  DONE · 14 contratos
+    │   ├── Re-Auditoría Ronda 1                  FAILED · 13/14 + 3 hallazgos nuevos
+    │   ├── Adjudicación post-re-audit            DONE · 10 hallazgos, 4 P0
+    │   ├── Remediación Ronda 2 (dirigida)        NEXT · RS-RA-AUDIT-001 primero
+    │   ├── Re-Auditoría Ronda 2                  PENDING
+    │   └── Provisional Sign-Off                  BLOCKED
     ├── Revisión del Depto. de Matemática      DEFERRED · a Final Delivery / Pre-Release
     ├── Sign-off manual de la rueda            PENDING · humana
     └── Pacing empírico con jugadores          PENDING · humana
@@ -75,11 +78,13 @@ exigiría inventar acciones de jugador que ninguna Template tiene. El contenido
 de 1.º a 5.º está en estado `draft`: faltan la remediación matemática y su
 sign-off provisional de IA, el sign-off manual de la rueda y el pacing empírico,
 gates de producción de STAGE-08. La remediación matemática cerró sus catorce
-contratos el 18 de septiembre, y la **re-auditoría independiente** del mismo día
-confirmó trece de los catorce —incluido el techo `K = 78` de la pantalla del
-acto— pero **falló el gate** por tres hallazgos bloqueantes propios (D-S08-117).
-La revisión del Departamento de Matemática humano no se eliminó: está diferida a
-la entrega final (D-S08-095).
+contratos el 18 de septiembre —**ronda 1**—, y la **re-auditoría independiente** del
+mismo día confirmó **trece de los catorce** —incluido el techo `K = 78` de la pantalla
+del acto— pero **falló el gate** por tres hallazgos bloqueantes propios (D-S08-117).
+La [adjudicación posterior](../04-quality/post-reaudit-mathematics-findings-adjudication.md)
+cerró los diez hallazgos el mismo día y emitió el contrato de la **ronda 2**
+(D-S08-122 a D-S08-126). La revisión del Departamento de Matemática humano no se
+eliminó: está diferida a la entrega final (D-S08-095).
 
 ## Baseline autoritativa
 
@@ -204,6 +209,39 @@ protegidos y el catálogo de 5.º se republicó como `grade-5-dev-4`. Medido: K 
 motor, action log, snapshot y ruleset de carrera no cambiaron; los catálogos se
 republicaron una sola vez (D-S08-109).
 
+## Adjudicación posterior a la re-auditoría
+
+La [adjudicación de los hallazgos](../04-quality/post-reaudit-mathematics-findings-adjudication.md)
+se ejecutó el 18 de septiembre y dio `COMPLETE · TARGETED REMEDIATION REQUIRED`. Los
+diez hallazgos `MAT-RA` quedaron decididos: **cuatro bloquean** el sign-off provisional
+—MAT-RA-001, 002, 003 y 006—, uno es técnico P1, dos se difieren a la revisión humana,
+uno a STAGE-09 y dos se resolvieron documentalmente.
+
+Revalidó la evidencia primaria de los tres bloqueantes y, en los dos atajos constantes,
+encontró una **causa raíz más profunda** que la reportada, lo que cambia la forma de la
+corrección:
+
+- `y3.course-project-tech`: el generador sólo puede emitir **seis** objetivos, cuyo
+  supremo `(5, 4, 6)` está muy dentro de los máximos `(10, 10, 12)`, así que un vector
+  ≥ ese supremo cumple **todos** los objetivos posibles en **cualquier** catálogo del
+  espacio. El exploit es estructural del generador: republicar no lo arregla.
+- `y4.course-project-fundraiser`: el orden de los ítems por **margen por minuto de
+  cocina** es idéntico en **25 de 25** variantes, así que el razonamiento económico
+  correcto da siempre la misma respuesta. El atajo **es la heurística correcta
+  congelada**, no ignorancia de la matemática.
+
+Los techos se fijaron con **estudios de factibilidad**, no por analogía: `K ≤ 65 ·
+S ≤ 35 %` para las dos, elegidos de modo que **ninguna corrección de una sola palanca
+los cumpla** —en 3.º, ampliar objetivos da 88,33 y apretar topes da 83,33, pero juntas
+dan 57,50; en 4.º, bajar el colchón deja 65,20 y rotar el orden da 40,00—. **No se creó
+ningún techo universal:** la auditoría reporta, los contratos deciden.
+
+MAT-RA-006 **subió de LOW a P0 y va primero**: sin la auditoría ampliada la ronda 2 no
+puede demostrar que arregló nada, y el contrato exige reproducir los dos hallazgos sobre
+el catálogo vigente **antes** de tocar contenido. El contrato completo está en la
+[especificación de la ronda 2](../04-quality/post-reaudit-mathematics-remediation-spec.md).
+**Nada de runtime, contenido, catálogos ni tests cambió en este gate.**
+
 ## Siguiente tarea canónica
 
 ```text
@@ -225,13 +263,19 @@ Mathematics Remediation Implementation — DONE
   STOP 2: RS-NEW-001 criterio 3 — RESUELTO por enmienda (D-S08-113)
 Contract Conflict Adjudication — DONE
 RS-MAT-008 Blind Ceiling Final Adjudication — DONE
-Independent Mathematics Re-Audit — FAILED — REMEDIATION REQUIRED
-  13 de 14 contratos PASS · RS-NEW-003 FAIL
+Mathematics Remediation Round 1 — DONE (14 contratos)
+Independent Mathematics Re-Audit Round 1 — FAILED — REMEDIATION REQUIRED
+  13 de 14 contratos PASS · RS-NEW-003 FAIL (erratum D-S08-122)
   K = 78 de y5.stage-screen re-probado y correcto
   MAT-RA-001 HIGH   g7.bus-travel-review, feedback falso en 26/26
   MAT-RA-002 BLOCKER y3.course-project-tech, constante K 95,83 · S 83 %
   MAT-RA-003 BLOCKER y4.course-project-fundraiser, constante K 92,80 · S 92 %
-AI Mathematics Department Provisional Sign-Off — NOT READY
+Post-Re-Audit Findings Adjudication — DONE
+  10 hallazgos adjudicados · 4 P0 bloqueantes
+  RS-RA-AUDIT-001 · RS-RA-001 · RS-RA-002 · RS-RA-003 · RS-RA-TEST-001
+Targeted Mathematics Remediation Round 2 — NEXT
+Independent Mathematics Re-Audit Round 2 — PENDING
+AI Mathematics Department Provisional Sign-Off — BLOCKED
 
 Human Mathematics Department Review
 — DEFERRED TO FINAL DELIVERY / PRE-RELEASE
@@ -239,8 +283,8 @@ Human Mathematics Department Review
 Real-player pacing validation — PENDING
 
 Next:
-ADJUDICACIÓN Y REMEDIACIÓN DE LOS HALLAZGOS MAT-RA,
-empezando por los tres bloqueantes
+TARGETED POST-REAUDIT MATHEMATICS REMEDIATION,
+con WP-RA-AUDIT primero: reproducir los hallazgos antes de corregir
 ```
 
 La [auditoría de implementación de carrera completa](../04-quality/full-career-implementation-audit.md)
@@ -278,6 +322,15 @@ de Matemática humano sobre las 42 Templates queda diferida a la entrega final.
 Hasta eso, el contenido permanece `draft` y la edición `official: false`.
 
 ## Última reconciliación
+
+18 de septiembre de 2026, al cierre: **adjudicación de los hallazgos posteriores a la
+re-auditoría**. Veredicto `COMPLETE · TARGETED REMEDIATION REQUIRED`. Los diez
+hallazgos decididos, cuatro bloqueantes con contrato ejecutable, causa raíz real de los
+dos atajos constantes establecida y sus techos fijados por estudio de factibilidad.
+Erratum canónico: el resultado contractual de la re-auditoría es **13 / 14**, no 14 / 14.
+Cuatro errata más aplicadas —techo a `N = 25`, «ninguna medición de estrategia ciega» de
+RS-MAT-011, la clase del inventario de feedback y la política de retención de catálogos
+de ADR-021—. Sólo documentación: ningún archivo de producto cambió. Sin push.
 
 18 de septiembre de 2026, más tarde: **re-auditoría matemática independiente**.
 Veredicto `FAILED — REMEDIATION REQUIRED`. Trece de los catorce contratos

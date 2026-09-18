@@ -54,7 +54,7 @@ implementación (sección [Correcciones](#correcciones)).
 | `g7.bus-latest-departure` | `optimalComparison` · optimal «el número que hacía falta» | exactitud | A | óptimo = respuesta exacta |
 | `g7.bus-latest-departure` | `consequence` · invalid | tarde por la entrada o sin el margen pedido | B | rama por `arrival > entrada` |
 | `g7.bus-travel-review` | `optimalComparison` · cuatro niveles | minutos de la demora y del viaje | B | `model.extraMinutes`, `model.travelMinutes` |
-| `g7.bus-travel-review` | `consequence` · «Faltaba sumarle el viaje normal» | causa del error | A | se muestra sólo si la respuesta es la demora sola |
+| `g7.bus-travel-review` | `consequence` · «Faltaba sumarle el viaje normal» | causa del error | **C** (era A) | **Clasificación corregida el 2026-09-18, D-S08-125.** La justificación registrada —«se muestra sólo si la respuesta es la demora sola»— es **falsa**: la rama decide con `Math.abs(respuesta − viajeDeHoy) === viajeNormal`, y un valor absoluto tiene dos raíces, así que también dispara en `viajeDeHoy + viajeNormal`, donde el jugador se **pasó**. Falso en 26 de 26 variantes. Ver [MAT-RA-001](independent-mathematics-reaudit.md#mat-ra-001-high-bloqueante-g7bus-travel-review) y [RS-RA-001](post-reaudit-mathematics-remediation-spec.md#4-rs-ra-001-g7bus-travel-review) |
 | `g7.mural-paint` | `optimalComparison` · optimal «el envase más barato entre los que alcanzaban» | mínimo entre suficientes | A | óptimo = `smallestSufficientTin` más barato |
 | `g7.mural-paint` | `optimalComparison` · functional | con el envase de $X alcanzaba | B | precio del más barato suficiente |
 | `g7.notebook-offer` | `optimalComparison` · optimal | qué descuento era mayor | B | `discountComparison` |

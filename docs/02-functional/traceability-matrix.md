@@ -68,7 +68,15 @@ revisión humana final`. Adjudicado el 16 de septiembre de 2026; implementado el
 con veredicto `BLOCKED` (D-S08-104) y, ese mismo día, con los dos conflictos de
 contrato adjudicados: la pregunta 67 cerrada por enmienda (D-S08-113) y la 66
 cerrada el 18 con el techo probado de `y5.stage-screen` (D-S08-116). Los catorce
-contratos quedan en PASS. La re-auditoría todavía no existe.
+contratos de la **ronda 1** quedan en PASS.
+
+La **re-auditoría independiente** se ejecutó el 18 de septiembre y dio
+`FAILED — REMEDIATION REQUIRED` (D-S08-117): **13 de 14** contratos verificados de forma
+independiente —`RS-NEW-003` en FAIL por `g7.bus-travel-review`, erratum D-S08-122— y el
+techo `K = 78` de `y5.stage-screen` re-probado. Añadió diez hallazgos `MAT-RA`, tres
+bloqueantes. La [adjudicación posterior](../04-quality/post-reaudit-mathematics-findings-adjudication.md)
+los cerró el mismo día (D-S08-122 a D-S08-126) y emitió el
+[contrato de la ronda 2](../04-quality/post-reaudit-mathematics-remediation-spec.md).
 
 | Hallazgos | Decisión canónica | Contrato | Implementación | Verificación |
 |---|---|---|---|---|
@@ -80,12 +88,31 @@ contratos quedan en PASS. La re-auditoría todavía no existe.
 | MAT-008 | `REQUIRED_CORRECTION` P0 | RS-MAT-008 (techo enmendado a `K ≤ 78`, D-S08-116) | **DONE** · dos elementos protegidos, seis formas, geometría exacta y catálogo `grade-5-dev-4` | `unit/grade-5-screen-yearbook-next`, `integration/mathematics-remediation` · RS-MAT-008, auditoría de estrategia ciega, E2E a 320 px |
 | MAT-009 · MAT-AJ-NEW-007 | `REQUIRED_CORRECTION` P1 | RS-MAT-009 | DONE | `integration/mathematics-remediation`, auditoría |
 | MAT-010 | `ACCEPT_AS_DESIGNED` | — | Sin cambio | Revisión humana final |
-| MAT-011 | `REQUIRED_CLARIFICATION` P2 | RS-MAT-011 | DONE · consigna de la peña | `integration/mathematics-remediation`, E2E 320 px |
+| MAT-011 | `REQUIRED_CLARIFICATION` P2 | RS-MAT-011 | DONE · consigna de la peña. **PASS en su alcance textual**; su línea «ninguna medición de estrategia ciega» quedó falsada por medición (erratum D-S08-124) → RS-RA-003 | `integration/mathematics-remediation`, E2E 320 px |
 | MAT-012 · MAT-013 | `ACCEPT_WITH_DOCUMENTED_RISK` | — | Sin cambio | Banderas para la revisión humana final |
 | MAT-AJ-NEW-001 | `REQUIRED_CORRECTION` P0 | RS-NEW-001 (criterio 3 enmendado, D-S08-113) | **DONE** | `integration/mathematics-remediation` · «criterio 3 enmendado», auditoría |
 | MAT-AJ-NEW-002 | `REQUIRED_CORRECTION` P0 | RS-NEW-002 | DONE | `integration/mathematics-remediation` |
-| MAT-AJ-NEW-003 | `REQUIRED_CORRECTION` P1 | RS-NEW-003 | DONE · seis Repasos | `integration/mathematics-remediation` |
+| MAT-AJ-NEW-003 | `REQUIRED_CORRECTION` P1 | RS-NEW-003 | **FAIL en la re-auditoría** · los cinco Repasos del alcance explícito pasan, pero el alcance transversal alcanza a `g7.bus-travel-review`, que lo incumple en 26/26 → RS-RA-001 | `integration/mathematics-remediation`; re-auditoría, sección I |
 | Regla 2.9 | Inventario de feedback afirmativo | — | DONE · seis textos falsos más corregidos (D-S08-110) | [inventario](../04-quality/mathematics-remediation-feedback-inventory.md) |
+
+### Ronda 2 · hallazgos de la re-auditoría independiente
+
+Cadena `hallazgo del re-audit → adjudicación del Chair → contrato de la ronda 2 →
+remediación dirigida → re-auditoría ronda 2 → sign-off provisional`. Adjudicados el 18
+de septiembre de 2026 (D-S08-122 a D-S08-126). **Ninguno implementado todavía.**
+
+| Hallazgo | Decisión canónica | Prio | ¿Bloquea? | Contrato | Verificación exigida |
+|---|---|---|---|---|---|
+| MAT-RA-006 · alcance de la auditoría permanente | `REQUIRED_CORRECTION` | **P0** | **sí** | [RS-RA-AUDIT-001](../04-quality/post-reaudit-mathematics-remediation-spec.md#3-rs-ra-audit-001-auditoría-permanente-por-capacidad) | Matriz de cobertura de las 42 Templates; reproducción de los dos atajos **antes** de corregir |
+| MAT-RA-001 · `g7.bus-travel-review` | `REQUIRED_CORRECTION` | **P0** | **sí** | [RS-RA-001](../04-quality/post-reaudit-mathematics-remediation-spec.md#4-rs-ra-001-g7bus-travel-review) | Rango `[0,120]` × 26 variantes, dirección contra el signo de `respuesta − exacta` |
+| MAT-RA-002 · `y3.course-project-tech` | `REQUIRED_CORRECTION` | **P0** | **sí** | [RS-RA-002](../04-quality/post-reaudit-mathematics-remediation-spec.md#5-rs-ra-002-y3course-project-tech) | `K ≤ 65 · S ≤ 35 %` por enumeración exhaustiva del espacio constante |
+| MAT-RA-003 · `y4.course-project-fundraiser` | `REQUIRED_CORRECTION` | **P0** | **sí** | [RS-RA-003](../04-quality/post-reaudit-mathematics-remediation-spec.md#6-rs-ra-003-y4course-project-fundraiser) | `K ≤ 65 · S ≤ 35 %` y ≥ 3 ordenaciones por margen por minuto |
+| MAT-RA-008 · flake de `architecture-lint` | `REQUIRED_CORRECTION` | P1 | no | [RS-RA-TEST-001](../04-quality/post-reaudit-mathematics-remediation-spec.md#7-rs-ra-test-001-reproducibilidad-de-architecture-lint) | `pnpm verify` verde tres corridas seguidas |
+| MAT-RA-005 · `g7.bus-timing` | `ACCEPT_WITH_DOCUMENTED_RISK` | P2 | no | — | Bandera humana H-6; la auditoría sigue reportando su `K` |
+| MAT-RA-004 · `y1.scale-fit-review` | `DEFER_TO_FINAL_HUMAN_REVIEW` | P2 | no | — | Bandera humana H-7; la auditoría sigue reportando su política ingenua |
+| MAT-RA-009 · replay de catálogos de 1.º–5.º | `DEFER_TO_STAGE_09` | P0 en STAGE-09 | no | R-S09-CAT | Política de retención escrita por año antes de la edición oficial |
+| MAT-RA-007 · «N = 25 minimiza el techo» | `RESOLVED — DOCUMENTATION ONLY` | P2 | no | — | Erratum aplicado (D-S08-123) |
+| MAT-RA-010 · conteos desactualizados | `RESOLVED — ALREADY FIXED` | NONE | no | — | Verificado: 1739 tests, 0 `todo`, 158 E2E |
 
 Fuentes: [adjudicación](../04-quality/mathematics-department-ai-adjudication.md),
 [revisor A](../04-quality/mathematics-department-ai-reviewer-a.md),

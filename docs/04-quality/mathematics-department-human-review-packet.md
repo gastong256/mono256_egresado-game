@@ -304,6 +304,25 @@ de borde y de riesgo. Abrir con
 Los casos 11 y 12 están para **contraste**: son las dos situaciones que la
 pre-revisión considera mejor construidas. Sirven de vara para juzgar las demás.
 
+### Banderas abiertas por la re-auditoría independiente
+
+Cinco preguntas que ninguna adjudicación de IA puede cerrar. Vienen de la
+[re-auditoría](independent-mathematics-reaudit.md) y de su
+[adjudicación](post-reaudit-mathematics-findings-adjudication.md), y son **decisiones de
+didáctica y de producto**, no defectos matemáticos.
+
+| # | Bandera | Pregunta |
+|---|---|---|
+| **H-6** | `g7.bus-timing` | Tomar **siempre la primera salida** rinde **84,6 %** de la escala sin calcular nunca el porcentaje de demora, porque la salida más temprana deja el mayor margen y la escalera trata «llegar temprano» como `efficient` a propósito. El único costo —9,1 min perdidos de promedio— vive en Estilo, que no puntúa. ¿Es aceptable? ¿Debería «demasiado temprano» ser un **error matemático**? Bajarlo exige tocar la escalera `LOCKED` o agregar un tope de espera |
+| **H-7** | `y1.scale-fit-review` | Colocar de izquierda a derecha es óptimo en **24 de 24**, y la presentación ya entrega el paso convertido (`widthCells`) que la consigna pide hacer. Pero el motor responde **en celdas** y la grilla dibuja la huella, así que ocultar la conversión es incoherente con la interacción y con la accesibilidad, y volver el encaje no trivial subiría la dificultad de un Repaso (contra ADR-024). **¿La conversión cm → celdas es el constructo de este Repaso, o andamiaje?** De la respuesta depende si hay algo que corregir |
+| **H-8** | `y3.course-project-tech` | Después de RS-RA-002 los objetivos y los topes de recurso se van a **dispersar** para que ninguna respuesta constante domine. ¿Los números nuevos siguen siendo **verosímiles** para una feria escolar, o se nota que están construidos para romper la memorización? |
+| **H-9** | `y4.course-project-fundraiser` | Después de RS-RA-003 el orden de los ítems por **margen por minuto de cocina** va a rotar entre variantes —hoy es el mismo en 25 de 25—. ¿Las economías resultantes —precios, costos y tiempos— son creíbles para un curso real? |
+| **H-10** | Techos de estrategia ciega | ¿`K ≤ 65 · S ≤ 35 %` son **pedagógicamente** apropiados para esas dos situaciones, o conviene ser más exigente incluso a costa de más dispersión paramétrica? |
+
+Las banderas H-8 y H-9 se abren **antes** de que la remediación exista, a propósito: la
+ronda 2 va a mover números que afectan la verosimilitud narrativa, y esa evaluación es
+humana.
+
 ## Parte G — Planilla de sign-off
 
 Una ficha por situación revisada. No firmar por otra persona.

@@ -618,6 +618,15 @@ entradas de la peña.
 
 **Mediciones.** Ninguna de estrategia ciega.
 
+> **ERRATUM, 2026-09-18 (D-S08-124).** Esa línea quedó **falsada por medición**. La
+> [re-auditoría independiente](independent-mathematics-reaudit.md#mat-ra-003-blocker-bloqueante-y4course-project-fundraiser)
+> enumeró los 630 vectores constantes de la peña y encontró que
+> `panchos 3 · tortas 0 · bebidas 9` rinde `K = 92,80` y es óptima en 23 de 25
+> variantes. Esta Template **sí** necesitaba medición de estrategia ciega. El resto de
+> RS-MAT-011 —un contrato de claridad textual— sigue **PASS** y no se deforma: la
+> resistencia a estrategia ciega se contrata aparte, en
+> [RS-RA-003](post-reaudit-mathematics-remediation-spec.md#6-rs-ra-003-y4course-project-fundraiser).
+
 **Superficie de versión esperada.** Contenido de 4.º y posteriores según
 convención; catálogo sin cambio de población esperado.
 

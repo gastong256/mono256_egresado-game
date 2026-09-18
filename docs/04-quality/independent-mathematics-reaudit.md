@@ -14,6 +14,18 @@
 INDEPENDENT MATHEMATICS RE-AUDIT — FAILED — REMEDIATION REQUIRED
 ```
 
+> **ERRATUM, 2026-09-18 (D-S08-122).** El párrafo que sigue dice «los catorce se
+> sostienen», y eso **contradice la matriz contractual de la sección E**, que
+> concluye **13 de 14 PASS con RS-NEW-003 en FAIL**. La matriz es la correcta: el
+> alcance de RS-NEW-003 se extiende, por su propia línea de Alcance y por la regla
+> 2.9, a «cualquier otro Repaso donde el inventario encuentre el mismo patrón», y
+> `g7.bus-travel-review` lo incumple en 26 de 26 variantes. El resultado contractual
+> canónico de esta re-auditoría es **13 / 14**. El veredicto global `FAILED` no
+> depende de esa corrección: se sostiene igual por MAT-RA-002 y MAT-RA-003, que son
+> hallazgos nuevos fuera de los catorce contratos. Resuelto por la
+> [adjudicación posterior](post-reaudit-mathematics-findings-adjudication.md#c-erratum-canónico-de-la-re-auditoría).
+> El texto original se conserva tal como se emitió.
+
 Los catorce contratos de la remediación **se verificaron de forma independiente y
 los catorce se sostienen**, incluida la parte más difícil: el techo
 `K = 78` de `y5.stage-screen` se volvió a probar desde cero, con una derivación

@@ -111,8 +111,16 @@ heurística.
 - Y `K` es un **máximo** sobre respuestas constantes, así que `K ≥ score_entera`
   sin importar cómo queden las otras cinco.
 
-Para `N = 24` el mismo argumento da `K ≥ 78,125`, peor: 25 es el tamaño que
-minimiza el techo.
+Para `N = 24` el mismo argumento da `K ≥ 78,125`, peor.
+
+> **ERRATUM, 2026-09-18 (D-S08-123).** Acá decía además que «25 es el tamaño que
+> minimiza el techo». Es **falso**, y la
+> [re-auditoría independiente](independent-mathematics-reaudit.md#mat-ra-007-observation-exceso-documental-en-la-adjudicación-del-techo)
+> lo probó por enumeración: `K_min(N) = 75 + 25·⌈N/10⌉/N`, que vale **77,5** para todo
+> `N` múltiplo de 10 y **77,885** para `N = 26`. La cifra de `N = 24` (78,125) sí es
+> correcta. **El resultado de este contrato no cambia:** el catálogo publicado tiene
+> `N = 25`, donde el mínimo es exactamente **78,000**, y el techo `K ≤ 78` se cumple y
+> es mínimo a ese tamaño. Lo corregido es el alcance del argumento, no su conclusión.
 
 ## F. Catálogo testigo
 

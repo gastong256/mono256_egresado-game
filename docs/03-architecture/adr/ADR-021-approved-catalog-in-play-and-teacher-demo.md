@@ -46,6 +46,19 @@ Poner ese guard encontró un defecto real: **el codec del action log descartaba 
 
 `grade-7-dev-1` no se regeneró. Se agregó `grade-7-dev-2` como archivo nuevo, y los dos viven en el content set indexados por versión. Una run que declaró `dev-1` puede resolverse contra el conjunto que realmente jugó.
 
+> **Aclaración, 2026-09-18 (D-S08-126).** El principio se enunció acá sobre 7.º, y leído
+> en general parecería universal. No lo es hoy, y la
+> [re-auditoría independiente](../../04-quality/independent-mathematics-reaudit.md#mat-ra-009-observation-alcance-del-replay-de-los-catálogos-de-1º-a-5º)
+> lo detectó: 7.º conserva `dev-1` a `dev-6`, mientras 1.º a 5.º **renombran** el
+> artefacto a la versión siguiente (D-S08-088, D-S08-109), así que una run que declarara
+> `grade-5-dev-2` no resuelve. Es deliberado mientras ese contenido está en `draft` con
+> `official: false`, y el sistema **falla cerrado**: la compatibilidad de versiones es
+> igualdad exacta en motor, ruleset y contenido, así que nunca resuelve contra el
+> conjunto equivocado. La garantía de retención de este punto rige, por ahora, para los
+> catálogos que una run **oficial** puede declarar. Antes de que exista una edición
+> oficial, el requisito **R-S09-CAT** de STAGE-09 exige escribir la política de retención
+> de replay por año y garantizar que todo descriptor declarable siga siendo resoluble.
+
 El artefacto es una frontera y se parsea con zod al cargar el content set, no se castea: un catálogo corrupto tiene que fallar al arrancar y no más tarde, como una dirección que no resuelve en la mitad de una partida.
 
 Agregar una plantilla no mueve ningún problema existente, y hay un test que lo comprueba entrada por entrada. **Cambiar un generador sí**, y esta versión cambió uno: las direcciones generadas del acto valen otra coreografía en `dev-2` que en `dev-1` (ver §6). Todas las demás conservan su huella. Publicar al lado en vez de regenerar es lo que permite afirmar las dos cosas.

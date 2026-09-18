@@ -90,6 +90,8 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 ### 04-quality
 - `content-validation.md`: pipeline de schema, matemática, generación, UI y playtest.
 - `competition-fairness-audit.md`: preguntas de equidad que un ranking con premios debe poder contestar.
+- `post-reaudit-mathematics-findings-adjudication.md`: adjudicación de los diez hallazgos de la re-auditoría, con la causa raíz real de los dos atajos constantes, los estudios de factibilidad que fijan sus techos y el erratum contractual 13/14.
+- `post-reaudit-mathematics-remediation-spec.md`: contrato ejecutable de la ronda 2, con la auditoría permanente por capacidad primero y los cuatro contratos P0.
 - `post-teacher-gate-1-score-audit.md`: barrida reproducible de `fair-score-dev-2` sobre 23.000 planes y comparación histórica.
 - `full-career-technical-conformance.md`: reporte técnico read-only de Phase 0, evidencia y deltas futuros.
 - `post-grade-1-scalability-audit.md`: contrato obligatorio para dos obligaciones conceptuales bajo un recovery máximo después de implementar 1.º.
