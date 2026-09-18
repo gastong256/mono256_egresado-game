@@ -1,3 +1,4 @@
+// Ronda 2: contenido actualizado; políticas y versiones de ruleset intactas.
 /**
  * Las versiones del content set de 7.º grado.
  *
@@ -63,7 +64,7 @@
  * cambió algo que no cambió.
  */
 export const GRADE_7_RULESET_VERSION = '0.4.0-grade-7'
-export const GRADE_7_CONTENT_VERSION = '0.10.0-grade-7'
+export const GRADE_7_CONTENT_VERSION = '0.11.0-grade-7'
 
 /**
  * El ruleset de una partida **compuesta** de 7.º.
@@ -102,4 +103,4 @@ export const GRADE_7_COMPOSED_RULESET_VERSION = '0.2.0-grade-7-composed'
  * aprobaban, así que parte de sus entradas generadas es otra. `dev-5` queda
  * publicado tal como estaba.
  */
-export const GRADE_7_VARIANT_CATALOG_VERSION = 'grade-7-dev-6'
+export const GRADE_7_VARIANT_CATALOG_VERSION = 'grade-7-dev-7'

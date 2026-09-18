@@ -8,13 +8,21 @@
  * `docs/04-quality/mathematics-remediation-spec.md`, por Template: no hay un
  * umbral universal.
  *
- * `pnpm game:blind-audit` imprime la tabla completa sin afirmar nada.
+ * Desde la ronda 2 el espacio de respuesta se clasifica por **capacidad** y no
+ * por nombre de motor (RS-RA-AUDIT-001): toda Template del catálogo recibe una
+ * fila con su modo, y donde existe un vector constante comparable que entra en el
+ * presupuesto se enumera **entero**. Eso es lo que hace visibles los atajos de
+ * las Templates de construcción, que la ronda 1 no medía.
+ *
+ * `pnpm game:blind-audit` imprime la tabla completa sin afirmar nada;
+ * `-- --coverage` agrega la matriz de cobertura.
  */
 import { beforeAll, describe, expect, it } from 'vitest'
 import { createFullCareerDependencies } from '@/content/full-career'
 import { grade5VariantCatalog } from '@/content/grade-5'
 import {
   auditBlindStrategies,
+  EVALUATION_BUDGET,
   type BlindStrategyRow,
 } from '../helpers/blind-strategy'
 
@@ -25,7 +33,8 @@ let rows: readonly BlindStrategyRow[] = []
 const row = (templateId: string) => {
   const found = rows.find((entry) => entry.templateId === templateId)
   if (found === undefined) throw new Error(`falta ${templateId} en el catálogo`)
-  if (!found.enumerable) throw new Error(`${templateId} no es enumerable`)
+  if (found.mode !== 'AUDITED_EXHAUSTIVELY')
+    throw new Error(`${templateId} no se enumeró: ${found.reason ?? ''}`)
   return found
 }
 
@@ -36,9 +45,112 @@ beforeAll(() => {
   )
 })
 
+describe('RS-RA-AUDIT-001 · cobertura por capacidad', () => {
+  it('toda Template del catálogo recibe un modo de auditoría declarado', () => {
+    expect(new Set(rows.map((entry) => entry.templateId))).toEqual(
+      new Set(grade5VariantCatalog.entries.map((entry) => entry.templateId)),
+    )
+    expect(rows).toHaveLength(
+      new Set(grade5VariantCatalog.entries.map((entry) => entry.templateId))
+        .size,
+    )
+    for (const entry of rows) {
+      expect(['A', 'B', 'C', 'D']).toContain(entry.category)
+      expect([
+        'AUDITED_EXHAUSTIVELY',
+        'AUDITED_BY_POLICIES',
+        'NOT_APPLICABLE_WITH_REASON',
+        'BLOCKED_BY_SPACE_WITH_REASON',
+      ]).toContain(entry.mode)
+      // Nunca «no enumerable» sin razón: si no se enumeró, dice por qué.
+      if (entry.mode !== 'AUDITED_EXHAUSTIVELY')
+        expect(entry.reason ?? '').not.toBe('')
+    }
+  })
+
+  it('ninguna Template queda sin soporte de medición', () => {
+    const unsupported = rows.filter(
+      (entry) => entry.mode === 'BLOCKED_BY_SPACE_WITH_REASON',
+    )
+    expect(unsupported.map((entry) => entry.templateId)).toEqual([])
+  })
+
+  it('las Templates de construcción con vector constante estable se enumeran enteras', () => {
+    // Las cuatro que el contrato nombra: su cardinal es tratable y la ronda 1
+    // las reportaba como «no enumerable» por el nombre de su motor.
+    for (const templateId of [
+      'g7.stand-supplies',
+      'y3.course-project-tech',
+      'y4.course-project-fundraiser',
+      'y4.school-event-flow',
+    ]) {
+      const entry = row(templateId)
+      expect(entry.mode).toBe('AUDITED_EXHAUSTIVELY')
+      expect(entry.cardinality ?? 0).toBeGreaterThan(0)
+      expect(entry.evaluations ?? 0).toBeLessThanOrEqual(EVALUATION_BUDGET)
+    }
+  })
+
+  it('las Templates sin vector constante comparable se miden con políticas', () => {
+    for (const entry of rows.filter(
+      (candidate) => candidate.mode === 'AUDITED_BY_POLICIES',
+    ))
+      expect(entry.policies.length).toBeGreaterThan(0)
+  })
+
+  it('el presupuesto de evaluaciones se respeta en toda enumeración exhaustiva', () => {
+    for (const entry of rows.filter(
+      (candidate) => candidate.mode === 'AUDITED_EXHAUSTIVELY',
+    ))
+      expect(entry.evaluations ?? 0).toBeLessThanOrEqual(EVALUATION_BUDGET)
+  })
+})
+
+describe('RS-RA-002 · y3.course-project-tech resiste la respuesta constante', () => {
+  it('K ≤ 65 y S ≤ 35 % sobre el espacio constante entero', () => {
+    const tech = row('y3.course-project-tech')
+    expect(tech.mode).toBe('AUDITED_EXHAUSTIVELY')
+    expect(tech.K).toBeLessThanOrEqual(65)
+    expect(tech.S).toBeLessThanOrEqual(0.35)
+  })
+
+  it('al menos cinco vectores distintos son óptimos en el catálogo', () => {
+    expect(
+      row('y3.course-project-tech').optimalSignatures,
+    ).toBeGreaterThanOrEqual(5)
+  })
+
+  it('un plan óptimo sigue existiendo en toda variante', () => {
+    const tech = row('y3.course-project-tech')
+    expect(tech.reachable.optimal).toBe(tech.variants)
+  })
+})
+
+describe('RS-RA-003 · y4.course-project-fundraiser resiste la respuesta constante', () => {
+  it('K ≤ 65 y S ≤ 35 % sobre el espacio constante entero', () => {
+    const pena = row('y4.course-project-fundraiser')
+    expect(pena.mode).toBe('AUDITED_EXHAUSTIVELY')
+    expect(pena.K).toBeLessThanOrEqual(65)
+    expect(pena.S).toBeLessThanOrEqual(0.35)
+  })
+
+  it('al menos cinco vectores distintos son óptimos en el catálogo', () => {
+    expect(
+      row('y4.course-project-fundraiser').optimalSignatures,
+    ).toBeGreaterThanOrEqual(5)
+  })
+
+  it('un plan óptimo sigue existiendo en toda variante', () => {
+    const pena = row('y4.course-project-fundraiser')
+    expect(pena.reachable.optimal).toBe(pena.variants)
+  })
+})
+
 describe('auditoría de estrategia ciega sobre el catálogo de carrera completa', () => {
   it('mide todas las Templates de tarjeta, clasificación y entrada numérica', () => {
-    const enumerable = rows.filter((entry) => entry.enumerable)
+    const enumerable = rows.filter(
+      (entry) => entry.mode === 'AUDITED_EXHAUSTIVELY',
+    )
     expect(enumerable.length).toBeGreaterThanOrEqual(18)
     for (const entry of enumerable) {
       expect(entry.R).toBeGreaterThanOrEqual(10)
@@ -49,7 +161,9 @@ describe('auditoría de estrategia ciega sobre el catálogo de carrera completa'
   })
 
   it('la postura pública nunca cambia la calidad matemática de una clasificación', () => {
-    for (const entry of rows.filter((candidate) => candidate.enumerable))
+    for (const entry of rows.filter(
+      (candidate) => candidate.mode === 'AUDITED_EXHAUSTIVELY',
+    ))
       expect(entry.stanceLeaks).toBe(0)
   })
 
@@ -58,7 +172,7 @@ describe('auditoría de estrategia ciega sobre el catálogo de carrera completa'
     expect(transport.K).toBeLessThanOrEqual(transport.R + 10)
     expect(transport.S).toBeLessThanOrEqual(0.4)
     for (const option of ['suelto', 'recargable', 'combo', 'abono']) {
-      const qualities = transport.constant.get(option) ?? []
+      const qualities = transport.constantById.get(option) ?? []
       expect(
         qualities.filter((q) => q === 'optimal').length,
       ).toBeGreaterThanOrEqual(3)
@@ -113,7 +227,10 @@ describe('auditoría de estrategia ciega sobre el catálogo de carrera completa'
 
   it('y4.represent-class: marcar todo «No entra» nunca llega a efficient', () => {
     const council = row('y4.represent-class')
-    const allOut = [...council.constant.entries()].find(([key]) =>
+    // `constantById` indexa por el texto legible de la clasificación, que sólo
+    // existe cuando los ids de enunciado y etiqueta son los mismos en todas las
+    // variantes. Es el caso del consejo, y es lo que hace legible la aserción.
+    const allOut = [...council.constantById.entries()].find(([key]) =>
       key.split(',').every((part) => part.endsWith('=no-entra')),
     )
     expect(allOut).toBeDefined()

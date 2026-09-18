@@ -174,6 +174,16 @@ describe('la partida elige dentro del catálogo aprobado', () => {
 })
 
 describe('una versión publicada del catálogo no se toca', () => {
+  it('publica dev-7 para la corrección del Repaso sin reescribir dev-6', () => {
+    const before = grade7VariantCatalogs['grade-7-dev-6']
+    const after = grade7VariantCatalogs['grade-7-dev-7']
+    if (before === undefined || after === undefined) throw new Error('faltan')
+    expect(before.contentVersion).toBe('0.10.0-grade-7')
+    expect(after.contentVersion).toBe('0.11.0-grade-7')
+    expect(after.entries).toEqual(before.entries)
+    expect(after.generators).toEqual(before.generators)
+  })
+
   it('conserva grade-7-dev-1 tal como se publicó', () => {
     const previous = grade7VariantCatalogs['grade-7-dev-1']
     if (previous === undefined) throw new Error('falta grade-7-dev-1')

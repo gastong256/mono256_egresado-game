@@ -224,7 +224,16 @@ export const busTravelReview: ChallengeDefinition = defineChallenge<
 
     // Confundir «la demora» con «el viaje con demora» es el error que esta
     // pantalla existe para nombrar, así que se lo nombra en vez de marcarlo mal.
-    const answeredExtra = gap === model.scheduledMinutes
+    //
+    // La condición se compara **con signo** contra los minutos que agrega la
+    // demora, no con la distancia al viaje de hoy: `|respuesta − viajeDeHoy| =
+    // viajeNormal` tiene dos raíces —la demora sola, que es el error, y
+    // `viajeDeHoy + viajeNormal`, que es haber contado el viaje normal dos
+    // veces—, y en la segunda este texto afirmaba lo contrario de lo que pasó
+    // (MAT-RA-001, RS-RA-001). Quien se pasa cae en la escalera por distancia,
+    // que es donde corresponde.
+    const answeredExtra =
+      compare(submitted, fromInteger(model.extraMinutes)) === 0
     if (answeredExtra) {
       return ok({
         quality: 'functional',

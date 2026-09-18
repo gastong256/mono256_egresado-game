@@ -1,6 +1,6 @@
 {
-  "catalogVersion": "grade-4-dev-3",
-  "contentVersion": "4.2.0-grade-4",
+  "catalogVersion": "grade-5-dev-5",
+  "contentVersion": "5.4.0-grade-5",
   "generators": [
     {
       "templateId": "g7.bus-latest-departure",
@@ -125,8 +125,8 @@
     {
       "templateId": "y3.course-project-tech",
       "generatorId": "y3.course-project-tech.resources",
-      "generatorVersion": "1",
-      "candidateSpace": 31104
+      "generatorVersion": "2",
+      "candidateSpace": 2916
     },
     {
       "templateId": "y3.fixed-variable-review",
@@ -167,8 +167,8 @@
     {
       "templateId": "y4.course-project-fundraiser",
       "generatorId": "y4.course-project-fundraiser.margin",
-      "generatorVersion": "1",
-      "candidateSpace": 2187
+      "generatorVersion": "2",
+      "candidateSpace": 1296
     },
     {
       "templateId": "y4.event-floor-plan",
@@ -205,6 +205,48 @@
       "generatorId": "y4.spatial-capacity-review.fits",
       "generatorVersion": "1",
       "candidateSpace": 48
+    },
+    {
+      "templateId": "y5.course-project-final",
+      "generatorId": "y5.course-project-final.contingency",
+      "generatorVersion": "2",
+      "candidateSpace": 15552
+    },
+    {
+      "templateId": "y5.final-trip-or-event",
+      "generatorId": "y5.final-trip.packages",
+      "generatorVersion": "1",
+      "candidateSpace": 1296
+    },
+    {
+      "templateId": "y5.multi-option-comparison-review",
+      "generatorId": "y5.multi-option-comparison-review.total",
+      "generatorVersion": "1",
+      "candidateSpace": 64
+    },
+    {
+      "templateId": "y5.next-step-options",
+      "generatorId": "y5.next-step-options.scenarios",
+      "generatorVersion": "2",
+      "candidateSpace": 58320
+    },
+    {
+      "templateId": "y5.proportion-capacity-review",
+      "generatorId": "y5.proportion-capacity-review.pages",
+      "generatorVersion": "1",
+      "candidateSpace": 24
+    },
+    {
+      "templateId": "y5.stage-screen",
+      "generatorId": "y5.stage-screen.fit",
+      "generatorVersion": "2",
+      "candidateSpace": 1944
+    },
+    {
+      "templateId": "y5.yearbook",
+      "generatorId": "y5.yearbook.pages",
+      "generatorVersion": "1",
+      "candidateSpace": 243
     }
   ],
   "entries": [
@@ -1961,170 +2003,177 @@
     {
       "familyId": "course-project",
       "templateId": "y3.course-project-tech",
+      "variantId": "c00001",
+      "source": "generated",
+      "fingerprint": "ef77c4f24c6dbc1308842d6cf89516987d1e0d725b6410fd266ecf6b63aed3f0"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y3.course-project-tech",
+      "variantId": "c00003",
+      "source": "generated",
+      "fingerprint": "8135c3c36a7351b7e8337dbafc6726b95c19963fe71eb89533e34a0793b3ddaa"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y3.course-project-tech",
       "variantId": "c00005",
       "source": "generated",
-      "fingerprint": "f84485654a4a598b5d62df9bb9d0d3e3b2dbd481ee3bc43facca584d03c79bda"
+      "fingerprint": "5a47f1e678e8f314f41c18f3020d3644a7b7637695673ad3eb74e411348e4177"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y3.course-project-tech",
+      "variantId": "c00006",
+      "source": "generated",
+      "fingerprint": "a36900c6153cb70efdca6a5c86d4b79310b062d02b6e93769543fea8405597ae"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y3.course-project-tech",
+      "variantId": "c00007",
+      "source": "generated",
+      "fingerprint": "ace0b1098144d42dfce4cabcb0db10b637234da9700067c780e10b7eacfe6242"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y3.course-project-tech",
+      "variantId": "c00009",
+      "source": "generated",
+      "fingerprint": "cbe3ac6d62977a072f1ce2a9e76d694e76841edccd94faff26709631b4c9ffe3"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y3.course-project-tech",
+      "variantId": "c00010",
+      "source": "generated",
+      "fingerprint": "db34861d6f8a7bcf257626294f9be3c4b44ab3ea5161f03d7f0276c36cd0bc70"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y3.course-project-tech",
+      "variantId": "c00011",
+      "source": "generated",
+      "fingerprint": "ee041f3156d7f594efcd96b201a9ed1d8f9d851d24c45b7d090c235f62beeeb1"
     },
     {
       "familyId": "course-project",
       "templateId": "y3.course-project-tech",
       "variantId": "c00012",
       "source": "generated",
-      "fingerprint": "101f061b5156779d8d9e168fe665bd421db37be932a71808342f1a3b870d1a40"
+      "fingerprint": "7f7fdaaec82ac43be8f39dafecae968d3d33825f26bbd01b3cdd8725cf032db5"
     },
     {
       "familyId": "course-project",
       "templateId": "y3.course-project-tech",
-      "variantId": "c00016",
+      "variantId": "c00013",
       "source": "generated",
-      "fingerprint": "48b1080b0ca382974dc383dad445460147f802933b8d091f9d214fca812f63d5"
+      "fingerprint": "8f54f6f3c0d3ae81ba09000c4df4a296a8c7dedcc1a97e79067f02d76cf9f5ff"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y3.course-project-tech",
+      "variantId": "c00014",
+      "source": "generated",
+      "fingerprint": "234b5191f4019cfbc2c5ab7df12b4246b7d073802ca753c7f08a45025929b715"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y3.course-project-tech",
+      "variantId": "c00015",
+      "source": "generated",
+      "fingerprint": "cb0f3f9984447642bb8e5ac388ae6b5d92fa0fdfd77029831fcdb7d7ece1ca29"
     },
     {
       "familyId": "course-project",
       "templateId": "y3.course-project-tech",
       "variantId": "c00017",
       "source": "generated",
-      "fingerprint": "42791a7530e8be7835aa1ce7a61b0fdb7d9bab2936020ddfb27a16714f3e1b40"
+      "fingerprint": "d2bed76244ef67f443580dc8734ce16729e5b7ef6db84e28d608f2b4d30084e0"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y3.course-project-tech",
+      "variantId": "c00019",
+      "source": "generated",
+      "fingerprint": "17da57a0d6c97d25af30ba61e68fcd7e6b95d19f8a8ff6a36ec4c039b71b7cfe"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y3.course-project-tech",
+      "variantId": "c00020",
+      "source": "generated",
+      "fingerprint": "dc63dc1d0490da7834282f8bff1ac79d15025cd9b3b57811e7780fa9a2dfd3c2"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y3.course-project-tech",
+      "variantId": "c00021",
+      "source": "generated",
+      "fingerprint": "ddd3b1f9e7f9916b1966da24efc6c6f76b74cc5cc754c1e38848bae5148f0bd4"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y3.course-project-tech",
+      "variantId": "c00022",
+      "source": "generated",
+      "fingerprint": "e7742093de598b43b4197e245ccea234ee16691c7d11703d1740ff3dbe087c0e"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y3.course-project-tech",
+      "variantId": "c00023",
+      "source": "generated",
+      "fingerprint": "b373410d4c08cad4f1619ed73713e6f529a913163b30cadcb9c7aab90fa73570"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y3.course-project-tech",
+      "variantId": "c00024",
+      "source": "generated",
+      "fingerprint": "3ac1cd7536acbe7c2f429f532544028fb057ed9684de11b9253d7029ae03c940"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y3.course-project-tech",
+      "variantId": "c00025",
+      "source": "generated",
+      "fingerprint": "c191347238d71540bb2be420615fdd4c455d679c9f1d2bcb0b2bb8361755b89d"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y3.course-project-tech",
+      "variantId": "c00026",
+      "source": "generated",
+      "fingerprint": "5db997c9196ba10e8a3999e9e644720398c16510e80f31e4435a85bb22f41b37"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y3.course-project-tech",
+      "variantId": "c00027",
+      "source": "generated",
+      "fingerprint": "adfa3deafb05cb82505427cc51907f5c188ac9c240ca2a122efd182aabb2876f"
     },
     {
       "familyId": "course-project",
       "templateId": "y3.course-project-tech",
       "variantId": "c00029",
       "source": "generated",
-      "fingerprint": "2dee9f0885a09af68a523bf80dfbc953c8295f35ab4fd50665c7c97005c30fba"
+      "fingerprint": "d0df65d447fa60056f78b6daabdcd584062f353289ecf2027d11c85b0accb05e"
     },
     {
       "familyId": "course-project",
       "templateId": "y3.course-project-tech",
-      "variantId": "c00032",
+      "variantId": "c00030",
       "source": "generated",
-      "fingerprint": "f5986190968cd1030bbe023c973570bf200901c18fac53ad59c5af3151a68f42"
+      "fingerprint": "8f87ae6116a9f8abc983b547cc660f0f46a0292927181f32514a4144d44dce4b"
     },
     {
       "familyId": "course-project",
       "templateId": "y3.course-project-tech",
-      "variantId": "c00036",
-      "source": "generated",
-      "fingerprint": "f017f3d8dc6258e460da5f98d1b5bd0e4333a42b06407ca209374d4898bbd8f7"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y3.course-project-tech",
-      "variantId": "c00037",
-      "source": "generated",
-      "fingerprint": "adc9c56fea6d08accfa9010a9db6763cc47685f6117c6be9485659e03b6142c9"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y3.course-project-tech",
-      "variantId": "c00049",
-      "source": "generated",
-      "fingerprint": "23124ae5b9cfb07ca8cbcafc34aa72d2dec2eb4d077c620b669d6a8f2498fdfb"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y3.course-project-tech",
-      "variantId": "c00053",
-      "source": "generated",
-      "fingerprint": "49c6fe222020df3f03aabab2be518c3eff45c839b68bd2f1055b5293aa85e926"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y3.course-project-tech",
-      "variantId": "c00064",
-      "source": "generated",
-      "fingerprint": "da4e69d0f3c2200c612503a9e494e78b8e1146ef3e51000d4b2de7a4873d408a"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y3.course-project-tech",
-      "variantId": "c00065",
-      "source": "generated",
-      "fingerprint": "02380a2d0bff62b7e4ee6c65d2451217c91f166f5107d0f098517a7f37c32b9e"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y3.course-project-tech",
-      "variantId": "c00071",
-      "source": "generated",
-      "fingerprint": "4b91dca3f81dee21d578824c0d0b499867a3646c55b1432d5335e0c7c1e8540e"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y3.course-project-tech",
-      "variantId": "c00072",
-      "source": "generated",
-      "fingerprint": "7933ed0ab310164187c63a0b291a63796a34bd0ec46299305e8643054da8d685"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y3.course-project-tech",
-      "variantId": "c00083",
-      "source": "generated",
-      "fingerprint": "736e0afdce5d6a7294f341bd5314cbcefd90dffcd1273ecada33d45b008db661"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y3.course-project-tech",
-      "variantId": "c00103",
-      "source": "generated",
-      "fingerprint": "ff68be5f648edd02517e08eb245ba94649f96cce8c5fdad165c7cae346d0fdf6"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y3.course-project-tech",
-      "variantId": "c00113",
-      "source": "generated",
-      "fingerprint": "89d4bf5d44402d67c96db8e240de312318808a148be94dc80e474829aad39c58"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y3.course-project-tech",
-      "variantId": "c00116",
-      "source": "generated",
-      "fingerprint": "524446a4c631f731901419e0a595d343fdcebd4fab9f551496c609be8ee1b89c"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y3.course-project-tech",
-      "variantId": "c00120",
-      "source": "generated",
-      "fingerprint": "41c6f84e2365c35036fc297a2d2b05cc539af21ba124712a00db7f861857ad7c"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y3.course-project-tech",
-      "variantId": "c00121",
-      "source": "generated",
-      "fingerprint": "0110db31c8472c0350447086d07f9e2b4a9827c5cbef0168062f3a7a100d0ed4"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y3.course-project-tech",
-      "variantId": "c00122",
-      "source": "generated",
-      "fingerprint": "885816331ab996312ffb762910d82d4cac978974d3a55abca1bbc23399a7462a"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y3.course-project-tech",
-      "variantId": "c00131",
-      "source": "generated",
-      "fingerprint": "c92c44b05bb578d5c0e98739a551b4f98c809069eca44b423fd9cb1cf75752a9"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y3.course-project-tech",
-      "variantId": "c00132",
-      "source": "generated",
-      "fingerprint": "57e13a8742a14f434bb3889df4cb03f80baa8fa1951934c1c726656f9403620e"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y3.course-project-tech",
-      "variantId": "c00133",
-      "source": "generated",
-      "fingerprint": "c281a4d186ab9fcf6e3f1f053234957d0b6c0b1aa1c050bcfa714316d8fd3b9d"
+      "variantId": "reference",
+      "source": "authored",
+      "fingerprint": "0f152b29c7d34b4c1fb1488f96321c2cbc3b474de71e68ee791d8ae8aec4bdf5"
     },
     {
       "familyId": "course-project",
@@ -2304,177 +2353,177 @@
     {
       "familyId": "course-project",
       "templateId": "y4.course-project-fundraiser",
+      "variantId": "c00001",
+      "source": "generated",
+      "fingerprint": "010607540dd35ef1f78a370e3e44644be2c120a4adf7bde0c48171ad87e7fb21"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.course-project-fundraiser",
+      "variantId": "c00002",
+      "source": "generated",
+      "fingerprint": "33678cd73544a61fee3bcb7be1826946dc53b911b6eb68dd89800ffc5cf6d056"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.course-project-fundraiser",
+      "variantId": "c00003",
+      "source": "generated",
+      "fingerprint": "b933afc719623d39017f096edcc6e4bce31a3902605768ba459bc245da4f8a93"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.course-project-fundraiser",
+      "variantId": "c00004",
+      "source": "generated",
+      "fingerprint": "a62a8cc1ebf7bbec59e21f2cae94ac7970dd61c6d5a4a5c4e509db8bde43926f"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.course-project-fundraiser",
+      "variantId": "c00005",
+      "source": "generated",
+      "fingerprint": "06a536264b060f65d24ea6e90e49bc23432ee82be1fa16e732ffc6e774a2e47a"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.course-project-fundraiser",
+      "variantId": "c00007",
+      "source": "generated",
+      "fingerprint": "30b1c8bafcaa04700a7fad2f0a43bf04c7f180a1e298c22b1e757dca52baed45"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.course-project-fundraiser",
+      "variantId": "c00008",
+      "source": "generated",
+      "fingerprint": "bbd9593279669100594613508b01901b237858456951d35c91fe6105cd5f8169"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.course-project-fundraiser",
       "variantId": "c00009",
       "source": "generated",
-      "fingerprint": "11f8aa2f7eddaf7e9860e62dd8d004293158afff647e27eb149094f635ecaf3c"
+      "fingerprint": "52cfca99d7804262f2b2dc691108184c184a863ac6efdfc2682f383bfac6ecc7"
     },
     {
       "familyId": "course-project",
       "templateId": "y4.course-project-fundraiser",
       "variantId": "c00010",
       "source": "generated",
-      "fingerprint": "7ac6898106121979199a0cc88350623f8ecac5da25cdf8dcc911b5d4633b560d"
+      "fingerprint": "41a57591e97a46be924286611a3d40f28bc7e043c9cb125d6a93b69a27d066b0"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.course-project-fundraiser",
+      "variantId": "c00013",
+      "source": "generated",
+      "fingerprint": "371772bb655457caffaf9084d9f8e3c767a69b0b01b5155c2a39357c7ad0b586"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.course-project-fundraiser",
+      "variantId": "c00014",
+      "source": "generated",
+      "fingerprint": "577bbb1ef875834f24c5e9f457952da46cabc0a1a177434e9ed8411b04a240e9"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.course-project-fundraiser",
+      "variantId": "c00015",
+      "source": "generated",
+      "fingerprint": "bda017d579f8fa34a361c51b278f257d5c6e469c350ba7564f5041b631c0d910"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.course-project-fundraiser",
+      "variantId": "c00016",
+      "source": "generated",
+      "fingerprint": "fb471eaa1d52bea85a0c6afa9e38b772eaa1161a5c255def373c2242ae0e3e61"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.course-project-fundraiser",
+      "variantId": "c00018",
+      "source": "generated",
+      "fingerprint": "9abaad0428a26dbea0dc9eb120c17d15c54a155a026396c218a5f517aa3b5b4c"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.course-project-fundraiser",
+      "variantId": "c00019",
+      "source": "generated",
+      "fingerprint": "1520d38d81f86b2dae313f40f7eaee5d51e4a817796ca586b7dad641bd20c733"
     },
     {
       "familyId": "course-project",
       "templateId": "y4.course-project-fundraiser",
       "variantId": "c00020",
       "source": "generated",
-      "fingerprint": "67eec3513f703ef79e19421a44a9e5a15247c9ff422a8704121689bc50bb694e"
+      "fingerprint": "6196051976e9ef7f9f24887e9a2f83e3c92123bb58ca21bbb0164d4658aecc31"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y4.course-project-fundraiser",
+      "variantId": "c00021",
+      "source": "generated",
+      "fingerprint": "c1c37ad6766c69dcc5a2178bdc3e3cd07b4f0be8660c7031aaf7af49ce24693d"
     },
     {
       "familyId": "course-project",
       "templateId": "y4.course-project-fundraiser",
       "variantId": "c00022",
       "source": "generated",
-      "fingerprint": "5a4593a3898bb4784511568628f9b6d3d07516b5087de1ae641b4319d3816884"
+      "fingerprint": "5c5a567eb388682683a17b98bdc353fcb8acca62504ada55aacdb379fc08ae6e"
     },
     {
       "familyId": "course-project",
       "templateId": "y4.course-project-fundraiser",
-      "variantId": "c00040",
+      "variantId": "c00024",
       "source": "generated",
-      "fingerprint": "0c412b7c94388355dfb52e2638baddf750a4de2e9fa1ca84155553d742df1bfd"
+      "fingerprint": "ed7bb6d7b9bbb3a8831464be79c54642ebf75400dc5d96eae7d0862583c2aa8a"
     },
     {
       "familyId": "course-project",
       "templateId": "y4.course-project-fundraiser",
-      "variantId": "c00046",
+      "variantId": "c00025",
       "source": "generated",
-      "fingerprint": "2eab3c256e66e2a3ef5bd518e8066605bb0e65f6dd59ab015fd6711bea532c79"
+      "fingerprint": "5da82aaf315d74025dab791ae23f1c5d10ac3e72bc0a8a1b9cbfb06e1aebd58c"
     },
     {
       "familyId": "course-project",
       "templateId": "y4.course-project-fundraiser",
-      "variantId": "c00051",
+      "variantId": "c00026",
       "source": "generated",
-      "fingerprint": "371c03b150a3eb5d33bb492714ba9377522531b6faa3338c7f3ed899ffd105b4"
+      "fingerprint": "230c33ee3f394149c8ad204f60822fae78705309181e98ca1bedfc727f21f8de"
     },
     {
       "familyId": "course-project",
       "templateId": "y4.course-project-fundraiser",
-      "variantId": "c00055",
+      "variantId": "c00027",
       "source": "generated",
-      "fingerprint": "651da9e667b43ee50051f4412e4371715c5871bd78dc2ba1a8599c4289149f1d"
+      "fingerprint": "ee1b8356302a41818640be7645080915044a4767617ca4328ac1b176b26b8a9b"
     },
     {
       "familyId": "course-project",
       "templateId": "y4.course-project-fundraiser",
-      "variantId": "c00059",
+      "variantId": "c00028",
       "source": "generated",
-      "fingerprint": "99636e6e4568fed3446180c42bbb33b06349fe5bc7316b5a48784023e3b21ef6"
+      "fingerprint": "1a48a5d074f39c48919ae3afd98d9e7f69598b396cdd6b24200ff6e38464ea74"
     },
     {
       "familyId": "course-project",
       "templateId": "y4.course-project-fundraiser",
-      "variantId": "c00066",
+      "variantId": "c00029",
       "source": "generated",
-      "fingerprint": "77b77e75a8491585d8b35c8eeb2a8f5dd221f1f66b91c367aa0a11cf30120f17"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y4.course-project-fundraiser",
-      "variantId": "c00076",
-      "source": "generated",
-      "fingerprint": "0a3b7b267906c1431d58fa4aa90af5ee7c1624aa8d14730e8b91ab7137e853af"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y4.course-project-fundraiser",
-      "variantId": "c00082",
-      "source": "generated",
-      "fingerprint": "1f3af5a32429847a8fcdc5647662797208c28545ee67e9223fdbd7137c2a2a6e"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y4.course-project-fundraiser",
-      "variantId": "c00086",
-      "source": "generated",
-      "fingerprint": "7fb10c6c2b8ac24ccd0bbb8856356d6aa7b73b33a3643bfb461cc8649155fbea"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y4.course-project-fundraiser",
-      "variantId": "c00090",
-      "source": "generated",
-      "fingerprint": "88e27ecdb683ae3e91a19b63c197610ede577f08dfe890be98954a97e29658c3"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y4.course-project-fundraiser",
-      "variantId": "c00092",
-      "source": "generated",
-      "fingerprint": "33f7de56c39b389aa7843378d9cb1f736b7e692b9574d743e0cf4281bf522b3a"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y4.course-project-fundraiser",
-      "variantId": "c00115",
-      "source": "generated",
-      "fingerprint": "dded9abbf07b75920a40e01de1d00524c94f96c8839263ee076b67ccc274e0b7"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y4.course-project-fundraiser",
-      "variantId": "c00123",
-      "source": "generated",
-      "fingerprint": "695db175ad9d63344f49abc34a83e2cf7179095e4fe3887e6cf5544e26a47d7c"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y4.course-project-fundraiser",
-      "variantId": "c00128",
-      "source": "generated",
-      "fingerprint": "ad28d462725d43110ac5ecdad5e5aaf52c075833af142f67a4f6c11ad39f8e94"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y4.course-project-fundraiser",
-      "variantId": "c00133",
-      "source": "generated",
-      "fingerprint": "8436e3c2d6f25d2183280472ff1cca284d16f1d7691073e48f11b1009a403280"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y4.course-project-fundraiser",
-      "variantId": "c00147",
-      "source": "generated",
-      "fingerprint": "e246d0d099146c13a038e015a2c2f49d7d13ca20ea33a43a7d0b3aefec39e72f"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y4.course-project-fundraiser",
-      "variantId": "c00148",
-      "source": "generated",
-      "fingerprint": "d5b05b12cbbe8aa630310cefb4acf26c8b09f4cbccd0fe60c476bed33cf15567"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y4.course-project-fundraiser",
-      "variantId": "c00169",
-      "source": "generated",
-      "fingerprint": "1317272f885a139e6fbefa62999f6c497b55e45c17750856819fc0d8d070ed06"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y4.course-project-fundraiser",
-      "variantId": "c00182",
-      "source": "generated",
-      "fingerprint": "d1b417d2d5505decb2dd1bdcc461f7ffa2cc0e12648b5c9057faf860c15dadb9"
-    },
-    {
-      "familyId": "course-project",
-      "templateId": "y4.course-project-fundraiser",
-      "variantId": "c00184",
-      "source": "generated",
-      "fingerprint": "d8d61bdbfccd984eea39b81152569196455abfea698a9be8cc2a0ae6b4391119"
+      "fingerprint": "a3e586473407eebfc4f6625ec0b216d6d4fb185d358fdf32e67c7c0e23250724"
     },
     {
       "familyId": "course-project",
       "templateId": "y4.course-project-fundraiser",
       "variantId": "reference",
       "source": "authored",
-      "fingerprint": "4c7b9268b10e4681fa745bedd4e37a632acbeafdbbf1297fa9681a9f6b6458cc"
+      "fingerprint": "c4c446d06d1ca86aa1eb4547de00021c915615f06781e51037b9b7f845fce02d"
     },
     {
       "familyId": "course-project",
@@ -2652,6 +2701,181 @@
       "fingerprint": "dbc36cd23bb290b271101bd7e16c040c096abeec7f55e99cb18e3b011a64f996"
     },
     {
+      "familyId": "course-project",
+      "templateId": "y5.course-project-final",
+      "variantId": "c00001",
+      "source": "generated",
+      "fingerprint": "303a4615196277af1281e275b29cf494959de875151592d315ea5df095f04ab9"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y5.course-project-final",
+      "variantId": "c00002",
+      "source": "generated",
+      "fingerprint": "d256d3999c374ec057aaba3ed36fb2403178610266b8970dac4b31a06cbe1305"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y5.course-project-final",
+      "variantId": "c00004",
+      "source": "generated",
+      "fingerprint": "63867693a779dcd3ee81a93f1b3c91ab913267162566080cf08044fc74fff3e6"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y5.course-project-final",
+      "variantId": "c00005",
+      "source": "generated",
+      "fingerprint": "32d36d6b624b1b65f9d48ce462b789aea0ea563792479e9b7a117e5ea1a41427"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y5.course-project-final",
+      "variantId": "c00007",
+      "source": "generated",
+      "fingerprint": "e47c5f590a84bbdb808fdef390126ed498c19258a5c6a79be642e77859ca3448"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y5.course-project-final",
+      "variantId": "c00008",
+      "source": "generated",
+      "fingerprint": "000452f025c729cdc0469e20bce39a02c4e6bdf94d6d3d57bbd61157fdb1e594"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y5.course-project-final",
+      "variantId": "c00009",
+      "source": "generated",
+      "fingerprint": "f459c026c917119dd05b3fc9fd1ece7d58899b9a2e629b2c2e9f2e10da44d2dd"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y5.course-project-final",
+      "variantId": "c00010",
+      "source": "generated",
+      "fingerprint": "48b9b57ee5f299a2b5251b34fed4b7d3b140a1113f997d482201e01c0731d32a"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y5.course-project-final",
+      "variantId": "c00011",
+      "source": "generated",
+      "fingerprint": "544bd5310a81701a7718574d8af1a73f0fb0ec79ee38984f7d9cc4e8d1032c0f"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y5.course-project-final",
+      "variantId": "c00012",
+      "source": "generated",
+      "fingerprint": "cf4211eadc0d249b905c9f12960a2f3fdedc703ebcb1dbb246d99cd928ebec0f"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y5.course-project-final",
+      "variantId": "c00013",
+      "source": "generated",
+      "fingerprint": "25f79bae8f8b2cac068ea2da2ba20ecba13dccc253945191df296ceb29ce424a"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y5.course-project-final",
+      "variantId": "c00014",
+      "source": "generated",
+      "fingerprint": "d68d4d11ca5143c7d1876c07ce6edf379ebf3935b6b27e98a75b744d74b33bf0"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y5.course-project-final",
+      "variantId": "c00015",
+      "source": "generated",
+      "fingerprint": "88553ad28d525a1294ee54d720a49f4731b0ded1a02c9d8fe3a824ed328ff53f"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y5.course-project-final",
+      "variantId": "c00016",
+      "source": "generated",
+      "fingerprint": "df07b41344e436ab9a8c27cde2e77be180249b470fc6d01f12c83af40206c1d5"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y5.course-project-final",
+      "variantId": "c00017",
+      "source": "generated",
+      "fingerprint": "3fd60b6e035a501fa6172c1bfd86e9fe7e66576e7b4287490c7f181e4925f7bd"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y5.course-project-final",
+      "variantId": "c00018",
+      "source": "generated",
+      "fingerprint": "daf73920edcd80f2a3318603275a37c71bd04feb1a6982aac48c30be9702674b"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y5.course-project-final",
+      "variantId": "c00019",
+      "source": "generated",
+      "fingerprint": "52f7c5aa3858c7c3b15c46fa8877b7068a44064bdbc66624be97ace769614a6e"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y5.course-project-final",
+      "variantId": "c00020",
+      "source": "generated",
+      "fingerprint": "8a2c01b780697bb46c28cb102a5f2d9cd7cff5f7f039893df1affa5b4f233e55"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y5.course-project-final",
+      "variantId": "c00023",
+      "source": "generated",
+      "fingerprint": "cc468a2e83ebba00089edb0a48b55041d694ef6982f946592277a503b6d77a68"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y5.course-project-final",
+      "variantId": "c00024",
+      "source": "generated",
+      "fingerprint": "115965c5885e78fdb0546900bdfe470bf1dc54bef620cf4d9845e41cc6d453a8"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y5.course-project-final",
+      "variantId": "c00025",
+      "source": "generated",
+      "fingerprint": "43e793ebb3d63b1d7ce3b3abc8a427e2d11f3f17766ee87fb21aeecc9636536a"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y5.course-project-final",
+      "variantId": "c00026",
+      "source": "generated",
+      "fingerprint": "4365adb422659c7521fb24459eccc6010be11ff795e4f4b5a8bd2cbf204980e3"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y5.course-project-final",
+      "variantId": "c00027",
+      "source": "generated",
+      "fingerprint": "287fc86bfa8dfbdf58cb13028b40899e44699e6e5dddf92ddc89d28b1d8fbfbd"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y5.course-project-final",
+      "variantId": "c00029",
+      "source": "generated",
+      "fingerprint": "bf5abd35d30bd99e52d960da21b849a12ba80c270623261668f0f1575df1f0e7"
+    },
+    {
+      "familyId": "course-project",
+      "templateId": "y5.course-project-final",
+      "variantId": "reference",
+      "source": "authored",
+      "fingerprint": "742ebf60ffe023040cbcf1796abf428b712c0ddd1ab4413ab388eb88548bbfea"
+    },
+    {
       "familyId": "court-space",
       "templateId": "y2.court-zones",
       "variantId": "c00002",
@@ -2827,6 +3051,181 @@
       "fingerprint": "715ba37acac38c94679f6fbf84654414cb8c201755045387f67a4daf161e083f"
     },
     {
+      "familyId": "despues-del-colegio",
+      "templateId": "y5.next-step-options",
+      "variantId": "c00001",
+      "source": "generated",
+      "fingerprint": "989154122df0473d058cc8b5d02047a200e60127c3c7f10de61f743250c974da"
+    },
+    {
+      "familyId": "despues-del-colegio",
+      "templateId": "y5.next-step-options",
+      "variantId": "c00002",
+      "source": "generated",
+      "fingerprint": "a694333ad3336126a91ae420777c25704051a2e551894308cefac5a5343cda72"
+    },
+    {
+      "familyId": "despues-del-colegio",
+      "templateId": "y5.next-step-options",
+      "variantId": "c00003",
+      "source": "generated",
+      "fingerprint": "24ff12fab97d2ea1b38030fb694e4ec52b4586246d325e3f255bf2417829f640"
+    },
+    {
+      "familyId": "despues-del-colegio",
+      "templateId": "y5.next-step-options",
+      "variantId": "c00004",
+      "source": "generated",
+      "fingerprint": "ddca485918e75f344ca61b0f82d077b2d245f35826ece815628e204865778698"
+    },
+    {
+      "familyId": "despues-del-colegio",
+      "templateId": "y5.next-step-options",
+      "variantId": "c00005",
+      "source": "generated",
+      "fingerprint": "8babe5a7d7f626b4d5c0e0f68260001e8120c15aa887d6e1556a832574744854"
+    },
+    {
+      "familyId": "despues-del-colegio",
+      "templateId": "y5.next-step-options",
+      "variantId": "c00006",
+      "source": "generated",
+      "fingerprint": "a872e1e0d0b5a1cc2e97d3912a621c10936484eb593a956d335f7f5c77e91d77"
+    },
+    {
+      "familyId": "despues-del-colegio",
+      "templateId": "y5.next-step-options",
+      "variantId": "c00007",
+      "source": "generated",
+      "fingerprint": "0085f9006a20f521babe3904179c4f505be76c1b69e054f07dd71dfd5ba63f00"
+    },
+    {
+      "familyId": "despues-del-colegio",
+      "templateId": "y5.next-step-options",
+      "variantId": "c00008",
+      "source": "generated",
+      "fingerprint": "384d8d62eeee133331861c3a184e1f5203c816ff90caecb4021e26e468697f1c"
+    },
+    {
+      "familyId": "despues-del-colegio",
+      "templateId": "y5.next-step-options",
+      "variantId": "c00009",
+      "source": "generated",
+      "fingerprint": "959a7a7e68156714d02d8d3f330e637a9e7109d6973e027f1e159d96d1cb55b3"
+    },
+    {
+      "familyId": "despues-del-colegio",
+      "templateId": "y5.next-step-options",
+      "variantId": "c00010",
+      "source": "generated",
+      "fingerprint": "76dc711ceb752bb46267db24e1ce8c6465488dc9a20753a9209127170f1d2568"
+    },
+    {
+      "familyId": "despues-del-colegio",
+      "templateId": "y5.next-step-options",
+      "variantId": "c00011",
+      "source": "generated",
+      "fingerprint": "e351c7249e611507dc383be604101bfd666c5fbc7ff6277b79032aeb4cd5be4d"
+    },
+    {
+      "familyId": "despues-del-colegio",
+      "templateId": "y5.next-step-options",
+      "variantId": "c00012",
+      "source": "generated",
+      "fingerprint": "f889fe602e922ecc9c5e8e0afb4d238f96b3d3eb208116ac256c29234dca9e00"
+    },
+    {
+      "familyId": "despues-del-colegio",
+      "templateId": "y5.next-step-options",
+      "variantId": "c00013",
+      "source": "generated",
+      "fingerprint": "d771fda31ecb97ef73bf600eb708b95229ab16b19479b3a3a7b343ee294734d7"
+    },
+    {
+      "familyId": "despues-del-colegio",
+      "templateId": "y5.next-step-options",
+      "variantId": "c00014",
+      "source": "generated",
+      "fingerprint": "df69ee13c7667152fb6598dc657f026b131e7ee8780ed733b97ee62050453e06"
+    },
+    {
+      "familyId": "despues-del-colegio",
+      "templateId": "y5.next-step-options",
+      "variantId": "c00015",
+      "source": "generated",
+      "fingerprint": "da53c629fd2f687f41aeed4858780206206201655ad115a8af1063dc11abec0b"
+    },
+    {
+      "familyId": "despues-del-colegio",
+      "templateId": "y5.next-step-options",
+      "variantId": "c00016",
+      "source": "generated",
+      "fingerprint": "38ba550d60f11302a86407ca085ff728246085a6a5ca28ecf49561f163c8ca5c"
+    },
+    {
+      "familyId": "despues-del-colegio",
+      "templateId": "y5.next-step-options",
+      "variantId": "c00017",
+      "source": "generated",
+      "fingerprint": "cab7aff68956a839fb785a05c397df6f9cb1d50fe8efbdd786cec5b3cdb291c2"
+    },
+    {
+      "familyId": "despues-del-colegio",
+      "templateId": "y5.next-step-options",
+      "variantId": "c00018",
+      "source": "generated",
+      "fingerprint": "ad0b2d9c8bb7fd76d5c0e8bd578220da423229e27279d5c119758bd6c91df2da"
+    },
+    {
+      "familyId": "despues-del-colegio",
+      "templateId": "y5.next-step-options",
+      "variantId": "c00019",
+      "source": "generated",
+      "fingerprint": "b704bbaa941100ba472c3c34fd6487bcda225ffe3eedeaa9bd2c2266e1731fe1"
+    },
+    {
+      "familyId": "despues-del-colegio",
+      "templateId": "y5.next-step-options",
+      "variantId": "c00020",
+      "source": "generated",
+      "fingerprint": "9dca86558eb73cbbf2178be67971ff217de10380a6001c6dd5e9d6ebbc89b4ef"
+    },
+    {
+      "familyId": "despues-del-colegio",
+      "templateId": "y5.next-step-options",
+      "variantId": "c00021",
+      "source": "generated",
+      "fingerprint": "5e36dbd1b385a35535ec8f6245e1a440dc34f0d969b744695b1acc2146d7cd41"
+    },
+    {
+      "familyId": "despues-del-colegio",
+      "templateId": "y5.next-step-options",
+      "variantId": "c00022",
+      "source": "generated",
+      "fingerprint": "8a2c2f73c3f8fa4fc3a1af5f0bd3209c9eeb98aab20145d34c5d46f63a94d031"
+    },
+    {
+      "familyId": "despues-del-colegio",
+      "templateId": "y5.next-step-options",
+      "variantId": "c00023",
+      "source": "generated",
+      "fingerprint": "f05260320b0576940cfcf555f96dee2ccfbbbae1d08698e756dcb2523f973855"
+    },
+    {
+      "familyId": "despues-del-colegio",
+      "templateId": "y5.next-step-options",
+      "variantId": "c00024",
+      "source": "generated",
+      "fingerprint": "a7a9207c959f0e4a7d3eb7accade656fa179f8e0887f807cdbe41578e9b0545c"
+    },
+    {
+      "familyId": "despues-del-colegio",
+      "templateId": "y5.next-step-options",
+      "variantId": "reference",
+      "source": "authored",
+      "fingerprint": "b0e3058efca9d564ec5a37cb176f7aef117275a8444f6cc1b3935be3018d148a"
+    },
+    {
       "familyId": "dia-del-amigo",
       "templateId": "y3.friend-day",
       "variantId": "c00001",
@@ -3000,6 +3399,867 @@
       "variantId": "reference",
       "source": "authored",
       "fingerprint": "ea24091cf3535560d143c71d725b409caa77f654f2032563af33177f43c1cafd"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.final-trip-or-event",
+      "variantId": "c00001",
+      "source": "generated",
+      "fingerprint": "3910d61432044f5e578b2feab840a433cd20ddfcad9a6791c9b3d0e6cdcae2db"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.final-trip-or-event",
+      "variantId": "c00002",
+      "source": "generated",
+      "fingerprint": "43fb69e1cd67ba58fa0ace8691e19c60059d99e8cc2f2ddc4142db1f2c88c108"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.final-trip-or-event",
+      "variantId": "c00003",
+      "source": "generated",
+      "fingerprint": "1ae2b48f592fe3f64bae0aa2e5b99932ed28baf1a393475c4b9c226b449cec88"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.final-trip-or-event",
+      "variantId": "c00004",
+      "source": "generated",
+      "fingerprint": "b9b1afea45af08afc213b1a21a1eabccefb9a308b221e861719d4a41f96ee1af"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.final-trip-or-event",
+      "variantId": "c00005",
+      "source": "generated",
+      "fingerprint": "44f0d6f45d22003646e697b0f402ccddfaca7321c62de633a242663e2582697d"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.final-trip-or-event",
+      "variantId": "c00006",
+      "source": "generated",
+      "fingerprint": "314caac2f1e0ad735b27b27a0643ff4ffe65febcf13403cb342a8e53724ee51f"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.final-trip-or-event",
+      "variantId": "c00007",
+      "source": "generated",
+      "fingerprint": "b678d0b66fcb0b21e16029a7b328011e7d09b647f17407eb28da21147d075957"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.final-trip-or-event",
+      "variantId": "c00008",
+      "source": "generated",
+      "fingerprint": "8c66f78b48202f0f2271b4a29adcb3d58db9ba5710a0c97801e014c226244d87"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.final-trip-or-event",
+      "variantId": "c00009",
+      "source": "generated",
+      "fingerprint": "b28b19fbb8f25be01fdac946a51df18afb77ff33c0db864c1cf377081d1f96d3"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.final-trip-or-event",
+      "variantId": "c00010",
+      "source": "generated",
+      "fingerprint": "31352f33ebc3e3b36efb9961596085aea9748716119d7e62dc0c1a158f58ba85"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.final-trip-or-event",
+      "variantId": "c00011",
+      "source": "generated",
+      "fingerprint": "97d92fc96234474b68d06f7cb49692355a722e45403b614fa5feafc57e8b8a96"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.final-trip-or-event",
+      "variantId": "c00012",
+      "source": "generated",
+      "fingerprint": "91489da0e4364340614efdc3b726414e302f884a30f12807b92fb0077216e7ac"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.final-trip-or-event",
+      "variantId": "c00013",
+      "source": "generated",
+      "fingerprint": "f8fc639c458da9417a098018d81527743a15aeefa360e74666b72b8df98844e3"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.final-trip-or-event",
+      "variantId": "c00014",
+      "source": "generated",
+      "fingerprint": "d590de801834a5543de18fe304d27d8d5f018f12f00fcb087d9241df2df5c6a3"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.final-trip-or-event",
+      "variantId": "c00015",
+      "source": "generated",
+      "fingerprint": "7602c28096a2ede38d28f1efdffbc620a3e165a66aaac19f15656ada6c149713"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.final-trip-or-event",
+      "variantId": "c00016",
+      "source": "generated",
+      "fingerprint": "caab98b43f9f49c8b049189918b5cdcf367433b135ca4ef3061e33c686428637"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.final-trip-or-event",
+      "variantId": "c00017",
+      "source": "generated",
+      "fingerprint": "15861375224f5706ba81bb90dea39386fb838ac024bd49e52e05738e880bf761"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.final-trip-or-event",
+      "variantId": "c00018",
+      "source": "generated",
+      "fingerprint": "b018635cd75aabaaef446733395bcb6d90cf67ee3d18978084053a20a314077c"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.final-trip-or-event",
+      "variantId": "c00019",
+      "source": "generated",
+      "fingerprint": "f03f0efdabb1dcb09471409cd5eb7f950a90d4ea2c75b77d64376f0893ef1407"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.final-trip-or-event",
+      "variantId": "c00020",
+      "source": "generated",
+      "fingerprint": "2203dc3f38669b1e1ea39e2ea80a90d8d4498477476d077e6ce9cf56c9643bd1"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.final-trip-or-event",
+      "variantId": "c00021",
+      "source": "generated",
+      "fingerprint": "a60511b5cb7acddfe773c7634422971942560ef82ed43485d4261473995f6058"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.final-trip-or-event",
+      "variantId": "c00022",
+      "source": "generated",
+      "fingerprint": "a4a46051581dd84a72ebd24b50d170a0319e900aa47d21caf06201e1da1abbd0"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.final-trip-or-event",
+      "variantId": "c00023",
+      "source": "generated",
+      "fingerprint": "b38819fcc551b30168e74dd61c429118303328c2b9e0dbdcc7da1a692db7e543"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.final-trip-or-event",
+      "variantId": "c00024",
+      "source": "generated",
+      "fingerprint": "8a71e535eec8201398c3c608f5be195a32398459b408e24c3bdb52671ce15410"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.final-trip-or-event",
+      "variantId": "reference",
+      "source": "authored",
+      "fingerprint": "6263772b67f3ef4650c2f3a162c7e85d45d67baf36a8b0c3b71c036c07737890"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.multi-option-comparison-review",
+      "variantId": "c00001",
+      "source": "generated",
+      "fingerprint": "ccf546e679e668a9643ab130974568c83747e56ae4c19e1b994bc5b459cde11b"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.multi-option-comparison-review",
+      "variantId": "c00002",
+      "source": "generated",
+      "fingerprint": "b12d580e6985e73e25edb288128c3ed6b0cde97b51cb5d7d6ed0b2e342d7d07d"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.multi-option-comparison-review",
+      "variantId": "c00003",
+      "source": "generated",
+      "fingerprint": "442f378a30d7ae4d0e5ec5d8d5f3e200058a1e5dd0a5a9bf9e6729d335212d3d"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.multi-option-comparison-review",
+      "variantId": "c00004",
+      "source": "generated",
+      "fingerprint": "d1b7dd8ab7642052ccb25711275a437b93aba74a0e14a7a2321dc295eabdd9db"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.multi-option-comparison-review",
+      "variantId": "c00005",
+      "source": "generated",
+      "fingerprint": "f54eb331856545038df8139a7967b23efb6a493513d4d78029b6d2d5c864f74c"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.multi-option-comparison-review",
+      "variantId": "c00006",
+      "source": "generated",
+      "fingerprint": "ace5edd853505de9f1344b0fe2831c698be6df8f0c9fd8c8cd8ceee52a5d4ffa"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.multi-option-comparison-review",
+      "variantId": "c00007",
+      "source": "generated",
+      "fingerprint": "f33af985955699fc082beb5b2e812ea4d1f09a5c8cecc221b5ba14b559147bd3"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.multi-option-comparison-review",
+      "variantId": "c00008",
+      "source": "generated",
+      "fingerprint": "c8829de2f55c8db8b1f4e9960be39b04efe85647e461ffae837200cf1b0432f7"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.multi-option-comparison-review",
+      "variantId": "c00009",
+      "source": "generated",
+      "fingerprint": "b48c020d18b13d38dfb486b42cafc44154c09bfd6fc039990f8ba6694ffc7c81"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.multi-option-comparison-review",
+      "variantId": "c00010",
+      "source": "generated",
+      "fingerprint": "673e25339be14859151bbb271334693cee8b8cd351721fc60a7d179519ecd9e7"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.multi-option-comparison-review",
+      "variantId": "c00011",
+      "source": "generated",
+      "fingerprint": "a3628a870990cb978dcbf09ade31c8502e6e09da2fbb3319716d1acd29c472fb"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.multi-option-comparison-review",
+      "variantId": "c00012",
+      "source": "generated",
+      "fingerprint": "d9925063a6e1c36e4d336ef4b9ff455d18fd0da2c653e6b602fcc953af77496a"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.multi-option-comparison-review",
+      "variantId": "c00013",
+      "source": "generated",
+      "fingerprint": "3d5feeea6b18e0f85fef5647d97145bbb8d0e1ec0ea7fcce88532d8e80f56734"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.multi-option-comparison-review",
+      "variantId": "c00014",
+      "source": "generated",
+      "fingerprint": "128490950224d0b6c11e2d7afed0d0bb6593c38ed5b372a14696ed3e92b87dbb"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.multi-option-comparison-review",
+      "variantId": "c00015",
+      "source": "generated",
+      "fingerprint": "8951199bfc692d61e070713cb8fd3a76ceb5111fa894c0cfb528d2bc67ac3e5b"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.multi-option-comparison-review",
+      "variantId": "c00016",
+      "source": "generated",
+      "fingerprint": "db03c2cbe2264d21fa50752030d718f912886998fa669f5017a1fcfc1af03eec"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.multi-option-comparison-review",
+      "variantId": "c00017",
+      "source": "generated",
+      "fingerprint": "3bc6385bef3984979ba82ff06e506b260fc4322971931dcf89aa49ce2333007b"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.multi-option-comparison-review",
+      "variantId": "c00018",
+      "source": "generated",
+      "fingerprint": "9a369777e6f67304f2d3246a4337856b28c6c54037357da0fbf9b77a37f15004"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.multi-option-comparison-review",
+      "variantId": "c00019",
+      "source": "generated",
+      "fingerprint": "2aa2c27f16b983baaf6f5f268b3565c656661dda569a8aacfcbdbec14530fe25"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.multi-option-comparison-review",
+      "variantId": "c00020",
+      "source": "generated",
+      "fingerprint": "d49b16ef4112f03eb231b4b6d129afd6ac57bede12f15828d6c8f9cfda394543"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.multi-option-comparison-review",
+      "variantId": "c00021",
+      "source": "generated",
+      "fingerprint": "54b8e81a473bac5f268df064b9dc0a5a2d0c3fafb3b71c7f648e72fbaaa83679"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.multi-option-comparison-review",
+      "variantId": "c00022",
+      "source": "generated",
+      "fingerprint": "f5319c7c941ea23f687b5d9e26a049acdb02da1de0144495433efb7412130878"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.multi-option-comparison-review",
+      "variantId": "c00023",
+      "source": "generated",
+      "fingerprint": "f7ba4552a7e79550c1371a5718abbacc3063a2bba63b2b93667f8acebffbec27"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.multi-option-comparison-review",
+      "variantId": "c00024",
+      "source": "generated",
+      "fingerprint": "8cf914b3915d2696932ee2f9a8cf243616091eff35005ca3e1fce6b34e1a73d7"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.multi-option-comparison-review",
+      "variantId": "reference",
+      "source": "authored",
+      "fingerprint": "4376bea5b11f584c4fc0642a50e250d03f0517d1b60017054639563764aa0db0"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.proportion-capacity-review",
+      "variantId": "c00001",
+      "source": "generated",
+      "fingerprint": "a85590236150dd3e4c8cbf4b58acf65f2d80d0b7e8ae8e5297336b2194fb87e8"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.proportion-capacity-review",
+      "variantId": "c00002",
+      "source": "generated",
+      "fingerprint": "39d52b42945e5cc6975f0eb1f732fe88203ef7c5e3db7f9fe420219351c9598c"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.proportion-capacity-review",
+      "variantId": "c00003",
+      "source": "generated",
+      "fingerprint": "018dea06406596b80ba340ed98d06322dfe381e1c3eb900998ed60bf0eef16d7"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.proportion-capacity-review",
+      "variantId": "c00004",
+      "source": "generated",
+      "fingerprint": "73330582f753eed4678e773514a6736564aa22b22c65ddf146b4b4d310b5b7e0"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.proportion-capacity-review",
+      "variantId": "c00005",
+      "source": "generated",
+      "fingerprint": "7de097bcf2e9a6168ec44e42bd24dc327c46e46743eaa9aaeab8c056ebc2b8e6"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.proportion-capacity-review",
+      "variantId": "c00006",
+      "source": "generated",
+      "fingerprint": "ee604ead4eee4f056af6b51b7dbc511eaa832d936b7379a57e04fba679c1c17b"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.proportion-capacity-review",
+      "variantId": "c00007",
+      "source": "generated",
+      "fingerprint": "03e0991ca9549b654473b5a6805c4990891c882632b521c35ec99f82dc402c08"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.proportion-capacity-review",
+      "variantId": "c00008",
+      "source": "generated",
+      "fingerprint": "f0d71b60a4aa8107a3751145521d084f7f562e5071321805c3cac525780a665c"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.proportion-capacity-review",
+      "variantId": "c00010",
+      "source": "generated",
+      "fingerprint": "8ca08a7a5be6d2df3bd267880ab50f095df7239d263fcf50a57b3b285d9e97d3"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.proportion-capacity-review",
+      "variantId": "c00011",
+      "source": "generated",
+      "fingerprint": "c52cec7557bb4f06589e23a6618cd46b7cadc64bf12ef3ee4906433f5e5ad83a"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.proportion-capacity-review",
+      "variantId": "c00012",
+      "source": "generated",
+      "fingerprint": "27030c7e9f031037e060b1037bbdb03a396e84c2061bf511683e50ea98e6ec18"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.proportion-capacity-review",
+      "variantId": "c00013",
+      "source": "generated",
+      "fingerprint": "906dd175c6cb8168d5b1a5ebd2dc08948d7cb7b4f182597715e62cab1ea63d8d"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.proportion-capacity-review",
+      "variantId": "c00014",
+      "source": "generated",
+      "fingerprint": "47c9482ea9a069a51fc594ad811003f4f72809818aeccffde71167defdc0e396"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.proportion-capacity-review",
+      "variantId": "c00015",
+      "source": "generated",
+      "fingerprint": "b1fb0b8bb0fa233142e527f3da9876e47fbf7c7345279012f9c434270d34f861"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.proportion-capacity-review",
+      "variantId": "c00016",
+      "source": "generated",
+      "fingerprint": "03438ffd30989cb158967d0e40e211227ded8bba611c0bae9d0c15bab26f1348"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.proportion-capacity-review",
+      "variantId": "c00017",
+      "source": "generated",
+      "fingerprint": "b1c78fad1937652f157a8ff2aff1d5c1506dcf8135d1c528c5ec39fd821c0f01"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.proportion-capacity-review",
+      "variantId": "c00018",
+      "source": "generated",
+      "fingerprint": "25449e7d428b3929168942eb26057863e0bf5c03bb738e97201f771a00fffb37"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.proportion-capacity-review",
+      "variantId": "c00019",
+      "source": "generated",
+      "fingerprint": "992dba42f3aadb4fc81d957243d2f84e4b3f80bc69712ab3741d44a846a3b88d"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.proportion-capacity-review",
+      "variantId": "c00020",
+      "source": "generated",
+      "fingerprint": "af9c8892b93ad6f22b2e328ab0afe246a29bbc04e4fbec8ac20c9481228cb473"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.proportion-capacity-review",
+      "variantId": "c00021",
+      "source": "generated",
+      "fingerprint": "9a58c5bbc66c03ec5fa49015ac90eb405fbd3dee084ee7c1dc13516203e16e1c"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.proportion-capacity-review",
+      "variantId": "c00022",
+      "source": "generated",
+      "fingerprint": "d696f76ce35b56085e549a4807bd95eec838eae00d39708f041cb28db1368423"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.proportion-capacity-review",
+      "variantId": "c00023",
+      "source": "generated",
+      "fingerprint": "3fb80cd3868b009a06b5d8b95a0d676f73bce57f3a350f726c8050dabee728d2"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.proportion-capacity-review",
+      "variantId": "reference",
+      "source": "authored",
+      "fingerprint": "c93a76b3cc2a9bce222b9488a979845ec114e078deb16542eedc554959f60093"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.stage-screen",
+      "variantId": "c00001",
+      "source": "generated",
+      "fingerprint": "64c1348762d3e42d797c4963b45c8af83a45f1b27bd71cc91947d544f44595c1"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.stage-screen",
+      "variantId": "c00002",
+      "source": "generated",
+      "fingerprint": "0365df32829b28d3e32b0f68875c78fe4c76d665929a88117ef5efd8be2c502f"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.stage-screen",
+      "variantId": "c00003",
+      "source": "generated",
+      "fingerprint": "0ac0570e343e13ed63d508682addd8e9c43dc5311da06c76f2c6889ebc7a07e4"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.stage-screen",
+      "variantId": "c00004",
+      "source": "generated",
+      "fingerprint": "b4b26e767c28033f259ab5bda2c77cb76ec6f373d24284f6330194d223a69b8c"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.stage-screen",
+      "variantId": "c00005",
+      "source": "generated",
+      "fingerprint": "f611031625624fc78a286ed405e8449a7e2d0a700ecd5ddf1e4a8dbf4deeffd9"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.stage-screen",
+      "variantId": "c00006",
+      "source": "generated",
+      "fingerprint": "05c83c5ed978463000d2d144bd17a268d6fb3b1fb7f2a5eb8c790a1cbb46599a"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.stage-screen",
+      "variantId": "c00007",
+      "source": "generated",
+      "fingerprint": "78d75346e14eafd86a7bf5275fd414276fdbddee35fb382618b2e72e44b7d0d0"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.stage-screen",
+      "variantId": "c00008",
+      "source": "generated",
+      "fingerprint": "be28aa9c9802f151e3d05f578c67f1b44db11596880fda1d7811fb860bc0fa30"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.stage-screen",
+      "variantId": "c00009",
+      "source": "generated",
+      "fingerprint": "7534193b07747bbe29bbe9dad2fb4c1a0b0e25f6a7e368b6cea44dc2330fc1ce"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.stage-screen",
+      "variantId": "c00010",
+      "source": "generated",
+      "fingerprint": "f4ce87ffc06fd819cb91d49cab85fbee3b12e7402275a2360b8fdd2385ed3fa5"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.stage-screen",
+      "variantId": "c00011",
+      "source": "generated",
+      "fingerprint": "a9619203681344a155faf3a3e27835cb636bdf552ac3b65ed20a8750e2b24360"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.stage-screen",
+      "variantId": "c00012",
+      "source": "generated",
+      "fingerprint": "128f44b2ea0e894736672d8eaefc8fd4d91d0b1a53988bc12a88ed6ccf8a199b"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.stage-screen",
+      "variantId": "c00013",
+      "source": "generated",
+      "fingerprint": "e415d30c0c7c7ed714a6e29765316f03ea5cb8983feaada8eb8f4c740f92018c"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.stage-screen",
+      "variantId": "c00014",
+      "source": "generated",
+      "fingerprint": "248822c1e4a31338f948211007051ac0de1c9b0323c3b91abb7efc33ef3c08ec"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.stage-screen",
+      "variantId": "c00015",
+      "source": "generated",
+      "fingerprint": "20152625e14bc1fe0d92674bbee993fd65e8a316a80141447611b1ab8d08494a"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.stage-screen",
+      "variantId": "c00016",
+      "source": "generated",
+      "fingerprint": "9d1dff3ded5445b036cd98d0de7167bfd2e8b5ea8c87ee53ba9a337ac3f6882c"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.stage-screen",
+      "variantId": "c00017",
+      "source": "generated",
+      "fingerprint": "3571b8733c859043b6a3e7591ddc047a2e4ebebd38b45982fa1629cf97e9b9e7"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.stage-screen",
+      "variantId": "c00018",
+      "source": "generated",
+      "fingerprint": "06eea129cb219df46df94757a028d66ca5f7811d4c1b118fbaa56c57f68ea36a"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.stage-screen",
+      "variantId": "c00019",
+      "source": "generated",
+      "fingerprint": "0d13c7766973be6a836971d597eda2f880bbf8a1f82b9ae3c164365d8dcaee4a"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.stage-screen",
+      "variantId": "c00020",
+      "source": "generated",
+      "fingerprint": "fc054bc640134313728446caa4d8301428fa5409ef4b84122927dc0c1cf2f6fd"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.stage-screen",
+      "variantId": "c00021",
+      "source": "generated",
+      "fingerprint": "5e75c016dc978e81a9e5be1161ae16505ab7f31f2d020cfcf99940acb564725a"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.stage-screen",
+      "variantId": "c00022",
+      "source": "generated",
+      "fingerprint": "df540d33870cd3b53c42551dcd7170a34b9f98d06c0da36ab3a5a5f78fc0b641"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.stage-screen",
+      "variantId": "c00023",
+      "source": "generated",
+      "fingerprint": "86d32ea729f63a1a960b4cde0260e5b24b72ce5ad3e353bd4645a9c8cf93e2bf"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.stage-screen",
+      "variantId": "c00024",
+      "source": "generated",
+      "fingerprint": "202aa018cac7f5262cbfdb59859970cc5daf1cfd27231c969ea44dfd0cca4105"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.stage-screen",
+      "variantId": "reference",
+      "source": "authored",
+      "fingerprint": "e7e426a84c35f798eccc84d70f1f128b70b7357e16288fe8bb477da936c57581"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.yearbook",
+      "variantId": "c00001",
+      "source": "generated",
+      "fingerprint": "16a44b38856bcb15877f929fee2e5d17839d0d42de37e988d718e889cd54c1c1"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.yearbook",
+      "variantId": "c00004",
+      "source": "generated",
+      "fingerprint": "0c0407981ecf53025fbb9bf7e56121a4493edeecfe520d67d1b3679f8c9f6aeb"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.yearbook",
+      "variantId": "c00005",
+      "source": "generated",
+      "fingerprint": "6b319600b103759818c76255b4240ad9eb0e7d270df9f69fc0c52a97093b2e79"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.yearbook",
+      "variantId": "c00006",
+      "source": "generated",
+      "fingerprint": "997ba753973f6f648a36fd812644b8d7fe3168deab498ab7c02e2a36cc9b66fe"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.yearbook",
+      "variantId": "c00007",
+      "source": "generated",
+      "fingerprint": "322f839b20f9e8e1a43a4db99141f445f97a3e7e70b41e9ea8e0b18baaf692e0"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.yearbook",
+      "variantId": "c00009",
+      "source": "generated",
+      "fingerprint": "df6ff7e02702c8d1e2323a6525b391dd667e6c7d46add281decbf97242195a64"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.yearbook",
+      "variantId": "c00010",
+      "source": "generated",
+      "fingerprint": "4c0b573f57bf9fe7576dc4d2d0aa7db56bb3cde35a600cbd7e51e8edb561e56f"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.yearbook",
+      "variantId": "c00014",
+      "source": "generated",
+      "fingerprint": "2be4f954595ee92d0a6810b0351d8c4e4264d1ff873e67c1025b029c5dd565f6"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.yearbook",
+      "variantId": "c00015",
+      "source": "generated",
+      "fingerprint": "482ac0c8646049911f19b138739a7c8378a78f0ef718d3e3852f509d289c9d7d"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.yearbook",
+      "variantId": "c00016",
+      "source": "generated",
+      "fingerprint": "39d5df18a9f87b0b9662fdbbc0aa02852af37f4e6bd7abd271d029bdb014c3ff"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.yearbook",
+      "variantId": "c00022",
+      "source": "generated",
+      "fingerprint": "f6780d46f79942959f6566c0dc1fada46ceaaded0635396ea76283ad81586dcd"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.yearbook",
+      "variantId": "c00023",
+      "source": "generated",
+      "fingerprint": "1dc953f7b6d05ed884033dde75cf8d769b698ff35e401797652a575f08e7a003"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.yearbook",
+      "variantId": "c00025",
+      "source": "generated",
+      "fingerprint": "f2ce0376f08dd67e944fe0a71b44051aba6629ffc4dcdc6f07759dfcac85a037"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.yearbook",
+      "variantId": "c00028",
+      "source": "generated",
+      "fingerprint": "56cc67473c08fe91ae9717b14caf2438a0e7dac71dbd1aed235524a2bd8cbcd9"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.yearbook",
+      "variantId": "c00031",
+      "source": "generated",
+      "fingerprint": "8325568b18212e9efa0983c706a71b495c17dfa88501cfdccf11b062e780bd7b"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.yearbook",
+      "variantId": "c00034",
+      "source": "generated",
+      "fingerprint": "824d2fc85f0ef7a07aa4ca0b4a95912952f374d62953c8bc0d28c69ad67e6697"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.yearbook",
+      "variantId": "c00036",
+      "source": "generated",
+      "fingerprint": "4d903e9b5b047424e605f6af1617823735e3200cb26e5fb598526e2676043cfb"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.yearbook",
+      "variantId": "c00037",
+      "source": "generated",
+      "fingerprint": "a0c1c5360b4f69b66eec840af3d29d918cbf9332eefed1039c1350ed41d78037"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.yearbook",
+      "variantId": "c00040",
+      "source": "generated",
+      "fingerprint": "8a8fea12d9eda7e61eb71b5138c130ddb8150b0d2c9c30a3b60dc946eda58279"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.yearbook",
+      "variantId": "c00041",
+      "source": "generated",
+      "fingerprint": "13cd23380c7103716d4ee980a756dd368adcadaefebab37f51b55b817f6b006a"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.yearbook",
+      "variantId": "c00043",
+      "source": "generated",
+      "fingerprint": "686e9e223a2b2dbdf7ea79ebf02c767a47d1a9a6c03c9db885ea3e1ec0e0e5a0"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.yearbook",
+      "variantId": "c00052",
+      "source": "generated",
+      "fingerprint": "ecdc68f52c75b4e710f1d69f5f4c3f88d547fe9449aae9045b398f34ed20d9c9"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.yearbook",
+      "variantId": "c00054",
+      "source": "generated",
+      "fingerprint": "f147f6142d26e4e2dfd9d1bce919b6427be079d88bed69a150305b3d2fa1cecc"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.yearbook",
+      "variantId": "c00058",
+      "source": "generated",
+      "fingerprint": "94932c710a55ee6b392e57ba76b0f6f231b158c4d58591db67b663831b8c21c5"
+    },
+    {
+      "familyId": "egreso",
+      "templateId": "y5.yearbook",
+      "variantId": "reference",
+      "source": "authored",
+      "fingerprint": "aff73078620c4334bd478dc616f1892e9126956c83ef4b1a1085459338d5fb03"
     },
     {
       "familyId": "evento-escolar",

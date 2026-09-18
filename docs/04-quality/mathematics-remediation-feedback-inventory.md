@@ -3,8 +3,9 @@
 - **Estado:** `EXECUTED` — 2026-09-17, dentro de la
   [implementación de la remediación matemática](mathematics-remediation-implementation.md)
 - **Regla que lo exige:** [especificación de remediación, regla 2.9](mathematics-remediation-spec.md#2-reglas-transversales)
-- **Alcance:** las 42 Templates del catálogo de carrera completa —`grade-5-dev-3` al ejecutarlo, `grade-5-dev-4` desde la reescritura de la pantalla del acto— —no sólo las de la
-  especificación—, sobre los tres campos de texto fijo del feedback:
+- **Alcance:** las 42 Templates del catálogo de carrera completa: inicialmente
+  `grade-5-dev-3`, luego `grade-5-dev-4` y re-verificado en ronda 2 sobre
+  `grade-5-dev-5`. Incluye los tres campos de texto fijo del feedback:
   `consequence`, `optimalComparison` y `violatedConstraint`
 - **Consumidor:** `Independent Mathematics Re-Audit`
 
@@ -16,16 +17,18 @@
    causa: narración de consecuencia social («el acto sigue sin vos»), nombres de
    restricción («hora de entrada») y cierres sin contenido matemático («Queda
    anotado, y el año sigue»).
-3. Cada texto que sí afirma algo quedó en uno de dos estados:
+3. Cada texto afirmativo se clasifica contrastando su condición ejecutable, no la intención de un comentario:
    - **A — probado:** es verdadero en toda variante aprobada donde se muestra,
      porque la escalera o un gate lo garantizan, y se dice cuál;
    - **B — calculado:** se arma desde los parámetros o la respuesta de la
-     variante, así que no puede afirmar algo que la variante no tiene.
+     variante; además se comprueba que la condición de rama implica la afirmación. Calcular un número no prueba por sí solo la dirección o la causa.
+   - **C — falso:** hay un contraejemplo reproducible; requiere corrección y evidencia.
 4. Donde la garantía no era evidente se midió sobre el catálogo publicado y, si
    el texto resultó falso, **se corrigió** y quedó un test.
 
-Ningún texto queda en estado «falso»: los que lo eran se corrigieron en esta
-implementación (sección [Correcciones](#correcciones)).
+La afirmación inicial de que ningún texto era falso fue refutada por MAT-RA-001.
+La ronda 2 corrige esa rama y los textos de peña, postas y entrada detallados abajo; el
+estado actual se apoya en condiciones ejecutables y pruebas, no en aquella afirmación.
 
 ## Correcciones
 
@@ -54,7 +57,7 @@ implementación (sección [Correcciones](#correcciones)).
 | `g7.bus-latest-departure` | `optimalComparison` · optimal «el número que hacía falta» | exactitud | A | óptimo = respuesta exacta |
 | `g7.bus-latest-departure` | `consequence` · invalid | tarde por la entrada o sin el margen pedido | B | rama por `arrival > entrada` |
 | `g7.bus-travel-review` | `optimalComparison` · cuatro niveles | minutos de la demora y del viaje | B | `model.extraMinutes`, `model.travelMinutes` |
-| `g7.bus-travel-review` | `consequence` · «Faltaba sumarle el viaje normal» | causa del error | **C** (era A) | **Clasificación corregida el 2026-09-18, D-S08-125.** La justificación registrada —«se muestra sólo si la respuesta es la demora sola»— es **falsa**: la rama decide con `Math.abs(respuesta − viajeDeHoy) === viajeNormal`, y un valor absoluto tiene dos raíces, así que también dispara en `viajeDeHoy + viajeNormal`, donde el jugador se **pasó**. Falso en 26 de 26 variantes. Ver [MAT-RA-001](independent-mathematics-reaudit.md#mat-ra-001-high-bloqueante-g7bus-travel-review) y [RS-RA-001](post-reaudit-mathematics-remediation-spec.md#4-rs-ra-001-g7bus-travel-review) |
+| `g7.bus-travel-review` | `consequence` · «Faltaba sumarle el viaje normal» | causa del error | A · corregida desde C | Ronda 2: comparación racional `respuesta === extraMinutes`, equivalente a la demora sola. Test independiente de las 26 × 121 respuestas, incluida la raíz falsa `exacta + normal`; 0 afirmaciones falsas. La clasificación A original fue refutada por MAT-RA-001; no se borra ese antecedente |
 | `g7.mural-paint` | `optimalComparison` · optimal «el envase más barato entre los que alcanzaban» | mínimo entre suficientes | A | óptimo = `smallestSufficientTin` más barato |
 | `g7.mural-paint` | `optimalComparison` · functional | con el envase de $X alcanzaba | B | precio del más barato suficiente |
 | `g7.notebook-offer` | `optimalComparison` · optimal | qué descuento era mayor | B | `discountComparison` |
@@ -94,6 +97,7 @@ implementación (sección [Correcciones](#correcciones)).
 | `y2.team-kit-order` | `consequence` · efficient, functional | repuestos no quedan donde hay más gente | A | niveles definidos por distancia al reparto por restos mayores |
 | `y2.court-zones` | `violatedConstraint` · invalid | margen, celda repetida, techo, separación lograda | B | rama por falla y `spread` |
 | `y2.court-zones` | `optimalComparison` · optimal, efficient | con pedido + 2 celdas las colas quedan sueltas | A | `tierOf`: óptimo = `spread ≥ apart + 2` |
+| `y2.court-zones` | `consequence` · invalid | distribución necesita ajustes | A · corregida | Invalid = falla alguna restricción; ya no implica a la vez superposición y pared. La causa concreta queda en violatedConstraint |
 | `y2.court-zones` | `consequence` · optimal | dos celdas o más sobre lo pedido | A | `tierOf` |
 | `y2.court-zones` | `consequence` · efficient, functional «más juntas de lo que la cancha permitía» | había una ubicación mejor | A | witness de nivel `optimal` por variante |
 | `y2.intercurso-plan` | `violatedConstraint`, `consequence` | qué actividad falta, Equipo | B | cobertura y `read.team` |
@@ -122,10 +126,11 @@ implementación (sección [Correcciones](#correcciones)).
 | Template | Campo · nivel | Afirma | Estado | Garantía |
 |---|---|---|---|---|
 | `y4.course-project-fundraiser` | `violatedConstraint` · invalid | cocina o pérdida | B | `read.minutes` contra cocina |
-| `y4.course-project-fundraiser` | `consequence` · por nivel | cubre, llega, colchón | A | escalera: functional cubre, efficient objetivo, optimal colchón |
+| `y4.course-project-fundraiser` | `consequence` · por nivel | cocina, pérdida, cubre, llega, colchón | B/A · corregida | Invalid distingue `minutes > kitchenMinutes` de `profit < 0`; functional implica `0 ≤ profit < target`; efficient implica `target ≤ profit < target + reserve`; optimal implica `profit ≥ target + reserve`. Ya no dice «justo». Enumeración independiente de 25 × 630 planes |
 | `y4.margin-review` | `violatedConstraint` · functional | precio contra lo que deja | B | `p.price − p.cost` |
 | `y4.margin-review` | `consequence` · resto | dirección del error | B | signo, test RS-NEW-003 |
 | `y4.school-event-flow` | `violatedConstraint`, `consequence` · invalid | ayudantes que no hay o ritmo del cuello de botella | B | `read.overstaffed`, `read.rate` |
+| `y4.school-event-flow` | `consequence` · functional | margen cero o positivo | B · corregida | «justo» iff rate = required; si no, muestra rate − required. Enumeración independiente de los 125 vectores por variante |
 | `y4.school-event-flow` | `consequence` · efficient «con aire de sobra» | llega a la mitad del margen posible | A | efficient = mitad del margen posible |
 | `y4.school-event-flow` | `consequence` · optimal «el mejor ritmo que se puede sostener» | máximo | A | óptimo = mejor ritmo alcanzable |
 | `y4.event-floor-plan` | `violatedConstraint` | tipo de falla, asientos contra invitados | B | `read.failure`, `read.seats` |
@@ -165,3 +170,19 @@ implementación (sección [Correcciones](#correcciones)).
   la peña, horas con viaje—, no este inventario.
 - `facts`: son números de la variante, no afirmaciones.
 - Storylets y epílogo: no dan feedback matemático.
+
+## Re-verificación de ronda 2
+
+Se contrastaron las garantías de las 42 Templates con las condiciones de rama.
+La evidencia de enumeración completa se limita a los espacios acotados de los
+Repasos y de los dos proyectos: no se afirma enumerar toda geometría o agenda.
+Las postas dejan de afirmar a la vez superposición y pared para cualquier inválido;
+la restricción ya distinguía la causa real. En la entrada, 251 de los 532 planes
+funcionales tenían margen positivo: «justo» ahora exige margen cero; los demás
+muestran `rate − required`. Regresiones en `mathematics-remediation.test.ts`.
+Los demás casos conservan sus demostraciones por predicado/gate y los tests de
+`mathematics-remediation`; un witness que comparte evaluador no es un oráculo
+independiente. La baseline de la peña tenía 9876 planes con cocina excedida y
+beneficio no negativo que decían «termina costando plata», en las 25 variantes.
+El informe de [ronda 2](targeted-post-reaudit-mathematics-remediation.md) conserva
+before/after y la evidencia de las correcciones, incluidos los falsos «justo».

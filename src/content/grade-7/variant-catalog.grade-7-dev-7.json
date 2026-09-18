@@ -1,0 +1,1345 @@
+{
+  "catalogVersion": "grade-7-dev-7",
+  "contentVersion": "0.11.0-grade-7",
+  "generators": [
+    {
+      "templateId": "g7.bus-latest-departure",
+      "generatorId": "bus.latest-departure.constraint-first",
+      "generatorVersion": "1",
+      "candidateSpace": 20000
+    },
+    {
+      "templateId": "g7.bus-timing",
+      "generatorId": "bus.timing.constraint-first",
+      "generatorVersion": "1",
+      "candidateSpace": 20000
+    },
+    {
+      "templateId": "g7.bus-travel-review",
+      "generatorId": "bus.travel-review.constraint-first",
+      "generatorVersion": "1",
+      "candidateSpace": 20000
+    },
+    {
+      "templateId": "g7.may-25-act",
+      "generatorId": "may-25.grid.constraint-first",
+      "generatorVersion": "2",
+      "candidateSpace": 20000
+    },
+    {
+      "templateId": "g7.mural-paint",
+      "generatorId": "mural.coverage.reverse",
+      "generatorVersion": "1",
+      "candidateSpace": 20000
+    },
+    {
+      "templateId": "g7.notebook-offer",
+      "generatorId": "notebook.offer.constraint-first",
+      "generatorVersion": "1",
+      "candidateSpace": 20000
+    },
+    {
+      "templateId": "g7.stand-supplies",
+      "generatorId": "stand.supplies.constraint-first",
+      "generatorVersion": "1",
+      "candidateSpace": 20000
+    }
+  ],
+  "entries": [
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00000",
+      "source": "generated",
+      "fingerprint": "4c3456e26995cc86b307e12e3b711894ed7d4489fb6025366b7f0c241ab3e9a1"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00001",
+      "source": "generated",
+      "fingerprint": "14d7c98b4276236ec84857991ee7bc5ae64ecb8ef7bd5f608e218e69c34454d2"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00002",
+      "source": "generated",
+      "fingerprint": "e5d5db450bc9705275ee9dcce712d32a7a3e573965f70ac450d69d09b4209b28"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00003",
+      "source": "generated",
+      "fingerprint": "d79a84583d51c330c70c3a37d7d9cde3c68385bae9095061bb81fe21e98acad5"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00004",
+      "source": "generated",
+      "fingerprint": "2a1641344b694ce06815964339f557a1df8ad822aef64d9f613f7f1136cdc9a0"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00005",
+      "source": "generated",
+      "fingerprint": "026009f023e6cfafead7c60c7038df3684d515feeada54b7ad9edd0cd63c5a30"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00006",
+      "source": "generated",
+      "fingerprint": "11ce45e22cd2f84d98fd492d12cd3df444950c1e1d05b3d4e1d633ef4ea0b993"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00007",
+      "source": "generated",
+      "fingerprint": "c19917767194ec329b4bbd950e82c838d18da32004451ef8cc2a10f57a96ff0d"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00008",
+      "source": "generated",
+      "fingerprint": "35604e60221a51415aa3dd0841c5bb811983464884fe4b2ab6d9894b5722f125"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00009",
+      "source": "generated",
+      "fingerprint": "438cab4506faece67e98141a3d0171e2b4bb4f21a35f1950a7d97b1e8ecfa4b5"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00010",
+      "source": "generated",
+      "fingerprint": "9585b7573ce3592af8a66f6201d112739a7ea0ab59fce9b87ec566b21f4dd67c"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00011",
+      "source": "generated",
+      "fingerprint": "4adcdbac2e2c4a1f68af2b0a5de708f130f5d30152a2e4f7436cbad2441bfb6c"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00012",
+      "source": "generated",
+      "fingerprint": "be6479c72817be107db6708b9c44b55cca9c0ad60a47ad36de681cc66e3b16e2"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00013",
+      "source": "generated",
+      "fingerprint": "4d3f522e6961e9db795889801af234cec33b331aa54ad7f93ad761b77a34d508"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00014",
+      "source": "generated",
+      "fingerprint": "e323b65899567204f435673b1ede84f29127f87052a3aeb8d811aea3d7ce1d75"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00015",
+      "source": "generated",
+      "fingerprint": "ec7eff5ad5aaf733edaa6f58dcaf06c0ae3d39ec2bd9edef911da2fd9b6e02e8"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00016",
+      "source": "generated",
+      "fingerprint": "931d208e24dd384192f875f331d25f81caeef9ba66523e058526c47633396e93"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00017",
+      "source": "generated",
+      "fingerprint": "264bb5359cdc40775a11d73509d3f9bcdb4b452a0be5ab529d22fe26b7a375f1"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00018",
+      "source": "generated",
+      "fingerprint": "b1c50125c184c8e30a446d061dc85e279fccbdd1232143e7d63b1accc2e8bb3b"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00019",
+      "source": "generated",
+      "fingerprint": "90ddef658cdfdc66fcc8c7302242d0f173faf73a623d61da9ce0fa84f137d436"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00020",
+      "source": "generated",
+      "fingerprint": "0f0e0d24c1a4f2fe84f4c4fa4add18bf44676875ea192831c3ec4624f1284aac"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00021",
+      "source": "generated",
+      "fingerprint": "c7f0d48bf6b8b1965b6ec5dc70c247d10aba48ecd1e74b42ae2e6e87d724d236"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00022",
+      "source": "generated",
+      "fingerprint": "504b29f31b6d93a3ac0e503f6272a1b262f673f70e669d12afe45b983104c2ee"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "c00023",
+      "source": "generated",
+      "fingerprint": "7a5dbc3196bf659d6636341453d9b05d31d09aada3f579560b00b2d7e990270a"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "margen-10",
+      "source": "authored",
+      "fingerprint": "7e92c2bb47c3f88293919979b0341299fb061c133405c76c0cd6a638101814c4"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-latest-departure",
+      "variantId": "margen-5",
+      "source": "authored",
+      "fingerprint": "95b56854529414f8f56c0b5425e61553412a4ad08e69df59a230aa871e054754"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00000",
+      "source": "generated",
+      "fingerprint": "da440e5b4ef199bf3914012f734c93db5c641a8ed9e0a39e01173a53135c404c"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00001",
+      "source": "generated",
+      "fingerprint": "9ee3b59f7b03ef0db15b797e22d382acf6126ae8d9a1e1c0d3d7cb864b2d84fc"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00002",
+      "source": "generated",
+      "fingerprint": "33777fc40ce6fbc3de96f8403c5ab9532d3586232a9372621a3edb77a57e646f"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00003",
+      "source": "generated",
+      "fingerprint": "f428d36b9f2ef4ed023d14995579cadb73e5d48b158e4f04060fe740a0683562"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00004",
+      "source": "generated",
+      "fingerprint": "5655ae952d41398846e84867f958d44a3b118df92f97d6b686833be18ccc2dc9"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00005",
+      "source": "generated",
+      "fingerprint": "cfa01a4c42bf8f7a6cbc5d10cf5f4f4b046d641105ef8a921502da6491ba2909"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00006",
+      "source": "generated",
+      "fingerprint": "aae80a180236c3b5a2d5e5596116f6a450ebc55ee90cea9a1ae1521db6ef06bc"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00007",
+      "source": "generated",
+      "fingerprint": "2bdf15a33378fa7d56eefcbbbd6f66cda1b3fb3b8a9983b6ed584a0c0e152880"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00008",
+      "source": "generated",
+      "fingerprint": "c2e0762fde46433aeb0ab7a0038ee6c1bcafda265729690a64033edd433bf1c9"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00009",
+      "source": "generated",
+      "fingerprint": "083f6b8e9acdb5d346b8c17c836cfe51adeaa8739320c0b5e252b5e72b43cd99"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00010",
+      "source": "generated",
+      "fingerprint": "cd62a3beb06a4516f991a2d2b7081998a19c94f3de94f7b29e2e995c22960edd"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00011",
+      "source": "generated",
+      "fingerprint": "4da647bf4503a05a236faaf4e0061bb0e6bc306872bafa5f86c5f084bce9b57b"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00012",
+      "source": "generated",
+      "fingerprint": "9cf0129f5ba21ab07a7088cf3eedb371b70fd2974a4ec373872c0186df40487e"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00013",
+      "source": "generated",
+      "fingerprint": "4cac818db2ed3074a9a78ce4b5649a349dda93f8a33371dc8084b89da54a198a"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00014",
+      "source": "generated",
+      "fingerprint": "9b5c47fa69a9cea0436f21c2741bea8e0bcbd1259b9c429cdafffac8df0522fc"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00015",
+      "source": "generated",
+      "fingerprint": "7143be0b37dc71799b54a773d2e97513179de25cbd7e156407be4731bfb4d83e"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00016",
+      "source": "generated",
+      "fingerprint": "1c26a5ce94fd768b991561a4904dcade3bfdf48bd3f3f102b905dea8fa141f69"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00017",
+      "source": "generated",
+      "fingerprint": "023537827b13736f37909153e78b055b2bf59c1ae3fe8164a502fab4a5f0bac1"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00018",
+      "source": "generated",
+      "fingerprint": "b59ad69e677016b6b143ec199589bc2600262ec185b07b74031df15632a29685"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00019",
+      "source": "generated",
+      "fingerprint": "95bde4ee63dec8466616c0ab1fc1dda8335a6e1f3c9c50922b421eaec744cc2e"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00020",
+      "source": "generated",
+      "fingerprint": "5a0e663bac929f7dc3498c4317c0d77b5840f60c5bc67596105af2b6dd4b0114"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00021",
+      "source": "generated",
+      "fingerprint": "1197c3be58e48c3e38845dd06c129abfd86fb5f45d45eeda2287e12030509573"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00022",
+      "source": "generated",
+      "fingerprint": "1ba461ac27c5030598fdfd1057252d31337ef8616555ca5c4b6302c69440e3ce"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "c00023",
+      "source": "generated",
+      "fingerprint": "dd74c6e2f6f95837716e5c9110bf7805a4830cf7a288ed274d6db23179b7042c"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "demora-25",
+      "source": "authored",
+      "fingerprint": "13043c246176177c335d8a8e61b0ca392d238c74529dd3441762e9a3564a0455"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-timing",
+      "variantId": "demora-50",
+      "source": "authored",
+      "fingerprint": "1c1fbd489f4d0b67c2ce104a0f2e758946ab4d8b690f8654c9faf8e0889d9831"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00000",
+      "source": "generated",
+      "fingerprint": "254a276dc83add237400e9e3adc5b664b6b491ac6d1be941e08fcaeb0e4ec1e2"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00001",
+      "source": "generated",
+      "fingerprint": "d6d67a9495858e7564659cd46b111e8457fa492aee2fbb9f997707dc691bc2a5"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00002",
+      "source": "generated",
+      "fingerprint": "d179ce369ba7a1f76d58337582701d466450b7d2d4fb06c129faa6f12815a6c9"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00003",
+      "source": "generated",
+      "fingerprint": "7c6af3509701ae3c0b299f938f331792864fd209905aca7961d11b90e8d37a21"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00005",
+      "source": "generated",
+      "fingerprint": "655337f503888b6081ae54e7dec8a076e69583de26b0fa837da7a217a10c5890"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00007",
+      "source": "generated",
+      "fingerprint": "e4e18ad7de1ee72a8da7caf8ba84c1d4981fc626d022fd21a821e7c0bc54cbc9"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00008",
+      "source": "generated",
+      "fingerprint": "9dda2c4adf31e9fec4f9ea2382ef89ddd50c785016fbd854bc968932f97969ad"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00010",
+      "source": "generated",
+      "fingerprint": "5962653972487d3d30fbddb03eb71a70d8f70b02c4947a3458e8e79fcb0412e6"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00013",
+      "source": "generated",
+      "fingerprint": "3beba365d0c252cd6314a7017a2ebf70e6f2e28a8c9c6ff705fc241cc96bfc7a"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00014",
+      "source": "generated",
+      "fingerprint": "e3eab079d59dc299f96f08c829c71fae60fd846634da9f2b73b0a754d8cf7bd7"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00015",
+      "source": "generated",
+      "fingerprint": "2a809363b3054694ac21b4dff76bad8868f6ec61cb077899152dbeba59aaea46"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00017",
+      "source": "generated",
+      "fingerprint": "41f9f85a61c4a6c43ca9dc1c4518192a0c6479109d93594b31852f648007ad6c"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00018",
+      "source": "generated",
+      "fingerprint": "284b4db44706b3aaef6757ed85f9415308a077cc62d11f12951ad9f245695be4"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00019",
+      "source": "generated",
+      "fingerprint": "eaaf20f53184f9299c284b2f58445ec13f03972887ce452835ef81df4f6334ef"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00020",
+      "source": "generated",
+      "fingerprint": "461661bb3f386e81419c7c9fe8760dbade6399dd646e68bef93f106205252677"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00025",
+      "source": "generated",
+      "fingerprint": "291eb87a9f242ac0ccc9f4f7fde9fe621a18ce3c6a4fe0d8ffe3aaf4d10da3af"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00027",
+      "source": "generated",
+      "fingerprint": "084106bab6fcfaed020a32baa1a7fe3d46517ac81e28e86d411456676de0686d"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00028",
+      "source": "generated",
+      "fingerprint": "214f8b78e9d49e63652fba0cc37e42716537a2fdc180556f2e3478d63a564f22"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00038",
+      "source": "generated",
+      "fingerprint": "08e6f4cc69aaae56ad7492d8e018be711ca34ede1a633be7d26da5564c8ade71"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00040",
+      "source": "generated",
+      "fingerprint": "75065bc3fe45d9adcffa5c85b074b8183acfc637cbdbb6836353f08c717e01ec"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00042",
+      "source": "generated",
+      "fingerprint": "6c6c0f2822e2113cff780c21b01c7e19eed2434d852c2754753b634df89f0366"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00043",
+      "source": "generated",
+      "fingerprint": "7311650260ffbabc1e83a3e52bc143eef82146164b9ceefc7aaa8edbae5fb6be"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00045",
+      "source": "generated",
+      "fingerprint": "c6bac839e2617569fc48955391a92f2b2995962cf43da64467b78ec559bd5f95"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "c00047",
+      "source": "generated",
+      "fingerprint": "53be6205cb55a37d0d3cd6d944443b565d8417d00bc493274279187f45e85b78"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "repaso-25",
+      "source": "authored",
+      "fingerprint": "c32d32f42d2d2ddbab60c2f5b46e2133cf5b2e58d5119ae31edeaebe5855848b"
+    },
+    {
+      "familyId": "bus",
+      "templateId": "g7.bus-travel-review",
+      "variantId": "repaso-50",
+      "source": "authored",
+      "fingerprint": "43ed736c36b6e0543a2f380804d06d59998d8d6a76fd01cc74c87ad5934e018c"
+    },
+    {
+      "familyId": "group-project",
+      "templateId": "g7.group-tasks",
+      "variantId": "equipo-a",
+      "source": "authored",
+      "fingerprint": "96032ec74726ef3b0f366cc3e482f228701776fb0764a4b7507ca3ea93c9a471"
+    },
+    {
+      "familyId": "group-project",
+      "templateId": "g7.group-tasks",
+      "variantId": "equipo-b",
+      "source": "authored",
+      "fingerprint": "9ae65881bd48e4612aa51fdcc2a161c7457844e0d49ef4a000c7dd6bd53bf0b8"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00000",
+      "source": "generated",
+      "fingerprint": "bfc9e43ada83c9f3b7edb28b8f48f848efde5caacc7a8a32b57107106d9f11f8"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00001",
+      "source": "generated",
+      "fingerprint": "e39e2f09430448a68598cc36e12b79e19c2936564767c6035859eb98b5b2bbfa"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00002",
+      "source": "generated",
+      "fingerprint": "015275d669f3f4d69103eb09e609845980d56e0a85c6c6ff988954275e020969"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00003",
+      "source": "generated",
+      "fingerprint": "847451e5c481d3a92ad234b46c5c5b307da92ddaf508358021494ee900fc4209"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00004",
+      "source": "generated",
+      "fingerprint": "76a12ca18d344688dfa97b292bf53bf6693e7dd5eaaca409c9803107c79da384"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00005",
+      "source": "generated",
+      "fingerprint": "525ad3b20394eaaa757d03227b16b3b2526bf27ddba4080503db04737b11c9c2"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00006",
+      "source": "generated",
+      "fingerprint": "d2cd6a0fdb2059743517f51f5324c0fd0f6cb8fb9bb17f5b620e5a9a6168848e"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00007",
+      "source": "generated",
+      "fingerprint": "8cf289b0c9217fb11abb03bb821a23992ea051a84183624b591cab288d5c1779"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00008",
+      "source": "generated",
+      "fingerprint": "3b6cfc32fcb157b220536e6ba0cdeb091549973223b6f74c8ed4e77b874bf25e"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00009",
+      "source": "generated",
+      "fingerprint": "aa3803399548a663519a4bc7f56da0fe3e0f621920da3fb2883853c1c61fa02c"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00010",
+      "source": "generated",
+      "fingerprint": "446b7a1fabf379feaaa84ec4685ea5b1ccda1bcd0c2565585e50cea6b3a15e2f"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00011",
+      "source": "generated",
+      "fingerprint": "01e07960a2b5961baa5e69956ddfa31d9d13301646a0c6698c24e8ed57dac057"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00012",
+      "source": "generated",
+      "fingerprint": "3122617930dfdca468be5dbd2b1a561cdff99827db458c86d43dc82f71aa5843"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00013",
+      "source": "generated",
+      "fingerprint": "6e277d33e64e3629948e3db4c9a1fef8b8032f332302e5c1f13a79f64125a7be"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00014",
+      "source": "generated",
+      "fingerprint": "4b01d938ab51f97c6ed20351f8195af97f49f483ad701a0c6d58c40c0aae693f"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00015",
+      "source": "generated",
+      "fingerprint": "2f3ec64d1419fc6020cfab526e09e547de659ee6cfdec8ac63020932117cfb86"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00016",
+      "source": "generated",
+      "fingerprint": "a88a225a423ea302e09aa890d6950bc6ac3e8ba5b0496f4a69274a3628277fb1"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00017",
+      "source": "generated",
+      "fingerprint": "28c25c8bb93b94a288116b63f3c39133e75605cebb27413d599b3b43a0dd85fc"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00018",
+      "source": "generated",
+      "fingerprint": "6aede2a1a4bfebcf44426f87dc6d29e7d6d7138b148b6a2a97b3f18ec3fab70a"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00019",
+      "source": "generated",
+      "fingerprint": "23591f887ecc993591d61dd8be5377150a9f0626f20de068e1155593d34ee604"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00020",
+      "source": "generated",
+      "fingerprint": "e4c3b0029d2b57a106d95276f30a7bc3b74997204f0839ff97f006435ea17c13"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00021",
+      "source": "generated",
+      "fingerprint": "c4e27b2cc483de4a3e96054796980e8a3929d925394cabed688fbb8467aeb723"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00022",
+      "source": "generated",
+      "fingerprint": "d063541305882a17ef5d4ebbad2d0571327959ff9d94975f8a4aaf7e828a92c4"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "c00023",
+      "source": "generated",
+      "fingerprint": "0e0b82bedca4da77716512db490df57137811583a63bbb03b7c9a23bd5b23c8d"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "coreografia-a",
+      "source": "authored",
+      "fingerprint": "177570976b57af2a9b91799bc2cd8232be289d88c7b4a743ccc5ab6fc04a5a06"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "coreografia-b",
+      "source": "authored",
+      "fingerprint": "08454eb560fcf1d1c4860bd24775e6877220e2fbb0a1aa3653e07d82206fbaee"
+    },
+    {
+      "familyId": "may-25",
+      "templateId": "g7.may-25-act",
+      "variantId": "coreografia-c",
+      "source": "authored",
+      "fingerprint": "5130376438865eb35b8e28317b23c5f99a9f5570da2dd1463e21212198164908"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00000",
+      "source": "generated",
+      "fingerprint": "0a2d4f0a2b45326347787765cf8d448b7800e8f1eb59aba52d4af17a242e93bc"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00001",
+      "source": "generated",
+      "fingerprint": "8dd1f8bae494cbc45f07fecf7ed4bdd3592c59406c4780f3225b53df669bfdc6"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00002",
+      "source": "generated",
+      "fingerprint": "827fb9702f3123fff811b72c9b3e61846b4236761cb3bd403bef13ab28fb5bc5"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00003",
+      "source": "generated",
+      "fingerprint": "684d002f5831ac41679607beef095337c666fb9f6cd5984e397ae5861f3d8326"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00006",
+      "source": "generated",
+      "fingerprint": "a8e49c3666f4385f1770ab266fd4196b36388203b584b0a374ce459f06a34971"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00007",
+      "source": "generated",
+      "fingerprint": "4b1110cfaf551ec015d5e1827dadd7b0fd8d64faa7703237f6d493467474385a"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00009",
+      "source": "generated",
+      "fingerprint": "edc4d4fd967515ce3e4bf6476ff06fde1f61172bac4a870bf33a4bdffd9e87df"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00013",
+      "source": "generated",
+      "fingerprint": "49cbf1d971621471a957640a018e211994c26bd9b8c7e73aa9b9fbef0e5c3369"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00014",
+      "source": "generated",
+      "fingerprint": "4d387993c273b669621e2828d78638c1a983dac01d71e370cf674f6a6e250f9a"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00015",
+      "source": "generated",
+      "fingerprint": "17ede9630cb113a4cc283dbeb75877e109e1359300b0d008e1802d008cecef91"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00017",
+      "source": "generated",
+      "fingerprint": "6ad0e59db39ceb4a2d99f7ccc4471a95670d6745f47b2fbca4042b43fc5a4b5d"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00019",
+      "source": "generated",
+      "fingerprint": "3a870034858bbb43c2b87314c71d94088a1315e6521af4898c86799e10d5452b"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00021",
+      "source": "generated",
+      "fingerprint": "a74620e3bb95d0d65c0a48b4b43c9b56540282a8deb03c563d12f0031b6803b9"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00024",
+      "source": "generated",
+      "fingerprint": "b83c9ea71a54ba413078288b09d8f88c3ef2100eeba1afef0ab92eaee924dc6a"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00028",
+      "source": "generated",
+      "fingerprint": "fc13c092046b48716c23ddeacd9f20e0611dabd37acd8c50271fa92877c5e3a9"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00030",
+      "source": "generated",
+      "fingerprint": "416eafecbd2e90e25313a9956be2e59ff5c3247c0e452ee4c2783c40fa477a71"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00034",
+      "source": "generated",
+      "fingerprint": "23110f9ccd6592f28896e8ccaa79f43c8eee155f1b7e939257b25bf774fd612d"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00036",
+      "source": "generated",
+      "fingerprint": "ffbf03ecc5d511ab95ae986365adbb3ec38e868c11c9274e3d3cbb5f0f9b1dd1"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00038",
+      "source": "generated",
+      "fingerprint": "4e94854c22f7801bf98c3845dcf904ffbc1df19e19a82fd711bfdb56b4c1a418"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00039",
+      "source": "generated",
+      "fingerprint": "08974c224f212b4ca0c9b9ae3b6f9fe967192113d4c184108025bdde4def8ef2"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00041",
+      "source": "generated",
+      "fingerprint": "a393c9e498be18c871686e8d1f68fe15920bd41661de8725934344df1c3705c9"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00046",
+      "source": "generated",
+      "fingerprint": "c4559372ce15ed15fe84791a51e72dd253d26a9a5fb43a230d8ff7985c7f898c"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00047",
+      "source": "generated",
+      "fingerprint": "48a39c894b5674b74516562219202f12cfda3e7d5dcaac2760b35a5417f9aefb"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "c00050",
+      "source": "generated",
+      "fingerprint": "ef40e935c1a705f193d9c24d087c0f83fe729b8afea427cf5c8f7a2c99ce7047"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "pared-5x24",
+      "source": "authored",
+      "fingerprint": "54582b705c232182e0c771c7286f6cc122c8bc004c72c2d3394c0199fac50f4a"
+    },
+    {
+      "familyId": "mural",
+      "templateId": "g7.mural-paint",
+      "variantId": "pared-6x24",
+      "source": "authored",
+      "fingerprint": "6ba3d0683e13740c2c19ee1ddc31902e0acd9a90e8fd97aa16083888e4eda038"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00000",
+      "source": "generated",
+      "fingerprint": "8c9bc4845e52c5c6c119561890723a9e7a65cc7b7c14721ee41ca4e78ce71a55"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00001",
+      "source": "generated",
+      "fingerprint": "881cd03212aca15cf0f868629e59d41cd7b432735cd72086243ba6d952b402d2"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00002",
+      "source": "generated",
+      "fingerprint": "780eea69ac9fb78d46dae919958f95ad8fc8fc5bb77691899a4038c4a3e8bfb9"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00003",
+      "source": "generated",
+      "fingerprint": "bfb98b2daf0580db6bc04c5dc8021d4d30c7a82be4332338da3049a7fdc003cd"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00004",
+      "source": "generated",
+      "fingerprint": "8a84e6c027caf703600d5e2ab60465d9be63432de70dfd6252703d326cfa569d"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00005",
+      "source": "generated",
+      "fingerprint": "f6fae1be7c6b3f8c334642eb064a295582af97f737516281a68b82459c078969"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00006",
+      "source": "generated",
+      "fingerprint": "8016ba6dda159de95daf4f6fb0e295c43e35633985ce0e4e68cc8afa775056ce"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00007",
+      "source": "generated",
+      "fingerprint": "5439f5cd9c2ae75e774e02ea1f98a3773bc822881be1f753484d5876e5211357"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00008",
+      "source": "generated",
+      "fingerprint": "2464dc84916f90071e01749e9bad38e83ceef967fd6ead37a48a5450a814970c"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00009",
+      "source": "generated",
+      "fingerprint": "ae95fb060e2b342a0b69b245e0840a0f7c1c074e77c12fd3aa9ac28760297311"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00010",
+      "source": "generated",
+      "fingerprint": "e93dfc9f49a0c4978a645b62993ceab01b3ba49d62277501f15cd877d2019900"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00011",
+      "source": "generated",
+      "fingerprint": "b39f66a4cdb2529c29d62c26554ae08c4ce8a72ccfd86a36b0407fee7db40827"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00012",
+      "source": "generated",
+      "fingerprint": "f988487553de26287ebbff71385351db1cd1fac8dc8739842535d736fc6b4d3a"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00013",
+      "source": "generated",
+      "fingerprint": "704a7d8b61fe5cd10efc33423c7b7199314fb0216edb232d21698fbd3520057d"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00014",
+      "source": "generated",
+      "fingerprint": "0832a0eea2e89c510102d444532a647d29bcc389b5a76643f4b752b482fd0f26"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00015",
+      "source": "generated",
+      "fingerprint": "740d9530e49bd9e094dd34ee7b85ef8801f0b54b4fc97d535ed15b797e2ac0b8"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00016",
+      "source": "generated",
+      "fingerprint": "bdf2a63759e845c4ddc465e9ddd3871146fd56a715ee154d4b9cd15e7b87bfc2"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00017",
+      "source": "generated",
+      "fingerprint": "213a80a2cf6602a8006888fc374b96f4d45a0e27f7d1164964b15bbc5c4e443b"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00018",
+      "source": "generated",
+      "fingerprint": "eb5aebcb3ba36967d2b7ce934d1accec9bcb5ae32228d9bdbcf8c7b8ac31aa74"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00019",
+      "source": "generated",
+      "fingerprint": "ac8b81fda7d3e8f5dcd34cb741905d6eb4a2ff1a93b62ad978aa2c06213e369f"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00020",
+      "source": "generated",
+      "fingerprint": "8977d6a1fc9077730d85807d2ad6f4af1e7f6b37915c241162307c80990a7356"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00021",
+      "source": "generated",
+      "fingerprint": "c0f3654a9e3587cd0af8b64abff627bc6ade7070cd6e16f714132eb4e3b47bfc"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00022",
+      "source": "generated",
+      "fingerprint": "8107ccc0d07582236f6b7faf395da922b496c49e5eb7e8c3904daab774ea45e4"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "c00023",
+      "source": "generated",
+      "fingerprint": "294b758a437d5edd6a435eeb2ec3c7a6860b3ed1af45262d71582a6bda7e1196"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "precio-alto",
+      "source": "authored",
+      "fingerprint": "aab95547bf9c7dd187471c7da1eac563345cb1097f27001d10dabd7ca194f96f"
+    },
+    {
+      "familyId": "notebook",
+      "templateId": "g7.notebook-offer",
+      "variantId": "precio-bajo",
+      "source": "authored",
+      "fingerprint": "ca8a996d9ac33b48c71c482673ffd34b322117a232784564c2cc3e5303043693"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00000",
+      "source": "generated",
+      "fingerprint": "aeafa7c2d70da7c2459783af37fff528c35876c795ef47870920249abd990d2b"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00001",
+      "source": "generated",
+      "fingerprint": "2586b2b97db589d623d1152f76050471905392c87c84015b7688aa48027b1e7f"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00002",
+      "source": "generated",
+      "fingerprint": "58f6d9f02f6836ddc0b9f1525f2a9aabe640602516a34950f8a5150c9167537c"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00003",
+      "source": "generated",
+      "fingerprint": "15643e9e04f45e25e5f2a7fff87a3d1a18aedb1d8474ba3ccff29d901fc3ab29"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00004",
+      "source": "generated",
+      "fingerprint": "1bc9835b7df44f1955703670375e6e7447b6a4c00a7edb7ae5422c6fcdbb6082"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00005",
+      "source": "generated",
+      "fingerprint": "3197fb0a8b54e7fd19fa6ee74b2f3061ec672a522eb1aca625571d851a42e5b2"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00007",
+      "source": "generated",
+      "fingerprint": "30ae664668b1a7077968a45395c125c5b762459793fb50f9ad16dedb1a1d9296"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00008",
+      "source": "generated",
+      "fingerprint": "4673a890d79ad8f6ab1f1997a24d6413e452a954360810cac6298ae3d23c615a"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00009",
+      "source": "generated",
+      "fingerprint": "6120cdeafc79f9dac2317fab7f94cb367b37b1c154f2d33bfde3b6c9f9806e68"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00010",
+      "source": "generated",
+      "fingerprint": "09291325cddb6d65a08a3530d75765236d0b147916a1058c59675374105b871c"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00011",
+      "source": "generated",
+      "fingerprint": "63c5fa1ee61ed7b54c84c105df7dc4c4c5a9637d0c7e68ee86e458834c9c8097"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00012",
+      "source": "generated",
+      "fingerprint": "a8b4612e739c8b352faa4c65572d8a87bdbae613709a9e8b40b34346cefa6cc4"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00013",
+      "source": "generated",
+      "fingerprint": "ee9300a5ce94d5f0ba2a70d30efe0521cd15ee263b8ca5953f992da8be54734a"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00014",
+      "source": "generated",
+      "fingerprint": "d8da385a3e9ab1ef660e5fec7cd542ebb59904c0016a41580edc5fb636c75898"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00015",
+      "source": "generated",
+      "fingerprint": "a0ebb63001260d2542f098e817672ab9b87f3fe3b2a8c41a3fa25f3dff81f755"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00016",
+      "source": "generated",
+      "fingerprint": "a1ad8f2d880d7fd7d2d2cfea3fb9f62228f02398b8fa625754f40d429bab8b75"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00017",
+      "source": "generated",
+      "fingerprint": "8307b79ca5b53aa76ecac31454cb643511040f48097194cb75118df232936c17"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00018",
+      "source": "generated",
+      "fingerprint": "8c828127ebfb897fbaad6a12d8c1fdcafb808e1eda97da8772f167e236c2f81a"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00019",
+      "source": "generated",
+      "fingerprint": "0c36f35b3365f79a3a9ead4269a92e86b46613a1dfc37552e5ea8ea02058f2e8"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00020",
+      "source": "generated",
+      "fingerprint": "301b25a541a21838f5127faf78fc9ce5fcd88f3a813f144a339fb8aa461185b6"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00021",
+      "source": "generated",
+      "fingerprint": "5e58addefaba1cd4484be7681685fd4d27c410b1d0800042d81d3d91e186501d"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00022",
+      "source": "generated",
+      "fingerprint": "eff7117bfef6527acde080ace9122fe024f5d4b4a6881bd650d455dffa682e0c"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00023",
+      "source": "generated",
+      "fingerprint": "5482eb431450cc792598ba050c6e74c414532147236dd61b0f58ce90cc3c7cba"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "c00024",
+      "source": "generated",
+      "fingerprint": "f98dfc083a30a018529139c6a10c38075ba1c908aaf6b79cdcaa952f2439a065"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "porciones-20",
+      "source": "authored",
+      "fingerprint": "6024aec20781d02272032efc922f66a898747a095fee7f7f29cc3b4060c9f4e1"
+    },
+    {
+      "familyId": "school-fair",
+      "templateId": "g7.stand-supplies",
+      "variantId": "porciones-24",
+      "source": "authored",
+      "fingerprint": "90da2254325f8df97e6df56eff2c1e71b5f337371d314ef7b4714dc65b837307"
+    }
+  ]
+}

@@ -70,6 +70,8 @@ const steps: readonly NextStepParams[] = Array.from(
   (_, index) => generateNextStep(index),
 ).filter((params) => nextStepGates(params).length === 0)
 
+// screenChoices comparte tierOf: sólo prueba agregación. El test RS-MAT-008
+// deriva geometría aparte y sí comprueba la verdad (RS-RA-AUDIT-001.7).
 describe('5.º · el anuario', () => {
   const sample = yearbooks[0]
   if (sample === undefined) throw new Error('sin variante aprobada')

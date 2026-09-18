@@ -76,12 +76,18 @@ async function openAt(page: Page, seed: string, templateId: string) {
 
 async function targetsAreBigEnough(page: Page) {
   const controls = await page
-    .locator('main select:enabled, main button:enabled')
+    .locator('main select:enabled, main button:enabled, main input:enabled')
     .evaluateAll((elements) =>
-      elements.map((element) => ({
-        height: element.getBoundingClientRect().height,
-        width: element.getBoundingClientRect().width,
-      })),
+      elements.map((element) => {
+        // La etiqueta asociada es parte del área clicable de una casilla.
+        const target = element.matches('input[type="checkbox"]')
+          ? (element.closest('label') ?? element)
+          : element
+        return {
+          height: target.getBoundingClientRect().height,
+          width: target.getBoundingClientRect().width,
+        }
+      }),
     )
   for (const control of controls) {
     expect(control.height).toBeGreaterThanOrEqual(44)
@@ -204,5 +210,35 @@ for (const width of [320, 412]) {
     await page.keyboard.press('Enter')
     await expect(page.getByTestId('feedback-heading')).toBeFocused()
     await reflow(page, `week · result · ${String(width)}`)
+  })
+}
+
+for (const width of [320, 360, 390, 412, 1280]) {
+  test(`RS-RA-002: feria de tecnología a ${String(width)} px`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width, height: 900 })
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await openAt(page, 'browser-r2-tech', 'y3.course-project-tech')
+    const fields = page.getByRole('spinbutton')
+    await expect(fields).toHaveCount(3)
+    await reflow(page, 'tech · datos nuevos')
+    await targetsAreBigEnough(page)
+    if (width === 1280) {
+      // Zoom CSS 200 %: comprobación de reflow, no emulación de browser zoom.
+      await page.evaluate(() => {
+        document.documentElement.style.zoom = '2'
+      })
+      await reflow(page, 'tech · zoom CSS 200 %')
+    }
+    await tabTo(page, fields.first())
+    await page.keyboard.press('ControlOrMeta+A')
+    await page.keyboard.type('6')
+    await noAxeViolations(page)
+    const submit = page.getByTestId('submit-answer')
+    await tabTo(page, submit)
+    await page.keyboard.press('Enter')
+    await expect(page.getByTestId('feedback-heading')).toBeFocused()
+    await reflow(page, 'tech · feedback')
   })
 }

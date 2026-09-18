@@ -1,3 +1,8 @@
+import {
+  createGrade3Dependencies,
+  grade3VariantCatalog,
+} from '@/content/grade-3'
+import { publishedParams } from '../helpers/published-params'
 import { describe, expect, it } from 'vitest'
 import { bandOf, cognitiveLoad } from '@/game'
 import {
@@ -15,6 +20,7 @@ import {
   rateReviewGates,
   readTech,
   techGates,
+  techSchema,
   techPlans,
   uploadMinutes,
   usage,
@@ -95,7 +101,7 @@ describe('3.º · Proyecto del Curso: la feria de tecnología', () => {
     expect(CREW.length).toBe(ITEMS.length)
   })
 
-  it('el evaluador reproduce el oráculo y rechaza cantidades fuera de contrato', () => {
+  it('la agregación coincide con los witnesses y rechaza cantidades fuera de contrato', () => {
     for (const quality of ['optimal', 'efficient', 'functional'] as const) {
       const plan = techPlans(sample).find((entry) => entry.quality === quality)
       if (plan === undefined) throw new Error(`falta un plan ${quality}`)
@@ -146,4 +152,83 @@ describe('3.º · Repaso de cuánto entra', () => {
     expect(rateCapacityReview.scoring?.team).toBe('none')
     expect(rateCapacityReview.scoring?.aura).toBe('none')
   })
+})
+
+// RS-RA-002: la verdad esperada se deriva aquí de las cantidades y restricciones,
+// sin readTech/techPlans/usage/uploadMinutes, que son la misma ruta del evaluador.
+describe('RS-RA-002 · catálogo publicado y oráculo independiente', () => {
+  const variants = publishedParams(
+    createGrade3Dependencies(),
+    grade3VariantCatalog,
+    'y3.course-project-tech',
+    (x) => techSchema.parse(x),
+  )
+  const supremum = {
+    video: Math.max(...variants.map((p) => p.target.video)),
+    entrevistas: Math.max(...variants.map((p) => p.target.entrevistas)),
+    laminas: Math.max(...variants.map((p) => p.target.laminas)),
+  }
+  it.each(variants.map((p, index) => ({ p, index })))(
+    'variante $index: todos los 1573 planes',
+    ({ p }) => {
+      const tiers = new Set<string>()
+      let perfectTeam = false
+      for (let v = 0; v <= 10; v++)
+        for (let e = 0; e <= 10; e++)
+          for (let l = 0; l <= 12; l++) {
+            const nb = 4 * v + e + 3 * l,
+              mb = 350 * v + 60 * e + 20 * l
+            const valid =
+              nb <= p.notebookMinutes &&
+              mb <= p.megabytes &&
+              mb <= p.labMinutes * p.uploadRate &&
+              v >= p.minimum.video &&
+              e >= p.minimum.entrevistas &&
+              l >= p.minimum.laminas
+            const met =
+              Number(v >= p.target.video) +
+              Number(e >= p.target.entrevistas) +
+              Number(l >= p.target.laminas)
+            const expected = !valid
+              ? 'invalid'
+              : met === 3
+                ? 'optimal'
+                : met === 2
+                  ? 'efficient'
+                  : 'functional'
+            const lines = [
+              { itemId: 'video', quantity: v },
+              { itemId: 'entrevistas', quantity: e },
+              { itemId: 'laminas', quantity: l },
+            ]
+            const result = evaluateTech(p, lines)
+            if (!result.ok) throw new Error('respuesta válida rechazada')
+            expect(result.value.quality).toBe(expected)
+            const loads = { nico: 4 * v, sofi: e, tomi: 3 * l }
+            const team = valid
+              ? Number(v > 0 && e > 0 && l > 0) +
+                Number(
+                  Math.max(4 * v, e, 3 * l) - Math.min(4 * v, e, 3 * l) <=
+                    p.spread,
+                ) +
+                Number(loads[p.tight] <= p.tightCap)
+              : 0
+            expect(result.value.metrics.efficiency).toBe(team / 3)
+            if (expected === 'optimal' && team === 3) perfectTeam = true
+            tiers.add(expected)
+          }
+      expect(tiers).toEqual(
+        new Set(['invalid', 'functional', 'efficient', 'optimal']),
+      )
+      expect(perfectTeam).toBe(true)
+      const dominating = evaluateTech(
+        p,
+        Object.entries(supremum).map(([itemId, quantity]) => ({
+          itemId,
+          quantity,
+        })),
+      )
+      expect(dominating.ok && dominating.value.quality).toBe('invalid')
+    },
+  )
 })

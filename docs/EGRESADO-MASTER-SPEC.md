@@ -583,6 +583,14 @@ antes de G1 salvo BLOCKER genuino. Teacher Demo sigue separado y orientado a
 amplitud. Fair v1 repite una Competition Seed compartida por edición; Practice
 ofrece variedad procedural, sin rank oficial.
 
+## Seguimiento de la remediación matemática de ronda 2
+
+Las correcciones de MAT-RA-001/002/003/006/008 están DONE con tres
+`pnpm verify` consecutivos en verde. El [informe](04-quality/targeted-post-reaudit-mathematics-remediation.md)
+conserva contratos y mediciones. STAGE-08 sigue IN_PROGRESS; después corresponde
+Independent Mathematics Re-Audit Round 2. Sign-off provisional bloqueado hasta
+su PASS, revisión humana diferida y pacing real pendiente.
+
 ---
 
 # FILE: 00-product/success-metrics.md
@@ -3187,6 +3195,21 @@ según el signo del error, contenido `3.2.0-grade-3`. La práctica parcial `7.º
 **Rareza.** `rare.y3.offline-project` sigue siendo hook, por la misma razón que
 el de 2.º (D-S08-067).
 
+## Remediación dirigida de ronda 2 · proyecto tecnológico
+
+RS-RA-002 conserva STANDARD/MEDIUM/PROJECT, máximos 10/10/12, Equipo independiente
+y `rate-capacity-review`. El generador 2 amplía a doce objetivos; once aparecen
+en las 25 variantes publicadas. Ajusta notebook, pendrive y laboratorio por tasa:
+23–53 minutos de notebook, 1050–3200 MB y 5–29 minutos. Las formas publicadas
+son pendrive corto (9), laboratorio corto (8) y notebook corta (8).
+
+El supremo publicado `(6,7,8)` necesita 55 minutos de notebook y no cabe en
+ninguna variante. Cada variante conserva los tres niveles válidos, un óptimo
+con Equipo máximo y dos evidencias de Equipo. Los 1573 vectores completos por
+variante dan 116 óptimos distintos, K 35,8 y S 20 %, bajo K≤65/S≤35 %.
+Contenido `3.3.0-grade-3`, catálogo `grade-3-dev-4`; ver
+[informe de implementación](04-quality/targeted-post-reaudit-mathematics-remediation.md).
+
 ---
 
 # FILE: 01-game-design/grade-4-template-design.md
@@ -3330,7 +3353,7 @@ independiente por evaluador y materialización sólo de direcciones aprobadas.
 | Template | Formas semánticas | Escalera 100/75/40/10 | Equipo / Aura / Estilo |
 |---|---|---|---|
 | `y4.shift-coverage` | Dos puestos en tres bloques seguidos y cuatro personas con disponibilidad por bloque; formas `llega-tarde`, `se-va-temprano` y `todos-parciales` | INVALID puesto vacío, choque de hora o alguien que no está · FUNCTIONAL cierra pero alguien se queda las tres horas · EFFICIENT todos descansan · OPTIMAL además ningún puesto cambia de manos más de una vez | **Equipo** 0–3 por los acuerdos del grupo, leído entre cronogramas que ya cierran (`LOCKED`) |
-| `y4.course-project-fundraiser` | Costo fijo, tres cosas para vender con su costo, precio y minutos de cocina, un objetivo y un colchón; formas `cocina-corta`, `objetivo-alto` y `margen-parejo`. La consigna nombra las tres condiciones en orden —no perder plata, llegar al objetivo, llegar con el colchón—, explica el punto de equilibrio en palabras y dice que todo lo que se prepara se vende | INVALID se pasa de cocina o pierde plata · FUNCTIONAL cubre costos · EFFICIENT llega al objetivo · OPTIMAL llega con el colchón | Sin Equipo ni Aura. Estilo por la forma de la producción |
+| `y4.course-project-fundraiser` | Costo fijo, tres cosas para vender con su costo, precio y minutos de cocina, un objetivo y un colchón; formas `rinden-panchos`, `rinden-tortas` y `rinden-bebidas`. La consigna nombra las tres condiciones en orden —no perder plata, llegar al objetivo, llegar con el colchón—, explica el punto de equilibrio en palabras y dice que todo lo que se prepara se vende | INVALID se pasa de cocina o pierde plata · FUNCTIONAL cubre costos · EFFICIENT llega al objetivo · OPTIMAL llega con el colchón | Sin Equipo ni Aura. Estilo por la forma de la producción |
 | `y4.school-event-flow` | Tres puestos en fila con su tasa y lo que suma cada ayudante; formas `puerta-lenta`, `acreditacion-lenta` y `buffet-lento` | INVALID la cola crece o reparte ayudantes que no hay · FUNCTIONAL alcanza el ritmo pedido · EFFICIENT llega a la mitad del margen posible · OPTIMAL el mejor ritmo alcanzable | Ninguno: la consecuencia sobre otra gente se ve, pero no se cobra como gesto social |
 | `y4.event-floor-plan` | Salón con puerta, pasillo y a veces columnas; escenario, tres mesas y una barra; formas `salon-angosto`, `puerta-al-medio` y `con-columnas` | INVALID se sale, se pisa, tapa el pasillo, no sienta a todos o deja una zona encerrada · FUNCTIONAL entra y se circula · EFFICIENT además sobra lugar para una mesa más **o** entra la barra · OPTIMAL las dos | Ninguno |
 | `y4.represent-class` | Tres límites escritos —plata, minutos y lugar— y cinco propuestas; la situación declara a quién afecta lo que se propone. Toda variante tiene al menos dos propuestas viables, así que no llevar ninguna nunca es casi exacto | INVALID lleva al consejo algo que no entra · EFFICIENT deja una viable afuera · FUNCTIONAL deja dos o más —incluido no llevar ninguna, que la consecuencia narra como tal— · OPTIMAL exacta | **Aura** por la postura pública, leída de un campo distinto del de las etiquetas (`LOCKED`). Sin Equipo y sin Prestige |
@@ -3371,6 +3394,24 @@ tocar sus artefactos publicados. Reemplaza a `grade-4-dev-2` por la
 de la peña, dirección del error en los dos Repasos y feedback de la cola,
 contenido `4.2.0-grade-4`. La práctica parcial `7.º → 4.º` es
 `official: false`.
+
+## Remediación dirigida de ronda 2 · peña
+
+RS-RA-003 conserva STANDARD/MEDIUM/PROJECT, cantidades máximas 8/6/9, punto de
+equilibrio, tres niveles válidos, gate de Estilo y recuperación. El generador 2
+rota las seis ordenaciones estrictas por margen por minuto; sus frecuencias son
+5/5/5/5/2/3, ninguna sobre 20 %. Las formas nombran qué producto rinde por minuto:
+panchos (8), tortas (10), bebidas (7). No cambian la interacción ni el schema del motor.
+
+La cocina dispone de 150/180/210/240 minutos. El objetivo se calcula desde los
+planes con menos de tres cuartos de cocina usada, dejando 1000–3000 de holgura
+más el redondeo hacia abajo a miles; el gate comprueba holgura de 0–3000.
+La holgura óptima global sobre objetivo más reserva baja de mediana 18000 a 9000
+(rango 6000–13000). El espacio de 630 vectores da K 62,4 y S 28 %, bajo K≤65/S≤35 %.
+Hay óptimo Math y diversidad de Estilo en cada variante. La consigna RS-MAT-011
+se conserva. El feedback distingue cocina insuficiente de pérdida monetaria.
+Contenido `4.3.0-grade-4`, catálogo `grade-4-dev-4`; ver
+[informe de implementación](04-quality/targeted-post-reaudit-mathematics-remediation.md).
 
 ---
 
@@ -5159,22 +5200,22 @@ los cerró el mismo día (D-S08-122 a D-S08-126) y emitió el
 | MAT-012 · MAT-013 | `ACCEPT_WITH_DOCUMENTED_RISK` | — | Sin cambio | Banderas para la revisión humana final |
 | MAT-AJ-NEW-001 | `REQUIRED_CORRECTION` P0 | RS-NEW-001 (criterio 3 enmendado, D-S08-113) | **DONE** | `integration/mathematics-remediation` · «criterio 3 enmendado», auditoría |
 | MAT-AJ-NEW-002 | `REQUIRED_CORRECTION` P0 | RS-NEW-002 | DONE | `integration/mathematics-remediation` |
-| MAT-AJ-NEW-003 | `REQUIRED_CORRECTION` P1 | RS-NEW-003 | **FAIL en la re-auditoría** · los cinco Repasos del alcance explícito pasan, pero el alcance transversal alcanza a `g7.bus-travel-review`, que lo incumple en 26/26 → RS-RA-001 | `integration/mathematics-remediation`; re-auditoría, sección I |
+| MAT-AJ-NEW-003 | `REQUIRED_CORRECTION` P1 | RS-NEW-003 | **FAIL en la re-auditoría** · los cinco Repasos del alcance explícito pasan, pero el alcance transversal alcanza a `g7.bus-travel-review`, que lo incumple en 26/26 → **corregido en ronda 2 por RS-RA-001**, re-audit independiente pendiente | `integration/mathematics-remediation`; re-auditoría, sección I |
 | Regla 2.9 | Inventario de feedback afirmativo | — | DONE · seis textos falsos más corregidos (D-S08-110) | [inventario](04-quality/mathematics-remediation-feedback-inventory.md) |
 
 ### Ronda 2 · hallazgos de la re-auditoría independiente
 
 Cadena `hallazgo del re-audit → adjudicación del Chair → contrato de la ronda 2 →
 remediación dirigida → re-auditoría ronda 2 → sign-off provisional`. Adjudicados el 18
-de septiembre de 2026 (D-S08-122 a D-S08-126). **Ninguno implementado todavía.**
+de septiembre de 2026 (D-S08-122 a D-S08-126). **Correcciones DONE: cinco contratos PASS y tres verify consecutivos.** Evidencia before/after y pruebas en el [informe de ronda 2](04-quality/targeted-post-reaudit-mathematics-remediation.md).
 
 | Hallazgo | Decisión canónica | Prio | ¿Bloquea? | Contrato | Verificación exigida |
 |---|---|---|---|---|---|
-| MAT-RA-006 · alcance de la auditoría permanente | `REQUIRED_CORRECTION` | **P0** | **sí** | [RS-RA-AUDIT-001](04-quality/post-reaudit-mathematics-remediation-spec.md#3-rs-ra-audit-001-auditoría-permanente-por-capacidad) | Matriz de cobertura de las 42 Templates; reproducción de los dos atajos **antes** de corregir |
-| MAT-RA-001 · `g7.bus-travel-review` | `REQUIRED_CORRECTION` | **P0** | **sí** | [RS-RA-001](04-quality/post-reaudit-mathematics-remediation-spec.md#4-rs-ra-001-g7bus-travel-review) | Rango `[0,120]` × 26 variantes, dirección contra el signo de `respuesta − exacta` |
-| MAT-RA-002 · `y3.course-project-tech` | `REQUIRED_CORRECTION` | **P0** | **sí** | [RS-RA-002](04-quality/post-reaudit-mathematics-remediation-spec.md#5-rs-ra-002-y3course-project-tech) | `K ≤ 65 · S ≤ 35 %` por enumeración exhaustiva del espacio constante |
-| MAT-RA-003 · `y4.course-project-fundraiser` | `REQUIRED_CORRECTION` | **P0** | **sí** | [RS-RA-003](04-quality/post-reaudit-mathematics-remediation-spec.md#6-rs-ra-003-y4course-project-fundraiser) | `K ≤ 65 · S ≤ 35 %` y ≥ 3 ordenaciones por margen por minuto |
-| MAT-RA-008 · flake de `architecture-lint` | `REQUIRED_CORRECTION` | P1 | no | [RS-RA-TEST-001](04-quality/post-reaudit-mathematics-remediation-spec.md#7-rs-ra-test-001-reproducibilidad-de-architecture-lint) | `pnpm verify` verde tres corridas seguidas |
+| MAT-RA-006 · alcance de la auditoría permanente | `REQUIRED_CORRECTION` | **P0** | **sí** | [RS-RA-AUDIT-001](04-quality/post-reaudit-mathematics-remediation-spec.md#3-rs-ra-audit-001-auditoría-permanente-por-capacidad) | PASS · 24 exhaustivas / 18 políticas; ambos atajos reproducidos antes de corregir |
+| MAT-RA-001 · `g7.bus-travel-review` | `REQUIRED_CORRECTION` | **P0** | **sí** | [RS-RA-001](04-quality/post-reaudit-mathematics-remediation-spec.md#4-rs-ra-001-g7bus-travel-review) | PASS · rango `[0,120]` × 26 variantes, iff demora sola y signo correcto |
+| MAT-RA-002 · `y3.course-project-tech` | `REQUIRED_CORRECTION` | **P0** | **sí** | [RS-RA-002](04-quality/post-reaudit-mathematics-remediation-spec.md#5-rs-ra-002-y3course-project-tech) | PASS · K 35,8 / S 20 %, bajo 65/35 %, enumeración completa |
+| MAT-RA-003 · `y4.course-project-fundraiser` | `REQUIRED_CORRECTION` | **P0** | **sí** | [RS-RA-003](04-quality/post-reaudit-mathematics-remediation-spec.md#6-rs-ra-003-y4course-project-fundraiser) | PASS · K 62,4 / S 28 %, seis órdenes, máximo 20 % |
+| MAT-RA-008 · flake de `architecture-lint` | `REQUIRED_CORRECTION` | P1 | no | [RS-RA-TEST-001](04-quality/post-reaudit-mathematics-remediation-spec.md#7-rs-ra-test-001-reproducibilidad-de-architecture-lint) | PASS · `pnpm verify` verde tres corridas seguidas |
 | MAT-RA-005 · `g7.bus-timing` | `ACCEPT_WITH_DOCUMENTED_RISK` | P2 | no | — | Bandera humana H-6; la auditoría sigue reportando su `K` |
 | MAT-RA-004 · `y1.scale-fit-review` | `DEFER_TO_FINAL_HUMAN_REVIEW` | P2 | no | — | Bandera humana H-7; la auditoría sigue reportando su política ingenua |
 | MAT-RA-009 · replay de catálogos de 1.º–5.º | `DEFER_TO_STAGE_09` | P0 en STAGE-09 | no | R-S09-CAT | Política de retención escrita por año antes de la edición oficial |
@@ -12824,6 +12865,13 @@ si un chico entiende la consigna, si la tarea vale la pena, si el error que el
 juego castiga es el error que importa, y si esto se puede poner delante de un
 curso.
 
+## Evidencia posterior · remediación dirigida de ronda 2
+
+El [informe de implementación](04-quality/targeted-post-reaudit-mathematics-remediation.md)
+aporta K/S 35,8/20 % (proyecto tecnológico) y 62,4/28 % (peña), con seis órdenes
+de margen por minuto. Son mediciones técnicas: no validan pacing ni carga
+cognitiva con alumnos. H-6…H-10 mantienen su decisión y su revisión humana diferida.
+
 ---
 
 # FILE: 04-quality/mathematics-department-pre-review.md
@@ -13846,8 +13894,9 @@ especificación prohíbe.
 - **Estado:** `EXECUTED` — 2026-09-17, dentro de la
   [implementación de la remediación matemática](04-quality/mathematics-remediation-implementation.md)
 - **Regla que lo exige:** [especificación de remediación, regla 2.9](04-quality/mathematics-remediation-spec.md#2-reglas-transversales)
-- **Alcance:** las 42 Templates del catálogo de carrera completa —`grade-5-dev-3` al ejecutarlo, `grade-5-dev-4` desde la reescritura de la pantalla del acto— —no sólo las de la
-  especificación—, sobre los tres campos de texto fijo del feedback:
+- **Alcance:** las 42 Templates del catálogo de carrera completa: inicialmente
+  `grade-5-dev-3`, luego `grade-5-dev-4` y re-verificado en ronda 2 sobre
+  `grade-5-dev-5`. Incluye los tres campos de texto fijo del feedback:
   `consequence`, `optimalComparison` y `violatedConstraint`
 - **Consumidor:** `Independent Mathematics Re-Audit`
 
@@ -13859,16 +13908,18 @@ especificación prohíbe.
    causa: narración de consecuencia social («el acto sigue sin vos»), nombres de
    restricción («hora de entrada») y cierres sin contenido matemático («Queda
    anotado, y el año sigue»).
-3. Cada texto que sí afirma algo quedó en uno de dos estados:
+3. Cada texto afirmativo se clasifica contrastando su condición ejecutable, no la intención de un comentario:
    - **A — probado:** es verdadero en toda variante aprobada donde se muestra,
      porque la escalera o un gate lo garantizan, y se dice cuál;
    - **B — calculado:** se arma desde los parámetros o la respuesta de la
-     variante, así que no puede afirmar algo que la variante no tiene.
+     variante; además se comprueba que la condición de rama implica la afirmación. Calcular un número no prueba por sí solo la dirección o la causa.
+   - **C — falso:** hay un contraejemplo reproducible; requiere corrección y evidencia.
 4. Donde la garantía no era evidente se midió sobre el catálogo publicado y, si
    el texto resultó falso, **se corrigió** y quedó un test.
 
-Ningún texto queda en estado «falso»: los que lo eran se corrigieron en esta
-implementación (sección [Correcciones](#correcciones)).
+La afirmación inicial de que ningún texto era falso fue refutada por MAT-RA-001.
+La ronda 2 corrige esa rama y los textos de peña, postas y entrada detallados abajo; el
+estado actual se apoya en condiciones ejecutables y pruebas, no en aquella afirmación.
 
 ## Correcciones
 
@@ -13897,7 +13948,7 @@ implementación (sección [Correcciones](#correcciones)).
 | `g7.bus-latest-departure` | `optimalComparison` · optimal «el número que hacía falta» | exactitud | A | óptimo = respuesta exacta |
 | `g7.bus-latest-departure` | `consequence` · invalid | tarde por la entrada o sin el margen pedido | B | rama por `arrival > entrada` |
 | `g7.bus-travel-review` | `optimalComparison` · cuatro niveles | minutos de la demora y del viaje | B | `model.extraMinutes`, `model.travelMinutes` |
-| `g7.bus-travel-review` | `consequence` · «Faltaba sumarle el viaje normal» | causa del error | **C** (era A) | **Clasificación corregida el 2026-09-18, D-S08-125.** La justificación registrada —«se muestra sólo si la respuesta es la demora sola»— es **falsa**: la rama decide con `Math.abs(respuesta − viajeDeHoy) === viajeNormal`, y un valor absoluto tiene dos raíces, así que también dispara en `viajeDeHoy + viajeNormal`, donde el jugador se **pasó**. Falso en 26 de 26 variantes. Ver [MAT-RA-001](04-quality/independent-mathematics-reaudit.md#mat-ra-001-high-bloqueante-g7bus-travel-review) y [RS-RA-001](04-quality/post-reaudit-mathematics-remediation-spec.md#4-rs-ra-001-g7bus-travel-review) |
+| `g7.bus-travel-review` | `consequence` · «Faltaba sumarle el viaje normal» | causa del error | A · corregida desde C | Ronda 2: comparación racional `respuesta === extraMinutes`, equivalente a la demora sola. Test independiente de las 26 × 121 respuestas, incluida la raíz falsa `exacta + normal`; 0 afirmaciones falsas. La clasificación A original fue refutada por MAT-RA-001; no se borra ese antecedente |
 | `g7.mural-paint` | `optimalComparison` · optimal «el envase más barato entre los que alcanzaban» | mínimo entre suficientes | A | óptimo = `smallestSufficientTin` más barato |
 | `g7.mural-paint` | `optimalComparison` · functional | con el envase de $X alcanzaba | B | precio del más barato suficiente |
 | `g7.notebook-offer` | `optimalComparison` · optimal | qué descuento era mayor | B | `discountComparison` |
@@ -13937,6 +13988,7 @@ implementación (sección [Correcciones](#correcciones)).
 | `y2.team-kit-order` | `consequence` · efficient, functional | repuestos no quedan donde hay más gente | A | niveles definidos por distancia al reparto por restos mayores |
 | `y2.court-zones` | `violatedConstraint` · invalid | margen, celda repetida, techo, separación lograda | B | rama por falla y `spread` |
 | `y2.court-zones` | `optimalComparison` · optimal, efficient | con pedido + 2 celdas las colas quedan sueltas | A | `tierOf`: óptimo = `spread ≥ apart + 2` |
+| `y2.court-zones` | `consequence` · invalid | distribución necesita ajustes | A · corregida | Invalid = falla alguna restricción; ya no implica a la vez superposición y pared. La causa concreta queda en violatedConstraint |
 | `y2.court-zones` | `consequence` · optimal | dos celdas o más sobre lo pedido | A | `tierOf` |
 | `y2.court-zones` | `consequence` · efficient, functional «más juntas de lo que la cancha permitía» | había una ubicación mejor | A | witness de nivel `optimal` por variante |
 | `y2.intercurso-plan` | `violatedConstraint`, `consequence` | qué actividad falta, Equipo | B | cobertura y `read.team` |
@@ -13965,10 +14017,11 @@ implementación (sección [Correcciones](#correcciones)).
 | Template | Campo · nivel | Afirma | Estado | Garantía |
 |---|---|---|---|---|
 | `y4.course-project-fundraiser` | `violatedConstraint` · invalid | cocina o pérdida | B | `read.minutes` contra cocina |
-| `y4.course-project-fundraiser` | `consequence` · por nivel | cubre, llega, colchón | A | escalera: functional cubre, efficient objetivo, optimal colchón |
+| `y4.course-project-fundraiser` | `consequence` · por nivel | cocina, pérdida, cubre, llega, colchón | B/A · corregida | Invalid distingue `minutes > kitchenMinutes` de `profit < 0`; functional implica `0 ≤ profit < target`; efficient implica `target ≤ profit < target + reserve`; optimal implica `profit ≥ target + reserve`. Ya no dice «justo». Enumeración independiente de 25 × 630 planes |
 | `y4.margin-review` | `violatedConstraint` · functional | precio contra lo que deja | B | `p.price − p.cost` |
 | `y4.margin-review` | `consequence` · resto | dirección del error | B | signo, test RS-NEW-003 |
 | `y4.school-event-flow` | `violatedConstraint`, `consequence` · invalid | ayudantes que no hay o ritmo del cuello de botella | B | `read.overstaffed`, `read.rate` |
+| `y4.school-event-flow` | `consequence` · functional | margen cero o positivo | B · corregida | «justo» iff rate = required; si no, muestra rate − required. Enumeración independiente de los 125 vectores por variante |
 | `y4.school-event-flow` | `consequence` · efficient «con aire de sobra» | llega a la mitad del margen posible | A | efficient = mitad del margen posible |
 | `y4.school-event-flow` | `consequence` · optimal «el mejor ritmo que se puede sostener» | máximo | A | óptimo = mejor ritmo alcanzable |
 | `y4.event-floor-plan` | `violatedConstraint` | tipo de falla, asientos contra invitados | B | `read.failure`, `read.seats` |
@@ -14008,6 +14061,22 @@ implementación (sección [Correcciones](#correcciones)).
   la peña, horas con viaje—, no este inventario.
 - `facts`: son números de la variante, no afirmaciones.
 - Storylets y epílogo: no dan feedback matemático.
+
+## Re-verificación de ronda 2
+
+Se contrastaron las garantías de las 42 Templates con las condiciones de rama.
+La evidencia de enumeración completa se limita a los espacios acotados de los
+Repasos y de los dos proyectos: no se afirma enumerar toda geometría o agenda.
+Las postas dejan de afirmar a la vez superposición y pared para cualquier inválido;
+la restricción ya distinguía la causa real. En la entrada, 251 de los 532 planes
+funcionales tenían margen positivo: «justo» ahora exige margen cero; los demás
+muestran `rate − required`. Regresiones en `mathematics-remediation.test.ts`.
+Los demás casos conservan sus demostraciones por predicado/gate y los tests de
+`mathematics-remediation`; un witness que comparte evaluador no es un oráculo
+independiente. La baseline de la peña tenía 9876 planes con cocina excedida y
+beneficio no negativo que decían «termina costando plata», en las 25 variantes.
+El informe de [ronda 2](04-quality/targeted-post-reaudit-mathematics-remediation.md) conserva
+before/after y la evidencia de las correcciones, incluidos los falsos «justo».
 
 ---
 
@@ -17301,6 +17370,332 @@ feedback y esta adjudicación como evidencia a re-derivar de forma independiente
 
 ---
 
+# FILE: 04-quality/targeted-post-reaudit-mathematics-remediation.md
+
+# Implementación de la remediación matemática dirigida · ronda 2
+
+## A. Veredicto
+
+**TARGETED POST-REAUDIT MATHEMATICS REMEDIATION — DONE**.
+Los cinco contratos de ronda 2 están implementados y verificados.
+La implementación no ejecuta la re-auditoría independiente ni el sign-off.
+
+## B. Baseline y recuperación del trabajo
+
+`main`, HEAD `748db1d4ed46e5943ce413b434ab2a8a2b8cdd47` (adjudicación),
+37 commits locales por delante de origin. Se retomaron seis archivos modificados
+y un helper nuevo del agente anterior, todos atribuibles a esta tarea; no se
+sobrescribió trabajo ajeno. Su evidencia `baseline-audit.txt` reproducía los dos
+hallazgos antes de sus correcciones. Se volvió a ejecutar la misma instrumentación
+sobre un worktree aislado del HEAD base, sin aplicar allí cambios de contenido.
+
+Baseline: motor `10.0.0`, action log `7`, snapshot `8`, 42 Templates,
+41 generadores, 1026 entradas en `grade-5-dev-4`; 95 archivos de test,
+1739 tests, 0 todo y 158 E2E según la baseline canónica.
+
+## C. Autoridad consumida
+
+Ambas fuentes del commit `748db1d` se conservaron sin enmiendas:
+
+- [Adjudicación posterior](04-quality/post-reaudit-mathematics-findings-adjudication.md).
+- [Especificación de ronda 2](04-quality/post-reaudit-mathematics-remediation-spec.md).
+
+Se aplicaron sus techos, prioridades, alcance y decisiones; no se readjudicaron.
+ADRs 013/020/021 y D-S08-088/109 gobiernan exactitud, catálogos y versiones.
+Las fichas de 3.º y 4.º conservan STANDARD/MEDIUM/PROJECT, recovery y scorer.
+
+## D. Paquetes y matriz contractual
+
+| Finding | Decisión | Prioridad / bloqueo | Paquete / contrato | Before → after | Criterio | Versión |
+|---|---|---|---|---|---|---|
+| MAT-RA-006 | REQUIRED_CORRECTION | P0 / sí | WP-RA-AUDIT / RS-RA-AUDIT-001 | 19 exhaustivas, 23 sin medición completa → 24 exhaustivas y 18 con políticas | 42 filas con categoría/razón; reproducción previa | tooling |
+| MAT-RA-001 | REQUIRED_CORRECTION | P0 / sí | WP-RA-001 / RS-RA-001 | 26 causas falsas → 0 en 3146 respuestas | rama iff demora sola; twin invalid | contenido 7.º y posteriores; textos 2.º/4.º |
+| MAT-RA-002 | REQUIRED_CORRECTION | P0 / sí | WP-RA-002 / RS-RA-002 | K 95,8333 / S 83,3333 % → K 35,8 / S 20 % | K ≤65 / S ≤35 % | generador 2; contenido 3.º+ |
+| MAT-RA-003 | REQUIRED_CORRECTION | P0 / sí | WP-RA-003 / RS-RA-003 | K 92,8 / S 92 % → K 62,4 / S 28 % | K ≤65 / S ≤35 %; ≥3 órdenes, ninguno >50 % | generador 2; contenido 4.º+ |
+| MAT-RA-008 | REQUIRED_CORRECTION | P1 / no matemático | WP-RA-TEST / RS-RA-TEST-001 | arranque ESLint dentro de caso → beforeAll | tres verify consecutivos | sólo tests |
+
+Orden ejecutado: instrumentación y reproducción → Repaso → proyecto 3.º →
+proyecto 4.º → warmup → republicación y docs → verificación. Los intentos de diseño
+se midieron sobre catálogos en memoria; sólo el resultado final se publicó.
+
+Los cinco paquetes y WP-RA-CATALOGS/DOCS/VERIFY quedan **DONE / PASS**.
+Pruebas directas: RS-RA-AUDIT-001 y techos RS-RA-002/003 en
+`tests/integration/blind-strategy-audit.test.ts`; RS-RA-001 en
+`tests/unit/grade-7-content.test.ts` y `tests/integration/mathematics-remediation.test.ts`;
+oráculos RS-RA-002/003 en `tests/unit/grade-3-project-tech.test.ts` y
+`tests/unit/grade-4-fundraiser.test.ts`; RS-RA-TEST-001 en
+`tests/unit/architecture-lint.test.ts` y los tres `pnpm verify` de la sección M.
+
+## E. Evidencia before → after
+
+| Template | N antes / después | Espacio completo | Mejor constante antes → después | Histograma antes → después (o/e/f/i) | Óptimos distintos después |
+|---|---|---|---|---|---|
+| y3.course-project-tech | 24 / 25 | 1573 | 4-4-6 → 2-7-4 | 20/4/0/0 → 5/3/0/17 | 116 |
+| y4.course-project-fundraiser | 25 / 25 | 630 | 3-0-9 → 2-2-2 | 23/0/0/2 → 0/16/9/0 | 283 |
+
+S mide el mayor número de óptimas de cualquier constante, no necesariamente la
+que maximiza K: en 4.º la constante de S es `7-2-0`, óptima en 7/25.
+R antes (redondeado): 27,6 en 3.º y 30,0 en 4.º; después: 12,830769 y
+21,591111. Todo es enumeración, sin sampling.
+
+## F. Auditoría permanente
+
+`tests/helpers/blind-strategy-space.ts` describe capacidades desde la presentación:
+coordenadas estables, cardinal, firma y políticas. No conoce IDs de Templates ni
+soluciones. Cantidades/presupuestos enumeran el producto cartesiano completo;
+asignaciones estables también, incluida la omisión de tareas. Firmas que cambian
+pasan a C; espacios por encima del presupuesto a B; geometría/agenda/recorrido
+a D. Los estados bloqueados requieren razón; el catálogo actual no tiene ninguno.
+
+Presupuesto técnico: **60.000 evaluaciones por Template**, contando posturas.
+El mayor caso publicado cuesta 54.675 (729 × 25 × 3) y el proyecto tecnológico
+39.325. El reporte `--timing` separa medición temporal de la salida determinista.
+La medición final dio **831,3 ms** para el baseline y **938,3 ms** para el
+catálogo corregido, con peor Template en **268,0 ms**. Bajo pruebas concurrentes
+se observaron también 1,133 s y 2,045 s; el límite se expresa en evaluaciones. No es un
+SLA de CI: es evidencia de tratabilidad y margen acotado, no millones sin medir.
+
+Familias: mínimos/máximos/mitad/primero/proporciones; asignación primera/cíclica/
+equilibrada/orden; agenda temprano/tarde/orden/uniforme; espacial origen/
+orientación/primer hueco/filas/huella; ruta orden/inverso/vecino; grilla y
+clasificación todo/nada/patrón. No consultan el evaluador para elegir una respuesta.
+Las políticas rechazadas se cuentan explícitamente; para ordenar políticas reciben
+el piso convencional 10, no un puntaje competitivo real. El histograma incluye
+esos rechazos como invalid. Espacial y recorrido no declaran un cardinal parcial
+que omita rotaciones o respuestas incompletas.
+
+Los techos sólo existen donde hay contrato. `screenChoices` comparte `tierOf`,
+`surveyPlans` comparte `surveyClaims` y `standingsPlans` comparte `independentTruths`:
+esas comparaciones verifican agregación, no verdad independiente. Las pruebas
+geométricas separadas de RS-MAT-008 conservan su alcance.
+
+## G. RS-RA-001 e inventario
+
+La demora sola es `normal × porcentaje / 100`; la duración exacta suma el normal.
+Se compara con signo contra la demora, no contra `abs(respuesta − exacta)`.
+Las 26 segundas raíces `exacta + normal` pasan de functional a invalid por la
+escalera existente. Se prueban todos los valores enteros 0–120, los cuatro niveles,
+la causa en ambas direcciones y la equivalencia de rama.
+
+La re-verificación por condición real encontró además un texto falso preexistente
+en la peña: **9876 de 15750 planes** de la baseline excedían cocina con ganancia
+no negativa y aun así decían «termina costando plata». Ahora esa rama nombra la
+capacidad insuficiente. Efficient dice «falta para el colchón» en lugar de «justo».
+La misma re-verificación encontró la consecuencia inválida de las postas que
+afirmaba superposición **y** pared sin que esa conjunción fuera condición de rama:
+se reemplaza por una consecuencia general, conservando la restricción precisa.
+En la cola, 251 de 532 planes funcionales publicados tenían margen positivo;
+ahora «justo» se reserva para margen cero y el resto muestra el margen calculado.
+Son correcciones textuales de RS-RA-001.6, sin alterar niveles ni parámetros.
+Es aplicación de RS-RA-001.6; narrate/present fijados por RS-MAT-011 permanecen iguales.
+No cambió la escalera, Estilo ni la recuperación. Ver el
+[inventario actualizado](04-quality/mathematics-remediation-feedback-inventory.md).
+
+## H. RS-RA-002
+
+Doce objetivos posibles de 2–6 minutos de video, 2–7 entrevistas y 3–8 láminas;
+once están presentes en el catálogo. El mínimo se obtiene restando cantidades
+pequeñas al objetivo. Notebook con 4 u 8 minutos de holgura sobre el costo objetivo;
+pendrive y laboratorio con holguras distintas ligadas al costo y a la tasa.
+El laboratorio corto se calcula desde los MB objetivo, no desde la capacidad del
+pendrive (esa expresión heredada lo volvía redundante).
+
+El supremo `(6,7,8)` cuesta 55 minutos de notebook y ninguna variante publicada
+ofrece más de 53: no hay un plan admisible que domine todos los objetivos.
+Gates preservan al menos dos recursos materiales, tres niveles válidos, diferencias
+de Equipo entre óptimos y Math óptima con Equipo máximo. Notebook 23–53 min,
+pendrive 1050–3200 MB, laboratorio 5–29 min; máximos UI 10/10/12 intactos.
+Formas publicadas: pendrive 9, laboratorio 8, notebook 8. Oráculo independiente:
+39.325 planes contra desigualdades enteras, sin reutilizar readTech/techPlans.
+
+## I. RS-RA-003
+
+Las formas semánticas ahora declaran qué producto rinde más por minuto:
+`rinden-panchos`, `rinden-tortas`, `rinden-bebidas`. Cambia el enum de **contenido**,
+no un schema de motor, de interacción, snapshot ni action log. Los máximos de UI
+8/6/9 siguen fijos. Se rotan seis órdenes de margen/minuto con minutos 10/25/40 y
+márgenes legibles; costos, fijo, objetivo y reserva siguen visibles.
+
+El objetivo se deriva del techo de ganancia dejando más de un cuarto de cocina
+libre, menos reserva y una holgura pequeña: aprieta sin eliminar la estrategia
+improvisadora óptima ni el gate de Estilo. Las tres condiciones son alcanzables
+por separado en las 25 variantes. No se recalibró calidad ni Estilo.
+
+Órdenes publicados (ítems 0 panchos, 1 tortas, 2 bebidas): `1>2>0:5`, `2>0>1:5`,
+`0>2>1:5`, `1>0>2:5`, `2>1>0:2`, `0>1>2:3`. Seis órdenes, máximo 20 %.
+Antes: un orden al 100 %. Holgura `ganancia máxima − objetivo − reserva`:
+antes 5000/18000/35000 (mínima/mediana/máxima), después **6000/9000/13000**.
+Oráculo independiente: 15.750 planes; calidad, Estilo, tres condiciones y feedback.
+La verosimilitud sigue sometida a H-9, sin declarar revisión humana.
+
+## J. Corrección técnica y decisiones conservadas
+
+ESLint se calienta en beforeAll con 15 s propios para resolver configuración;
+el antecedente medido fue 5575 ms bajo cobertura. La reproducción aislada en
+el worktree baseline midió 1790,14 ms en la primera llamada y 6,24 ms en la segunda. Ningún test individual ni
+presupuesto global se amplió, no hay retries nuevos ni cobertura excluida.
+La verificación adicional detectó un caso existente del Intercurso que enumeraba
+todas las variantes en una sola prueba (5139 ms): ahora cada variante es un caso,
+con exactamente las mismas aserciones. La regresión nueva de postas construye su
+contraejemplo directamente, evitando una búsqueda óptima ajena a lo que prueba.
+
+Las erratas de 13/14, K_min(N), RS-MAT-011, ADR-021 y R-S09-CAT ya estaban
+aplicadas por `748db1d`: se conservaron, sin duplicarlas ni borrar historia.
+H-6…H-10 ya están en el paquete humano y conservan sus preguntas.
+
+## K. Versiones y catálogos
+
+| Año | Contenido antes → después | Catálogo antes → después | Entradas después |
+|---|---|---|---|
+| 7.º | 0.10.0 → 0.11.0-grade-7 | grade-7-dev-6 → grade-7-dev-7 | 185 |
+| 1.º | 1.1.0 → 1.2.0-grade-1 | grade-1-dev-2 → grade-1-dev-3 | 359 |
+| 2.º | 2.2.0 → 2.3.0-grade-2 | grade-2-dev-3 → grade-2-dev-4 | 508 |
+| 3.º | 3.2.0 → 3.3.0-grade-3 | grade-3-dev-3 → grade-3-dev-4 | 682 |
+| 4.º | 4.2.0 → 4.3.0-grade-4 | grade-4-dev-3 → grade-4-dev-4 | 854 |
+| 5.º | 5.3.0 → 5.4.0-grade-5 | grade-5-dev-4 → grade-5-dev-5 | 1027 |
+
+Generadores de ambos proyectos: 1 → 2. Sin cambios de motor 10.0.0, action log 7,
+snapshot 8, rulesets ni score `fair-score-dev-2@2.0.0-post-tg1-candidate` 85/10/5.
+Huellas finales: motor `4bcf054e`, ruleset de carrera `7d41fddb`, contenido
+`92b6edb6` (antes `72435ee3`). Sólo cambia la identidad del contenido.
+7.º conserva dev-1…dev-6 byte a byte; dev-7 tiene exactamente las mismas entradas
+que dev-6. Los catálogos draft 1.º–5.º se renombraron según D-S08-088/109.
+No se afirma retención histórica que la arquitectura aún no implementa.
+
+## L. Regresiones
+
+La suite verifica carrera perfecta 10.000, egreso, Repaso con score competitivo 0,
+reanudación, replay y recomputación del servidor. Nuevos recorridos de los proyectos
+comprueban 320/360/390/412 px y desktop, teclado, foco del feedback, controles de
+44 px y axe. A desktop se suma reflow con zoom CSS 200 %: no se presenta como
+emulación de zoom nativo del navegador. La UI y el sistema de diseño no cambiaron.
+
+## M. Verificación
+
+Los tres `pnpm verify` consecutivos terminaron en exit 0 sobre el código final,
+sin retries nuevos ni tests concurrentes externos. Cobertura del último pase:
+statements 85,07 %, branches 76,84 %, functions 86,93 %, lines 85,19 %. Cada pase ejecutó 96 archivos,
+**1883 tests** de Vitest, 0 todo, y **174 E2E**.
+
+| Pase | Resultado | Duración total |
+|---|---|---|
+| 1 | PASS | 454.52 s |
+| 2 | PASS | 460.33 s |
+| 3 | PASS | 445.98 s |
+
+Comandos ejecutados y alcance:
+
+- `pnpm toolchain:check`: Node 24.19.0 / pnpm 11.22.0 alineados.
+- `pnpm install --frozen-lockfile`: PASS, lockfile sin cambios.
+- `pnpm game:validate-content -- --content=grade-5 --seeds=300 --stats`:
+  las 42 Templates y 50 storylets, 0 errores y 0 warnings.
+- `pnpm game:variants check` y `pnpm game:variants check --content=grade-1`,
+  `--content=grade-2`, `--content=grade-3`, `--content=grade-4`, `--content=grade-5`:
+  todos PASS en cada verify. La comprobación reconstruye cada catálogo y exige igualdad.
+- `pnpm game:blind-audit -- --coverage --keys --timing`: 42 filas, 24 exhaustivas,
+  18 políticas, 0 no aplicables y 0 bloqueadas; techos contractuales en verde.
+- `pnpm game:simulate:deep`: 5000/5000 runs completadas y egresadas, 0 hallazgos;
+  peor caso un Repaso. El verify añade simulaciones de cada práctica por año.
+- `pnpm game:score`: 23000 planes, todas las carreras perfectas en 10000,
+  dispersión 0, FairScore 85/10/5 intacto. La carrera real y el servidor se prueban
+  además en la suite de integración.
+- `pnpm test:coverage`, `pnpm build`, `pnpm test:e2e:only`: PASS dentro de cada verify.
+- `pnpm format:check`, `pnpm lint`, `pnpm typecheck`, `pnpm design:check`,
+  `pnpm secrets:check`: PASS dentro de cada verify.
+- `node scripts/validate-agent-workspace.mjs`,
+  `node scripts/sync-master-spec.mjs --check`, `git diff --check`: PASS;
+  repetidos después de reconciliar esta evidencia documental.
+
+Reproducción de baseline: worktree aislado en `748db1d`, copiando sólo los dos
+helpers y el CLI de auditoría. Se ejecutó
+`./node_modules/.bin/vite-node --config vitest.config.ts scripts/game/blind-audit.ts --coverage --keys --timing`.
+El wrapper pnpm rechazó el node_modules enlazado (`ERR_PNPM_UNSAFE_MODULES_DIR`);
+invocar el binario instalado evitó modificar dependencias o contenido del baseline.
+
+Fallos de iteración diagnosticados: primera publicación parcial aún sin todos
+los artefactos y presupuesto inicial 50000 que dejaba la clasificación final en
+políticas; se completó la publicación y se midió el presupuesto final 60000.
+El fixture nuevo de presentación omitía `detail` y no estrechaba la unión; se
+corrigió. Al declarar cardinalidad desconocida para geometría/recorridos faltaba
+admitir undefined explícito con exactOptionalPropertyTypes; corregido. Un gate
+rechazó el orden del manifest y quedó ordenado. El E2E medía sólo la casilla de
+20 px: ahora mide también su etiqueta clicable de 44 px; 48 casos focales PASS.
+La cobertura detectó el caso monolítico del Intercurso (5139 ms) y la búsqueda
+innecesaria de la nueva prueba de postas (7781 ms): se separaron variantes sin
+quitar aserciones y se construyó el contraejemplo directamente. Tras esas
+correcciones se inició la serie de tres gates, sin reintentos para esconder fallos.
+
+DB, Docker y release público no ejecutados: no se modificaron esas superficies
+ni se desplegó. No se ejecutó la re-auditoría independiente de ronda 2.
+
+
+## N. Hallazgos aceptados o diferidos
+
+MAT-RA-004: revisión humana H-7; MAT-RA-005: riesgo aceptado H-6,
+K 84,6154 / S 57,6923 %; MAT-RA-009: STAGE-09, R-S09-CAT.
+MAT-RA-007: documentación resuelta; MAT-RA-010: conteos históricos ya corregidos.
+RS-MAT-008 sigue K=78 a N=25, S=40 %, excepción estrecha intacta;
+OQ-66 y OQ-67 siguen cerradas. No se alteró el comportamiento de esas Templates.
+
+## O. Handoff
+
+`Independent Mathematics Re-Audit Round 2 — NEXT`.
+Sign-off provisional bloqueado hasta su PASS; revisión humana diferida;
+pacing real pendiente; STAGE-08 permanece IN_PROGRESS.
+
+## P. Matriz de cobertura medida
+
+| Template | Motor | N | Puntuable | Categoría | Estado | Cardinal | Mejor estrategia ciega | Métrica | Histograma o/e/f/i | Umbral contractual | Razón |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| `g7.bus-latest-departure` | numeric-input | 26 | sí | A | AUDITED_EXHAUSTIVELY | 121 | constante `64` | K 53.5 · S 19.2 % | 2/10/10/4 | sin techo; sólo medición | coordenadas semánticas estables; espacio completo dentro del presupuesto |
+| `g7.bus-timing` | timeline | 26 | sí | A | AUDITED_EXHAUSTIVELY | 4 | constante `#0` | K 84.6 · S 57.7 % | 10/16/0/0 | sin techo; sólo medición | coordenadas semánticas estables; espacio completo dentro del presupuesto |
+| `g7.bus-travel-review` | numeric-input | 26 | no | A | AUDITED_EXHAUSTIVELY | 121 | constante `44` | K 28.5 · S 11.5 % | 1/6/0/19 | sin techo; sólo medición | coordenadas semánticas estables; espacio completo dentro del presupuesto |
+| `g7.group-tasks` | assignment-board | 2 | sí | A | AUDITED_EXHAUSTIVELY | 625 | constante `2-3-4-1` | K 100.0 · S 100.0 % | 2/0/0/0 | sin techo; sólo medición | coordenadas semánticas estables; espacio completo dentro del presupuesto |
+| `g7.may-25-act` | number-grid | 27 | sí | D | AUDITED_BY_POLICIES | 16777216 | marcar todo | política 10.0 · óptima en 0/27 · rechazadas 0 | 0/0/0/27 | sin techo; sólo medición | number-grid nombra posiciones, personas u horarios de cada variante: no hay respuesta constante comparable |
+| `g7.mural-paint` | decision-card | 26 | sí | A | AUDITED_EXHAUSTIVELY | 3 | constante `#2` | K 67.7 · S 53.8 % | 12/0/14/0 | K ≤ 73 | coordenadas semánticas estables; espacio completo dentro del presupuesto |
+| `g7.notebook-offer` | decision-card | 26 | sí | A | AUDITED_EXHAUSTIVELY | 2 | constante `#1` | K 58.5 · S 53.8 % | 14/0/0/12 | sin techo; sólo medición | coordenadas semánticas estables; espacio completo dentro del presupuesto |
+| `g7.stand-supplies` | budget-builder | 26 | sí | A | AUDITED_EXHAUSTIVELY | 702 | constante `0-0-4` | K 29.8 · S 15.4 % | 4/1/3/18 | sin techo; sólo medición | coordenadas semánticas estables; espacio completo dentro del presupuesto |
+| `y1.classroom-layout` | spatial-layout | 25 | sí | D | AUDITED_BY_POLICIES | — | primer hueco | política 64.0 · óptima en 15/25 · rechazadas 0 | 15/0/0/10 | sin techo; sólo medición | spatial-layout nombra posiciones, personas u horarios de cada variante: no hay respuesta constante comparable |
+| `y1.course-project-expo` | assignment-board | 25 | sí | C | AUDITED_BY_POLICIES | 1024 | cíclica | política 72.4 · óptima en 0/25 · rechazadas 0 | 0/24/0/1 | sin techo; sólo medición | el espacio de respuesta cambia entre variantes (2 formas distintas): no hay respuesta constante comparable |
+| `y1.mobile-data` | quantity-builder | 25 | sí | C | AUDITED_BY_POLICIES | 1625 | primer ítem al máximo | política 40.0 · óptima en 0/25 · rechazadas 0 | 0/0/25/0 | sin techo; sólo medición | el espacio de respuesta cambia entre variantes (4 formas distintas): no hay respuesta constante comparable |
+| `y1.rehearsal-schedule` | schedule-builder | 25 | sí | D | AUDITED_BY_POLICIES | 34884 | agenda vacía | política 10.0 · óptima en 0/25 · rechazadas 0 | 0/0/0/25 | sin techo; sólo medición | schedule-builder nombra posiciones, personas u horarios de cada variante: no hay respuesta constante comparable |
+| `y1.scale-fit-review` | spatial-layout | 24 | no | D | AUDITED_BY_POLICIES | — | fila a fila | política 100.0 · óptima en 24/24 · rechazadas 0 | 24/0/0/0 | sin techo; sólo medición | spatial-layout nombra posiciones, personas u horarios de cada variante: no hay respuesta constante comparable |
+| `y1.schedule-review` | schedule-builder | 25 | no | D | AUDITED_BY_POLICIES | 72 | repartido uniforme | política 40.0 · óptima en 0/25 · rechazadas 0 | 0/0/25/0 | sin techo; sólo medición | schedule-builder nombra posiciones, personas u horarios de cada variante: no hay respuesta constante comparable |
+| `y1.student-day-challenge-wheel` | quantity-builder | 25 | sí | C | AUDITED_BY_POLICIES | 4084101 | primer ítem al máximo | política 23.2 · óptima en 0/25 · rechazadas 0 | 0/0/11/14 | sin techo; sólo medición | el espacio de respuesta cambia entre variantes (8 formas distintas): no hay respuesta constante comparable |
+| `y2.course-project-survey` | classification | 25 | sí | A | AUDITED_EXHAUSTIVELY | 64 | constante `011101` | K 52.8 · S 32.0 % | 2/10/8/5 | K ≤ 60; S ≤ 35 % | coordenadas semánticas estables; espacio completo dentro del presupuesto |
+| `y2.court-zones` | spatial-layout | 25 | sí | D | AUDITED_BY_POLICIES | — | empaque desde el origen | política 10.0 · óptima en 0/25 · rechazadas 0 | 0/0/0/25 | sin techo; sólo medición | spatial-layout nombra posiciones, personas u horarios de cada variante: no hay respuesta constante comparable |
+| `y2.data-claim-review` | classification | 25 | no | A | AUDITED_EXHAUSTIVELY | 8 | constante `111` | K 72.6 · S 52.0 % | 6/13/6/0 | K ≤ 75; S ≤ 60 % | coordenadas semánticas estables; espacio completo dentro del presupuesto |
+| `y2.intercurso-plan` | assignment-board | 25 | sí | B | AUDITED_BY_POLICIES | 15625 | equilibrada | política 42.4 · óptima en 9/25 · rechazadas 0 | 9/0/0/16 | sin techo; sólo medición | espacio de 15625 respuestas por variante: 390625 evaluaciones exceden el presupuesto de 60000 |
+| `y2.standings-claim` | classification | 25 | sí | A | AUDITED_EXHAUSTIVELY | 81 | constante `1221` | K 56.6 · S 20.0 % | 4/5/16/0 | K ≤ 65; S ≤ 35 % | coordenadas semánticas estables; espacio completo dentro del presupuesto |
+| `y2.team-kit-order` | quantity-builder | 24 | sí | C | AUDITED_BY_POLICIES | 2160 | mitad del máximo | política 10.0 · óptima en 0/24 · rechazadas 0 | 0/0/0/24 | sin techo; sólo medición | el espacio de respuesta cambia entre variantes (22 formas distintas): no hay respuesta constante comparable |
+| `y3.course-project-tech` | quantity-builder | 25 | sí | A | AUDITED_EXHAUSTIVELY | 1573 | constante `2-7-4` | K 35.8 · S 20.0 % | 5/3/0/17 | RS-RA-002: K ≤ 65; S ≤ 35 % | coordenadas semánticas estables; espacio completo dentro del presupuesto |
+| `y3.fixed-variable-review` | numeric-input | 25 | no | A | AUDITED_EXHAUSTIVELY | 99 | constante `22` | K 24.4 · S 16.0 % | 4/0/0/21 | sin techo; sólo medición | coordenadas semánticas estables; espacio completo dentro del presupuesto |
+| `y3.friend-day` | schedule-builder | 25 | sí | D | AUDITED_BY_POLICIES | 20592 | repartido uniforme | política 24.4 · óptima en 4/25 · rechazadas 0 | 4/0/0/21 | sin techo; sólo medición | schedule-builder nombra posiciones, personas u horarios de cada variante: no hay respuesta constante comparable |
+| `y3.rate-capacity-review` | numeric-input | 25 | no | A | AUDITED_EXHAUSTIVELY | 100 | constante `4` | K 40.8 · S 20.0 % | 5/4/2/14 | sin techo; sólo medición | coordenadas semánticas estables; espacio completo dentro del presupuesto |
+| `y3.route-plan` | route-builder | 24 | sí | D | AUDITED_BY_POLICIES | — | orden presentado | política 40.0 · óptima en 8/24 · rechazadas 0 | 8/0/0/16 | sin techo; sólo medición | route-builder nombra posiciones, personas u horarios de cada variante: no hay respuesta constante comparable |
+| `y3.transport-pass` | decision-card | 25 | sí | A | AUDITED_EXHAUSTIVELY | 4 | constante `#1` | K 64.2 · S 28.0 % | 6/7/12/0 | K ≤ R + 10; S ≤ 40 % | coordenadas semánticas estables; espacio completo dentro del presupuesto |
+| `y3.week-planner` | schedule-builder | 25 | sí | D | AUDITED_BY_POLICIES | 82368 | sólo lo obligatorio, temprano | política 19.6 · óptima en 0/25 · rechazadas 0 | 0/0/8/17 | sin techo; sólo medición | schedule-builder nombra posiciones, personas u horarios de cada variante: no hay respuesta constante comparable |
+| `y4.course-project-fundraiser` | quantity-builder | 25 | sí | A | AUDITED_EXHAUSTIVELY | 630 | constante `2-2-2` | K 62.4 · S 28.0 % | 0/16/9/0 | RS-RA-003: K ≤ 65; S ≤ 35 % | coordenadas semánticas estables; espacio completo dentro del presupuesto |
+| `y4.event-floor-plan` | spatial-layout | 25 | sí | D | AUDITED_BY_POLICIES | — | huella mínima | política 31.6 · óptima en 6/25 · rechazadas 0 | 6/0/0/19 | sin techo; sólo medición | spatial-layout nombra posiciones, personas u horarios de cada variante: no hay respuesta constante comparable |
+| `y4.margin-review` | numeric-input | 25 | no | A | AUDITED_EXHAUSTIVELY | 100 | constante `6` | K 49.8 · S 40.0 % | 10/1/1/13 | sin techo; sólo medición | coordenadas semánticas estables; espacio completo dentro del presupuesto |
+| `y4.represent-class` | classification | 24 | sí | A | AUDITED_EXHAUSTIVELY | 32 | constante `11101` | K 59.6 · S 29.2 % | 0/16/5/3 | sin techo; sólo medición | coordenadas semánticas estables; espacio completo dentro del presupuesto |
+| `y4.school-event-flow` | quantity-builder | 24 | sí | A | AUDITED_EXHAUSTIVELY | 125 | constante `2-2-1` | K 54.4 · S 16.7 % | 3/9/7/5 | sin techo; sólo medición | coordenadas semánticas estables; espacio completo dentro del presupuesto |
+| `y4.shift-coverage` | assignment-board | 24 | sí | B | AUDITED_BY_POLICIES | 15625 | cíclica | política 15.4 · óptima en 0/24 · rechazadas 0 | 0/2/0/22 | sin techo; sólo medición | espacio de 15625 respuestas por variante: 375000 evaluaciones exceden el presupuesto de 60000 |
+| `y4.spatial-capacity-review` | numeric-input | 25 | no | A | AUDITED_EXHAUSTIVELY | 401 | constante `72` | K 41.4 · S 20.0 % | 3/7/2/13 | sin techo; sólo medición | coordenadas semánticas estables; espacio completo dentro del presupuesto |
+| `y5.course-project-final` | classification | 25 | sí | A | AUDITED_EXHAUSTIVELY | 729 | constante `112121` | K 56.8 · S 28.0 % | 0/18/0/7 | K ≤ 65; S ≤ 35 % | coordenadas semánticas estables; espacio completo dentro del presupuesto |
+| `y5.final-trip-or-event` | decision-card | 25 | sí | A | AUDITED_EXHAUSTIVELY | 4 | constante `#2` | K 59.4 · S 28.0 % | 7/7/5/6 | sin techo; sólo medición | coordenadas semánticas estables; espacio completo dentro del presupuesto |
+| `y5.multi-option-comparison-review` | numeric-input | 25 | no | B | AUDITED_BY_POLICIES | 10000000 | el máximo del rango | política 10.0 · óptima en 0/25 · rechazadas 0 | 0/0/0/25 | sin techo; sólo medición | espacio de 10000000 respuestas por variante: 250000000 evaluaciones exceden el presupuesto de 60000 |
+| `y5.next-step-options` | classification | 25 | sí | A | AUDITED_EXHAUSTIVELY | 32 | constante `11111` | K 40.0 · S 16.0 % | 0/0/25/0 | K ≤ 65; S ≤ 35 % | coordenadas semánticas estables; espacio completo dentro del presupuesto |
+| `y5.proportion-capacity-review` | numeric-input | 23 | no | A | AUDITED_EXHAUSTIVELY | 100 | constante `6` | K 34.1 · S 13.0 % | 3/3/3/14 | sin techo; sólo medición | coordenadas semánticas estables; espacio completo dentro del presupuesto |
+| `y5.stage-screen` | decision-card | 25 | sí | A | AUDITED_EXHAUSTIVELY | 6 | constante `#0` | K 78.0 · S 40.0 % | 3/22/0/0 | K ≤ 78; S ≤ 40 % | coordenadas semánticas estables; espacio completo dentro del presupuesto |
+| `y5.yearbook` | quantity-builder | 25 | sí | C | AUDITED_BY_POLICIES | 28561 | mitad del máximo | política 23.0 · óptima en 0/25 · rechazadas 0 | 0/5/0/20 | sin techo; sólo medición | el espacio de respuesta cambia entre variantes (5 formas distintas): no hay respuesta constante comparable |
+
+24 exhaustivas, 18 por políticas; 0 no aplicables, 0 bloqueadas. En categoría C,
+el cardinal mostrado corresponde a la primera variante; la razón informa las
+formas diferentes. El signo «—» indica cardinal no declarado, no un espacio vacío.
+
+---
+
 # FILE: 04-quality/testing-strategy.md
 
 # Estrategia de testing
@@ -17715,6 +18110,26 @@ Las bandas y sus casos estructurales existen. Lo futuro es su calibración docen
 
 Regla que ya está escrita y sigue valiendo: no crear goldens que congelen decisiones todavía abiertas.
 
+## Auditoría permanente por capacidad · RS-RA-AUDIT-001
+
+`pnpm game:blind-audit -- --coverage --keys --timing` informa las 42 Templates,
+con 24 espacios constantes enumerados y 18 auditorías por políticas. La capacidad
+se deriva de la presentación: firma semántica estable, cardinalidad y mapeo de
+respuesta. A enumera; B supera el presupuesto; C cambia coordenadas entre
+variantes; D necesita políticas por geometría, calendario o recorrido. Cada fila
+declara estado, razón y techo contractual si existe; no hay techo universal.
+
+El presupuesto técnico es 60.000 evaluaciones por Template, posturas incluidas:
+el máximo actual es 54.675, y el barrido final medido cuesta 938,3 ms (peor
+Template 268,0 ms); bajo carga concurrente también se observaron 1,133–2,045 s. Las políticas miran datos presentados,
+no soluciones: mínimos/máximos/mitad/proporciones, asignaciones cíclicas o
+balanceadas, agendas por orden, primer hueco espacial, rutas por orden/vecino,
+y grillas/clasificaciones constantes o alternadas. Rechazos se cuentan aparte.
+
+El [informe de ronda 2](04-quality/targeted-post-reaudit-mathematics-remediation.md) incluye
+la matriz completa, baseline reproducida y límites del método. Los helpers que
+comparten evaluador prueban agregación; no se presentan como oráculos independientes.
+
 ---
 
 # FILE: 05-operations/fair-mode-and-competition-freeze.md
@@ -18093,8 +18508,8 @@ STAGE-08                                      IN_PROGRESS · CURRENT
     │   ├── Remediación Ronda 1                  DONE · 14 contratos
     │   ├── Re-Auditoría Ronda 1                  FAILED · 13/14 + 3 hallazgos nuevos
     │   ├── Adjudicación post-re-audit            DONE · 10 hallazgos, 4 P0
-    │   ├── Remediación Ronda 2 (dirigida)        NEXT · RS-RA-AUDIT-001 primero
-    │   ├── Re-Auditoría Ronda 2                  PENDING
+    │   ├── Remediación Ronda 2 (dirigida)        DONE · cinco contratos verificados
+    │   ├── Re-Auditoría Ronda 2                  NEXT
     │   └── Provisional Sign-Off                  BLOCKED
     ├── Revisión del Depto. de Matemática      DEFERRED · a Final Delivery / Pre-Release
     ├── Sign-off manual de la rueda            PENDING · humana
@@ -18133,7 +18548,7 @@ oficialización, el ranking y el servidor competitivo son STAGE-09. El techo de
 Prestige **ofrecido es 0** por decisión explícita (D-S08-084): la maquinaria
 existe y el servidor la recomputa, pero autorar una oportunidad competitiva
 exigiría inventar acciones de jugador que ninguna Template tiene. El contenido
-de 1.º a 5.º está en estado `draft`: faltan la remediación matemática y su
+de 1.º a 5.º está en estado `draft`: faltan la re-auditoría de ronda 2 y su
 sign-off provisional de IA, el sign-off manual de la rueda y el pacing empírico,
 gates de producción de STAGE-08. La remediación matemática cerró sus catorce
 contratos el 18 de septiembre —**ronda 1**—, y la **re-auditoría independiente** del
@@ -18150,24 +18565,24 @@ STAGE-07 sigue `DONE`: toda run válida completada egresa, con un Repaso máximo
 por etapa fuera del presupuesto ordinario y de FairScore.
 
 - Versiones: engine `10.0.0`, action log `7`, snapshot `8`. 7.º conserva ruleset
-  `0.4.0-grade-7`; contenido `0.10.0-grade-7` y catálogo `grade-7-dev-6`, con
-  `dev-1` a `dev-5` publicados sin cambios.
-  `7.º → 1.º`: contenido `1.1.0-grade-1`, catálogo `grade-1-dev-2`.
-  `7.º → 2.º`: contenido `2.2.0-grade-2`, catálogo `grade-2-dev-3`.
-  `7.º → 3.º`: contenido `3.2.0-grade-3`, catálogo `grade-3-dev-3`.
-  `7.º → 4.º`: contenido `4.2.0-grade-4`, catálogo `grade-4-dev-3`.
+  `0.4.0-grade-7`; contenido `0.11.0-grade-7` y catálogo `grade-7-dev-7`, con
+  `dev-1` a `dev-6` publicados sin cambios.
+  `7.º → 1.º`: contenido `1.2.0-grade-1`, catálogo `grade-1-dev-3`.
+  `7.º → 2.º`: contenido `2.3.0-grade-2`, catálogo `grade-2-dev-4`.
+  `7.º → 3.º`: contenido `3.3.0-grade-3`, catálogo `grade-3-dev-4`.
+  `7.º → 4.º`: contenido `4.3.0-grade-4`, catálogo `grade-4-dev-4`.
   `7.º → 5.º`: rulesets `5.3.0-grade-5-partial` y `5.3.0-grade-5-demo`, contenido
-  `5.3.0-grade-5`, catálogo `grade-5-dev-4`. Carrera completa: ruleset
+  `5.4.0-grade-5`, catálogo `grade-5-dev-5`. Carrera completa: ruleset
   `1.0.0-full-career` sobre ese mismo contenido y catálogo. Score
   `fair-score-dev-2@2.0.0-post-tg1-candidate` sin cambios. Los catálogos y
-  contenidos subieron con la remediación matemática (D-S08-109).
+  contenidos subieron con la ronda 2; los rulesets permanecen iguales.
 - Huellas: motor `4bcf054e` —se movió con la respuesta de recorrido y con la
   política de rareza—; ruleset de la carrera completa `7d41fddb`; contenido de la
-  carrera `72435ee3`.
-- Tests: 95 archivos y **1739 tests** de Vitest, **0 `todo`**; **158 E2E** de
+  carrera `92b6edb6`, con `5.4.0-grade-5`.
+- Tests: 96 archivos y **1883 tests** de Vitest, **0 `todo`**; **174 E2E** de
   Playwright en desktop y mobile, incluidos los recorridos de 1.º a 5.º, la
-  carrera completa y el barrido de accesibilidad del audit. Conteos remedidos por
-  la re-auditoría independiente el 18 de septiembre (MAT-RA-010).
+  carrera completa y el barrido de accesibilidad del audit. Conteos medidos en tres `pnpm verify` consecutivos de ronda 2; la baseline
+  histórica del re-audit fue 1739 tests y 158 E2E.
 - Simulación: 5000 runs de 7.º, 5000 de `7.º → 1.º`, 2000 del demo amplio y 200
   de cada práctica parcial de 2.º a 5.º egresadas, 0 hallazgos, peor caso un
   Repaso por etapa. La carrera completa se barre con seis políticas de juego
@@ -18331,8 +18746,8 @@ Independent Mathematics Re-Audit Round 1 — FAILED — REMEDIATION REQUIRED
 Post-Re-Audit Findings Adjudication — DONE
   10 hallazgos adjudicados · 4 P0 bloqueantes
   RS-RA-AUDIT-001 · RS-RA-001 · RS-RA-002 · RS-RA-003 · RS-RA-TEST-001
-Targeted Mathematics Remediation Round 2 — NEXT
-Independent Mathematics Re-Audit Round 2 — PENDING
+Targeted Mathematics Remediation Round 2 — DONE
+Independent Mathematics Re-Audit Round 2 — NEXT
 AI Mathematics Department Provisional Sign-Off — BLOCKED
 
 Human Mathematics Department Review
@@ -18341,8 +18756,7 @@ Human Mathematics Department Review
 Real-player pacing validation — PENDING
 
 Next:
-TARGETED POST-REAUDIT MATHEMATICS REMEDIATION,
-con WP-RA-AUDIT primero: reproducir los hallazgos antes de corregir
+INDEPENDENT MATHEMATICS RE-AUDIT ROUND 2
 ```
 
 La [auditoría de implementación de carrera completa](04-quality/full-career-implementation-audit.md)
@@ -18380,6 +18794,10 @@ de Matemática humano sobre las 42 Templates queda diferida a la entrega final.
 Hasta eso, el contenido permanece `draft` y la edición `official: false`.
 
 ## Última reconciliación
+
+18 de septiembre de 2026: ronda 2 dirigida DONE (D-S08-127/128), cinco contratos
+verificados, seis catálogos republicados y tres verify consecutivos verdes.
+Re-auditoría independiente ronda 2 NEXT; STAGE-08 IN_PROGRESS. Sin push.
 
 18 de septiembre de 2026, al cierre: **adjudicación de los hallazgos posteriores a la
 re-auditoría**. Veredicto `COMPLETE · TARGETED REMEDIATION REQUIRED`. Los diez
@@ -18432,6 +18850,13 @@ nueve beats sobre el catálogo real, eventos raros, Prestige con techo ofrecido
 0, hitos, callbacks y epílogo con su pantalla—, auditoría de Estilo, barrido por
 políticas de juego y E2E de carrera. D-S08-056 cerrada con evidencia.
 Verificación completa en verde. Sin push.
+
+## Remediación dirigida de ronda 2 · verificación de cierre
+
+Los cinco contratos están implementados y los tres `pnpm verify` consecutivos
+exigidos por RS-RA-TEST-001 terminaron en PASS. La evidencia y la matriz de 42 Templates
+están en el [informe](04-quality/targeted-post-reaudit-mathematics-remediation.md).
+Las decisiones de riesgo H-6/H-7, OQ-66/67 cerradas y R-S09-CAT siguen vigentes.
 
 ---
 
@@ -19450,7 +19875,7 @@ cerrar la integración de carrera completa):
 - [x] Epílogo de carrera real con saliencia determinista, datos ausentes no dibujados y Hitos display-only distinguibles.
 - [x] Accesibilidad teclado/tap, móvil, reduced motion, replay/snapshot/reanudación y E2E por año. — Más el E2E de carrera completa a 320 px.
 - [ ] Auditoría de composición completa, cobertura/exploits y playtests de pacing según [validación de contenido](04-quality/content-validation.md). — La [auditoría de implementación](04-quality/full-career-implementation-audit.md) está ejecutada y los exploits barridos; **los playtests de pacing con jugadores reales no**.
-- [ ] Revisión matemática, documentación por año y cero sistemas fundamentales duplicados. — Documentación por año completa y sin sistemas duplicados. El gate provisional es el **AI Mathematics Department** (D-S08-095): [pre-revisión](04-quality/mathematics-department-pre-review.md) y [adjudicación independiente](04-quality/mathematics-department-ai-adjudication.md) ejecutadas, con `REMEDIATION REQUIRED`; la [implementación de la remediación](04-quality/mathematics-remediation-implementation.md) cerró en `DONE` con los catorce contratos de la [especificación](04-quality/mathematics-remediation-spec.md), después de dos adjudicaciones de contrato —la [de sus conflictos](04-quality/mathematics-remediation-contract-conflict-adjudication.md) y la [del techo de la pantalla del acto](04-quality/rs-mat-008-blind-ceiling-final-adjudication.md)—; la [re-auditoría independiente](04-quality/independent-mathematics-reaudit.md) confirmó trece de los catorce contratos y el techo `K = 78`, pero dio `FAILED — REMEDIATION REQUIRED` por tres hallazgos bloqueantes propios, y la [adjudicación posterior](04-quality/post-reaudit-mathematics-findings-adjudication.md) emitió el [contrato de la ronda 2](04-quality/post-reaudit-mathematics-remediation-spec.md); faltan esa remediación dirigida, su re-auditoría y el sign-off provisional. **La revisión del Departamento de Matemática humano no se reemplaza: se difiere a Final Delivery / Pre-Release Acceptance.**
+- [ ] Revisión matemática, documentación por año y cero sistemas fundamentales duplicados. — Documentación por año completa y sin sistemas duplicados. El gate provisional es el **AI Mathematics Department** (D-S08-095): [pre-revisión](04-quality/mathematics-department-pre-review.md) y [adjudicación independiente](04-quality/mathematics-department-ai-adjudication.md) ejecutadas, con `REMEDIATION REQUIRED`; la [implementación de la remediación](04-quality/mathematics-remediation-implementation.md) cerró en `DONE` con los catorce contratos de la [especificación](04-quality/mathematics-remediation-spec.md), después de dos adjudicaciones de contrato —la [de sus conflictos](04-quality/mathematics-remediation-contract-conflict-adjudication.md) y la [del techo de la pantalla del acto](04-quality/rs-mat-008-blind-ceiling-final-adjudication.md)—; la [re-auditoría independiente](04-quality/independent-mathematics-reaudit.md) confirmó trece de los catorce contratos y el techo `K = 78`, pero dio `FAILED — REMEDIATION REQUIRED` por tres hallazgos bloqueantes propios, y la [adjudicación posterior](04-quality/post-reaudit-mathematics-findings-adjudication.md) emitió el [contrato de la ronda 2](04-quality/post-reaudit-mathematics-remediation-spec.md); la remediación dirigida está DONE con tres verify consecutivos; faltan su re-auditoría y el sign-off provisional. **La revisión del Departamento de Matemática humano no se reemplaza: se difiere a Final Delivery / Pre-Release Acceptance.**
 
 **Lectura requerida.** [Matriz](01-game-design/full-career-content-matrix.md) ·
 [diseño G1](01-game-design/grade-1-template-design.md) ·
@@ -19463,20 +19888,15 @@ cerrar la integración de carrera completa):
 sustituyen estos gates. Objetivos editoriales y calibraciones versionadas conservan
 la madurez del [registro](07-reference/decision-register.md).
 
-**Siguiente tarea.** `TARGETED POST-REAUDIT MATHEMATICS REMEDIATION`, según la
-[especificación de la ronda 2](04-quality/post-reaudit-mathematics-remediation-spec.md).
-La [re-auditoría](04-quality/independent-mathematics-reaudit.md) dio `FAILED`
-(D-S08-117) con **13 de 14** contratos en PASS y el techo `K = 78` de `y5.stage-screen`
-re-probado, y la
-[adjudicación posterior](04-quality/post-reaudit-mathematics-findings-adjudication.md)
-cerró los diez hallazgos (D-S08-122 a D-S08-126). Cuatro contratos P0 bloquean el
-sign-off: **RS-RA-AUDIT-001** —la auditoría permanente por capacidad, que va **primero**
-porque sin ella la ronda no puede medirse—, **RS-RA-001** en `g7.bus-travel-review`,
-**RS-RA-002** en `y3.course-project-tech` y **RS-RA-003** en
-`y4.course-project-fundraiser`, más **RS-RA-TEST-001** en P1. `g7.bus-timing`
-(D-S08-111, MAT-RA-005) y `y1.scale-fit-review` (MAT-RA-004) quedaron **no
-bloqueantes**, con banderas humanas H-6 y H-7. Después de la ronda 2 va una
-`Independent Mathematics Re-Audit Round 2`, y recién entonces el Provisional Sign-Off.
+**Remediación dirigida de ronda 2.** Implementados RS-RA-AUDIT-001,
+RS-RA-001/002/003 y RS-RA-TEST-001; DONE con tres verify consecutivos. La
+[evidencia](04-quality/targeted-post-reaudit-mathematics-remediation.md) incluye
+baseline reproducida, K/S 35,8/20 % y 62,4/28 %, seis órdenes económicos en la
+peña, 42 filas auditadas y republicación de los seis catálogos. Los techos y las
+decisiones de D-S08-122…126 no cambian. H-6/H-7 y R-S09-CAT siguen vigentes.
+
+**Siguiente tarea:** `Independent Mathematics Re-Audit Round 2`.
+El Provisional Sign-Off sigue bloqueado hasta su PASS.
 Siguen además los gates humanos de STAGE-08 que no se difirieron:
 sign-off manual de la rueda del Día del Estudiante y playtests de pacing con
 jugadores reales. La revisión del Departamento de Matemática humano sobre las 42
@@ -22485,6 +22905,9 @@ contenido, catálogos ni tests.
 | D-S08-125 | **MAT-RA-006 sube de LOW a HIGH y pasa a P0, primera en el orden de trabajo.** La auditoría permanente despacha por **nombre de motor** y deja 22 de 42 Templates sin métrica; para las de cantidades ese «no enumerable» es falso, con espacios constantes de 125 a 1573 elementos. Es la causa raíz de MAT-RA-002, 003 y 004, y sin ella la ronda 2 **no puede demostrar que arregló nada**. `RS-RA-AUDIT-001` la reescribe **por capacidad** en cuatro categorías (A exhaustiva, B espacio grande, C sin respuesta constante estable, D política), exige estado declarado para las 42 —prohibido «no enumerable» sin razón— y exige **reproducir los dos hallazgos sobre el catálogo vigente antes** de tocar contenido. Sin techos universales: la auditoría reporta, los contratos deciden. También se corrige la clasificación del inventario de feedback, que probaba la intención del código y no su condición de rama | ACCEPTED · método | [RS-RA-AUDIT-001](04-quality/post-reaudit-mathematics-remediation-spec.md#3-rs-ra-audit-001-auditoría-permanente-por-capacidad) |
 | D-S08-126 | Hallazgos no bloqueantes, adjudicados. **MAT-RA-005** `g7.bus-timing` (`K 84,62 · S 58 %`): `ACCEPT_WITH_DOCUMENTED_RISK`, bandera humana H-6 — la matemática es correcta, la estrategia conservadora es defendible y no ignorante, y bajar el piso exigiría tocar la escalera `LOCKED`; es un hallazgo de **validez de evaluación**, no un exploit. **MAT-RA-004** `y1.scale-fit-review`: `DEFER_TO_FINAL_HUMAN_REVIEW`, bandera H-7 — el motor `spatial-layout` responde en celdas y la grilla dibuja la huella, así que ocultar la conversión cm → celdas es incoherente con la interacción y con la accesibilidad, y volver el encaje no trivial subiría la dificultad de un Repaso contra ADR-024; la pregunta «¿la conversión es el constructo o andamiaje?» es didáctica y humana. **MAT-RA-008** sube a MEDIUM P1 (`RS-RA-TEST-001`): medido, el primer `eslint.lintText()` paga la resolución de configuración —948–1651 ms aislado contra 6–7 ms por caso siguiente— dentro de un caso cronometrado, y bajo cobertura llega a 5575 ms contra el presupuesto de 5000; se arregla moviendo el calentamiento a la preparación, **sin** subir `testTimeout` ni bajar cobertura. **MAT-RA-009**: `DEFER_TO_STAGE_09` con el requisito **R-S09-CAT**, más aclaración de ADR-021 §4 —la retención rige para catálogos que una run oficial puede declarar; 1.º a 5.º renombran mientras están en `draft` y el sistema falla cerrado—. **MAT-RA-007** y **MAT-RA-010**: resueltos documentalmente | ACCEPTED · adjudicación | [adjudicación, secciones I y J](04-quality/post-reaudit-mathematics-findings-adjudication.md#i-mat-ra-004-y-mat-ra-005-decisiones-de-producto-y-didáctica) |
 
+| D-S08-127 | Implementación de los contratos de ronda 2 sin readjudicar umbrales: auditoría por capacidad (24 exhaustivas, 18 políticas), Repaso con rama iff demora sola, proyecto tecnológico K 35,8 / S 20 % y peña K 62,4 / S 28 % con seis órdenes de margen por minuto. Warmup de ESLint en preparación; sin aumentar timeout global ni reducir coverage. Correcciones adicionales de texto derivadas del inventario RS-RA-001.6, sin cambiar sus niveles | DONE · tres verify consecutivos | [informe de ronda 2](04-quality/targeted-post-reaudit-mathematics-remediation.md) |
+| D-S08-128 | Republicación final de contenido y catálogos: 7.º dev-7, 1.º dev-3, 2.º dev-4, 3.º dev-4, 4.º dev-4, 5.º dev-5; generadores de proyectos 3.º/4.º versión 2. Engine 10.0.0, action log 7, snapshot 8, rulesets y FairScore se conservan. 7.º dev-1…6 retenidos; retención draft de 1.º–5.º sigue diferida a R-S09-CAT. La revisión independiente de ronda 2 será el próximo gate; sign-off bloqueado hasta su PASS | IMPLEMENTED · contenido draft | [versiones y handoff](04-quality/targeted-post-reaudit-mathematics-remediation.md#k-versiones-y-catálogos) |
+
 La integración de TG1 permanece histórica en [su acta y trazabilidad](06-delivery/teacher-gate-1/12-integracion-post-gate.md).
 Siguen pendientes la oficialización/freeze, validación empírica, autoría ejecutable,
 catálogo concreto de logros, operación/auth/retención y el gate post-G1. Label,
@@ -23090,6 +23513,13 @@ No son preguntas abiertas: son alcance excluido. Se listan para que nadie las re
 - chat;
 - monetización.
 
+### Evidencia de implementación de OQ-68 y OQ-69
+
+La ronda 2 implementa las decisiones ya cerradas: K/S 35,8/20 % para el proyecto
+de 3.º y 62,4/28 % para la peña; cobertura de las 42 Templates (24 exhaustivas,
+18 por políticas). Ver [informe](04-quality/targeted-post-reaudit-mathematics-remediation.md).
+No reabre OQ-66/67 ni cierra las cuestiones humanas de OQ-70/71.
+
 ---
 
 # FILE: 07-reference/research-basis.md
@@ -23463,6 +23893,8 @@ Se agregan, desde la integración del Project Blueprint v0.2:
 
 Estas preguntas están registradas en [preguntas abiertas](07-reference/open-questions.md) y deben cerrarse en la fuente autoritativa correspondiente cuando exista evidencia o decisión docente, actualizando el [registro de decisiones](07-reference/decision-register.md), la trazabilidad y el ADR cuando aplique.
 
+- [x] Ronda 2: implementación, matriz 42/42 y verificación completa en [el reporte](04-quality/targeted-post-reaudit-mathematics-remediation.md); re-audit independiente separado.
+
 ---
 
 # FILE: README.md
@@ -23560,6 +23992,7 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 - `content-validation.md`: pipeline de schema, matemática, generación, UI y playtest.
 - `competition-fairness-audit.md`: preguntas de equidad que un ranking con premios debe poder contestar.
 - `post-reaudit-mathematics-findings-adjudication.md`: adjudicación de los diez hallazgos de la re-auditoría, con la causa raíz real de los dos atajos constantes, los estudios de factibilidad que fijan sus techos y el erratum contractual 13/14.
+- `targeted-post-reaudit-mathematics-remediation.md`: implementación y evidencia de la ronda 2; siguiente gate independiente separado.
 - `post-reaudit-mathematics-remediation-spec.md`: contrato ejecutable de la ronda 2, con la auditoría permanente por capacidad primero y los cuatro contratos P0.
 - `post-teacher-gate-1-score-audit.md`: barrida reproducible de `fair-score-dev-2` sobre 23.000 planes y comparación histórica.
 - `full-career-technical-conformance.md`: reporte técnico read-only de Phase 0, evidencia y deltas futuros.

@@ -92,22 +92,22 @@ los cerró el mismo día (D-S08-122 a D-S08-126) y emitió el
 | MAT-012 · MAT-013 | `ACCEPT_WITH_DOCUMENTED_RISK` | — | Sin cambio | Banderas para la revisión humana final |
 | MAT-AJ-NEW-001 | `REQUIRED_CORRECTION` P0 | RS-NEW-001 (criterio 3 enmendado, D-S08-113) | **DONE** | `integration/mathematics-remediation` · «criterio 3 enmendado», auditoría |
 | MAT-AJ-NEW-002 | `REQUIRED_CORRECTION` P0 | RS-NEW-002 | DONE | `integration/mathematics-remediation` |
-| MAT-AJ-NEW-003 | `REQUIRED_CORRECTION` P1 | RS-NEW-003 | **FAIL en la re-auditoría** · los cinco Repasos del alcance explícito pasan, pero el alcance transversal alcanza a `g7.bus-travel-review`, que lo incumple en 26/26 → RS-RA-001 | `integration/mathematics-remediation`; re-auditoría, sección I |
+| MAT-AJ-NEW-003 | `REQUIRED_CORRECTION` P1 | RS-NEW-003 | **FAIL en la re-auditoría** · los cinco Repasos del alcance explícito pasan, pero el alcance transversal alcanza a `g7.bus-travel-review`, que lo incumple en 26/26 → **corregido en ronda 2 por RS-RA-001**, re-audit independiente pendiente | `integration/mathematics-remediation`; re-auditoría, sección I |
 | Regla 2.9 | Inventario de feedback afirmativo | — | DONE · seis textos falsos más corregidos (D-S08-110) | [inventario](../04-quality/mathematics-remediation-feedback-inventory.md) |
 
 ### Ronda 2 · hallazgos de la re-auditoría independiente
 
 Cadena `hallazgo del re-audit → adjudicación del Chair → contrato de la ronda 2 →
 remediación dirigida → re-auditoría ronda 2 → sign-off provisional`. Adjudicados el 18
-de septiembre de 2026 (D-S08-122 a D-S08-126). **Ninguno implementado todavía.**
+de septiembre de 2026 (D-S08-122 a D-S08-126). **Correcciones DONE: cinco contratos PASS y tres verify consecutivos.** Evidencia before/after y pruebas en el [informe de ronda 2](../04-quality/targeted-post-reaudit-mathematics-remediation.md).
 
 | Hallazgo | Decisión canónica | Prio | ¿Bloquea? | Contrato | Verificación exigida |
 |---|---|---|---|---|---|
-| MAT-RA-006 · alcance de la auditoría permanente | `REQUIRED_CORRECTION` | **P0** | **sí** | [RS-RA-AUDIT-001](../04-quality/post-reaudit-mathematics-remediation-spec.md#3-rs-ra-audit-001-auditoría-permanente-por-capacidad) | Matriz de cobertura de las 42 Templates; reproducción de los dos atajos **antes** de corregir |
-| MAT-RA-001 · `g7.bus-travel-review` | `REQUIRED_CORRECTION` | **P0** | **sí** | [RS-RA-001](../04-quality/post-reaudit-mathematics-remediation-spec.md#4-rs-ra-001-g7bus-travel-review) | Rango `[0,120]` × 26 variantes, dirección contra el signo de `respuesta − exacta` |
-| MAT-RA-002 · `y3.course-project-tech` | `REQUIRED_CORRECTION` | **P0** | **sí** | [RS-RA-002](../04-quality/post-reaudit-mathematics-remediation-spec.md#5-rs-ra-002-y3course-project-tech) | `K ≤ 65 · S ≤ 35 %` por enumeración exhaustiva del espacio constante |
-| MAT-RA-003 · `y4.course-project-fundraiser` | `REQUIRED_CORRECTION` | **P0** | **sí** | [RS-RA-003](../04-quality/post-reaudit-mathematics-remediation-spec.md#6-rs-ra-003-y4course-project-fundraiser) | `K ≤ 65 · S ≤ 35 %` y ≥ 3 ordenaciones por margen por minuto |
-| MAT-RA-008 · flake de `architecture-lint` | `REQUIRED_CORRECTION` | P1 | no | [RS-RA-TEST-001](../04-quality/post-reaudit-mathematics-remediation-spec.md#7-rs-ra-test-001-reproducibilidad-de-architecture-lint) | `pnpm verify` verde tres corridas seguidas |
+| MAT-RA-006 · alcance de la auditoría permanente | `REQUIRED_CORRECTION` | **P0** | **sí** | [RS-RA-AUDIT-001](../04-quality/post-reaudit-mathematics-remediation-spec.md#3-rs-ra-audit-001-auditoría-permanente-por-capacidad) | PASS · 24 exhaustivas / 18 políticas; ambos atajos reproducidos antes de corregir |
+| MAT-RA-001 · `g7.bus-travel-review` | `REQUIRED_CORRECTION` | **P0** | **sí** | [RS-RA-001](../04-quality/post-reaudit-mathematics-remediation-spec.md#4-rs-ra-001-g7bus-travel-review) | PASS · rango `[0,120]` × 26 variantes, iff demora sola y signo correcto |
+| MAT-RA-002 · `y3.course-project-tech` | `REQUIRED_CORRECTION` | **P0** | **sí** | [RS-RA-002](../04-quality/post-reaudit-mathematics-remediation-spec.md#5-rs-ra-002-y3course-project-tech) | PASS · K 35,8 / S 20 %, bajo 65/35 %, enumeración completa |
+| MAT-RA-003 · `y4.course-project-fundraiser` | `REQUIRED_CORRECTION` | **P0** | **sí** | [RS-RA-003](../04-quality/post-reaudit-mathematics-remediation-spec.md#6-rs-ra-003-y4course-project-fundraiser) | PASS · K 62,4 / S 28 %, seis órdenes, máximo 20 % |
+| MAT-RA-008 · flake de `architecture-lint` | `REQUIRED_CORRECTION` | P1 | no | [RS-RA-TEST-001](../04-quality/post-reaudit-mathematics-remediation-spec.md#7-rs-ra-test-001-reproducibilidad-de-architecture-lint) | PASS · `pnpm verify` verde tres corridas seguidas |
 | MAT-RA-005 · `g7.bus-timing` | `ACCEPT_WITH_DOCUMENTED_RISK` | P2 | no | — | Bandera humana H-6; la auditoría sigue reportando su `K` |
 | MAT-RA-004 · `y1.scale-fit-review` | `DEFER_TO_FINAL_HUMAN_REVIEW` | P2 | no | — | Bandera humana H-7; la auditoría sigue reportando su política ingenua |
 | MAT-RA-009 · replay de catálogos de 1.º–5.º | `DEFER_TO_STAGE_09` | P0 en STAGE-09 | no | R-S09-CAT | Política de retención escrita por año antes de la edición oficial |

@@ -76,12 +76,18 @@ async function openAt(page: Page, seed: string, templateId: string) {
 
 async function targetsAreBigEnough(page: Page) {
   const controls = await page
-    .locator('main select:enabled, main button:enabled')
+    .locator('main select:enabled, main button:enabled, main input:enabled')
     .evaluateAll((elements) =>
-      elements.map((element) => ({
-        height: element.getBoundingClientRect().height,
-        width: element.getBoundingClientRect().width,
-      })),
+      elements.map((element) => {
+        // La etiqueta asociada es parte del área clicable de una casilla.
+        const target = element.matches('input[type="checkbox"]')
+          ? (element.closest('label') ?? element)
+          : element
+        return {
+          height: target.getBoundingClientRect().height,
+          width: target.getBoundingClientRect().width,
+        }
+      }),
     )
   for (const control of controls) {
     expect(control.height).toBeGreaterThanOrEqual(44)
@@ -135,7 +141,7 @@ for (const width of [320, 360, 390, 412]) {
   })
 }
 
-for (const width of [320, 412]) {
+for (const width of [320, 360, 390, 412, 1280]) {
   test(`Grade 4: la peña a ${String(width)} px, con las tres condiciones y el punto de equilibrio`, async ({
     page,
   }) => {
@@ -154,6 +160,13 @@ for (const width of [320, 412]) {
     const fields = page.getByRole('spinbutton')
     await expect(fields.first()).toBeVisible()
     await reflow(page, `fundraiser · empty · ${String(width)}`)
+    await targetsAreBigEnough(page)
+    if (width === 1280) {
+      await page.evaluate(() => {
+        document.documentElement.style.zoom = '2'
+      })
+      await reflow(page, 'fundraiser · zoom CSS 200 %')
+    }
 
     await tabTo(page, fields.first())
     await page.keyboard.type('1')

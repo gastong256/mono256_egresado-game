@@ -137,7 +137,7 @@ independiente por evaluador y materialización sólo de direcciones aprobadas.
 | Template | Formas semánticas | Escalera 100/75/40/10 | Equipo / Aura / Estilo |
 |---|---|---|---|
 | `y4.shift-coverage` | Dos puestos en tres bloques seguidos y cuatro personas con disponibilidad por bloque; formas `llega-tarde`, `se-va-temprano` y `todos-parciales` | INVALID puesto vacío, choque de hora o alguien que no está · FUNCTIONAL cierra pero alguien se queda las tres horas · EFFICIENT todos descansan · OPTIMAL además ningún puesto cambia de manos más de una vez | **Equipo** 0–3 por los acuerdos del grupo, leído entre cronogramas que ya cierran (`LOCKED`) |
-| `y4.course-project-fundraiser` | Costo fijo, tres cosas para vender con su costo, precio y minutos de cocina, un objetivo y un colchón; formas `cocina-corta`, `objetivo-alto` y `margen-parejo`. La consigna nombra las tres condiciones en orden —no perder plata, llegar al objetivo, llegar con el colchón—, explica el punto de equilibrio en palabras y dice que todo lo que se prepara se vende | INVALID se pasa de cocina o pierde plata · FUNCTIONAL cubre costos · EFFICIENT llega al objetivo · OPTIMAL llega con el colchón | Sin Equipo ni Aura. Estilo por la forma de la producción |
+| `y4.course-project-fundraiser` | Costo fijo, tres cosas para vender con su costo, precio y minutos de cocina, un objetivo y un colchón; formas `rinden-panchos`, `rinden-tortas` y `rinden-bebidas`. La consigna nombra las tres condiciones en orden —no perder plata, llegar al objetivo, llegar con el colchón—, explica el punto de equilibrio en palabras y dice que todo lo que se prepara se vende | INVALID se pasa de cocina o pierde plata · FUNCTIONAL cubre costos · EFFICIENT llega al objetivo · OPTIMAL llega con el colchón | Sin Equipo ni Aura. Estilo por la forma de la producción |
 | `y4.school-event-flow` | Tres puestos en fila con su tasa y lo que suma cada ayudante; formas `puerta-lenta`, `acreditacion-lenta` y `buffet-lento` | INVALID la cola crece o reparte ayudantes que no hay · FUNCTIONAL alcanza el ritmo pedido · EFFICIENT llega a la mitad del margen posible · OPTIMAL el mejor ritmo alcanzable | Ninguno: la consecuencia sobre otra gente se ve, pero no se cobra como gesto social |
 | `y4.event-floor-plan` | Salón con puerta, pasillo y a veces columnas; escenario, tres mesas y una barra; formas `salon-angosto`, `puerta-al-medio` y `con-columnas` | INVALID se sale, se pisa, tapa el pasillo, no sienta a todos o deja una zona encerrada · FUNCTIONAL entra y se circula · EFFICIENT además sobra lugar para una mesa más **o** entra la barra · OPTIMAL las dos | Ninguno |
 | `y4.represent-class` | Tres límites escritos —plata, minutos y lugar— y cinco propuestas; la situación declara a quién afecta lo que se propone. Toda variante tiene al menos dos propuestas viables, así que no llevar ninguna nunca es casi exacto | INVALID lleva al consejo algo que no entra · EFFICIENT deja una viable afuera · FUNCTIONAL deja dos o más —incluido no llevar ninguna, que la consecuencia narra como tal— · OPTIMAL exacta | **Aura** por la postura pública, leída de un campo distinto del de las etiquetas (`LOCKED`). Sin Equipo y sin Prestige |
@@ -178,3 +178,21 @@ tocar sus artefactos publicados. Reemplaza a `grade-4-dev-2` por la
 de la peña, dirección del error en los dos Repasos y feedback de la cola,
 contenido `4.2.0-grade-4`. La práctica parcial `7.º → 4.º` es
 `official: false`.
+
+## Remediación dirigida de ronda 2 · peña
+
+RS-RA-003 conserva STANDARD/MEDIUM/PROJECT, cantidades máximas 8/6/9, punto de
+equilibrio, tres niveles válidos, gate de Estilo y recuperación. El generador 2
+rota las seis ordenaciones estrictas por margen por minuto; sus frecuencias son
+5/5/5/5/2/3, ninguna sobre 20 %. Las formas nombran qué producto rinde por minuto:
+panchos (8), tortas (10), bebidas (7). No cambian la interacción ni el schema del motor.
+
+La cocina dispone de 150/180/210/240 minutos. El objetivo se calcula desde los
+planes con menos de tres cuartos de cocina usada, dejando 1000–3000 de holgura
+más el redondeo hacia abajo a miles; el gate comprueba holgura de 0–3000.
+La holgura óptima global sobre objetivo más reserva baja de mediana 18000 a 9000
+(rango 6000–13000). El espacio de 630 vectores da K 62,4 y S 28 %, bajo K≤65/S≤35 %.
+Hay óptimo Math y diversidad de Estilo en cada variante. La consigna RS-MAT-011
+se conserva. El feedback distingue cocina insuficiente de pérdida monetaria.
+Contenido `4.3.0-grade-4`, catálogo `grade-4-dev-4`; ver
+[informe de implementación](../04-quality/targeted-post-reaudit-mathematics-remediation.md).

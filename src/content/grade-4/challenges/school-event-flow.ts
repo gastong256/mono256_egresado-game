@@ -315,7 +315,9 @@ export function evaluateFlow(p: FlowParams, lines: readonly BudgetLine[]) {
               ? 'Ese reparto usa ayudantes que no hay: así la entrada no se puede armar.'
               : `La cola sale a la vereda: no todas las ${mil(p.people)} personas entran a tiempo.`
             : read.quality === 'functional'
-              ? 'Entra todo el mundo, justo: cualquier demora se nota.'
+              ? read.rate === read.required
+                ? 'Entra todo el mundo, justo: cualquier demora se nota.'
+                : `Entra todo el mundo con margen de ${String(read.rate - read.required)} personas cada diez minutos sobre lo necesario.`
               : read.quality === 'efficient'
                 ? 'Entra todo el mundo con aire de sobra.'
                 : 'Ese es el mejor ritmo que se puede sostener con esa gente.',

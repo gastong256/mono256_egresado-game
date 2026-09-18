@@ -64,7 +64,7 @@ const item = z.strictObject({
 })
 export const fundraiserSchema = z
   .strictObject({
-    shape: z.enum(['cocina-corta', 'objetivo-alto', 'margen-parejo']),
+    shape: z.enum(['rinden-panchos', 'rinden-tortas', 'rinden-bebidas']),
     /** El costo fijo: se paga aunque no se venda nada. */
     fixedCost: money,
     /** Lo que el curso necesita juntar, y el colchón que quiere dejar. */
@@ -152,7 +152,7 @@ export interface FundraiserPlan extends StyledPlan {
   readonly profit: number
 }
 
-/** Oráculo independiente sobre todas las producciones posibles. */
+/** Enumeración de witnesses con el evaluador. El oráculo independiente vive en tests. */
 export function fundraiserPlans(
   p: FundraiserParams,
 ): readonly FundraiserPlan[] {
@@ -179,61 +179,97 @@ export function fundraiserPlans(
   return plans
 }
 
-const SHAPES = ['cocina-corta', 'objetivo-alto', 'margen-parejo'] as const
+const SHAPES = ['rinden-panchos', 'rinden-tortas', 'rinden-bebidas'] as const
 const COSTS = [
   [4000, 3000, 3600],
   [3600, 3200, 3000],
   [4400, 2800, 4000],
 ] as const
-const PRICES = [
-  [9000, 7200, 7200],
-  [8400, 8000, 6000],
-  [9600, 6400, 8000],
+// De mayor a menor margen por minuto. El mayor margen por bandeja
+// queda último: leer sólo el precio no resuelve la capacidad compartida.
+const ORDERS = [
+  [0, 1, 2],
+  [1, 2, 0],
+  [2, 0, 1],
+  [0, 2, 1],
+  [1, 0, 2],
+  [2, 1, 0],
 ] as const
-const MINUTES = [
-  [20, 45, 10],
-  [25, 35, 15],
-  [30, 50, 10],
+const MARGINS = [
+  [3000, 4000, 5000],
+  [3600, 4400, 5200],
 ] as const
+const MINUTES = [10, 25, 40] as const
 const FIXED = [10_000, 14_000, 18_000] as const
-const TARGETS = [18_000, 24_000, 30_000] as const
-const KITCHEN = [180, 240, 300] as const
+const KITCHEN = [150, 180, 210, 240] as const
 const RESERVE = 6_000
+const SLACKS = [1000, 2000, 3000] as const
 const RADICES = [
-  SHAPES.length,
-  COSTS.length,
-  PRICES.length,
-  MINUTES.length,
-  FIXED.length,
-  TARGETS.length,
+  ORDERS.length,
   KITCHEN.length,
+  COSTS.length,
+  FIXED.length,
+  SLACKS.length,
+  MARGINS.length,
 ]
 export const FUNDRAISER_SPACE = spaceOf(RADICES)
 
+/** Techo económico con menos de tres cuartos de cocina: preserva la posibilidad
+ * de un óptimo que deje tiempo libre, sin confundir Estilo con calidad. */
+function profitWithSpareKitchen(
+  items: FundraiserParams['items'],
+  kitchen: number,
+  fixed: number,
+): number {
+  let best = -fixed
+  for (let a = 0; a <= ITEMS[0].max; a++)
+    for (let b = 0; b <= ITEMS[1].max; b++)
+      for (let c = 0; c <= ITEMS[2].max; c++) {
+        const counts = [a, b, c]
+        const minutes = items.reduce(
+          (sum, item, i) => sum + item.minutes * (counts[i] ?? 0),
+          0,
+        )
+        if (minutes * 4 >= kitchen * 3) continue
+        const profit = items.reduce(
+          (sum, item, i) => sum + (item.price - item.cost) * (counts[i] ?? 0),
+          -fixed,
+        )
+        best = Math.max(best, profit)
+      }
+  return best
+}
+
 export function generateFundraiser(index: number): FundraiserParams {
-  const axes = candidateAxes(index, RADICES, 587)
-  const shape = at(SHAPES, digit(axes, 0))
-  const costs = at(COSTS, digit(axes, 1))
-  const prices = at(PRICES, digit(axes, 2))
-  const minutes = at(MINUTES, digit(axes, 3))
-  const target = at(TARGETS, digit(axes, 5))
-  // La forma dice qué aprieta: la cocina, el objetivo o un margen parejo entre
-  // las tres cosas. La forma no se muestra, así que cada una tiene su firma.
-  const kitchen = shape === 'cocina-corta' ? 150 : at(KITCHEN, digit(axes, 6))
+  // Orden económico rota antes que magnitudes: el prefijo del catálogo ya
+  // ofrece decisiones diferentes por una razón visible en costos y minutos.
+  const axes = candidateAxes(index, RADICES, 1)
+  const order = at(ORDERS, digit(axes, 0))
+  const shape = at(SHAPES, order[0])
+  const costs = at(COSTS, digit(axes, 2))
+  const fixedCost = at(FIXED, digit(axes, 3))
+  const kitchenMinutes = at(KITCHEN, digit(axes, 1))
+  const items = ITEMS.map((_, position) => {
+    const rank = order.findIndex((item) => item === position)
+    const cost = costs[position] ?? costs[0]
+    return {
+      cost,
+      price: cost + at(at(MARGINS, digit(axes, 5)), rank),
+      minutes: at(MINUTES, rank),
+    }
+  }) as FundraiserParams['items']
+  const ceiling = profitWithSpareKitchen(items, kitchenMinutes, fixedCost)
+  const slack = at(SLACKS, digit(axes, 4))
   return fundraiserSchema.parse({
     shape,
-    fixedCost: at(FIXED, digit(axes, 4)),
-    target: shape === 'objetivo-alto' ? target + 8_000 : target,
+    fixedCost,
     reserve: RESERVE,
-    kitchenMinutes: kitchen,
-    items: ITEMS.map((_, position) => ({
-      cost: costs[position] ?? 3000,
-      price:
-        shape === 'margen-parejo'
-          ? (costs[position] ?? 3000) + 4000
-          : (prices[position] ?? 7000),
-      minutes: minutes[position] ?? 20,
-    })),
+    kitchenMinutes,
+    items,
+    target: Math.max(
+      1000,
+      Math.floor((ceiling - RESERVE - slack) / 1000) * 1000,
+    ),
   })
 }
 
@@ -252,6 +288,10 @@ export function fundraiserGates(p: FundraiserParams): readonly string[] {
   if (!plans.some((plan) => plan.quality === 'optimal'))
     issues.push('el objetivo con colchón es inalcanzable')
 
+  const spare = profitWithSpareKitchen(p.items, p.kitchenMinutes, p.fixedCost)
+  if (spare - p.target - p.reserve > Math.max(...SLACKS))
+    issues.push('objetivo y colchón quedan holgados aun dejando cocina libre')
+
   // La cocina tiene que apretar: si entra todo, no hay nada que decidir.
   const everything = ITEMS.map((entry) => ({
     itemId: entry.id,
@@ -264,11 +304,12 @@ export function fundraiserGates(p: FundraiserParams): readonly string[] {
   // el mejor margen por minuto de cocina, o la decisión se toma sin mirar la
   // capacidad compartida.
   const byUnit = ITEMS.map((_, index) => marginOf(p, index))
-  const byMinute = ITEMS.map(
-    (_, index) => marginOf(p, index) / (p.items[index]?.minutes ?? 1),
-  )
   const bestUnit = byUnit.indexOf(Math.max(...byUnit))
-  const bestMinute = byMinute.indexOf(Math.max(...byMinute))
+  const bestMinute = [0, 1, 2].sort(
+    (a, b) =>
+      marginOf(p, b) * (p.items[a]?.minutes ?? 1) -
+        marginOf(p, a) * (p.items[b]?.minutes ?? 1) || a - b,
+  )[0]
   if (bestUnit === bestMinute)
     issues.push('el mejor margen por bandeja ya es el mejor por minuto')
   return issues
@@ -311,11 +352,13 @@ export function evaluateFundraiser(
           : {}),
         consequence:
           read.quality === 'invalid'
-            ? 'La peña termina costando plata.'
+            ? read.minutes > p.kitchenMinutes
+              ? 'La cocina no alcanza para preparar esa producción.'
+              : 'La peña termina costando plata.'
             : read.quality === 'functional'
               ? 'Se cubren los costos, pero no alcanza para lo que el curso necesita.'
               : read.quality === 'efficient'
-                ? 'Se llega al objetivo, justo.'
+                ? 'Se llega al objetivo, pero falta para el colchón.'
                 : 'Se llega al objetivo y queda un colchón por si algo sale mal.',
       },
       read.style === undefined
@@ -333,7 +376,7 @@ export function evaluateFundraiser(
 
 export const fundraiserVariants = generatedSource({
   id: 'y4.course-project-fundraiser.margin',
-  version: '1',
+  version: '2',
   schema: fundraiserSchema,
   size: FUNDRAISER_SPACE,
   generate: generateFundraiser,

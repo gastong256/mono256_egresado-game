@@ -925,7 +925,7 @@ cerrar la integración de carrera completa):
 - [x] Epílogo de carrera real con saliencia determinista, datos ausentes no dibujados y Hitos display-only distinguibles.
 - [x] Accesibilidad teclado/tap, móvil, reduced motion, replay/snapshot/reanudación y E2E por año. — Más el E2E de carrera completa a 320 px.
 - [ ] Auditoría de composición completa, cobertura/exploits y playtests de pacing según [validación de contenido](../04-quality/content-validation.md). — La [auditoría de implementación](../04-quality/full-career-implementation-audit.md) está ejecutada y los exploits barridos; **los playtests de pacing con jugadores reales no**.
-- [ ] Revisión matemática, documentación por año y cero sistemas fundamentales duplicados. — Documentación por año completa y sin sistemas duplicados. El gate provisional es el **AI Mathematics Department** (D-S08-095): [pre-revisión](../04-quality/mathematics-department-pre-review.md) y [adjudicación independiente](../04-quality/mathematics-department-ai-adjudication.md) ejecutadas, con `REMEDIATION REQUIRED`; la [implementación de la remediación](../04-quality/mathematics-remediation-implementation.md) cerró en `DONE` con los catorce contratos de la [especificación](../04-quality/mathematics-remediation-spec.md), después de dos adjudicaciones de contrato —la [de sus conflictos](../04-quality/mathematics-remediation-contract-conflict-adjudication.md) y la [del techo de la pantalla del acto](../04-quality/rs-mat-008-blind-ceiling-final-adjudication.md)—; la [re-auditoría independiente](../04-quality/independent-mathematics-reaudit.md) confirmó trece de los catorce contratos y el techo `K = 78`, pero dio `FAILED — REMEDIATION REQUIRED` por tres hallazgos bloqueantes propios, y la [adjudicación posterior](../04-quality/post-reaudit-mathematics-findings-adjudication.md) emitió el [contrato de la ronda 2](../04-quality/post-reaudit-mathematics-remediation-spec.md); faltan esa remediación dirigida, su re-auditoría y el sign-off provisional. **La revisión del Departamento de Matemática humano no se reemplaza: se difiere a Final Delivery / Pre-Release Acceptance.**
+- [ ] Revisión matemática, documentación por año y cero sistemas fundamentales duplicados. — Documentación por año completa y sin sistemas duplicados. El gate provisional es el **AI Mathematics Department** (D-S08-095): [pre-revisión](../04-quality/mathematics-department-pre-review.md) y [adjudicación independiente](../04-quality/mathematics-department-ai-adjudication.md) ejecutadas, con `REMEDIATION REQUIRED`; la [implementación de la remediación](../04-quality/mathematics-remediation-implementation.md) cerró en `DONE` con los catorce contratos de la [especificación](../04-quality/mathematics-remediation-spec.md), después de dos adjudicaciones de contrato —la [de sus conflictos](../04-quality/mathematics-remediation-contract-conflict-adjudication.md) y la [del techo de la pantalla del acto](../04-quality/rs-mat-008-blind-ceiling-final-adjudication.md)—; la [re-auditoría independiente](../04-quality/independent-mathematics-reaudit.md) confirmó trece de los catorce contratos y el techo `K = 78`, pero dio `FAILED — REMEDIATION REQUIRED` por tres hallazgos bloqueantes propios, y la [adjudicación posterior](../04-quality/post-reaudit-mathematics-findings-adjudication.md) emitió el [contrato de la ronda 2](../04-quality/post-reaudit-mathematics-remediation-spec.md); la remediación dirigida está DONE con tres verify consecutivos; faltan su re-auditoría y el sign-off provisional. **La revisión del Departamento de Matemática humano no se reemplaza: se difiere a Final Delivery / Pre-Release Acceptance.**
 
 **Lectura requerida.** [Matriz](../01-game-design/full-career-content-matrix.md) ·
 [diseño G1](../01-game-design/grade-1-template-design.md) ·
@@ -938,20 +938,15 @@ cerrar la integración de carrera completa):
 sustituyen estos gates. Objetivos editoriales y calibraciones versionadas conservan
 la madurez del [registro](../07-reference/decision-register.md).
 
-**Siguiente tarea.** `TARGETED POST-REAUDIT MATHEMATICS REMEDIATION`, según la
-[especificación de la ronda 2](../04-quality/post-reaudit-mathematics-remediation-spec.md).
-La [re-auditoría](../04-quality/independent-mathematics-reaudit.md) dio `FAILED`
-(D-S08-117) con **13 de 14** contratos en PASS y el techo `K = 78` de `y5.stage-screen`
-re-probado, y la
-[adjudicación posterior](../04-quality/post-reaudit-mathematics-findings-adjudication.md)
-cerró los diez hallazgos (D-S08-122 a D-S08-126). Cuatro contratos P0 bloquean el
-sign-off: **RS-RA-AUDIT-001** —la auditoría permanente por capacidad, que va **primero**
-porque sin ella la ronda no puede medirse—, **RS-RA-001** en `g7.bus-travel-review`,
-**RS-RA-002** en `y3.course-project-tech` y **RS-RA-003** en
-`y4.course-project-fundraiser`, más **RS-RA-TEST-001** en P1. `g7.bus-timing`
-(D-S08-111, MAT-RA-005) y `y1.scale-fit-review` (MAT-RA-004) quedaron **no
-bloqueantes**, con banderas humanas H-6 y H-7. Después de la ronda 2 va una
-`Independent Mathematics Re-Audit Round 2`, y recién entonces el Provisional Sign-Off.
+**Remediación dirigida de ronda 2.** Implementados RS-RA-AUDIT-001,
+RS-RA-001/002/003 y RS-RA-TEST-001; DONE con tres verify consecutivos. La
+[evidencia](../04-quality/targeted-post-reaudit-mathematics-remediation.md) incluye
+baseline reproducida, K/S 35,8/20 % y 62,4/28 %, seis órdenes económicos en la
+peña, 42 filas auditadas y republicación de los seis catálogos. Los techos y las
+decisiones de D-S08-122…126 no cambian. H-6/H-7 y R-S09-CAT siguen vigentes.
+
+**Siguiente tarea:** `Independent Mathematics Re-Audit Round 2`.
+El Provisional Sign-Off sigue bloqueado hasta su PASS.
 Siguen además los gates humanos de STAGE-08 que no se difirieron:
 sign-off manual de la rueda del Día del Estudiante y playtests de pacing con
 jugadores reales. La revisión del Departamento de Matemática humano sobre las 42

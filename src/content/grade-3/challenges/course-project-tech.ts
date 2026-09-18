@@ -219,7 +219,7 @@ export interface TechPlan {
   readonly over?: TechOutcome['over']
 }
 
-/** Oráculo independiente sobre todas las producciones posibles. */
+/** Enumeración de witnesses con el evaluador. El oráculo independiente vive en tests. */
 export function techPlans(p: TechParams): readonly TechPlan[] {
   const plans: TechPlan[] = []
   const [video, entrevistas, laminas] = ITEMS
@@ -249,62 +249,191 @@ const SHAPES = [
   'laboratorio-corto',
   'notebook-corta',
 ] as const
-const NOTEBOOKS = [40, 52, 64, 76] as const
-const MEGABYTES = [1200, 1800, 2400, 3000] as const
-const LABS = [8, 12, 16, 20] as const
-const RATES = [120, 180, 240] as const
-const MINIMUMS = [
+
+/**
+ * Lo que la feria pide de cada cosa.
+ *
+ * Antes eran tres mínimos por dos pasos: **seis** objetivos en todo el espacio,
+ * cuyo supremo componente a componente era `(5, 4, 6)` —muy dentro de los
+ * máximos `(10, 10, 12)` que ofrece la pantalla—. Un vector por encima de ese
+ * supremo cumplía **todos** los objetivos que el generador podía emitir, en
+ * cualquier catálogo que se sorteara de él, y sólo los topes de recurso podían
+ * frenarlo: «video 4 · entrevistas 4 · láminas 6» rendía K 95,8 sin leer un dato
+ * (MAT-RA-002).
+ *
+ * Doce objetivos que se **cruzan** —cada uno pide mucho de una cosa y poco de
+ * otra— sacan el supremo del alcance de cualquier plan que además entre en los
+ * presupuestos, y con eso ninguna respuesta reusable domina el catálogo
+ * (RS-RA-002, criterios 1 a 3).
+ */
+const TARGETS = [
   { video: 2, entrevistas: 2, laminas: 3 },
-  { video: 3, entrevistas: 1, laminas: 4 },
-  { video: 2, entrevistas: 3, laminas: 2 },
+  { video: 5, entrevistas: 7, laminas: 6 },
+  { video: 2, entrevistas: 7, laminas: 3 },
+  { video: 6, entrevistas: 6, laminas: 5 },
+  { video: 3, entrevistas: 2, laminas: 8 },
+  { video: 4, entrevistas: 4, laminas: 4 },
+  { video: 5, entrevistas: 2, laminas: 7 },
+  { video: 2, entrevistas: 5, laminas: 8 },
+  { video: 6, entrevistas: 7, laminas: 3 },
+  { video: 3, entrevistas: 6, laminas: 6 },
+  { video: 4, entrevistas: 3, laminas: 5 },
+  { video: 2, entrevistas: 6, laminas: 4 },
 ] as const
-const TARGET_STEPS = [
+/** Cuánto menos que lo prometido acepta la feria como mínimo. */
+const DROPS = [
   { video: 1, entrevistas: 1, laminas: 2 },
   { video: 2, entrevistas: 1, laminas: 1 },
+  { video: 1, entrevistas: 2, laminas: 1 },
 ] as const
+const RATES = [120, 180, 240] as const
 const SPREADS = [8, 12, 16] as const
 const TIGHTS = ['nico', 'sofi', 'tomi'] as const
-const RADICES = [
-  SHAPES.length,
-  NOTEBOOKS.length,
-  MEGABYTES.length,
-  LABS.length,
+
+/** Los ejes que la generación por papel busca una vez fijado el papel. */
+const SEARCH_RADICES = [
+  DROPS.length,
   RATES.length,
-  MINIMUMS.length,
-  TARGET_STEPS.length,
   SPREADS.length,
   TIGHTS.length,
 ]
-export const TECH_SPACE = spaceOf(RADICES)
+const SEARCH_SPACE = spaceOf(SEARCH_RADICES)
+const SEARCH_STRIDE = 29
+/** Cada dirección arranca su búsqueda en un punto distinto del espacio. */
+const SEARCH_STEP = 7
+/** Papeles del catálogo: doce objetivos por tres cuellos de botella. */
+const ROLE_CYCLE = TARGETS.length * SHAPES.length
+export const TECH_SPACE = ROLE_CYCLE * SEARCH_SPACE
 
-export function generateTech(index: number): TechParams {
-  const axes = candidateAxes(index, RADICES, 1861)
-  const shape = at(SHAPES, digit(axes, 0))
-  const minimum = at(MINIMUMS, digit(axes, 5))
-  const step = at(TARGET_STEPS, digit(axes, 6))
-  // La forma dice cuál es el recurso que aprieta primero. Sin eso, la misma
-  // restricción mandaría siempre y el plan se resolvería de memoria.
-  const notebook =
-    at(NOTEBOOKS, digit(axes, 1)) * (shape === 'notebook-corta' ? 1 : 2)
+/** Lo que cuesta un plan en minutos de notebook. */
+function notebookCost(counts: Readonly<Record<ItemId, number>>): number {
+  return ITEMS.reduce(
+    (total, item) => total + counts[item.id] * item.notebook,
+    0,
+  )
+}
+
+/** Lo que ocupa un plan en MB, que es también lo que hay que subir. */
+function megabyteCost(counts: Readonly<Record<ItemId, number>>): number {
+  return ITEMS.reduce(
+    (total, item) => total + counts[item.id] * item.megabytes,
+    0,
+  )
+}
+
+/**
+ * El papel de una dirección: qué pide la feria y qué recurso aprieta.
+ *
+ * El objetivo rota con el índice y el cuello de botella rota **desplazado**, así
+ * que un mismo objetivo aparece con recursos escasos distintos. Sin ese desfasaje
+ * el resto de tres dividiría a doce y cada objetivo quedaría atado a un único
+ * cuello de botella (D-S08-108).
+ */
+export function techRoleOf(index: number): {
+  readonly target: (typeof TARGETS)[number]
+  readonly shape: (typeof SHAPES)[number]
+} {
+  const cycle = Math.abs(index)
+  return {
+    target: at(TARGETS, cycle % TARGETS.length),
+    shape: at(SHAPES, cycle + Math.floor(cycle / TARGETS.length)),
+  }
+}
+
+/**
+ * Los tres presupuestos de una variante, atados al costo de lo prometido.
+ *
+ * El recurso que aprieta recibe poco aire sobre el plan objetivo y los otros dos
+ * reciben bastante. Eso es lo que vuelve la cuenta obligatoria: pasarse de lo
+ * prometido en el ítem caro se sale del presupuesto que aprieta, y cuál es el
+ * ítem caro depende de qué recurso escasea en **esta** variante. El aire nunca
+ * es cero: el plan objetivo no puede ser el único válido (RS-RA-002, criterio 4).
+ */
+function budgetsFor(
+  shape: (typeof SHAPES)[number],
+  target: Readonly<Record<ItemId, number>>,
+  uploadRate: number,
+): {
+  readonly notebookMinutes: number
+  readonly megabytes: number
+  readonly labMinutes: number
+} {
+  const TIGHT_NOTEBOOK = 4
+  const LOOSE_NOTEBOOK = 8
+  const TIGHT_MEGABYTES = 150
+  const LOOSE_MEGABYTES = 600
+  const LOOSE_LAB = 6
   const megabytes =
-    at(MEGABYTES, digit(axes, 2)) * (shape === 'pendrive-corto' ? 1 : 2)
-  const lab = at(LABS, digit(axes, 3)) * (shape === 'laboratorio-corto' ? 1 : 2)
-  return techSchema.parse({
-    shape,
-    notebookMinutes: notebook,
+    Math.ceil(
+      (megabyteCost(target) +
+        (shape === 'pendrive-corto' ? TIGHT_MEGABYTES : LOOSE_MEGABYTES)) /
+        50,
+    ) * 50
+  return {
+    notebookMinutes:
+      notebookCost(target) +
+      (shape === 'notebook-corta' ? TIGHT_NOTEBOOK : LOOSE_NOTEBOOK),
     megabytes,
-    labMinutes: lab,
-    uploadRate: at(RATES, digit(axes, 4)),
-    minimum,
-    target: {
-      video: minimum.video + step.video,
-      entrevistas: minimum.entrevistas + step.entrevistas,
-      laminas: minimum.laminas + step.laminas,
-    },
-    spread: at(SPREADS, digit(axes, 7)),
-    tight: at(TIGHTS, digit(axes, 8)),
-    tightCap: at(SPREADS, digit(axes, 7)) + 4,
-  })
+    labMinutes:
+      Math.ceil((megabyteCost(target) + TIGHT_MEGABYTES) / uploadRate) +
+      (shape === 'laboratorio-corto' ? 0 : LOOSE_LAB),
+  }
+}
+
+/**
+ * Generación por papel: la primera combinación de holgura, tasa y acuerdos que,
+ * con el objetivo y el cuello de botella de su dirección, pasa todos los gates.
+ * Si no aparece ninguna, devuelve la última probada y el gate de papel la
+ * rechaza.
+ */
+export function generateTech(index: number): TechParams {
+  const { target, shape } = techRoleOf(index)
+  let last: TechParams | undefined
+  for (let attempt = 0; attempt < SEARCH_SPACE; attempt++) {
+    const axes = candidateAxes(
+      index * SEARCH_STEP + attempt,
+      SEARCH_RADICES,
+      SEARCH_STRIDE,
+    )
+    const drop = at(DROPS, digit(axes, 0))
+    const uploadRate = at(RATES, digit(axes, 1))
+    const spread = at(SPREADS, digit(axes, 2))
+    const candidate = techSchema.safeParse({
+      shape,
+      ...budgetsFor(shape, target, uploadRate),
+      uploadRate,
+      minimum: {
+        video: Math.max(0, target.video - drop.video),
+        entrevistas: Math.max(0, target.entrevistas - drop.entrevistas),
+        laminas: Math.max(0, target.laminas - drop.laminas),
+      },
+      target,
+      spread,
+      tight: at(TIGHTS, digit(axes, 3)),
+      tightCap: spread + 4,
+    })
+    if (!candidate.success) continue
+    last = candidate.data
+    if (techGates(candidate.data).length === 0) return candidate.data
+  }
+  if (last === undefined)
+    throw new Error(`sin variante para la dirección ${String(index)}`)
+  return last
+}
+
+/** Gate de dirección: la variante juega el papel que le toca en el reparto. */
+export function techRoleGates(p: TechParams, index: number): readonly string[] {
+  const { target, shape } = techRoleOf(index)
+  const issues: string[] = []
+  if (p.shape !== shape)
+    issues.push('la variante no aprieta el recurso de su dirección')
+  if (
+    p.target.video !== target.video ||
+    p.target.entrevistas !== target.entrevistas ||
+    p.target.laminas !== target.laminas
+  )
+    issues.push('la variante no pide lo que su dirección promete')
+  return issues
 }
 
 export function techGates(p: TechParams): readonly string[] {
@@ -332,6 +461,15 @@ export function techGates(p: TechParams): readonly string[] {
   }))
   if (readTech(p, everything).quality !== 'invalid')
     issues.push('los recursos alcanzan para todo')
+
+  // El supremo de todos los objetivos no puede ser un plan admisible: evita
+  // resolver cualquier variante aumentando siempre las tres cantidades.
+  const supremum = ITEMS.map((item) => ({
+    itemId: item.id,
+    quantity: Math.max(...TARGETS.map((target) => target[item.id])),
+  }))
+  if (readTech(p, supremum).quality !== 'invalid')
+    issues.push('el supremo de objetivos entra en los recursos')
 
   // Equipo: varios planes Math-válidos con consecuencias distintas.
   const teamsAmongOptimal = new Set(
@@ -417,11 +555,14 @@ export function evaluateTech(p: TechParams, lines: readonly BudgetLine[]) {
 
 export const techVariants = generatedSource({
   id: 'y3.course-project-tech.resources',
-  version: '1',
+  // 2: objetivos cruzados y presupuestos atados al costo de lo prometido
+  // (RS-RA-002). El espacio del generador cambió, así que la versión sube.
+  version: '2',
   schema: techSchema,
   size: TECH_SPACE,
   generate: generateTech,
   gates: techGates,
+  addressGates: techRoleGates,
 })
 
 const PROJECT_FAMILY = toScenarioFamilyId('course-project')

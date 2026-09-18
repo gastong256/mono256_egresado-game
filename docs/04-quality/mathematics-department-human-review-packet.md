@@ -385,3 +385,10 @@ Lo que esa pre-revisión **no puede** decidir es justamente lo que se les pide:
 si un chico entiende la consigna, si la tarea vale la pena, si el error que el
 juego castiga es el error que importa, y si esto se puede poner delante de un
 curso.
+
+## Evidencia posterior · remediación dirigida de ronda 2
+
+El [informe de implementación](targeted-post-reaudit-mathematics-remediation.md)
+aporta K/S 35,8/20 % (proyecto tecnológico) y 62,4/28 % (peña), con seis órdenes
+de margen por minuto. Son mediciones técnicas: no validan pacing ni carga
+cognitiva con alumnos. H-6…H-10 mantienen su decisión y su revisión humana diferida.

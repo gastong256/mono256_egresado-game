@@ -3,22 +3,33 @@
  *
  * Mide lo que un jugador obtiene **sin mirar los números**: responder al azar
  * (R), repetir siempre la misma respuesta completa (K) y cuántas variantes
- * comparten la misma respuesta óptima (S). La especificación de remediación
- * matemática fija techos por Template sobre estas tres métricas; este módulo
- * sólo las calcula, con el evaluador real de cada Template y nunca con uno
- * paralelo.
+ * comparten esa misma respuesta óptima (S). Los contratos de remediación fijan
+ * techos por Template sobre esas métricas; este módulo sólo las calcula, con el
+ * evaluador real de cada Template y nunca con uno paralelo.
+ *
+ * El espacio de respuesta lo clasifica {@link responseSpaceOf} por **capacidad**,
+ * no por nombre de motor (RS-RA-AUDIT-001). Donde existe un vector constante
+ * comparable y su cardinal entra en el presupuesto, se enumera **entero**; donde
+ * no, se miden políticas ingenuas. Toda Template del catálogo recibe una fila con
+ * su estado: ninguna queda sin auditar sin decir por qué.
  *
  * Es una medición, no un oráculo: el re-audit independiente no debe apoyarse
- * sólo en ella.
+ * sólo en ella. Nada acá conoce la respuesta esperada de ninguna Template.
  */
 import type {
   ApprovedVariantCatalog,
   ChallengeDefinition,
   EngineDependencies,
-  InteractionAnswer,
   SolutionQuality,
 } from '@/game'
 import { materializeVariant } from '@/game/testing'
+import {
+  EVALUATION_BUDGET,
+  responseSpaceOf,
+  type ResponseSpace,
+} from './blind-strategy-space'
+
+export { EVALUATION_BUDGET } from './blind-strategy-space'
 
 /** La escala del contrato: la escalera 100/75/40/10. */
 export const QUALITY_SCORE: Readonly<Record<SolutionQuality, number>> = {
@@ -28,11 +39,6 @@ export const QUALITY_SCORE: Readonly<Record<SolutionQuality, number>> = {
   invalid: 10,
 }
 
-/** Más respuestas que esto por variante no se enumeran. */
-export const MAX_CLASSIFICATION_ANSWERS = 50_000
-/** Un rango numérico más ancho que esto no se enumera. */
-export const MAX_NUMERIC_VALUES = 5_000
-
 const TIERS: readonly SolutionQuality[] = [
   'optimal',
   'efficient',
@@ -40,111 +46,271 @@ const TIERS: readonly SolutionQuality[] = [
   'invalid',
 ]
 
-interface CandidateAnswer {
-  /** La misma respuesta en todas las variantes, por identificador. */
-  readonly byId: string
-  /** La misma respuesta por posición, para cuando los ids cambian. */
-  readonly byPosition: string
-  readonly answer: InteractionAnswer
-  /** Otras variantes de la respuesta que sólo cambian la postura pública. */
-  readonly stanceVariants: readonly InteractionAnswer[]
+/** Cómo se auditó una Template. Nunca queda sin declarar. */
+export type AuditMode =
+  | 'AUDITED_EXHAUSTIVELY'
+  | 'AUDITED_BY_POLICIES'
+  | 'NOT_APPLICABLE_WITH_REASON'
+  | 'BLOCKED_BY_SPACE_WITH_REASON'
+
+/** La mejor política ingenua encontrada, cuando no hubo enumeración exhaustiva. */
+export interface PolicyScore {
+  readonly histogram: Readonly<Record<SolutionQuality, number>>
+  readonly rejected: number
+  readonly name: string
+  readonly mean: number
+  readonly optimal: number
 }
 
 export interface BlindStrategyRow {
   readonly templateId: string
   readonly kind: string
   readonly variants: number
-  readonly enumerable: boolean
+  readonly mode: AuditMode
+  readonly category: 'A' | 'B' | 'C' | 'D'
+  readonly threshold: string | undefined
+  readonly histogram: Readonly<Record<SolutionQuality, number>>
+  /** Por qué no se enumeró, cuando no se enumeró. Siempre presente si aplica. */
   readonly reason?: string
-  /** Si K y S se calcularon por posición porque los ids cambian. */
-  readonly byPosition: boolean
+  /** Cardinal del espacio de respuesta por variante, cuando se pudo medir. */
+  readonly cardinality?: number | undefined
+  /** Costo de la enumeración exhaustiva: `cardinalidad × variantes`. */
+  readonly evaluations?: number
+  readonly scoreBearing: boolean
+  /** `NaN` cuando no hubo enumeración exhaustiva. */
   readonly R: number
   readonly K: number
   readonly kAnswer: string
   readonly S: number
   readonly sAnswer: string
+  /** Mejor política, ordenada de mayor a menor. Vacío si se enumeró entero. */
+  readonly policies: readonly PolicyScore[]
   /** Variantes en las que cada nivel es alcanzable. */
   readonly reachable: Readonly<Record<SolutionQuality, number>>
   /** Nivel de cada respuesta constante en cada variante, en orden de catálogo. */
   readonly constant: ReadonlyMap<string, readonly SolutionQuality[]>
+  /**
+   * La misma tabla, indexada por el identificador legible de la respuesta.
+   *
+   * Sólo cuando ese identificador es el mismo en todas las variantes: si los ids
+   * cambian, la coordenada estable es la posición y esta vista queda vacía.
+   */
+  readonly constantById: ReadonlyMap<string, readonly SolutionQuality[]>
+  /** Cuántos vectores distintos son óptimos en alguna variante. */
+  readonly optimalSignatures: number
   /** Variantes donde alguna respuesta cambió de nivel sólo por la postura. */
   readonly stanceLeaks: number
 }
 
-function answersOf(
-  view: ReturnType<ReturnType<ChallengeDefinition['materialize']>['present']>,
-): { readonly answers: readonly CandidateAnswer[]; readonly reason?: string } {
-  if (view.kind === 'decision-card' || view.kind === 'timeline') {
-    return {
-      answers: view.options.map((option, position) => ({
-        byId: option.id,
-        byPosition: `#${String(position)}`,
-        answer: { kind: view.kind, optionId: option.id } as InteractionAnswer,
-        stanceVariants: [],
-      })),
-    }
-  }
-  if (view.kind === 'classification') {
-    const labels = view.labels.map((label) => label.id)
-    const total = labels.length ** view.statements.length
-    if (total > MAX_CLASSIFICATION_ANSWERS)
-      return { answers: [], reason: `${String(total)} clasificaciones` }
-    const stances = view.stance?.options.map((option) => option.id) ?? []
-    const answers: CandidateAnswer[] = []
-    for (let mask = 0; mask < total; mask++) {
-      let rest = mask
-      const entries = view.statements.map((statement) => {
-        const labelId = labels[rest % labels.length] ?? ''
-        rest = Math.floor(rest / labels.length)
-        return { statementId: statement.id, labelId }
-      })
-      const withStance = (stance: string | undefined): InteractionAnswer => ({
-        kind: 'classification',
-        entries,
-        ...(stance === undefined ? {} : { stance }),
-      })
-      answers.push({
-        byId: entries.map((e) => `${e.statementId}=${e.labelId}`).join(','),
-        byPosition: entries
-          .map((e, i) => `#${String(i)}=${e.labelId}`)
-          .join(','),
-        answer: withStance(stances[0]),
-        stanceVariants: stances.slice(1).map(withStance),
-      })
-    }
-    return { answers }
-  }
-  if (view.kind === 'numeric-input') {
-    const min = Number(view.min)
-    const max = Number(view.max)
-    const step = Number(view.step)
-    if (!Number.isInteger(min) || !Number.isInteger(max) || step !== 1)
-      return { answers: [], reason: 'rango numérico no entero' }
-    if (max - min + 1 > MAX_NUMERIC_VALUES)
-      return {
-        answers: [],
-        reason: `rango de ${String(max - min + 1)} valores`,
+const emptyReachable = (): Record<SolutionQuality, number> => ({
+  optimal: 0,
+  efficient: 0,
+  functional: 0,
+  invalid: 0,
+})
+
+interface Instance {
+  readonly variantId: string
+  readonly instance: ReturnType<ChallengeDefinition['materialize']>
+  readonly view: ReturnType<
+    ReturnType<ChallengeDefinition['materialize']>['present']
+  >
+}
+
+function evaluateTier(
+  templateId: string,
+  variantId: string,
+  instance: Instance['instance'],
+  answer: Parameters<Instance['instance']['evaluate']>[0],
+  strict: boolean,
+): SolutionQuality | undefined {
+  const result = instance.evaluate(answer, [])
+  if (result.ok) return result.value.quality
+  if (strict)
+    throw new Error(
+      `${templateId}/${variantId}: respuesta enumerada rechazada (${result.error.kind})`,
+    )
+  // Una política puede proponer algo malformado para ese motor —no hacer nada,
+  // por ejemplo—. Eso no es un nivel: es una respuesta que el juego no acepta.
+  return undefined
+}
+
+/** Enumeración exhaustiva de respuestas constantes sobre todas las variantes. */
+function auditExhaustively(
+  templateId: string,
+  instances: readonly Instance[],
+  spaces: readonly ResponseSpace[],
+  keys: readonly string[],
+): Pick<
+  BlindStrategyRow,
+  | 'R'
+  | 'K'
+  | 'kAnswer'
+  | 'S'
+  | 'sAnswer'
+  | 'reachable'
+  | 'constant'
+  | 'constantById'
+  | 'stanceLeaks'
+  | 'optimalSignatures'
+  | 'histogram'
+> {
+  const n = instances.length
+  const constant = new Map<string, SolutionQuality[]>()
+  const reachable = emptyReachable()
+  let randomTotal = 0
+  let stanceLeaks = 0
+  const optimalSignatures = new Set<string>()
+
+  instances.forEach(({ variantId, instance }, index) => {
+    const space = spaces[index]
+    const seen = new Set<SolutionQuality>()
+    let sum = 0
+    let counted = 0
+    let leaked = false
+    for (const key of keys) {
+      // La coordenada se resuelve contra ESTA variante: los identificadores de
+      // opción cambian entre variantes y la respuesta constante es la posición.
+      const candidate = space?.resolve?.(key)
+      if (candidate === undefined) continue
+      const quality = evaluateTier(
+        templateId,
+        variantId,
+        instance,
+        candidate.answer,
+        true,
+      )
+      if (quality === undefined) continue
+      for (const other of candidate.stanceVariants) {
+        const again = instance.evaluate(other, [])
+        if (!again.ok || again.value.quality !== quality) leaked = true
       }
-    return {
-      answers: Array.from({ length: max - min + 1 }, (_, i) => {
-        const value = String(min + i)
-        return {
-          byId: value,
-          byPosition: value,
-          answer: { kind: 'numeric-input', value },
-          stanceVariants: [],
-        }
-      }),
+      if (quality === 'optimal') optimalSignatures.add(key)
+      seen.add(quality)
+      sum += QUALITY_SCORE[quality]
+      counted += 1
+      const list = constant.get(key) ?? []
+      list.push(quality)
+      constant.set(key, list)
+    }
+    if (leaked) stanceLeaks += 1
+    randomTotal += counted === 0 ? 0 : sum / counted
+    for (const tier of seen) reachable[tier] += 1
+  })
+
+  let K = -1
+  let kAnswer = ''
+  let S = -1
+  let sAnswer = ''
+  for (const [key, qualities] of constant) {
+    if (qualities.length !== n) continue
+    const mean = qualities.reduce((t, q) => t + QUALITY_SCORE[q], 0) / n
+    if (mean > K) {
+      K = mean
+      kAnswer = key
+    }
+    const share = qualities.filter((q) => q === 'optimal').length / n
+    if (share > S) {
+      S = share
+      sAnswer = key
     }
   }
-  return { answers: [], reason: `motor ${view.kind} no enumerable` }
+  // Vista por identificador legible, sólo si es el mismo en todas las variantes.
+  const constantById = new Map<string, readonly SolutionQuality[]>()
+  const labels = keys.map((key) =>
+    spaces
+      .map((space) => space.labelOf?.(key))
+      .filter((id) => id !== undefined),
+  )
+  const stableLabels =
+    labels.length > 0 &&
+    labels.every(
+      (ids) => ids.length === instances.length && new Set(ids).size === 1,
+    )
+  if (stableLabels)
+    keys.forEach((key, index) => {
+      const id = labels[index]?.[0]
+      const qualities = constant.get(key)
+      if (id !== undefined && qualities !== undefined && qualities.length === n)
+        constantById.set(id, qualities)
+    })
+
+  const histogram = emptyReachable()
+  for (const quality of constant.get(kAnswer) ?? []) histogram[quality] += 1
+  return {
+    histogram,
+    R: randomTotal / n,
+    K,
+    kAnswer,
+    S,
+    sAnswer,
+    reachable,
+    constant: new Map([...constant].filter(([, q]) => q.length === n)),
+    constantById,
+    stanceLeaks,
+    optimalSignatures: optimalSignatures.size,
+  }
+}
+
+/** Políticas ingenuas: deterministas y ciegas a la respuesta esperada. */
+function auditByPolicies(
+  templateId: string,
+  instances: readonly Instance[],
+): Pick<BlindStrategyRow, 'policies' | 'reachable'> {
+  const reachable = emptyReachable()
+  const totals = new Map<
+    string,
+    {
+      sum: number
+      optimal: number
+      rejected: number
+      histogram: Record<SolutionQuality, number>
+    }
+  >()
+  for (const { variantId, instance, view } of instances) {
+    const space = responseSpaceOf(view)
+    const seen = new Set<SolutionQuality>()
+    for (const policy of space?.policies ?? []) {
+      const evaluated = evaluateTier(
+        templateId,
+        variantId,
+        instance,
+        policy.answer,
+        false,
+      )
+      const quality = evaluated ?? 'invalid'
+      seen.add(quality)
+      const entry = totals.get(policy.name) ?? {
+        sum: 0,
+        optimal: 0,
+        rejected: 0,
+        histogram: emptyReachable(),
+      }
+      if (evaluated === undefined) entry.rejected += 1
+      entry.histogram[quality] += 1
+      entry.sum += QUALITY_SCORE[quality]
+      if (quality === 'optimal') entry.optimal += 1
+      totals.set(policy.name, entry)
+    }
+    for (const tier of seen) reachable[tier] += 1
+  }
+  const policies = [...totals]
+    .map(([name, entry]) => ({
+      name,
+      mean: entry.sum / instances.length,
+      optimal: entry.optimal,
+      rejected: entry.rejected,
+      histogram: entry.histogram,
+    }))
+    .sort((a, b) => b.mean - a.mean || a.name.localeCompare(b.name))
+  return { policies, reachable }
 }
 
 /**
- * R, K y S de cada Template del catálogo cuyo espacio de respuestas es finito.
+ * R, K y S de cada Template del catálogo, con su modo de auditoría.
  *
  * Las variantes se recorren en el orden del catálogo y las respuestas en el
- * orden de presentación: la salida es determinista.
+ * orden que declara el espacio: la salida es determinista.
  */
 export function auditBlindStrategies(
   dependencies: EngineDependencies,
@@ -162,128 +328,144 @@ export function auditBlindStrategies(
   for (const [templateId, variantIds] of byTemplate) {
     if (only !== undefined && !only.includes(templateId)) continue
     const template = dependencies.catalog.template(templateId as never)
-    if (template === undefined) continue
+    if (template === undefined)
+      throw new Error(`Template ausente: ${templateId}`)
 
-    const byId = new Map<string, SolutionQuality[]>()
-    const byPosition = new Map<string, SolutionQuality[]>()
-    const reachable: Record<SolutionQuality, number> = {
-      optimal: 0,
-      efficient: 0,
-      functional: 0,
-      invalid: 0,
-    }
-    let kind = ''
-    let reason: string | undefined
-    let randomTotal = 0
-    let idSignature: string | undefined
-    let idsStable = true
-    let stanceLeaks = 0
-
-    for (const variantId of variantIds) {
+    const instances: Instance[] = variantIds.map((variantId) => {
       const instance = materializeVariant(template, {
         variantId: variantId as never,
         seed: 'blind-strategy-audit',
       })
-      const view = instance.present([])
-      kind = view.kind
-      const { answers, reason: skipped } = answersOf(view)
-      if (skipped !== undefined) {
-        reason = skipped
-        break
-      }
-      const signature = answers.map((a) => a.byId).join('|')
-      if (idSignature === undefined) idSignature = signature
-      else if (idSignature !== signature) idsStable = false
-
-      const seen = new Set<SolutionQuality>()
-      let sum = 0
-      let leaked = false
-      for (const candidate of answers) {
-        const result = instance.evaluate(candidate.answer, [])
-        if (!result.ok)
-          throw new Error(
-            `${templateId}/${variantId}: respuesta enumerada rechazada (${result.error.kind})`,
-          )
-        const quality = result.value.quality
-        for (const other of candidate.stanceVariants) {
-          const again = instance.evaluate(other, [])
-          if (!again.ok || again.value.quality !== quality) leaked = true
-        }
-        seen.add(quality)
-        sum += QUALITY_SCORE[quality]
-        for (const [map, key] of [
-          [byId, candidate.byId],
-          [byPosition, candidate.byPosition],
-        ] as const) {
-          const list = map.get(key) ?? []
-          list.push(quality)
-          map.set(key, list)
-        }
-      }
-      if (leaked) stanceLeaks += 1
-      randomTotal += sum / answers.length
-      for (const tier of seen) reachable[tier] += 1
+      return { variantId, instance, view: instance.present([]) }
+    })
+    const first = instances[0]
+    if (first === undefined) continue
+    const kind = first.view.kind
+    // Un Repaso no aporta evidencia competitiva (ADR-024), así que su K no es
+    // un exploit de puntaje aunque sea alto. Todo lo demás puntúa: `scoring.math`
+    // nunca es `'none'` por contrato.
+    const scoreBearing = template.placement !== 'recovery'
+    const base = {
+      templateId,
+      threshold: CONTRACT_THRESHOLDS[templateId],
+      histogram: emptyReachable(),
+      kind,
+      variants: instances.length,
+      scoreBearing,
+      R: Number.NaN,
+      K: Number.NaN,
+      kAnswer: '',
+      S: Number.NaN,
+      sAnswer: '',
+      policies: [] as readonly PolicyScore[],
+      constant: new Map<string, readonly SolutionQuality[]>(),
+      constantById: new Map<string, readonly SolutionQuality[]>(),
+      optimalSignatures: 0,
+      stanceLeaks: 0,
     }
 
-    const n = variantIds.length
-    if (reason !== undefined) {
+    const spaces = instances.map((entry) => responseSpaceOf(entry.view))
+    const unsupported = spaces.some((space) => space === undefined)
+    if (unsupported || spaces[0] === undefined) {
       rows.push({
-        templateId,
-        kind,
-        variants: n,
-        enumerable: false,
-        reason,
-        byPosition: false,
-        R: Number.NaN,
-        K: Number.NaN,
-        kAnswer: '',
-        S: Number.NaN,
-        sAnswer: '',
-        reachable,
-        constant: new Map(),
-        stanceLeaks: 0,
+        ...base,
+        mode: 'BLOCKED_BY_SPACE_WITH_REASON',
+        category: 'D',
+        reason: `la auditoría no sabe describir el espacio de respuesta de ${kind}`,
+        reachable: emptyReachable(),
       })
       continue
     }
 
-    const source = idsStable ? byId : byPosition
-    const constant = new Map(
-      [...source].filter(([, qualities]) => qualities.length === n),
+    const signatures = new Set(spaces.map((space) => space?.signature))
+    const cardinality = spaces[0].cardinality
+    const evaluations =
+      (cardinality ?? Number.POSITIVE_INFINITY) *
+      spaces.reduce(
+        (sum, space) => sum + (space?.evaluationsPerResponse ?? 1),
+        0,
+      )
+    const hasConstants = spaces.every(
+      (space) =>
+        space?.constantKeys !== undefined && space.resolve !== undefined,
     )
-    let K = -1
-    let kAnswer = ''
-    let S = -1
-    let sAnswer = ''
-    for (const [key, qualities] of constant) {
-      const mean =
-        qualities.reduce((total, q) => total + QUALITY_SCORE[q], 0) / n
-      if (mean > K) {
-        K = mean
-        kAnswer = key
-      }
-      const share = qualities.filter((q) => q === 'optimal').length / n
-      if (share > S) {
-        S = share
-        sAnswer = key
-      }
+
+    // Categoría C: la forma del espacio cambia entre variantes, así que «la
+    // misma respuesta» no significa lo mismo en dos variantes y no existe un
+    // vector constante comparable.
+    if (hasConstants && signatures.size > 1) {
+      rows.push({
+        ...base,
+        mode: 'AUDITED_BY_POLICIES' as const,
+        category: 'C',
+        reason: `el espacio de respuesta cambia entre variantes (${String(signatures.size)} formas distintas): no hay respuesta constante comparable`,
+        cardinality,
+        ...auditByPolicies(templateId, instances),
+      })
+      continue
     }
+
+    // Categoría B: hay vector constante, pero enumerarlo excede el presupuesto.
+    if (hasConstants && evaluations > EVALUATION_BUDGET) {
+      rows.push({
+        ...base,
+        mode: 'AUDITED_BY_POLICIES' as const,
+        category: 'B',
+        reason: `espacio de ${String(cardinality)} respuestas por variante: ${String(evaluations)} evaluaciones exceden el presupuesto de ${String(EVALUATION_BUDGET)}`,
+        cardinality,
+        evaluations,
+        ...auditByPolicies(templateId, instances),
+      })
+      continue
+    }
+
+    // Categoría D: motores de construcción, sin vector constante comparable.
+    if (!hasConstants) {
+      rows.push({
+        ...base,
+        mode: 'AUDITED_BY_POLICIES' as const,
+        category: 'D',
+        reason: `${kind} nombra posiciones, personas u horarios de cada variante: no hay respuesta constante comparable`,
+        cardinality,
+        ...auditByPolicies(templateId, instances),
+      })
+      continue
+    }
+
+    // Categoría A: enumeración exhaustiva del espacio constante.
+    const keys = spaces[0].constantKeys?.() ?? []
     rows.push({
-      templateId,
-      kind,
-      variants: n,
-      enumerable: true,
-      byPosition: !idsStable,
-      R: randomTotal / n,
-      K,
-      kAnswer,
-      S,
-      sAnswer,
-      reachable,
-      constant,
-      stanceLeaks,
+      ...base,
+      mode: 'AUDITED_EXHAUSTIVELY',
+      category: 'A',
+      reason:
+        'coordenadas semánticas estables; espacio completo dentro del presupuesto',
+      cardinality,
+      evaluations,
+      ...auditExhaustively(
+        templateId,
+        instances,
+        spaces as readonly ResponseSpace[],
+        keys,
+      ),
+      policies: [],
     })
   }
   return rows
+}
+
+// Contratos particulares: no participan del descubrimiento del espacio.
+const CONTRACT_THRESHOLDS: Readonly<Record<string, string>> = {
+  'y3.course-project-tech': 'RS-RA-002: K ≤ 65; S ≤ 35 %',
+  'y4.course-project-fundraiser': 'RS-RA-003: K ≤ 65; S ≤ 35 %',
+  'y3.transport-pass': 'K ≤ R + 10; S ≤ 40 %',
+  'y2.data-claim-review': 'K ≤ 75; S ≤ 60 %',
+  'y2.course-project-survey': 'K ≤ 60; S ≤ 35 %',
+  'y2.standings-claim': 'K ≤ 65; S ≤ 35 %',
+  'y5.stage-screen': 'K ≤ 78; S ≤ 40 %',
+  'y5.course-project-final': 'K ≤ 65; S ≤ 35 %',
+  'y5.next-step-options': 'K ≤ 65; S ≤ 35 %',
+  'g7.mural-paint': 'K ≤ 73',
 }
 
 const one = (value: number) => (Number.isNaN(value) ? '—' : value.toFixed(1))
@@ -299,7 +481,7 @@ export function formatReachable(
   ).join(' · ')
 }
 
-/** Tabla Markdown estable, para el reporte de remediación y el re-audit. */
+/** Tabla Markdown estable de R/K/S, para los reportes y el re-audit. */
 export function formatBlindStrategyTable(
   rows: readonly BlindStrategyRow[],
 ): string {
@@ -311,9 +493,44 @@ export function formatBlindStrategyTable(
     a.templateId.localeCompare(b.templateId),
   )) {
     lines.push(
-      row.enumerable
-        ? `| \`${row.templateId}\` | ${row.kind}${row.byPosition ? ' (por posición)' : ''} | ${String(row.variants)} | ${one(row.R)} | ${one(row.K)} | ${percent(row.S)} | ${formatReachable(row)} |`
-        : `| \`${row.templateId}\` | ${row.kind} | ${String(row.variants)} | — | — | — | no enumerable: ${row.reason ?? ''} |`,
+      row.mode === 'AUDITED_EXHAUSTIVELY'
+        ? `| \`${row.templateId}\` | ${row.kind} | ${String(row.variants)} | ${one(row.R)} | ${one(row.K)} | ${percent(row.S)} | ${formatReachable(row)} |`
+        : `| \`${row.templateId}\` | ${row.kind} | ${String(row.variants)} | — | — | — | ${row.mode}: ${row.reason ?? ''} |`,
+    )
+  }
+  return lines.join('\n')
+}
+
+/**
+ * Matriz de cobertura: una fila por Template del catálogo, con su modo, su
+ * cardinal y la mejor estrategia ciega que se le encontró.
+ */
+export function formatCoverageMatrix(
+  rows: readonly BlindStrategyRow[],
+): string {
+  const lines = [
+    '| Template | Motor | N | Puntuable | Categoría | Estado | Cardinal | Mejor estrategia ciega | Métrica | Histograma o/e/f/i | Umbral contractual | Razón |',
+    '|---|---|---|---|---|---|---|---|---|---|---|---|',
+  ]
+  for (const row of [...rows].sort((a, b) =>
+    a.templateId.localeCompare(b.templateId),
+  )) {
+    const best =
+      row.mode === 'AUDITED_EXHAUSTIVELY'
+        ? `constante \`${row.kAnswer}\``
+        : (row.policies[0]?.name ?? '—')
+    const metric =
+      row.mode === 'AUDITED_EXHAUSTIVELY'
+        ? `K ${one(row.K)} · S ${percent(row.S)}`
+        : row.policies[0] === undefined
+          ? '—'
+          : `política ${row.policies[0].mean.toFixed(1)} · óptima en ${String(row.policies[0].optimal)}/${String(row.variants)} · rechazadas ${String(row.policies[0].rejected)}`
+    const histogram =
+      row.mode === 'AUDITED_EXHAUSTIVELY'
+        ? row.histogram
+        : row.policies[0]?.histogram
+    lines.push(
+      `| \`${row.templateId}\` | ${row.kind} | ${String(row.variants)} | ${row.scoreBearing ? 'sí' : 'no'} | ${row.category} | ${row.mode} | ${row.cardinality === undefined ? '—' : String(row.cardinality)} | ${best} | ${metric} | ${histogram === undefined ? '—' : TIERS.map((tier) => histogram[tier]).join('/')} | ${row.threshold ?? 'sin techo; sólo medición'} | ${row.reason ?? '—'} |`,
     )
   }
   return lines.join('\n')

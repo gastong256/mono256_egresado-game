@@ -636,6 +636,71 @@ describe('RS-MAT-011 · la consigna de la peña', () => {
 })
 
 describe('inventario de feedback afirmativo · correcciones en el mismo alcance', () => {
+  it('RS-RA-001.6: una superposición interior no implica estar contra la pared', () => {
+    const courts = published(
+      'y2.court-zones',
+      (x) => courtSchema.parse(x),
+      createGrade2Dependencies(),
+      grade2VariantCatalog,
+    )
+    for (const p of courts) {
+      const placements = ['saque', 'pases', 'tiros'].map((objectId) => ({
+        objectId,
+        x: p.margin,
+        y: p.margin,
+        rotation: 0 as const,
+      }))
+      const result = evaluateCourt(p, placements)
+      if (!result.ok) throw new Error('rechazo inesperado')
+      expect(result.value.quality).toBe('invalid')
+      expect(result.value.feedback.violatedConstraint).toBe(
+        'Dos postas quedaron en la misma celda.',
+      )
+      expect(result.value.feedback.consequence).not.toContain('contra la pared')
+    }
+  })
+
+  it('RS-RA-001.6: justo significa margen cero, no cualquier functional', () => {
+    const flows = published(
+      'y4.school-event-flow',
+      (x) => flowSchema.parse(x),
+      createGrade4Dependencies(),
+      grade4VariantCatalog,
+    )
+    let positive = 0
+    for (const p of flows) {
+      const ids = ['puerta', 'acreditacion', 'buffet']
+      for (let a = 0; a <= 4; a++)
+        for (let b = 0; b <= 4; b++)
+          for (let c = 0; c <= 4; c++) {
+            const counts = [a, b, c]
+            const rate = Math.min(
+              ...p.stations.map(
+                (station, i) => station.base + station.perHelper * counts[i]!,
+              ),
+            )
+            const result = evaluateFlow(
+              p,
+              ids.map((itemId, i) => ({ itemId, quantity: counts[i]! })),
+            )
+            if (!result.ok) throw new Error('rechazo inesperado')
+            if (result.value.quality !== 'functional') continue
+            const margin = rate - p.people / p.slots
+            expect(margin).toBeGreaterThanOrEqual(0)
+            if (margin === 0)
+              expect(result.value.feedback.consequence).toContain('justo')
+            else {
+              positive++
+              expect(result.value.feedback.consequence).toContain(
+                `margen de ${String(margin)} personas`,
+              )
+              expect(result.value.feedback.consequence).not.toContain('justo')
+            }
+          }
+    }
+    expect(positive).toBeGreaterThan(0)
+  })
+
   it('y2.court-zones: el óptimo no dice «lo más separadas que permite la cancha»', () => {
     const courts = published(
       'y2.court-zones',

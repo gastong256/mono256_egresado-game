@@ -32,19 +32,21 @@ describe('2.º · el plan del Intercurso', () => {
     expect(TASKS).toHaveLength(ACTIVITIES.length * SLOTS.length)
   })
 
-  it('LOCKED · hay varios planes Math-válidos con consecuencias distintas de Equipo', () => {
-    for (const p of approved) {
-      const optimal = planOptions(p).filter(
+  // Cada variante conserva las mismas aserciones. Separarlas evita cargar toda
+  // la enumeración del catálogo en el timeout de un único caso (5139 ms con v8).
+  it.each(approved.map((params, index) => ({ params, index })))(
+    'LOCKED · variante $index: planes Math-válidos con distintas consecuencias de Equipo',
+    ({ params }) => {
+      const optimal = planOptions(params).filter(
         (plan) => plan.quality === 'optimal',
       )
       expect(optimal.length).toBeGreaterThan(1)
       expect(new Set(optimal.map((plan) => plan.team)).size).toBeGreaterThan(1)
-      // Y el Estilo describe la forma del reparto, no el resultado.
       expect(
         new Set(optimal.flatMap((plan) => plan.style ?? [])).size,
       ).toBeGreaterThan(1)
-    }
-  })
+    },
+  )
 
   it('el Equipo no mueve la calidad matemática', () => {
     for (const p of approved) {

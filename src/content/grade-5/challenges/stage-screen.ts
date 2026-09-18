@@ -184,7 +184,7 @@ export interface ScreenChoice {
   readonly quality: SolutionQuality
 }
 
-/** Oráculo independiente: las seis formas, con su nivel. */
+/** Witnesses de las seis formas; comparte tierOf, no es un oráculo independiente. */
 export function screenChoices(p: ScreenParams): readonly ScreenChoice[] {
   return WAYS.map((way) => ({ wayId: way.id, quality: tierOf(p, way.id) }))
 }

@@ -167,8 +167,9 @@ describe('2.º · la tabla del Intercurso', () => {
   })
 
   it.each(approved.map((p, i) => [i, p] as const))(
-    '%s: el oráculo independiente coincide con el evaluador en clasificación y postura',
+    '%s: la agregación coincide con el enumerador en clasificación y postura',
     (_, p) => {
+      // Comparte independentTruths: prueba agregación/postura, no verdad de las claims.
       for (const plan of standingsPlans(p)) {
         const result = evaluateStandings(p, plan.entries, plan.stance)
         expect(result.ok && result.value.quality).toBe(plan.quality)

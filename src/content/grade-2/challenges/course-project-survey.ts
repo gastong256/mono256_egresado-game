@@ -72,7 +72,7 @@ export const SURVEY_OPTIONS = [
  * La regla de publicación del curso, única fuente del criterio.
  *
  * Una opción «le ganó» a otra sólo si le saca **más de una de cada diez**
- * respuestas. El evaluador, el oráculo y el texto de la pantalla leen esta
+ * respuestas. El evaluador, los witnesses y el texto de la pantalla leen esta
  * constante: antes el criterio vivía sólo en el evaluador y el jugador tenía que
  * adivinar qué contaba como «con claridad» (MAT-003).
  */

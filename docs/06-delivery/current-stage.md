@@ -35,8 +35,8 @@ STAGE-08                                      IN_PROGRESS · CURRENT
     │   ├── Remediación Ronda 1                  DONE · 14 contratos
     │   ├── Re-Auditoría Ronda 1                  FAILED · 13/14 + 3 hallazgos nuevos
     │   ├── Adjudicación post-re-audit            DONE · 10 hallazgos, 4 P0
-    │   ├── Remediación Ronda 2 (dirigida)        NEXT · RS-RA-AUDIT-001 primero
-    │   ├── Re-Auditoría Ronda 2                  PENDING
+    │   ├── Remediación Ronda 2 (dirigida)        DONE · cinco contratos verificados
+    │   ├── Re-Auditoría Ronda 2                  NEXT
     │   └── Provisional Sign-Off                  BLOCKED
     ├── Revisión del Depto. de Matemática      DEFERRED · a Final Delivery / Pre-Release
     ├── Sign-off manual de la rueda            PENDING · humana
@@ -75,7 +75,7 @@ oficialización, el ranking y el servidor competitivo son STAGE-09. El techo de
 Prestige **ofrecido es 0** por decisión explícita (D-S08-084): la maquinaria
 existe y el servidor la recomputa, pero autorar una oportunidad competitiva
 exigiría inventar acciones de jugador que ninguna Template tiene. El contenido
-de 1.º a 5.º está en estado `draft`: faltan la remediación matemática y su
+de 1.º a 5.º está en estado `draft`: faltan la re-auditoría de ronda 2 y su
 sign-off provisional de IA, el sign-off manual de la rueda y el pacing empírico,
 gates de producción de STAGE-08. La remediación matemática cerró sus catorce
 contratos el 18 de septiembre —**ronda 1**—, y la **re-auditoría independiente** del
@@ -92,24 +92,24 @@ STAGE-07 sigue `DONE`: toda run válida completada egresa, con un Repaso máximo
 por etapa fuera del presupuesto ordinario y de FairScore.
 
 - Versiones: engine `10.0.0`, action log `7`, snapshot `8`. 7.º conserva ruleset
-  `0.4.0-grade-7`; contenido `0.10.0-grade-7` y catálogo `grade-7-dev-6`, con
-  `dev-1` a `dev-5` publicados sin cambios.
-  `7.º → 1.º`: contenido `1.1.0-grade-1`, catálogo `grade-1-dev-2`.
-  `7.º → 2.º`: contenido `2.2.0-grade-2`, catálogo `grade-2-dev-3`.
-  `7.º → 3.º`: contenido `3.2.0-grade-3`, catálogo `grade-3-dev-3`.
-  `7.º → 4.º`: contenido `4.2.0-grade-4`, catálogo `grade-4-dev-3`.
+  `0.4.0-grade-7`; contenido `0.11.0-grade-7` y catálogo `grade-7-dev-7`, con
+  `dev-1` a `dev-6` publicados sin cambios.
+  `7.º → 1.º`: contenido `1.2.0-grade-1`, catálogo `grade-1-dev-3`.
+  `7.º → 2.º`: contenido `2.3.0-grade-2`, catálogo `grade-2-dev-4`.
+  `7.º → 3.º`: contenido `3.3.0-grade-3`, catálogo `grade-3-dev-4`.
+  `7.º → 4.º`: contenido `4.3.0-grade-4`, catálogo `grade-4-dev-4`.
   `7.º → 5.º`: rulesets `5.3.0-grade-5-partial` y `5.3.0-grade-5-demo`, contenido
-  `5.3.0-grade-5`, catálogo `grade-5-dev-4`. Carrera completa: ruleset
+  `5.4.0-grade-5`, catálogo `grade-5-dev-5`. Carrera completa: ruleset
   `1.0.0-full-career` sobre ese mismo contenido y catálogo. Score
   `fair-score-dev-2@2.0.0-post-tg1-candidate` sin cambios. Los catálogos y
-  contenidos subieron con la remediación matemática (D-S08-109).
+  contenidos subieron con la ronda 2; los rulesets permanecen iguales.
 - Huellas: motor `4bcf054e` —se movió con la respuesta de recorrido y con la
   política de rareza—; ruleset de la carrera completa `7d41fddb`; contenido de la
-  carrera `72435ee3`.
-- Tests: 95 archivos y **1739 tests** de Vitest, **0 `todo`**; **158 E2E** de
+  carrera `92b6edb6`, con `5.4.0-grade-5`.
+- Tests: 96 archivos y **1883 tests** de Vitest, **0 `todo`**; **174 E2E** de
   Playwright en desktop y mobile, incluidos los recorridos de 1.º a 5.º, la
-  carrera completa y el barrido de accesibilidad del audit. Conteos remedidos por
-  la re-auditoría independiente el 18 de septiembre (MAT-RA-010).
+  carrera completa y el barrido de accesibilidad del audit. Conteos medidos en tres `pnpm verify` consecutivos de ronda 2; la baseline
+  histórica del re-audit fue 1739 tests y 158 E2E.
 - Simulación: 5000 runs de 7.º, 5000 de `7.º → 1.º`, 2000 del demo amplio y 200
   de cada práctica parcial de 2.º a 5.º egresadas, 0 hallazgos, peor caso un
   Repaso por etapa. La carrera completa se barre con seis políticas de juego
@@ -273,8 +273,8 @@ Independent Mathematics Re-Audit Round 1 — FAILED — REMEDIATION REQUIRED
 Post-Re-Audit Findings Adjudication — DONE
   10 hallazgos adjudicados · 4 P0 bloqueantes
   RS-RA-AUDIT-001 · RS-RA-001 · RS-RA-002 · RS-RA-003 · RS-RA-TEST-001
-Targeted Mathematics Remediation Round 2 — NEXT
-Independent Mathematics Re-Audit Round 2 — PENDING
+Targeted Mathematics Remediation Round 2 — DONE
+Independent Mathematics Re-Audit Round 2 — NEXT
 AI Mathematics Department Provisional Sign-Off — BLOCKED
 
 Human Mathematics Department Review
@@ -283,8 +283,7 @@ Human Mathematics Department Review
 Real-player pacing validation — PENDING
 
 Next:
-TARGETED POST-REAUDIT MATHEMATICS REMEDIATION,
-con WP-RA-AUDIT primero: reproducir los hallazgos antes de corregir
+INDEPENDENT MATHEMATICS RE-AUDIT ROUND 2
 ```
 
 La [auditoría de implementación de carrera completa](../04-quality/full-career-implementation-audit.md)
@@ -322,6 +321,10 @@ de Matemática humano sobre las 42 Templates queda diferida a la entrega final.
 Hasta eso, el contenido permanece `draft` y la edición `official: false`.
 
 ## Última reconciliación
+
+18 de septiembre de 2026: ronda 2 dirigida DONE (D-S08-127/128), cinco contratos
+verificados, seis catálogos republicados y tres verify consecutivos verdes.
+Re-auditoría independiente ronda 2 NEXT; STAGE-08 IN_PROGRESS. Sin push.
 
 18 de septiembre de 2026, al cierre: **adjudicación de los hallazgos posteriores a la
 re-auditoría**. Veredicto `COMPLETE · TARGETED REMEDIATION REQUIRED`. Los diez
@@ -374,3 +377,10 @@ nueve beats sobre el catálogo real, eventos raros, Prestige con techo ofrecido
 0, hitos, callbacks y epílogo con su pantalla—, auditoría de Estilo, barrido por
 políticas de juego y E2E de carrera. D-S08-056 cerrada con evidencia.
 Verificación completa en verde. Sin push.
+
+## Remediación dirigida de ronda 2 · verificación de cierre
+
+Los cinco contratos están implementados y los tres `pnpm verify` consecutivos
+exigidos por RS-RA-TEST-001 terminaron en PASS. La evidencia y la matriz de 42 Templates
+están en el [informe](../04-quality/targeted-post-reaudit-mathematics-remediation.md).
+Las decisiones de riesgo H-6/H-7, OQ-66/67 cerradas y R-S09-CAT siguen vigentes.

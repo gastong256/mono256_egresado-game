@@ -1,3 +1,8 @@
+import {
+  createGrade4Dependencies,
+  grade4VariantCatalog,
+} from '@/content/grade-4'
+import { publishedParams } from '../helpers/published-params'
 import { describe, expect, it } from 'vitest'
 import { bandOf, cognitiveLoad } from '@/game'
 import {
@@ -8,6 +13,7 @@ import {
   evaluateFundraiser,
   evaluateMarginReview,
   fundraiserGates,
+  fundraiserSchema,
   fundraiserPlans,
   generateFundraiser,
   generateMarginReview,
@@ -102,7 +108,7 @@ describe('4.º · Proyecto del Curso: la peña', () => {
     ).toBeGreaterThanOrEqual(2)
   })
 
-  it('el evaluador reproduce el oráculo y rechaza cantidades fuera de contrato', () => {
+  it('la agregación coincide con los witnesses y rechaza cantidades fuera de contrato', () => {
     for (const quality of ['optimal', 'efficient', 'functional'] as const) {
       const plan = plans.find((entry) => entry.quality === quality)
       if (plan === undefined) throw new Error(`falta un plan ${quality}`)
@@ -152,4 +158,107 @@ describe('4.º · Repaso de cubrir el costo fijo', () => {
     expect(marginReview.scoring?.team).toBe('none')
     expect(marginReview.scoring?.aura).toBe('none')
   })
+})
+
+// Independiente: no deriva ni la calidad ni la ganancia de readFundraiser/plans.
+describe('RS-RA-003 · catálogo publicado y oráculo independiente', () => {
+  const variants = publishedParams(
+    createGrade4Dependencies(),
+    grade4VariantCatalog,
+    'y4.course-project-fundraiser',
+    (x) => fundraiserSchema.parse(x),
+  )
+  it('distribuye al menos tres órdenes de margen por minuto sin mayoría', () => {
+    const orders = new Map<string, number>()
+    for (const p of variants) {
+      const order = [0, 1, 2]
+        .sort(
+          (a, b) =>
+            (p.items[b]!.price - p.items[b]!.cost) * p.items[a]!.minutes -
+              (p.items[a]!.price - p.items[a]!.cost) * p.items[b]!.minutes ||
+            a - b,
+        )
+        .join('>')
+      orders.set(order, (orders.get(order) ?? 0) + 1)
+    }
+    expect(orders.size).toBeGreaterThanOrEqual(3)
+    expect(Math.max(...orders.values()) * 2).toBeLessThanOrEqual(
+      variants.length,
+    )
+  })
+  it.each(variants.map((p, index) => ({ p, index })))(
+    'variante $index: todos los 630 planes y textos',
+    ({ p }) => {
+      const tiers = new Set<string>()
+      const styles = new Map<string, Set<string>>()
+      let best = -p.fixedCost,
+        bestWithSpare = -p.fixedCost
+      for (let a = 0; a <= 8; a++)
+        for (let b = 0; b <= 6; b++)
+          for (let c = 0; c <= 9; c++) {
+            const counts = [a, b, c]
+            const minutes = p.items.reduce(
+              (total, it, i) => total + it.minutes * counts[i]!,
+              0,
+            )
+            const profit = p.items.reduce(
+              (total, it, i) => total + (it.price - it.cost) * counts[i]!,
+              -p.fixedCost,
+            )
+            const expected =
+              minutes > p.kitchenMinutes || profit < 0
+                ? 'invalid'
+                : profit >= p.target + p.reserve
+                  ? 'optimal'
+                  : profit >= p.target
+                    ? 'efficient'
+                    : 'functional'
+            const result = evaluateFundraiser(
+              p,
+              ITEMS.map((it, i) => ({ itemId: it.id, quantity: counts[i]! })),
+            )
+            if (!result.ok) throw new Error('respuesta válida rechazada')
+            expect(result.value.quality).toBe(expected)
+            const text = result.value.feedback.consequence
+            if (minutes > p.kitchenMinutes)
+              expect(text).toContain('cocina no alcanza')
+            else if (profit < 0) expect(text).toContain('costando plata')
+            else if (profit < p.target) expect(text).toContain('no alcanza')
+            else if (profit < p.target + p.reserve)
+              expect(text).toContain('falta para el colchón')
+            else expect(text).toContain('queda un colchón')
+            if (minutes <= p.kitchenMinutes) best = Math.max(best, profit)
+            if (minutes * 4 < p.kitchenMinutes * 3)
+              bestWithSpare = Math.max(bestWithSpare, profit)
+            tiers.add(expected)
+            const style =
+              expected === 'invalid'
+                ? undefined
+                : minutes * 4 < p.kitchenMinutes * 3
+                  ? 'improvisador'
+                  : counts.filter((n) => n > 0).length <= 1
+                    ? 'estratega'
+                    : 'aplicado'
+            expect(result.value.careerEffects.estilo?.axis).toBe(style)
+            if (style) {
+              const seen = styles.get(style) ?? new Set<string>()
+              seen.add(expected)
+              styles.set(style, seen)
+            }
+          }
+      expect(tiers).toEqual(
+        new Set(['invalid', 'functional', 'efficient', 'optimal']),
+      )
+      expect(best).toBeGreaterThanOrEqual(p.target + p.reserve)
+      // El objetivo usa la capacidad de una estrategia con tiempo libre, sin
+      // exigir agotar cocina ni eliminar el witness de Estilo.
+      expect(bestWithSpare - (p.target + p.reserve)).toBeGreaterThanOrEqual(0)
+      expect(bestWithSpare - (p.target + p.reserve)).toBeLessThanOrEqual(3000)
+      for (const seen of styles.values())
+        expect(seen.size).toBeGreaterThanOrEqual(2)
+      expect(
+        [...styles.values()].filter((seen) => seen.has('optimal')).length,
+      ).toBeGreaterThanOrEqual(2)
+    },
+  )
 })

@@ -150,3 +150,10 @@ No son preguntas abiertas: son alcance excluido. Se listan para que nadie las re
 - grafo social y cuentas complejas;
 - chat;
 - monetización.
+
+### Evidencia de implementación de OQ-68 y OQ-69
+
+La ronda 2 implementa las decisiones ya cerradas: K/S 35,8/20 % para el proyecto
+de 3.º y 62,4/28 % para la peña; cobertura de las 42 Templates (24 exhaustivas,
+18 por políticas). Ver [informe](../04-quality/targeted-post-reaudit-mathematics-remediation.md).
+No reabre OQ-66/67 ni cierra las cuestiones humanas de OQ-70/71.

@@ -1,5 +1,5 @@
 import { ESLint } from 'eslint'
-import { describe, expect, it } from 'vitest'
+import { beforeAll, describe, expect, it } from 'vitest'
 
 const eslint = new ESLint({ cwd: process.cwd() })
 
@@ -7,6 +7,14 @@ async function ruleIds(source: string, filePath: string) {
   const [result] = await eslint.lintText(source, { filePath })
   return result?.messages.map((message) => message.ruleId) ?? []
 }
+
+// RS-RA-TEST-001: la resolución inicial costó 5575 ms bajo cobertura.
+// El presupuesto de preparación no cambia el timeout de ningún caso.
+beforeAll(async () => {
+  await eslint.lintText('export const value = 1', {
+    filePath: 'src/game/core/lint-warmup.ts',
+  })
+}, 15_000)
 
 describe('architecture lint policy', () => {
   it.each([

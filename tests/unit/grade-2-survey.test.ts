@@ -65,6 +65,8 @@ function ladder(truths: readonly boolean[], published: readonly boolean[]) {
   return quality
 }
 
+// surveyPlans comparte surveyClaims con el evaluador: sus comparaciones prueban
+// agregación, no una verdad independiente de cada afirmación (RS-RA-AUDIT-001.7).
 describe('2.º · la encuesta del Proyecto del Curso', () => {
   it('publica un catálogo suficiente en sus cuatro formas semánticas', () => {
     expect(approved.length).toBeGreaterThanOrEqual(20)
@@ -146,7 +148,7 @@ describe('2.º · la encuesta del Proyecto del Curso', () => {
     }
   })
 
-  it('RS-MAT-003: pantalla, evaluador y oráculo leen la misma regla de publicación', () => {
+  it('RS-MAT-003: pantalla y evaluador comparten la regla de publicación verificada', () => {
     expect(PUBLICATION_RULE_TEXT).toContain(
       `más de 1 de cada ${String(PUBLICATION_RULE.oneIn)} respuestas`,
     )

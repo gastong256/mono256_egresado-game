@@ -173,3 +173,18 @@ según el signo del error, contenido `3.2.0-grade-3`. La práctica parcial `7.º
 
 **Rareza.** `rare.y3.offline-project` sigue siendo hook, por la misma razón que
 el de 2.º (D-S08-067).
+
+## Remediación dirigida de ronda 2 · proyecto tecnológico
+
+RS-RA-002 conserva STANDARD/MEDIUM/PROJECT, máximos 10/10/12, Equipo independiente
+y `rate-capacity-review`. El generador 2 amplía a doce objetivos; once aparecen
+en las 25 variantes publicadas. Ajusta notebook, pendrive y laboratorio por tasa:
+23–53 minutos de notebook, 1050–3200 MB y 5–29 minutos. Las formas publicadas
+son pendrive corto (9), laboratorio corto (8) y notebook corta (8).
+
+El supremo publicado `(6,7,8)` necesita 55 minutos de notebook y no cabe en
+ninguna variante. Cada variante conserva los tres niveles válidos, un óptimo
+con Equipo máximo y dos evidencias de Equipo. Los 1573 vectores completos por
+variante dan 116 óptimos distintos, K 35,8 y S 20 %, bajo K≤65/S≤35 %.
+Contenido `3.3.0-grade-3`, catálogo `grade-3-dev-4`; ver
+[informe de implementación](../04-quality/targeted-post-reaudit-mathematics-remediation.md).

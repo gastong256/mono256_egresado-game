@@ -83,6 +83,7 @@
 04-quality/post-reaudit-mathematics-remediation-spec.md
 04-quality/post-teacher-gate-1-score-audit.md
 04-quality/rs-mat-008-blind-ceiling-final-adjudication.md
+04-quality/targeted-post-reaudit-mathematics-remediation.md
 04-quality/testing-strategy.md
 04-quality/threat-model.md
 04-quality/variant-validation-and-audit.md

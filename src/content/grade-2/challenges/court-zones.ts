@@ -342,7 +342,7 @@ export function evaluateCourt(
           quality === 'optimal'
             ? 'Las postas quedan con dos celdas o más de separación sobre lo pedido y ninguna cola se mezcla con otra.'
             : quality === 'invalid'
-              ? 'Con esa distribución dos postas se pisan y la posta de saque termina jugando contra la pared.'
+              ? 'La distribución necesita ajustes antes de armar las postas.'
               : 'Las postas entran, aunque quedan más juntas de lo que la cancha permitía.',
       },
       {},

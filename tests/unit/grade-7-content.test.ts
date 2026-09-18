@@ -733,6 +733,144 @@ describe('el acto · marcar todo nunca alcanza', () => {
   })
 })
 
+describe('RS-RA-001 · el Repaso del colectivo nombra la concepción errónea con signo', () => {
+  /**
+   * La rama decidía con `|respuesta − viajeDeHoy| = viajeNormal`, y un valor
+   * absoluto tiene dos raíces: además de la demora sola —el error real, por
+   * debajo— disparaba en `viajeDeHoy + viajeNormal`, donde el jugador contó el
+   * viaje normal **dos veces**. Ahí el texto «Faltaba sumarle el viaje normal»
+   * afirmaba lo contrario de lo que había pasado, en 26 de 26 variantes
+   * (MAT-RA-001).
+   *
+   * La expectativa se deriva de la aritmética de la variante —el viaje de hoy es
+   * el normal más su porcentaje— y no de la condición de rama, para que el test
+   * no sea su propio oráculo.
+   */
+  const review = grade7Challenges.find(
+    (template) => template.id === 'g7.bus-travel-review',
+  )
+  if (review === undefined) throw new Error('falta g7.bus-travel-review')
+
+  const approved = grade7VariantCatalog.entries
+    .filter((entry) => entry.templateId === 'g7.bus-travel-review')
+    .map((entry) => entry.variantId)
+
+  interface Case {
+    readonly variantId: string
+    readonly scheduled: number
+    readonly extra: number
+    readonly exact: number
+    readonly range: { readonly min: number; readonly max: number }
+    readonly instance: ReturnType<typeof materializeVariant>
+  }
+
+  const cases: Case[] = approved.map((variantId) => {
+    const instance = materializeVariant(review, {
+      variantId,
+      seed: 'rs-ra-001',
+    })
+    const view = instance.present([])
+    if (view.kind !== 'numeric-input')
+      throw new Error('el Repaso dejó de ser una entrada numérica')
+    const scheduled = Number(
+      view.data.find((datum) => datum.label === 'Viaje normal')?.value ?? '0',
+    )
+    const percent = Number(
+      (
+        view.data.find((datum) => datum.label === 'Demora de hoy')?.value ?? '0'
+      ).replace(/[^0-9]/gu, ''),
+    )
+    // Derivación independiente: el viaje de hoy es el normal más su porcentaje.
+    const extra = (scheduled * percent) / 100
+    return {
+      variantId,
+      scheduled,
+      extra,
+      exact: scheduled + extra,
+      range: { min: Number(view.min), max: Number(view.max) },
+      instance,
+    }
+  })
+
+  const CAUSE = /Faltaba sumarle el viaje normal/u
+
+  it('deriva el viaje de hoy de los datos visibles y coincide con el nivel óptimo', () => {
+    expect(cases).toHaveLength(26)
+    for (const entry of cases) {
+      expect(Number.isInteger(entry.extra)).toBe(true)
+      const result = entry.instance.evaluate(
+        { kind: 'numeric-input', value: String(entry.exact) },
+        [],
+      )
+      expect(result.ok && result.value.quality).toBe('optimal')
+    }
+  })
+
+  it('la rama de la concepción errónea dispara sólo en la demora sola', () => {
+    for (const entry of cases) {
+      for (let value = entry.range.min; value <= entry.range.max; value += 1) {
+        const result = entry.instance.evaluate(
+          { kind: 'numeric-input', value: String(value) },
+          [],
+        )
+        expect(result.ok).toBe(true)
+        if (!result.ok) throw new Error('rechazo dentro del rango presentado')
+        expect(entry.range).toEqual({ min: 0, max: 120 })
+        const gap = Math.abs(value - entry.exact)
+        expect(result.value.quality).toBe(
+          value === entry.exact
+            ? 'optimal'
+            : value === entry.extra
+              ? 'functional'
+              : gap <= 2
+                ? 'efficient'
+                : 'invalid',
+        )
+        const feedback = result.value.feedback
+        const claimsTheCause = CAUSE.test(feedback.consequence ?? '')
+        expect(claimsTheCause).toBe(value === entry.extra)
+      }
+    }
+  })
+
+  it('contar el viaje normal dos veces ya no recibe el texto de haberlo omitido', () => {
+    for (const entry of cases) {
+      const twin = entry.exact + entry.scheduled
+      if (twin > entry.range.max) continue
+      const result = entry.instance.evaluate(
+        { kind: 'numeric-input', value: String(twin) },
+        [],
+      )
+      expect(result.ok).toBe(true)
+      if (!result.ok) continue
+      const feedback = result.value.feedback as { consequence?: string }
+      expect(CAUSE.test(feedback.consequence ?? '')).toBe(false)
+      // Se pasó por el viaje normal entero: queda fuera de la banda de cerca.
+      expect(result.value.quality).toBe('invalid')
+    }
+  })
+
+  it('la demora sola conserva su nivel y su explicación', () => {
+    for (const entry of cases) {
+      const result = entry.instance.evaluate(
+        { kind: 'numeric-input', value: String(entry.extra) },
+        [],
+      )
+      expect(result.ok).toBe(true)
+      if (!result.ok) continue
+      expect(result.value.quality).toBe('functional')
+      const feedback = result.value.feedback as { consequence?: string }
+      expect(CAUSE.test(feedback.consequence ?? '')).toBe(true)
+    }
+  })
+
+  it('sigue fuera de FairScore y con el mismo rol', () => {
+    expect(review.placement).toBe('recovery')
+    expect(review.scoring.team).toBe('none')
+    expect(review.scoring.aura).toBe('none')
+  })
+})
+
 describe('el content set', () => {
   it('declara ocho plantillas y diez storylets', () => {
     // Siete ordinarias más una de recuperación; nueve storylets del arco más el

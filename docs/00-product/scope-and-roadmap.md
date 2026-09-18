@@ -160,3 +160,11 @@ beats ordinarios. Los targets de formas semánticas y materializaciones están e
 antes de G1 salvo BLOCKER genuino. Teacher Demo sigue separado y orientado a
 amplitud. Fair v1 repite una Competition Seed compartida por edición; Practice
 ofrece variedad procedural, sin rank oficial.
+
+## Seguimiento de la remediación matemática de ronda 2
+
+Las correcciones de MAT-RA-001/002/003/006/008 están DONE con tres
+`pnpm verify` consecutivos en verde. El [informe](../04-quality/targeted-post-reaudit-mathematics-remediation.md)
+conserva contratos y mediciones. STAGE-08 sigue IN_PROGRESS; después corresponde
+Independent Mathematics Re-Audit Round 2. Sign-off provisional bloqueado hasta
+su PASS, revisión humana diferida y pacing real pendiente.

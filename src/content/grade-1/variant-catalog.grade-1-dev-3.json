@@ -1,6 +1,6 @@
 {
-  "catalogVersion": "grade-1-dev-2",
-  "contentVersion": "1.1.0-grade-1",
+  "catalogVersion": "grade-1-dev-3",
+  "contentVersion": "1.2.0-grade-1",
   "generators": [
     {
       "templateId": "g7.bus-latest-departure",

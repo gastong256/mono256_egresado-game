@@ -136,3 +136,23 @@ El catálogo ya existe y usa direcciones semánticas, no posiciones ni seeds gua
 Las bandas y sus casos estructurales existen. Lo futuro es su calibración docente/empírica y el catálogo oficial congelado con el que se vaya a competir.
 
 Regla que ya está escrita y sigue valiendo: no crear goldens que congelen decisiones todavía abiertas.
+
+## Auditoría permanente por capacidad · RS-RA-AUDIT-001
+
+`pnpm game:blind-audit -- --coverage --keys --timing` informa las 42 Templates,
+con 24 espacios constantes enumerados y 18 auditorías por políticas. La capacidad
+se deriva de la presentación: firma semántica estable, cardinalidad y mapeo de
+respuesta. A enumera; B supera el presupuesto; C cambia coordenadas entre
+variantes; D necesita políticas por geometría, calendario o recorrido. Cada fila
+declara estado, razón y techo contractual si existe; no hay techo universal.
+
+El presupuesto técnico es 60.000 evaluaciones por Template, posturas incluidas:
+el máximo actual es 54.675, y el barrido final medido cuesta 938,3 ms (peor
+Template 268,0 ms); bajo carga concurrente también se observaron 1,133–2,045 s. Las políticas miran datos presentados,
+no soluciones: mínimos/máximos/mitad/proporciones, asignaciones cíclicas o
+balanceadas, agendas por orden, primer hueco espacial, rutas por orden/vecino,
+y grillas/clasificaciones constantes o alternadas. Rechazos se cuentan aparte.
+
+El [informe de ronda 2](targeted-post-reaudit-mathematics-remediation.md) incluye
+la matriz completa, baseline reproducida y límites del método. Los helpers que
+comparten evaluador prueban agregación; no se presentan como oráculos independientes.

@@ -151,3 +151,5 @@ Se agregan, desde la integración del Project Blueprint v0.2:
 - acento visual por año y producción del pack raster, ambos diferidos al sistema de diseño.
 
 Estas preguntas están registradas en [preguntas abiertas](07-reference/open-questions.md) y deben cerrarse en la fuente autoritativa correspondiente cuando exista evidencia o decisión docente, actualizando el [registro de decisiones](07-reference/decision-register.md), la trazabilidad y el ADR cuando aplique.
+
+- [x] Ronda 2: implementación, matriz 42/42 y verificación completa en [el reporte](04-quality/targeted-post-reaudit-mathematics-remediation.md); re-audit independiente separado.

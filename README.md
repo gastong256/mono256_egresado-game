@@ -91,3 +91,11 @@ ESLint y un `tsconfig` aislado del game core hacen cumplir estas fronteras. El n
 - [ADR-013: aritmética racional exacta](docs/03-architecture/adr/ADR-013-exact-rational-arithmetic.md)
 
 Vercel continúa siendo la topología canónica prevista para producción; la imagen Docker es un artefacto portable y de paridad, no una decisión de proveedor alternativa. Ningún despliegue público está habilitado en esta base.
+
+## Estado de la remediación matemática
+
+La [ronda 2](docs/04-quality/targeted-post-reaudit-mathematics-remediation.md)
+está DONE con tres `pnpm verify` consecutivos en verde. STAGE-08 sigue IN_PROGRESS;
+el siguiente gate es Independent Mathematics Re-Audit Round 2. No constituye
+sign-off provisional ni revisión humana. Estado completo en
+[la etapa actual](docs/06-delivery/current-stage.md).
