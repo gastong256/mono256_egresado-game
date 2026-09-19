@@ -153,3 +153,4 @@ Se agregan, desde la integración del Project Blueprint v0.2:
 Estas preguntas están registradas en [preguntas abiertas](07-reference/open-questions.md) y deben cerrarse en la fuente autoritativa correspondiente cuando exista evidencia o decisión docente, actualizando el [registro de decisiones](07-reference/decision-register.md), la trazabilidad y el ADR cuando aplique.
 
 - [x] Ronda 2: implementación, matriz 42/42 y verificación completa en [el reporte](04-quality/targeted-post-reaudit-mathematics-remediation.md); re-audit independiente separado.
+- [x] Re-auditoría independiente de ronda 2: los cinco contratos verificados desde afuera y el veredicto `FAILED` con sus tres bloqueantes, en [la re-auditoría de ronda 2](04-quality/independent-mathematics-reaudit-round-2.md); adjudicación de ronda 3 pendiente.

@@ -105,6 +105,7 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 - `mathematics-department-ai-adjudication.md`: adjudicación del Chair sobre MAT-001…MAT-013 y los hallazgos nuevos, con gobernanza, evidencia y banderas para la revisión humana final.
 - `mathematics-remediation-spec.md`: contrato canónico de la remediación matemática, con criterios de aceptación, tests, mediciones y superficie de versión por hallazgo.
 - `independent-mathematics-reaudit.md`: re-auditoría matemática independiente de la remediación completa, con la re-derivación del techo de la pantalla del acto, la tabla R/K/S propia y los diez hallazgos nuevos.
+- `independent-mathematics-reaudit-round-2.md`: re-auditoría independiente de la ronda 2, con los cinco contratos verificados desde afuera y las estrategias de reemplazo que hacen fallar el gate igual.
 - `rs-mat-008-blind-ceiling-final-adjudication.md`: prueba del menor techo de estrategia ciega factible para la pantalla del acto, con el catálogo testigo que lo alcanza y la enmienda que cierra la remediación.
 - `mathematics-remediation-contract-conflict-adjudication.md`: adjudicación de los dos conflictos internos del contrato de remediación, con el prototipo que mide la factibilidad, la enmienda del criterio 3 y el punto de decisión que sigue abierto.
 - `mathematics-remediation-implementation.md`: implementación de la remediación matemática, con veredicto `BLOCKED`, evidencia por contrato, estrategia ciega antes y después, versiones y los dos STOP con su punto de decisión.

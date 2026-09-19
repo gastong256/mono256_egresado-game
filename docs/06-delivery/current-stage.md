@@ -36,8 +36,9 @@ STAGE-08                                      IN_PROGRESS · CURRENT
     │   ├── Re-Auditoría Ronda 1                  FAILED · 13/14 + 3 hallazgos nuevos
     │   ├── Adjudicación post-re-audit            DONE · 10 hallazgos, 4 P0
     │   ├── Remediación Ronda 2 (dirigida)        DONE · cinco contratos verificados
-    │   ├── Re-Auditoría Ronda 2                  NEXT
-    │   └── Provisional Sign-Off                  BLOCKED
+    │   ├── Re-Auditoría Ronda 2                  FAILED · 5/5 contratos PASS, 3 hallazgos bloqueantes
+    │   ├── Adjudicación Ronda 3                  NEXT
+    │   └── Provisional Sign-Off                  BLOCKED · NOT READY
     ├── Revisión del Depto. de Matemática      DEFERRED · a Final Delivery / Pre-Release
     ├── Sign-off manual de la rueda            PENDING · humana
     └── Pacing empírico con jugadores          PENDING · humana
@@ -273,9 +274,13 @@ Independent Mathematics Re-Audit Round 1 — FAILED — REMEDIATION REQUIRED
 Post-Re-Audit Findings Adjudication — DONE
   10 hallazgos adjudicados · 4 P0 bloqueantes
   RS-RA-AUDIT-001 · RS-RA-001 · RS-RA-002 · RS-RA-003 · RS-RA-TEST-001
-Targeted Mathematics Remediation Round 2 — DONE
-Independent Mathematics Re-Audit Round 2 — NEXT
-AI Mathematics Department Provisional Sign-Off — BLOCKED
+Targeted Mathematics Remediation Round 2 — DONE (5 contratos, los 5 PASS)
+Independent Mathematics Re-Audit Round 2 — FAILED — REMEDIATION REQUIRED
+  los 5 contratos escritos verificados de forma independiente y en verde
+  MAT-RA2-001 BLOCKER y3.course-project-tech, copiar el objetivo de pantalla: K 100 / S 100 %
+  MAT-RA2-002 BLOCKER y4.course-project-fundraiser, «menos minutos primero»: K 100 / S 100 %
+  MAT-RA2-003 HIGH    la auditoría permanente no puede ver esa clase de estrategia
+AI Mathematics Department Provisional Sign-Off — NOT READY / BLOCKED
 
 Human Mathematics Department Review
 — DEFERRED TO FINAL DELIVERY / PRE-RELEASE
@@ -321,6 +326,18 @@ de Matemática humano sobre las 42 Templates queda diferida a la entrega final.
 Hasta eso, el contenido permanece `draft` y la edición `official: false`.
 
 ## Última reconciliación
+
+19 de septiembre de 2026: **re-auditoría matemática independiente de la ronda 2**.
+Veredicto `FAILED — REMEDIATION REQUIRED`. Los cinco contratos escritos se verificaron
+desde afuera y **los cinco pasan** —RA-001 con las 3146 respuestas enumeradas, RA-002 en
+K 35,8 / S 20 %, RA-003 en K 62,4 / S 28 %, la auditoría con 42 filas y la detección
+genérica de la clase vieja probada sobre el catálogo anterior—. El gate falla igual: dos
+Templates `anchor` puntuables admiten una estrategia reutilizable **más simple** que la
+que la ronda 2 eliminó, con K 100 y S 100 % cada una, y la auditoría permanente no puede
+detectar esa clase. Tres hallazgos bloqueantes nuevos, MAT-RA2-001 a MAT-RA2-003.
+Producto intacto; siguiente gate, adjudicación. Detalle en la
+[re-auditoría de ronda 2](../04-quality/independent-mathematics-reaudit-round-2.md).
+Sin push.
 
 18 de septiembre de 2026: ronda 2 dirigida DONE (D-S08-127/128), cinco contratos
 verificados, seis catálogos republicados y tres verify consecutivos verdes.
