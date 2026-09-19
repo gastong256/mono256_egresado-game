@@ -75,13 +75,55 @@ describe('3.º · Proyecto del Curso: la feria de tecnología', () => {
 
   it('lo que ocupa el pendrive es lo mismo que hay que subir', () => {
     const lines = ITEMS.map((item) => ({ itemId: item.id, quantity: 2 }))
-    const { megabytes } = usage(lines)
+    const { megabytes } = usage(sample, lines)
     expect(megabytes).toBe(
-      ITEMS.reduce((total, item) => total + item.megabytes * 2, 0),
+      sample.rates.reduce((total, rate) => total + rate.megabytes * 2, 0),
     )
     expect(uploadMinutes(sample, megabytes)).toBe(
       Math.ceil(megabytes / sample.uploadRate),
     )
+  })
+
+  it('lo prometido es un total y ningún vector copiado de la pantalla lo alcanza', () => {
+    for (const params of approved.slice(0, 40)) {
+      // Copiar el piso de la feria en las tres casillas: válido, nunca óptimo.
+      const floor = ITEMS.map((item) => ({
+        itemId: item.id,
+        quantity: params.minimum[item.id],
+      }))
+      const read = readTech(params, floor)
+      expect(read.quality).not.toBe('optimal')
+      // Y lo prometido no es un vector: es la suma.
+      expect(params.promised).toBeGreaterThan(
+        params.minimum.video +
+          params.minimum.entrevistas +
+          params.minimum.laminas,
+      )
+    }
+  })
+
+  it('las tasas cambian entre variantes, así que no hay una cosa barata siempre', () => {
+    const cheapestByNotebook = new Set<number>()
+    const cheapestByMegabytes = new Set<number>()
+    for (const params of approved.slice(0, 40)) {
+      const rates = [...params.rates]
+      cheapestByNotebook.add(
+        rates.indexOf(
+          rates.reduce((best, rate) =>
+            rate.notebook < best.notebook ? rate : best,
+          ),
+        ),
+      )
+      cheapestByMegabytes.add(
+        rates.indexOf(
+          rates.reduce((best, rate) =>
+            rate.megabytes < best.megabytes ? rate : best,
+          ),
+        ),
+      )
+    }
+    expect(cheapestByNotebook.size).toBeGreaterThanOrEqual(2)
+    expect(cheapestByMegabytes.size).toBeGreaterThanOrEqual(2)
   })
 
   it('el reparto por dueño no cambia la calidad matemática', () => {
@@ -163,11 +205,10 @@ describe('RS-RA-002 · catálogo publicado y oráculo independiente', () => {
     'y3.course-project-tech',
     (x) => techSchema.parse(x),
   )
-  const supremum = {
-    video: Math.max(...variants.map((p) => p.target.video)),
-    entrevistas: Math.max(...variants.map((p) => p.target.entrevistas)),
-    laminas: Math.max(...variants.map((p) => p.target.laminas)),
-  }
+  const everything = ITEMS.map((item) => ({
+    itemId: item.id,
+    quantity: item.max,
+  }))
   it.each(variants.map((p, index) => ({ p, index })))(
     'variante $index: todos los 1573 planes',
     ({ p }) => {
@@ -176,8 +217,9 @@ describe('RS-RA-002 · catálogo publicado y oráculo independiente', () => {
       for (let v = 0; v <= 10; v++)
         for (let e = 0; e <= 10; e++)
           for (let l = 0; l <= 12; l++) {
-            const nb = 4 * v + e + 3 * l,
-              mb = 350 * v + 60 * e + 20 * l
+            const [rv, re, rl] = p.rates
+            const nb = rv.notebook * v + re.notebook * e + rl.notebook * l
+            const mb = rv.megabytes * v + re.megabytes * e + rl.megabytes * l
             const valid =
               nb <= p.notebookMinutes &&
               mb <= p.megabytes &&
@@ -185,15 +227,12 @@ describe('RS-RA-002 · catálogo publicado y oráculo independiente', () => {
               v >= p.minimum.video &&
               e >= p.minimum.entrevistas &&
               l >= p.minimum.laminas
-            const met =
-              Number(v >= p.target.video) +
-              Number(e >= p.target.entrevistas) +
-              Number(l >= p.target.laminas)
+            const pieces = v + e + l
             const expected = !valid
               ? 'invalid'
-              : met === 3
+              : pieces >= p.promised
                 ? 'optimal'
-                : met === 2
+                : pieces + 2 >= p.promised
                   ? 'efficient'
                   : 'functional'
             const lines = [
@@ -204,13 +243,15 @@ describe('RS-RA-002 · catálogo publicado y oráculo independiente', () => {
             const result = evaluateTech(p, lines)
             if (!result.ok) throw new Error('respuesta válida rechazada')
             expect(result.value.quality).toBe(expected)
-            const loads = { nico: 4 * v, sofi: e, tomi: 3 * l }
+            const carga = [rv.notebook * v, re.notebook * e, rl.notebook * l]
+            const loads: Record<TechParams['tight'], number> = {
+              nico: rv.notebook * v,
+              sofi: re.notebook * e,
+              tomi: rl.notebook * l,
+            }
             const team = valid
               ? Number(v > 0 && e > 0 && l > 0) +
-                Number(
-                  Math.max(4 * v, e, 3 * l) - Math.min(4 * v, e, 3 * l) <=
-                    p.spread,
-                ) +
+                Number(Math.max(...carga) - Math.min(...carga) <= p.spread) +
                 Number(loads[p.tight] <= p.tightCap)
               : 0
             expect(result.value.metrics.efficiency).toBe(team / 3)
@@ -221,13 +262,8 @@ describe('RS-RA-002 · catálogo publicado y oráculo independiente', () => {
         new Set(['invalid', 'functional', 'efficient', 'optimal']),
       )
       expect(perfectTeam).toBe(true)
-      const dominating = evaluateTech(
-        p,
-        Object.entries(supremum).map(([itemId, quantity]) => ({
-          itemId,
-          quantity,
-        })),
-      )
+      // Producir el máximo de todo nunca entra: los recursos aprietan.
+      const dominating = evaluateTech(p, everything)
       expect(dominating.ok && dominating.value.quality).toBe('invalid')
     },
   )

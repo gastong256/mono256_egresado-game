@@ -7,7 +7,19 @@
  */
 
 /*
- * El contenido sube a 0.10.0 por la remediación matemática del 2026-09-17. Tres
+ * El contenido sube a 0.12.0 por el sprint de cierre matemático de STAGE-08.
+ * Una sola cosa cambia y no es una regla: `g7.group-tasks` pasa de dos equipos
+ * autorados a seis. Con dos, el mejor reparto de los dos coincidía en la
+ * **posición** —a cada quien su tarea de tres estrellas— y repetir ese patrón
+ * sin mirar las horas rendía el máximo en las dos variantes publicadas
+ * (MAT-RA2-004). Los cuatro equipos nuevos tienen a alguien sin horas para la
+ * tarea que mejor le sale, así que el mejor reparto es otro en cada uno.
+ *
+ * El ruleset **no** sube: ninguna política de score, dificultad, perfil ni
+ * progresión cambió.
+ *
+ * El contexto anterior, de cuando el contenido subió a 0.10.0 por la
+ * remediación matemática del 2026-09-17. Tres
  * cosas cambian y ninguna es una regla:
  *
  * - el feedback de acierto de `g7.notebook-offer` ahora dice qué descuento era
@@ -64,7 +76,7 @@
  * cambió algo que no cambió.
  */
 export const GRADE_7_RULESET_VERSION = '0.4.0-grade-7'
-export const GRADE_7_CONTENT_VERSION = '0.11.0-grade-7'
+export const GRADE_7_CONTENT_VERSION = '0.12.0-grade-7'
 
 /**
  * El ruleset de una partida **compuesta** de 7.º.
@@ -102,5 +114,8 @@ export const GRADE_7_COMPOSED_RULESET_VERSION = '0.2.0-grade-7-composed'
  * aprobadas: el gate de balance del mural rechaza direcciones que antes se
  * aprobaban, así que parte de sus entradas generadas es otra. `dev-5` queda
  * publicado tal como estaba.
+ *
+ * `grade-7-dev-8` suma las cuatro variantes autoradas nuevas del trabajo
+ * grupal. Ninguna dirección generada se movió; la población sube en cuatro.
  */
-export const GRADE_7_VARIANT_CATALOG_VERSION = 'grade-7-dev-7'
+export const GRADE_7_VARIANT_CATALOG_VERSION = 'grade-7-dev-8'

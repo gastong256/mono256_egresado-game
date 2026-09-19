@@ -60,31 +60,38 @@ export const CREW = [
 export const ITEMS = [
   {
     id: 'video',
-    label: 'Minutos de video',
-    /** Minutos de notebook que pide editar un minuto de video. */
-    notebook: 4,
-    /** Lo que ocupa, en MB. Lo mismo que después hay que subir. */
-    megabytes: 350,
+    label: 'Videos cortos',
     max: 10,
   },
   {
     id: 'entrevistas',
     label: 'Entrevistas grabadas',
-    notebook: 1,
-    megabytes: 60,
     max: 10,
   },
   {
     id: 'laminas',
     label: 'Láminas del stand',
-    notebook: 3,
-    megabytes: 20,
     max: 12,
   },
 ] as const
 export type ItemId = (typeof ITEMS)[number]['id']
 
 const smallCount = z.number().int().min(0).max(12)
+/**
+ * Lo que gasta **una** pieza de una cosa, en esta variante.
+ *
+ * Las tasas son parámetro, no constante del módulo. Con tasas fijas en todo el
+ * catálogo hay una única cosa «barata» —la misma siempre— y un orden de
+ * prioridad fijo resuelve cualquier variante sin leer un número; además el
+ * jugador las memoriza una vez y no vuelve a mirarlas. Con tasas por variante,
+ * cuál conviene depende de **qué recurso aprieta acá**, que es el constructo.
+ */
+const rate = z.strictObject({
+  /** Minutos de notebook que pide editar una pieza. */
+  notebook: z.number().int().min(1).max(12),
+  /** Lo que ocupa, en MB. Lo mismo que después hay que subir. */
+  megabytes: z.number().int().min(10).max(400).multipleOf(10),
+})
 export const techSchema = z
   .strictObject({
     shape: z.enum(['pendrive-corto', 'laboratorio-corto', 'notebook-corta']),
@@ -95,17 +102,16 @@ export const techSchema = z
     /** Minutos de laboratorio y lo que sube la conexión por minuto. */
     labMinutes: z.number().int().min(5).max(60),
     uploadRate: z.number().int().min(20).max(400).multipleOf(10),
-    /** Lo que la feria pide como mínimo, y lo que el curso prometió. */
+    /** Lo que gasta cada cosa, en el orden de la pantalla. */
+    rates: z.tuple([rate, rate, rate]),
+    /** Lo que la feria pide como mínimo de cada cosa. */
     minimum: z.strictObject({
       video: smallCount,
       entrevistas: smallCount,
       laminas: smallCount,
     }),
-    target: z.strictObject({
-      video: smallCount,
-      entrevistas: smallCount,
-      laminas: smallCount,
-    }),
+    /** Cuántas piezas prometió llevar el curso, entre las tres cosas. */
+    promised: z.number().int().min(6).max(32),
     /** Cuánta diferencia de carga entre dos personas el grupo tolera. */
     spread: z.number().int().min(4).max(30),
     /** Quién no tiene computadora en casa, y cuánta edición puede tomar. */
@@ -114,27 +120,32 @@ export const techSchema = z
   })
   .refine(
     (p) =>
-      (['video', 'entrevistas', 'laminas'] as const).every(
-        (item) => p.target[item] >= p.minimum[item],
-      ),
-    'lo prometido queda por debajo del mínimo',
+      p.promised > p.minimum.video + p.minimum.entrevistas + p.minimum.laminas,
+    'lo prometido no supera el mínimo de la feria',
   )
 export type TechParams = z.infer<typeof techSchema>
 
-export function usage(lines: readonly BudgetLine[]) {
-  const counts = ITEMS.map((item) => ({
-    item,
-    count: quantity(lines, item.id),
-  }))
-  const notebook = counts.reduce(
-    (total, entry) => total + entry.count * entry.item.notebook,
+/** Cuántas piezas de cada cosa trae un plan, en el orden de la pantalla. */
+export function counts(lines: readonly BudgetLine[]): readonly number[] {
+  return ITEMS.map((item) => quantity(lines, item.id))
+}
+
+export function usage(p: TechParams, lines: readonly BudgetLine[]) {
+  const pieces = counts(lines)
+  const notebook = pieces.reduce(
+    (total, count, index) => total + count * (p.rates[index]?.notebook ?? 0),
     0,
   )
-  const megabytes = counts.reduce(
-    (total, entry) => total + entry.count * entry.item.megabytes,
+  const megabytes = pieces.reduce(
+    (total, count, index) => total + count * (p.rates[index]?.megabytes ?? 0),
     0,
   )
-  return { counts, notebook, megabytes }
+  return {
+    pieces,
+    notebook,
+    megabytes,
+    total: pieces.reduce((a, b) => a + b, 0),
+  }
 }
 
 /** Minutos enteros de laboratorio que pide subir todo lo producido. */
@@ -142,8 +153,13 @@ export function uploadMinutes(p: TechParams, megabytes: number): number {
   return Math.ceil(megabytes / p.uploadRate)
 }
 
+/** Cuántas piezas por debajo de lo prometido todavía cuentan como buen stand. */
+const SHORTFALL = 2
+
 export interface TechOutcome {
   readonly quality: SolutionQuality
+  /** Piezas producidas en total. */
+  readonly total: number
   /** Acuerdos del grupo cumplidos, 0 a 3. Sólo entre planes que entran. */
   readonly team: number
   /** Qué recurso se pasó, si se pasó alguno. */
@@ -153,18 +169,23 @@ export interface TechOutcome {
 /**
  * La lectura completa de un plan, con su propia aritmética.
  *
- * Math primero y solo: los tres recursos compartidos y los mínimos de la feria.
- * Equipo se lee después, sobre los mismos números pero mirando de quién es cada
- * cosa, y nunca cambia la calidad.
+ * Math primero y solo: los tres recursos compartidos, el mínimo de la feria y
+ * cuántas piezas entran. Equipo se lee después, sobre los mismos números pero
+ * mirando de quién es cada cosa, y nunca cambia la calidad.
+ *
+ * Lo prometido es un **total**, no un vector. Antes la pantalla imprimía lo
+ * prometido de cada cosa y los presupuestos se derivaban del costo de ese plan,
+ * así que copiar los tres números era siempre válido y siempre óptimo: la
+ * respuesta estaba escrita en la consigna (MAT-RA2-001). Ahora el número que se
+ * ve es cuánto hay que llevar **en total**; repartirlo entre tres cosas que
+ * gastan distinto de tres recursos distintos es el trabajo.
  */
 export function readTech(
   p: TechParams,
   lines: readonly BudgetLine[],
 ): TechOutcome {
-  const { counts, notebook, megabytes } = usage(lines)
+  const { pieces, notebook, megabytes, total } = usage(p, lines)
   const upload = uploadMinutes(p, megabytes)
-  const countOf = (id: ItemId) =>
-    counts.find((entry) => entry.item.id === id)?.count ?? 0
 
   const over =
     notebook > p.notebookMinutes
@@ -173,30 +194,28 @@ export function readTech(
         ? ('pendrive' as const)
         : upload > p.labMinutes
           ? ('laboratorio' as const)
-          : (['video', 'entrevistas', 'laminas'] as const).some(
-                (item) => countOf(item) < p.minimum[item],
+          : ITEMS.some(
+                (item, index) => (pieces[index] ?? 0) < p.minimum[item.id],
               )
             ? ('minimo' as const)
             : undefined
 
-  const promised = (['video', 'entrevistas', 'laminas'] as const).filter(
-    (item) => countOf(item) >= p.target[item],
-  ).length
-
   const quality: SolutionQuality =
     over !== undefined
       ? 'invalid'
-      : promised >= 3
+      : total >= p.promised
         ? 'optimal'
-        : promised >= 2
+        : total + SHORTFALL >= p.promised
           ? 'efficient'
           : 'functional'
 
   // Equipo: los mismos números, leídos por dueño.
   const loadOf = (crewId: string) => {
     const owner = CREW.find((person) => person.id === crewId)
-    const item = ITEMS.find((entry) => entry.id === owner?.item)
-    return item === undefined ? 0 : countOf(item.id) * item.notebook
+    const index = ITEMS.findIndex((entry) => entry.id === owner?.item)
+    return index < 0
+      ? 0
+      : (pieces[index] ?? 0) * (p.rates[index]?.notebook ?? 0)
   }
   const loads = CREW.map((person) => loadOf(person.id))
   const everyone = loads.every((load) => load > 0)
@@ -207,6 +226,7 @@ export function readTech(
 
   return {
     quality,
+    total,
     team,
     ...(over === undefined ? {} : { over }),
   }
@@ -251,165 +271,238 @@ const SHAPES = [
 ] as const
 
 /**
- * Lo que la feria pide de cada cosa.
+ * Lo que gasta cada cosa, por **papel**: barata en minutos, barata en MB, y
+ * la del medio.
  *
- * Antes eran tres mínimos por dos pasos: **seis** objetivos en todo el espacio,
- * cuyo supremo componente a componente era `(5, 4, 6)` —muy dentro de los
- * máximos `(10, 10, 12)` que ofrece la pantalla—. Un vector por encima de ese
- * supremo cumplía **todos** los objetivos que el generador podía emitir, en
- * cualquier catálogo que se sorteara de él, y sólo los topes de recurso podían
- * frenarlo: «video 4 · entrevistas 4 · láminas 6» rendía K 95,8 sin leer un dato
- * (MAT-RA-002).
- *
- * Doce objetivos que se **cruzan** —cada uno pide mucho de una cosa y poco de
- * otra— sacan el supremo del alcance de cualquier plan que además entre en los
- * presupuestos, y con eso ninguna respuesta reusable domina el catálogo
- * (RS-RA-002, criterios 1 a 3).
+ * Los tres papeles son incomparables a propósito —ninguno gasta menos que otro
+ * en las dos cosas a la vez—, así que cuál conviene depende de qué recurso
+ * aprieta en esta variante. Sin esa incomparabilidad habría una cosa mejor
+ * siempre y un orden de prioridad fijo resolvería el catálogo entero.
  */
-const TARGETS = [
-  { video: 2, entrevistas: 2, laminas: 3 },
-  { video: 5, entrevistas: 7, laminas: 6 },
-  { video: 2, entrevistas: 7, laminas: 3 },
-  { video: 6, entrevistas: 6, laminas: 5 },
-  { video: 3, entrevistas: 2, laminas: 8 },
-  { video: 4, entrevistas: 4, laminas: 4 },
-  { video: 5, entrevistas: 2, laminas: 7 },
-  { video: 2, entrevistas: 5, laminas: 8 },
-  { video: 6, entrevistas: 7, laminas: 3 },
-  { video: 3, entrevistas: 6, laminas: 6 },
-  { video: 4, entrevistas: 3, laminas: 5 },
-  { video: 2, entrevistas: 6, laminas: 4 },
+const RATE_SETS = [
+  [
+    { notebook: 5, megabytes: 40 },
+    { notebook: 1, megabytes: 300 },
+    { notebook: 3, megabytes: 120 },
+  ],
+  [
+    { notebook: 4, megabytes: 60 },
+    { notebook: 1, megabytes: 250 },
+    { notebook: 2, megabytes: 150 },
+  ],
+  [
+    { notebook: 6, megabytes: 30 },
+    { notebook: 2, megabytes: 200 },
+    { notebook: 3, megabytes: 90 },
+  ],
 ] as const
-/** Cuánto menos que lo prometido acepta la feria como mínimo. */
-const DROPS = [
+/** Qué papel le toca a cada cosa. Rota, así que la cosa barata no es siempre la misma. */
+const ROTATIONS = [
+  [0, 1, 2],
+  [1, 2, 0],
+  [2, 0, 1],
+] as const
+const NOTEBOOKS = [24, 30, 36, 42, 48, 60, 72, 90] as const
+const MEGABYTES = [500, 700, 900, 1100, 1400, 1800, 2200] as const
+const UPLOADS = [80, 120, 180, 240] as const
+const LABS = [5, 6, 8, 10, 12, 16] as const
+const MINIMUMS = [
   { video: 1, entrevistas: 1, laminas: 2 },
   { video: 2, entrevistas: 1, laminas: 1 },
-  { video: 1, entrevistas: 2, laminas: 1 },
+  { video: 1, entrevistas: 2, laminas: 2 },
 ] as const
-const RATES = [120, 180, 240] as const
 const SPREADS = [8, 12, 16] as const
 const TIGHTS = ['nico', 'sofi', 'tomi'] as const
 
-/** Los ejes que la generación por papel busca una vez fijado el papel. */
 const SEARCH_RADICES = [
-  DROPS.length,
-  RATES.length,
+  RATE_SETS.length,
+  NOTEBOOKS.length,
+  MEGABYTES.length,
+  UPLOADS.length,
+  LABS.length,
+  MINIMUMS.length,
   SPREADS.length,
   TIGHTS.length,
 ]
 const SEARCH_SPACE = spaceOf(SEARCH_RADICES)
-const SEARCH_STRIDE = 29
+/** Coprimo con 36.450 = 2·3⁶·5²: la búsqueda recorre el espacio entero. */
+const SEARCH_STRIDE = 1237
 /** Cada dirección arranca su búsqueda en un punto distinto del espacio. */
-const SEARCH_STEP = 7
-/** Papeles del catálogo: doce objetivos por tres cuellos de botella. */
-const ROLE_CYCLE = TARGETS.length * SHAPES.length
+const SEARCH_STEP = 11
+/**
+ * Cuántas magnitudes se prueban por dirección antes de rendirse.
+ *
+ * El espacio de búsqueda es grande y el gate caro; sin cota, una dirección sin
+ * solución costaría treinta y seis mil enumeraciones. Con cota, una dirección
+ * sin solución se rechaza y el barrido sigue.
+ */
+const MAX_ATTEMPTS = 320
+/** Papeles del catálogo: tres cuellos de botella por tres rotaciones de tasas. */
+const ROLE_CYCLE = SHAPES.length * ROTATIONS.length
 export const TECH_SPACE = ROLE_CYCLE * SEARCH_SPACE
 
-/** Lo que cuesta un plan en minutos de notebook. */
-function notebookCost(counts: Readonly<Record<ItemId, number>>): number {
-  return ITEMS.reduce(
-    (total, item) => total + counts[item.id] * item.notebook,
-    0,
-  )
-}
-
-/** Lo que ocupa un plan en MB, que es también lo que hay que subir. */
-function megabyteCost(counts: Readonly<Record<ItemId, number>>): number {
-  return ITEMS.reduce(
-    (total, item) => total + counts[item.id] * item.megabytes,
-    0,
-  )
-}
-
 /**
- * El papel de una dirección: qué pide la feria y qué recurso aprieta.
+ * El papel de una dirección: qué recurso aprieta y cómo se reparten las tasas.
  *
- * El objetivo rota con el índice y el cuello de botella rota **desplazado**, así
- * que un mismo objetivo aparece con recursos escasos distintos. Sin ese desfasaje
- * el resto de tres dividiría a doce y cada objetivo quedaría atado a un único
- * cuello de botella (D-S08-108).
+ * La rotación avanza **desfasada** contra el cuello de botella, así que un mismo
+ * recurso escaso aparece con repartos de tasas distintos (D-S08-108).
  */
 export function techRoleOf(index: number): {
-  readonly target: (typeof TARGETS)[number]
   readonly shape: (typeof SHAPES)[number]
+  readonly rotation: (typeof ROTATIONS)[number]
 } {
   const cycle = Math.abs(index)
   return {
-    target: at(TARGETS, cycle % TARGETS.length),
-    shape: at(SHAPES, cycle + Math.floor(cycle / TARGETS.length)),
+    shape: at(SHAPES, cycle % SHAPES.length),
+    rotation: at(ROTATIONS, cycle + Math.floor(cycle / SHAPES.length)),
   }
 }
 
 /**
- * Los tres presupuestos de una variante, atados al costo de lo prometido.
+ * Cuántas piezas entran como máximo, y en cuántos repartos distintos.
  *
- * El recurso que aprieta recibe poco aire sobre el plan objetivo y los otros dos
- * reciben bastante. Eso es lo que vuelve la cuenta obligatoria: pasarse de lo
- * prometido en el ítem caro se sale del presupuesto que aprieta, y cuál es el
- * ítem caro depende de qué recurso escasea en **esta** variante. El aire nunca
- * es cero: el plan objetivo no puede ser el único válido (RS-RA-002, criterio 4).
+ * Recorrido entero en aritmética entera, sin asignar un objeto por plan: es la
+ * cuenta que la búsqueda del generador hace cientos de veces por dirección.
  */
-function budgetsFor(
-  shape: (typeof SHAPES)[number],
-  target: Readonly<Record<ItemId, number>>,
-  uploadRate: number,
+function ceilingOf(
+  rates: TechParams['rates'],
+  notebookMinutes: number,
+  megabyteCap: number,
+  minimum: Readonly<Record<ItemId, number>>,
 ): {
-  readonly notebookMinutes: number
-  readonly megabytes: number
-  readonly labMinutes: number
+  readonly best: number
+  readonly valid: number
+  /** Cuántos repartos válidos llegan a `threshold` piezas o más. */
+  readonly ways: (threshold: number) => number
 } {
-  const TIGHT_NOTEBOOK = 4
-  const LOOSE_NOTEBOOK = 8
-  const TIGHT_MEGABYTES = 150
-  const LOOSE_MEGABYTES = 600
-  const LOOSE_LAB = 6
-  const megabytes =
-    Math.ceil(
-      (megabyteCost(target) +
-        (shape === 'pendrive-corto' ? TIGHT_MEGABYTES : LOOSE_MEGABYTES)) /
-        50,
-    ) * 50
+  const floors = ITEMS.map((item) => minimum[item.id])
+  const totals: number[] = []
+  let best = -1
+  for (let a = floors[0] ?? 0; a <= ITEMS[0].max; a++)
+    for (let b = floors[1] ?? 0; b <= ITEMS[1].max; b++)
+      for (let c = floors[2] ?? 0; c <= ITEMS[2].max; c++) {
+        const notebook =
+          a * rates[0].notebook + b * rates[1].notebook + c * rates[2].notebook
+        if (notebook > notebookMinutes) continue
+        const used =
+          a * rates[0].megabytes +
+          b * rates[1].megabytes +
+          c * rates[2].megabytes
+        if (used > megabyteCap) continue
+        const total = a + b + c
+        totals.push(total)
+        if (total > best) best = total
+      }
   return {
-    notebookMinutes:
-      notebookCost(target) +
-      (shape === 'notebook-corta' ? TIGHT_NOTEBOOK : LOOSE_NOTEBOOK),
-    megabytes,
-    labMinutes:
-      Math.ceil((megabyteCost(target) + TIGHT_MEGABYTES) / uploadRate) +
-      (shape === 'laboratorio-corto' ? 0 : LOOSE_LAB),
+    best,
+    valid: totals.length,
+    ways: (threshold) => totals.filter((total) => total >= threshold).length,
   }
 }
 
 /**
- * Generación por papel: la primera combinación de holgura, tasa y acuerdos que,
- * con el objetivo y el cuello de botella de su dirección, pasa todos los gates.
- * Si no aparece ninguna, devuelve la última probada y el gate de papel la
- * rechaza.
+ * Cuánto por debajo del tope está lo que el curso promete.
+ *
+ * Uno, no cero. Prometer exactamente el máximo entero convertiría el beat en
+ * «encontrá el óptimo de un programa entero», que está por encima del perfil
+ * cognitivo declarado —dos pasos, una optimización— y por encima de 3.º. Con un
+ * punto de aire, el reparto bien pensado llega y el reparto apurado queda en
+ * `efficient`, que es la escalera que la ficha del año pide.
+ */
+const AMBITION = 1
+
+/**
+ * Cuántos MB se pueden usar de verdad: los que hay en el pendrive o los que la
+ * conexión llega a subir en el rato de laboratorio, lo que sea menor.
+ *
+ * Ésa es la dependencia encadenada del beat, y el paso que el Repaso repara:
+ * un rato de laboratorio **es** un tope de MB una vez que se lo multiplica por
+ * lo que sube la conexión por minuto.
+ */
+export function megabyteCapOf(
+  p: Pick<TechParams, 'megabytes' | 'labMinutes' | 'uploadRate'>,
+): number {
+  return Math.min(p.megabytes, p.uploadRate * p.labMinutes)
+}
+
+/** Qué recurso aprieta: el único que, aflojado solo, deja producir más piezas. */
+function bindingOf(
+  p: Pick<
+    TechParams,
+    | 'rates'
+    | 'notebookMinutes'
+    | 'megabytes'
+    | 'labMinutes'
+    | 'uploadRate'
+    | 'minimum'
+  >,
+): (typeof SHAPES)[number] | undefined {
+  const cap = megabyteCapOf(p)
+  const base = ceilingOf(p.rates, p.notebookMinutes, cap, p.minimum).best
+  if (base < 0) return undefined
+  const byNotebook =
+    ceilingOf(p.rates, p.notebookMinutes * 2, cap, p.minimum).best - base
+  const byMegabytes =
+    ceilingOf(p.rates, p.notebookMinutes, cap * 2, p.minimum).best - base
+  if (byNotebook === byMegabytes) return undefined
+  if (byNotebook > byMegabytes)
+    return byNotebook > 0 ? 'notebook-corta' : undefined
+  if (byMegabytes <= 0) return undefined
+  // Dentro de los MB, cuál de los dos topes es el que manda tiene que ser
+  // estricto: con empate, aflojar uno solo no cambia nada y el papel no existe.
+  const uploadable = p.uploadRate * p.labMinutes
+  if (p.megabytes === uploadable) return undefined
+  return p.megabytes < uploadable ? 'pendrive-corto' : 'laboratorio-corto'
+}
+
+/**
+ * La variante de una dirección: su papel, y la primera magnitud que lo sostiene.
+ *
+ * Nada acá deriva un presupuesto del costo de una respuesta. Los tres recursos
+ * salen de listas fijas y lo prometido sale de **cuánto se puede producir con
+ * ellos**, que es una consecuencia, no un insumo. Ésa es la diferencia con la
+ * ronda 2, donde los presupuestos se construían alrededor del plan objetivo y
+ * por eso ese plan entraba siempre.
  */
 export function generateTech(index: number): TechParams {
-  const { target, shape } = techRoleOf(index)
+  const { shape, rotation } = techRoleOf(index)
   let last: TechParams | undefined
-  for (let attempt = 0; attempt < SEARCH_SPACE; attempt++) {
+  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
     const axes = candidateAxes(
       index * SEARCH_STEP + attempt,
       SEARCH_RADICES,
       SEARCH_STRIDE,
     )
-    const drop = at(DROPS, digit(axes, 0))
-    const uploadRate = at(RATES, digit(axes, 1))
-    const spread = at(SPREADS, digit(axes, 2))
+    const profiles = at(RATE_SETS, digit(axes, 0))
+    const rateAt = (position: number) =>
+      profiles[rotation[position] ?? 0] ?? profiles[0]
+    const rates: TechParams['rates'] = [rateAt(0), rateAt(1), rateAt(2)]
+    const notebookMinutes = at(NOTEBOOKS, digit(axes, 1))
+    const megabytes = at(MEGABYTES, digit(axes, 2))
+    const uploadRate = at(UPLOADS, digit(axes, 3))
+    const labMinutes = at(LABS, digit(axes, 4))
+    const minimum = at(MINIMUMS, digit(axes, 5))
+    const spread = at(SPREADS, digit(axes, 6))
+    const floor = minimum.video + minimum.entrevistas + minimum.laminas
+    const { best } = ceilingOf(
+      rates,
+      notebookMinutes,
+      Math.min(megabytes, uploadRate * labMinutes),
+      minimum,
+    )
+    // Sin aire entre el piso de la feria y el tope no hay tres niveles.
+    if (best - AMBITION <= floor + SHORTFALL) continue
     const candidate = techSchema.safeParse({
       shape,
-      ...budgetsFor(shape, target, uploadRate),
+      notebookMinutes,
+      megabytes,
+      labMinutes,
       uploadRate,
-      minimum: {
-        video: Math.max(0, target.video - drop.video),
-        entrevistas: Math.max(0, target.entrevistas - drop.entrevistas),
-        laminas: Math.max(0, target.laminas - drop.laminas),
-      },
-      target,
+      rates,
+      minimum,
+      promised: best - AMBITION,
       spread,
-      tight: at(TIGHTS, digit(axes, 3)),
+      tight: at(TIGHTS, digit(axes, 7)),
       tightCap: spread + 4,
     })
     if (!candidate.success) continue
@@ -423,20 +516,72 @@ export function generateTech(index: number): TechParams {
 
 /** Gate de dirección: la variante juega el papel que le toca en el reparto. */
 export function techRoleGates(p: TechParams, index: number): readonly string[] {
-  const { target, shape } = techRoleOf(index)
+  const { shape, rotation } = techRoleOf(index)
   const issues: string[] = []
   if (p.shape !== shape)
     issues.push('la variante no aprieta el recurso de su dirección')
-  if (
-    p.target.video !== target.video ||
-    p.target.entrevistas !== target.entrevistas ||
-    p.target.laminas !== target.laminas
+  const profiles = RATE_SETS.find((set) =>
+    rotation.every(
+      (profile, position) =>
+        set[profile]?.notebook === p.rates[position]?.notebook &&
+        set[profile]?.megabytes === p.rates[position]?.megabytes,
+    ),
   )
-    issues.push('la variante no pide lo que su dirección promete')
+  if (profiles === undefined)
+    issues.push('la variante no reparte las tasas como su dirección')
+  return issues
+}
+
+/**
+ * Gates baratos: los que no necesitan enumerar el espacio con un objeto por plan.
+ *
+ * Van primero y cortan. La búsqueda prueba cientos de magnitudes por dirección
+ * y casi todas mueren acá, sin pagar la enumeración de witnesses.
+ */
+function techShapeIssues(p: TechParams): readonly string[] {
+  const issues: string[] = []
+  const { best, ways, valid } = ceilingOf(
+    p.rates,
+    p.notebookMinutes,
+    megabyteCapOf(p),
+    p.minimum,
+  )
+  if (best < 0) return ['ningún plan entra']
+  if (best - AMBITION !== p.promised)
+    issues.push('lo prometido no sale del tope de piezas de la variante')
+
+  // El mínimo de la feria tiene que dejar lugar a los tres niveles: si llegar
+  // al mínimo ya deja a dos piezas de lo prometido, `functional` no existe.
+  const floor = p.minimum.video + p.minimum.entrevistas + p.minimum.laminas
+  if (floor + SHORTFALL >= p.promised)
+    issues.push('el mínimo de la feria ya alcanza lo prometido')
+
+  // Llegar tiene que ser exigente: si muchos repartos llegan a lo prometido,
+  // lo prometido no mide nada y cualquier plan ciego cae adentro por volumen.
+  const reaching = ways(p.promised)
+  if (reaching * 5 > valid)
+    issues.push('demasiados repartos llegan a lo prometido')
+  if (reaching < 2) issues.push('un solo reparto llega a lo prometido')
+
+  // LOCKED: más de un recurso decide. El que aprieta acá tiene que ser uno solo
+  // y el de la dirección; con uno solo apretando siempre, esto es una división.
+  if (bindingOf(p) !== p.shape)
+    issues.push('el recurso que aprieta no es el de la variante')
+
+  // Y tiene que apretar de verdad: producir el máximo de todo no puede entrar.
+  const everything = ITEMS.map((item) => ({
+    itemId: item.id,
+    quantity: item.max,
+  }))
+  if (readTech(p, everything).quality !== 'invalid')
+    issues.push('los recursos alcanzan para todo')
   return issues
 }
 
 export function techGates(p: TechParams): readonly string[] {
+  const shape = techShapeIssues(p)
+  if (shape.length > 0) return shape
+
   const issues: string[] = []
   const plans = techPlans(p)
   issues.push(...tierWitnessIssues(plans))
@@ -452,24 +597,6 @@ export function techGates(p: TechParams): readonly string[] {
   binding.delete('minimo')
   if (binding.size < 2)
     issues.push('un solo recurso decide: el plan es una división')
-
-  // Y tienen que apretar de verdad: el plan que la feria pide al máximo no
-  // puede entrar, o no habría nada que repartir.
-  const everything = ITEMS.map((item) => ({
-    itemId: item.id,
-    quantity: item.max,
-  }))
-  if (readTech(p, everything).quality !== 'invalid')
-    issues.push('los recursos alcanzan para todo')
-
-  // El supremo de todos los objetivos no puede ser un plan admisible: evita
-  // resolver cualquier variante aumentando siempre las tres cantidades.
-  const supremum = ITEMS.map((item) => ({
-    itemId: item.id,
-    quantity: Math.max(...TARGETS.map((target) => target[item.id])),
-  }))
-  if (readTech(p, supremum).quality !== 'invalid')
-    issues.push('el supremo de objetivos entra en los recursos')
 
   // Equipo: varios planes Math-válidos con consecuencias distintas.
   const teamsAmongOptimal = new Set(
@@ -499,7 +626,7 @@ export function evaluateTech(p: TechParams, lines: readonly BudgetLine[]) {
     return err({ kind: 'invalid-answer' as const, detail: malformed[0] ?? '' })
 
   const read = readTech(p, lines)
-  const { notebook, megabytes } = usage(lines)
+  const { notebook, megabytes } = usage(p, lines)
   const upload = uploadMinutes(p, megabytes)
   const base = outcome(
     read.quality,
@@ -519,6 +646,10 @@ export function evaluateTech(p: TechParams, lines: readonly BudgetLine[]) {
           label: 'Subida',
           value: `${String(upload)} de ${String(p.labMinutes)} min`,
         },
+        {
+          label: 'Piezas',
+          value: `${String(read.total)} de ${String(p.promised)} prometidas`,
+        },
         { label: 'Acuerdos del grupo', value: `${String(read.team)} de 3` },
       ],
       ...(read.quality === 'invalid'
@@ -537,8 +668,8 @@ export function evaluateTech(p: TechParams, lines: readonly BudgetLine[]) {
         read.quality === 'invalid'
           ? 'El stand llega a la feria con una parte sin terminar.'
           : read.quality === 'optimal'
-            ? 'Entró todo lo que el curso había prometido llevar.'
-            : 'El stand se arma, aunque algo de lo prometido quedó afuera.',
+            ? 'Entraron las piezas que el curso había prometido llevar.'
+            : 'El stand se arma, aunque llegó con menos piezas de las prometidas.',
     },
     {},
     [{ flag: 'y3.projectTech.outcome', value: read.quality }],
@@ -555,9 +686,9 @@ export function evaluateTech(p: TechParams, lines: readonly BudgetLine[]) {
 
 export const techVariants = generatedSource({
   id: 'y3.course-project-tech.resources',
-  // 2: objetivos cruzados y presupuestos atados al costo de lo prometido
-  // (RS-RA-002). El espacio del generador cambió, así que la versión sube.
-  version: '2',
+  // 3: lo prometido es un total y las tasas son parámetro; los presupuestos ya
+  // no se derivan del costo de ninguna respuesta (MAT-RA2-001).
+  version: '3',
   schema: techSchema,
   size: TECH_SPACE,
   generate: generateTech,
@@ -605,18 +736,18 @@ export const courseProjectTech: ChallengeDefinition = defineChallenge<
   tools: ['calculator', 'notepad'],
   generate: ({ params }) => parameters(techSchema, params),
   verify: (p) =>
-    p.uploadRate * p.labMinutes >= p.megabytes / 4
+    p.uploadRate * p.labMinutes * 4 >= p.megabytes
       ? []
       : ['el laboratorio no alcanza ni para una parte del pendrive'],
   narrate: (_p, context) => ({
     title: 'Proyecto del Curso: la feria de tecnología',
     setup: `${projectArcCallback(context.flags)}La feria es el viernes y el curso tiene que armar el stand con la notebook prestada, el pendrive y una hora de laboratorio.`,
-    goal: 'Decidí cuánto hacer de cada cosa: que entre en los recursos y que el grupo trabaje parejo.',
+    goal: 'Decidí cuántas piezas hacer de cada cosa: que entren en los recursos, que lleguen a lo prometido y que el grupo trabaje parejo.',
   }),
   present: (p) => ({
     kind: 'quantity-builder',
     instructions:
-      'Poné cuánto va a producir el curso de cada cosa. Lo que ocupa el pendrive es lo mismo que después hay que subir.',
+      'Poné cuántas piezas va a producir el curso de cada cosa. Lo que ocupa el pendrive es lo mismo que después hay que subir.',
     data: [
       {
         label: 'Notebook prestada',
@@ -641,21 +772,30 @@ export const courseProjectTech: ChallengeDefinition = defineChallenge<
         value: mil(p.uploadRate),
         unit: 'MB por minuto',
       },
-      // Lo que la feria pide y lo que el curso prometió, uno por cosa: el
-      // mínimo primero y lo prometido después, que es el orden en el que se
-      // decide.
+      // Lo que el curso prometió: un total, entre las tres cosas. Está a la
+      // vista porque es la consigna; no es la respuesta, porque cómo se reparte
+      // entre tres cosas que gastan distinto es justamente lo que hay que
+      // decidir.
+      {
+        label: 'El curso prometió',
+        value: String(p.promised),
+        unit: 'piezas en total',
+        span: 2,
+      },
+      // Y el piso de cada cosa, que la feria pide sí o sí.
       ...ITEMS.map((item) => ({
         label: item.label,
-        value: `${String(p.minimum[item.id])} / ${String(p.target[item.id])}`,
-        unit: 'pide / prometió',
+        value: String(p.minimum[item.id]),
+        unit: 'pide la feria',
       })),
     ],
-    items: ITEMS.map((item) => {
+    items: ITEMS.map((item, index) => {
       const owner = CREW.find((person) => person.item === item.id)
+      const rate = p.rates[index]
       return {
         id: item.id,
         label: item.label,
-        detail: `${String(item.notebook)} min de notebook · ${mil(item.megabytes)} MB cada uno · lo arma ${owner?.label ?? ''}`,
+        detail: `${String(rate?.notebook ?? 0)} min de notebook · ${mil(rate?.megabytes ?? 0)} MB cada una · la arma ${owner?.label ?? ''}`,
         maxQuantity: item.max,
       }
     }),

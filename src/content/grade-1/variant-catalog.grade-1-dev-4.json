@@ -1,6 +1,6 @@
 {
-  "catalogVersion": "grade-1-dev-3",
-  "contentVersion": "1.2.0-grade-1",
+  "catalogVersion": "grade-1-dev-4",
+  "contentVersion": "1.3.0-grade-1",
   "generators": [
     {
       "templateId": "g7.bus-latest-departure",
@@ -59,7 +59,7 @@
     {
       "templateId": "y1.mobile-data",
       "generatorId": "y1.mobile-data.capacity-decoys",
-      "generatorVersion": "1",
+      "generatorVersion": "2",
       "candidateSpace": 288
     },
     {
@@ -1167,6 +1167,34 @@
       "fingerprint": "9ae65881bd48e4612aa51fdcc2a161c7457844e0d49ef4a000c7dd6bd53bf0b8"
     },
     {
+      "familyId": "group-project",
+      "templateId": "g7.group-tasks",
+      "variantId": "equipo-c",
+      "source": "authored",
+      "fingerprint": "1bae9eb29a4d83c2ac4e052c0d3f35b81fa6ae889c7a0d003cc564e8bccdb0df"
+    },
+    {
+      "familyId": "group-project",
+      "templateId": "g7.group-tasks",
+      "variantId": "equipo-d",
+      "source": "authored",
+      "fingerprint": "e8390e1968e7ec3f2c19a1891449065e794fee9fbba455726f0539bcc0a8a27c"
+    },
+    {
+      "familyId": "group-project",
+      "templateId": "g7.group-tasks",
+      "variantId": "equipo-e",
+      "source": "authored",
+      "fingerprint": "b9575a527f1f1af119ed35e3e2a74ead539469216660021ee90bb837097e27b5"
+    },
+    {
+      "familyId": "group-project",
+      "templateId": "g7.group-tasks",
+      "variantId": "equipo-f",
+      "source": "authored",
+      "fingerprint": "c5a85a4eafa8a9e280f20169f71a0921412c5428a4e2d7c5839c767171b87e6d"
+    },
+    {
       "familyId": "may-25",
       "templateId": "g7.may-25-act",
       "variantId": "c00000",
@@ -1360,168 +1388,168 @@
       "templateId": "y1.mobile-data",
       "variantId": "c00001",
       "source": "generated",
-      "fingerprint": "e0a54cef839d948e85299896c60e2240ea6618b72e2bde397d116489d9609a8b"
-    },
-    {
-      "familyId": "mobile-data",
-      "templateId": "y1.mobile-data",
-      "variantId": "c00002",
-      "source": "generated",
-      "fingerprint": "c52b5712553567db1523a73023668d189aadbd6f432da0c09cd3916b9a785d00"
+      "fingerprint": "75a2f6996c66600a45ac2edf801c0bf44f090a4e60dad7e4e80ea15de48900cf"
     },
     {
       "familyId": "mobile-data",
       "templateId": "y1.mobile-data",
       "variantId": "c00003",
       "source": "generated",
-      "fingerprint": "eb77ebd896112e03193248caabca47a21ea5877e299ccd23b93b4a050bebbad0"
+      "fingerprint": "e5e5874c828abbf2c17f149376fef0fc3d93a6590fb3d23bd9e85a7e5de95cfb"
     },
     {
       "familyId": "mobile-data",
       "templateId": "y1.mobile-data",
       "variantId": "c00004",
       "source": "generated",
-      "fingerprint": "747c4bde4f158fafbedd7bbdabe4e48993108a62641082f0d7b437a994e5fb8f"
+      "fingerprint": "a5b3092b0ba1bf6f65867b97d6597528425b07038629cc3db12114714f228d1d"
     },
     {
       "familyId": "mobile-data",
       "templateId": "y1.mobile-data",
       "variantId": "c00005",
       "source": "generated",
-      "fingerprint": "1cae021374ba3df38cefe8a43bb47b45fe9e59de8ca7740707e0dc087fe1751b"
+      "fingerprint": "34a1e51d1a68b7df086f4dc0df23486f74d887bc9b792a9035ae64502e294b29"
     },
     {
       "familyId": "mobile-data",
       "templateId": "y1.mobile-data",
       "variantId": "c00006",
       "source": "generated",
-      "fingerprint": "86aed7f78fbfd5806cf77ac47bb411d8697eddd5b8e2ed44b717e4bd62d7a29c"
+      "fingerprint": "9ef80853872d2dfc3506d31a6bd812f25e1ebf1a591e29b13a60ccb8d126eed6"
+    },
+    {
+      "familyId": "mobile-data",
+      "templateId": "y1.mobile-data",
+      "variantId": "c00007",
+      "source": "generated",
+      "fingerprint": "495480b8b775c21cd89d5a068b55f0cfb300a893d0d36f212cd03bd6b883dcd1"
     },
     {
       "familyId": "mobile-data",
       "templateId": "y1.mobile-data",
       "variantId": "c00008",
       "source": "generated",
-      "fingerprint": "42b8b7dc190c3356877c724201d303468b5c6ebc3756b2c7808e71d2ba24d963"
+      "fingerprint": "62f16174fce604eee274dc4acbe00bdda767f518617428b21b452a9443e73e30"
     },
     {
       "familyId": "mobile-data",
       "templateId": "y1.mobile-data",
       "variantId": "c00009",
       "source": "generated",
-      "fingerprint": "9daf4762e5bfd4a9b2fd438bee37105140eda2a279849df60d96f54e40bd5bea"
+      "fingerprint": "8511ccb94cd1b7bd46cfc502ac39125c6c76dfd56e08c22842f779bf38cfc29d"
+    },
+    {
+      "familyId": "mobile-data",
+      "templateId": "y1.mobile-data",
+      "variantId": "c00010",
+      "source": "generated",
+      "fingerprint": "2fad924607e4a1637fa6fdf870e29fa85b3f1cae7d9a17db8475ea9d3fbc5858"
     },
     {
       "familyId": "mobile-data",
       "templateId": "y1.mobile-data",
       "variantId": "c00011",
       "source": "generated",
-      "fingerprint": "7858c2b98d5caab2d226d32d6c30539b1d69fef5eebdefa8d67773796edc0be8"
+      "fingerprint": "e0a54cef839d948e85299896c60e2240ea6618b72e2bde397d116489d9609a8b"
     },
     {
       "familyId": "mobile-data",
       "templateId": "y1.mobile-data",
       "variantId": "c00012",
       "source": "generated",
-      "fingerprint": "f1a85cee39de7f5211fcbfb47e308fd80dfbedc1ea4b73ddd89432c3ae80f8fc"
+      "fingerprint": "51a9c394f39a00e082c97a23362def8a00bd442f3b13a8195ebfcb36b7852c07"
+    },
+    {
+      "familyId": "mobile-data",
+      "templateId": "y1.mobile-data",
+      "variantId": "c00013",
+      "source": "generated",
+      "fingerprint": "f11201096929326b1bbb304d2f5fecbe2cd06dd82afbff8b35215de837ac603a"
     },
     {
       "familyId": "mobile-data",
       "templateId": "y1.mobile-data",
       "variantId": "c00014",
       "source": "generated",
-      "fingerprint": "761de7f2e340d53d694b0c094ed91241a212eae6ca93b53b66fa5b43e4282d4b"
+      "fingerprint": "cac20ba29cf9cb82e4df89788e7f316ff5489a11743efd4b548ae772d975403d"
     },
     {
       "familyId": "mobile-data",
       "templateId": "y1.mobile-data",
       "variantId": "c00015",
       "source": "generated",
-      "fingerprint": "a6e2f63ae89b05fcbf465243e6cac5d298f132c22e77b84900c02c77a3899896"
+      "fingerprint": "93a331c81d70e4a28971b79bf6b320368a7cfb4c58781e059c1feadca7f2dd78"
     },
     {
       "familyId": "mobile-data",
       "templateId": "y1.mobile-data",
       "variantId": "c00016",
       "source": "generated",
-      "fingerprint": "baec649f2dc1d65bbc0c6a1657d4b6d9f19d2cbf5b16524f5ab9998f589d87bc"
-    },
-    {
-      "familyId": "mobile-data",
-      "templateId": "y1.mobile-data",
-      "variantId": "c00017",
-      "source": "generated",
-      "fingerprint": "398064d2c177f1269c86b7fc1fb2227ccd4a02d47d193c1566a09066ef2850c5"
+      "fingerprint": "accbead97cc1a3a57e53f2555537d6668e4a62a3d8e7c2aaddc470babe48262e"
     },
     {
       "familyId": "mobile-data",
       "templateId": "y1.mobile-data",
       "variantId": "c00018",
       "source": "generated",
-      "fingerprint": "761fb348f8b8eca1b08be148efbbfd286808978865904b9f3eeed01d8f26211c"
+      "fingerprint": "9a37835588d7a3ce6135536d72ba6d672a422fa65bcdeacf843900ed22dd1d45"
     },
     {
       "familyId": "mobile-data",
       "templateId": "y1.mobile-data",
       "variantId": "c00019",
       "source": "generated",
-      "fingerprint": "997b06cf7268ece68adf9227d1660ab16025b0e48c292524d6b873d0f502c988"
+      "fingerprint": "74678c6f19524150b2cfcb03aa74ce1d8451ab2c9d828985504b5d0b17ae8fa0"
     },
     {
       "familyId": "mobile-data",
       "templateId": "y1.mobile-data",
-      "variantId": "c00021",
-      "source": "generated",
-      "fingerprint": "6df18cfa02177f44f7b035b28a9ac7e00904f53a465c37291bd0c0879a9e764e"
-    },
-    {
-      "familyId": "mobile-data",
-      "templateId": "y1.mobile-data",
-      "variantId": "c00024",
-      "source": "generated",
-      "fingerprint": "5d95606e34cd4cac8e2dc11ee050098595ea69a9a54816ee497836d90cb715fb"
-    },
-    {
-      "familyId": "mobile-data",
-      "templateId": "y1.mobile-data",
-      "variantId": "c00025",
-      "source": "generated",
-      "fingerprint": "f08267659bc7405bd1d7761a3f7a297d145d6fb260e511d10ae9142374bcea2f"
-    },
-    {
-      "familyId": "mobile-data",
-      "templateId": "y1.mobile-data",
-      "variantId": "c00026",
-      "source": "generated",
-      "fingerprint": "2908a740415bd6122932a5104d5eff8b35c3ee717e4e9af671e697f93443f5c1"
-    },
-    {
-      "familyId": "mobile-data",
-      "templateId": "y1.mobile-data",
-      "variantId": "c00027",
-      "source": "generated",
-      "fingerprint": "8511ccb94cd1b7bd46cfc502ac39125c6c76dfd56e08c22842f779bf38cfc29d"
-    },
-    {
-      "familyId": "mobile-data",
-      "templateId": "y1.mobile-data",
-      "variantId": "c00028",
+      "variantId": "c00020",
       "source": "generated",
       "fingerprint": "b0af3fb291b5ebcb1d411d0bafe4f36c7c98f120488b60c351a3920f1177c5e5"
     },
     {
       "familyId": "mobile-data",
       "templateId": "y1.mobile-data",
-      "variantId": "c00030",
+      "variantId": "c00021",
       "source": "generated",
-      "fingerprint": "bc28647375944ca439ed8ebbf5fc0f8414877eeacf1a9813b6316b4468563f82"
+      "fingerprint": "e7ec53566112410c9b13903156db62b84b8436528501cdabf28ae8ad970814cd"
     },
     {
       "familyId": "mobile-data",
       "templateId": "y1.mobile-data",
-      "variantId": "c00031",
+      "variantId": "c00022",
       "source": "generated",
-      "fingerprint": "031153ae578a31fba0978b11d3e3407152f4eac9c96439692f2af2ad02578cf9"
+      "fingerprint": "c52b5712553567db1523a73023668d189aadbd6f432da0c09cd3916b9a785d00"
+    },
+    {
+      "familyId": "mobile-data",
+      "templateId": "y1.mobile-data",
+      "variantId": "c00023",
+      "source": "generated",
+      "fingerprint": "de36846ef91206e85ed2539275e8931168f0d89018f9e0f2c6a2a9ef6b14b3dd"
+    },
+    {
+      "familyId": "mobile-data",
+      "templateId": "y1.mobile-data",
+      "variantId": "c00024",
+      "source": "generated",
+      "fingerprint": "9097070aefab7db6e5f988e75021434926ff2f596ad45569b7aadaecbaf9bfa7"
+    },
+    {
+      "familyId": "mobile-data",
+      "templateId": "y1.mobile-data",
+      "variantId": "c00025",
+      "source": "generated",
+      "fingerprint": "72153d10fc10a878202ccea8947212fa1a3690512edb585cd8b510206ec2d4a2"
+    },
+    {
+      "familyId": "mobile-data",
+      "templateId": "y1.mobile-data",
+      "variantId": "c00026",
+      "source": "generated",
+      "fingerprint": "9e4f88fbb5eb836e68e8168e0f19141a35d05ff415f77bbe87b7b164df6bc656"
     },
     {
       "familyId": "mobile-data",

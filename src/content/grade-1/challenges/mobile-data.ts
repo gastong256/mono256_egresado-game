@@ -95,6 +95,21 @@ const RATES = [
 ] as const
 const RADICES = [SHAPES.length, DAYS.length, SCHOOL.length, RATES.length, 2]
 export const MOBILE_DATA_SPACE = spaceOf(RADICES)
+/**
+ * El paso que recorre el espacio de candidatos.
+ *
+ * Tiene que ser coprimo con el tamaño —si no, no es una biyección—, pero eso no
+ * alcanza: con paso 97 el resto módulo 3 quedaba igual al índice módulo 3, así
+ * que **toda** dirección de forma `either-or` caía en la mitad baja del espacio
+ * y heredaba siempre el mismo par de tasas y el mismo `flip`. Las once variantes
+ * `either-or` del catálogo publicado eran, en los hechos, tres problemas
+ * repetidos, y «llenar de videos» las resolvía a las once (MAT-CLO-003).
+ *
+ * 35 mantiene la biyección —288 = 2⁵·3², y 35 = 5·7— y además reparte los dos
+ * dígitos lentos: en los primeros once múltiplos de 3 aparecen los cuatro pares
+ * de tasas y los dos valores de `flip`.
+ */
+const MOBILE_DATA_STRIDE = 35
 
 const roundUp = (value: number, step: number): number =>
   Math.ceil(value / step) * step
@@ -107,7 +122,7 @@ const roundUp = (value: number, step: number): number =>
  * The authoring gates below re-check every relation with their own arithmetic.
  */
 export function generateMobileData(index: number): MobileDataParams {
-  const axes = candidateAxes(index, RADICES, 97)
+  const axes = candidateAxes(index, RADICES, MOBILE_DATA_STRIDE)
   const shape = at(SHAPES, digit(axes, 0))
   const days = at(DAYS, digit(axes, 1))
   const school = at(SCHOOL, digit(axes, 2))
@@ -129,8 +144,14 @@ export function generateMobileData(index: number): MobileDataParams {
           songs: Math.floor(free / music) + 1,
         })
       }
+      // El aire sobre el pedido es **un video**, no una sesión de música más.
+      // Con una sesión de música el único plan que cumple el pedido gasta todo
+      // en música, así que ninguna forma de jugar alcanza el óptimo salvo una y
+      // el gate de Estilo rechaza la variante: el catálogo se quedaba sin
+      // ninguna dirección de este lado del `either-or` y «llenar de videos» lo
+      // resolvía entero (MAT-CLO-003).
       const songs = 6 + 2 * (days % 3)
-      const free = roundUp(songs * music + music, 50)
+      const free = roundUp(songs * music + video, 50)
       return mobileDataSchema.parse({
         shape,
         ...base,
@@ -423,7 +444,9 @@ export function evaluateMobileData(
 
 export const mobileDataVariants = generatedSource({
   id: 'y1.mobile-data.capacity-decoys',
-  version: '1',
+  // 2: paso de recorrido que descorrelaciona la forma de las tasas y del flip
+  // (MAT-CLO-003). El espacio es el mismo; qué dirección da qué variante, no.
+  version: '2',
   schema: mobileDataSchema,
   size: MOBILE_DATA_SPACE,
   generate: generateMobileData,

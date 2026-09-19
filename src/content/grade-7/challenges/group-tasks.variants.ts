@@ -7,9 +7,16 @@
  * sin nombre o nombres sacados de una bolsa, que es escribir contenido con un
  * generador en vez de escribirlo.
  *
- * El espacio útil además es chico: con tres personas y tres tareas hay pocas
- * configuraciones que sean a la vez resolubles y no obvias, y encontrarlas es
- * trabajo de autoría.
+ * El espacio útil además es chico: con cuatro personas y cuatro tareas hay
+ * pocas configuraciones que sean a la vez resolubles y no obvias, y encontrarlas
+ * es trabajo de autoría.
+ *
+ * Seis equipos, no dos. Con dos, los dos mejores repartos coincidían en la
+ * **posición** —a cada quien su tarea de tres estrellas, y las horas alcanzaban
+ * siempre—, así que repetir ese patrón sin mirar las horas rendía el máximo en
+ * las dos variantes publicadas (MAT-RA2-004). En los cuatro equipos nuevos las
+ * horas de alguien no alcanzan para la tarea que mejor le sale, y el mejor
+ * reparto es otro: el patrón deja de ser uno solo y hay que leer las horas.
  *
  * Autorada **no** quiere decir confiable. Estas variantes pasan por el mismo
  * pipeline que las generadas —validación, huella, deduplicación, catálogo— y su
@@ -214,6 +221,122 @@ const AUTHORED: readonly (GroupParams & { readonly id: string })[] = [
         name: 'Vos',
         hoursFree: 2,
         skill: { investigacion: 1, diseno: 1, presentacion: 3, maqueta: 1 },
+      },
+    ],
+  },
+  {
+    id: 'equipo-c',
+    members: [
+      {
+        id: 'lucas',
+        name: 'Lucas',
+        hoursFree: 7,
+        skill: { investigacion: 3, diseno: 1, presentacion: 1, maqueta: 2 },
+      },
+      {
+        id: 'sofia',
+        name: 'Sofía',
+        hoursFree: 6,
+        skill: { investigacion: 1, diseno: 1, presentacion: 2, maqueta: 3 },
+      },
+      {
+        id: 'mateo',
+        name: 'Mateo',
+        hoursFree: 3,
+        skill: { investigacion: 1, diseno: 3, presentacion: 2, maqueta: 1 },
+      },
+      {
+        id: 'vos',
+        name: 'Vos',
+        hoursFree: 2,
+        skill: { investigacion: 1, diseno: 1, presentacion: 3, maqueta: 1 },
+      },
+    ],
+  },
+  {
+    id: 'equipo-d',
+    members: [
+      {
+        id: 'lucas',
+        name: 'Lucas',
+        hoursFree: 4,
+        skill: { investigacion: 3, diseno: 2, presentacion: 1, maqueta: 3 },
+      },
+      {
+        id: 'sofia',
+        name: 'Sofía',
+        hoursFree: 6,
+        skill: { investigacion: 2, diseno: 1, presentacion: 1, maqueta: 2 },
+      },
+      {
+        id: 'mateo',
+        name: 'Mateo',
+        hoursFree: 5,
+        skill: { investigacion: 3, diseno: 1, presentacion: 2, maqueta: 1 },
+      },
+      {
+        id: 'vos',
+        name: 'Vos',
+        hoursFree: 3,
+        skill: { investigacion: 1, diseno: 3, presentacion: 2, maqueta: 1 },
+      },
+    ],
+  },
+  {
+    id: 'equipo-e',
+    members: [
+      {
+        id: 'lucas',
+        name: 'Lucas',
+        hoursFree: 3,
+        skill: { investigacion: 1, diseno: 3, presentacion: 2, maqueta: 1 },
+      },
+      {
+        id: 'sofia',
+        name: 'Sofía',
+        hoursFree: 5,
+        skill: { investigacion: 3, diseno: 1, presentacion: 1, maqueta: 1 },
+      },
+      {
+        id: 'mateo',
+        name: 'Mateo',
+        hoursFree: 2,
+        skill: { investigacion: 1, diseno: 1, presentacion: 3, maqueta: 1 },
+      },
+      {
+        id: 'vos',
+        name: 'Vos',
+        hoursFree: 6,
+        skill: { investigacion: 2, diseno: 1, presentacion: 1, maqueta: 3 },
+      },
+    ],
+  },
+  {
+    id: 'equipo-f',
+    members: [
+      {
+        id: 'lucas',
+        name: 'Lucas',
+        hoursFree: 5,
+        skill: { investigacion: 3, diseno: 1, presentacion: 1, maqueta: 1 },
+      },
+      {
+        id: 'sofia',
+        name: 'Sofía',
+        hoursFree: 2,
+        skill: { investigacion: 1, diseno: 1, presentacion: 3, maqueta: 1 },
+      },
+      {
+        id: 'mateo',
+        name: 'Mateo',
+        hoursFree: 6,
+        skill: { investigacion: 1, diseno: 2, presentacion: 1, maqueta: 3 },
+      },
+      {
+        id: 'vos',
+        name: 'Vos',
+        hoursFree: 4,
+        skill: { investigacion: 2, diseno: 3, presentacion: 1, maqueta: 1 },
       },
     ],
   },

@@ -146,6 +146,20 @@ const RESERVES = [30_000, 40_000, 60_000] as const
  */
 const ROLES = ['fuera', 'sin-todo', 'justo', 'holgado'] as const
 const ROTATIONS = [0, 1, 2, 3] as const
+/**
+ * Cuántos lugares de más trae cada paquete, **por posición**.
+ *
+ * Antes el margen venía del papel: el paquete holgado traía siempre ocho
+ * lugares de más y era, por construcción, el que más lugares ofrecía en todo el
+ * catálogo. «Elegir el de más lugares» rendía entonces `optimal` en las 25
+ * variantes sin mirar ni la plata, ni los días, ni lo que el paquete incluye
+ * (MAT-CLO-002, misma forma lógica que MAT-RA2-002).
+ *
+ * Atándolo a la posición —que rota contra el papel— el paquete con más lugares
+ * deja de coincidir con el mejor: los lugares vuelven a ser una restricción que
+ * hay que chequear, no una etiqueta que delate la respuesta.
+ */
+const PLACE_MARGINS = [3, 8, 2, 5] as const
 const RADICES = [
   SHAPES.length,
   FUNDS.length,
@@ -188,11 +202,14 @@ export function generateTrip(index: number): TripParams {
           micro: true,
           comidas: true,
         }
+      // Los lugares de más los da la posición, no el papel: el que más ofrece
+      // no es el mejor, y hay que mirar las tres condiciones.
+      const places = course + (PLACE_MARGINS[position] ?? 2)
       if (role === 'sin-todo')
         return {
           cost: fund - reserve - 60_000,
           days: Math.min(nights, freeDays),
-          places: course + 4,
+          places,
           micro: true,
           comidas: false,
         }
@@ -200,14 +217,14 @@ export function generateTrip(index: number): TripParams {
         return {
           cost: fund - Math.floor(reserve / 2),
           days: Math.min(nights, freeDays),
-          places: course + 2,
+          places,
           micro: true,
           comidas: true,
         }
       return {
         cost: fund - reserve - 40_000,
         days: Math.min(nights, freeDays),
-        places: course + 8,
+        places,
         micro: true,
         comidas: true,
       }
@@ -316,7 +333,9 @@ export function evaluateTrip(p: TripParams, optionId: string) {
 
 export const tripVariants = generatedSource({
   id: 'y5.final-trip.packages',
-  version: '1',
+  // 2: los lugares de más los fija la posición y no el papel, así que «el de
+  // más lugares» deja de ser siempre el mejor (MAT-CLO-002).
+  version: '2',
   schema: tripSchema,
   size: TRIP_SPACE,
   generate: generateTrip,

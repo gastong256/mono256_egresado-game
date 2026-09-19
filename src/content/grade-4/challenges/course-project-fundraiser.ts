@@ -180,10 +180,22 @@ export function fundraiserPlans(
 }
 
 const SHAPES = ['rinden-panchos', 'rinden-tortas', 'rinden-bebidas'] as const
+/**
+ * Lo que sale preparar cada bandeja, por posición.
+ *
+ * El rango es ancho a propósito: con costos parecidos, ordenar por **precio**
+ * por minuto da la misma decisión que ordenar por **margen** por minuto, y el
+ * año entero se resuelve sin restar lo que cuesta preparar —que es exactamente
+ * el error que `y4.margin-review` existe para reparar—. El gate lo comprueba
+ * variante por variante.
+ */
 const COSTS = [
-  [4000, 3000, 3600],
-  [3600, 3200, 3000],
-  [4400, 2800, 4000],
+  [1600, 8000, 4000],
+  [8000, 1600, 4000],
+  [4000, 8000, 1600],
+  [1600, 4000, 8000],
+  [8000, 4000, 1600],
+  [4000, 1600, 8000],
 ] as const
 // De mayor a menor margen por minuto. El mayor margen por bandeja
 // queda último: leer sólo el precio no resuelve la capacidad compartida.
@@ -195,28 +207,124 @@ const ORDERS = [
   [1, 0, 2],
   [2, 1, 0],
 ] as const
-const MARGINS = [
-  [3000, 4000, 5000],
-  [3600, 4400, 5200],
+/**
+ * Las seis economías de la peña: qué deja y cuánto ocupa cada bandeja.
+ *
+ * El índice **es** el rango por margen por minuto de cocina: la entrada 0 es
+ * siempre la que más deja por minuto. Lo que cambia entre economías es cuántos
+ * minutos ocupa cada rango, y ahí está la corrección de MAT-RA2-002.
+ *
+ * Antes los minutos eran una constante del rango —`[10, 25, 40]`, siempre
+ * ascendente—, así que «ordenar por menos minutos» **era** ordenar por mayor
+ * margen por minuto, en las 25 variantes publicadas y en cualquier catálogo que
+ * el generador pudiera emitir. Rotar qué producto ocupaba cada rango cambiaba la
+ * etiqueta, no la economía: el multiset `(margen, minutos)` era uno solo en todo
+ * el catálogo. Permutar etiquetas no es diversidad económica.
+ *
+ * Acá el catálogo contiene seis economías de verdad distintas. En dos de ellas
+ * la bandeja más rápida es también la que más deja por minuto —a veces lo barato
+ * y rápido sí es lo mejor, y negarlo sería falso—; en las otras cuatro no, y en
+ * dos es directamente la peor. Ninguna ordenación simple domina el catálogo.
+ *
+ * Dos invariantes que el gate vuelve a comprobar sobre la variante materializada:
+ * el margen por minuto baja estrictamente con el rango, y la bandeja de mayor
+ * margen **por unidad** nunca es la de rango 0 —ése es el señuelo declarado del
+ * Intrinsic Math Gate—.
+ */
+const ECONOMIES = [
+  [
+    { margin: 3000, minutes: 15 },
+    { margin: 4000, minutes: 25 },
+    { margin: 4800, minutes: 40 },
+  ],
+  [
+    { margin: 5000, minutes: 25 },
+    { margin: 1500, minutes: 10 },
+    { margin: 5400, minutes: 40 },
+  ],
+  [
+    { margin: 5000, minutes: 20 },
+    { margin: 6000, minutes: 40 },
+    { margin: 1200, minutes: 10 },
+  ],
+  [
+    { margin: 4000, minutes: 20 },
+    { margin: 4800, minutes: 40 },
+    { margin: 1500, minutes: 15 },
+  ],
+  [
+    { margin: 3600, minutes: 15 },
+    { margin: 5000, minutes: 25 },
+    { margin: 1500, minutes: 20 },
+  ],
+  [
+    { margin: 4500, minutes: 20 },
+    { margin: 6000, minutes: 30 },
+    { margin: 2400, minutes: 25 },
+  ],
 ] as const
-const MINUTES = [10, 25, 40] as const
-const FIXED = [10_000, 14_000, 18_000] as const
-const KITCHEN = [150, 180, 210, 240] as const
+const FIXED = [
+  8_000, 10_000, 12_000, 14_000, 16_000, 18_000, 20_000, 22_000,
+] as const
+const KITCHEN = [120, 150, 180, 210, 240, 270, 300] as const
 const RESERVE = 6_000
+/** Cuánto por debajo del techo cae el objetivo con colchón. */
 const SLACKS = [1000, 2000, 3000] as const
-const RADICES = [
-  ORDERS.length,
+/**
+ * Papel de una dirección: qué orden económico y qué economía le tocan.
+ *
+ * Con paso 1 sobre una única lectura de base mixta los dígitos lentos se
+ * quedaban en su primer valor durante las treinta direcciones que el barrido
+ * visita, así que el catálogo publicado recorría 30 de 1296 direcciones y
+ * congelaba la mitad de los ejes (MAT-RA2-005). Generar **por papel** —como ya
+ * hace 3.º— lo arregla de raíz: el papel se reparte por construcción y la
+ * búsqueda sólo elige magnitudes.
+ *
+ * La economía rota **desfasada** contra el orden: sin ese desfasaje seis
+ * dividiría a seis y cada orden quedaría atado a una sola economía.
+ */
+const SEARCH_RADICES = [
   KITCHEN.length,
   COSTS.length,
   FIXED.length,
   SLACKS.length,
-  MARGINS.length,
 ]
-export const FUNDRAISER_SPACE = spaceOf(RADICES)
+const SEARCH_SPACE = spaceOf(SEARCH_RADICES)
+/** Coprimo con 1008 = 2⁴·3²·7: la búsqueda recorre el espacio entero. */
+const SEARCH_STRIDE = 115
+/** Cada dirección arranca su búsqueda en un punto distinto del espacio. */
+const SEARCH_STEP = 5
+const ROLE_CYCLE = ORDERS.length * ECONOMIES.length
+export const FUNDRAISER_SPACE = ROLE_CYCLE * SEARCH_SPACE
 
-/** Techo económico con menos de tres cuartos de cocina: preserva la posibilidad
- * de un óptimo que deje tiempo libre, sin confundir Estilo con calidad. */
-function profitWithSpareKitchen(
+export function fundraiserRoleOf(index: number): {
+  readonly order: (typeof ORDERS)[number]
+  readonly economy: (typeof ECONOMIES)[number]
+} {
+  const cycle = Math.abs(index)
+  return {
+    order: at(ORDERS, cycle % ORDERS.length),
+    economy: at(ECONOMIES, cycle + Math.floor(cycle / ORDERS.length)),
+  }
+}
+
+/**
+ * Lo máximo que la peña puede dejar con la cocina que hay.
+ *
+ * El objetivo se calibra contra **este** techo, y no contra el mejor plan que
+ * deja tres cuartos de cocina libre, que es como se calibraba antes. Esa
+ * calibración vieja es la causa raíz que la ronda 2 no vio: el techo con cocina
+ * libre queda muy por debajo de lo que rinde llenar la cocina, así que casi
+ * cualquier producción que la llenara pasaba el objetivo con colchón —el 47 % de
+ * los planes válidos era `optimal`— y cualquier reparto ciego caía adentro por
+ * volumen. Con el techo real, llegar exige acercarse al óptimo, y acercarse al
+ * óptimo exige el margen de contribución por minuto de cocina.
+ *
+ * Estilo no se tocó: un óptimo que deja cocina libre sigue siendo posible —lo
+ * comprueba el gate de Estilo variante por variante—, sólo que ahora es una
+ * propiedad que la variante tiene que ganarse, no una que el objetivo regala.
+ */
+function bestProfit(
   items: FundraiserParams['items'],
   kitchen: number,
   fixed: number,
@@ -230,7 +338,7 @@ function profitWithSpareKitchen(
           (sum, item, i) => sum + item.minutes * (counts[i] ?? 0),
           0,
         )
-        if (minutes * 4 >= kitchen * 3) continue
+        if (minutes > kitchen) continue
         const profit = items.reduce(
           (sum, item, i) => sum + (item.price - item.cost) * (counts[i] ?? 0),
           -fixed,
@@ -240,57 +348,129 @@ function profitWithSpareKitchen(
   return best
 }
 
-export function generateFundraiser(index: number): FundraiserParams {
-  // Orden económico rota antes que magnitudes: el prefijo del catálogo ya
-  // ofrece decisiones diferentes por una razón visible en costos y minutos.
-  const axes = candidateAxes(index, RADICES, 1)
-  const order = at(ORDERS, digit(axes, 0))
-  const shape = at(SHAPES, order[0])
-  const costs = at(COSTS, digit(axes, 2))
-  const fixedCost = at(FIXED, digit(axes, 3))
-  const kitchenMinutes = at(KITCHEN, digit(axes, 1))
-  const items = ITEMS.map((_, position) => {
-    const rank = order.findIndex((item) => item === position)
-    const cost = costs[position] ?? costs[0]
-    return {
-      cost,
-      price: cost + at(at(MARGINS, digit(axes, 5)), rank),
-      minutes: at(MINUTES, rank),
-    }
-  }) as FundraiserParams['items']
-  const ceiling = profitWithSpareKitchen(items, kitchenMinutes, fixedCost)
-  const slack = at(SLACKS, digit(axes, 4))
-  return fundraiserSchema.parse({
-    shape,
-    fixedCost,
-    reserve: RESERVE,
-    kitchenMinutes,
-    items,
-    target: Math.max(
-      1000,
-      Math.floor((ceiling - RESERVE - slack) / 1000) * 1000,
+/** La producción que reparte la cocina en partes iguales, sin mirar márgenes. */
+export function evenKitchenSplit(p: FundraiserParams): readonly BudgetLine[] {
+  const share = Math.floor(p.kitchenMinutes / ITEMS.length)
+  return ITEMS.map((entry, index) => ({
+    itemId: entry.id,
+    quantity: Math.min(
+      entry.max,
+      Math.floor(share / (p.items[index]?.minutes ?? 1)),
     ),
-  })
+  }))
 }
 
-export function fundraiserGates(p: FundraiserParams): readonly string[] {
+/** La producción que llena la cocina empezando por donde `order` dice. */
+export function fillKitchen(
+  p: FundraiserParams,
+  order: readonly number[],
+): readonly BudgetLine[] {
+  const counts = ITEMS.map(() => 0)
+  let left = p.kitchenMinutes
+  for (const position of order) {
+    const minutes = p.items[position]?.minutes ?? 1
+    const take = Math.min(ITEMS[position]?.max ?? 0, Math.floor(left / minutes))
+    counts[position] = take
+    left -= take * minutes
+  }
+  return ITEMS.map((entry, index) => ({
+    itemId: entry.id,
+    quantity: counts[index] ?? 0,
+  }))
+}
+
+/**
+ * La variante de una dirección: su papel, y la primera magnitud que lo sostiene.
+ *
+ * El papel —orden económico y economía— lo fija la dirección. Lo que se busca
+ * son las magnitudes: cuánta cocina hay, cuánto cuesta cada bandeja, cuánto es
+ * el costo fijo y qué tan ajustado queda el objetivo. La primera combinación que
+ * pasa todos los gates es la variante; si no aparece ninguna, devuelve la última
+ * probada y el gate la rechaza.
+ */
+export function generateFundraiser(index: number): FundraiserParams {
+  const { order, economy } = fundraiserRoleOf(index)
+  const shape = at(SHAPES, order[0])
+  let last: FundraiserParams | undefined
+  for (let attempt = 0; attempt < SEARCH_SPACE; attempt++) {
+    const axes = candidateAxes(
+      index * SEARCH_STEP + attempt,
+      SEARCH_RADICES,
+      SEARCH_STRIDE,
+    )
+    const kitchenMinutes = at(KITCHEN, digit(axes, 0))
+    const costs = at(COSTS, digit(axes, 1))
+    const fixedCost = at(FIXED, digit(axes, 2))
+    const slack = at(SLACKS, digit(axes, 3))
+    const items = ITEMS.map((_, position) => {
+      const rank = order.findIndex((item) => item === position)
+      const cost = costs[position] ?? costs[0]
+      const tray = economy[rank] ?? economy[0]
+      return { cost, price: cost + tray.margin, minutes: tray.minutes }
+    }) as FundraiserParams['items']
+    const ceiling = bestProfit(items, kitchenMinutes, fixedCost)
+    const candidate = fundraiserSchema.safeParse({
+      shape,
+      fixedCost,
+      reserve: RESERVE,
+      kitchenMinutes,
+      items,
+      target: Math.max(
+        1000,
+        Math.floor((ceiling - RESERVE - slack) / 1000) * 1000,
+      ),
+    })
+    if (!candidate.success) continue
+    last = candidate.data
+    if (fundraiserGates(candidate.data).length === 0) return candidate.data
+  }
+  if (last === undefined)
+    throw new Error(`sin variante para la dirección ${String(index)}`)
+  return last
+}
+
+/**
+ * Gate de dirección: la variante juega la economía que su dirección nombra.
+ *
+ * Sin esto el catálogo podría aprobar veinticinco variantes de la misma
+ * economía —que es exactamente lo que pasó en la ronda 2— y la diversidad
+ * quedaría librada a lo que el barrido produjera. Con esto, el prefijo publicado
+ * rota las seis por construcción.
+ */
+export function fundraiserRoleGates(
+  p: FundraiserParams,
+  index: number,
+): readonly string[] {
+  const { order, economy } = fundraiserRoleOf(index)
   const issues: string[] = []
-  const plans = fundraiserPlans(p)
-  issues.push(...tierWitnessIssues(plans), ...styleGateIssues(plans))
+  order.forEach((position, rank) => {
+    const tray = p.items[position]
+    const expected = economy[rank]
+    if (
+      tray === undefined ||
+      expected === undefined ||
+      tray.price - tray.cost !== expected.margin ||
+      tray.minutes !== expected.minutes
+    )
+      issues.push('la variante no juega la economía de su dirección')
+  })
+  return [...new Set(issues)]
+}
 
-  // LOCKED: cubrir costos y llegar al objetivo son condiciones distintas, y
-  // las dos tienen que ser alcanzables por separado.
-  const covers = plans.filter(
-    (plan) => plan.quality === 'functional' && plan.profit >= 0,
-  )
-  if (covers.length === 0)
-    issues.push('no hay producción que sólo cubra costos')
-  if (!plans.some((plan) => plan.quality === 'optimal'))
-    issues.push('el objetivo con colchón es inalcanzable')
-
-  const spare = profitWithSpareKitchen(p.items, p.kitchenMinutes, p.fixedCost)
-  if (spare - p.target - p.reserve > Math.max(...SLACKS))
-    issues.push('objetivo y colchón quedan holgados aun dejando cocina libre')
+/**
+ * Gates baratos: los que no necesitan enumerar el espacio entero.
+ *
+ * Van primero y cortan. La búsqueda del generador prueba cientos de magnitudes
+ * por dirección y la enumeración de 630 planes es lo caro; casi todas las
+ * candidatas mueren acá, sin pagarla.
+ */
+function fundraiserShapeIssues(p: FundraiserParams): readonly string[] {
+  const issues: string[] = []
+  const ceiling = bestProfit(p.items, p.kitchenMinutes, p.fixedCost)
+  if (ceiling - p.target - p.reserve > Math.max(...SLACKS))
+    issues.push('el objetivo con colchón queda lejos del techo de la cocina')
+  if (p.target < 4000)
+    issues.push('el objetivo es demasiado chico para decidir nada')
 
   // La cocina tiene que apretar: si entra todo, no hay nada que decidir.
   const everything = ITEMS.map((entry) => ({
@@ -305,13 +485,63 @@ export function fundraiserGates(p: FundraiserParams): readonly string[] {
   // capacidad compartida.
   const byUnit = ITEMS.map((_, index) => marginOf(p, index))
   const bestUnit = byUnit.indexOf(Math.max(...byUnit))
-  const bestMinute = [0, 1, 2].sort(
+  const byMinute = [0, 1, 2].sort(
     (a, b) =>
       marginOf(p, b) * (p.items[a]?.minutes ?? 1) -
         marginOf(p, a) * (p.items[b]?.minutes ?? 1) || a - b,
-  )[0]
-  if (bestUnit === bestMinute)
+  )
+  if (bestUnit === byMinute[0])
     issues.push('el mejor margen por bandeja ya es el mejor por minuto')
+
+  // El margen por minuto tiene que ordenar de verdad: dos bandejas empatadas
+  // dejarían la decisión indeterminada y el techo del contrato sin sentido.
+  // Comparación cruzada entera, sin división ni coma.
+  for (let rank = 1; rank < byMinute.length; rank++) {
+    const better = byMinute[rank - 1] ?? 0
+    const worse = byMinute[rank] ?? 0
+    if (
+      marginOf(p, better) * (p.items[worse]?.minutes ?? 1) <=
+      marginOf(p, worse) * (p.items[better]?.minutes ?? 1)
+    )
+      issues.push('dos bandejas dejan lo mismo por minuto de cocina')
+  }
+
+  // Intrinsic Math Gate, la otra mitad: **repartir la cocina en partes
+  // iguales** —sin calcular un solo margen— no puede alcanzar el objetivo con
+  // colchón. Si alcanzara, el año se resolvería llenando la cocina y el margen
+  // de contribución por minuto, que es el constructo, no haría falta
+  // (MAT-RA2-002, estrategia de reemplazo hallada dentro del sprint).
+  if (readFundraiser(p, evenKitchenSplit(p)).quality === 'optimal')
+    issues.push('repartir la cocina en partes iguales ya alcanza el objetivo')
+
+  return issues
+}
+
+export function fundraiserGates(p: FundraiserParams): readonly string[] {
+  const shape = fundraiserShapeIssues(p)
+  if (shape.length > 0) return shape
+
+  const issues: string[] = []
+  const plans = fundraiserPlans(p)
+  issues.push(...tierWitnessIssues(plans), ...styleGateIssues(plans))
+
+  // LOCKED: cubrir costos y llegar al objetivo son condiciones distintas, y
+  // las dos tienen que ser alcanzables por separado.
+  const covers = plans.filter(
+    (plan) => plan.quality === 'functional' && plan.profit >= 0,
+  )
+  if (covers.length === 0)
+    issues.push('no hay producción que sólo cubra costos')
+  if (!plans.some((plan) => plan.quality === 'optimal'))
+    issues.push('el objetivo con colchón es inalcanzable')
+
+  // Y llegar tiene que ser exigente. Si la mayoría de las producciones que
+  // entran ya dejan el colchón, el objetivo no mide nada y cualquier plan
+  // ciego cae adentro por volumen.
+  const optimal = plans.filter((plan) => plan.quality === 'optimal')
+  const viable = plans.filter((plan) => plan.quality !== 'invalid')
+  if (optimal.length * 5 > viable.length)
+    issues.push('más de un quinto de las producciones válidas ya es óptima')
   return issues
 }
 
@@ -376,11 +606,14 @@ export function evaluateFundraiser(
 
 export const fundraiserVariants = generatedSource({
   id: 'y4.course-project-fundraiser.margin',
-  version: '2',
+  // 3: seis economías reales en vez de una sola permutada, y un paso de
+  // recorrido que las reparte en el prefijo publicado (MAT-RA2-002/005).
+  version: '3',
   schema: fundraiserSchema,
   size: FUNDRAISER_SPACE,
   generate: generateFundraiser,
   gates: fundraiserGates,
+  addressGates: fundraiserRoleGates,
 })
 
 const PROJECT_FAMILY = toScenarioFamilyId('course-project')

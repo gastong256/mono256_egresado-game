@@ -250,10 +250,16 @@ describe('RS-RA-003 · catálogo publicado y oráculo independiente', () => {
         new Set(['invalid', 'functional', 'efficient', 'optimal']),
       )
       expect(best).toBeGreaterThanOrEqual(p.target + p.reserve)
-      // El objetivo usa la capacidad de una estrategia con tiempo libre, sin
-      // exigir agotar cocina ni eliminar el witness de Estilo.
-      expect(bestWithSpare - (p.target + p.reserve)).toBeGreaterThanOrEqual(0)
-      expect(bestWithSpare - (p.target + p.reserve)).toBeLessThanOrEqual(3000)
+      // El objetivo se calibra contra el **techo real** de la cocina, no contra
+      // el mejor plan que la deja libre: si se calibra contra el segundo, casi
+      // cualquier producción que llene la cocina lo pasa y un reparto ciego cae
+      // adentro por volumen (MAT-RA2-002). El margen es a lo sumo el mayor de
+      // los aires publicados más lo que redondea el objetivo al millar.
+      expect(best - (p.target + p.reserve)).toBeGreaterThanOrEqual(0)
+      expect(best - (p.target + p.reserve)).toBeLessThanOrEqual(6999)
+      // Y el witness de Estilo sigue en pie: el plan con cocina libre existe,
+      // aunque ya no sea el que fija el objetivo.
+      expect(bestWithSpare).toBeGreaterThanOrEqual(0)
       for (const seen of styles.values())
         expect(seen.size).toBeGreaterThanOrEqual(2)
       expect(
