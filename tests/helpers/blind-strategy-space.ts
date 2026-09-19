@@ -22,8 +22,22 @@
 import type {
   InteractionAnswer,
   InteractionPresentation,
+  PresentedDatum,
   SpatialPlacement,
 } from '@/game'
+import {
+  numericShortcutPolicies,
+  optionShortcutPolicies,
+  quantityShortcutPolicies,
+  type AuditedQuantityItem,
+  type NaivePolicy,
+} from './blind-strategy-policies'
+
+export {
+  STRATEGY_FAMILIES,
+  type NaivePolicy,
+  type StrategyFamily,
+} from './blind-strategy-policies'
 
 /**
  * Presupuesto por Template: 60.000 evaluaciones matemáticas. La medición
@@ -46,12 +60,6 @@ export interface ConstantResponse {
   readonly answer: InteractionAnswer
   /** Otras formas de la misma respuesta que sólo cambian la postura pública. */
   readonly stanceVariants: readonly InteractionAnswer[]
-}
-
-/** Una política ingenua: determinista, y ciega a la respuesta esperada. */
-export interface NaivePolicy {
-  readonly name: string
-  readonly answer: InteractionAnswer
 }
 
 /**
@@ -92,11 +100,6 @@ function digits(code: number, sizes: readonly number[]): readonly number[] {
   })
 }
 
-interface QuantityItem {
-  readonly id: string
-  readonly maxQuantity: number
-}
-
 /**
  * Cantidades y presupuesto: el vector de cantidades **es** la respuesta.
  *
@@ -105,7 +108,8 @@ interface QuantityItem {
  */
 function quantitySpace(
   kind: 'quantity-builder' | 'budget-builder',
-  items: readonly QuantityItem[],
+  data: readonly PresentedDatum[],
+  items: readonly AuditedQuantityItem[],
 ): ResponseSpace {
   const sizes = items.map((item) => item.maxQuantity + 1)
   const lines = (counts: readonly number[]) =>
@@ -115,10 +119,6 @@ function quantitySpace(
     }))
   const answerOf = (counts: readonly number[]): InteractionAnswer =>
     ({ kind, lines: lines(counts) }) as InteractionAnswer
-  const half = items.map((item) => Math.floor(item.maxQuantity / 2))
-  const equalShare = items.map(() =>
-    Math.min(...items.map((item) => item.maxQuantity)),
-  )
   return {
     signature: `${kind}:${items.map((item) => `${item.id}<=${String(item.maxQuantity)}`).join(',')}`,
     cardinality: product(sizes),
@@ -137,21 +137,7 @@ function quantitySpace(
         return undefined
       return { key, answer: answerOf(counts), stanceVariants: [] }
     },
-    policies: [
-      { name: 'todo al mínimo', answer: answerOf(items.map(() => 0)) },
-      {
-        name: 'todo al máximo',
-        answer: answerOf(items.map((item) => item.maxQuantity)),
-      },
-      { name: 'mitad del máximo', answer: answerOf(half) },
-      {
-        name: 'primer ítem al máximo',
-        answer: answerOf(
-          items.map((item, index) => (index === 0 ? item.maxQuantity : 0)),
-        ),
-      },
-      { name: 'proporciones iguales', answer: answerOf(equalShare) },
-    ],
+    policies: quantityShortcutPolicies(kind, data, items),
   }
 }
 
@@ -162,7 +148,11 @@ function optionSpace(
     | 'timeline'
     | 'chart-interpretation'
     | 'information-request',
-  options: readonly { readonly id: string }[],
+  options: readonly {
+    readonly id: string
+    readonly label: string
+    readonly detail?: string
+  }[],
 ): ResponseSpace {
   const answerOf = (id: string): InteractionAnswer =>
     ({ kind, optionId: id }) as InteractionAnswer
@@ -177,19 +167,7 @@ function optionSpace(
         : { key, answer: answerOf(option.id), stanceVariants: [] }
     },
     labelOf: (key) => options[Number(key.slice(1))]?.id,
-    policies: [
-      ...(options[0] === undefined
-        ? []
-        : [{ name: 'la primera opción', answer: answerOf(options[0].id) }]),
-      ...(options.length < 2
-        ? []
-        : [
-            {
-              name: 'la última opción',
-              answer: answerOf(options[options.length - 1]!.id),
-            },
-          ]),
-    ],
+    policies: optionShortcutPolicies(kind, options),
   }
 }
 
@@ -243,10 +221,12 @@ function classificationSpace(
     },
     policies: [
       ...labels.map((label, index) => ({
+        family: 'NORMALIZED' as const,
         name: `todo «${label}»`,
         answer: withStance(uniform(index), stances[0]),
       })),
       {
+        family: 'FIXED_PRIORITY' as const,
         name: 'primer patrón válido',
         answer: withStance(
           entriesOf(sizes.map((_, i) => i % labels.length)),
@@ -283,14 +263,7 @@ function numericSpace(
         ? { key, answer: answerOf(value), stanceVariants: [] }
         : undefined
     },
-    policies: [
-      { name: 'el mínimo del rango', answer: answerOf(min) },
-      { name: 'el máximo del rango', answer: answerOf(max) },
-      {
-        name: 'el medio del rango',
-        answer: answerOf(min + Math.floor((max - min) / 2)),
-      },
-    ],
+    policies: numericShortcutPolicies(view),
   }
 }
 
@@ -335,6 +308,7 @@ function constructionSpace(
       cardinality: (agents.length + 1) ** tasks.length,
       policies: [
         {
+          family: 'NORMALIZED' as const,
           name: 'nada asignado',
           answer: { kind: 'assignment-board', assignments: [] },
         },
@@ -342,15 +316,18 @@ function constructionSpace(
           ? []
           : [
               {
+                family: 'FIXED_PRIORITY' as const,
                 name: 'todo a la primera persona',
                 answer: answerOf(() => agents[0]!),
               },
             ]),
         {
+          family: 'FIXED_PRIORITY' as const,
           name: 'cíclica',
           answer: answerOf((index) => agents[index % agents.length] ?? ''),
         },
         {
+          family: 'FIXED_PRIORITY' as const,
           name: 'equilibrada',
           answer: answerOf(
             (index) =>
@@ -358,6 +335,7 @@ function constructionSpace(
           ),
         },
         {
+          family: 'FIXED_PRIORITY' as const,
           name: 'preservar el orden',
           answer: answerOf((index) =>
             index < agents.length
@@ -399,18 +377,22 @@ function constructionSpace(
       ),
       policies: [
         {
+          family: 'NORMALIZED' as const,
           name: 'agenda vacía',
           answer: { kind: 'schedule-builder', placements: [] },
         },
         {
+          family: 'DOMAIN_NAIVE' as const,
           name: 'lo más temprano posible',
           answer: answerOf((index) => starts(index)[0]),
         },
         {
+          family: 'DOMAIN_NAIVE' as const,
           name: 'lo más tarde posible',
           answer: answerOf((index) => starts(index).at(-1)),
         },
         {
+          family: 'DOMAIN_NAIVE' as const,
           name: 'sólo lo obligatorio, temprano',
           answer: answerOf((index) =>
             view.activities[index]?.optional === true
@@ -419,10 +401,12 @@ function constructionSpace(
           ),
         },
         {
+          family: 'FIXED_PRIORITY' as const,
           name: 'preservar el orden',
           answer: answerOf((index) => sequential[index]),
         },
         {
+          family: 'DOMAIN_NAIVE' as const,
           name: 'repartido uniforme',
           answer: answerOf((index) => {
             const activity = view.activities[index]!
@@ -506,10 +490,12 @@ function constructionSpace(
       // de posiciones. Aquí se mide por políticas, no se enumera ese espacio.
       policies: [
         {
+          family: 'NORMALIZED' as const,
           name: 'plano vacío',
           answer: { kind: 'spatial-layout', placements: [] },
         },
         {
+          family: 'DOMAIN_NAIVE' as const,
           name: 'fila a fila',
           answer: {
             kind: 'spatial-layout',
@@ -517,6 +503,7 @@ function constructionSpace(
           },
         },
         {
+          family: 'DOMAIN_NAIVE' as const,
           name: 'empaque desde el origen',
           answer: {
             kind: 'spatial-layout',
@@ -529,18 +516,22 @@ function constructionSpace(
           },
         },
         {
+          family: 'DOMAIN_NAIVE' as const,
           name: 'misma orientación',
           answer: { kind: 'spatial-layout', placements: rowMajor(() => true) },
         },
         {
+          family: 'SIMPLE_GREEDY' as const,
           name: 'primer hueco',
           answer: { kind: 'spatial-layout', placements: firstFit(false) },
         },
         {
+          family: 'SIMPLE_GREEDY' as const,
           name: 'huella mínima',
           answer: { kind: 'spatial-layout', placements: firstFit(true) },
         },
         {
+          family: 'DOMAIN_NAIVE' as const,
           name: 'sólo lo obligatorio, fila a fila',
           answer: {
             kind: 'spatial-layout',
@@ -584,22 +575,33 @@ function constructionSpace(
       // n! sólo contaría recorridos completos y ocultaría las omisiones.
       // El cardinal no se declara hasta modelar el dominio entero.
       policies: [
-        { name: 'sin paradas', answer: answerOf([]) },
         {
+          family: 'NORMALIZED' as const,
+          name: 'sin paradas',
+          answer: answerOf([]),
+        },
+        {
+          family: 'FIXED_PRIORITY' as const,
           name: 'orden presentado',
           answer: answerOf(points.map((point) => point.id)),
         },
         {
+          family: 'FIXED_PRIORITY' as const,
           name: 'orden inverso',
           answer: answerOf([...points].reverse().map((point) => point.id)),
         },
         {
+          family: 'DOMAIN_NAIVE' as const,
           name: 'sólo las obligatorias, orden presentado',
           answer: answerOf(
             points.filter((point) => !point.optional).map((point) => point.id),
           ),
         },
-        { name: 'vecino más cercano', answer: answerOf(nearest()) },
+        {
+          family: 'SIMPLE_GREEDY' as const,
+          name: 'vecino más cercano',
+          answer: answerOf(nearest()),
+        },
       ],
     }
   }
@@ -618,10 +620,23 @@ function constructionSpace(
       signature: `number-grid:${rounds.map((round) => String(round.numbers.length)).join(',')}`,
       cardinality: product(rounds.map((round) => 2 ** round.numbers.length)),
       policies: [
-        { name: 'sin rondas', answer: { kind: 'number-grid', rounds: [] } },
-        { name: 'marcar todo', answer: answerOf((numbers) => [...numbers]) },
-        { name: 'no marcar nada', answer: answerOf(() => []) },
         {
+          family: 'NORMALIZED' as const,
+          name: 'sin rondas',
+          answer: { kind: 'number-grid', rounds: [] },
+        },
+        {
+          family: 'NORMALIZED' as const,
+          name: 'marcar todo',
+          answer: answerOf((numbers) => [...numbers]),
+        },
+        {
+          family: 'NORMALIZED' as const,
+          name: 'no marcar nada',
+          answer: answerOf(() => []),
+        },
+        {
+          family: 'FIXED_PRIORITY' as const,
           name: 'primer patrón válido (primera celda)',
           answer: answerOf((numbers) => numbers.slice(0, 1)),
         },
@@ -650,8 +665,15 @@ export function responseSpaceOf(
     case 'numeric-input':
       return numericSpace(view)
     case 'quantity-builder':
+      return quantitySpace(view.kind, view.data, view.items)
     case 'budget-builder':
-      return quantitySpace(view.kind, view.items)
+      // Un `budget-builder` imprime el precio unitario donde el otro imprime
+      // las tasas: es el mismo texto por ítem, con otro nombre de campo.
+      return quantitySpace(
+        view.kind,
+        view.data,
+        view.items.map((item) => ({ ...item, detail: item.unitPrice })),
+      )
     default:
       return constructionSpace(view)
   }

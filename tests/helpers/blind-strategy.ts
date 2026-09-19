@@ -26,10 +26,16 @@ import { materializeVariant } from '@/game/testing'
 import {
   EVALUATION_BUDGET,
   responseSpaceOf,
+  STRATEGY_FAMILIES,
   type ResponseSpace,
+  type StrategyFamily,
 } from './blind-strategy-space'
 
-export { EVALUATION_BUDGET } from './blind-strategy-space'
+export {
+  EVALUATION_BUDGET,
+  STRATEGY_FAMILIES,
+  type StrategyFamily,
+} from './blind-strategy-space'
 
 /** La escala del contrato: la escalera 100/75/40/10. */
 export const QUALITY_SCORE: Readonly<Record<SolutionQuality, number>> = {
@@ -53,11 +59,12 @@ export type AuditMode =
   | 'NOT_APPLICABLE_WITH_REASON'
   | 'BLOCKED_BY_SPACE_WITH_REASON'
 
-/** La mejor política ingenua encontrada, cuando no hubo enumeración exhaustiva. */
+/** Una política de atajo medida sobre todas las variantes de la Template. */
 export interface PolicyScore {
   readonly histogram: Readonly<Record<SolutionQuality, number>>
   readonly rejected: number
   readonly name: string
+  readonly family: StrategyFamily
   readonly mean: number
   readonly optimal: number
 }
@@ -83,8 +90,17 @@ export interface BlindStrategyRow {
   readonly kAnswer: string
   readonly S: number
   readonly sAnswer: string
-  /** Mejor política, ordenada de mayor a menor. Vacío si se enumeró entero. */
+  /**
+   * Políticas de atajo medidas, de mayor a menor rendimiento medio.
+   *
+   * Se corren en **toda** Template, también donde el espacio constante se
+   * enumeró entero: una constante y una política relativa a la pantalla son dos
+   * clases distintas de atajo y la segunda no se deduce de la primera
+   * (MAT-RA2-003).
+   */
   readonly policies: readonly PolicyScore[]
+  /** Familias canónicas efectivamente evaluadas en esta Template. */
+  readonly families: readonly StrategyFamily[]
   /** Variantes en las que cada nivel es alcanzable. */
   readonly reachable: Readonly<Record<SolutionQuality, number>>
   /** Nivel de cada respuesta constante en cada variante, en orden de catálogo. */
@@ -108,6 +124,28 @@ const emptyReachable = (): Record<SolutionQuality, number> => ({
   functional: 0,
   invalid: 0,
 })
+
+/** Cuántas variantes admiten cada nivel, según lo que la auditoría recorrió. */
+function reachableOf(
+  seenByVariant: readonly ReadonlySet<SolutionQuality>[],
+): Record<SolutionQuality, number> {
+  const reachable = emptyReachable()
+  for (const seen of seenByVariant)
+    for (const tier of seen) reachable[tier] += 1
+  return reachable
+}
+
+/** Cierra una medición por políticas con su tabla de niveles alcanzables. */
+function withReachable<
+  T extends { readonly seenByVariant: readonly ReadonlySet<SolutionQuality>[] },
+>({
+  seenByVariant,
+  ...rest
+}: T): Omit<T, 'seenByVariant'> & {
+  readonly reachable: Record<SolutionQuality, number>
+} {
+  return { ...rest, reachable: reachableOf(seenByVariant) }
+}
 
 interface Instance {
   readonly variantId: string
@@ -148,16 +186,15 @@ function auditExhaustively(
   | 'kAnswer'
   | 'S'
   | 'sAnswer'
-  | 'reachable'
   | 'constant'
   | 'constantById'
   | 'stanceLeaks'
   | 'optimalSignatures'
   | 'histogram'
-> {
+> & { readonly seenByVariant: readonly ReadonlySet<SolutionQuality>[] } {
   const n = instances.length
   const constant = new Map<string, SolutionQuality[]>()
-  const reachable = emptyReachable()
+  const seenByVariant: Set<SolutionQuality>[] = []
   let randomTotal = 0
   let stanceLeaks = 0
   const optimalSignatures = new Set<string>()
@@ -195,7 +232,7 @@ function auditExhaustively(
     }
     if (leaked) stanceLeaks += 1
     randomTotal += counted === 0 ? 0 : sum / counted
-    for (const tier of seen) reachable[tier] += 1
+    seenByVariant.push(seen)
   })
 
   let K = -1
@@ -244,7 +281,7 @@ function auditExhaustively(
     kAnswer,
     S,
     sAnswer,
-    reachable,
+    seenByVariant,
     constant: new Map([...constant].filter(([, q]) => q.length === n)),
     constantById,
     stanceLeaks,
@@ -252,58 +289,83 @@ function auditExhaustively(
   }
 }
 
-/** Políticas ingenuas: deterministas y ciegas a la respuesta esperada. */
+/**
+ * Políticas de atajo: deterministas, y ciegas a la respuesta esperada.
+ *
+ * Una política sólo puntúa cuando **todas** las variantes la ofrecen: si una
+ * pantalla no imprime la fila que otra sí imprime, «la misma regla» no existe
+ * en todo el catálogo y promediar sobre un subconjunto inventaría un atajo que
+ * un jugador no podría reusar. Ésas se descartan y se cuentan aparte.
+ */
 function auditByPolicies(
   templateId: string,
   instances: readonly Instance[],
-): Pick<BlindStrategyRow, 'policies' | 'reachable'> {
-  const reachable = emptyReachable()
+): Pick<BlindStrategyRow, 'policies' | 'families'> & {
+  readonly seenByVariant: readonly ReadonlySet<SolutionQuality>[]
+} {
+  const seenByVariant: Set<SolutionQuality>[] = []
   const totals = new Map<
     string,
     {
+      family: StrategyFamily
       sum: number
       optimal: number
       rejected: number
+      applied: number
       histogram: Record<SolutionQuality, number>
     }
   >()
   for (const { variantId, instance, view } of instances) {
     const space = responseSpaceOf(view)
     const seen = new Set<SolutionQuality>()
+    // Dos reglas distintas pueden proponer la misma respuesta en esta variante.
+    // Evaluarla una vez y reusar el nivel no cambia ninguna métrica y mantiene
+    // el costo de las políticas muy por debajo del de la enumeración.
+    const memo = new Map<string, SolutionQuality | undefined>()
     for (const policy of space?.policies ?? []) {
-      const evaluated = evaluateTier(
-        templateId,
-        variantId,
-        instance,
-        policy.answer,
-        false,
-      )
+      const key = JSON.stringify(policy.answer)
+      const evaluated = memo.has(key)
+        ? memo.get(key)
+        : evaluateTier(templateId, variantId, instance, policy.answer, false)
+      memo.set(key, evaluated)
       const quality = evaluated ?? 'invalid'
       seen.add(quality)
       const entry = totals.get(policy.name) ?? {
+        family: policy.family,
         sum: 0,
         optimal: 0,
         rejected: 0,
+        applied: 0,
         histogram: emptyReachable(),
       }
       if (evaluated === undefined) entry.rejected += 1
+      entry.applied += 1
       entry.histogram[quality] += 1
       entry.sum += QUALITY_SCORE[quality]
       if (quality === 'optimal') entry.optimal += 1
       totals.set(policy.name, entry)
     }
-    for (const tier of seen) reachable[tier] += 1
+    seenByVariant.push(seen)
   }
-  const policies = [...totals]
+  const complete = [...totals].filter(
+    ([, entry]) => entry.applied === instances.length,
+  )
+  const policies = complete
     .map(([name, entry]) => ({
       name,
+      family: entry.family,
       mean: entry.sum / instances.length,
       optimal: entry.optimal,
       rejected: entry.rejected,
       histogram: entry.histogram,
     }))
     .sort((a, b) => b.mean - a.mean || a.name.localeCompare(b.name))
-  return { policies, reachable }
+  const present = new Set(complete.map(([, entry]) => entry.family))
+  return {
+    policies,
+    families: STRATEGY_FAMILIES.filter((family) => present.has(family)),
+    seenByVariant,
+  }
 }
 
 /**
@@ -358,6 +420,7 @@ export function auditBlindStrategies(
       S: Number.NaN,
       sAnswer: '',
       policies: [] as readonly PolicyScore[],
+      families: [] as readonly StrategyFamily[],
       constant: new Map<string, readonly SolutionQuality[]>(),
       constantById: new Map<string, readonly SolutionQuality[]>(),
       optimalSignatures: 0,
@@ -400,7 +463,7 @@ export function auditBlindStrategies(
         category: 'C',
         reason: `el espacio de respuesta cambia entre variantes (${String(signatures.size)} formas distintas): no hay respuesta constante comparable`,
         cardinality,
-        ...auditByPolicies(templateId, instances),
+        ...withReachable(auditByPolicies(templateId, instances)),
       })
       continue
     }
@@ -414,7 +477,7 @@ export function auditBlindStrategies(
         reason: `espacio de ${String(cardinality)} respuestas por variante: ${String(evaluations)} evaluaciones exceden el presupuesto de ${String(EVALUATION_BUDGET)}`,
         cardinality,
         evaluations,
-        ...auditByPolicies(templateId, instances),
+        ...withReachable(auditByPolicies(templateId, instances)),
       })
       continue
     }
@@ -427,13 +490,25 @@ export function auditBlindStrategies(
         category: 'D',
         reason: `${kind} nombra posiciones, personas u horarios de cada variante: no hay respuesta constante comparable`,
         cardinality,
-        ...auditByPolicies(templateId, instances),
+        ...withReachable(auditByPolicies(templateId, instances)),
       })
       continue
     }
 
-    // Categoría A: enumeración exhaustiva del espacio constante.
+    // Categoría A: enumeración exhaustiva del espacio constante **y** políticas
+    // relativas a la pantalla. Enumerar constantes no cubre «copiar el número
+    // que la variante imprime»: son dos clases distintas de atajo.
     const keys = spaces[0].constantKeys?.() ?? []
+    const exhaustive = auditExhaustively(
+      templateId,
+      instances,
+      spaces as readonly ResponseSpace[],
+      keys,
+    )
+    const { seenByVariant, ...byPolicies } = auditByPolicies(
+      templateId,
+      instances,
+    )
     rows.push({
       ...base,
       mode: 'AUDITED_EXHAUSTIVELY',
@@ -442,13 +517,14 @@ export function auditBlindStrategies(
         'coordenadas semánticas estables; espacio completo dentro del presupuesto',
       cardinality,
       evaluations,
-      ...auditExhaustively(
-        templateId,
-        instances,
-        spaces as readonly ResponseSpace[],
-        keys,
+      ...exhaustive,
+      ...byPolicies,
+      families: ['CONSTANT', ...byPolicies.families],
+      reachable: reachableOf(
+        exhaustive.seenByVariant.map(
+          (seen, index) => new Set([...seen, ...(seenByVariant[index] ?? [])]),
+        ),
       ),
-      policies: [],
     })
   }
   return rows
