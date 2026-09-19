@@ -71,7 +71,7 @@ Tabla de navegación. Los contratos de cada etapa, más abajo, son la autoridad.
 | [STAGE-06](#stage-06-scorepolicy-competitiva) | ScorePolicy competitiva | `DONE` | STAGE-05 | — |
 | [GATE-TG1](#gate-tg1-teacher-gate-1) | **Teacher Gate 1** | `PASSED_WITH_REQUIRED_ADJUSTMENTS` | STAGE-04, STAGE-06 | externo |
 | [STAGE-07](#stage-07-invariante-de-egreso-fail-forward-y-recuperaciones) | Egreso, fail-forward y recuperaciones | `DONE` | GATE-TG1 | — |
-| [STAGE-08](#stage-08-contenido-incremental-de-1º-a-5º) | Contenido incremental 1.º → 5.º | `IN_PROGRESS` · **actual** · implementación e integración DONE · remediación ronda 1 DONE 14/14 · re-auditoría ronda 1 FAILED 13/14 + 3 hallazgos · adjudicación post-re-audit DONE · remediación ronda 2 NEXT | STAGE-07 | auditoría tras 1.º · gates matemáticos provisionales |
+| [STAGE-08](#stage-08-contenido-incremental-de-1º-a-5º) | Contenido incremental 1.º → 5.º | `IN_PROGRESS` · **actual** · implementación e integración DONE · remediación ronda 1 DONE 14/14 · re-auditoría ronda 1 FAILED · remediación ronda 2 DONE 5/5 · re-auditoría ronda 2 FAILED · sprint de cierre DONE · auditoría final de cierre NEXT | STAGE-07 | auditoría tras 1.º · gates matemáticos provisionales |
 | [STAGE-09](#stage-09-fair-mode-servidor-autoritativo-y-ranking) | Fair mode, servidor autoritativo y ranking | `NOT_STARTED` | STAGE-06, STAGE-08 | — |
 | [GATE-TG2](#gate-tg2-teacher-gate-2) | **Teacher Gate 2** | `TEACHER_GATE` | STAGE-09 | externo |
 | [FREEZE](#freeze-congelamiento-de-competencia) | Congelamiento de competencia | `NOT_STARTED` | GATE-TG2 | — |
@@ -925,7 +925,7 @@ cerrar la integración de carrera completa):
 - [x] Epílogo de carrera real con saliencia determinista, datos ausentes no dibujados y Hitos display-only distinguibles.
 - [x] Accesibilidad teclado/tap, móvil, reduced motion, replay/snapshot/reanudación y E2E por año. — Más el E2E de carrera completa a 320 px.
 - [ ] Auditoría de composición completa, cobertura/exploits y playtests de pacing según [validación de contenido](../04-quality/content-validation.md). — La [auditoría de implementación](../04-quality/full-career-implementation-audit.md) está ejecutada y los exploits barridos; **los playtests de pacing con jugadores reales no**.
-- [ ] Revisión matemática, documentación por año y cero sistemas fundamentales duplicados. — Documentación por año completa y sin sistemas duplicados. El gate provisional es el **AI Mathematics Department** (D-S08-095): [pre-revisión](../04-quality/mathematics-department-pre-review.md) y [adjudicación independiente](../04-quality/mathematics-department-ai-adjudication.md) ejecutadas, con `REMEDIATION REQUIRED`; la [implementación de la remediación](../04-quality/mathematics-remediation-implementation.md) cerró en `DONE` con los catorce contratos de la [especificación](../04-quality/mathematics-remediation-spec.md), después de dos adjudicaciones de contrato —la [de sus conflictos](../04-quality/mathematics-remediation-contract-conflict-adjudication.md) y la [del techo de la pantalla del acto](../04-quality/rs-mat-008-blind-ceiling-final-adjudication.md)—; la [re-auditoría independiente](../04-quality/independent-mathematics-reaudit.md) confirmó trece de los catorce contratos y el techo `K = 78`, pero dio `FAILED — REMEDIATION REQUIRED` por tres hallazgos bloqueantes propios, y la [adjudicación posterior](../04-quality/post-reaudit-mathematics-findings-adjudication.md) emitió el [contrato de la ronda 2](../04-quality/post-reaudit-mathematics-remediation-spec.md); la remediación dirigida está DONE con tres verify consecutivos; faltan su re-auditoría y el sign-off provisional. **La revisión del Departamento de Matemática humano no se reemplaza: se difiere a Final Delivery / Pre-Release Acceptance.**
+- [ ] Revisión matemática, documentación por año y cero sistemas fundamentales duplicados. — Documentación por año completa y sin sistemas duplicados. El gate provisional es el **AI Mathematics Department** (D-S08-095): [pre-revisión](../04-quality/mathematics-department-pre-review.md) y [adjudicación independiente](../04-quality/mathematics-department-ai-adjudication.md) ejecutadas, con `REMEDIATION REQUIRED`; la [implementación de la remediación](../04-quality/mathematics-remediation-implementation.md) cerró en `DONE` con los catorce contratos de la [especificación](../04-quality/mathematics-remediation-spec.md), después de dos adjudicaciones de contrato —la [de sus conflictos](../04-quality/mathematics-remediation-contract-conflict-adjudication.md) y la [del techo de la pantalla del acto](../04-quality/rs-mat-008-blind-ceiling-final-adjudication.md)—; la [re-auditoría independiente](../04-quality/independent-mathematics-reaudit.md) confirmó trece de los catorce contratos y el techo `K = 78`, pero dio `FAILED — REMEDIATION REQUIRED` por tres hallazgos bloqueantes propios, y la [adjudicación posterior](../04-quality/post-reaudit-mathematics-findings-adjudication.md) emitió el [contrato de la ronda 2](../04-quality/post-reaudit-mathematics-remediation-spec.md); la remediación dirigida cerró con tres verify consecutivos, su [re-auditoría de ronda 2](../04-quality/independent-mathematics-reaudit-round-2.md) volvió a dar `FAILED` porque las dos Templates remediadas admitían una estrategia **más simple** que la eliminada, y el [sprint de cierre](../04-quality/stage-08-mathematics-final-closure-sprint.md) cerró esa clase entera con una familia finita de ocho políticas sobre las 42 Templates; falta la auditoría final de cierre y el sign-off provisional. **La revisión del Departamento de Matemática humano no se reemplaza: se difiere a Final Delivery / Pre-Release Acceptance.**
 
 **Lectura requerida.** [Matriz](../01-game-design/full-career-content-matrix.md) ·
 [diseño G1](../01-game-design/grade-1-template-design.md) ·
@@ -945,7 +945,22 @@ baseline reproducida, K/S 35,8/20 % y 62,4/28 %, seis órdenes económicos en la
 peña, 42 filas auditadas y republicación de los seis catálogos. Los techos y las
 decisiones de D-S08-122…126 no cambian. H-6/H-7 y R-S09-CAT siguen vigentes.
 
-**Siguiente tarea:** `Independent Mathematics Re-Audit Round 2`.
+**Re-auditoría independiente de ronda 2.** `FAILED`: los cinco contratos escritos
+pasan, pero `y3.course-project-tech` y `y4.course-project-fundraiser` admiten una
+estrategia reutilizable más simple que la eliminada —`K 100 · S 100 %` cada una— y
+la auditoría permanente no puede ver esa clase (D-S08-129…133).
+
+**Sprint de cierre matemático.** DONE. El
+[informe](../04-quality/stage-08-mathematics-final-closure-sprint.md) cierra
+MAT-RA2-001…005 con `RS-CLO-AUDIT-001` y `RS-CLO-001/002/003`: taxonomía finita de
+ocho familias sobre las 42 Templates, rediseño matemático de la feria de
+tecnología —lo prometido pasa a ser un total y las tasas a ser parámetro—,
+rediseño económico de la peña —seis economías reales y objetivo calibrado contra
+el techo real de la cocina— y tres atajos más cerrados dentro del sprint. Seis
+catálogos republicados; motor, action log, snapshot, rulesets y FairScore
+intactos.
+
+**Siguiente tarea:** `Final Mathematics Closure Audit`, de sólo lectura.
 El Provisional Sign-Off sigue bloqueado hasta su PASS.
 Siguen además los gates humanos de STAGE-08 que no se difirieron:
 sign-off manual de la rueda del Día del Estudiante y playtests de pacing con
@@ -961,10 +976,10 @@ juego, se recompone en servidor y pasa accesibilidad a 320 px, con la
 en `PASS WITH REQUIRED HARDENING — RESOLVED`. **El pacing sigue sin medirse con
 jugadores reales**, y la [adjudicación matemática](../04-quality/mathematics-department-ai-adjudication.md)
 exige remediación antes del sign-off provisional, así que la etapa no cierra: la
-implementación y la remediación matemática de la **ronda 1** están completas, su
-re-auditoría **falló** con tres hallazgos bloqueantes y la adjudicación posterior ya
-emitió el contrato de la **ronda 2**; faltan esa remediación dirigida, su re-auditoría,
-el sign-off provisional y la validación empírica de pacing.
+implementación y las dos rondas de remediación matemática están completas, sus dos
+re-auditorías independientes **fallaron** y el **sprint de cierre** que siguió a la
+segunda está DONE; faltan la auditoría final de cierre, el sign-off provisional y
+la validación empírica de pacing.
 
 ---
 

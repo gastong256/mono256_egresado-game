@@ -114,6 +114,23 @@ de septiembre de 2026 (D-S08-122 a D-S08-126). **Correcciones DONE: cinco contra
 | MAT-RA-007 · «N = 25 minimiza el techo» | `RESOLVED — DOCUMENTATION ONLY` | P2 | no | — | Erratum aplicado (D-S08-123) |
 | MAT-RA-010 · conteos desactualizados | `RESOLVED — ALREADY FIXED` | NONE | no | — | Verificado: 1739 tests, 0 `todo`, 158 E2E |
 
+### Hallazgos de la re-auditoría de ronda 2 y su cierre
+
+Cadena `re-auditoría ronda 2 → sprint de cierre → auditoría final de cierre →
+sign-off provisional`. La ronda 2 eliminó un vector y dejó la clase; el
+[sprint de cierre](../04-quality/stage-08-mathematics-final-closure-sprint.md)
+cierra la clase con una familia finita de ocho políticas sobre las 42 Templates.
+
+| Hallazgo | Disposición del sprint | Prio | ¿Bloquea? | Contrato | Verificación |
+|---|---|---|---|---|---|
+| MAT-RA2-003 · la auditoría no ve la clase | `REQUIRED_CORRECTION` | **P0** | **sí** | `RS-CLO-AUDIT-001` | PASS · ocho familias declaradas por Template, 42 filas, 0 sin soporte, 1155–1306 ms |
+| MAT-RA2-001 · `y3.course-project-tech` | `REQUIRED_CORRECTION` | **P0** | **sí** | `RS-CLO-001` · `RS-CLO-002` | PASS · lo prometido pasa a total y las tasas a parámetro; K 56,60 / S 16,0 %; mejor atajo 47,00 · 4 % |
+| MAT-RA2-002 · `y4.course-project-fundraiser` | `REQUIRED_CORRECTION` | **P0** | **sí** | `RS-CLO-001` · `RS-CLO-002` | PASS · seis economías reales, objetivo contra el techo real; K 57,80 / S 20,0 %; «menos minutos» 81,80 · 44 % |
+| MAT-RA2-004 · `g7.group-tasks` | `REQUIRED_CORRECTION` · **subido de MEDIUM** | **P0** | **sí** | `RS-CLO-003` | PASS · seis equipos autorados; K 45,00 / S 33,3 % |
+| MAT-RA2-005 · amplitud del catálogo | `REQUIRED_CORRECTION` · causa raíz | P1 | no | `RS-CLO-002` | PASS · pasos de recorrido coprimos en `y4` y `y1.mobile-data`; seis economías publicadas |
+| Hallado en el sprint · `y5.final-trip-or-event` | `REQUIRED_CORRECTION` | P1 | no | `RS-CLO-003` | PASS · lugares atados a la posición; 66,00 · 24 % |
+| Hallado en el sprint · `y1.mobile-data` | `ACCEPT_WITH_DOCUMENTED_RISK` | P2 | no | `RS-CLO-001` | 86,00 · 44 %, con techo propio más estricto y evidencia de baseline |
+
 Fuentes: [adjudicación](../04-quality/mathematics-department-ai-adjudication.md),
 [revisor A](../04-quality/mathematics-department-ai-reviewer-a.md),
 [revisor B](../04-quality/mathematics-department-ai-reviewer-b.md),

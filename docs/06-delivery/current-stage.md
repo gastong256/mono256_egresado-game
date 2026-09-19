@@ -37,8 +37,9 @@ STAGE-08                                      IN_PROGRESS · CURRENT
     │   ├── Adjudicación post-re-audit            DONE · 10 hallazgos, 4 P0
     │   ├── Remediación Ronda 2 (dirigida)        DONE · cinco contratos verificados
     │   ├── Re-Auditoría Ronda 2                  FAILED · 5/5 contratos PASS, 3 hallazgos bloqueantes
-    │   ├── Adjudicación Ronda 3                  NEXT
-    │   └── Provisional Sign-Off                  BLOCKED · NOT READY
+    │   ├── Sprint de Cierre Matemático            DONE · MAT-RA2-001…005 cerrados
+    │   ├── Final Mathematics Closure Audit        NEXT
+    │   └── Provisional Sign-Off                  PENDING · tras el PASS del cierre
     ├── Revisión del Depto. de Matemática      DEFERRED · a Final Delivery / Pre-Release
     ├── Sign-off manual de la rueda            PENDING · humana
     └── Pacing empírico con jugadores          PENDING · humana
@@ -76,7 +77,7 @@ oficialización, el ranking y el servidor competitivo son STAGE-09. El techo de
 Prestige **ofrecido es 0** por decisión explícita (D-S08-084): la maquinaria
 existe y el servidor la recomputa, pero autorar una oportunidad competitiva
 exigiría inventar acciones de jugador que ninguna Template tiene. El contenido
-de 1.º a 5.º está en estado `draft`: faltan la re-auditoría de ronda 2 y su
+de 1.º a 5.º está en estado `draft`: faltan la auditoría final de cierre y su
 sign-off provisional de IA, el sign-off manual de la rueda y el pacing empírico,
 gates de producción de STAGE-08. La remediación matemática cerró sus catorce
 contratos el 18 de septiembre —**ronda 1**—, y la **re-auditoría independiente** del
@@ -93,24 +94,22 @@ STAGE-07 sigue `DONE`: toda run válida completada egresa, con un Repaso máximo
 por etapa fuera del presupuesto ordinario y de FairScore.
 
 - Versiones: engine `10.0.0`, action log `7`, snapshot `8`. 7.º conserva ruleset
-  `0.4.0-grade-7`; contenido `0.11.0-grade-7` y catálogo `grade-7-dev-7`, con
-  `dev-1` a `dev-6` publicados sin cambios.
-  `7.º → 1.º`: contenido `1.2.0-grade-1`, catálogo `grade-1-dev-3`.
-  `7.º → 2.º`: contenido `2.3.0-grade-2`, catálogo `grade-2-dev-4`.
-  `7.º → 3.º`: contenido `3.3.0-grade-3`, catálogo `grade-3-dev-4`.
-  `7.º → 4.º`: contenido `4.3.0-grade-4`, catálogo `grade-4-dev-4`.
+  `0.4.0-grade-7`; contenido `0.12.0-grade-7` y catálogo `grade-7-dev-8` con 189
+  entradas, con `dev-1` a `dev-7` publicados sin cambios.
+  `7.º → 1.º`: contenido `1.3.0-grade-1`, catálogo `grade-1-dev-4` (363).
+  `7.º → 2.º`: contenido `2.4.0-grade-2`, catálogo `grade-2-dev-5` (512).
+  `7.º → 3.º`: contenido `3.4.0-grade-3`, catálogo `grade-3-dev-5` (686).
+  `7.º → 4.º`: contenido `4.4.0-grade-4`, catálogo `grade-4-dev-5` (858).
   `7.º → 5.º`: rulesets `5.3.0-grade-5-partial` y `5.3.0-grade-5-demo`, contenido
-  `5.4.0-grade-5`, catálogo `grade-5-dev-5`. Carrera completa: ruleset
+  `5.5.0-grade-5`, catálogo `grade-5-dev-6` (1031). Carrera completa: ruleset
   `1.0.0-full-career` sobre ese mismo contenido y catálogo. Score
   `fair-score-dev-2@2.0.0-post-tg1-candidate` sin cambios. Los catálogos y
-  contenidos subieron con la ronda 2; los rulesets permanecen iguales.
-- Huellas: motor `4bcf054e` —se movió con la respuesta de recorrido y con la
-  política de rareza—; ruleset de la carrera completa `7d41fddb`; contenido de la
-  carrera `92b6edb6`, con `5.4.0-grade-5`.
-- Tests: 96 archivos y **1883 tests** de Vitest, **0 `todo`**; **174 E2E** de
+  contenidos subieron con el sprint de cierre; los rulesets permanecen iguales.
+- Tests: 96 archivos y **1898 tests** de Vitest, **0 `todo`**; **174 E2E** de
   Playwright en desktop y mobile, incluidos los recorridos de 1.º a 5.º, la
-  carrera completa y el barrido de accesibilidad del audit. Conteos medidos en tres `pnpm verify` consecutivos de ronda 2; la baseline
-  histórica del re-audit fue 1739 tests y 158 E2E.
+  carrera completa y el barrido de accesibilidad del audit. Conteos medidos en
+  tres `pnpm verify` consecutivos del sprint de cierre; la baseline de ronda 2 fue
+  1883 tests y 174 E2E, y la histórica del re-audit, 1739 y 158.
 - Simulación: 5000 runs de 7.º, 5000 de `7.º → 1.º`, 2000 del demo amplio y 200
   de cada práctica parcial de 2.º a 5.º egresadas, 0 hallazgos, peor caso un
   Repaso por etapa. La carrera completa se barre con seis políticas de juego
@@ -275,20 +274,29 @@ Post-Re-Audit Findings Adjudication — DONE
   10 hallazgos adjudicados · 4 P0 bloqueantes
   RS-RA-AUDIT-001 · RS-RA-001 · RS-RA-002 · RS-RA-003 · RS-RA-TEST-001
 Targeted Mathematics Remediation Round 2 — DONE (5 contratos, los 5 PASS)
-Independent Mathematics Re-Audit Round 2 — FAILED — REMEDIATION REQUIRED
-  los 5 contratos escritos verificados de forma independiente y en verde
-  MAT-RA2-001 BLOCKER y3.course-project-tech, copiar el objetivo de pantalla: K 100 / S 100 %
-  MAT-RA2-002 BLOCKER y4.course-project-fundraiser, «menos minutos primero»: K 100 / S 100 %
-  MAT-RA2-003 HIGH    la auditoría permanente no puede ver esa clase de estrategia
-AI Mathematics Department Provisional Sign-Off — NOT READY / BLOCKED
+AI Mathematics Department Provisional Sign-Off — PENDING
 
 Human Mathematics Department Review
 — DEFERRED TO FINAL DELIVERY / PRE-RELEASE
 
 Real-player pacing validation — PENDING
 
+Independent Mathematics Re-Audit Round 2 — FAILED — REMEDIATION REQUIRED
+  los 5 contratos escritos verificados de forma independiente y en verde
+  MAT-RA2-001 BLOCKER y3.course-project-tech, copiar el objetivo: K 100 / S 100 %
+  MAT-RA2-002 BLOCKER y4.course-project-fundraiser, «menos minutos primero»: K 100 / S 100 %
+  MAT-RA2-003 HIGH    la auditoría permanente no puede ver esa clase de estrategia
+STAGE-08 Mathematics Final Closure Sprint — DONE
+  RS-CLO-AUDIT-001 · RS-CLO-001 · RS-CLO-002 · RS-CLO-003
+  taxonomía finita de ocho familias sobre las 42 Templates
+  y3.course-project-tech  100/100 % → 47,00 / 4 %
+  y4.course-project-fundraiser 100/100 % → 81,80 / 44 %
+  g7.group-tasks K 100/100 % → K 45,00 / S 33,3 %
+  y5.final-trip-or-event 100/100 % → 66,00 / 24 %
+  y1.mobile-data 89,00/56 % → 86,00 / 44 %, aceptado con razón y techo propio
+
 Next:
-INDEPENDENT MATHEMATICS RE-AUDIT ROUND 2
+FINAL MATHEMATICS CLOSURE AUDIT
 ```
 
 La [auditoría de implementación de carrera completa](../04-quality/full-career-implementation-audit.md)
@@ -325,7 +333,49 @@ target de pacing sigue sin validarse con personas—. La revisión del Departame
 de Matemática humano sobre las 42 Templates queda diferida a la entrega final.
 Hasta eso, el contenido permanece `draft` y la edición `official: false`.
 
+## Sprint de cierre matemático
+
+El [sprint de cierre](../04-quality/stage-08-mathematics-final-closure-sprint.md)
+se ejecutó el 19 de septiembre y dio `DONE`. La ronda 2 había eliminado un
+**vector**; este sprint elimina la **clase**. La auditoría permanente incorpora una
+familia finita de ocho políticas de baja complejidad —constante, normalizada, copia
+de pantalla, relativa al objetivo, relativa al recurso, prioridad fija, greedy
+simple e ingenua de dominio—, genérica sobre la presentación, sin un solo
+`templateId`, corrida sobre las **42** Templates en 1155–1306 ms.
+
+`y3.course-project-tech` se rediseñó: lo prometido pasa de vector por ítem a
+**total**, las tasas pasan a ser parámetro de la variante y los presupuestos dejan
+de derivarse del costo de ninguna respuesta. Copiar la pantalla ya nunca supera
+`functional`; el mejor atajo rinde 47,00 con 1 óptima de 25, y el razonamiento
+buscado llega a `optimal` en 24 de 25.
+
+`y4.course-project-fundraiser` se rediseñó por economía, no por etiqueta: seis
+multisets `(margen, minutos)` distintos en vez de uno, objetivo calibrado contra el
+**techo real** de la cocina —la causa raíz que la ronda 2 no vio, y por la que
+repartir la cocina en partes iguales rendía 98,00 · 92 %— y gates de reparto ciego y
+de selectividad. «Menos minutos primero» baja de 100/100 % a 81,80 · 44 %.
+
+La auditoría ampliada hizo visibles tres atajos más, todos cerrados dentro del
+sprint: `g7.group-tasks` pasó de dos equipos autorados a seis (K 100 → 45,00),
+`y5.final-trip-or-event` ató los lugares de más a la posición y no al papel
+(100/100 % → 66,00 · 24 %) y `y1.mobile-data` corrigió un paso de recorrido que
+congelaba ejes (89,00 · 56 % → 86,00 · 44 %, aceptado con razón escrita y techo
+propio más estricto que el global).
+
+Seis catálogos republicados. Motor `10.0.0`, action log `7`, snapshot `8`,
+rulesets y FairScore **sin cambios**; perfecto = 10 000 exacto; 5000 / 5000
+egresadas; replay y servidor fail-closed contra las versiones nuevas. Tres
+`pnpm verify` consecutivos en verde con 1898 tests y 174 E2E.
+
 ## Última reconciliación
+
+19 de septiembre de 2026, al cierre: **sprint de cierre matemático de STAGE-08**.
+Veredicto `DONE`. MAT-RA2-001 a MAT-RA2-005 cerrados; MAT-RA2-004 reclasificado
+hacia arriba y arreglado. Ninguna Template puntuable admite hoy un atajo
+reutilizable de baja complejidad con media ≥ 85 u `optimal` ≥ 80 %, salvo el
+razonamiento buscado de la peña —declarado— y `y1.mobile-data` —aceptado con
+evidencia y techo propio—. Siguiente gate: `FINAL MATHEMATICS CLOSURE AUDIT`, de
+sólo lectura. Sin push.
 
 19 de septiembre de 2026: **re-auditoría matemática independiente de la ronda 2**.
 Veredicto `FAILED — REMEDIATION REQUIRED`. Los cinco contratos escritos se verificaron

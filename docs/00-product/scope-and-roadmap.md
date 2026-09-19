@@ -161,10 +161,19 @@ antes de G1 salvo BLOCKER genuino. Teacher Demo sigue separado y orientado a
 amplitud. Fair v1 repite una Competition Seed compartida por edición; Practice
 ofrece variedad procedural, sin rank oficial.
 
-## Seguimiento de la remediación matemática de ronda 2
+## Seguimiento del cierre matemático de STAGE-08
 
-Las correcciones de MAT-RA-001/002/003/006/008 están DONE con tres
-`pnpm verify` consecutivos en verde. El [informe](../04-quality/targeted-post-reaudit-mathematics-remediation.md)
-conserva contratos y mediciones. STAGE-08 sigue IN_PROGRESS; después corresponde
-Independent Mathematics Re-Audit Round 2. Sign-off provisional bloqueado hasta
-su PASS, revisión humana diferida y pacing real pendiente.
+La re-auditoría independiente de ronda 2 verificó los cinco contratos escritos y
+**falló** igual: las dos Templates que la ronda existía para arreglar admitían una
+estrategia reutilizable **más simple** que la eliminada, y la auditoría permanente
+no podía verla. El
+[sprint de cierre](../04-quality/stage-08-mathematics-final-closure-sprint.md)
+está **DONE**: cierra la clase entera con una familia finita de ocho políticas de
+baja complejidad, corrida sobre las 42 Templates, y cierra además tres atajos que
+esa familia hizo visibles —`g7.group-tasks`, `y5.final-trip-or-event` y
+`y1.mobile-data`—. Seis catálogos republicados, tres `pnpm verify` consecutivos en
+verde, motor y FairScore intactos.
+
+STAGE-08 sigue IN_PROGRESS; después corresponde la **Final Mathematics Closure
+Audit**, de sólo lectura. Sign-off provisional pendiente de su PASS, revisión
+humana diferida a Final Delivery y pacing real pendiente.
