@@ -38,8 +38,8 @@ STAGE-08                                      IN_PROGRESS · CURRENT
     │   ├── Remediación Ronda 2 (dirigida)        DONE · cinco contratos verificados
     │   ├── Re-Auditoría Ronda 2                  FAILED · 5/5 contratos PASS, 3 hallazgos bloqueantes
     │   ├── Sprint de Cierre Matemático            DONE · MAT-RA2-001…005 cerrados
-    │   ├── Final Mathematics Closure Audit        NEXT
-    │   └── Provisional Sign-Off                  PENDING · tras el PASS del cierre
+    │   ├── Final Mathematics Closure Audit        PASSED · con hallazgos no bloqueantes
+    │   └── Provisional Sign-Off                  NEXT · el cierre pasó
     ├── Revisión del Depto. de Matemática      DEFERRED · a Final Delivery / Pre-Release
     ├── Sign-off manual de la rueda            PENDING · humana
     └── Pacing empírico con jugadores          PENDING · humana
@@ -294,9 +294,17 @@ STAGE-08 Mathematics Final Closure Sprint — DONE
   g7.group-tasks K 100/100 % → K 45,00 / S 33,3 %
   y5.final-trip-or-event 100/100 % → 66,00 / 24 %
   y1.mobile-data 89,00/56 % → 86,00 / 44 %, aceptado con razón y techo propio
+Final Mathematics Closure Audit — PASSED WITH NON-BLOCKING FINDINGS
+  ninguna política de las ocho familias cruza el guardarraíl y desvía el constructo
+  y3 · el atajo real es 81,80 / 44 %, no 47,00 / 4 %: constructo sin su último paso
+  y4 · margen por minuto de cocina 100/100 % ACEPTADO, es la cuenta del año
+  y1.mobile-data 86,00 / 44 % ACEPTADO, estructural: cualquier plan válido ya da 80,71
+  MAT-FC-001/002 HIGH · defectos del instrumento, no del producto
+  MAT-FC-003 MEDIUM · g7.group-tasks: 1–2 permutaciones factibles de 24
+  MAT-FC-004/005 LOW · cifras del informe y población desbalanceada
 
 Next:
-FINAL MATHEMATICS CLOSURE AUDIT
+AI MATHEMATICS DEPARTMENT PROVISIONAL SIGN-OFF
 ```
 
 La [auditoría de implementación de carrera completa](../04-quality/full-career-implementation-audit.md)
@@ -368,6 +376,26 @@ egresadas; replay y servidor fail-closed contra las versiones nuevas. Tres
 `pnpm verify` consecutivos en verde con 1898 tests y 174 E2E.
 
 ## Última reconciliación
+
+20 de septiembre de 2026: **auditoría final de cierre matemático**. Veredicto
+`PASSED WITH NON-BLOCKING FINDINGS`. Toda métrica se re-derivó fuera de la
+instrumentación del implementador: evaluador propio contrastado contra producción
+en 39 325 respuestas sin una sola discrepancia, economía de la peña recalculada
+desde la pantalla, 89 622 respuestas de política sobre un motor corregido,
+enumeración exhaustiva propia de los espacios de opción y asignación, FairScore
+recomputado con racionales exactos y sonda de manipulación propia contra el
+servidor. Ninguna Template puntuable admite una política de las ocho familias
+congeladas que cruce el guardarraíl **y** desvíe materialmente el constructo;
+`RS-MAT-008` sigue en `K 78,00 · S 40,0 %` con numerador 1950/25; 58 221 respuestas
+de feedback verificadas sin una afirmación falsa; perfecto = 10 000 exacto;
+5000/5000 egresadas; el servidor ignora el puntaje del cliente y rechaza cerrado
+toda versión forjada. Cinco hallazgos nuevos, **ninguno bloqueante**: dos de ellos
+—MAT-FC-001 y MAT-FC-002— son defectos del **instrumento**, que subestima
+`y3.course-project-tech` en ~33 puntos y no evalúa políticas por atributo en los
+motores de construcción. Producto intacto: no se remedió nada. Siguiente gate:
+`AI MATHEMATICS DEPARTMENT PROVISIONAL SIGN-OFF`. Detalle en la
+[auditoría final de cierre](../04-quality/final-mathematics-closure-audit.md).
+Sin push.
 
 19 de septiembre de 2026, al cierre: **sprint de cierre matemático de STAGE-08**.
 Veredicto `DONE`. MAT-RA2-001 a MAT-RA2-005 cerrados; MAT-RA2-004 reclasificado

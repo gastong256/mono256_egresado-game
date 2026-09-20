@@ -89,6 +89,7 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 
 ### 04-quality
 - `content-validation.md`: pipeline de schema, matemática, generación, UI y playtest.
+- `final-mathematics-closure-audit.md`: la auditoría final de sólo lectura del cierre matemático, con la re-derivación independiente de las ocho familias congeladas, la adjudicación de la peña y de los datos móviles, y los dos defectos del instrumento que el producto sobrevive.
 - `competition-fairness-audit.md`: preguntas de equidad que un ranking con premios debe poder contestar.
 - `post-reaudit-mathematics-findings-adjudication.md`: adjudicación de los diez hallazgos de la re-auditoría, con la causa raíz real de los dos atajos constantes, los estudios de factibilidad que fijan sus techos y el erratum contractual 13/14.
 - `targeted-post-reaudit-mathematics-remediation.md`: implementación y evidencia de la ronda 2; siguiente gate independiente separado.
