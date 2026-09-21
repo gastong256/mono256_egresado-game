@@ -22,6 +22,7 @@ import { createFullCareerDependencies } from '@/content/full-career'
 import { grade5VariantCatalog } from '@/content/grade-5'
 import {
   auditBlindStrategies,
+  COVERAGE_DEPTHS,
   EVALUATION_BUDGET,
   STRATEGY_FAMILIES,
   type BlindStrategyRow,
@@ -278,7 +279,21 @@ interface AcceptedExposure {
   /** Cota propia, por encima de la cual vuelve a bloquear. */
   readonly mean: number
   readonly share: number
+  /**
+   * El piso estructural medido que explica la excepción.
+   *
+   * Obligatorio cuando la exposición supera **los dos** ejes del techo global:
+   * ahí no alcanza con escribir una razón, porque aflojar los dos ejes sin
+   * evidencia sería borrar el contrato. El piso dice qué rinde acertar
+   * cualquier respuesta que entre, la auditoría lo vuelve a medir sola, y la
+   * cota aceptada tiene que quedar pegada a él.
+   */
+  readonly floor?: { readonly mean: number; readonly share: number }
 }
+
+/** Cuánto puede despegarse una excepción de su propio piso antes de bloquear. */
+const FLOOR_MEAN_MARGIN = 10
+const FLOOR_SHARE_MARGIN = 0.2
 
 /**
  * Exposición aceptada con razón escrita, y con su propio techo.
@@ -303,6 +318,25 @@ const ACCEPTED_EXPOSURE: Readonly<Record<string, AcceptedExposure>> = {
       'la política hace la cuenta de consumo contra capacidad, que es el constructo de la banda CORE; el piso de 75 es de la escalera, no del atajo',
     mean: 87,
     share: 0.5,
+  },
+  // 7.º, `assignment-board`. La auditoría final de cierre midió estas dos
+  // políticas de forma independiente —90,00 · 83,3 % emparejando por horas y
+  // 85,00 · 83,3 % por estrellas— y las adjudicó **no bloqueantes** con su
+  // análisis de constructo: de las 24 permutaciones sólo entran 1 o 2 por
+  // equipo, así que acertar **cualquier** reparto factible ya promedia 82,00 y
+  // es óptimo en el 70 %. Emparejar por horas hace la mitad que discrimina —el
+  // filtro de capacidad— y queda 8 puntos sobre ese piso; la de estrellas se
+  // saltea las horas y queda 3, y cae en `invalid` en cuanto diverge. No hay
+  // constructo que saltear porque el espacio factible es casi un punto: eso es
+  // MAT-FC-003, que queda abierto para la revisión humana. Las cotas de acá
+  // están pegadas al piso medido, así que cualquier empeoramiento vuelve a
+  // fallar, y la auditoría re-mide ese piso sola en cada corrida.
+  'g7.group-tasks': {
+    reason:
+      'el espacio factible tiene 1 o 2 repartos de 24, así que el piso de acertar cualquiera ya es 82,00 · 70 %: la política hace el filtro de capacidad, no saltea un constructo que apenas existe (MAT-FC-003, revisión humana)',
+    mean: 91,
+    share: 0.88,
+    floor: { mean: 82, share: 0.7 },
   },
 }
 
@@ -391,10 +425,37 @@ describe('RS-CLO-001 · ninguna Template puntuable cae ante un atajo de baja com
   it('toda exposición aceptada trae su razón escrita', () => {
     for (const [templateId, accepted] of Object.entries(ACCEPTED_EXPOSURE)) {
       expect(accepted.reason.length).toBeGreaterThan(40)
-      // Una excepción sólo vale si es **más** estricta que el techo global en
-      // el eje que no sobrepasa: aflojar los dos sería borrar el contrato.
-      expect(accepted.share).toBeLessThan(BLOCKING_SHARE)
-      expect(rows.some((entry) => entry.templateId === templateId)).toBe(true)
+      const entry = rows.find((row) => row.templateId === templateId)
+      expect(entry).toBeDefined()
+
+      // Una excepción tiene que ser **más** estricta que el techo global en
+      // todo eje que no sobrepase: aflojar los dos sin evidencia sería borrar
+      // el contrato.
+      const overMean = accepted.mean > BLOCKING_MEAN
+      const overShare = accepted.share > BLOCKING_SHARE
+      if (!overMean) expect(accepted.mean).toBeLessThan(BLOCKING_MEAN)
+      if (!overShare) expect(accepted.share).toBeLessThan(BLOCKING_SHARE)
+
+      // Y si sobrepasa los dos, la razón escrita no alcanza: tiene que declarar
+      // el piso estructural que la explica, la auditoría tiene que volver a
+      // medir al menos ese piso por su cuenta, y la cota tiene que quedar
+      // pegada a él.
+      if (overMean && overShare) {
+        const floor = accepted.floor
+        expect(floor).toBeDefined()
+        if (floor === undefined) continue
+        expect(entry?.viable).toBeDefined()
+        expect(entry?.viable?.floorMean ?? 0).toBeGreaterThanOrEqual(floor.mean)
+        expect(entry?.viable?.floorShare ?? 0).toBeGreaterThanOrEqual(
+          floor.share,
+        )
+        expect(accepted.mean).toBeLessThanOrEqual(
+          floor.mean + FLOOR_MEAN_MARGIN,
+        )
+        expect(accepted.share).toBeLessThanOrEqual(
+          floor.share + FLOOR_SHARE_MARGIN,
+        )
+      }
     }
   })
 
@@ -470,5 +531,135 @@ describe('RS-CLO-003 · los atajos hallados dentro del sprint quedaron cerrados'
     expect((byPlaces?.optimal ?? 0) / trip.variants).toBeLessThan(
       BLOCKING_SHARE,
     )
+  })
+})
+
+describe('MAT-FC-002 · la cobertura declara su profundidad y no la exagera', () => {
+  it('cada fila declara una profundidad canónica', () => {
+    for (const entry of rows) expect(COVERAGE_DEPTHS).toContain(entry.depth)
+  })
+
+  it('ninguna fila se declara profunda sin haber corrido políticas de atributo', () => {
+    for (const entry of rows) {
+      const attribute = entry.policies.some(
+        (policy) => policy.derivation === 'attribute',
+      )
+      if (
+        entry.depth === 'ATTRIBUTE_POLICIES' ||
+        entry.depth === 'EXHAUSTIVE_AND_ATTRIBUTE'
+      )
+        expect(attribute).toBe(true)
+      // Y al revés: si corrieron, la fila no puede reportarse como sólo
+      // posicional. La etiqueta sigue a la medición, nunca al revés.
+      if (attribute) expect(entry.depth).not.toBe('POSITIONAL_POLICIES_ONLY')
+      if (entry.mode === 'AUDITED_EXHAUSTIVELY')
+        expect(entry.depth.startsWith('EXHAUSTIVE')).toBe(true)
+    }
+  })
+
+  it('una fila cubierta sólo por políticas trae políticas de verdad', () => {
+    for (const entry of rows.filter(
+      (candidate) => candidate.mode === 'AUDITED_BY_POLICIES',
+    )) {
+      expect(entry.policies.length).toBeGreaterThan(0)
+      // Declarar el límite es válido; fingir profundidad no.
+      if (entry.policies.length < 3)
+        expect(entry.depth).toBe('LIMITED_POLICY_COVERAGE')
+    }
+  })
+
+  it('los tableros de asignación ya se miden por lo que imprimen, no sólo por posición', () => {
+    // El motor que la auditoría de cierre encontró ciego a las políticas de
+    // atributo. Donde la pantalla imprime una cifra por persona y por tarea,
+    // tienen que existir y haberse medido.
+    const group = row('g7.group-tasks')
+    const attribute = group.policies.filter(
+      (policy) => policy.derivation === 'attribute',
+    )
+    expect(attribute.length).toBeGreaterThan(0)
+    expect(attribute.some((policy) => policy.name.includes('cifra'))).toBe(true)
+    expect(
+      attribute.some((policy) => policy.name.includes('quien mejor la hace')),
+    ).toBe(true)
+    expect(group.depth).toBe('EXHAUSTIVE_AND_ATTRIBUTE')
+  })
+
+  it('donde la pantalla no imprime atributos comparables, se dice y no se inventa', () => {
+    // `y2.intercurso-plan` y `y4.shift-coverage` no imprimen una cifra por
+    // tarea: fingir una política de atributo ahí sería inventar cobertura.
+    for (const templateId of ['y2.intercurso-plan', 'y4.shift-coverage']) {
+      const entry = rows.find(
+        (candidate) => candidate.templateId === templateId,
+      )
+      expect(entry).toBeDefined()
+      expect(entry?.policies.length ?? 0).toBeGreaterThan(0)
+      expect(['POSITIONAL_POLICIES_ONLY', 'LIMITED_POLICY_COVERAGE']).toContain(
+        entry?.depth,
+      )
+    }
+  })
+
+  it('el piso estructural se mide donde el espacio se enumeró entero', () => {
+    for (const entry of rows.filter(
+      (candidate) => candidate.mode === 'AUDITED_EXHAUSTIVELY',
+    )) {
+      expect(entry.viable).toBeDefined()
+      expect(entry.viable?.min ?? -1).toBeGreaterThanOrEqual(0)
+      expect(entry.viable?.max ?? -1).toBeGreaterThanOrEqual(
+        entry.viable?.min ?? 0,
+      )
+    }
+    // El caso que motivó la métrica: un espacio factible de uno o dos repartos
+    // regala el piso a cualquier política que aterrice adentro (MAT-FC-003).
+    const group = row('g7.group-tasks')
+    expect(group.viable?.min ?? 99).toBeLessThanOrEqual(2)
+    expect(group.viable?.floorMean ?? 0).toBeGreaterThan(70)
+  })
+})
+
+describe('MAT-FC-001 · la corrección semántica se ve en la medición', () => {
+  it('y3.course-project-tech: el llenado respeta los tres topes reales', () => {
+    const tech = row('y3.course-project-tech')
+    const fills = tech.policies.filter((policy) =>
+      policy.name.startsWith('llenar sin pasarse de ningún límite'),
+    )
+    expect(fills.length).toBeGreaterThan(0)
+
+    // Antes del arreglo, el tope espurio de 8 minutos cortaba todo llenado y
+    // la mejor de estas políticas promediaba 41,40 sin llegar nunca a óptimo.
+    // La auditoría final de cierre midió 79,40 · 40 % por su cuenta.
+    const best = fills.reduce((top, policy) =>
+      policy.mean > top.mean ? policy : top,
+    )
+    expect(best.mean).toBeGreaterThan(70)
+    expect(best.optimal / tech.variants).toBeGreaterThan(0.3)
+
+    // Y el techo del cierre sigue en pie con la medición corregida.
+    expect(best.mean).toBeLessThan(BLOCKING_MEAN)
+    expect(best.optimal / tech.variants).toBeLessThan(BLOCKING_SHARE)
+  })
+
+  it('y3.course-project-tech: el rato de laboratorio se lee como tope de MB', () => {
+    const tech = row('y3.course-project-tech')
+    const names = tech.policies.map((policy) => policy.name)
+    // La dependencia encadenada del beat sí tiene que modelarse: el rato de
+    // laboratorio, por lo que sube la conexión, es un tope en MB.
+    expect(names.some((name) => name.includes('Laboratorio a mb'))).toBe(true)
+    // Lo que no puede existir es ese mismo rato como tope de los minutos de
+    // notebook, que son otra magnitud.
+    expect(names.some((name) => name.startsWith('llenar «Laboratorio»'))).toBe(
+      false,
+    )
+  })
+
+  it('el catálogo declara una sola magnitud por unidad donde la pantalla lo dice', () => {
+    // Ninguna otra Template imprime un recurso junto a la unidad, así que la
+    // corrección no pudo mover sus cifras: esto lo fija.
+    const fundraiser = row('y4.course-project-fundraiser')
+    const intended = fundraiser.policies.find((policy) =>
+      policy.name.includes('$ #2 − #1 por min de «Cocina»'),
+    )
+    expect(intended).toBeDefined()
+    expect(intended?.mean).toBe(100)
   })
 })

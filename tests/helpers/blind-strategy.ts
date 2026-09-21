@@ -27,6 +27,7 @@ import {
   EVALUATION_BUDGET,
   responseSpaceOf,
   STRATEGY_FAMILIES,
+  type PolicyDerivation,
   type ResponseSpace,
   type StrategyFamily,
 } from './blind-strategy-space'
@@ -34,6 +35,7 @@ import {
 export {
   EVALUATION_BUDGET,
   STRATEGY_FAMILIES,
+  type PolicyDerivation,
   type StrategyFamily,
 } from './blind-strategy-space'
 
@@ -65,6 +67,8 @@ export interface PolicyScore {
   readonly rejected: number
   readonly name: string
   readonly family: StrategyFamily
+  /** De dónde salió: de las cifras de la variante, o de la forma de la pantalla. */
+  readonly derivation: PolicyDerivation
   readonly mean: number
   readonly optimal: number
 }
@@ -116,6 +120,64 @@ export interface BlindStrategyRow {
   readonly optimalSignatures: number
   /** Variantes donde alguna respuesta cambió de nivel sólo por la postura. */
   readonly stanceLeaks: number
+  /**
+   * Profundidad real con la que se auditó la fila.
+   *
+   * Una fila cubierta sólo por patrones posicionales no está auditada a la
+   * misma profundidad que una que además probó políticas derivadas de las
+   * cifras impresas, y reportar las dos como «cubierta» exagera la cobertura
+   * (MAT-FC-002).
+   */
+  readonly depth: CoverageDepth
+  /**
+   * El piso estructural: qué rinde acertar cualquier respuesta que entre.
+   *
+   * Sólo donde se enumeró el espacio constante entero. `min`/`max` son cuántas
+   * respuestas distintas entran en la variante más pobre y en la más rica: un
+   * `min` de uno o dos dice que el espacio factible es casi un punto y que
+   * cualquier política que aterrice adentro cobra el piso sin optimizar nada.
+   */
+  readonly viable?: StructuralFloor
+}
+
+/** Cuántas respuestas entran, y qué rinde acertar una cualquiera. */
+export interface StructuralFloor {
+  readonly min: number
+  readonly max: number
+  readonly floorMean: number
+  readonly floorShare: number
+}
+
+/**
+ * Cuán hondo llegó la auditoría de una Template.
+ *
+ * El orden es de mayor a menor profundidad. `POSITIONAL_POLICIES_ONLY` y
+ * `LIMITED_POLICY_COVERAGE` son declaraciones honestas de límite, no fallas:
+ * decir que una fila se midió sólo con patrones de la forma de la pantalla es
+ * preferible a contarla como cobertura plena.
+ */
+export const COVERAGE_DEPTHS = [
+  'EXHAUSTIVE_AND_ATTRIBUTE',
+  'EXHAUSTIVE_ONLY',
+  'ATTRIBUTE_POLICIES',
+  'POSITIONAL_POLICIES_ONLY',
+  'LIMITED_POLICY_COVERAGE',
+] as const
+export type CoverageDepth = (typeof COVERAGE_DEPTHS)[number]
+
+/** Cuántas políticas distintas hacen falta para no declarar cobertura limitada. */
+const MIN_POLICIES_FOR_COVERAGE = 3
+
+export function coverageDepthOf(
+  mode: AuditMode,
+  policies: readonly PolicyScore[],
+): CoverageDepth {
+  const attribute = policies.some((policy) => policy.derivation === 'attribute')
+  if (mode === 'AUDITED_EXHAUSTIVELY')
+    return attribute ? 'EXHAUSTIVE_AND_ATTRIBUTE' : 'EXHAUSTIVE_ONLY'
+  if (policies.length < MIN_POLICIES_FOR_COVERAGE)
+    return 'LIMITED_POLICY_COVERAGE'
+  return attribute ? 'ATTRIBUTE_POLICIES' : 'POSITIONAL_POLICIES_ONLY'
 }
 
 const emptyReachable = (): Record<SolutionQuality, number> => ({
@@ -191,6 +253,7 @@ function auditExhaustively(
   | 'stanceLeaks'
   | 'optimalSignatures'
   | 'histogram'
+  | 'viable'
 > & { readonly seenByVariant: readonly ReadonlySet<SolutionQuality>[] } {
   const n = instances.length
   const constant = new Map<string, SolutionQuality[]>()
@@ -198,6 +261,14 @@ function auditExhaustively(
   let randomTotal = 0
   let stanceLeaks = 0
   const optimalSignatures = new Set<string>()
+  // Piso estructural: qué rinde acertar **cualquier** respuesta que entre. Una
+  // Template cuyo espacio factible es casi un punto regala ese piso a cualquier
+  // política que aterrice adentro, y sin medirlo no se puede distinguir un
+  // atajo de la geometría de la escalera (MAT-FC-003).
+  const viableByVariant: number[] = []
+  let viableTotal = 0
+  let viableOptimal = 0
+  let viableCount = 0
 
   instances.forEach(({ variantId, instance }, index) => {
     const space = spaces[index]
@@ -205,6 +276,9 @@ function auditExhaustively(
     let sum = 0
     let counted = 0
     let leaked = false
+    let viable = 0
+    let viableSum = 0
+    let viableOpt = 0
     for (const key of keys) {
       // La coordenada se resuelve contra ESTA variante: los identificadores de
       // opción cambian entre variantes y la respuesta constante es la posición.
@@ -223,6 +297,11 @@ function auditExhaustively(
         if (!again.ok || again.value.quality !== quality) leaked = true
       }
       if (quality === 'optimal') optimalSignatures.add(key)
+      if (quality !== 'invalid') {
+        viable += 1
+        viableSum += QUALITY_SCORE[quality]
+        if (quality === 'optimal') viableOpt += 1
+      }
       seen.add(quality)
       sum += QUALITY_SCORE[quality]
       counted += 1
@@ -233,6 +312,9 @@ function auditExhaustively(
     if (leaked) stanceLeaks += 1
     randomTotal += counted === 0 ? 0 : sum / counted
     seenByVariant.push(seen)
+    viableByVariant.push(viable)
+    viableTotal += viableSum
+    viableOptimal += viableOpt
   })
 
   let K = -1
@@ -272,10 +354,21 @@ function auditExhaustively(
         constantById.set(id, qualities)
     })
 
+  viableCount = viableByVariant.reduce((total, count) => total + count, 0)
   const histogram = emptyReachable()
   for (const quality of constant.get(kAnswer) ?? []) histogram[quality] += 1
   return {
     histogram,
+    ...(viableByVariant.length === 0
+      ? {}
+      : {
+          viable: {
+            min: Math.min(...viableByVariant),
+            max: Math.max(...viableByVariant),
+            floorMean: viableCount === 0 ? 0 : viableTotal / viableCount,
+            floorShare: viableCount === 0 ? 0 : viableOptimal / viableCount,
+          },
+        }),
     R: randomTotal / n,
     K,
     kAnswer,
@@ -308,6 +401,7 @@ function auditByPolicies(
     string,
     {
       family: StrategyFamily
+      derivation: PolicyDerivation
       sum: number
       optimal: number
       rejected: number
@@ -332,6 +426,7 @@ function auditByPolicies(
       seen.add(quality)
       const entry = totals.get(policy.name) ?? {
         family: policy.family,
+        derivation: policy.derivation,
         sum: 0,
         optimal: 0,
         rejected: 0,
@@ -354,6 +449,7 @@ function auditByPolicies(
     .map(([name, entry]) => ({
       name,
       family: entry.family,
+      derivation: entry.derivation,
       mean: entry.sum / instances.length,
       optimal: entry.optimal,
       rejected: entry.rejected,
@@ -425,6 +521,7 @@ export function auditBlindStrategies(
       constantById: new Map<string, readonly SolutionQuality[]>(),
       optimalSignatures: 0,
       stanceLeaks: 0,
+      depth: 'LIMITED_POLICY_COVERAGE' as CoverageDepth,
     }
 
     const spaces = instances.map((entry) => responseSpaceOf(entry.view))
@@ -527,7 +624,12 @@ export function auditBlindStrategies(
       ),
     })
   }
-  return rows
+  // La profundidad se decide al final y en un solo lugar, sobre lo que cada
+  // fila **efectivamente** midió: así no puede quedar declarada de más.
+  return rows.map((row) => ({
+    ...row,
+    depth: coverageDepthOf(row.mode, row.policies),
+  }))
 }
 
 // Contratos particulares: no participan del descubrimiento del espacio.
@@ -585,8 +687,8 @@ export function formatCoverageMatrix(
   rows: readonly BlindStrategyRow[],
 ): string {
   const lines = [
-    '| Template | Motor | N | Puntuable | Categoría | Estado | Cardinal | Mejor estrategia ciega | Métrica | Histograma o/e/f/i | Umbral contractual | Razón |',
-    '|---|---|---|---|---|---|---|---|---|---|---|---|',
+    '| Template | Motor | N | Puntuable | Categoría | Estado | Profundidad | Cardinal | Mejor estrategia ciega | Métrica | Histograma o/e/f/i | Piso estructural | Umbral contractual | Razón |',
+    '|---|---|---|---|---|---|---|---|---|---|---|---|---|---|',
   ]
   for (const row of [...rows].sort((a, b) =>
     a.templateId.localeCompare(b.templateId),
@@ -605,8 +707,12 @@ export function formatCoverageMatrix(
       row.mode === 'AUDITED_EXHAUSTIVELY'
         ? row.histogram
         : row.policies[0]?.histogram
+    const floor =
+      row.viable === undefined
+        ? '—'
+        : `${String(row.viable.min)}–${String(row.viable.max)} entran · ${one(row.viable.floorMean)} · ${percent(row.viable.floorShare)}`
     lines.push(
-      `| \`${row.templateId}\` | ${row.kind} | ${String(row.variants)} | ${row.scoreBearing ? 'sí' : 'no'} | ${row.category} | ${row.mode} | ${row.cardinality === undefined ? '—' : String(row.cardinality)} | ${best} | ${metric} | ${histogram === undefined ? '—' : TIERS.map((tier) => histogram[tier]).join('/')} | ${row.threshold ?? 'sin techo; sólo medición'} | ${row.reason ?? '—'} |`,
+      `| \`${row.templateId}\` | ${row.kind} | ${String(row.variants)} | ${row.scoreBearing ? 'sí' : 'no'} | ${row.category} | ${row.mode} | ${row.depth} | ${row.cardinality === undefined ? '—' : String(row.cardinality)} | ${best} | ${metric} | ${histogram === undefined ? '—' : TIERS.map((tier) => histogram[tier]).join('/')} | ${floor} | ${row.threshold ?? 'sin techo; sólo medición'} | ${row.reason ?? '—'} |`,
     )
   }
   return lines.join('\n')

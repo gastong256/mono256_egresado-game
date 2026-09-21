@@ -22,6 +22,59 @@ export interface Figure {
   readonly amount: number
   /** Unidad normalizada (`min`, `mb`, `$`, `h`…), o `''` si no se imprimió. */
   readonly unit: string
+  /**
+   * El recurso que la pantalla nombra **después** de la unidad, si lo nombra.
+   *
+   * «1 min **de notebook**» dice que ese minuto es de la notebook y no del
+   * laboratorio. Sin esto, dos capacidades impresas en la misma unidad se
+   * confunden y una restricción ajena se ata a un costo que no le corresponde
+   * (MAT-FC-001). Vacío cuando la pantalla no lo dice.
+   */
+  readonly of: string
+}
+
+/**
+ * La identidad **semántica** de una magnitud: unidad y recurso.
+ *
+ * Es la coordenada con la que la auditoría compara costos y presupuestos. Dos
+ * magnitudes con la misma unidad y distinto recurso son magnitudes distintas,
+ * por más que se rendericen igual.
+ */
+export interface Dimension {
+  readonly unit: string
+  readonly of: string
+}
+
+/** Clave estable de una dimensión. Determinista y sin ambigüedad de string suelto. */
+export function dimensionKey(dimension: Dimension): string {
+  return dimension.of === ''
+    ? dimension.unit
+    : `${dimension.unit}@${dimension.of}`
+}
+
+export function dimensionOf(figure: Figure): Dimension {
+  return { unit: figure.unit, of: figure.of }
+}
+
+/** Cómo se nombra una dimensión en un informe. Legible, y todavía sin ambigüedad. */
+export function dimensionLabel(dimension: Dimension): string {
+  return dimension.of === ''
+    ? dimension.unit
+    : `${dimension.unit} de ${dimension.of}`
+}
+
+/**
+ * Si una etiqueta impresa nombra el recurso de una dimensión.
+ *
+ * «Notebook prestada» nombra `notebook`; «Laboratorio», no. Es una comparación
+ * por palabra entera sobre el texto plegado, para que `lab` no case dentro de
+ * `laboratorio` por accidente.
+ */
+export function labelNames(label: string, resource: string): boolean {
+  if (resource === '') return true
+  return fold(label)
+    .split(/[^\p{L}\p{N}]+/u)
+    .includes(resource)
 }
 
 /**
@@ -96,7 +149,8 @@ export function parseRateUnit(raw: string | undefined): RateUnit | undefined {
  * MB. Un número sin unidad queda con unidad vacía y sólo se usa donde la
  * política declara de dónde lo saca.
  */
-const FIGURE_PATTERN = /(\$\s*)?(\d{1,3}(?:\.\d{3})+|\d+)(?:\s*([\p{L}$]+))?/gu
+const FIGURE_PATTERN =
+  /(\$\s*)?(\d{1,3}(?:\.\d{3})+|\d+)(?:\s*([\p{L}$]+))?(?:\s+de\s+([\p{L}]+))?/gu
 
 export function figuresIn(text: string, fallbackUnit = ''): readonly Figure[] {
   const figures: Figure[] = []
@@ -106,7 +160,10 @@ export function figuresIn(text: string, fallbackUnit = ''): readonly Figure[] {
     const suffix = normalizeUnit(match[3])
     const unit =
       match[1] === undefined ? (suffix === '' ? fallbackUnit : suffix) : '$'
-    figures.push({ amount, unit })
+    // El recurso sólo cuenta cuando viene pegado a una unidad escrita: en
+    // «250 MB cada una» no hay `de`, y en «5 min de viaje» sí lo hay.
+    const of = suffix === '' ? '' : fold(match[4] ?? '').trim()
+    figures.push({ amount, unit, of })
   }
   return figures
 }
@@ -136,9 +193,32 @@ export function figuresOfUnit(
     .map((figure) => figure.amount)
 }
 
+/** Las cifras de una dimensión semántica, en orden de lectura. */
+export function figuresOfDimension(
+  figures: readonly Figure[],
+  dimension: Dimension,
+): readonly number[] {
+  const wanted = dimensionKey(dimension)
+  return figures
+    .filter((figure) => dimensionKey(dimensionOf(figure)) === wanted)
+    .map((figure) => figure.amount)
+}
+
 /** Las unidades presentes, en orden de primera aparición. */
 export function unitsOf(figures: readonly Figure[]): readonly string[] {
   return [...new Set(figures.map((figure) => figure.unit))].filter(
     (unit) => unit !== '',
   )
+}
+
+/** Las dimensiones presentes, en orden de primera aparición. */
+export function dimensionsOf(figures: readonly Figure[]): readonly Dimension[] {
+  const seen = new Map<string, Dimension>()
+  for (const figure of figures) {
+    if (figure.unit === '') continue
+    const dimension = dimensionOf(figure)
+    const key = dimensionKey(dimension)
+    if (!seen.has(key)) seen.set(key, dimension)
+  }
+  return [...seen.values()]
 }

@@ -26,6 +26,7 @@ import type {
   SpatialPlacement,
 } from '@/game'
 import {
+  assignmentShortcutPolicies,
   numericShortcutPolicies,
   optionShortcutPolicies,
   quantityShortcutPolicies,
@@ -36,6 +37,7 @@ import {
 export {
   STRATEGY_FAMILIES,
   type NaivePolicy,
+  type PolicyDerivation,
   type StrategyFamily,
 } from './blind-strategy-policies'
 
@@ -223,11 +225,13 @@ function classificationSpace(
       ...labels.map((label, index) => ({
         family: 'NORMALIZED' as const,
         name: `todo «${label}»`,
+        derivation: 'positional' as const,
         answer: withStance(uniform(index), stances[0]),
       })),
       {
         family: 'FIXED_PRIORITY' as const,
         name: 'primer patrón válido',
+        derivation: 'positional' as const,
         answer: withStance(
           entriesOf(sizes.map((_, i) => i % labels.length)),
           stances[0],
@@ -307,9 +311,26 @@ function constructionSpace(
       },
       cardinality: (agents.length + 1) ** tasks.length,
       policies: [
+        // Derivadas de lo que la pantalla imprime en cada fila: las cifras y
+        // las marcas. Sin ellas este motor quedaba cubierto sólo por patrones
+        // posicionales (MAT-FC-002).
+        ...assignmentShortcutPolicies(
+          view.agents.map((agent) => ({
+            id: agent.id,
+            label: agent.label,
+            detail: agent.detail ?? '',
+          })),
+          view.tasks.map((task) => ({
+            id: task.id,
+            label: task.label,
+            detail: task.detail ?? '',
+          })),
+          answerOf,
+        ),
         {
           family: 'NORMALIZED' as const,
           name: 'nada asignado',
+          derivation: 'positional' as const,
           answer: { kind: 'assignment-board', assignments: [] },
         },
         ...(agents[0] === undefined
@@ -318,17 +339,20 @@ function constructionSpace(
               {
                 family: 'FIXED_PRIORITY' as const,
                 name: 'todo a la primera persona',
+                derivation: 'positional' as const,
                 answer: answerOf(() => agents[0]!),
               },
             ]),
         {
           family: 'FIXED_PRIORITY' as const,
           name: 'cíclica',
+          derivation: 'positional' as const,
           answer: answerOf((index) => agents[index % agents.length] ?? ''),
         },
         {
           family: 'FIXED_PRIORITY' as const,
           name: 'equilibrada',
+          derivation: 'positional' as const,
           answer: answerOf(
             (index) =>
               agents[Math.floor((index * agents.length) / tasks.length)] ?? '',
@@ -337,6 +361,7 @@ function constructionSpace(
         {
           family: 'FIXED_PRIORITY' as const,
           name: 'preservar el orden',
+          derivation: 'positional' as const,
           answer: answerOf((index) =>
             index < agents.length
               ? (agents[index] ?? '')
@@ -361,6 +386,38 @@ function constructionSpace(
       kind: 'schedule-builder',
       placements: placements(pick),
     })
+    /**
+     * Agenda en el orden que dicta una magnitud impresa: la duración.
+     *
+     * Es la única razón visible que este motor ofrece por actividad, y hasta el
+     * cierre no se medía ninguna (MAT-FC-002). Cada actividad toma el primer
+     * horario que le queda disponible al avanzar el reloj.
+     */
+    const byDuration = (longestFirst: boolean) => {
+      const order = view.activities
+        .map((_activity, index) => index)
+        .sort((left, right) => {
+          const a = view.activities[left]?.durationMinutes ?? 0
+          const b = view.activities[right]?.durationMinutes ?? 0
+          return (longestFirst ? b - a : a - b) || left - right
+        })
+      const chosen = new Map<number, number>()
+      let clock = view.span.from
+      for (const index of order) {
+        const activity = view.activities[index]
+        if (activity === undefined) continue
+        const start =
+          activity.startMinutes.find((minute) => minute >= clock) ??
+          activity.startMinutes[0]
+        if (start === undefined) continue
+        chosen.set(index, start)
+        clock = start + activity.setupMinutes + activity.durationMinutes
+      }
+      return chosen
+    }
+    const shortestFirst = byDuration(false)
+    const longestFirst = byDuration(true)
+
     let cursor = view.span.from
     const sequential = view.activities.map((activity) => {
       const start =
@@ -379,21 +436,37 @@ function constructionSpace(
         {
           family: 'NORMALIZED' as const,
           name: 'agenda vacía',
+          derivation: 'positional' as const,
           answer: { kind: 'schedule-builder', placements: [] },
+        },
+        {
+          family: 'SIMPLE_GREEDY' as const,
+          name: 'la más corta primero',
+          derivation: 'attribute' as const,
+          answer: answerOf((index) => shortestFirst.get(index)),
+        },
+        {
+          family: 'SIMPLE_GREEDY' as const,
+          name: 'la más larga primero',
+          derivation: 'attribute' as const,
+          answer: answerOf((index) => longestFirst.get(index)),
         },
         {
           family: 'DOMAIN_NAIVE' as const,
           name: 'lo más temprano posible',
+          derivation: 'positional' as const,
           answer: answerOf((index) => starts(index)[0]),
         },
         {
           family: 'DOMAIN_NAIVE' as const,
           name: 'lo más tarde posible',
+          derivation: 'positional' as const,
           answer: answerOf((index) => starts(index).at(-1)),
         },
         {
           family: 'DOMAIN_NAIVE' as const,
           name: 'sólo lo obligatorio, temprano',
+          derivation: 'positional' as const,
           answer: answerOf((index) =>
             view.activities[index]?.optional === true
               ? undefined
@@ -403,11 +476,13 @@ function constructionSpace(
         {
           family: 'FIXED_PRIORITY' as const,
           name: 'preservar el orden',
+          derivation: 'positional' as const,
           answer: answerOf((index) => sequential[index]),
         },
         {
           family: 'DOMAIN_NAIVE' as const,
           name: 'repartido uniforme',
+          derivation: 'positional' as const,
           answer: answerOf((index) => {
             const activity = view.activities[index]!
             const last =
@@ -444,18 +519,22 @@ function constructionSpace(
       })
     }
     // Greedy sin backtracking ni evaluador: usa sólo la geometría visible.
-    const firstFit = (smallestFirst: boolean): SpatialPlacement[] => {
+    const firstFit = (
+      order: 'presentado' | 'menor' | 'mayor',
+    ): SpatialPlacement[] => {
       const occupied = new Set(
         [...view.blocked, ...view.clearance, ...view.entrances].map(
           (cell) => `${cell.x},${cell.y}`,
         ),
       )
-      const ordered = smallestFirst
-        ? [...objects].sort(
-            (a, b) =>
-              a.widthCells * a.heightCells - b.widthCells * b.heightCells,
-          )
-        : objects
+      const area = (object: (typeof objects)[number]) =>
+        object.widthCells * object.heightCells
+      const ordered =
+        order === 'presentado'
+          ? objects
+          : [...objects].sort((a, b) =>
+              order === 'menor' ? area(a) - area(b) : area(b) - area(a),
+            )
       const placements: SpatialPlacement[] = []
       for (const object of ordered) {
         let placed = false
@@ -492,11 +571,13 @@ function constructionSpace(
         {
           family: 'NORMALIZED' as const,
           name: 'plano vacío',
+          derivation: 'positional' as const,
           answer: { kind: 'spatial-layout', placements: [] },
         },
         {
           family: 'DOMAIN_NAIVE' as const,
           name: 'fila a fila',
+          derivation: 'positional' as const,
           answer: {
             kind: 'spatial-layout',
             placements: rowMajor(() => true),
@@ -505,6 +586,7 @@ function constructionSpace(
         {
           family: 'DOMAIN_NAIVE' as const,
           name: 'empaque desde el origen',
+          derivation: 'positional' as const,
           answer: {
             kind: 'spatial-layout',
             placements: objects.map((object) => ({
@@ -518,21 +600,34 @@ function constructionSpace(
         {
           family: 'DOMAIN_NAIVE' as const,
           name: 'misma orientación',
+          derivation: 'positional' as const,
           answer: { kind: 'spatial-layout', placements: rowMajor(() => true) },
         },
         {
           family: 'SIMPLE_GREEDY' as const,
           name: 'primer hueco',
-          answer: { kind: 'spatial-layout', placements: firstFit(false) },
+          derivation: 'attribute' as const,
+          answer: {
+            kind: 'spatial-layout',
+            placements: firstFit('presentado'),
+          },
         },
         {
           family: 'SIMPLE_GREEDY' as const,
           name: 'huella mínima',
-          answer: { kind: 'spatial-layout', placements: firstFit(true) },
+          derivation: 'attribute' as const,
+          answer: { kind: 'spatial-layout', placements: firstFit('menor') },
+        },
+        {
+          family: 'SIMPLE_GREEDY' as const,
+          name: 'huella máxima',
+          derivation: 'attribute' as const,
+          answer: { kind: 'spatial-layout', placements: firstFit('mayor') },
         },
         {
           family: 'DOMAIN_NAIVE' as const,
           name: 'sólo lo obligatorio, fila a fila',
+          derivation: 'positional' as const,
           answer: {
             kind: 'spatial-layout',
             placements: rowMajor((index) => objects[index]?.optional !== true),
@@ -578,21 +673,25 @@ function constructionSpace(
         {
           family: 'NORMALIZED' as const,
           name: 'sin paradas',
+          derivation: 'positional' as const,
           answer: answerOf([]),
         },
         {
           family: 'FIXED_PRIORITY' as const,
           name: 'orden presentado',
+          derivation: 'positional' as const,
           answer: answerOf(points.map((point) => point.id)),
         },
         {
           family: 'FIXED_PRIORITY' as const,
           name: 'orden inverso',
+          derivation: 'positional' as const,
           answer: answerOf([...points].reverse().map((point) => point.id)),
         },
         {
           family: 'DOMAIN_NAIVE' as const,
           name: 'sólo las obligatorias, orden presentado',
+          derivation: 'positional' as const,
           answer: answerOf(
             points.filter((point) => !point.optional).map((point) => point.id),
           ),
@@ -600,6 +699,7 @@ function constructionSpace(
         {
           family: 'SIMPLE_GREEDY' as const,
           name: 'vecino más cercano',
+          derivation: 'attribute' as const,
           answer: answerOf(nearest()),
         },
       ],
@@ -623,21 +723,25 @@ function constructionSpace(
         {
           family: 'NORMALIZED' as const,
           name: 'sin rondas',
+          derivation: 'positional' as const,
           answer: { kind: 'number-grid', rounds: [] },
         },
         {
           family: 'NORMALIZED' as const,
           name: 'marcar todo',
+          derivation: 'positional' as const,
           answer: answerOf((numbers) => [...numbers]),
         },
         {
           family: 'NORMALIZED' as const,
           name: 'no marcar nada',
+          derivation: 'positional' as const,
           answer: answerOf(() => []),
         },
         {
           family: 'FIXED_PRIORITY' as const,
           name: 'primer patrón válido (primera celda)',
+          derivation: 'positional' as const,
           answer: answerOf((numbers) => numbers.slice(0, 1)),
         },
       ],

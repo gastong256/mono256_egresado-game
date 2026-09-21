@@ -25,13 +25,19 @@ import type {
   PresentedDatum,
 } from '@/game'
 import {
+  dimensionKey,
+  dimensionLabel,
+  dimensionsOf,
   figuresIn,
   figuresOfDatum,
+  figuresOfDimension,
   figuresOfOption,
   figuresOfUnit,
+  labelNames,
   normalizeUnit,
   parseRateUnit,
   unitsOf,
+  type Dimension,
   type Figure,
 } from './blind-strategy-reading'
 
@@ -58,10 +64,26 @@ const FAMILY_RANK = new Map<StrategyFamily, number>(
   STRATEGY_FAMILIES.map((family, index) => [family, index]),
 )
 
+/**
+ * De dónde sale una política: de las cifras de la variante, o de la forma de la
+ * pantalla.
+ *
+ * `attribute` lee lo que la pantalla imprime **para esta variante** —costos,
+ * capacidades, horas, estrellas— y por eso se adapta a cada una. `positional`
+ * sale de la forma: la primera opción, el orden presentado, todo o nada.
+ *
+ * La distinción existe porque una fila «cubierta» sólo por políticas
+ * posicionales no está auditada a la misma profundidad que una que además probó
+ * las derivadas de atributos, y reportar las dos igual exagera la cobertura
+ * (MAT-FC-002).
+ */
+export type PolicyDerivation = 'attribute' | 'positional'
+
 /** Una política ingenua: determinista, y ciega a la respuesta esperada. */
 export interface NaivePolicy {
   readonly name: string
   readonly family: StrategyFamily
+  readonly derivation: PolicyDerivation
   readonly answer: InteractionAnswer
 }
 
@@ -109,10 +131,12 @@ export interface AuditedQuantityItem {
   readonly detail: string
 }
 
-/** Una capacidad impresa y lo que cada ítem le consume, en la misma unidad. */
+/** Una capacidad impresa y lo que cada ítem le consume, en la misma magnitud. */
 interface ResourceModel {
   readonly label: string
   readonly unit: string
+  /** La magnitud semántica que este modelo mide, no sólo su unidad impresa. */
+  readonly dimension: Dimension
   readonly budget: number
   readonly costs: readonly number[]
 }
@@ -130,12 +154,33 @@ const MAX_VALUES = 8
 const clamp = (value: number, max: number): number =>
   Math.max(0, Math.min(max, Number.isFinite(value) ? Math.trunc(value) : 0))
 
-/** Las cifras de la unidad `unit` que **todos** los ítems imprimen, por turno. */
+/** Las magnitudes que los ítems imprimen, sin repetir y en orden de lectura. */
+function dimensionsIn(
+  itemFigures: readonly (readonly Figure[])[],
+): readonly Dimension[] {
+  return [
+    ...new Map(
+      itemFigures
+        .flatMap((figures) => dimensionsOf(figures))
+        .map((dimension) => [dimensionKey(dimension), dimension]),
+    ).values(),
+  ]
+}
+
+/**
+ * Las cifras de la magnitud `dimension` que **todos** los ítems imprimen.
+ *
+ * Por magnitud y no por unidad: si la pantalla dice «min de notebook», esos
+ * minutos no son los mismos que los de otra capacidad impresa en minutos, y
+ * mezclarlos ata un costo a un presupuesto ajeno (MAT-FC-001).
+ */
 function costSlots(
   itemFigures: readonly (readonly Figure[])[],
-  unit: string,
+  dimension: Dimension,
 ): readonly (readonly number[])[] {
-  const perItem = itemFigures.map((figures) => figuresOfUnit(figures, unit))
+  const perItem = itemFigures.map((figures) =>
+    figuresOfDimension(figures, dimension),
+  )
   const depth = Math.min(...perItem.map((list) => list.length))
   return Array.from({ length: Math.max(0, depth) }, (_, slot) =>
     perItem.map((list) => list[slot] ?? 0),
@@ -154,9 +199,12 @@ function resourceModels(
   data: readonly PresentedDatum[],
   itemFigures: readonly (readonly Figure[])[],
 ): readonly ResourceModel[] {
-  const units = [...new Set(itemFigures.flatMap((figures) => unitsOf(figures)))]
-  const slotsByUnit = new Map<string, readonly (readonly number[])[]>(
-    units.map((unit) => [unit, costSlots(itemFigures, unit)]),
+  const dimensions = dimensionsIn(itemFigures)
+  const slotsByDimension = new Map<string, readonly (readonly number[])[]>(
+    dimensions.map((dimension) => [
+      dimensionKey(dimension),
+      costSlots(itemFigures, dimension),
+    ]),
   )
   const rates = data.flatMap((datum) => {
     const rate = parseRateUnit(datum.unit)
@@ -166,47 +214,79 @@ function resourceModels(
       : [{ label: datum.label, rate, amount }]
   })
 
+  const constraints = data.filter((datum) => datum.constraint === true)
+  /**
+   * Las magnitudes de `unit` que la pantalla **sí** deja desambiguar.
+   *
+   * Una magnitud con recurso nombrado —«min de notebook»— sólo se ata a la
+   * capacidad cuya etiqueta nombra ese recurso. Si ninguna la nombra, la
+   * pantalla no dice de quién es y se vuelve al comportamiento por unidad: la
+   * corrección nunca puede **perder** una restricción real.
+   */
+  const claims = new Map<string, boolean>(
+    dimensions.map((dimension) => [
+      dimensionKey(dimension),
+      dimension.of !== '' &&
+        constraints.some(
+          (datum) =>
+            figuresOfDatum(datum)[0]?.unit === dimension.unit &&
+            labelNames(datum.label, dimension.of),
+        ),
+    ]),
+  )
+
   const models: ResourceModel[] = []
   const push = (
     label: string,
-    unit: string,
+    dimension: Dimension,
     budget: number,
     slotIndex: number,
   ) => {
-    const costs = slotsByUnit.get(unit)?.[slotIndex]
+    const costs = slotsByDimension.get(dimensionKey(dimension))?.[slotIndex]
     if (costs === undefined || costs.every((cost) => cost <= 0)) return
     if (budget <= 0) return
-    models.push({ label, unit, budget, costs })
+    models.push({ label, unit: dimension.unit, dimension, budget, costs })
   }
+
+  /** Las magnitudes que esta capacidad puede medir, ya desambiguadas. */
+  const boundTo = (datum: PresentedDatum, unit: string) =>
+    dimensions.filter((dimension) => {
+      if (dimension.unit !== unit) return false
+      if (claims.get(dimensionKey(dimension)) !== true) return true
+      return labelNames(datum.label, dimension.of)
+    })
 
   for (const datum of data) {
     if (datum.constraint !== true) continue
     const figure = figuresOfDatum(datum)[0]
     if (figure === undefined) continue
-    const direct = slotsByUnit.get(figure.unit)
-    if (direct !== undefined)
+    for (const dimension of boundTo(datum, figure.unit)) {
+      const direct = slotsByDimension.get(dimensionKey(dimension)) ?? []
       direct.forEach((_, slot) =>
         push(
           direct.length === 1
             ? datum.label
             : `${datum.label} #${String(slot + 1)}`,
-          figure.unit,
+          dimension,
           figure.amount,
           slot,
         ),
       )
+    }
     for (const { label, rate, amount } of rates) {
       if (rate.per !== figure.unit) continue
-      const converted = slotsByUnit.get(rate.produced)
-      if (converted === undefined) continue
-      converted.forEach((_, slot) =>
-        push(
-          `${datum.label} a ${rate.produced} (${label})`,
-          rate.produced,
-          figure.amount * amount,
-          slot,
-        ),
-      )
+      for (const dimension of dimensions) {
+        if (dimension.unit !== rate.produced) continue
+        const converted = slotsByDimension.get(dimensionKey(dimension)) ?? []
+        converted.forEach((_, slot) =>
+          push(
+            `${datum.label} a ${rate.produced} (${label})`,
+            dimension,
+            figure.amount * amount,
+            slot,
+          ),
+        )
+      }
     }
   }
   return models.slice(0, MAX_MODELS)
@@ -219,16 +299,16 @@ function valueVectors(
   const vectors: ValueVector[] = [
     { label: 'unidades', values: itemFigures.map(() => 1) },
   ]
-  const units = [...new Set(itemFigures.flatMap((figures) => unitsOf(figures)))]
-  for (const unit of units) {
-    const slots = costSlots(itemFigures, unit)
+  for (const dimension of dimensionsIn(itemFigures)) {
+    const name = dimensionLabel(dimension)
+    const slots = costSlots(itemFigures, dimension)
     slots.forEach((values, slot) => {
       vectors.push({
-        label: slots.length === 1 ? unit : `${unit} #${String(slot + 1)}`,
+        label: slots.length === 1 ? name : `${name} #${String(slot + 1)}`,
         values,
       })
     })
-    // La diferencia entre dos cifras de la misma unidad: «lo que deja cada
+    // La diferencia entre dos cifras de la misma magnitud: «lo que deja cada
     // bandeja» es precio menos costo, y las dos están impresas.
     for (let later = 1; later < slots.length; later++)
       for (let earlier = 0; earlier < later; earlier++) {
@@ -237,7 +317,7 @@ function valueVectors(
         )
         if (values.every((value) => value > 0))
           vectors.push({
-            label: `${unit} #${String(later + 1)} − #${String(earlier + 1)}`,
+            label: `${name} #${String(later + 1)} − #${String(earlier + 1)}`,
             values,
           })
       }
@@ -385,15 +465,15 @@ function copyVectors(
   }
 
   // Un número del detalle de cada ítem, tipeado en su propia casilla.
-  const units = [...new Set(itemFigures.flatMap((figures) => unitsOf(figures)))]
-  for (const unit of units) {
-    const slots = costSlots(itemFigures, unit)
+  for (const dimension of dimensionsIn(itemFigures)) {
+    const name = dimensionLabel(dimension)
+    const slots = costSlots(itemFigures, dimension)
     slots.forEach((values, slot) => {
       vectors.push({
         label:
           slots.length === 1
-            ? `el número «${unit}» del detalle de cada ítem`
-            : `el ${String(slot + 1)}.º número «${unit}» del detalle de cada ítem`,
+            ? `el número «${name}» del detalle de cada ítem`
+            : `el ${String(slot + 1)}.º número «${name}» del detalle de cada ítem`,
         counts: values.map((value, index) =>
           clamp(value, items[index]?.maxQuantity ?? 0),
         ),
@@ -450,7 +530,17 @@ export function quantityShortcutPolicies(
     family: StrategyFamily,
     name: string,
     counts: readonly number[],
-  ) => policies.push({ family, name, answer: answerOf(counts) })
+  ) =>
+    policies.push({
+      family,
+      name,
+      // `NORMALIZED` es una fracción de la forma de la pantalla y no compara
+      // magnitudes entre ítems; el resto sí lee las cifras de la variante —el
+      // detalle de cada ítem, las capacidades del encabezado— y se adapta a
+      // ellas.
+      derivation: family === 'NORMALIZED' ? 'positional' : 'attribute',
+      answer: answerOf(counts),
+    })
 
   // NORMALIZED — fracciones del máximo presentado.
   for (const [numerator, denominator, label] of [
@@ -624,6 +714,163 @@ export function quantityShortcutPolicies(
 }
 
 /* -------------------------------------------------------------------------
+ * Tableros de asignación
+ * ---------------------------------------------------------------------- */
+
+/** Una persona o una tarea, como la pantalla la imprime. */
+export interface AuditedAssignee {
+  readonly id: string
+  readonly label: string
+  readonly detail: string
+}
+
+/** La primera cifra del detalle, que es la magnitud que la fila anuncia. */
+function leadingAmount(detail: string): number | undefined {
+  return figuresIn(detail)[0]?.amount
+}
+
+/**
+ * Cuánto vale una tarea para una persona, según lo que la fila de esa persona
+ * imprime **al lado del nombre de la tarea**.
+ *
+ * `Investigación ★★★` vale 3 y `Diseño ★` vale 1: la marca repetida es la
+ * escala que la pantalla usa. Un número escrito ahí también sirve. Si la fila
+ * no nombra la tarea, no hay valor y la política no se ofrece.
+ */
+function ratingFor(detail: string, taskLabel: string): number | undefined {
+  // Las etiquetas compuestas —`Fútbol · mañana`— se anuncian por su primer
+  // tramo, que es como la fila de la persona las nombra.
+  const head = (taskLabel.split('·')[0] ?? '').trim()
+  if (head === '') return undefined
+  const at = detail.toLowerCase().indexOf(head.toLowerCase())
+  if (at < 0) return undefined
+  const rest = detail.slice(at + head.length)
+  const number = /^[^\p{L}\d]*(\d+)/u.exec(rest)
+  if (number?.[1] !== undefined) return Number(number[1])
+  const marks = /^\s*(\S)\1*/u.exec(rest)
+  return marks?.[0] === undefined ? undefined : marks[0].trim().length
+}
+
+/** Orden total por una magnitud leída, con la posición como desempate. */
+function byAmount(
+  amounts: readonly (number | undefined)[],
+  descending: boolean,
+): readonly number[] {
+  return amounts
+    .map((_, index) => index)
+    .sort((left, right) => {
+      const a = amounts[left] ?? 0
+      const b = amounts[right] ?? 0
+      return (descending ? b - a : a - b) || left - right
+    })
+}
+
+/**
+ * Atajos de un tablero de asignación derivados de lo que la pantalla imprime.
+ *
+ * Hasta el cierre, este motor sólo recibía patrones posicionales —cíclica,
+ * equilibrada, preservar el orden—, así que una regla de una sola magnitud
+ * visible quedaba sin medir aunque la pantalla la ofreciera en bandeja
+ * (MAT-FC-002). Estas leen las cifras y las marcas de cada fila, y nada más:
+ * no conocen la respuesta esperada ni el identificador de la Template.
+ *
+ * La respuesta nombra, para cada tarea, a quién le toca. Una persona no se
+ * repite: estas políticas reparten, no duplican.
+ */
+export function assignmentShortcutPolicies(
+  agents: readonly AuditedAssignee[],
+  tasks: readonly AuditedAssignee[],
+  answerOf: (
+    pick: (taskIndex: number) => string | undefined,
+  ) => InteractionAnswer,
+): readonly NaivePolicy[] {
+  if (agents.length === 0 || tasks.length === 0) return []
+  const policies: NaivePolicy[] = []
+  const add = (
+    family: StrategyFamily,
+    name: string,
+    pick: readonly (number | undefined)[],
+  ) =>
+    policies.push({
+      family,
+      name,
+      derivation: 'attribute',
+      answer: answerOf((index) => {
+        const agent = pick[index]
+        return agent === undefined ? undefined : agents[agent]?.id
+      }),
+    })
+
+  const agentAmounts = agents.map((agent) => leadingAmount(agent.detail))
+  const taskAmounts = tasks.map((task) => leadingAmount(task.detail))
+  const everyAgent = agentAmounts.every((amount) => amount !== undefined)
+  const everyTask = taskAmounts.every((amount) => amount !== undefined)
+
+  // Emparejar por magnitud: la fila que más anuncia con la tarea que más pide,
+  // y los tres cruces restantes. Una sola comparación por lado.
+  if (everyAgent && everyTask)
+    for (const agentsFirst of [true, false])
+      for (const tasksFirst of [true, false]) {
+        const orderedAgents = byAmount(agentAmounts, agentsFirst)
+        const orderedTasks = byAmount(taskAmounts, tasksFirst)
+        const pick: (number | undefined)[] = tasks.map(() => undefined)
+        orderedTasks.forEach((task, rank) => {
+          pick[task] = orderedAgents[rank]
+        })
+        add(
+          'SIMPLE_GREEDY',
+          `la persona de ${agentsFirst ? 'mayor' : 'menor'} cifra a la tarea de ${tasksFirst ? 'mayor' : 'menor'} cifra`,
+          pick,
+        )
+      }
+
+  // La primera persona a la que la cifra le alcanza, tarea por tarea. Es el
+  // «primer hueco» del tablero: una comparación, sin buscar el mejor reparto.
+  if (everyAgent && everyTask) {
+    const taken = new Set<number>()
+    const pick = tasks.map((_, index) => {
+      const need = taskAmounts[index] ?? 0
+      const found = agents.findIndex(
+        (_agent, position) =>
+          !taken.has(position) && (agentAmounts[position] ?? 0) >= need,
+      )
+      if (found < 0) return undefined
+      taken.add(found)
+      return found
+    })
+    add('SIMPLE_GREEDY', 'la primera persona a la que le alcanza', pick)
+  }
+
+  // Por lo que cada fila dice que se le da a cada tarea. Sin mirar capacidad.
+  const ratings = agents.map((agent) =>
+    tasks.map((task) => ratingFor(agent.detail, task.label)),
+  )
+  const rated = ratings.every((row) =>
+    row.every((value) => value !== undefined),
+  )
+  if (rated)
+    for (const best of [true, false]) {
+      const taken = new Set<number>()
+      const pick = tasks.map((_, task) => {
+        const order = byAmount(
+          agents.map((_agent, agent) => ratings[agent]?.[task]),
+          best,
+        ).filter((agent) => !taken.has(agent))
+        const chosen = order[0]
+        if (chosen === undefined) return undefined
+        taken.add(chosen)
+        return chosen
+      })
+      add(
+        'SIMPLE_GREEDY',
+        `cada tarea a quien ${best ? 'mejor' : 'peor'} la hace`,
+        pick,
+      )
+    }
+  return byName(policies)
+}
+
+/* -------------------------------------------------------------------------
  * Entrada numérica
  * ---------------------------------------------------------------------- */
 
@@ -667,6 +914,8 @@ export function numericShortcutPolicies(
     policies.push({
       family: 'NORMALIZED',
       name: label,
+      // El rango es la forma del control, no una cifra del enunciado.
+      derivation: 'positional',
       answer: answerOf(
         min + Math.floor(((max - min) * numerator) / denominator),
       ),
@@ -676,6 +925,7 @@ export function numericShortcutPolicies(
       policies.push({
         family: 'VISIBLE_COPY',
         name: `copiar el número ${String(amount)} de la pantalla`,
+        derivation: 'attribute',
         answer: answerOf(amount),
       })
   for (const left of figures)
@@ -699,6 +949,7 @@ export function numericShortcutPolicies(
           policies.push({
             family: 'DOMAIN_NAIVE',
             name: `${String(left)} ${label} ${String(right)}`,
+            derivation: 'attribute',
             answer: answerOf(value),
           })
       }
@@ -738,12 +989,14 @@ export function optionShortcutPolicies(
     policies.push({
       family: 'FIXED_PRIORITY',
       name: 'la primera opción',
+      derivation: 'positional',
       answer: answerOf(first.id),
     })
   if (last !== undefined && options.length > 1)
     policies.push({
       family: 'FIXED_PRIORITY',
       name: 'la última opción',
+      derivation: 'positional',
       answer: answerOf(last.id),
     })
 
@@ -761,6 +1014,7 @@ export function optionShortcutPolicies(
         policies.push({
           family: 'SIMPLE_GREEDY',
           name: `la opción con ${descending ? 'mayor' : 'menor'} «${unit}${depth === 1 ? '' : ` #${String(slot + 1)}`}»`,
+          derivation: 'attribute',
           answer: answerOf(option.id),
         })
       }
