@@ -42,7 +42,11 @@ Egresado busca que la matemática sea una herramienta para actuar dentro del sis
 ## Objetivos
 
 1. Conseguir que un alumno comprenda el loop básico en menos de 30 segundos.
-2. Mantener una run estándar entre 4 y 7 minutos.
+2. Mantener una run estándar entre 4 y 7 minutos. Esa cifra es de cuando una
+   run era **un año suelto**. Para la carrera completa de 7.º a 5.º el objetivo
+   vigente es mediana 8–10 minutos con p75 ≤ 12, y vive en la
+   [matriz de contenido](../01-game-design/full-career-content-matrix.md#pacing);
+   lo midió el [cierre de integración y ritmo](../06-delivery/stage-08-final-integration-pacing-closure.md).
 3. Hacer que al menos 70% de los desafíos exijan interpretar datos o relaciones matemáticas relevantes para la decisión.
 4. Permitir rejugabilidad mediante seeds, variación procedural, rutas narrativas y perfiles finales.
 5. Soportar uso simultáneo desde múltiples dispositivos durante una feria.

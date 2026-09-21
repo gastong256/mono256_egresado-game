@@ -71,8 +71,8 @@ Tabla de navegación. Los contratos de cada etapa, más abajo, son la autoridad.
 | [STAGE-06](#stage-06-scorepolicy-competitiva) | ScorePolicy competitiva | `DONE` | STAGE-05 | — |
 | [GATE-TG1](#gate-tg1-teacher-gate-1) | **Teacher Gate 1** | `PASSED_WITH_REQUIRED_ADJUSTMENTS` | STAGE-04, STAGE-06 | externo |
 | [STAGE-07](#stage-07-invariante-de-egreso-fail-forward-y-recuperaciones) | Egreso, fail-forward y recuperaciones | `DONE` | GATE-TG1 | — |
-| [STAGE-08](#stage-08-contenido-incremental-de-1º-a-5º) | Contenido incremental 1.º → 5.º | `IN_PROGRESS` · **actual** · implementación e integración DONE · remediación ronda 1 DONE 14/14 · re-auditoría ronda 1 FAILED · remediación ronda 2 DONE 5/5 · re-auditoría ronda 2 FAILED · sprint de cierre DONE · auditoría final de cierre NEXT | STAGE-07 | auditoría tras 1.º · gates matemáticos provisionales |
-| [STAGE-09](#stage-09-fair-mode-servidor-autoritativo-y-ranking) | Fair mode, servidor autoritativo y ranking | `NOT_STARTED` | STAGE-06, STAGE-08 | — |
+| [STAGE-08](#stage-08-contenido-incremental-de-1º-a-5º) | Contenido incremental 1.º → 5.º | `DONE` · implementación e integración DONE · dos rondas de remediación y dos re-auditorías FAILED · sprint de cierre DONE · auditoría final de cierre PASSED · sign-off provisional de IA PASSED · cierre de integración y ritmo PASSED | STAGE-07 | gates humanos abiertos: pacing con jugadores, revisión de Matemática, rueda |
+| [STAGE-09](#stage-09-fair-mode-servidor-autoritativo-y-ranking) | Fair mode, servidor autoritativo y ranking | `NEXT` | STAGE-06 (`DONE`), STAGE-08 (`DONE`) | — |
 | [GATE-TG2](#gate-tg2-teacher-gate-2) | **Teacher Gate 2** | `TEACHER_GATE` | STAGE-09 | externo |
 | [FREEZE](#freeze-congelamiento-de-competencia) | Congelamiento de competencia | `NOT_STARTED` | GATE-TG2 | — |
 | [STAGE-10](#stage-10-production-hardening) | Production hardening | `NOT_STARTED` | FREEZE | go-live |
@@ -782,9 +782,10 @@ a TG1. El techo de un Repaso por etapa sigue siendo estructura de ADR-024.
 
 ### STAGE-08 — Contenido incremental de 1.º a 5.º
 
-- **Estado:** `IN_PROGRESS` — **etapa actual; Phase 0 DONE / Phase 1 DONE /
-  audit post-G1 PASSED / Phase 2 e integración de carrera completa DONE; gates
-  matemáticos provisionales en curso: remediación DONE, 14 de 14 contratos**
+- **Estado:** `DONE` — 21 de septiembre de 2026. Phase 0, Phase 1 y Phase 2
+  cerradas; gates matemáticos de IA cerrados con sign-off provisional; cierre de
+  integración y ritmo `PASSED`. Los gates **humanos** siguen abiertos y están
+  listados abajo
 - **Depende de:** STAGE-07 (`DONE`)
 - **Desbloquea:** STAGE-09
 
@@ -983,7 +984,18 @@ Templates ocurre en Final Delivery / Pre-Release Acceptance.
 
 **Exit gate.** ¿Una run real, auditada y accesible recorre
 `7.º → 1.º → 2.º → 3.º → 4.º → 5.º → EGRESADO`, con pacing medido y sin duplicar
-fundaciones? **Parcialmente.** La run existe, se audita y es accesible: la
+fundaciones? — **Sí.** El
+[cierre de integración y ritmo](stage-08-final-integration-pacing-closure.md) dio
+`PASSED`: 5000 carreras completadas y egresadas, reanudación y doble acción
+probadas contra el motor real, los once motores de interacción con confianza
+integrada, accesibilidad a 320–1280 px con zoom 200 %, build de producción en
+verde y **el ritmo medido por primera vez** —mediana ≈12,4 min contra un objetivo
+de 8–10, con la constante de lectura como factor decisivo y el instrumento
+(`pnpm game:pacing`) entregado al gate humano—. Lo que sigue abierto es humano:
+validación de pacing con jugadores, revisión del Departamento de Matemática y
+sign-off manual de la rueda.
+
+**Registro histórico del exit gate, antes del cierre.** **Parcialmente.** La run existe, se audita y es accesible: la
 carrera real compone nueve beats en los seis años, egresa bajo seis políticas de
 juego, se recompone en servidor y pasa accesibilidad a 320 px, con la
 [auditoría de implementación](../04-quality/full-career-implementation-audit.md)
@@ -1001,8 +1013,8 @@ la validación empírica de pacing.
 
 ### STAGE-09 — Fair mode, servidor autoritativo y ranking
 
-- **Estado:** `NOT_STARTED`
-- **Depende de:** STAGE-06, STAGE-08
+- **Estado:** `NEXT` — sus dos dependencias están cerradas
+- **Depende de:** STAGE-06 (`DONE`), STAGE-08 (`DONE`)
 - **Desbloquea:** GATE-TG2
 
 **Propósito.** Convertir el juego completo en una competencia cuya integridad se pueda defender.

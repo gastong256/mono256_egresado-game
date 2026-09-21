@@ -131,6 +131,7 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 - `teacher-gates.md`: qué decide el Departamento de Matemática en cada gate.
 - `teacher-gate-1/`: pack histórico, evidencia docente original, acta y trazabilidad de integración del Teacher Gate 1 ejecutado.
 - `definition-of-done.md`: DoD global y por tipo de cambio.
+- `stage-08-final-integration-pacing-closure.md`: el cierre de STAGE-08 como producto integrado —carrera completa, reanudación, idempotencia, motores, accesibilidad y build de producción— y la primera medición del ritmo de la carrera, con sus supuestos y su límite.
 - `repository-conventions.md`: estructura implementada, fronteras, comandos y reglas de dependencia.
 - `vertical-slice-grade-7.md`: alcance, contenido y criterios del primer slice jugable (7.º grado).
 

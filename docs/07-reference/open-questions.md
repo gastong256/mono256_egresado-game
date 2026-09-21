@@ -4,7 +4,7 @@ Estas decisiones requieren evidencia de prototipo, playtest, implementación u o
 
 ## Producto
 
-1. ~~¿Run objetivo de 4, 5 o 7 minutos?~~ **Cerrada por TG1-12:** la carrera completa apunta a aproximadamente **8–10 minutos**. Queda abierta la calibración empírica de pacing, no el objetivo.
+1. ~~¿Run objetivo de 4, 5 o 7 minutos?~~ **Cerrada por TG1-12:** la carrera completa apunta a aproximadamente **8–10 minutos**, con p75 ≤ 12. Queda abierta la calibración empírica de pacing, no el objetivo. El [cierre de integración y ritmo](../06-delivery/stage-08-final-integration-pacing-closure.md#m-resultados-de-ritmo) aportó la primera medición de ingeniería —mediana ≈12,4 min sobre 125 carreras, en banda a partir de ~215 palabras/min— y el instrumento para repetirla; cuál de los dos supuestos de lectura vale sigue siendo la pregunta abierta, y la contesta mirar jugar.
 2. Cantidad Normal/Fair v1 cerrada en nueve beats y [envolvente](../01-game-design/full-career-content-matrix.md#envolvente-normalfair-v1). Falta validar copy, transiciones y Repasos contra mediana 8–10 min / p75 ≤12 min. *Gate: carrera real y walkthroughs, no reabrir cantidad por conveniencia.*
 3. ¿El nickname se pide antes o después de la primera run en modo libre?
 4. ¿Qué tan visible debe ser el score durante la carrera?

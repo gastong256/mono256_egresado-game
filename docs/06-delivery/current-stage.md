@@ -5,11 +5,15 @@ actualización están en el [roadmap](implementation-sequence.md).
 
 ## STAGE-08 — Contenido incremental de 1.º a 5.º
 
-**Estado:** `IN_PROGRESS` · **etapa actual**.
+**Estado:** `DONE` — 21 de septiembre de 2026. **Etapa actual: STAGE-09.**
+
+Los gates que siguen abiertos son **humanos** y están fuera del alcance de
+STAGE-08: pacing con jugadores reales, revisión del Departamento de Matemática y
+sign-off manual de la rueda.
 
 ```text
 STAGE-07                                      DONE
-STAGE-08                                      IN_PROGRESS · CURRENT
+STAGE-08                                      DONE
 ├── PHASE 0 — FULL-CAREER CONTENT DESIGN       DONE
 ├── PHASE 1 — IMPLEMENT GRADE 1                DONE
 │   ├── Contratos de ADR-025 que usa 1.º       IMPLEMENTED
@@ -40,9 +44,12 @@ STAGE-08                                      IN_PROGRESS · CURRENT
     │   ├── Sprint de Cierre Matemático            DONE · MAT-RA2-001…005 cerrados
     │   ├── Final Mathematics Closure Audit        PASSED · con hallazgos no bloqueantes
     │   └── Provisional Sign-Off                  PASSED · MAT-FC-001/002/004 cerrados
+    ├── Cierre de integración y ritmo          PASSED · ritmo medido, mediana ≈12,4 min
     ├── Revisión del Depto. de Matemática      DEFERRED · a Final Delivery / Pre-Release
     ├── Sign-off manual de la rueda            PENDING · humana
     └── Pacing empírico con jugadores          PENDING · humana
+
+STAGE-09 · fair mode, servidor y ranking      NEXT
 ```
 
 Phase 1 cerró el 11 de septiembre de 2026. Las cinco Templates de 1.º
@@ -313,6 +320,13 @@ AI Mathematics Department Provisional Sign-Off — PASSED
   MAT-FC-003 y MAT-FC-005 DIFERIDOS · revisión humana y backlog
   producto intacto: `git status --porcelain -- src/` vacío
 
+STAGE-08 Final Integration & Pacing Closure — PASSED
+  5000 carreras completadas y egresadas · 125 carreras medidas de punta a punta
+  reanudación, recuperación pendiente y doble acción probadas contra el motor real
+  once motores de interacción con confianza integrada · build de producción en verde
+  ritmo medido por primera vez: mediana ≈12,4 min contra un objetivo de 8–10
+  entra en banda a ~215 palabras/min: lo decide mirar jugar, no el modelo
+
 Next:
 STAGE-09 · fair mode, servidor autoritativo y ranking
 (y los gates humanos de STAGE-08 que siguen abiertos)
@@ -387,6 +401,28 @@ egresadas; replay y servidor fail-closed contra las versiones nuevas. Tres
 `pnpm verify` consecutivos en verde con 1898 tests y 174 E2E.
 
 ## Última reconciliación
+
+21 de septiembre de 2026, al cierre: **cierre de integración y ritmo de
+STAGE-08**. Veredicto `PASSED`, y con él **STAGE-08 queda `DONE`**. La carrera se
+validó como un producto integrado y no como Templates sueltas: 5000 carreras
+simuladas completan y egresan, 125 carreras se recorrieron de punta a punta para
+medirlas, los once motores de interacción tienen confianza integrada, la
+accesibilidad va de 320 a 1280 px con zoom 200 %, y los E2E corren contra el
+build de producción. Se cubrió la superficie que estaba más floja: reanudar
+devuelve el estado exacto, una obligación de recuperación sobrevive la recarga,
+un checkpoint de otra versión o corrupto se descarta y se borra, y **responder
+dos veces el mismo beat se rechaza sin duplicar acción, puntaje ni avance**. Y se
+midió el **ritmo**, que era lo único que el exit gate pedía y nadie había hecho:
+mediana ≈12,4 min contra el objetivo de 8–10 con p75 ≤12. El exceso es moderado y
+uniforme; el veredicto depende de una constante de lectura sin calibrar —la
+carrera entra en banda a ~215 palabras/min—, así que se entrega medido e
+instrumentado (`pnpm game:pacing`) al gate humano de pacing, sin recortar copy a
+ciegas contra un modelo y sin fabricar evidencia de jugadores. Se reconciliaron
+además los dos objetivos de ritmo en conflicto: el 4–7 min es de cuando una run
+era un año suelto. Producto matemático intacto. Siguiente etapa: **STAGE-09**.
+Detalle en el
+[cierre de integración y ritmo](stage-08-final-integration-pacing-closure.md).
+Sin push.
 
 21 de septiembre de 2026: **sign-off provisional del Departamento de Matemática
 de IA**. Veredicto `PASSED`. Cerró los tres hallazgos acotados que la auditoría

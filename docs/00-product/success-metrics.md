@@ -46,7 +46,9 @@ La métrica combina finalización y atractivo. En pruebas cualitativas, pregunta
 No son contratos; sirven como hipótesis.
 
 - 80% completa la primera run iniciada en pruebas moderadas.
-- Mediana de run entre 4 y 7 minutos.
+- Mediana de run entre 4 y 7 minutos **para un año suelto**. La carrera completa
+  tiene su propio objetivo —mediana 8–10, p75 ≤ 12— en la
+  [matriz de contenido](../01-game-design/full-career-content-matrix.md#pacing).
 - 50% o más acepta jugar nuevamente cuando se le ofrece de inmediato.
 - Menos de 5% abandona por confusión de UI en un desafío individual.
 - 95% de requests críticos de feria bajo 1 s en condiciones normales.

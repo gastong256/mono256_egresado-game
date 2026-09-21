@@ -147,7 +147,11 @@ STANDARD/DEEP. Son intenciones de diseño pendientes de validación real.
 
 La envolvente Normal/Fair v1 está en las políticas siguientes. Pacing no equivale
 a dificultad ni a un timer. Objetivo UX: mediana 8–10 minutos y p75 ≤12 minutos,
-todavía sin validación empírica. Si no se cumple, reducir copy/fricción antes de
+todavía sin validación empírica con jugadores. La estimación de ingeniería del
+[cierre de integración y ritmo](../06-delivery/stage-08-final-integration-pacing-closure.md#m-resultados-de-ritmo)
+da mediana ≈12,4 min con los supuestos de lectura declarados, y entra en banda
+a partir de ~215 palabras/min: cuál de los dos supuestos vale lo decide mirar
+jugar, no el modelo. Si no se cumple, reducir copy/fricción antes de
 recortar sustancia matemática. Teacher Demo conserva densidad de inspección.
 
 ## Riesgos de autoría

@@ -100,6 +100,7 @@
 06-delivery/implementation-sequence.md
 06-delivery/mvp-backlog.md
 06-delivery/repository-conventions.md
+06-delivery/stage-08-final-integration-pacing-closure.md
 06-delivery/teacher-gate-1/01-guion.md
 06-delivery/teacher-gate-1/02-checklist-facilitador.md
 06-delivery/teacher-gate-1/03-casos.md

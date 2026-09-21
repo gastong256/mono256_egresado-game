@@ -174,6 +174,16 @@ esa familia hizo visibles —`g7.group-tasks`, `y5.final-trip-or-event` y
 `y1.mobile-data`—. Seis catálogos republicados, tres `pnpm verify` consecutivos en
 verde, motor y FairScore intactos.
 
-STAGE-08 sigue IN_PROGRESS; después corresponde la **Final Mathematics Closure
-Audit**, de sólo lectura. Sign-off provisional pendiente de su PASS, revisión
-humana diferida a Final Delivery y pacing real pendiente.
+La [auditoría final de cierre](../04-quality/final-mathematics-closure-audit.md)
+dio `PASSED WITH NON-BLOCKING FINDINGS` y el
+[sign-off provisional de IA](../04-quality/ai-mathematics-department-provisional-signoff.md),
+`PASSED`. Con el
+[cierre de integración y ritmo](../06-delivery/stage-08-final-integration-pacing-closure.md)
+—también `PASSED`, y la primera medición del ritmo de la carrera— **STAGE-08
+queda `DONE`** y sigue **STAGE-09**.
+
+Lo que queda abierto es humano y no pertenecía a STAGE-08: la revisión del
+Departamento de Matemática, diferida a Final Delivery / Pre-Release; el sign-off
+manual de la rueda; y la **calibración empírica de pacing con jugadores**, que
+ahora tiene instrumento (`pnpm game:pacing`) y una estimación de ingeniería
+—mediana ≈12,4 min contra el objetivo de 8–10— para contrastar.
