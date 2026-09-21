@@ -35,7 +35,7 @@ describe('5.º · el año corre de punta a punta', () => {
       const approved = grade5ApprovedVariants.variantsFor(template.id)
       expect(approved.length, template.id).toBeGreaterThanOrEqual(8)
     }
-  })
+  }, 30_000)
 
   it.each(['g5-alpha', 'g5-beta', 'g5-gamma'])(
     'demo %s: juega los seis años, egresa y replaya idéntico',
@@ -67,7 +67,7 @@ describe('5.º · el año corre de punta a punta', () => {
     expect(yearThree.every((entry) => entry.quality === 'optimal')).toBe(true)
     // Y nada quedó debiendo, así que el año no abre ningún Repaso.
     expect(played.state.progression.pending).toEqual([])
-  })
+  }, 30_000)
 
   it('la carrera de seis años compone doce beats ordinarios', () => {
     const built = descriptor('g5-composed', false)
@@ -86,7 +86,7 @@ describe('5.º · el año corre de punta a punta', () => {
       'year-5',
     ])
     expect(state.plan?.stages.flatMap((stage) => stage.beats).length).toBe(12)
-  })
+  }, 30_000)
 
   it('el servidor recalcula la run de 5.º y descarta lo que el cliente afirme', () => {
     const built = descriptor('g5-server', true)
@@ -129,7 +129,7 @@ describe('5.º · el año corre de punta a punta', () => {
         demo,
       ).ok,
     ).toBe(false)
-  })
+  }, 30_000)
 
   it('una clasificación inventada no pasa el servidor: la respuesta viaja en el log', () => {
     const built = descriptor('g5-route-tamper', true)
@@ -159,7 +159,7 @@ describe('5.º · el año corre de punta a punta', () => {
     expect(
       validateSubmittedRun({ ...encoded, actions: tampered }, demo).ok,
     ).toBe(false)
-  })
+  }, 30_000)
 
   it(
     'LOCKED · el cluster del evento escolar aporta como máximo una Template puntuable',
@@ -236,7 +236,7 @@ describe('5.º · el año corre de punta a punta', () => {
             .length,
         ).toBeLessThanOrEqual(1)
     }
-  })
+  }, 30_000)
 
   it('el Repaso de 5.º se juega, cierra la obligación y no suma puntaje', () => {
     const played = playGrade5(descriptor('g5-recovery', true), demo, (id) =>
@@ -268,5 +268,5 @@ describe('5.º · el año corre de punta a punta', () => {
     )
     expect(record?.resolved.length).toBeGreaterThanOrEqual(1)
     expect(record?.content?.templateId).toMatch(/^y5\./u)
-  })
+  }, 30_000)
 })

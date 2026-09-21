@@ -7,7 +7,7 @@ import { isDevelopmentHarnessEnabled } from '@/server/development/harness-access
 /**
  * Ruta de revisión para el Teacher Gate.
  *
- * Es el mismo juego que `/jugar` —mismo contenido, mismas reglas, mismas
+ * Es el mismo juego que `/dev/grade-7` —mismo contenido, mismas reglas, mismas
  * pantallas— con una sola diferencia: la partida arranca con el seed que se le
  * pide en la URL. Eso es lo que permite que dos personas, en dos días
  * distintos, vean exactamente la misma situación y discutan sobre lo mismo.

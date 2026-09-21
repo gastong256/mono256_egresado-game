@@ -2,7 +2,7 @@
 
 | Objetivo | Feature | Requisitos | Historias | ADR relacionado |
 |---|---|---|---|---|
-| Entrada rápida | identidad anónima | FR-001 | US-001 | ADR-008 |
+| Entrada rápida | identidad de participante | FR-001 | US-001 | ADR-008, ADR-026 |
 | Run reproducible | seed/versiones | FR-002, FR-003, FR-017, FR-018 | US-022, US-051 | ADR-003 |
 | Matemática como gameplay | challenges parametrizados | FR-005, FR-006, FR-007 | US-002, US-003 | ADR-007 |
 | Resiliencia | local-first/checkpoints | FR-009, FR-010, FR-016 | US-030, US-031 | ADR-006 |
@@ -10,8 +10,26 @@
 | Escalar contenido | content-as-data | FR-003, FR-005 | US-050 | ADR-007 |
 | Web universal | responsive/PWA-ready | NFR | US-001 | ADR-001 |
 | Operación de feria | eventos + pantalla | FR-014, FR-020 | US-040 | ADR-009 |
-| Privacidad | minimización | FR-001 | US-001 | ADR-008 |
+| Privacidad | minimización | FR-001 | US-001 | ADR-008, ADR-026 |
 | Moderación | ocultar entradas | FR-015 | US-041 | ADR-009 |
+
+## STAGE-09 — competencia
+
+Dónde vive cada capacidad de la competencia implementada.
+
+| Capacidad | Implementación | Evidencia |
+|---|---|---|
+| Producto público en una sola dirección | `src/app/page.tsx`, `src/components/competition/competition-experience.tsx` | `tests/e2e/competition.spec.ts` · «superficies retiradas» |
+| Identidad de participante con HMAC por competencia | `src/server/competition/identity.ts`, `src/lib/competition/identity-rules.ts` | `tests/unit/competition-identity.test.ts` |
+| Frontera pública/privada verificada por tipos | `src/server/competition/dto.ts` (`PublicSafe`, `IdentitySafe`) | `tests/unit/competition-privacy.test.ts` |
+| Aviso de privacidad desde configuración | `src/server/competition/privacy-notice.ts`, `config.ts` | `tests/unit/competition-config.test.ts` |
+| Emisión autoritativa con seed compartida | `src/server/competition/attempts.ts`, `editions.ts` | `tests/integration/competition-lifecycle.test.ts` |
+| Verificación por replay | `src/server/game/validate-run.ts`, compuesto por `attempts.ts` | `tests/integration/competition-attack.test.ts` |
+| Idempotencia y un intento activo | índices de `supabase/migrations/20260921000000_competition_fair_mode.sql` | `tests/integration/competition-store.test.ts` |
+| Ranking por mejor intento y puesto compartido | vista `competition_best_attempts`, `src/lib/competition/ranking.ts` | `tests/unit/competition-ranking.test.ts` |
+| Herramienta del organizador con auditoría | `src/server/competition/organizer.ts`, `src/app/organizer/` | `tests/integration/competition-organizer.test.ts` |
+| Retención y purga | `src/server/competition/retention.ts`, `scripts/competition/purge.ts` | `tests/integration/competition-organizer.test.ts` |
+| Límite de tasa persistente | `src/server/competition/rate-limit.ts` + `competition_bump_rate_limit` | `tests/integration/competition-store.test.ts` |
 
 ## Regla de mantenimiento
 

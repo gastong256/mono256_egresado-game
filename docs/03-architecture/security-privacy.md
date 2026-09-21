@@ -10,15 +10,19 @@
 
 ## Privacidad por diseño
 
-El MVP no necesita email, contraseña, apellido, edad exacta, escuela, ubicación precisa ni redes sociales. El nickname es un pseudónimo público y debe tratarse como contenido moderable.
+El MVP no necesita email, contraseña, edad exacta, ubicación precisa ni redes sociales. El nickname es un pseudónimo público y debe tratarse como contenido moderable.
 
-La base técnica no implementa Auth ni crea tablas de participantes, runs o ranking. Incorporarlas requiere respetar el [modelo de datos](data-model.md), [ADR-008](adr/ADR-008-anonymous-identity.md), el threat model y las preguntas abiertas de contratos y retención; no se infiere identidad a partir de los defaults de Supabase local.
+**Desde STAGE-09 hay identidad de participante**, porque la institución tiene que poder saber a quién le entrega un premio y un ranking de alias no lo dice. La decisión, su alcance y su marco están en [ADR-026](adr/ADR-026-participant-identity-and-minor-privacy.md), que supersede parcialmente [ADR-008](adr/ADR-008-anonymous-identity.md). Lo esencial: se piden cuatro campos y ninguno más; el alias es lo único público; el documento **no se guarda** —se deriva con HMAC-SHA-256 bajo un secreto de servidor, con el id de la edición adentro— y de él quedan sólo los últimos cuatro dígitos.
+
+La frontera pública/privada no es una convención sino un tipo: los DTO públicos no tienen un campo donde poner un dato privado y `PublicSafe<T>` falla la compilación si alguien agrega uno. La consulta pública lee una vista que no contiene las columnas privadas, así que el dato no viaja y después se oculta en la UI: no viaja.
+
+Las tablas de competencia existen desde la migración `20260921000000_competition_fair_mode.sql`, con RLS habilitada sin políticas, grants revocados a `anon` y `authenticated`, y acceso explícito sólo para `service_role`.
 
 ## Trust boundaries
 
 El browser es no confiable. No confiar en score, elapsed time sin límites/validación, challenge result, flags, stage final ni versión declarada arbitrariamente.
 
-Cuando se implementen runs oficiales, el BFF debe reconstruir el score desde una configuración emitida y una secuencia de acciones válidas. El cliente sólo puede previsualizar. Una run oficial debe asociarse a una sesión/cookie segura o un token firmado de corta vida; `runId` no es un secreto suficiente.
+Implementado en STAGE-09: el BFF emite el intento, lo registra con su tupla de versiones y reconstruye el score volviendo a jugar la secuencia de acciones. El cliente sólo previsualiza. Una run oficial se ata a una sesión opaca en cookie `HttpOnly` —de la que la base guarda sólo el digest— y el `runId` no autoriza nada por sí solo: el envío comprueba que el intento pertenezca al participante de la sesión.
 
 Las rutas de `src/app` invocan casos de uso del server y no importan adaptadores de persistencia. La UI no accede a Supabase directamente. El game core no recibe red, DB, browser globals ni tiempo/aleatoriedad global.
 

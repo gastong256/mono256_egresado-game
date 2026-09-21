@@ -17,7 +17,11 @@ test('renders the landing page without browser errors', async ({ page }) => {
   await expect(
     page.getByRole('heading', { level: 1, name: 'Egresado' }),
   ).toBeVisible()
-  await expect(page.getByRole('link', { name: 'Jugar' })).toBeVisible()
+  // Este servidor no tiene competencia configurada, así que la portada lo dice
+  // en lugar de ofrecer un botón que no llevaría a ninguna parte. La portada
+  // con competencia abierta se prueba en `competition.spec.ts`.
+  await expect(page.getByText(/Todavía no hay una competencia/u)).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Ranking' })).toBeVisible()
   // es-AR y no es: el juego escribe coma decimal, punto de miles y hora de
   // 24 h, y un lector de pantalla tiene que leerlos con esas reglas.
   await expect(page.locator('html')).toHaveAttribute('lang', 'es-AR')

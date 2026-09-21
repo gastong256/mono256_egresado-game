@@ -25,7 +25,12 @@ export {
   RecordRow,
   type DataGridItem,
 } from './data-metric'
-export { NumberField, TextField } from './field'
+export {
+  NumberField,
+  SelectField,
+  TextField,
+  type SelectFieldOption,
+} from './field'
 export {
   MilestoneTick,
   PartialMark,

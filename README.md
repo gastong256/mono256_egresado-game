@@ -4,7 +4,9 @@ Videojuego web de decisiones y desafíos matemáticos contextualizados en la vid
 
 El motor ejecuta una run completa de punta a punta: progresión por etapas, selección de storylets, generación procedural de desafíos, evaluación exacta, feedback estructurado, scoring, perfil de egreso, snapshots y replay. Lo hace con **contenido de desarrollo** explícitamente marcado como tal.
 
-Todavía no hay contenido de juego definitivo, Auth, persistencia de runs ni ranking. Las políticas de scoring, dificultad y perfil son de desarrollo: `createRuleset({ official: true })` falla a propósito mientras existan.
+Desde STAGE-09 ese juego está envuelto en una **competencia con servidor autoritativo**: el producto público vive en `/`, el servidor emite cada intento, vuelve a jugar lo enviado para recomputar el puntaje y publica un ranking por mejor intento verificado donde lo único que se ve de una persona es su alias. La identificación del participante sigue [ADR-026](docs/03-architecture/adr/ADR-026-participant-identity-and-minor-privacy.md): el documento no se guarda, se deriva.
+
+Todavía no hay contenido de juego definitivo. Las políticas de scoring, dificultad y perfil siguen siendo de desarrollo: `createRuleset({ official: true })` falla a propósito mientras existan, y oficializar la configuración de competencia es FREEZE, no esta etapa.
 
 > **Release público bloqueado:** el repositorio fija Next.js `16.3.1`, anterior al parche de seguridad anunciado para `16.3.2`. `pnpm release:check` falla deliberadamente hasta actualizar Next.js y su lockfile, y volver a ejecutar todos los gates. No desplegar esta revisión públicamente.
 
@@ -22,7 +24,9 @@ pnpm dev
 
 Abrir `http://localhost:3000`. El liveness check está en `http://localhost:3000/api/health`.
 
-La aplicación arranca sin base de datos. Para habilitar el stack local opcional:
+La aplicación arranca sin base de datos: la portada dice que no hay competencia
+configurada y el juego queda disponible bajo `/dev`. Para habilitar el stack
+local:
 
 ```bash
 pnpm db:start
@@ -35,6 +39,27 @@ pnpm dev
 ```bash
 pnpm db:stop
 ```
+
+### Levantar una competencia local
+
+```bash
+pnpm competition:organizer:hash -- "<contraseña de al menos 12 caracteres>"
+```
+
+Agregar a `.env.local` el digest impreso más `EGRESADO_COMPETITION_SLUG`,
+`PARTICIPANT_IDENTITY_SECRET`, los tres campos del responsable de los datos,
+`EGRESADO_PRIVACY_NOTICE_VERSION` y `EGRESADO_ORGANIZER_USERNAME`
+—`.env.example` los documenta uno por uno—. Después:
+
+```bash
+pnpm db:reset
+pnpm competition:bootstrap -- --name="Feria local" --status=OPEN
+```
+
+Sin el responsable de los datos configurado, la aplicación **no atiende** la
+competencia: falla con un error de configuración en vez de mostrar un aviso de
+privacidad incompleto. La operación completa está en el
+[runbook de feria](docs/05-operations/fair-runbook.md#operación-de-la-competencia-implementada).
 
 ## Comandos principales
 

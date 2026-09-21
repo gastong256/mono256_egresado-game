@@ -72,8 +72,8 @@ Tabla de navegación. Los contratos de cada etapa, más abajo, son la autoridad.
 | [GATE-TG1](#gate-tg1-teacher-gate-1) | **Teacher Gate 1** | `PASSED_WITH_REQUIRED_ADJUSTMENTS` | STAGE-04, STAGE-06 | externo |
 | [STAGE-07](#stage-07-invariante-de-egreso-fail-forward-y-recuperaciones) | Egreso, fail-forward y recuperaciones | `DONE` | GATE-TG1 | — |
 | [STAGE-08](#stage-08-contenido-incremental-de-1º-a-5º) | Contenido incremental 1.º → 5.º | `DONE` · implementación e integración DONE · dos rondas de remediación y dos re-auditorías FAILED · sprint de cierre DONE · auditoría final de cierre PASSED · sign-off provisional de IA PASSED · cierre de integración y ritmo PASSED | STAGE-07 | gates humanos abiertos: pacing con jugadores, revisión de Matemática, rueda |
-| [STAGE-09](#stage-09-fair-mode-servidor-autoritativo-y-ranking) | Fair mode, servidor autoritativo y ranking | `NEXT` | STAGE-06 (`DONE`), STAGE-08 (`DONE`) | — |
-| [GATE-TG2](#gate-tg2-teacher-gate-2) | **Teacher Gate 2** | `TEACHER_GATE` | STAGE-09 | externo |
+| [STAGE-09](#stage-09-fair-mode-servidor-autoritativo-y-ranking) | Fair mode, servidor autoritativo y ranking | `DONE` — 21 de septiembre de 2026 | STAGE-06 (`DONE`), STAGE-08 (`DONE`) | — |
+| [GATE-TG2](#gate-tg2-teacher-gate-2) | **Teacher Gate 2** | `TEACHER_GATE` · **siguiente** | STAGE-09 (`DONE`) | externo |
 | [FREEZE](#freeze-congelamiento-de-competencia) | Congelamiento de competencia | `NOT_STARTED` | GATE-TG2 | — |
 | [STAGE-10](#stage-10-production-hardening) | Production hardening | `NOT_STARTED` | FREEZE | go-live |
 | [RELEASE](#release-y-post-feria) | Feria y post-feria | `NOT_STARTED` | STAGE-10 | — |
@@ -160,10 +160,10 @@ Estado real contra el código al 11 de septiembre de 2026, tras cerrar STAGE-08 
 | Composición global de carrera | `DONE` como mecanismo | `src/game/challenges/composition-metadata.ts`, `src/game/plan/career-constraints.ts`, búsqueda acotada en `composer.ts`, validador global; `tests/unit/career-composition.test.ts`. Sólo la práctica parcial la usa: la carrera oficial de nueve beats espera 2.º–5.º | STAGE-08 / Phase 1 |
 | Repaso practicado/debriefeado y approved-only fail-closed | `DONE` | `src/game/runs/recovery-content.ts`, `recoveryCoverage`/`recordCoverage`, `tests/unit/recovery-coverage.test.ts`; veredicto pedagógico en el audit post-G1 | STAGE-08 / Phase 1 |
 | Modos constructivos: cantidades y posiciones, agenda, plano | `DONE` para 1.º | `quantity-builder`, `schedule-builder`, `spatial-layout`; renderers accesibles sin arrastre | STAGE-08 / Phase 1 |
-| Verificación autoritativa por replay | `PARTIAL` | `src/server/game/validate-run.ts`: replaya, valida el plan compuesto y **calcula su propio score competitivo**; nada de lo que el cliente afirme se lee. Faltan endpoints, sesión, rate limit y persistencia | STAGE-09 |
-| Ranking con personal best | `NOT_STARTED` | — | STAGE-09 |
-| Desempate lexicográfico | `NOT_STARTED` | — | STAGE-09 |
-| Fair mode operativo | `PARTIAL` | `GameMode` ya declara `'fair'` como literal; no hay comportamiento asociado | STAGE-09 |
+| Verificación autoritativa por replay | `DONE` | `src/server/game/validate-run.ts` compuesto por `src/server/competition/attempts.ts`: endpoints, sesión opaca, límite de tasa en base, persistencia e idempotencia. Matriz de ataque en `tests/integration/competition-attack.test.ts` | STAGE-09 |
+| Ranking con personal best | `DONE` | vista `competition_best_attempts` más `src/lib/competition/ranking.ts`; mejor intento verificado por participante elegible, medido en 500 participantes × 3 intentos | STAGE-09 |
+| Desempate lexicográfico | `DONE` | FairScore → Prestige → puesto compartido, sin criterio terciario; `tests/unit/competition-ranking.test.ts` | STAGE-09 |
+| Fair mode operativo | `DONE` | la edición emite descriptores `mode: 'fair'` con dificultad fija y la seed compartida de la competencia; una submission en `practice` se rechaza | STAGE-09 |
 | Configuración de competencia | `NOT_STARTED` | — | FREEZE |
 | Simulación determinista masiva | `DONE` para el alcance actual | `src/game/testing/simulation.ts`, `pnpm game:simulate`, 200 runs de 7.º y 200 de `7.º → 1.º` en `pnpm verify`; reporta egresos, repasos y previas, y `not-graduated` es hallazgo | transversal |
 | E2E y accesibilidad automatizada | `DONE` para el alcance actual | `tests/e2e/`, `@axe-core/playwright`, 80 tests | transversal |
@@ -1013,7 +1013,8 @@ la validación empírica de pacing.
 
 ### STAGE-09 — Fair mode, servidor autoritativo y ranking
 
-- **Estado:** `NEXT` — sus dos dependencias están cerradas
+- **Estado:** `DONE` — 21 de septiembre de 2026. Cierre en
+  [STAGE-09 · fair mode, servidor y ranking](stage-09-fair-mode-server-ranking.md)
 - **Depende de:** STAGE-06 (`DONE`), STAGE-08 (`DONE`)
 - **Desbloquea:** GATE-TG2
 
@@ -1037,21 +1038,21 @@ El navegador **nunca** es autoridad de score. El precursor ya existe: `src/serve
 
 **Lectura requerida.** [Arquitectura objetivo del motor](../03-architecture/target-engine-architecture.md) · [ADR-004](../03-architecture/adr/ADR-004-server-authoritative-scoring.md) · [ADR-006](../03-architecture/adr/ADR-006-local-first-gameplay.md) · [ADR-008](../03-architecture/adr/ADR-008-anonymous-identity.md) · [ADR-009](../03-architecture/adr/ADR-009-event-leaderboards.md) · [modo feria y congelamiento](../05-operations/fair-mode-and-competition-freeze.md) · [leaderboard y moderación](../05-operations/leaderboard-and-moderation.md) · [threat model](../04-quality/threat-model.md) · [contratos API](../03-architecture/api-contracts.md) · [modelo de datos](../03-architecture/data-model.md) · [ejemplo de descriptor](../07-reference/run-descriptor.example.json).
 
-**Criterios de aceptación.**
+**Criterios de aceptación.** Los trece, cumplidos.
 
-- [ ] El cliente no puede imponer un score autoritativo; un payload con `score` lo ve ignorado, probado por test.
-- [ ] El servidor verifica por replay y rechaza action logs imposibles con un código tipado.
-- [ ] Un score local válido coincide exactamente con el autoritativo.
-- [ ] El personal best se actualiza transaccionalmente y una run peor no reemplaza a la mejor.
-- [ ] La edición vincula cada intento a la misma seed, variantes, dificultad y oportunidades; runId único por intento, sin farming de rareza.
-- [ ] Intentos ilimitados y mejor tupla verificada; empate de ambos scores comparte puesto, sin criterio temporal ni clave oculta.
-- [ ] Sólo carreras completas y egresadas válidas pueden competir; Practice no envía rank oficial.
-- [ ] Top 3 público y puesto propio privado, con nickname moderado y sin tabla pública de últimos.
-- [ ] La tupla de versiones queda persistida en cada run oficial.
-- [ ] Un doble envío es idempotente y no crea dos entradas.
-- [ ] El ranking se comporta correctamente bajo la concurrencia objetivo.
-- [ ] Minimización de datos de menores verificada.
-- [ ] E2E completo de run → submission → ranking.
+- [x] El cliente no puede imponer un score autoritativo; un payload con `score`, `fairScore`, `graduated` y `prestige` inventados los ve **ignorados** —no hay punto del camino donde se lean— y el resultado publicado es el recomputado.
+- [x] El servidor verifica por replay y rechaza action logs imposibles con un código tipado: log truncado, comando después del egreso, transición imposible y basura que no es un log.
+- [x] Un score local válido coincide exactamente con el autoritativo: la partida perfecta da 10 000 exactos por replay del servidor.
+- [x] El mejor intento se deriva de la vista y una run peor nunca reemplaza a la mejor, en los dos órdenes.
+- [x] La edición vincula cada intento a la misma seed, plan, variantes, dificultad y oportunidades; `runId` único por intento, garantizado por unicidad en la base.
+- [x] Intentos ilimitados —un solo activo por participante, por índice único parcial— y mejor tupla verificada; empate de ambos scores comparte puesto, sin criterio temporal ni clave oculta.
+- [x] Sólo carreras completas y egresadas compiten: una run que no egresa se registra `REJECTED` y no rankea; una submission en modo `practice` se rechaza.
+- [x] Top 3 **por puesto** público —un empate en el podio entra entero— y puesto propio privado, con alias moderable por el organizador y sin lista pública de puestos bajos.
+- [x] La tupla de siete versiones queda persistida en cada intento y la verificación resuelve por identidad exacta, sin `latest`.
+- [x] Un doble envío byte a byte devuelve el mismo resultado; uno conflictivo no reemplaza nada; dos simultáneos producen una sola entrada.
+- [x] El ranking resuelve 500 participantes con 1500 intentos verificados en mediana 7 ms sobre Postgres.
+- [x] Minimización de datos de menores verificada por tipos, por consulta y por test: el documento no se guarda, la respuesta pública no tiene dónde llevar un dato privado y el log tampoco.
+- [x] E2E completo de identificación → emisión → run → submission → verificación → ranking, entrando por `/`.
 
 **Validación requerida.** `pnpm test`, `tests/integration/`, `pnpm test:e2e:only`, `pnpm db:reset` · `pnpm db:lint` · `pnpm db:types` si hay migración, `pnpm verify`.
 
@@ -1059,7 +1060,9 @@ El navegador **nunca** es autoridad de score. El precursor ya existe: `src/serve
 
 **Decisiones.** Product Pass v1 cierra shared rank y Competition Seed compartida; conserva intentos ilimitados y mejor resultado verificado de TG1. Tiempo, Estilo y azar de aparición no ordenan puestos. La operación decide premios compartidos o una instancia común separada del ranking v1; no inventa desempate oculto. Emisión, elegibilidad y persistencia pendientes bajo ADR-025.
 
-**Exit gate.** ¿Se puede correr una competencia simulada completa con score autoritativo en servidor?
+**Exit gate.** ¿Se puede correr una competencia simulada completa con score autoritativo en servidor? **Sí**, y se corre en cada `pnpm verify`.
+
+**Lo que no entró, y por qué.** La configuración de competencia no se congeló: eso es [FREEZE](#freeze-congelamiento-de-competencia), y `fair-score-dev-2` sigue `official: false`. No se hizo load testing ni hardening —es [STAGE-10](#stage-10-production-hardening)— y no se desplegó nada. No se reabrió ninguna regla v1 de empate o intentos. El techo de Prestige ofrecido sigue en 0 por D-S08-084: la maquinaria se recomputa y ordena, pero autorar una oportunidad competitiva es contenido, no esta etapa.
 
 ---
 

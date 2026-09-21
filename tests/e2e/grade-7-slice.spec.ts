@@ -26,7 +26,7 @@ function watchConsole(page: Page): string[] {
 }
 
 async function startRun(page: Page, nickname: string): Promise<void> {
-  await page.goto('/jugar')
+  await page.goto('/dev/grade-7')
   await page.getByLabel('¿Cómo te decimos?').fill(nickname)
   await page.getByRole('button', { name: 'Empezar 7.º grado' }).click()
   await expect(page.getByRole('button', { name: 'Seguir' })).toBeVisible()
@@ -64,9 +64,10 @@ async function playYear(
 test('un estudiante juega 7.º grado de principio a fin', async ({ page }) => {
   const problems = watchConsole(page)
 
-  await page.goto('/')
-  await expect(page.getByRole('heading', { name: 'Egresado' })).toBeVisible()
-  await page.getByRole('link', { name: 'Jugar' }).click()
+  // El recorrido de 7.º es superficie de desarrollo desde STAGE-09: el producto
+  // público es la competencia, y una segunda puerta que también dijera «jugar»
+  // sería una forma de jugar distinta de la que se está puntuando.
+  await page.goto('/dev/grade-7')
 
   // Nombre: lo único que se le pide antes de empezar.
   await expect(page.getByLabel('¿Cómo te decimos?')).toBeVisible()
@@ -521,7 +522,7 @@ test('descartar la partida guardada empieza de nuevo', async ({ page }) => {
 test('un checkpoint corrupto no rompe el juego', async ({ page }) => {
   const problems = watchConsole(page)
 
-  await page.goto('/jugar')
+  await page.goto('/dev/grade-7')
   await page.evaluate(() => {
     globalThis.localStorage.setItem('egresado.checkpoint.v1', '{no es json')
   })
@@ -533,7 +534,7 @@ test('un checkpoint corrupto no rompe el juego', async ({ page }) => {
 })
 
 test('el nombre se valida antes de empezar', async ({ page }) => {
-  await page.goto('/jugar')
+  await page.goto('/dev/grade-7')
 
   // El error vive dentro del formulario; el otro role="alert" de la página es el
   // anunciador de rutas de Next, que no tiene nada que ver con el nombre.
@@ -554,7 +555,7 @@ test('el nombre se valida antes de empezar', async ({ page }) => {
 })
 
 test('se puede jugar sólo con el teclado', async ({ page }) => {
-  await page.goto('/jugar')
+  await page.goto('/dev/grade-7')
 
   const field = page.getByLabel('¿Cómo te decimos?')
   await field.focus()
@@ -652,7 +653,7 @@ test('las pantallas principales no tienen violaciones de accesibilidad', async (
   await page.goto('/')
   await scan('inicio')
 
-  await page.goto('/jugar')
+  await page.goto('/dev/grade-7')
   await scan('nombre')
 
   await page.getByLabel('¿Cómo te decimos?').fill('Sofi')

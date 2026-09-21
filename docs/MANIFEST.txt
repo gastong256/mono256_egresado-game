@@ -53,6 +53,7 @@
 03-architecture/adr/ADR-023-competitive-score-policy.md
 03-architecture/adr/ADR-024-progression-recovery-and-graduation.md
 03-architecture/adr/ADR-025-full-career-contract-evolution.md
+03-architecture/adr/ADR-026-participant-identity-and-minor-privacy.md
 03-architecture/analytics-observability.md
 03-architecture/api-contracts.md
 03-architecture/architecture-overview.md
@@ -101,6 +102,7 @@
 06-delivery/mvp-backlog.md
 06-delivery/repository-conventions.md
 06-delivery/stage-08-final-integration-pacing-closure.md
+06-delivery/stage-09-fair-mode-server-ranking.md
 06-delivery/teacher-gate-1/01-guion.md
 06-delivery/teacher-gate-1/02-checklist-facilitador.md
 06-delivery/teacher-gate-1/03-casos.md

@@ -19,11 +19,15 @@ La aplicación Next.js vive en la raíz. `pnpm-workspace.yaml` existe para decla
 ├── src/
 │   ├── app/                # App Router y Route Handlers/BFF
 │   ├── components/         # UI sin acceso directo a server/DB
+│   │   └── competition/    # el producto público y la consola del organizador
 │   ├── config/             # entorno público y server-only validado
 │   ├── content/            # contenido de producto por etapa, como data
 │   ├── game/               # core TypeScript puro
 │   ├── lib/                # adapters/utilidades transversales
+│   │   └── competition/    # reglas puras compartidas navegador/servidor
 │   ├── server/             # casos de uso y persistencia server-only
+│   │   ├── competition/    # dominio de la competencia, con reloj inyectado
+│   │   └── persistence/    # puerto y adaptadores (Postgres y memoria)
 │   └── instrumentation.ts  # validación de entorno al iniciar server
 ├── supabase/
 │   ├── migrations/         # SQL versionado
@@ -75,6 +79,7 @@ El release público está bloqueado mientras `pnpm release:check` detecte Next.j
 | Tests con cobertura | `pnpm test:coverage` |
 | E2E con build | `pnpm test:e2e` |
 | Supabase local | `pnpm db:start`, `pnpm db:env`, `pnpm db:reset`, `pnpm db:lint`, `pnpm db:types`, `pnpm db:stop` |
+| Competencia | `pnpm competition:bootstrap`, `pnpm competition:organizer:hash`, `pnpm competition:privacy:purge` |
 | Docker desarrollo | `pnpm docker:up` / `pnpm docker:down` |
 | Imagen standalone | `pnpm docker:build` |
 | Supply chain / release | `pnpm security:audit`, `pnpm release:check` |
@@ -88,6 +93,13 @@ Los detalles y prerrequisitos están en [entorno de desarrollo](../08-engineerin
 - En Compose, distinguir la URL pública alcanzable por el browser de `SUPABASE_INTERNAL_URL` alcanzable por el proceso server.
 - Las migraciones viven en `supabase/migrations/`, se prueban con reset local y se aplican a staging antes de producción.
 - Regenerar `src/lib/supabase/database.types.ts` después de cambios de schema.
+- El esquema de competencia habilita RLS sin políticas y otorga acceso explícito
+  sólo a `service_role`: una tabla nueva nace inaccesible hasta que alguien
+  decide lo contrario, que es el default correcto alrededor de datos de menores.
+- `src/lib/competition/` existe porque las reglas de identidad las necesitan los
+  dos lados de la frontera y ninguno puede importar al otro: la UI no alcanza
+  `@/server` y el servidor no importa componentes. Lo que necesita un secreto
+  —la derivación de identidad— vive en `@/server/competition`.
 - No crear tablas de producto ni políticas por conveniencia mientras sus contratos estén abiertos.
 
 ## Tests

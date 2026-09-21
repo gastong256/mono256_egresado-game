@@ -1,13 +1,47 @@
 # Contratos API
 
+## Contrato vigente (STAGE-09)
+
+El contrato implementado está abajo; los bloques históricos que le siguen se
+conservan como antecedente y **no** son normativos.
+
+Todas las rutas responden `cache-control: no-store` y comparten el modelo de
+error de la última sección. Las que cambian estado exigen mismo origen y cookie
+de sesión.
+
+### Participante
+
+| Método y ruta | Qué hace |
+|---|---|
+| `GET /api/competition/state` | Estado público: edición, podio por puesto y —si hay sesión— el resumen propio. Nunca lleva un dato privado. |
+| `POST /api/competition/participants` | Registro o reingreso. Cuerpo `.strict()`: `nickname`, `fullName`, `dni`, `schoolYear`, `division?`, `privacyNoticeVersion`, `privacyNoticeAcknowledged`. Un campo de más se rechaza. |
+| `DELETE /api/competition/participants` | «No soy yo»: revoca la sesión de este navegador. |
+| `POST /api/competition/attempts` | Emite un intento, o devuelve el activo. Devuelve `attemptId`, `attemptNumber`, `resumed` y el `descriptor` emitido. El cuerpo se ignora: el cliente no elige seed, plan, catálogo, dificultad ni política de score. |
+| `POST /api/competition/attempts/{id}/submit` | Envía el log de acciones. Sólo se lee `actionLog`; lo que el cliente afirme sobre su resultado no se consulta en ningún punto. Idempotente por huella de la submission. |
+| `POST /api/competition/attempts/{id}/abandon` | Abandona la partida activa. |
+
+### Organizador
+
+| Método y ruta | Qué hace |
+|---|---|
+| `POST /api/organizer/session` · `DELETE` | Acceso y salida. |
+| `GET /api/organizer/dashboard` | Participantes con su identidad privada, intentos y puestos. |
+| `POST /api/organizer/actions` | Estado de la edición, corrección, elegibilidad, verificación de identidad, validez de un intento y purga. Cada acción exige motivo y queda auditada. |
+| `GET /api/organizer/export` | CSV de resultados. Sin clave de identidad, tokens, IP ni logs de acciones. |
+
+El detalle —qué no puede controlar el cliente, la matriz de ataque y los códigos
+de rechazo— está en
+[el cierre de STAGE-09](../06-delivery/stage-09-fair-mode-server-ranking.md).
+
+## Antecedente histórico
+
 Base conceptual: `/api/v1`.
 
-**Ejemplos históricos no normativos; endpoints aún no implementados.** Los bloques
+**Ejemplos históricos no normativos.** Los bloques
 siguientes preceden al contrato de carrera completa: `adaptive` en Fair, forma
 `ANSWER`, `officialScore`, score 10240 y `limit=20` no son decisiones v1 vigentes.
 Se conservan como antecedentes sin modificar schemas en esta integración.
-La evolución se gobierna en [ADR-025](adr/ADR-025-full-career-contract-evolution.md);
-el contrato HTTP concreto se resolverá en STAGE-09.
+La evolución se gobierna en [ADR-025](adr/ADR-025-full-career-contract-evolution.md).
 
 ## POST `/runs`
 

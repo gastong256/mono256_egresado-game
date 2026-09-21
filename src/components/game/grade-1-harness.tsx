@@ -116,7 +116,7 @@ const SETS = {
   },
 } as const
 
-/** Isolated local practice surface. Never touches the /jugar Grade-7 checkpoint. */
+/** Isolated local practice surface. Never touches the Grade-7 checkpoint of `/dev/grade-7`. */
 export function Grade1Harness({
   seed,
   demo,

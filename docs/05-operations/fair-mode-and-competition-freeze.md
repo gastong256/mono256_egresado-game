@@ -1,6 +1,6 @@
 # Modo feria, congelamiento y control de cambios
 
-**Estado: dirección de producto v1 cerrada; implementación STAGE-09 pendiente.**
+**Estado: dirección de producto v1 cerrada; implementada en STAGE-09.**
 El congelamiento sigue siendo política vigente ([runbook](fair-runbook.md),
 [Definition of Done](../06-delivery/definition-of-done.md)); cierre de diseño no
 oficializa las políticas de desarrollo.
@@ -19,7 +19,9 @@ default configurable de 1/N intentos para v1.
 Cada intento tiene runId propio vinculado a participante/edición/descriptor.
 El servidor contrasta esa emisión, versiones y plan, reproduce acciones y exige
 completitud/egreso antes de admitir al ranking. El hash enviado no prueba emisión.
-Auth, tablas, endpoints e idempotencia se implementan en STAGE-09, no en Phase 0.
+Auth, tablas, endpoints e idempotencia quedaron implementados en
+[STAGE-09](../06-delivery/stage-09-fair-mode-server-ranking.md); el procedimiento
+operativo, en el [runbook](fair-runbook.md#operación-de-la-competencia-implementada).
 
 Practice usa seeds procedurales aprobadas y puede favorecer novedad entre carreras;
 no presenta esos resultados como ranking oficial. Un pack común multi-seed queda
@@ -83,7 +85,11 @@ Corolario de disciplina: no se cambia una regla de score porque en la primera ho
 ## Cierre y premios
 
 - El cierre es un timestamp del servidor, no del cliente.
-- Hay que decidir antes si una run emitida antes del cierre puede enviarse después, y con cuánta tolerancia.
+- **Decidido en STAGE-09:** una run emitida antes del cierre se puede enviar
+  hasta `closesAt` más una tolerancia configurada por edición
+  (`submission_grace_seconds`, cinco minutos por defecto). La alternativa
+  estricta le saca el resultado a quien empezó a las 17:52 una carrera de doce
+  minutos, que no hizo nada mal. Se anuncia antes de abrir.
 - El premio se resuelve **sólo sobre runs verificadas y sobre el mejor intento**.
 - Se exporta una lista auditable de candidatos con: id interno de participante, nickname, id de la mejor run, desglose de score, tupla de versiones, estado de verificación y métricas de desempate.
 
@@ -98,13 +104,30 @@ premios sigue siendo decisión operativa previa a la feria.
 
 ## Privacidad de menores en competencia
 
-El ranking no necesita una cuenta escolar. Se prefiere nickname más identificador pseudónimo de participante, y sólo los datos de run necesarios para verificar.
+El ranking no necesita una cuenta escolar, y sigue sin tenerla: lo público es el
+alias y nada más.
 
-Se evita, salvo que la institución lo requiera y lo gobierne: nombre completo, correo, teléfono, edad o fecha de nacimiento exactas y perfil personal innecesario.
+Lo que **cambió en STAGE-09** es que la identidad real vive dentro del producto y
+no en una planilla aparte. Este documento prefería «un mapeo externo controlado
+por el organizador»; se evaluó y se descartó, porque una planilla suelta es una
+copia de datos de menores sin control de acceso, sin auditoría y sin fecha de
+borrado — el dato existe igual y lo único que cambia es que nadie lo protege. La
+condición que este mismo documento ponía —«salvo que la institución lo requiera
+y lo gobierne»— es la que se cumple: la institución responsable se declara en la
+configuración del despliegue y sin ella la aplicación no atiende.
 
-Si hace falta identidad real para entregar un premio, se prefiere un mapeo externo controlado por el organizador o un código de evento, no publicar identidad dentro del juego.
+Se piden cuatro campos y ninguno más, el documento no se guarda —se deriva con
+HMAC por competencia y se conservan los últimos cuatro dígitos— y la frontera
+entre lo público y lo privado está verificada por tipos y por tests. La decisión
+completa, con su marco normativo, está en
+[ADR-026](../03-architecture/adr/ADR-026-participant-identity-and-minor-privacy.md).
 
-Retención —cuánto viven los action logs, cuánto queda público el leaderboard, qué se archiva o anonimiza después de la feria— se define antes del lanzamiento y es **OPEN** ([pregunta 31](../07-reference/open-questions.md)). Esto es guía de producto; la política legal aplicable la define la institución. Ver [seguridad y privacidad](../03-architecture/security-privacy.md).
+**Retención: cerrada.** Los datos privados se conservan
+`EGRESADO_PRIVACY_RETENTION_DAYS` días después del cierre —120 por defecto— y se
+anonimizan con una operación explícita. El leaderboard queda legible: sobreviven
+el alias y el puntaje, que no identifican a nadie. Esto es guía de producto; la
+política legal aplicable la define la institución. Ver
+[seguridad y privacidad](../03-architecture/security-privacy.md).
 
 ## Ensayo de carga y red
 

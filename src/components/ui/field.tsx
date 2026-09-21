@@ -1,6 +1,11 @@
 'use client'
 
-import { useId, type InputHTMLAttributes, type ReactNode } from 'react'
+import {
+  useId,
+  type InputHTMLAttributes,
+  type ReactNode,
+  type SelectHTMLAttributes,
+} from 'react'
 
 import { cn } from '@/lib/ui/cn'
 
@@ -174,6 +179,76 @@ export function NumberField({
           </span>
         )}
       </div>
+    </FieldShell>
+  )
+}
+
+export interface SelectFieldOption {
+  readonly value: string
+  readonly label: string
+}
+
+export interface SelectFieldProps extends Omit<
+  SelectHTMLAttributes<HTMLSelectElement>,
+  'className' | 'id' | 'aria-invalid' | 'aria-describedby' | 'children'
+> {
+  readonly label: string
+  readonly options: readonly SelectFieldOption[]
+  /** Texto de la opción vacía. Existir es lo que evita un valor elegido por defecto. */
+  readonly placeholder?: string
+  readonly hint?: string
+  readonly error?: string
+  readonly className?: string
+}
+
+/**
+ * Campo de selección.
+ *
+ * Un `<select>` nativo y no una lista dibujada: trae teclado, lector de
+ * pantalla y la rueda del sistema operativo en un teléfono, que es exactamente
+ * lo que un chico espera al tocar «Año». Un menú propio tendría que
+ * reimplementar las tres cosas para verse igual.
+ *
+ * La opción vacía está siempre presente y deshabilitada una vez elegida: sin
+ * ella el primer año de la lista quedaría seleccionado sin que nadie lo haya
+ * elegido, y un formulario que responde por vos es peor que uno que pregunta.
+ */
+export function SelectField({
+  label,
+  options,
+  placeholder = 'Elegí una opción',
+  hint,
+  error,
+  className,
+  ...rest
+}: SelectFieldProps) {
+  const id = useId()
+  const describedBy = `${id}-description`
+  const described = error !== undefined || hint !== undefined
+
+  return (
+    <FieldShell
+      label={label}
+      {...(hint === undefined ? {} : { hint })}
+      {...(error === undefined ? {} : { error })}
+      htmlFor={id}
+      describedBy={describedBy}
+      {...(className === undefined ? {} : { className })}
+    >
+      <select
+        id={id}
+        aria-invalid={error === undefined ? undefined : true}
+        aria-describedby={described ? describedBy : undefined}
+        className={cn(controlClasses, 'text-option font-display h-12 px-3')}
+        {...rest}
+      >
+        <option value="">{placeholder}</option>
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
     </FieldShell>
   )
 }

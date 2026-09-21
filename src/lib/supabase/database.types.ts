@@ -10,10 +10,405 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      attempts: {
+        Row: {
+          action_log: Json | null
+          action_log_version: number
+          attempt_number: number
+          competition_id: string
+          content_version: string
+          engine_version: string
+          id: string
+          invalidated_at: string | null
+          invalidated_reason: string | null
+          participant_id: string
+          rejection_code: string | null
+          ruleset_version: string
+          run_id: string
+          run_plan_fingerprint: string
+          score_version: string
+          seed: string
+          snapshot_version: number
+          started_at: string
+          status: string
+          submission_digest: string | null
+          submitted_at: string | null
+          variant_catalog_version: string
+          verified_at: string | null
+          verified_fair_score: number | null
+          verified_prestige_score: number | null
+          verified_summary: Json | null
+        }
+        Insert: {
+          action_log?: Json | null
+          action_log_version: number
+          attempt_number: number
+          competition_id: string
+          content_version: string
+          engine_version: string
+          id?: string
+          invalidated_at?: string | null
+          invalidated_reason?: string | null
+          participant_id: string
+          rejection_code?: string | null
+          ruleset_version: string
+          run_id: string
+          run_plan_fingerprint: string
+          score_version: string
+          seed: string
+          snapshot_version: number
+          started_at?: string
+          status?: string
+          submission_digest?: string | null
+          submitted_at?: string | null
+          variant_catalog_version: string
+          verified_at?: string | null
+          verified_fair_score?: number | null
+          verified_prestige_score?: number | null
+          verified_summary?: Json | null
+        }
+        Update: {
+          action_log?: Json | null
+          action_log_version?: number
+          attempt_number?: number
+          competition_id?: string
+          content_version?: string
+          engine_version?: string
+          id?: string
+          invalidated_at?: string | null
+          invalidated_reason?: string | null
+          participant_id?: string
+          rejection_code?: string | null
+          ruleset_version?: string
+          run_id?: string
+          run_plan_fingerprint?: string
+          score_version?: string
+          seed?: string
+          snapshot_version?: number
+          started_at?: string
+          status?: string
+          submission_digest?: string | null
+          submitted_at?: string | null
+          variant_catalog_version?: string
+          verified_at?: string | null
+          verified_fair_score?: number | null
+          verified_prestige_score?: number | null
+          verified_summary?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'attempts_competition_id_fkey'
+            columns: ['competition_id']
+            isOneToOne: false
+            referencedRelation: 'competitions'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'attempts_participant_id_fkey'
+            columns: ['participant_id']
+            isOneToOne: false
+            referencedRelation: 'participants'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      competitions: {
+        Row: {
+          action_log_version: number
+          closes_at: string | null
+          content_version: string
+          created_at: string
+          engine_version: string
+          id: string
+          name: string
+          opens_at: string | null
+          privacy_notice_version: string
+          results_frozen_at: string | null
+          retention_days: number
+          ruleset_version: string
+          run_plan_fingerprint: string
+          run_seed: string
+          score_version: string
+          slug: string
+          snapshot_version: number
+          status: string
+          submission_grace_seconds: number
+          updated_at: string
+          variant_catalog_version: string
+        }
+        Insert: {
+          action_log_version: number
+          closes_at?: string | null
+          content_version: string
+          created_at?: string
+          engine_version: string
+          id?: string
+          name: string
+          opens_at?: string | null
+          privacy_notice_version: string
+          results_frozen_at?: string | null
+          retention_days?: number
+          ruleset_version: string
+          run_plan_fingerprint: string
+          run_seed: string
+          score_version: string
+          slug: string
+          snapshot_version: number
+          status?: string
+          submission_grace_seconds?: number
+          updated_at?: string
+          variant_catalog_version: string
+        }
+        Update: {
+          action_log_version?: number
+          closes_at?: string | null
+          content_version?: string
+          created_at?: string
+          engine_version?: string
+          id?: string
+          name?: string
+          opens_at?: string | null
+          privacy_notice_version?: string
+          results_frozen_at?: string | null
+          retention_days?: number
+          ruleset_version?: string
+          run_plan_fingerprint?: string
+          run_seed?: string
+          score_version?: string
+          slug?: string
+          snapshot_version?: number
+          status?: string
+          submission_grace_seconds?: number
+          updated_at?: string
+          variant_catalog_version?: string
+        }
+        Relationships: []
+      }
+      organizer_audit_log: {
+        Row: {
+          action: string
+          actor: string
+          competition_id: string | null
+          created_at: string
+          id: number
+          metadata: Json | null
+          reason: string | null
+          target_id: string | null
+          target_type: string | null
+        }
+        Insert: {
+          action: string
+          actor: string
+          competition_id?: string | null
+          created_at?: string
+          id?: never
+          metadata?: Json | null
+          reason?: string | null
+          target_id?: string | null
+          target_type?: string | null
+        }
+        Update: {
+          action?: string
+          actor?: string
+          competition_id?: string | null
+          created_at?: string
+          id?: never
+          metadata?: Json | null
+          reason?: string | null
+          target_id?: string | null
+          target_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'organizer_audit_log_competition_id_fkey'
+            columns: ['competition_id']
+            isOneToOne: false
+            referencedRelation: 'competitions'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      organizer_sessions: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          organizer_username: string
+          revoked_at: string | null
+          token_hash: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at: string
+          id?: string
+          organizer_username: string
+          revoked_at?: string | null
+          token_hash: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          organizer_username?: string
+          revoked_at?: string | null
+          token_hash?: string
+        }
+        Relationships: []
+      }
+      participant_sessions: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          last_seen_at: string | null
+          participant_id: string
+          revoked_at: string | null
+          token_hash: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at: string
+          id?: string
+          last_seen_at?: string | null
+          participant_id: string
+          revoked_at?: string | null
+          token_hash: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          last_seen_at?: string | null
+          participant_id?: string
+          revoked_at?: string | null
+          token_hash?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'participant_sessions_participant_id_fkey'
+            columns: ['participant_id']
+            isOneToOne: false
+            referencedRelation: 'participants'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      participants: {
+        Row: {
+          anonymized_at: string | null
+          competition_id: string
+          created_at: string
+          division_private: string | null
+          dni_last4_private: string | null
+          full_name_private: string | null
+          id: string
+          identity_hmac: string
+          identity_verified_at: string | null
+          nickname_hidden: boolean
+          nickname_key: string
+          privacy_notice_version: string
+          public_nickname: string
+          school_year_private: string | null
+          status: string
+          status_reason: string | null
+          updated_at: string
+        }
+        Insert: {
+          anonymized_at?: string | null
+          competition_id: string
+          created_at?: string
+          division_private?: string | null
+          dni_last4_private?: string | null
+          full_name_private?: string | null
+          id?: string
+          identity_hmac: string
+          identity_verified_at?: string | null
+          nickname_hidden?: boolean
+          nickname_key: string
+          privacy_notice_version: string
+          public_nickname: string
+          school_year_private?: string | null
+          status?: string
+          status_reason?: string | null
+          updated_at?: string
+        }
+        Update: {
+          anonymized_at?: string | null
+          competition_id?: string
+          created_at?: string
+          division_private?: string | null
+          dni_last4_private?: string | null
+          full_name_private?: string | null
+          id?: string
+          identity_hmac?: string
+          identity_verified_at?: string | null
+          nickname_hidden?: boolean
+          nickname_key?: string
+          privacy_notice_version?: string
+          public_nickname?: string
+          school_year_private?: string | null
+          status?: string
+          status_reason?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'participants_competition_id_fkey'
+            columns: ['competition_id']
+            isOneToOne: false
+            referencedRelation: 'competitions'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      rate_limit_counters: {
+        Row: {
+          bucket: string
+          hits: number
+          window_start: string
+        }
+        Insert: {
+          bucket: string
+          hits?: number
+          window_start: string
+        }
+        Update: {
+          bucket?: string
+          hits?: number
+          window_start?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
-      [_ in never]: never
+      competition_best_attempts: {
+        Row: {
+          attempt_id: string | null
+          competition_id: string | null
+          nickname_hidden: boolean | null
+          participant_id: string | null
+          public_nickname: string | null
+          verified_at: string | null
+          verified_fair_score: number | null
+          verified_prestige_score: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'attempts_competition_id_fkey'
+            columns: ['competition_id']
+            isOneToOne: false
+            referencedRelation: 'competitions'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'attempts_participant_id_fkey'
+            columns: ['participant_id']
+            isOneToOne: false
+            referencedRelation: 'participants'
+            referencedColumns: ['id']
+          },
+        ]
+      }
     }
     Functions: {
       [_ in never]: never

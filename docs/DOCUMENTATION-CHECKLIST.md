@@ -55,6 +55,9 @@
 - [x] Arquitectura objetivo del motor con el estado real de cada capacidad.
 - [x] Modelo de contenido: familia de escenario, plantilla y variante, con catálogo separado del plan de la run.
 - [x] Pipeline de variantes: generación por restricción, validación con oráculos independientes, huella, deduplicación, auditoría y catálogo aprobado versionado.
+- [x] Identidad de participante y privacidad de menores en competencia (ADR-026): qué se pide, qué es público, por qué el documento se deriva y no se guarda, y qué implica rotar el secreto.
+- [x] Esquema de competencia implementado, con las restricciones de la base que hacen el trabajo de una transacción.
+- [x] Contrato HTTP vigente de participante y organizador, separado del antecedente histórico no normativo.
 
 ## Calidad
 - [x] Unit/integration/E2E.
@@ -71,12 +74,16 @@
 - [x] Implementación de la remediación matemática documentada con veredicto `BLOCKED`, evidencia por contrato, inventario de feedback y los dos STOP como puntos de decisión abiertos, sin presentar re-auditoría ni sign-off como hechos.
 - [x] Adjudicación de los conflictos de contrato: qué enmienda se probó factible, cuál no, y qué decisión queda abierta, sin relajar ningún techo en silencio.
 - [x] Techo de estrategia ciega de la pantalla del acto: el mínimo factible, probado y alcanzado, con la remediación matemática cerrada en catorce contratos.
+- [x] Matriz de ataque de la competencia, con el resultado caso por caso y la propiedad común: el servidor falla cerrado y el ranking nunca queda contaminado.
+- [x] Amenazas de privacidad del dato de un menor, suplantación en el reingreso y purga prematura, con sus mitigaciones y lo que queda declarado como parcial.
+- [x] Estrategia de tests de competencia: contrato de persistencia contra dos implementaciones, carreras jugadas y no inventadas, y qué se saltea cuando no hay base.
 
 ## Operación
 - [x] Runbook de feria.
 - [x] Modo feria, política de intentos, congelamiento y control de cambios.
 - [x] Ranking/moderación.
 - [x] Fallback/incidentes.
+- [x] Operación de la competencia implementada: bootstrap, apertura y cierre, verificación de un ganador y purga, con el orden en que se usan y la advertencia de no purgar antes de entregar premios.
 
 ## Delivery
 - [x] Backlog priorizado.
@@ -88,6 +95,7 @@
 - [x] Phase 0, Phase 1 y gate post-G1 cerrados; 2.º–5.º habilitados como siguiente tarea.
 - [x] Protocolo de actualización del roadmap para agentes futuros.
 - [x] Checklists de Teacher Gate 1 y 2 y de congelamiento de fundaciones.
+- [x] Cierre de STAGE-09: producto público unificado, decisiones de identificación y privacidad, modelo de datos, autoridad del servidor, ranking, herramienta del organizador, matriz de ataque, escala medida y riesgos reales.
 
 ## Referencia
 - [x] Investigación y fuentes.

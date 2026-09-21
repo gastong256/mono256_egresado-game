@@ -12,6 +12,57 @@ La suite actual demuestra la infraestructura, no el comportamiento futuro del ju
 
 Vitest mide los archivos enumerados en `vitest.config.ts`, que incluyen todo `src/game`, con thresholds de 85 % para statements, lines y functions, y 75 % para branches. El porcentaje no es el objetivo: la prioridad de cobertura es transiciones, replay, generadores, evaluadores, matemática, scoring, selección de storylets y serialización.
 
+## La competencia (STAGE-09)
+
+La suite de competencia sigue el mismo criterio que el resto: probar
+**propiedades**, no implementaciones.
+
+- `tests/unit/competition-identity.test.ts` — normalización de documento y
+  nombre, derivación de identidad, alias, tokens y credencial del organizador.
+- `tests/unit/competition-ranking.test.ts` — el comparador y el puesto
+  compartido. Lo que defiende es la **ausencia** de todo lo demás —tiempo, orden
+  de llegada, intentos, alias— como criterio.
+- `tests/unit/competition-privacy.test.ts` — la frontera pública/privada contra
+  el dato concreto: el nombre de Ana, su documento y su año, buscados en cada
+  salida del sistema.
+- `tests/unit/competition-config.test.ts` — entorno, configuración del
+  responsable de los datos y resolución de la tupla de versiones.
+- `tests/integration/competition-store.test.ts` — el contrato del puerto de
+  persistencia, corrido contra **memoria y Postgres**. El store en memoria no es
+  un mock: es una segunda implementación real, y cuando una garantía existe en
+  una sola, la suite lo dice.
+- `tests/integration/competition-lifecycle.test.ts` — identidad, emisión,
+  ventana temporal, envío, idempotencia y mejor intento, con carreras **jugadas**
+  contra el motor real: un log inventado probaría que el servidor acepta lo que
+  el test escribió.
+- `tests/integration/competition-attack.test.ts` — la matriz de ataque. Cada
+  caso termina mirando el leaderboard: un rechazo que igual publica algo no
+  sirve de nada.
+- `tests/integration/competition-organizer.test.ts` — acceso, correcciones,
+  moderación, auditoría, exportación y purga.
+- `tests/integration/competition-performance.test.ts` — escala de feria medida,
+  no supuesta.
+- `tests/component/competition-ui.test.tsx` — el ranking, el formulario y el
+  panel de resultado donde se ven.
+- `tests/e2e/competition.spec.ts` — el producto entero desde `/`, sin `/dev`.
+
+La suite de navegador levanta **dos servidores**, porque hay dos formas de
+despliegue y no conviven: uno sin competencia y con el harness abierto, donde
+corren las suites de contenido de STAGE-08, y otro con la competencia
+configurada, donde corre la de STAGE-09. Un despliegue con competencia cierra
+`/dev` por diseño, así que ejercitar las dos superficies contra un solo proceso
+habría exigido relajar esa compuerta —es decir, probar una configuración que
+nadie va a desplegar.
+
+Dos notas de método. Las suites que tocan Postgres **se saltean con un mensaje**
+cuando no hay base configurada, en vez de pasar en verde sin haber probado nada;
+la evidencia de cierre se toma con la base levantada. Y la E2E de competencia
+resuelve los nueve beats con el motor real a partir del descriptor **que el
+servidor emitió**, dejando el avance en el checkpoint del navegador para que el
+producto lo reanude y lo envíe: un solucionador de interfaz para las 28
+Templates sería una segunda implementación de los witnesses de autoría, y las
+suites de STAGE-08 ya recorren ese contenido beat por beat en el navegador.
+
 El motor suma cuatro capas que no son unit tests convencionales:
 
 - **property tests** (`tests/property/`): determinismo por seed, equivalencia entre run y replay, round-trip de serialización, rangos del RNG, selección ponderada que nunca elige peso cero, stats acotadas, score finito y no negativo, instancias generadas que cumplen sus invariantes, y estabilidad de evaluación;

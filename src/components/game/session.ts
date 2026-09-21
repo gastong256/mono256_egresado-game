@@ -170,7 +170,7 @@ function storage(): Storage | undefined {
  *
  * Guardar, descartar, y lo que escriba otra pestaña cuentan como cambios. Sin
  * esto una pantalla que ya leyó el checkpoint seguiría mostrando lo que había
- * cuando se montó: el jugador que vuelve a `/jugar` sin recargar no vería la
+ * cuando se montó: quien vuelve al recorrido de 7.º sin recargar no vería la
  * partida que dejó por la mitad.
  *
  * Suscribirse es lo que le permite a una pantalla montada enterarse; la

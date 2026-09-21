@@ -88,6 +88,86 @@ export const serverEnvironmentSchema = z
       emptyStringToUndefined,
       z.enum(['true', 'false']).optional(),
     ),
+
+    /*
+     * Competencia y privacidad (STAGE-09).
+     *
+     * Nada de esto es NEXT_PUBLIC_: el secreto de identidad no puede llegar al
+     * navegador, y los datos del responsable se renderizan desde el servidor.
+     * Todos son opcionales en el esquema porque un entorno de desarrollo sin
+     * competencia configurada tiene que arrancar igual; la exigencia real la
+     * aplica `requireCompetitionConfiguration`, que falla con un error de
+     * configuración en lugar de dibujar un aviso de privacidad incompleto.
+     */
+    EGRESADO_COMPETITION_SLUG: z.preprocess(
+      emptyStringToUndefined,
+      z
+        .string()
+        .regex(
+          /^[a-z0-9][a-z0-9-]{0,62}$/u,
+          'Expected a lowercase competition slug',
+        )
+        .optional(),
+    ),
+    /**
+     * Secreto del HMAC de identidad de participante.
+     *
+     * Su longitud mínima no es decorativa: la clave derivada protege un dato de
+     * baja entropía, así que el secreto es lo único que impide recorrer el
+     * espacio entero de documentos.
+     */
+    PARTICIPANT_IDENTITY_SECRET: z.preprocess(
+      emptyStringToUndefined,
+      z
+        .string()
+        .min(32, 'Expected at least 32 characters of entropy')
+        .optional(),
+    ),
+    EGRESADO_PRIVACY_CONTROLLER_NAME: z.preprocess(
+      emptyStringToUndefined,
+      z.string().min(2).max(160).optional(),
+    ),
+    EGRESADO_PRIVACY_CONTROLLER_CONTACT: z.preprocess(
+      emptyStringToUndefined,
+      z.string().min(3).max(160).optional(),
+    ),
+    EGRESADO_PRIVACY_CONTROLLER_ADDRESS: z.preprocess(
+      emptyStringToUndefined,
+      z.string().min(3).max(240).optional(),
+    ),
+    EGRESADO_PRIVACY_NOTICE_VERSION: z.preprocess(
+      emptyStringToUndefined,
+      z.string().min(1).max(32).optional(),
+    ),
+    EGRESADO_PRIVACY_RETENTION_DAYS: z.preprocess(
+      emptyStringToUndefined,
+      z.coerce.number().int().min(1).max(3650).optional(),
+    ),
+    /** Años/cursos elegibles. Lista separada por comas, en orden de presentación. */
+    EGRESADO_SCHOOL_YEARS: z.preprocess(
+      emptyStringToUndefined,
+      z.string().min(1).max(240).optional(),
+    ),
+    /** Divisiones, si la escuela las necesita para distinguir estudiantes. */
+    EGRESADO_SCHOOL_DIVISIONS: z.preprocess(
+      emptyStringToUndefined,
+      z.string().min(1).max(120).optional(),
+    ),
+    EGRESADO_ORGANIZER_USERNAME: z.preprocess(
+      emptyStringToUndefined,
+      z.string().min(3).max(64).optional(),
+    ),
+    /** `scrypt:N:r:p:saltHex:hashHex`. Nunca la contraseña en claro. */
+    EGRESADO_ORGANIZER_PASSWORD_HASH: z.preprocess(
+      emptyStringToUndefined,
+      z
+        .string()
+        .regex(
+          /^scrypt:\d+:\d+:\d+:[0-9a-f]{32,}:[0-9a-f]{64,}$/u,
+          'Expected a scrypt digest produced by `pnpm competition:organizer:hash`',
+        )
+        .optional(),
+    ),
   })
   .superRefine((values, context) => {
     requirePair(
@@ -108,6 +188,12 @@ export const serverEnvironmentSchema = z
         path: ['SUPABASE_INTERNAL_URL'],
       })
     }
+    requirePair(
+      values,
+      'EGRESADO_ORGANIZER_USERNAME',
+      'EGRESADO_ORGANIZER_PASSWORD_HASH',
+      context,
+    )
   })
 
 export type PublicEnvironment = z.output<typeof publicEnvironmentSchema>

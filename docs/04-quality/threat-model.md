@@ -96,4 +96,53 @@ Las acciones de moderación pueden cambiar lo que el público ve.
 
 **Mitigación:** rol administrativo autenticado, mínimo privilegio y auditoría de actor, motivo y timestamp. **La obscuridad de una URL no es autorización.**
 
+### T16 Filtración del dato privado de un menor
+
+Desde STAGE-09 el sistema guarda nombre, año o curso y los últimos cuatro
+dígitos del documento. Es la amenaza de mayor impacto del producto: el daño de
+publicar el año y el nombre de un chico de trece años no se repara.
+
+**Mitigación:** el documento completo **no se guarda** —se deriva con HMAC bajo
+un secreto de servidor que no está en la base—; la frontera pública/privada es
+un tipo que falla la compilación si un DTO público gana un campo privado; la
+consulta pública lee una vista que no tiene las columnas privadas; el registro
+operativo acepta un conjunto cerrado de campos donde no hay dónde poner un dato
+personal; y cada tabla tiene RLS habilitada sin políticas, con grants revocados
+a `anon` y `authenticated`. Comprobado en `tests/unit/competition-privacy.test.ts`
+y en el E2E, que busca el nombre y el documento en el HTML servido.
+
+### T17 Suplantación en el reingreso
+
+Alguien escribe el documento de otra persona para jugar como ella o para
+impedirle anotarse.
+
+**Mitigación parcial, y declarada como tal.** El documento **identifica, no
+autentica**: saber un número no es saber una contraseña. El sistema impide el
+duplicado, no revela nada sobre el registro existente —el mismo mensaje neutral
+para un tipeo y para un documento ajeno, para no convertir el formulario en un
+oráculo— y deja el caso a un organizador con rastro auditado. Un premio no se
+entrega por sesión: lo verifica una persona, en presencia del documento.
+
+### T18 Purga prematura del dato de verificación
+
+Anonimizar antes de entregar los premios destruye la evidencia que permite
+verificar a un ganador que reclama después.
+
+**Mitigación:** la purga es explícita y nunca automática; sin `--force` se niega
+a correr antes de que venza la retención; y queda auditada. El runbook lo
+ordena: exportar primero, purgar después.
+
+## Estado de las mitigaciones
+
+T10 a T15 están implementadas y probadas en STAGE-09: la matriz de ataque
+completa, con su resultado caso por caso, está en
+[el cierre de la etapa](../06-delivery/stage-09-fair-mode-server-ranking.md)
+y en `tests/integration/competition-attack.test.ts`.
+
+Una corrección sobre T14 que apareció al ejercitarlo: el límite de tasa de
+**registro** se calibra contra el NAT de la escuela, no contra la intuición. Un
+edificio entero comparte una IP, así que un límite estrecho por origen no frena
+a quien puede cambiar de red y sí deja afuera a media clase. Lo que corta el
+abuso que importa es la unicidad de identidad por documento y edición.
+
 La arquitectura de estas mitigaciones está en [arquitectura objetivo del motor](../03-architecture/target-engine-architecture.md); su operación, en [modo feria y congelamiento](../05-operations/fair-mode-and-competition-freeze.md).

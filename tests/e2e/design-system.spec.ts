@@ -135,7 +135,7 @@ test('las dos familias del sistema están efectivamente cargadas', async ({
 })
 
 test('el radio es 0 y no hay ninguna sombra en el juego', async ({ page }) => {
-  await page.goto('/jugar')
+  await page.goto('/dev/grade-7')
 
   // Las dos invariantes de v0.2 que no son cuestión de gusto. Un `rounded-lg`
   // que se cuele no rompe ningún test de comportamiento, pero convierte la hoja
@@ -161,7 +161,7 @@ test('elegir una opción no revela si estaba bien', async ({ page }) => {
   // vuelve una carrera. Además es exactamente lo que ve quien pidió menos
   // animación.
   await page.emulateMedia({ reducedMotion: 'reduce' })
-  await page.goto('/jugar')
+  await page.goto('/dev/grade-7')
   await page.getByLabel('¿Cómo te decimos?').fill('Sofi')
   await page.getByRole('button', { name: /^Empezar/ }).click()
 
@@ -225,7 +225,7 @@ test('elegir una opción no revela si estaba bien', async ({ page }) => {
 
 test('nunca hay dos primarios montados a la vez', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
-  await page.goto('/jugar')
+  await page.goto('/dev/grade-7')
   await page.getByLabel('¿Cómo te decimos?').fill('Sofi')
   await page.getByRole('button', { name: /^Empezar/ }).click()
 
@@ -252,7 +252,7 @@ test('nunca hay dos primarios montados a la vez', async ({ page }) => {
 })
 
 test('el foco se ve sobre cualquier superficie', async ({ page }) => {
-  await page.goto('/jugar')
+  await page.goto('/dev/grade-7')
 
   const field = page.getByLabel('¿Cómo te decimos?')
   await field.focus()

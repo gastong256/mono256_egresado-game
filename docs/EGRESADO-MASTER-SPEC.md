@@ -5139,7 +5139,7 @@ TG1 cerró la dirección 85/10/5, normalización de oportunidades e intentos ili
 
 | Objetivo | Feature | Requisitos | Historias | ADR relacionado |
 |---|---|---|---|---|
-| Entrada rápida | identidad anónima | FR-001 | US-001 | ADR-008 |
+| Entrada rápida | identidad de participante | FR-001 | US-001 | ADR-008, ADR-026 |
 | Run reproducible | seed/versiones | FR-002, FR-003, FR-017, FR-018 | US-022, US-051 | ADR-003 |
 | Matemática como gameplay | challenges parametrizados | FR-005, FR-006, FR-007 | US-002, US-003 | ADR-007 |
 | Resiliencia | local-first/checkpoints | FR-009, FR-010, FR-016 | US-030, US-031 | ADR-006 |
@@ -5147,8 +5147,26 @@ TG1 cerró la dirección 85/10/5, normalización de oportunidades e intentos ili
 | Escalar contenido | content-as-data | FR-003, FR-005 | US-050 | ADR-007 |
 | Web universal | responsive/PWA-ready | NFR | US-001 | ADR-001 |
 | Operación de feria | eventos + pantalla | FR-014, FR-020 | US-040 | ADR-009 |
-| Privacidad | minimización | FR-001 | US-001 | ADR-008 |
+| Privacidad | minimización | FR-001 | US-001 | ADR-008, ADR-026 |
 | Moderación | ocultar entradas | FR-015 | US-041 | ADR-009 |
+
+## STAGE-09 — competencia
+
+Dónde vive cada capacidad de la competencia implementada.
+
+| Capacidad | Implementación | Evidencia |
+|---|---|---|
+| Producto público en una sola dirección | `src/app/page.tsx`, `src/components/competition/competition-experience.tsx` | `tests/e2e/competition.spec.ts` · «superficies retiradas» |
+| Identidad de participante con HMAC por competencia | `src/server/competition/identity.ts`, `src/lib/competition/identity-rules.ts` | `tests/unit/competition-identity.test.ts` |
+| Frontera pública/privada verificada por tipos | `src/server/competition/dto.ts` (`PublicSafe`, `IdentitySafe`) | `tests/unit/competition-privacy.test.ts` |
+| Aviso de privacidad desde configuración | `src/server/competition/privacy-notice.ts`, `config.ts` | `tests/unit/competition-config.test.ts` |
+| Emisión autoritativa con seed compartida | `src/server/competition/attempts.ts`, `editions.ts` | `tests/integration/competition-lifecycle.test.ts` |
+| Verificación por replay | `src/server/game/validate-run.ts`, compuesto por `attempts.ts` | `tests/integration/competition-attack.test.ts` |
+| Idempotencia y un intento activo | índices de `supabase/migrations/20260921000000_competition_fair_mode.sql` | `tests/integration/competition-store.test.ts` |
+| Ranking por mejor intento y puesto compartido | vista `competition_best_attempts`, `src/lib/competition/ranking.ts` | `tests/unit/competition-ranking.test.ts` |
+| Herramienta del organizador con auditoría | `src/server/competition/organizer.ts`, `src/app/organizer/` | `tests/integration/competition-organizer.test.ts` |
+| Retención y purga | `src/server/competition/retention.ts`, `scripts/competition/purge.ts` | `tests/integration/competition-organizer.test.ts` |
+| Límite de tasa persistente | `src/server/competition/rate-limit.ts` + `competition_bump_rate_limit` | `tests/integration/competition-store.test.ts` |
 
 ## Regla de mantenimiento
 
@@ -7400,6 +7418,190 @@ es el orden de ejecución, no este ADR.
 
 ---
 
+# FILE: 03-architecture/adr/ADR-026-participant-identity-and-minor-privacy.md
+
+# ADR-026 — Identidad de participante y privacidad de menores en competencia
+
+- Estado: Aceptado
+- Fecha: 2026-09-21
+- Supersede parcialmente: [ADR-008](03-architecture/adr/ADR-008-anonymous-identity.md)
+- Relacionado: [ADR-004](03-architecture/adr/ADR-004-server-authoritative-scoring.md) · [ADR-005](03-architecture/adr/ADR-005-postgres-supabase.md) · [ADR-009](03-architecture/adr/ADR-009-event-leaderboards.md)
+
+## Contexto
+
+ADR-008 fijó para el MVP una identidad anónima: player UUID, nickname moderado
+y cookie, sin apellido, correo ni fecha de nacimiento. Esa decisión sigue siendo
+correcta para lo que resolvía —un juego local sin premios— y el propio ADR
+anticipó su límite: «si se agregan cuentas futuras se requiere ADR nuevo de
+identidad/privacidad».
+
+STAGE-09 agrega un requisito que ADR-008 no contemplaba y que no se puede
+satisfacer con un seudónimo suelto: **la institución tiene que poder saber a
+quién le entrega un premio**. Un ranking de alias no dice quién es «Sofi23», y
+dos personas pueden elegir aliases parecidos. El modo feria ya preveía esta
+tensión y dejaba la puerta abierta —«se evita nombre completo, salvo que la
+institución lo requiera y lo gobierne»—, además de preferir «un mapeo externo
+controlado por el organizador».
+
+Ese mapeo externo se evaluó y se descartó por una razón operativa concreta: una
+planilla aparte que asocie alias con nombres es una copia de datos personales
+sin control de acceso, sin auditoría y sin fecha de borrado, sostenida por
+quien la haya creado. El dato existe igual; lo único que cambia es que nadie lo
+protege.
+
+Los participantes son estudiantes de secundaria y en su mayoría menores de edad.
+
+## Decisión
+
+Se implementa identificación de participante **dentro** del producto, con
+minimización agresiva y una frontera pública/privada verificada por tipos y por
+tests.
+
+### Qué se pide, una sola vez
+
+```text
+Alias                 público
+Nombre y apellido     privado
+DNI                   no se guarda; se deriva
+Año o curso           privado
+División              privado, sólo si la escuela la configura
+```
+
+**No** se piden correo, teléfono, domicilio, fecha de nacimiento, foto, género,
+datos de salud, cuentas sociales ni datos de madres, padres o tutores. Ninguno
+hace falta para decidir un premio, y cada uno sería un dato de un menor guardado
+sin propósito.
+
+La división es configurable y está ausente por defecto: una escuela que no la
+necesita para distinguir estudiantes no debería pedirla.
+
+### El alias es lo único público
+
+El ranking muestra alias, puntaje y puesto. Nada más. No hay curso, ni edad, ni
+nombre legal, ni contacto, ni marca de tiempo que permita perfilar a alguien.
+
+La frontera no es una convención: los tipos públicos **no tienen un campo** donde
+poner un dato privado, y `PublicSafe<T>` falla la compilación si alguien agrega
+uno. La consulta pública lee una vista que no contiene las columnas privadas, así
+que el dato no viaja y después se oculta en React — no viaja.
+
+### El DNI se deriva, no se guarda
+
+```text
+participantIdentityKey = HMAC-SHA-256(
+  PARTICIPANT_IDENTITY_SECRET,
+  `${competitionId}:${dniNormalizado}`
+)
+```
+
+Se persisten la clave derivada y los **últimos cuatro dígitos**. El número
+completo no queda en ninguna fila, ningún log, ninguna respuesta y ningún
+checkpoint del navegador.
+
+Por qué HMAC con secreto y no SHA-256 a secas: un DNI argentino tiene del orden
+de 10⁸ valores posibles. Un hash rápido sin clave se recorre entero en segundos,
+así que un digest sin clave **no es una seudonimización** — es el mismo dato
+escrito de otra forma. El secreto vive fuera de la base, así que quien obtenga
+una copia de la base no puede deshacerlo.
+
+Por qué entra el id de la competencia: la misma persona en dos ediciones produce
+claves distintas. Dos bases no se pueden cruzar para reconstruir un historial
+que nadie pidió. Es minimización por construcción, no por política.
+
+Por qué se conservan los últimos cuatro dígitos: son lo que permite que un
+docente, con nombre, año y alias a la vista, confirme en persona que quien
+reclama el premio es quien jugó — sin retener el documento completo para eso.
+
+### El documento identifica; no autentica
+
+Saber un DNI no es saber una contraseña. La sesión que se emite da
+**continuidad** —«seguís siendo vos entre partidas»— y nunca es prueba de
+identidad para entregar un premio. La verificación del ganador la hace una
+persona, presencialmente, y queda registrada.
+
+De ahí sale la respuesta ante un conflicto: si el documento ya está registrado
+con otro nombre, el servidor **no crea un duplicado y no dice de quién es**.
+Devuelve un pedido neutral de ayuda a un organizador, porque las dos
+explicaciones posibles —un tipeo y alguien poniendo el documento de otro— se ven
+idénticas desde el servidor, y sólo una persona puede distinguirlas. Decir cuál
+es convertiría el formulario en un oráculo sobre quién se anotó.
+
+### Sesiones
+
+Token opaco de 32 bytes, cookie `HttpOnly`, `Secure` en producción,
+`SameSite=Lax`, treinta días, revocable. En la base se guarda el SHA-256 del
+token, no el token: quien lea la tabla de sesiones no puede hacerse pasar por
+nadie. La cookie no lleva alias, ni id de participante, ni ninguna afirmación
+que el cliente pueda leer o alterar.
+
+### Retención
+
+Los datos privados se conservan hasta `EGRESADO_PRIVACY_RETENTION_DAYS` días
+después del cierre —120 por defecto— y después se anonimizan: se van nombre,
+año, división y últimos cuatro dígitos; quedan el alias y el puntaje, que no
+identifican a nadie y dejan el ranking legible el año siguiente.
+
+La purga es una operación explícita (`pnpm competition:privacy:purge` o una
+acción del organizador) y no un trabajo automático, porque purgar antes de
+verificar a los ganadores destruye la evidencia que la retención existe para
+proteger.
+
+### Configuración del responsable
+
+El nombre de la institución, su contacto y su domicilio son configuración del
+despliegue y se renderizan tal cual en el aviso. Si falta alguno, la aplicación
+**falla con un error de configuración** en vez de mostrar un aviso incompleto.
+Un aviso con una escuela inventada sería peor que no tener aviso: le diría a un
+chico a quién reclamar, y esa persona no existiría.
+
+El control del formulario es un **reconocimiento de lectura**, no una
+declaración de consentimiento. Este código no puede afirmar que una tilde
+resuelve la base legal del tratamiento; eso lo define la institución.
+
+## Marco al que responde
+
+Esto es ingeniería de privacidad por diseño, no asesoramiento legal, y se opera
+bajo la política de la institución responsable. El diseño se hizo mirando:
+
+- **Ley 25.326, art. 4** — datos adecuados, pertinentes y no excesivos; sin uso
+  incompatible; destrucción cuando dejan de ser necesarios. De ahí salen la
+  lista corta de campos, la ausencia de correo y fecha de nacimiento, el HMAC
+  por competencia y la retención con fecha.
+- **art. 6** — información previa, clara y expresa sobre finalidad,
+  destinatarios, responsable y derechos. De ahí sale el aviso en dos capas antes
+  del primer envío, con el responsable configurado y no inventado.
+- **art. 9 y 10** — seguridad y confidencialidad. De ahí salen RLS sin políticas
+  sobre cada tabla, grants explícitos sólo a la clave del servidor, tokens
+  hasheados, credencial del organizador con scrypt y auditoría de cada acceso
+  sensible.
+- **Guía de la AAIP sobre niñas, niños y adolescentes en entornos digitales** —
+  de ahí salen la minimización agresiva y que el ranking no publique curso,
+  edad, nombre ni ningún dato que permita ubicar a un chico fuera del juego.
+- **OWASP** — de ahí salen los parámetros de scrypt y la decisión de no usar un
+  hash rápido sin clave sobre un identificador de baja entropía.
+
+## Consecuencias
+
+- La institución puede identificar a un ganador sin que el producto publique
+  nada de él, y sin que exista una planilla paralela fuera de control.
+- Una copia de la base no revela documentos: sin el secreto, las claves
+  derivadas no se invierten.
+- Rotar `PARTICIPANT_IDENTITY_SECRET` invalida todas las claves de esa edición,
+  así que **no se rota durante una competencia abierta**. Entre ediciones no
+  cuesta nada: las claves viejas no se vuelven a consultar.
+- Un documento mal tipeado no se corrige editando la clave —una clave editable a
+  mano deja de ser una identidad— sino borrando el registro y volviendo a
+  anotarse. La operación queda documentada y auditada.
+- Dos personas con el mismo nombre no se fusionan: la deduplicación es por
+  documento y sólo por documento. Un parecido de nombres nunca une dos
+  registros.
+- Persiste el riesgo, inherente a la feria, de que alguien escriba el documento
+  de otra persona. El sistema no lo puede detectar; lo que hace es impedir el
+  duplicado, no filtrar información sobre el registro existente y dejarle el
+  caso a un organizador con un registro auditado.
+
+---
+
 # FILE: 03-architecture/analytics-observability.md
 
 # Analytics y observabilidad
@@ -7497,14 +7699,48 @@ Análisis posterior a la feria: puntos de abandono, tiempo por desafío, distrib
 
 # Contratos API
 
+## Contrato vigente (STAGE-09)
+
+El contrato implementado está abajo; los bloques históricos que le siguen se
+conservan como antecedente y **no** son normativos.
+
+Todas las rutas responden `cache-control: no-store` y comparten el modelo de
+error de la última sección. Las que cambian estado exigen mismo origen y cookie
+de sesión.
+
+### Participante
+
+| Método y ruta | Qué hace |
+|---|---|
+| `GET /api/competition/state` | Estado público: edición, podio por puesto y —si hay sesión— el resumen propio. Nunca lleva un dato privado. |
+| `POST /api/competition/participants` | Registro o reingreso. Cuerpo `.strict()`: `nickname`, `fullName`, `dni`, `schoolYear`, `division?`, `privacyNoticeVersion`, `privacyNoticeAcknowledged`. Un campo de más se rechaza. |
+| `DELETE /api/competition/participants` | «No soy yo»: revoca la sesión de este navegador. |
+| `POST /api/competition/attempts` | Emite un intento, o devuelve el activo. Devuelve `attemptId`, `attemptNumber`, `resumed` y el `descriptor` emitido. El cuerpo se ignora: el cliente no elige seed, plan, catálogo, dificultad ni política de score. |
+| `POST /api/competition/attempts/{id}/submit` | Envía el log de acciones. Sólo se lee `actionLog`; lo que el cliente afirme sobre su resultado no se consulta en ningún punto. Idempotente por huella de la submission. |
+| `POST /api/competition/attempts/{id}/abandon` | Abandona la partida activa. |
+
+### Organizador
+
+| Método y ruta | Qué hace |
+|---|---|
+| `POST /api/organizer/session` · `DELETE` | Acceso y salida. |
+| `GET /api/organizer/dashboard` | Participantes con su identidad privada, intentos y puestos. |
+| `POST /api/organizer/actions` | Estado de la edición, corrección, elegibilidad, verificación de identidad, validez de un intento y purga. Cada acción exige motivo y queda auditada. |
+| `GET /api/organizer/export` | CSV de resultados. Sin clave de identidad, tokens, IP ni logs de acciones. |
+
+El detalle —qué no puede controlar el cliente, la matriz de ataque y los códigos
+de rechazo— está en
+[el cierre de STAGE-09](06-delivery/stage-09-fair-mode-server-ranking.md).
+
+## Antecedente histórico
+
 Base conceptual: `/api/v1`.
 
-**Ejemplos históricos no normativos; endpoints aún no implementados.** Los bloques
+**Ejemplos históricos no normativos.** Los bloques
 siguientes preceden al contrato de carrera completa: `adaptive` en Fair, forma
 `ANSWER`, `officialScore`, score 10240 y `limit=20` no son decisiones v1 vigentes.
 Se conservan como antecedentes sin modificar schemas en esta integración.
-La evolución se gobierna en [ADR-025](03-architecture/adr/ADR-025-full-career-contract-evolution.md);
-el contrato HTTP concreto se resolverá en STAGE-09.
+La evolución se gobierna en [ADR-025](03-architecture/adr/ADR-025-full-career-contract-evolution.md).
 
 ## POST `/runs`
 
@@ -7945,9 +8181,15 @@ No duplicar sin necesidad:
 
 Preferir query/view/materialized view según escala real.
 
-## Entidades objetivo del modo feria
+## Entidades del modo feria
 
-**No implementadas.** Los nombres se adaptan a las convenciones reales al escribir la migración.
+**Implementadas en STAGE-09**, en la migración `20260921000000_competition_fair_mode.sql`:
+`competitions`, `participants`, `participant_sessions`, `attempts`,
+`organizer_sessions`, `organizer_audit_log` y `rate_limit_counters`, más la vista
+`competition_best_attempts`. El esquema, sus restricciones y por qué cada una
+hace el trabajo que haría una transacción están en
+[el cierre de STAGE-09](06-delivery/stage-09-fair-mode-server-ranking.md).
+La lista conceptual que sigue es la que guió el diseño.
 
 - **Evento:** vigencia, estado (`draft`/`frozen`/`live`/`closed`), tupla de versiones permitida, política de intentos y ajustes de ranking público.
 - **Participante:** id pseudónimo, evento, nickname, estado de moderación.
@@ -8404,15 +8646,19 @@ La frontera fundamental no cambia en ninguna de esas evoluciones. Si una propues
 
 ## Privacidad por diseño
 
-El MVP no necesita email, contraseña, apellido, edad exacta, escuela, ubicación precisa ni redes sociales. El nickname es un pseudónimo público y debe tratarse como contenido moderable.
+El MVP no necesita email, contraseña, edad exacta, ubicación precisa ni redes sociales. El nickname es un pseudónimo público y debe tratarse como contenido moderable.
 
-La base técnica no implementa Auth ni crea tablas de participantes, runs o ranking. Incorporarlas requiere respetar el [modelo de datos](03-architecture/data-model.md), [ADR-008](03-architecture/adr/ADR-008-anonymous-identity.md), el threat model y las preguntas abiertas de contratos y retención; no se infiere identidad a partir de los defaults de Supabase local.
+**Desde STAGE-09 hay identidad de participante**, porque la institución tiene que poder saber a quién le entrega un premio y un ranking de alias no lo dice. La decisión, su alcance y su marco están en [ADR-026](03-architecture/adr/ADR-026-participant-identity-and-minor-privacy.md), que supersede parcialmente [ADR-008](03-architecture/adr/ADR-008-anonymous-identity.md). Lo esencial: se piden cuatro campos y ninguno más; el alias es lo único público; el documento **no se guarda** —se deriva con HMAC-SHA-256 bajo un secreto de servidor, con el id de la edición adentro— y de él quedan sólo los últimos cuatro dígitos.
+
+La frontera pública/privada no es una convención sino un tipo: los DTO públicos no tienen un campo donde poner un dato privado y `PublicSafe<T>` falla la compilación si alguien agrega uno. La consulta pública lee una vista que no contiene las columnas privadas, así que el dato no viaja y después se oculta en la UI: no viaja.
+
+Las tablas de competencia existen desde la migración `20260921000000_competition_fair_mode.sql`, con RLS habilitada sin políticas, grants revocados a `anon` y `authenticated`, y acceso explícito sólo para `service_role`.
 
 ## Trust boundaries
 
 El browser es no confiable. No confiar en score, elapsed time sin límites/validación, challenge result, flags, stage final ni versión declarada arbitrariamente.
 
-Cuando se implementen runs oficiales, el BFF debe reconstruir el score desde una configuración emitida y una secuencia de acciones válidas. El cliente sólo puede previsualizar. Una run oficial debe asociarse a una sesión/cookie segura o un token firmado de corta vida; `runId` no es un secreto suficiente.
+Implementado en STAGE-09: el BFF emite el intento, lo registra con su tupla de versiones y reconstruye el score volviendo a jugar la secuencia de acciones. El cliente sólo previsualiza. Una run oficial se ata a una sesión opaca en cookie `HttpOnly` —de la que la base guarda sólo el digest— y el `runId` no autoriza nada por sí solo: el envío comprueba que el intento pertenezca al participante de la sesión.
 
 Las rutas de `src/app` invocan casos de uso del server y no importan adaptadores de persistencia. La UI no accede a Supabase directamente. El game core no recibe red, DB, browser globals ni tiempo/aleatoriedad global.
 
@@ -20360,6 +20606,57 @@ La suite actual demuestra la infraestructura, no el comportamiento futuro del ju
 
 Vitest mide los archivos enumerados en `vitest.config.ts`, que incluyen todo `src/game`, con thresholds de 85 % para statements, lines y functions, y 75 % para branches. El porcentaje no es el objetivo: la prioridad de cobertura es transiciones, replay, generadores, evaluadores, matemática, scoring, selección de storylets y serialización.
 
+## La competencia (STAGE-09)
+
+La suite de competencia sigue el mismo criterio que el resto: probar
+**propiedades**, no implementaciones.
+
+- `tests/unit/competition-identity.test.ts` — normalización de documento y
+  nombre, derivación de identidad, alias, tokens y credencial del organizador.
+- `tests/unit/competition-ranking.test.ts` — el comparador y el puesto
+  compartido. Lo que defiende es la **ausencia** de todo lo demás —tiempo, orden
+  de llegada, intentos, alias— como criterio.
+- `tests/unit/competition-privacy.test.ts` — la frontera pública/privada contra
+  el dato concreto: el nombre de Ana, su documento y su año, buscados en cada
+  salida del sistema.
+- `tests/unit/competition-config.test.ts` — entorno, configuración del
+  responsable de los datos y resolución de la tupla de versiones.
+- `tests/integration/competition-store.test.ts` — el contrato del puerto de
+  persistencia, corrido contra **memoria y Postgres**. El store en memoria no es
+  un mock: es una segunda implementación real, y cuando una garantía existe en
+  una sola, la suite lo dice.
+- `tests/integration/competition-lifecycle.test.ts` — identidad, emisión,
+  ventana temporal, envío, idempotencia y mejor intento, con carreras **jugadas**
+  contra el motor real: un log inventado probaría que el servidor acepta lo que
+  el test escribió.
+- `tests/integration/competition-attack.test.ts` — la matriz de ataque. Cada
+  caso termina mirando el leaderboard: un rechazo que igual publica algo no
+  sirve de nada.
+- `tests/integration/competition-organizer.test.ts` — acceso, correcciones,
+  moderación, auditoría, exportación y purga.
+- `tests/integration/competition-performance.test.ts` — escala de feria medida,
+  no supuesta.
+- `tests/component/competition-ui.test.tsx` — el ranking, el formulario y el
+  panel de resultado donde se ven.
+- `tests/e2e/competition.spec.ts` — el producto entero desde `/`, sin `/dev`.
+
+La suite de navegador levanta **dos servidores**, porque hay dos formas de
+despliegue y no conviven: uno sin competencia y con el harness abierto, donde
+corren las suites de contenido de STAGE-08, y otro con la competencia
+configurada, donde corre la de STAGE-09. Un despliegue con competencia cierra
+`/dev` por diseño, así que ejercitar las dos superficies contra un solo proceso
+habría exigido relajar esa compuerta —es decir, probar una configuración que
+nadie va a desplegar.
+
+Dos notas de método. Las suites que tocan Postgres **se saltean con un mensaje**
+cuando no hay base configurada, en vez de pasar en verde sin haber probado nada;
+la evidencia de cierre se toma con la base levantada. Y la E2E de competencia
+resuelve los nueve beats con el motor real a partir del descriptor **que el
+servidor emitió**, dejando el avance en el checkpoint del navegador para que el
+producto lo reanude y lo envíe: un solucionador de interfaz para las 28
+Templates sería una segunda implementación de los witnesses de autoría, y las
+suites de STAGE-08 ya recorren ese contenido beat por beat en el navegador.
+
 El motor suma cuatro capas que no son unit tests convencionales:
 
 - **property tests** (`tests/property/`): determinismo por seed, equivalencia entre run y replay, round-trip de serialización, rangos del RNG, selección ponderada que nunca elige peso cero, stats acotadas, score finito y no negativo, instancias generadas que cumplen sus invariantes, y estabilidad de evaluación;
@@ -20613,6 +20910,55 @@ Las acciones de moderación pueden cambiar lo que el público ve.
 
 **Mitigación:** rol administrativo autenticado, mínimo privilegio y auditoría de actor, motivo y timestamp. **La obscuridad de una URL no es autorización.**
 
+### T16 Filtración del dato privado de un menor
+
+Desde STAGE-09 el sistema guarda nombre, año o curso y los últimos cuatro
+dígitos del documento. Es la amenaza de mayor impacto del producto: el daño de
+publicar el año y el nombre de un chico de trece años no se repara.
+
+**Mitigación:** el documento completo **no se guarda** —se deriva con HMAC bajo
+un secreto de servidor que no está en la base—; la frontera pública/privada es
+un tipo que falla la compilación si un DTO público gana un campo privado; la
+consulta pública lee una vista que no tiene las columnas privadas; el registro
+operativo acepta un conjunto cerrado de campos donde no hay dónde poner un dato
+personal; y cada tabla tiene RLS habilitada sin políticas, con grants revocados
+a `anon` y `authenticated`. Comprobado en `tests/unit/competition-privacy.test.ts`
+y en el E2E, que busca el nombre y el documento en el HTML servido.
+
+### T17 Suplantación en el reingreso
+
+Alguien escribe el documento de otra persona para jugar como ella o para
+impedirle anotarse.
+
+**Mitigación parcial, y declarada como tal.** El documento **identifica, no
+autentica**: saber un número no es saber una contraseña. El sistema impide el
+duplicado, no revela nada sobre el registro existente —el mismo mensaje neutral
+para un tipeo y para un documento ajeno, para no convertir el formulario en un
+oráculo— y deja el caso a un organizador con rastro auditado. Un premio no se
+entrega por sesión: lo verifica una persona, en presencia del documento.
+
+### T18 Purga prematura del dato de verificación
+
+Anonimizar antes de entregar los premios destruye la evidencia que permite
+verificar a un ganador que reclama después.
+
+**Mitigación:** la purga es explícita y nunca automática; sin `--force` se niega
+a correr antes de que venza la retención; y queda auditada. El runbook lo
+ordena: exportar primero, purgar después.
+
+## Estado de las mitigaciones
+
+T10 a T15 están implementadas y probadas en STAGE-09: la matriz de ataque
+completa, con su resultado caso por caso, está en
+[el cierre de la etapa](06-delivery/stage-09-fair-mode-server-ranking.md)
+y en `tests/integration/competition-attack.test.ts`.
+
+Una corrección sobre T14 que apareció al ejercitarlo: el límite de tasa de
+**registro** se calibra contra el NAT de la escuela, no contra la intuición. Un
+edificio entero comparte una IP, así que un límite estrecho por origen no frena
+a quien puede cambiar de red y sí deja afuera a media clase. Lo que corta el
+abuso que importa es la unicidad de identidad por documento y edición.
+
 La arquitectura de estas mitigaciones está en [arquitectura objetivo del motor](03-architecture/target-engine-architecture.md); su operación, en [modo feria y congelamiento](05-operations/fair-mode-and-competition-freeze.md).
 
 ---
@@ -20784,7 +21130,7 @@ comparten evaluador prueban agregación; no se presentan como oráculos independ
 
 # Modo feria, congelamiento y control de cambios
 
-**Estado: dirección de producto v1 cerrada; implementación STAGE-09 pendiente.**
+**Estado: dirección de producto v1 cerrada; implementada en STAGE-09.**
 El congelamiento sigue siendo política vigente ([runbook](05-operations/fair-runbook.md),
 [Definition of Done](06-delivery/definition-of-done.md)); cierre de diseño no
 oficializa las políticas de desarrollo.
@@ -20803,7 +21149,9 @@ default configurable de 1/N intentos para v1.
 Cada intento tiene runId propio vinculado a participante/edición/descriptor.
 El servidor contrasta esa emisión, versiones y plan, reproduce acciones y exige
 completitud/egreso antes de admitir al ranking. El hash enviado no prueba emisión.
-Auth, tablas, endpoints e idempotencia se implementan en STAGE-09, no en Phase 0.
+Auth, tablas, endpoints e idempotencia quedaron implementados en
+[STAGE-09](06-delivery/stage-09-fair-mode-server-ranking.md); el procedimiento
+operativo, en el [runbook](05-operations/fair-runbook.md#operación-de-la-competencia-implementada).
 
 Practice usa seeds procedurales aprobadas y puede favorecer novedad entre carreras;
 no presenta esos resultados como ranking oficial. Un pack común multi-seed queda
@@ -20867,7 +21215,11 @@ Corolario de disciplina: no se cambia una regla de score porque en la primera ho
 ## Cierre y premios
 
 - El cierre es un timestamp del servidor, no del cliente.
-- Hay que decidir antes si una run emitida antes del cierre puede enviarse después, y con cuánta tolerancia.
+- **Decidido en STAGE-09:** una run emitida antes del cierre se puede enviar
+  hasta `closesAt` más una tolerancia configurada por edición
+  (`submission_grace_seconds`, cinco minutos por defecto). La alternativa
+  estricta le saca el resultado a quien empezó a las 17:52 una carrera de doce
+  minutos, que no hizo nada mal. Se anuncia antes de abrir.
 - El premio se resuelve **sólo sobre runs verificadas y sobre el mejor intento**.
 - Se exporta una lista auditable de candidatos con: id interno de participante, nickname, id de la mejor run, desglose de score, tupla de versiones, estado de verificación y métricas de desempate.
 
@@ -20882,13 +21234,30 @@ premios sigue siendo decisión operativa previa a la feria.
 
 ## Privacidad de menores en competencia
 
-El ranking no necesita una cuenta escolar. Se prefiere nickname más identificador pseudónimo de participante, y sólo los datos de run necesarios para verificar.
+El ranking no necesita una cuenta escolar, y sigue sin tenerla: lo público es el
+alias y nada más.
 
-Se evita, salvo que la institución lo requiera y lo gobierne: nombre completo, correo, teléfono, edad o fecha de nacimiento exactas y perfil personal innecesario.
+Lo que **cambió en STAGE-09** es que la identidad real vive dentro del producto y
+no en una planilla aparte. Este documento prefería «un mapeo externo controlado
+por el organizador»; se evaluó y se descartó, porque una planilla suelta es una
+copia de datos de menores sin control de acceso, sin auditoría y sin fecha de
+borrado — el dato existe igual y lo único que cambia es que nadie lo protege. La
+condición que este mismo documento ponía —«salvo que la institución lo requiera
+y lo gobierne»— es la que se cumple: la institución responsable se declara en la
+configuración del despliegue y sin ella la aplicación no atiende.
 
-Si hace falta identidad real para entregar un premio, se prefiere un mapeo externo controlado por el organizador o un código de evento, no publicar identidad dentro del juego.
+Se piden cuatro campos y ninguno más, el documento no se guarda —se deriva con
+HMAC por competencia y se conservan los últimos cuatro dígitos— y la frontera
+entre lo público y lo privado está verificada por tipos y por tests. La decisión
+completa, con su marco normativo, está en
+[ADR-026](03-architecture/adr/ADR-026-participant-identity-and-minor-privacy.md).
 
-Retención —cuánto viven los action logs, cuánto queda público el leaderboard, qué se archiva o anonimiza después de la feria— se define antes del lanzamiento y es **OPEN** ([pregunta 31](07-reference/open-questions.md)). Esto es guía de producto; la política legal aplicable la define la institución. Ver [seguridad y privacidad](03-architecture/security-privacy.md).
+**Retención: cerrada.** Los datos privados se conservan
+`EGRESADO_PRIVACY_RETENTION_DAYS` días después del cierre —120 por defecto— y se
+anonimizan con una operación explícita. El leaderboard queda legible: sobreviven
+el alias y el puntaje, que no identifican a nadie. Esto es guía de producto; la
+política legal aplicable la define la institución. Ver
+[seguridad y privacidad](03-architecture/security-privacy.md).
 
 ## Ensayo de carga y red
 
@@ -20971,6 +21340,68 @@ Activar procedimiento de `fallback-and-incident-plan.md`.
 - exportar resultados agregados;
 - tomar backup/snapshot según plan;
 - registrar incidentes y observaciones de playtest.
+
+## Operación de la competencia implementada
+
+Desde STAGE-09 el runbook tiene comandos concretos. El detalle de qué hace cada
+uno está en [el cierre de la etapa](06-delivery/stage-09-fair-mode-server-ranking.md);
+lo que sigue es el orden en que se usan.
+
+### Antes de la feria
+
+```bash
+pnpm competition:organizer:hash -- "<contraseña>"   # produce el digest
+pnpm db:reset                                       # aplica las migraciones
+pnpm competition:bootstrap -- --name="…" --status=UPCOMING \
+  --opens=2026-10-03T13:00:00-03:00 \
+  --closes=2026-10-03T18:00:00-03:00
+```
+
+El despliegue necesita, además de la base: `EGRESADO_COMPETITION_SLUG`,
+`PARTICIPANT_IDENTITY_SECRET`, los tres campos del responsable de los datos,
+la versión del aviso y la credencial del organizador. Si falta alguno, la
+aplicación **no atiende**: falla con un error de configuración en vez de mostrar
+un aviso de privacidad incompleto.
+
+`competition:bootstrap` es idempotente y **no pisa** una edición existente:
+cambiar la seed de una competencia en curso invalidaría todas las partidas
+jugadas.
+
+**El secreto de identidad no se rota durante una edición abierta.** Rotarlo
+invalida las claves derivadas y los participantes dejan de reconocerse a sí
+mismos. Entre ediciones no cuesta nada.
+
+### Apertura y cierre
+
+Desde `/organizer`, con sesión. Cada cambio de estado pide un motivo y queda
+auditado. El cierre es un timestamp del servidor: después de `closesAt` no se
+empiezan partidas, y las ya emitidas se pueden enviar hasta la tolerancia
+configurada.
+
+### Verificar un ganador
+
+1. El ranking muestra el alias.
+2. En `/organizer` se abre el participante: nombre y apellido, año o curso,
+   división si la hubiera y **los últimos cuatro dígitos** del documento.
+3. Se le pide a quien reclama que se identifique; si la institución lo permite,
+   se comparan los cuatro dígitos con su documento.
+4. Se marca «identidad verificada», con motivo. Queda auditado.
+
+El documento completo **no está en el sistema**: no se guarda. La verificación
+la hace una persona mirando un documento, no una pantalla.
+
+### Después de la feria
+
+- Exportar el CSV desde `/organizer` antes de cualquier purga.
+- Dejar pasar la ventana de retención —120 días por defecto— para atender
+  reclamos.
+- Anonimizar: `pnpm competition:privacy:purge -- --apply`, o la acción del
+  organizador. Se van nombre, año, división y últimos cuatro dígitos; quedan el
+  alias y el puntaje.
+
+**No purgar antes de entregar los premios.** Sin nombre ni últimos cuatro
+dígitos ya no se puede verificar a un ganador que reclama después. Por eso la
+purga es explícita y nunca un trabajo automático.
 
 ## Qué agrega una feria con premios
 
@@ -21066,7 +21497,7 @@ No se cambia score ni contenido en medio del evento como arreglo improvisado. Se
 
 # Leaderboard y moderación
 
-**Dirección de producto v1 LOCKED; runtime no implementado.**
+**Dirección de producto v1 LOCKED; runtime implementado en STAGE-09.**
 
 ## Principios y comparador
 
@@ -21083,7 +21514,10 @@ STAGE-09 debe usar FairScore recomputado, no el campo legacy `officialScore`.
 Intentos ilimitados; una entrada por participante con su mejor resultado verificado
 según el comparador, no suma de intentos. Se reutiliza la Competition Seed de la
 edición conforme a [modo feria](05-operations/fair-mode-and-competition-freeze.md).
-La implementación transaccional, identidad y persistencia siguen pendientes.
+La implementación está en [el cierre de STAGE-09](06-delivery/stage-09-fair-mode-server-ranking.md):
+el mejor intento sale de la vista `competition_best_attempts`, el puesto lo
+calcula un comparador puro y la atomicidad la dan restricciones de la base, no
+un lock del proceso.
 
 ## Pantalla pública v1
 
@@ -21100,8 +21534,15 @@ comparaciones de valor personal o rachas de fracaso.
 ## Moderación
 
 Operadores autorizados pueden ocultar nickname manteniendo score como “Jugador
-oculto”, ocultar entrada, invalidar por abuso y restaurar. Cada acción audita actor,
-fecha y motivo. No se selecciona un schema o sistema de auth en este documento.
+oculto”, invalidar por abuso y restaurar, descalificar y reincorporar. Cada
+acción audita actor, fecha y motivo — y guarda **qué campos** cambiaron, nunca
+sus valores: un log con el nombre viejo y el nuevo sería una segunda copia del
+dato personal en un lugar que nadie purga.
+
+Implementado en `/organizer`, detrás de una credencial de despliegue derivada
+con scrypt y una sesión opaca de ocho horas. Una entrada nunca se borra: ocultar
+el alias conserva el puesto y el puntaje, porque borrarla le daría a un insulto
+el poder de sacar a alguien del ranking.
 
 ## Cierre, premios y exportación
 
@@ -21110,10 +21551,13 @@ acuerda premios compartidos o un desafío común separado si necesita un ganador
 único. Un ID interno sólo estabiliza display, nunca define un ganador.
 
 Antes de abrir se anuncian comparador, intentos, horario de cierre, tratamiento de
-envíos pendientes y moderación. Al cierre se exportan identificador interno,
-nickname, run elegida, FairScore/Prestige y desglose, versiones y verificación,
-sin datos personales innecesarios. Retención y tooling administrativo se cierran
-en STAGE-09 bajo [operaciones](05-operations/fair-mode-and-competition-freeze.md).
+envíos pendientes y moderación. Al cierre se exporta un CSV con puesto, alias,
+nombre, año, división, últimos cuatro dígitos, mejores puntajes, cantidad de
+intentos y elegibilidad — sin clave de identidad, sin tokens, sin IP y sin logs
+de acciones. El texto del alias se neutraliza contra inyección de fórmulas.
+Retención y tooling quedaron cerrados en
+[STAGE-09](06-delivery/stage-09-fair-mode-server-ranking.md); el procedimiento
+operativo está en el [runbook](05-operations/fair-runbook.md#operación-de-la-competencia-implementada).
 
 ---
 
@@ -21124,9 +21568,54 @@ en STAGE-09 bajo [operaciones](05-operations/fair-mode-and-competition-freeze.md
 Vista corta del estado de ejecución. El contrato completo y el protocolo de
 actualización están en el [roadmap](06-delivery/implementation-sequence.md).
 
+## STAGE-09 — Fair mode, servidor autoritativo y ranking
+
+**Estado:** `DONE` — 21 de septiembre de 2026. **Siguiente gate: Teacher Gate 2**,
+que es aceptación externa y no una etapa de ingeniería.
+
+El juego completo de STAGE-08 quedó envuelto en una competencia cuya integridad
+se puede defender. El producto público es **una sola dirección**: en `/` el
+estudiante entiende la competencia, ve el ranking, se identifica, juega la
+carrera entera y recibe un puntaje que el servidor recomputó volviendo a jugar
+su partida. Nada de lo que el navegador afirme sobre su propio resultado se lee.
+
+```text
+STAGE-08                                      DONE
+STAGE-09                                      DONE
+├── Producto público unificado en `/`          DONE · `/jugar` pasó a `/dev/grade-7`
+├── Identificación con privacidad por diseño   DONE · ADR-026
+│   ├── Alias público, todo lo demás privado   DONE · frontera verificada por tipos
+│   ├── DNI derivado con HMAC por competencia  DONE · sólo se guardan 4 dígitos
+│   └── Aviso de privacidad desde config       DONE · falla si falta el responsable
+├── Emisión autoritativa de intentos           DONE · seed compartida de la edición
+├── Verificación por replay                    DONE · compone `validate-run.ts`
+├── Idempotencia y concurrencia                DONE · restricciones de la base
+├── Ranking por mejor intento verificado       DONE · FairScore → Prestige → empate
+├── Herramienta del organizador                DONE · con auditoría y exportación
+├── Retención y purga                          DONE · explícita, nunca automática
+├── Matriz de ataque                           DONE · 21 casos, todos fail-closed
+└── Escala medida                              DONE · 500 participantes, mediana 7 ms
+
+GATE-TG2 · Teacher Gate 2                     NEXT · externo
+Revisión del Depto. de Matemática             DEFERRED · a Final Delivery
+Sign-off manual de la rueda                   PENDING · humana
+Pacing empírico con jugadores                 PENDING · humana
+```
+
+**La semántica del juego no se tocó.** Motor `10.0.0`, action log `7`, snapshot
+`8`, ruleset `1.0.0-full-career`, contenido `5.5.0-grade-5`, catálogo
+`grade-5-dev-6` y FairScore `2.0.0-post-tg1-candidate` quedan idénticos: la
+partida perfecta sigue valiendo 10 000 exactos, y el servidor llega a ese número
+reproduciendo el log. El contenido sigue `draft` y la edición `official: false`:
+oficializar y congelar la configuración de competencia es FREEZE, no esta etapa.
+
+El detalle completo —arquitectura, modelo de datos, decisiones de privacidad,
+matriz de ataque, medición y riesgos— está en
+[STAGE-09 · fair mode, servidor y ranking](06-delivery/stage-09-fair-mode-server-ranking.md).
+
 ## STAGE-08 — Contenido incremental de 1.º a 5.º
 
-**Estado:** `DONE` — 21 de septiembre de 2026. **Etapa actual: STAGE-09.**
+**Estado:** `DONE` — 21 de septiembre de 2026.
 
 Los gates que siguen abiertos son **humanos** y están fuera del alcance de
 STAGE-08: pacing con jugadores reales, revisión del Departamento de Matemática y
@@ -21170,7 +21659,7 @@ STAGE-08                                      DONE
     ├── Sign-off manual de la rueda            PENDING · humana
     └── Pacing empírico con jugadores          PENDING · humana
 
-STAGE-09 · fair mode, servidor y ranking      NEXT
+STAGE-09 · fair mode, servidor y ranking      DONE
 ```
 
 Phase 1 cerró el 11 de septiembre de 2026. Las cinco Templates de 1.º
@@ -21448,8 +21937,18 @@ STAGE-08 Final Integration & Pacing Closure — PASSED
   ritmo medido por primera vez: mediana ≈12,4 min contra un objetivo de 8–10
   entra en banda a ~215 palabras/min: lo decide mirar jugar, no el modelo
 
+STAGE-09 · fair mode, servidor autoritativo y ranking — DONE
+  producto público unificado en `/`; `/jugar` pasó a superficie de desarrollo
+  identidad con HMAC por competencia; el documento completo no se guarda
+  emisión autoritativa con la Competition Seed compartida de la edición
+  verificación por replay componiendo `validate-run.ts`, sin reimplementarlo
+  idempotencia, un intento activo y mejor intento por restricciones de la base
+  ranking FairScore → Prestige → puesto compartido, Top 3 por puesto
+  organizador con auditoría, exportación y purga de retención
+  21 casos de ataque, todos fail-closed; 500 participantes con mediana 7 ms
+
 Next:
-STAGE-09 · fair mode, servidor autoritativo y ranking
+GATE-TG2 · Teacher Gate 2 — aceptación externa, no es ingeniería
 (y los gates humanos de STAGE-08 que siguen abiertos)
 ```
 
@@ -21474,7 +21973,9 @@ cambiar ninguna decisión de producto.
 
 ## Scope OUT y gates restantes
 
-No duplicar sistemas fundamentales y no implementar servidor/ranking de STAGE-09.
+No duplicar sistemas fundamentales. El servidor y el ranking de STAGE-09 ya
+están implementados; lo que sigue fuera de alcance es congelar la configuración
+de competencia (FREEZE) y el hardening y despliegue (STAGE-10).
 Las calibraciones recomendadas y Teacher Gate no se vuelven constantes inmutables
 ni configuración oficial.
 
@@ -21840,8 +22341,8 @@ Tabla de navegación. Los contratos de cada etapa, más abajo, son la autoridad.
 | [GATE-TG1](#gate-tg1-teacher-gate-1) | **Teacher Gate 1** | `PASSED_WITH_REQUIRED_ADJUSTMENTS` | STAGE-04, STAGE-06 | externo |
 | [STAGE-07](#stage-07-invariante-de-egreso-fail-forward-y-recuperaciones) | Egreso, fail-forward y recuperaciones | `DONE` | GATE-TG1 | — |
 | [STAGE-08](#stage-08-contenido-incremental-de-1º-a-5º) | Contenido incremental 1.º → 5.º | `DONE` · implementación e integración DONE · dos rondas de remediación y dos re-auditorías FAILED · sprint de cierre DONE · auditoría final de cierre PASSED · sign-off provisional de IA PASSED · cierre de integración y ritmo PASSED | STAGE-07 | gates humanos abiertos: pacing con jugadores, revisión de Matemática, rueda |
-| [STAGE-09](#stage-09-fair-mode-servidor-autoritativo-y-ranking) | Fair mode, servidor autoritativo y ranking | `NEXT` | STAGE-06 (`DONE`), STAGE-08 (`DONE`) | — |
-| [GATE-TG2](#gate-tg2-teacher-gate-2) | **Teacher Gate 2** | `TEACHER_GATE` | STAGE-09 | externo |
+| [STAGE-09](#stage-09-fair-mode-servidor-autoritativo-y-ranking) | Fair mode, servidor autoritativo y ranking | `DONE` — 21 de septiembre de 2026 | STAGE-06 (`DONE`), STAGE-08 (`DONE`) | — |
+| [GATE-TG2](#gate-tg2-teacher-gate-2) | **Teacher Gate 2** | `TEACHER_GATE` · **siguiente** | STAGE-09 (`DONE`) | externo |
 | [FREEZE](#freeze-congelamiento-de-competencia) | Congelamiento de competencia | `NOT_STARTED` | GATE-TG2 | — |
 | [STAGE-10](#stage-10-production-hardening) | Production hardening | `NOT_STARTED` | FREEZE | go-live |
 | [RELEASE](#release-y-post-feria) | Feria y post-feria | `NOT_STARTED` | STAGE-10 | — |
@@ -21928,10 +22429,10 @@ Estado real contra el código al 11 de septiembre de 2026, tras cerrar STAGE-08 
 | Composición global de carrera | `DONE` como mecanismo | `src/game/challenges/composition-metadata.ts`, `src/game/plan/career-constraints.ts`, búsqueda acotada en `composer.ts`, validador global; `tests/unit/career-composition.test.ts`. Sólo la práctica parcial la usa: la carrera oficial de nueve beats espera 2.º–5.º | STAGE-08 / Phase 1 |
 | Repaso practicado/debriefeado y approved-only fail-closed | `DONE` | `src/game/runs/recovery-content.ts`, `recoveryCoverage`/`recordCoverage`, `tests/unit/recovery-coverage.test.ts`; veredicto pedagógico en el audit post-G1 | STAGE-08 / Phase 1 |
 | Modos constructivos: cantidades y posiciones, agenda, plano | `DONE` para 1.º | `quantity-builder`, `schedule-builder`, `spatial-layout`; renderers accesibles sin arrastre | STAGE-08 / Phase 1 |
-| Verificación autoritativa por replay | `PARTIAL` | `src/server/game/validate-run.ts`: replaya, valida el plan compuesto y **calcula su propio score competitivo**; nada de lo que el cliente afirme se lee. Faltan endpoints, sesión, rate limit y persistencia | STAGE-09 |
-| Ranking con personal best | `NOT_STARTED` | — | STAGE-09 |
-| Desempate lexicográfico | `NOT_STARTED` | — | STAGE-09 |
-| Fair mode operativo | `PARTIAL` | `GameMode` ya declara `'fair'` como literal; no hay comportamiento asociado | STAGE-09 |
+| Verificación autoritativa por replay | `DONE` | `src/server/game/validate-run.ts` compuesto por `src/server/competition/attempts.ts`: endpoints, sesión opaca, límite de tasa en base, persistencia e idempotencia. Matriz de ataque en `tests/integration/competition-attack.test.ts` | STAGE-09 |
+| Ranking con personal best | `DONE` | vista `competition_best_attempts` más `src/lib/competition/ranking.ts`; mejor intento verificado por participante elegible, medido en 500 participantes × 3 intentos | STAGE-09 |
+| Desempate lexicográfico | `DONE` | FairScore → Prestige → puesto compartido, sin criterio terciario; `tests/unit/competition-ranking.test.ts` | STAGE-09 |
+| Fair mode operativo | `DONE` | la edición emite descriptores `mode: 'fair'` con dificultad fija y la seed compartida de la competencia; una submission en `practice` se rechaza | STAGE-09 |
 | Configuración de competencia | `NOT_STARTED` | — | FREEZE |
 | Simulación determinista masiva | `DONE` para el alcance actual | `src/game/testing/simulation.ts`, `pnpm game:simulate`, 200 runs de 7.º y 200 de `7.º → 1.º` en `pnpm verify`; reporta egresos, repasos y previas, y `not-graduated` es hallazgo | transversal |
 | E2E y accesibilidad automatizada | `DONE` para el alcance actual | `tests/e2e/`, `@axe-core/playwright`, 80 tests | transversal |
@@ -22781,7 +23282,8 @@ la validación empírica de pacing.
 
 ### STAGE-09 — Fair mode, servidor autoritativo y ranking
 
-- **Estado:** `NEXT` — sus dos dependencias están cerradas
+- **Estado:** `DONE` — 21 de septiembre de 2026. Cierre en
+  [STAGE-09 · fair mode, servidor y ranking](06-delivery/stage-09-fair-mode-server-ranking.md)
 - **Depende de:** STAGE-06 (`DONE`), STAGE-08 (`DONE`)
 - **Desbloquea:** GATE-TG2
 
@@ -22805,21 +23307,21 @@ El navegador **nunca** es autoridad de score. El precursor ya existe: `src/serve
 
 **Lectura requerida.** [Arquitectura objetivo del motor](03-architecture/target-engine-architecture.md) · [ADR-004](03-architecture/adr/ADR-004-server-authoritative-scoring.md) · [ADR-006](03-architecture/adr/ADR-006-local-first-gameplay.md) · [ADR-008](03-architecture/adr/ADR-008-anonymous-identity.md) · [ADR-009](03-architecture/adr/ADR-009-event-leaderboards.md) · [modo feria y congelamiento](05-operations/fair-mode-and-competition-freeze.md) · [leaderboard y moderación](05-operations/leaderboard-and-moderation.md) · [threat model](04-quality/threat-model.md) · [contratos API](03-architecture/api-contracts.md) · [modelo de datos](03-architecture/data-model.md) · [ejemplo de descriptor](07-reference/run-descriptor.example.json).
 
-**Criterios de aceptación.**
+**Criterios de aceptación.** Los trece, cumplidos.
 
-- [ ] El cliente no puede imponer un score autoritativo; un payload con `score` lo ve ignorado, probado por test.
-- [ ] El servidor verifica por replay y rechaza action logs imposibles con un código tipado.
-- [ ] Un score local válido coincide exactamente con el autoritativo.
-- [ ] El personal best se actualiza transaccionalmente y una run peor no reemplaza a la mejor.
-- [ ] La edición vincula cada intento a la misma seed, variantes, dificultad y oportunidades; runId único por intento, sin farming de rareza.
-- [ ] Intentos ilimitados y mejor tupla verificada; empate de ambos scores comparte puesto, sin criterio temporal ni clave oculta.
-- [ ] Sólo carreras completas y egresadas válidas pueden competir; Practice no envía rank oficial.
-- [ ] Top 3 público y puesto propio privado, con nickname moderado y sin tabla pública de últimos.
-- [ ] La tupla de versiones queda persistida en cada run oficial.
-- [ ] Un doble envío es idempotente y no crea dos entradas.
-- [ ] El ranking se comporta correctamente bajo la concurrencia objetivo.
-- [ ] Minimización de datos de menores verificada.
-- [ ] E2E completo de run → submission → ranking.
+- [x] El cliente no puede imponer un score autoritativo; un payload con `score`, `fairScore`, `graduated` y `prestige` inventados los ve **ignorados** —no hay punto del camino donde se lean— y el resultado publicado es el recomputado.
+- [x] El servidor verifica por replay y rechaza action logs imposibles con un código tipado: log truncado, comando después del egreso, transición imposible y basura que no es un log.
+- [x] Un score local válido coincide exactamente con el autoritativo: la partida perfecta da 10 000 exactos por replay del servidor.
+- [x] El mejor intento se deriva de la vista y una run peor nunca reemplaza a la mejor, en los dos órdenes.
+- [x] La edición vincula cada intento a la misma seed, plan, variantes, dificultad y oportunidades; `runId` único por intento, garantizado por unicidad en la base.
+- [x] Intentos ilimitados —un solo activo por participante, por índice único parcial— y mejor tupla verificada; empate de ambos scores comparte puesto, sin criterio temporal ni clave oculta.
+- [x] Sólo carreras completas y egresadas compiten: una run que no egresa se registra `REJECTED` y no rankea; una submission en modo `practice` se rechaza.
+- [x] Top 3 **por puesto** público —un empate en el podio entra entero— y puesto propio privado, con alias moderable por el organizador y sin lista pública de puestos bajos.
+- [x] La tupla de siete versiones queda persistida en cada intento y la verificación resuelve por identidad exacta, sin `latest`.
+- [x] Un doble envío byte a byte devuelve el mismo resultado; uno conflictivo no reemplaza nada; dos simultáneos producen una sola entrada.
+- [x] El ranking resuelve 500 participantes con 1500 intentos verificados en mediana 7 ms sobre Postgres.
+- [x] Minimización de datos de menores verificada por tipos, por consulta y por test: el documento no se guarda, la respuesta pública no tiene dónde llevar un dato privado y el log tampoco.
+- [x] E2E completo de identificación → emisión → run → submission → verificación → ranking, entrando por `/`.
 
 **Validación requerida.** `pnpm test`, `tests/integration/`, `pnpm test:e2e:only`, `pnpm db:reset` · `pnpm db:lint` · `pnpm db:types` si hay migración, `pnpm verify`.
 
@@ -22827,7 +23329,9 @@ El navegador **nunca** es autoridad de score. El precursor ya existe: `src/serve
 
 **Decisiones.** Product Pass v1 cierra shared rank y Competition Seed compartida; conserva intentos ilimitados y mejor resultado verificado de TG1. Tiempo, Estilo y azar de aparición no ordenan puestos. La operación decide premios compartidos o una instancia común separada del ranking v1; no inventa desempate oculto. Emisión, elegibilidad y persistencia pendientes bajo ADR-025.
 
-**Exit gate.** ¿Se puede correr una competencia simulada completa con score autoritativo en servidor?
+**Exit gate.** ¿Se puede correr una competencia simulada completa con score autoritativo en servidor? **Sí**, y se corre en cada `pnpm verify`.
+
+**Lo que no entró, y por qué.** La configuración de competencia no se congeló: eso es [FREEZE](#freeze-congelamiento-de-competencia), y `fair-score-dev-2` sigue `official: false`. No se hizo load testing ni hardening —es [STAGE-10](#stage-10-production-hardening)— y no se desplegó nada. No se reabrió ninguna regla v1 de empate o intentos. El techo de Prestige ofrecido sigue en 0 por D-S08-084: la maquinaria se recomputa y ordena, pero autorar una oportunidad competitiva es contenido, no esta etapa.
 
 ---
 
@@ -23052,11 +23556,15 @@ La aplicación Next.js vive en la raíz. `pnpm-workspace.yaml` existe para decla
 ├── src/
 │   ├── app/                # App Router y Route Handlers/BFF
 │   ├── components/         # UI sin acceso directo a server/DB
+│   │   └── competition/    # el producto público y la consola del organizador
 │   ├── config/             # entorno público y server-only validado
 │   ├── content/            # contenido de producto por etapa, como data
 │   ├── game/               # core TypeScript puro
 │   ├── lib/                # adapters/utilidades transversales
+│   │   └── competition/    # reglas puras compartidas navegador/servidor
 │   ├── server/             # casos de uso y persistencia server-only
+│   │   ├── competition/    # dominio de la competencia, con reloj inyectado
+│   │   └── persistence/    # puerto y adaptadores (Postgres y memoria)
 │   └── instrumentation.ts  # validación de entorno al iniciar server
 ├── supabase/
 │   ├── migrations/         # SQL versionado
@@ -23108,6 +23616,7 @@ El release público está bloqueado mientras `pnpm release:check` detecte Next.j
 | Tests con cobertura | `pnpm test:coverage` |
 | E2E con build | `pnpm test:e2e` |
 | Supabase local | `pnpm db:start`, `pnpm db:env`, `pnpm db:reset`, `pnpm db:lint`, `pnpm db:types`, `pnpm db:stop` |
+| Competencia | `pnpm competition:bootstrap`, `pnpm competition:organizer:hash`, `pnpm competition:privacy:purge` |
 | Docker desarrollo | `pnpm docker:up` / `pnpm docker:down` |
 | Imagen standalone | `pnpm docker:build` |
 | Supply chain / release | `pnpm security:audit`, `pnpm release:check` |
@@ -23121,6 +23630,13 @@ Los detalles y prerrequisitos están en [entorno de desarrollo](08-engineering/d
 - En Compose, distinguir la URL pública alcanzable por el browser de `SUPABASE_INTERNAL_URL` alcanzable por el proceso server.
 - Las migraciones viven en `supabase/migrations/`, se prueban con reset local y se aplican a staging antes de producción.
 - Regenerar `src/lib/supabase/database.types.ts` después de cambios de schema.
+- El esquema de competencia habilita RLS sin políticas y otorga acceso explícito
+  sólo a `service_role`: una tabla nueva nace inaccesible hasta que alguien
+  decide lo contrario, que es el default correcto alrededor de datos de menores.
+- `src/lib/competition/` existe porque las reglas de identidad las necesitan los
+  dos lados de la frontera y ninguno puede importar al otro: la UI no alcanza
+  `@/server` y el servidor no importa componentes. Lo que necesita un secreto
+  —la derivación de identidad— vive en `@/server/competition`.
 - No crear tablas de producto ni políticas por conveniencia mientras sus contratos estén abiertos.
 
 ## Tests
@@ -23509,6 +24025,575 @@ y el sign-off manual de la rueda.
 ```text
 STAGE-09 — Fair mode, servidor autoritativo y ranking
 ```
+
+---
+
+# FILE: 06-delivery/stage-09-fair-mode-server-ranking.md
+
+# STAGE-09 — Fair mode, servidor autoritativo y ranking
+
+## A. Veredicto
+
+```text
+STAGE-09 — FAIR MODE / AUTHORITATIVE SERVER / RANKING — DONE
+```
+
+El juego completo de STAGE-08 quedó envuelto en una competencia cuya integridad
+se puede defender: el servidor emite cada intento, vuelve a jugar lo enviado,
+recomputa FairScore y Prestige, y publica un ranking por mejor intento verificado
+donde lo único que se ve de una persona es su alias.
+
+No se tocó nada de la semántica del juego. Motor `10.0.0`, action log `7`,
+snapshot `8`, ruleset `1.0.0-full-career`, contenido `5.5.0-grade-5`, catálogo
+`grade-5-dev-6` y FairScore `2.0.0-post-tg1-candidate` quedan **idénticos**: la
+partida perfecta sigue valiendo 10 000 exactos y el servidor llega a ese número
+reproduciendo el log, no leyéndolo.
+
+## B. Baseline de entrada
+
+- HEAD de entrada: `a4fa7d8` — `docs(stage-08): close final integration and pacing stage`.
+- STAGE-08 `DONE` en [etapa actual](06-delivery/current-stage.md); STAGE-09 `NEXT` en el
+  [roadmap](06-delivery/implementation-sequence.md#stage-09-fair-mode-servidor-autoritativo-y-ranking).
+- Baseline de tests: 96 archivos y 1898 tests de Vitest; 174 E2E de Playwright.
+- Base de datos: una sola migración, `20260820000000_technical_foundation.sql`,
+  sin tablas de producto. Todo el esquema de competencia es nuevo.
+
+## C. Arquitectura
+
+```text
+SERVIDOR   emite y registra el intento (seed de la edición + runId propio)
+   ↓
+CLIENTE    juega local-first y registra comandos
+   ↓
+SERVIDOR   valida emisión y versiones → replay → FairScore + Prestige → ranking
+```
+
+La frontera de confianza es la que ADR-004 fijó y ADR-006 hace practicable: una
+vez emitida la partida, el navegador juega sin hablar con el servidor —el Wi-Fi
+de una escuela llena no aguanta un pedido por decisión— y el servidor decide al
+final, reproduciendo.
+
+El núcleo de verificación **no se reimplementó**. `src/server/game/validate-run.ts`
+ya replayaba una submission no confiable, comprobaba versiones, revalidaba el
+plan compuesto y calculaba su propio score; STAGE-09 lo compone y no lo duplica.
+Lo que se agregó alrededor es la emisión, la identidad, la persistencia, la
+idempotencia y el ranking.
+
+### Capas
+
+```text
+src/app/api/competition/*        rutas finas: parsean y delegan
+src/app/api/organizer/*
+src/app/page.tsx                 el producto público, entero
+src/app/organizer/page.tsx       la herramienta del docente
+
+src/server/competition/          dominio: sin SQL, sin React, con reloj inyectado
+  api.ts                         manejadores HTTP, probables sin levantar Next
+  attempts.ts                    emisión, reanudación, envío, idempotencia
+  participants.ts                registro y reingreso
+  ranking.ts                     estado público
+  organizer.ts                   acceso, correcciones, moderación, auditoría
+  retention.ts                   anonimización
+  dto.ts                         la frontera pública/privada, verificada por tipos
+  editions.ts                    tupla de versiones → dependencias del motor
+  identity.ts                    HMAC de identidad
+  clock.ts · tokens.ts · rate-limit.ts · logging.ts · schemas.ts
+
+src/server/persistence/competition/
+  store.ts                       el puerto, escrito al nivel que Postgres garantiza
+  supabase-store.ts              adaptador real
+  memory-store.ts                segunda implementación real, no un mock
+
+src/lib/competition/             reglas puras que el navegador y el servidor comparten
+```
+
+Las rutas quedan finas porque el árbol de decisiones —origen, límite de tasa,
+sesión, competencia abierta— es el mismo en casi todas, y repetirlo ocho veces
+es cómo se termina con una ruta que se olvidó de mirar la sesión.
+
+## D. Unificación del producto público
+
+**`/` es el producto.** Portada, explicación, estado de la competencia, ranking,
+identificación, partida y resultado verificado son estados de una sola dirección.
+No hay una URL por momento a propósito: una partida no es una página, y darle
+dirección propia invitaría a compartirla, recargarla a la mitad y volver con el
+botón de atrás en medio de una decisión.
+
+El ranking vive en la portada. No se creó `/ranking`: una segunda ruta pública
+para un podio de tres puestos agrega navegación sin agregar nada.
+
+### Lo que dejó de ser público
+
+| Antes | Ahora |
+|---|---|
+| `/jugar` — partida local de 7.º | `/dev/grade-7`, 404 fuera de desarrollo |
+| `/dev/game-engine?seed=…&content=…` | sin cambios de acceso, y cerrado además cuando hay competencia |
+| `/dev/design-system`, `/dev/teacher-gate` | ídem |
+
+`/jugar` se movió, no se borró: el slice de 7.º es contenido real y su cobertura
+vale. Lo que cambió es quién puede abrirlo. Con la competencia, una segunda
+puerta pública que también dijera «jugar» sería una forma de jugar distinta de
+la que se está puntuando —sin emisión, sin intento registrado, sin ranking— y el
+producto público tiene que ser una sola cosa.
+
+La compuerta de `/dev` ganó un tercer estado. Antes: abierta fuera de producción,
+cerrada en producción salvo opt-in. Ahora, además: **en producción con una
+competencia configurada no se abre, opt-in incluido**. El opt-in es una variable
+de entorno y una variable de entorno se copia de un `.env` a otro; un despliegue
+de feria con el harness encendido por arrastre no podría falsear un puntaje —la
+emisión y la verificación siguen del lado del servidor— pero sí pondría una
+pantalla que elige seed y contenido en la misma dirección donde los chicos están
+compitiendo.
+
+Ninguna prueba de competencia usa `/dev`. La suite de STAGE-09 entra por `/`.
+
+Esa compuerta tiene una consecuencia que la suite de navegador tuvo que
+reflejar: **las dos superficies no pueden convivir en el mismo proceso**. Un
+despliegue con competencia no tiene `/dev`, así que Playwright levanta dos
+servidores —uno sin competencia y con el harness abierto, para las suites de
+contenido de STAGE-08; otro con la competencia configurada, para la de
+STAGE-09— y cada proyecto apunta al suyo. Probar las dos contra un solo proceso
+habría exigido relajar la compuerta, es decir, probar una configuración que
+nadie va a desplegar.
+
+## E. Identificación del participante
+
+Cuatro campos, una pantalla:
+
+```text
+Alias                 público
+Nombre y apellido     privado
+DNI                   no se guarda: se deriva
+Año o curso           privado, select derivado de la configuración
+División              privado, sólo si la escuela la configura
+```
+
+No se piden correo, teléfono, domicilio, fecha de nacimiento, foto, género,
+datos de salud, cuentas sociales ni datos de tutores. Ninguno hace falta para
+decidir un premio.
+
+El mismo formulario sirve para anotarse y para volver desde otro teléfono,
+porque desde el lado del estudiante es la misma acción. El servidor los
+distingue por la clave derivada del documento; el jugador no tiene que
+acordarse de nada.
+
+Decisiones de campo que importan y su razón:
+
+- El documento es `type="text"` con `inputMode="numeric"`. Con `type="number"`
+  la rueda del mouse cambia el valor sin que nadie lo toque, los ceros a la
+  izquierda desaparecen y el navegador acepta `e` y `+`.
+- `autoComplete="off"` en el documento: sin eso un gestor de contraseñas ofrece
+  tarjetas de crédito en un campo numérico de ocho dígitos.
+- La validación corre al salir del campo, no por tecla.
+- Al enviar, el primer error recibe el foco.
+
+### Reingreso
+
+Si el documento ya está registrado **y el nombre coincide** —comparado sin
+acentos ni caso, porque obligar a reproducir una tilde en un teclado de teléfono
+es una barrera sin propósito—, se restaura la sesión y **se conserva el alias
+original**: es la identidad pública que otros ya vieron en el ranking.
+
+Si el nombre no coincide, el servidor no crea un duplicado y **no dice de quién
+es el documento**. Las dos explicaciones posibles —un tipeo y alguien poniendo
+el documento de otro— se ven idénticas desde el servidor, y decir cuál es
+convertiría el formulario en un oráculo sobre quién se anotó. El jugador recibe
+un pedido neutral de ayuda a un organizador.
+
+La decisión completa, con su marco normativo, está en
+[ADR-026](03-architecture/adr/ADR-026-participant-identity-and-minor-privacy.md).
+
+## F. Modelo de privacidad
+
+### El documento se deriva, no se guarda
+
+```text
+identityHmac = HMAC-SHA-256(
+  PARTICIPANT_IDENTITY_SECRET,
+  `${competitionId}:${dniNormalizado}`
+)
+```
+
+Se persisten la clave derivada y los **últimos cuatro dígitos**. Un DNI argentino
+tiene del orden de 10⁸ valores: un hash rápido sin clave se recorre entero en
+segundos, así que no sería una seudonimización sino el mismo dato escrito de otra
+forma. El secreto vive fuera de la base. El id de la competencia entra en la
+derivación para que la misma persona produzca claves distintas en dos ediciones.
+
+### La frontera es un tipo, no una convención
+
+```ts
+PublicSafe<PublicLeaderboardEntry>   // no compila si aparece un campo privado
+PrivateParticipant                    // sólo desde una ruta autenticada
+```
+
+La consulta pública lee la vista `competition_best_attempts`, que **no tiene** las
+columnas privadas. El dato no viaja y después se oculta en React: no viaja.
+
+### En la base
+
+Cada tabla tiene RLS habilitada **sin una sola política**, los grants a `anon` y
+`authenticated` están revocados explícitamente, y el único rol con acceso es
+`service_role` —la clave secreta del BFF— con grants explícitos. El proyecto no
+auto-expone entidades nuevas, así que una tabla agregada mañana nace inaccesible.
+
+### En los logs
+
+`CompetitionLogFields` es un tipo cerrado con nueve campos, todos opacos o
+numéricos. No hay dónde poner un documento ni un nombre. Nadie escribe
+`console.log(dni)`; sí escribe `console.log(submission)`, y por eso la función
+de registro no acepta un objeto cualquiera.
+
+### Retención
+
+`EGRESADO_PRIVACY_RETENTION_DAYS` días después del cierre —120 por defecto— los
+datos privados se anonimizan: se van nombre, año, división y últimos cuatro
+dígitos; quedan el alias y el puntaje. La purga es explícita
+(`pnpm competition:privacy:purge`, o una acción del organizador) y nunca
+automática: purgar antes de verificar a los ganadores destruye la evidencia que
+la retención existe para proteger.
+
+### Configuración del responsable
+
+Nombre, contacto y domicilio de la institución son configuración del despliegue
+y se renderizan tal cual. Si falta alguno, la aplicación **falla con un error de
+configuración**. Un aviso con una escuela inventada sería peor que no tener
+aviso: le diría a un chico a quién reclamar y esa persona no existiría.
+
+El control del formulario es un **reconocimiento de lectura**, no una
+declaración de consentimiento: este código no puede afirmar que una tilde
+resuelve la base legal del tratamiento.
+
+## G. Modelo de datos
+
+Migración `supabase/migrations/20260921000000_competition_fair_mode.sql`.
+
+| Tabla | Para qué | Restricciones que hacen el trabajo |
+|---|---|---|
+| `competitions` | la edición: seed compartida, ventana, tupla congelada | `slug` único; ventana ordenada |
+| `participants` | identidad pública y privada | `unique(competition_id, identity_hmac)`, `unique(competition_id, nickname_key)` |
+| `participant_sessions` | continuidad, sin PII | `token_hash` único |
+| `attempts` | cada partida, con sus versiones fijadas | `unique(participant_id, attempt_number)`, `run_id` único, **índice único parcial de un solo intento activo** |
+| `organizer_sessions` | acceso del docente | `token_hash` único |
+| `organizer_audit_log` | rastro de lo sensible | — |
+| `rate_limit_counters` | ventana fija, contada en la base | PK `(bucket, window_start)` |
+
+Vista `competition_best_attempts`: mejor intento verificado de cada participante
+elegible, con `security_invoker` y sin ninguna columna privada. Es una vista y no
+una tabla materializada porque materializar introduce un estado derivado que
+puede quedar viejo justo cuando un organizador invalida un resultado — y la
+medición dice que no hace falta (sección O).
+
+Índices: `attempts_ranking_idx` parcial sobre `(competition_id, fair desc,
+prestige desc)` donde `status='VERIFIED' and invalidated_at is null`;
+`attempts_participant_idx`; `participants_competition_status_idx`.
+
+### Por qué no hay transacciones explícitas
+
+PostgREST no las ofrece, y no hacen falta: **cada operación que tiene que ser
+atómica es una sola sentencia**. Un `insert` que choca contra un índice único
+decide si un participante ya existe; un índice único parcial decide si ya hay
+una partida en curso; un `update` con el estado esperado en el `where` decide
+quién gana un doble envío; un `insert … on conflict do update` incrementa el
+contador de tasa. La garantía la da la base, no el proceso — que es lo que
+importa cuando hay más de una instancia.
+
+## H. Ciclo de vida de la competencia
+
+```text
+DRAFT → UPCOMING → OPEN → CLOSED → ARCHIVED
+```
+
+`DRAFT` y `ARCHIVED` se presentan al público como `upcoming` y `closed`: son
+estados de operación, y publicarlos contaría algo sobre el trabajo interno del
+organizador en vez de sobre si se puede jugar.
+
+La regla temporal, elegida y documentada porque no había decisión previa:
+
+```text
+empezar mientras la competencia está OPEN y dentro de [opensAt, closesAt)
+enviar antes de closesAt + submissionGraceSeconds
+```
+
+La alternativa estricta —enviar antes del cierre, sin tolerancia— le saca el
+resultado a quien empezó a las 17:52 una carrera de doce minutos, que no hizo
+nada mal. La tolerancia es de la edición, se configura y se anuncia antes de
+abrir. El reloj es el del servidor, inyectado como dependencia: no hay un
+`Date.now()` suelto dentro de un servicio que pueda leer la hora del cliente.
+
+Al cerrar, el ranking sigue siendo legible, no se pueden empezar partidas nuevas
+y la exportación sigue disponible.
+
+## I. Ciclo de vida del intento
+
+**Emisión.** El servidor valida la sesión, comprueba la ventana, resuelve la
+edición por su tupla exacta, recompone el plan desde la seed de la edición y
+**verifica que la huella coincida con la congelada**; si una calibración se movió
+después de abrir, no emite. Persiste el intento `STARTED` con las versiones
+fijadas y devuelve el descriptor.
+
+La seed es la de la **edición**, compartida por todos los intentos —decisión de
+producto v1—, y lo único propio del intento es su `runId`. Dos participantes
+reciben el mismo plan, las mismas variantes, la misma dificultad y el mismo
+techo de oportunidades.
+
+**Un solo intento activo.** Dos pestañas abiertas no son un ataque: son un
+teléfono. El índice único parcial garantiza que haya a lo sumo una partida en
+curso, y cuando choca el servicio devuelve la que existe en vez de crear una
+paralela.
+
+**Reanudación.** El servidor conserva la identidad del intento; el navegador
+conserva el avance. El checkpoint está atado al id del intento **y** a la huella
+del plan, comparados por canonicalización completa del descriptor. Un checkpoint
+que no coincide no se adapta ni se migra: se descarta. Inventar avance sería
+peor que perderlo, porque el servidor va a volver a jugar el log igual.
+
+El motor pide un checkpoint al **resolver una situación**, no al pasar un beat
+narrativo: un beat sin decisión no tiene avance que perder. La consecuencia
+visible es que recargar en medio de la narración de un año vuelve a mostrar esa
+narración. Es el contrato de STAGE-08 y no se tocó; lo que STAGE-09 agrega es
+que el intento sigue siendo el mismo —recargar nunca abre una partida paralela—
+y que el checkpoint restaurado tiene que corresponder a **esta** emisión.
+
+**Envío e idempotencia.** El único dato del cliente que se lee es el log de
+acciones. Un reenvío byte a byte devuelve el mismo resultado —se compara la
+huella de la submission—; un segundo envío distinto sobre un intento ya cerrado
+no reemplaza nada. Dos envíos simultáneos compiten por la misma fila en un
+`update` condicionado por estado, y sólo uno la mueve.
+
+## J. Qué no puede controlar el cliente
+
+| El cliente afirma | Qué pasa |
+|---|---|
+| `score`, `fairScore`, `officialScore` | se ignora: no hay punto del camino donde se lea |
+| `prestige`, `graduated`, `quality`, `variants` | ídem |
+| otra `seed` | rechazado; el log no corresponde a la emisión |
+| otra huella de plan | rechazado |
+| otro `runId` | rechazado |
+| `mode: practice` | rechazado |
+| cualquier versión distinta de la fijada | `ATTEMPT_VERSION_UNSUPPORTED` |
+| log truncado | no egresa: `REJECTED`, fuera del ranking |
+| comando extra después del egreso | rechazado |
+| transición imposible | rechazado |
+| el intento de otra persona | `ATTEMPT_NOT_OWNED` |
+| un log bueno bajo otro intento propio | rechazado: el `runId` es otro |
+| envío sin sesión | `PARTICIPANT_SESSION_REQUIRED` |
+| envío después de la tolerancia | `SUBMISSION_TOO_LATE` |
+| su propia hora | no se lee: el reloj es del servidor |
+
+Que el score se **ignore** en vez de rechazarse es deliberado y más fuerte:
+rechazar por nombre obligaría a enumerar los nombres que alguien invente.
+
+## K. Ranking
+
+```text
+1. FairScore descendente
+2. PrestigeScore descendente
+3. puesto compartido
+```
+
+Sin criterio terciario. Ni tiempo, ni orden de llegada, ni cantidad de intentos,
+ni seed, ni alias. Un identificador estabiliza el dibujo entre empatados sin
+tocar el puesto. No se suma Prestige a FairScore: 9 999 con 100 nunca supera a
+10 000 con 0.
+
+El puesto es «cuántos son estrictamente mejores, más uno»: con 100, 100, 90 y 80
+los puestos son 1, 1, 3 y 4. Numerar 1, 1, 2, 3 diría que hay un segundo puesto
+que nadie ganó.
+
+Se publican los **tres primeros puestos**, no las tres primeras personas: un
+empate en el podio entra entero. El puesto propio se ve siempre, en privado,
+sea cual sea.
+
+Rankea el **mejor intento verificado** de cada participante elegible. Un intento
+peor posterior no reemplaza al mejor; uno rechazado, abandonado o invalidado no
+entra; si el mejor se invalida, el siguiente pasa a ser el efectivo.
+
+## L. Herramienta del organizador
+
+`/organizer`, detrás de sesión propia. No contradice la regla de una sola puerta
+pública: no es otra forma de jugar, no emite intentos y no aparece enlazada
+desde ninguna pantalla de estudiante.
+
+Puede: abrir y cerrar; ver quién está detrás de un alias —nombre, año, división
+y últimos cuatro dígitos—; corregir un tipeo; ocultar un alias inapropiado sin
+sacar el resultado del ranking; descalificar y reincorporar; invalidar y
+restaurar un resultado; marcar la identidad de un ganador como verificada;
+exportar CSV; anonimizar los datos privados.
+
+No puede: ver un documento completo —no se guarda— ni editar la clave de
+identidad. Una clave editable a mano deja de ser una identidad; un documento mal
+tipeado se corrige borrando el registro y volviendo a anotarse.
+
+Cada acción sensible exige un motivo y queda auditada con actor, acción, destino
+y fecha. El registro guarda **qué campos** cambiaron, nunca sus valores: un log
+con el nombre viejo y el nuevo sería una segunda copia del dato personal en un
+lugar que nadie purga.
+
+**Autenticación.** Credencial de despliegue con scrypt (`N = 2¹⁷`, `r = 8`,
+`p = 1`), sesión opaca de ocho horas en cookie `HttpOnly`. No se adoptó Supabase
+Auth: el repositorio no lo usa para nada y traerlo sólo para un usuario sería
+superficie nueva alrededor del dato más sensible del sistema. El separador del
+digest es `:` y no `$` porque los cargadores de `.env` expanden `$nombre` y
+truncarían la credencial sin que nadie entienda por qué.
+
+**Exportación.** CSV con lo que hace falta para entregar un premio. Sin clave de
+identidad, sin tokens, sin IP, sin logs de acciones. El texto controlado por el
+usuario se neutraliza contra inyección de fórmulas: un alias que empieza con
+`=`, `+`, `-` o `@` lo ejecutaría la planilla al abrirla, y el alias es texto de
+un chico de trece años probando qué pasa.
+
+## M. Seguridad y abuso
+
+- **Origen.** Cookies `SameSite=Lax` —que ya no viajan en un POST cruzado— más
+  comprobación de `Origin` contra el host que atendió. Un pedido sin `Origin` se
+  acepta sólo si tampoco trae cookie, así que nunca actúa en nombre de nadie.
+- **Límite de tasa.** Ventana fija contada en Postgres, no en memoria del
+  proceso: en serverless N instancias multiplicarían el límite por N justo
+  cuando la ráfaga lo hace importar. Registro 12/10 min, emisión 20/5 min, envío
+  40/5 min, acceso de organizador 10/15 min. Calibrado para no tocar una ráfaga
+  legítima —treinta personas empezando a la vez porque el organizador dijo
+  «ya»— y sí tocar lo que no se parece a una persona. La clave del balde es un
+  digest de la dirección, nunca la dirección.
+- **Restricciones de dominio** que hacen la mayor parte del trabajo: una
+  identidad por documento y edición, un alias por edición, un intento activo por
+  participante, envío idempotente.
+- **Validación.** Zod en cada frontera. Los cuerpos de identidad y de acción de
+  organizador son `.strict()`: un campo de más se rechaza en vez de ignorarse en
+  silencio. El log de acciones entra como `unknown` y lo valida el codec del
+  motor, que es quien sabe qué comandos existen; se acota el tamaño antes
+  (256 KiB).
+- **Respuestas.** `cache-control: no-store` en todo lo de competencia: una
+  respuesta cacheada por un intermediario compartido podría mostrarle a un
+  jugador el «vos» de otro.
+
+La matriz completa, con su resultado, está en la sección J y en
+`tests/integration/competition-attack.test.ts`.
+
+## N. Tests
+
+`pnpm verify` **en verde**, con la base local levantada:
+
+```text
+Vitest     108 archivos · 2135 tests · 0 todo
+Cobertura  statements 85,50 % · branches 77,20 % · functions 87,57 % · lines 85,70 %
+Playwright 218 tests en cuatro proyectos (harness y competencia × desktop y mobile)
+```
+
+La baseline de entrada era 96 archivos / 1898 tests de Vitest y 174 E2E. El
+delta —12 archivos, 237 tests y 44 E2E— es íntegramente de esta etapa.
+
+Los gates de contenido confirman que **la semántica del juego no se movió**:
+
+```text
+pnpm game:score          perfecto = 10000 exacto · spread 0 · 0 empates de redondeo
+pnpm game:simulate:deep  5000 / 5000 egresadas · 0 hallazgos · peor caso 1 Repaso
+pnpm game:blind-audit    sin cambios; y5.stage-screen sigue en K 78,0 · S 40 %
+pnpm game:pacing         mediana 12,25–13,83 min sobre 125 carreras, como en STAGE-08
+```
+
+| Suite | Qué prueba |
+|---|---|
+| `tests/unit/competition-identity.test.ts` | normalización de documento y nombre, HMAC, alias, tokens, scrypt |
+| `tests/unit/competition-ranking.test.ts` | comparador, puestos compartidos, corte por puesto |
+| `tests/unit/competition-privacy.test.ts` | frontera pública/privada, CSV, campos de log, aviso |
+| `tests/unit/competition-config.test.ts` | entorno, configuración del responsable, registro de ediciones |
+| `tests/unit/development-harness-gate.test.ts` | la compuerta de `/dev`, con su tercer estado |
+| `tests/integration/competition-store.test.ts` | el contrato del puerto, contra memoria **y** Postgres |
+| `tests/integration/competition-lifecycle.test.ts` | identidad, emisión, ventana, envío, idempotencia, mejor intento |
+| `tests/integration/competition-attack.test.ts` | la matriz de ataque |
+| `tests/integration/competition-organizer.test.ts` | acceso, correcciones, moderación, auditoría, exportación, purga |
+| `tests/integration/competition-performance.test.ts` | escala de feria medida |
+| `tests/e2e/competition.spec.ts` | el producto entero desde `/` |
+
+Las carreras de las suites de integración se **juegan**: nueve beats en seis
+años, con las respuestas que producen los witnesses de autoría. Un log inventado
+probaría que el servidor acepta lo que el test escribió; una carrera jugada
+prueba que acepta lo que el juego produce.
+
+El store en memoria **no es un mock**: es una segunda implementación real, y la
+suite de contrato corre contra las dos. Si una garantía existe sólo en una, la
+suite lo dice — así apareció, por ejemplo, que Postgres y memoria deletreaban
+las fechas distinto.
+
+## O. Rendimiento
+
+Escenario: **500 participantes con tres intentos verificados cada uno**, 1500
+intentos, sobre Postgres local.
+
+```text
+aislado                    mediana  7 ms · peor  9 ms
+con la suite en paralelo   mediana 43 ms · peor 67 ms
+carga de los 1500 intentos 19–46 s según la carga de la máquina
+```
+
+Se reportan las dos porque miden cosas distintas: la aislada es el costo de la
+consulta, la otra es lo que se ve cuando la máquina está haciendo algo más. Las
+dos están dos órdenes de magnitud por debajo de lo que un refresco de veinte
+segundos necesita.
+
+Sin caché, sin tabla materializada y sin infraestructura distribuida. La
+consulta del mejor intento es un `distinct on` sobre un índice parcial y el
+puesto se calcula sobre 500 filas. La medición es lo que permite decir que no
+hace falta materializar, en vez de suponerlo.
+
+## P. Accesibilidad
+
+Todo lo nuevo usa el sistema de diseño existente; no se introdujo un segundo
+lenguaje visual. El único componente agregado es `SelectField`, un `<select>`
+nativo —teclado, lector de pantalla y la rueda del sistema operativo en un
+teléfono— con opción vacía obligatoria, para que el formulario no responda por
+el estudiante.
+
+Verificado con axe (`wcag2a`, `wcag2aa`, `wcag21aa`, `wcag22aa`) sobre la
+portada y el formulario a 360 px, sin violaciones; sin desborde horizontal; el
+formulario se alcanza tabulando, sin foco programático; cada error queda
+asociado por `aria-describedby` y anunciado con `role="alert"`; el ranking es una
+lista ordenada con el puesto dibujado como número, porque un empate comparte
+puesto y sin el número la segunda fila parecería un segundo lugar.
+
+## Q. Riesgos que quedan
+
+1. **Alguien escribe el documento de otra persona.** El sistema no lo puede
+   detectar. Lo que hace es impedir el duplicado, no filtrar información sobre
+   el registro existente y dejarle el caso a un organizador con rastro auditado.
+   Es un riesgo de la feria, no del software.
+2. **El secreto de identidad no se puede rotar dentro de una edición abierta.**
+   Rotarlo invalida todas las claves derivadas. Entre ediciones no cuesta nada.
+   Documentado en `.env.example` y en ADR-026.
+3. **La política de score sigue siendo candidata.** `fair-score-dev-2` es
+   `official: false` y oficializarla es FREEZE, no esta etapa. La competencia
+   corre con la calibración que la edición fija, sea cual sea.
+4. **El techo de Prestige ofrecido sigue en 0** (D-S08-084). La maquinaria
+   existe, el servidor la recomputa y el ranking la usa como segundo criterio;
+   lo que falta es contenido que ofrezca oportunidades, que es decisión de
+   producto y no de esta etapa.
+5. **La lista de aliases bloqueados es corta y deliberada.** No es un servicio de
+   moderación. Lo que se escape lo resuelve un organizador ocultando el alias,
+   que es la herramienta correcta para un juicio que ninguna lista automatiza.
+6. **El límite de tasa falla abierto** si el contador no está disponible. La
+   alternativa —dejar a toda la feria afuera por una tabla auxiliar— es peor, y
+   las restricciones de dominio siguen en pie.
+
+## R. Próximo gate
+
+```text
+STAGE-08   DONE
+STAGE-09   DONE
+
+GATE-TG2 — Teacher Gate 2                  NEXT · externo, no es ingeniería
+Revisión del Departamento de Matemática    DIFERIDA a Final Delivery (D-S08-095)
+Sign-off manual de la rueda                PENDIENTE · humana
+Pacing empírico con jugadores              PENDIENTE · humana
+FREEZE                                     después de TG2
+STAGE-10 — Production hardening            después de FREEZE
+```
+
+Esta etapa **no** ejecuta Teacher Gate 2 ni la revisión humana de Matemática, y
+no oficializa la configuración de competencia: congelarla es FREEZE. El
+despliegue final y el hardening son STAGE-10; lo que STAGE-09 deja es una
+aplicación desplegable —build de producción, migración, validación de entorno,
+bootstrap de base, de competencia y de organizador— no desplegada.
 
 ---
 
@@ -25864,6 +26949,7 @@ De requisito de producto a estado de implementación. La columna de estado es un
 | ADR-023 | [Política de score competitivo](03-architecture/adr/ADR-023-competitive-score-policy.md) | Aceptado |
 | ADR-024 | [Progresión, recuperación y egreso](03-architecture/adr/ADR-024-progression-recovery-and-graduation.md) | Aceptado |
 | ADR-025 | [Evolución acotada de contratos de carrera completa](03-architecture/adr/ADR-025-full-career-contract-evolution.md) | Aceptado; implementación futura |
+| ADR-026 | [Identidad de participante y privacidad de menores en competencia](03-architecture/adr/ADR-026-participant-identity-and-minor-privacy.md) | Aceptado; supersede parcialmente ADR-008 |
 
 ## Regla para ADR nuevo
 
@@ -26143,6 +27229,17 @@ contenido, catálogos ni tests.
 | D-S08-140 | **La decorrelación pertenece al catálogo, no a la variante.** Se probó gatear cada señuelo por separado y el resultado fue contraproducente: prohibir que «empezar por la bandeja más cara» alcance el objetivo llevó «empezar por la más barata» de 80,80 a **99,00 · 96 %**, y prohibir los dos sentidos del precio por minuto llevó «el menor costo por minuto» a **100,00 · 100 %**. Con tres ítems y una capacidad hay **seis** órdenes y uno tiene que ser el bueno: prohibir algunos hace a los demás más probables. La masa se mueve, no desaparece. Se conservan sólo los gates por variante que no son de ordenación —reparto ciego, selectividad, señuelo declarado— y la decorrelación se mide sobre el catálogo entero | DONE · método | [sección P](04-quality/stage-08-mathematics-final-closure-sprint.md#p-la-regla-de-cierre) |
 | D-S08-141 | Republicación final del sprint de cierre: 7.º `0.12.0` / `grade-7-dev-8` (189), 1.º `1.3.0` / `grade-1-dev-4` (363), 2.º `2.4.0` / `grade-2-dev-5` (512), 3.º `3.4.0` / `grade-3-dev-5` (686), 4.º `4.4.0` / `grade-4-dev-5` (858), 5.º `5.5.0` / `grade-5-dev-6` (1031). Generadores: `y1.mobile-data` 1→2, `y3.course-project-tech` 2→3, `y4.course-project-fundraiser` 2→3, `y5.final-trip.packages` 1→2. **Motor `10.0.0`, action log `7`, snapshot `8`, los siete rulesets y FairScore `2.0.0-post-tg1-candidate` sin cambios**; `git diff` vacío en `src/game`, `src/server`, `src/app`, `src/components` y `src/styles`. Perfecto = 10 000 exacto, 5000/5000 egresadas, replay y servidor fail-closed contra las versiones nuevas, tres `pnpm verify` consecutivos en verde con 1898 tests y 174 E2E. Las siete versiones previas de 7.º quedan sin editar; R-S09-CAT no empeoró y no se tocó | DONE | [secciones K y L](04-quality/stage-08-mathematics-final-closure-sprint.md#k-versiones-y-catálogos) |
 | D-S08-142 | **Cierre finito declarado.** Una vez implementadas, auditadas y pasando las ocho familias canónicas, **no se agregan más clases de atajo dentro de la implementación**. Lo que exija un solucionador, varios pasos del razonamiento buscado o estrategia experta no es un atajo: es jugar bien, y pertenece a la auditoría final de cierre, a la revisión humana, al testeo con jugadores reales y al hardening futuro. El gate siguiente, `FINAL MATHEMATICS CLOSURE AUDIT`, es de **sólo lectura** y puede bloquear únicamente por matemática incorrecta, feedback materialmente falso, atajo bloqueante en Template puntuable, integridad de FairScore, integridad de replay/servidor o violación de contrato LOCKED | DONE · regla | [sección Q](04-quality/stage-08-mathematics-final-closure-sprint.md#q-handoff) |
+
+| D-S09-001 | **La identificación del participante vive dentro del producto, y ADR-008 queda parcialmente supersedido.** El modo feria prefería «un mapeo externo controlado por el organizador» entre alias y persona; se evaluó y se descartó, porque una planilla aparte es una copia de datos de menores sin control de acceso, sin auditoría y sin fecha de borrado — el dato existe igual y lo único que cambia es que nadie lo protege. Se piden cuatro campos (alias, nombre y apellido, documento, año o curso; división sólo si la escuela la configura) y ninguno más: sin correo, teléfono, domicilio, fecha de nacimiento, foto, género ni datos de tutores | ACCEPTED · producto y privacidad | [ADR-026](03-architecture/adr/ADR-026-participant-identity-and-minor-privacy.md) |
+| D-S09-002 | **El documento no se guarda: se deriva con HMAC-SHA-256 por competencia, y se conservan los últimos cuatro dígitos.** Un DNI argentino tiene del orden de 10⁸ valores, así que un hash rápido sin clave se recorre entero en segundos y **no sería una seudonimización** sino el mismo dato escrito de otra forma; el secreto vive fuera de la base. El id de la edición entra en la derivación para que la misma persona produzca claves distintas en dos ferias y dos bases no se puedan cruzar. Los cuatro dígitos son lo que permite que un docente verifique a un ganador en persona sin retener el número. Corolario operativo: el secreto **no se rota** dentro de una edición abierta | ACCEPTED · privacidad por diseño | [ADR-026](03-architecture/adr/ADR-026-participant-identity-and-minor-privacy.md) |
+| D-S09-003 | **El documento identifica, no autentica.** La sesión que emite el reingreso da continuidad entre partidas y nunca es prueba de identidad para un premio: eso lo verifica una persona. De ahí la respuesta ante conflicto: si el documento ya está registrado con otro nombre, el servidor no crea un duplicado y **no dice de quién es**, porque un tipeo y un documento ajeno se ven idénticos desde el servidor y distinguirlos convertiría el formulario en un oráculo sobre quién se anotó | ACCEPTED · seguridad y privacidad | [ADR-026](03-architecture/adr/ADR-026-participant-identity-and-minor-privacy.md) |
+| D-S09-004 | **El producto público es una sola dirección.** Portada, ranking, identificación, partida y resultado son estados de `/`. `/jugar` —la partida local de 7.º— pasó a `/dev/grade-7`, con la misma compuerta que el resto de `/dev`: una segunda puerta pública que también dijera «jugar» sería una forma de jugar distinta de la que se está puntuando. No se creó `/ranking`: una ruta aparte para un podio de tres puestos agrega navegación sin agregar nada. La compuerta de `/dev` ganó un tercer estado: **en producción con competencia configurada no se abre, opt-in incluido**, porque una variable de entorno se copia de un `.env` a otro | ACCEPTED · producto | [cierre de STAGE-09, sección D](06-delivery/stage-09-fair-mode-server-ranking.md) |
+| D-S09-005 | **Regla temporal de la competencia, elegida y documentada porque no había decisión previa:** empezar mientras la edición está `OPEN` y dentro de `[opensAt, closesAt)`; enviar hasta `closesAt` más una tolerancia configurada por edición. La alternativa estricta le saca el resultado a quien empezó a las 17:52 una carrera de doce minutos, que no hizo nada mal. El reloj es del servidor e inyectado como dependencia, así que ningún `Date.now()` suelto puede leer la hora del cliente | ACCEPTED · operación | [cierre de STAGE-09, sección H](06-delivery/stage-09-fair-mode-server-ranking.md) |
+| D-S09-006 | **La atomicidad la da la base, no el proceso.** Cada operación que tiene que ser atómica es una sola sentencia: un `insert` contra un índice único decide si un participante ya existe, un índice único parcial decide si ya hay partida en curso, un `update` con el estado esperado en el `where` decide quién gana un doble envío. Por eso no hacen falta transacciones explícitas sobre PostgREST — y, más importante, por eso la garantía no depende de que haya una sola instancia. El store en memoria no es un mock: es una segunda implementación real y la suite de contrato corre contra las dos | ACCEPTED · arquitectura | [cierre de STAGE-09, secciones G y N](06-delivery/stage-09-fair-mode-server-ranking.md) |
+| D-S09-007 | **El límite de tasa de registro se calibró contra el NAT de la escuela, no contra la intuición.** Un edificio entero comparte una IP: treinta chicos anotándose cuando el organizador dice «ya» son treinta registros del mismo origen en dos minutos. Un límite estrecho por IP no frena a quien puede cambiar de red y sí deja afuera a media clase, que es el peor error posible el día de la feria. Lo apareció el E2E al agotar el contador con doce registros. Lo que impide el abuso que importa no es el contador sino que haya **un participante por documento y edición**; los límites de intento y envío se cuentan por participante y el NAT no los afecta | ACCEPTED · operación | [cierre de STAGE-09, sección M](06-delivery/stage-09-fair-mode-server-ranking.md) |
+| D-S09-008 | **El ranking no se materializa.** La consulta del mejor intento es una vista con `distinct on` sobre un índice parcial, y el puesto lo calcula una función pura sobre las filas resultantes. Materializar introduciría un estado derivado que puede quedar viejo justo cuando un organizador invalida un resultado. Medido antes de decidirlo: 500 participantes con 1500 intentos verificados dan mediana 7 ms y peor caso 9 ms | ACCEPTED · arquitectura, con medición | [cierre de STAGE-09, sección O](06-delivery/stage-09-fair-mode-server-ranking.md) |
+| D-S09-009 | **El separador del digest del organizador es `:` y no el `$` de la convención de Unix.** El digest vive en un archivo `.env` y los cargadores de esos archivos expanden `$nombre`: un digest de scrypt con `$` seguido de letras llega truncado al servidor y la credencial deja de funcionar sin que nadie entienda por qué. Apareció al configurar el despliegue local | ACCEPTED · técnica | [cierre de STAGE-09, sección L](06-delivery/stage-09-fair-mode-server-ranking.md) |
+| D-S09-010 | **Veredicto `STAGE-09 — FAIR MODE / AUTHORITATIVE SERVER / RANKING — DONE`.** Los trece criterios de aceptación cumplidos. La semántica del juego no se tocó: motor `10.0.0`, action log `7`, snapshot `8`, ruleset `1.0.0-full-career`, contenido `5.5.0-grade-5`, catálogo `grade-5-dev-6` y FairScore `2.0.0-post-tg1-candidate` idénticos, y la partida perfecta sigue valiendo 10 000 exactos recomputados por el servidor. Queda fuera, por contrato: congelar la configuración de competencia (FREEZE), el hardening y el despliegue (STAGE-10), y oficializar `fair-score-dev-2`, que sigue `official: false`. Siguiente gate: Teacher Gate 2 | DONE · gate | [cierre de STAGE-09](06-delivery/stage-09-fair-mode-server-ranking.md) |
 
 La integración de TG1 permanece histórica en [su acta y trazabilidad](06-delivery/teacher-gate-1/12-integracion-post-gate.md).
 Siguen pendientes la oficialización/freeze, validación empírica, autoría ejecutable,
@@ -26656,7 +27753,7 @@ Estas decisiones requieren evidencia de prototipo, playtest, implementación u o
 28. ¿Cuánto persisten checkpoints y acciones `pending_sync` después de cerrar la sesión, cuándo expiran y cómo se comunican conflictos o rechazos terminales? *Gate: aceptar persistencia y UX offline de MVP Feria.*
 29. ¿Cuál es el mecanismo mínimo de moderación y “reset” requerido para MVP Feria, y qué queda reservado para el Admin UI post-MVP? *Gate: cerrar tooling y runbook operativo de MVP Feria.*
 30. ¿Qué health checks, ownership, backup/restore, RPO/RTO y rehearsal son obligatorios antes de una feria? *Gate: aprobar staging y rehearsal de feria.*
-31. ¿Qué política legal y de retención/eliminación aplica a runs, actions, pseudónimos y auditoría en la institución anfitriona? *Gate: persistir datos reales de participantes en una feria.*
+31. ~~¿Qué política legal y de retención/eliminación aplica a runs, actions, pseudónimos y auditoría en la institución anfitriona?~~ **Cerrada en lo técnico por STAGE-09,** y sólo en lo técnico. La retención es configuración del despliegue con default conservador —120 días desde el cierre—, la anonimización es una operación explícita y auditada, y el responsable de los datos se declara en la configuración: si falta, la aplicación no atiende. Ver [ADR-026](03-architecture/adr/ADR-026-participant-identity-and-minor-privacy.md). **La política legal aplicable la define la institución**, no este repositorio, y eso sigue siendo un acto externo previo a la feria.
 
 ## Producto y proveedores
 
@@ -26701,7 +27798,7 @@ targets, no se confunden con beats por carrera.
 47. ¿Qué pesos/hechos estratégicos expresan Estilo en cada Template? Ya se excluye inferir identidad de Math sola, azar o INVALID; nunca aporta FairScore/Prestige. 1.º implementa rasgos candidatos (`grade-1-strategy-evidence@1-candidate`) con un gate que impide atar un estilo a un nivel de resultado; los pesos siguen abiertos. *Gate: autoría/freeze de perfiles.*
 48. ¿Qué acento visual mínimo distingue cada año? Es una decisión del sistema de diseño, prevista para v0.4 y **explícitamente diferida**. No la resuelve un documento de producto. *Gate: alcance de la v0.4 del sistema de diseño.*
 49. ¿Se produce el pack raster de ocho imágenes o el producto sale confirmando que la UI sola alcanza? Todas las pantallas corren hoy con cero imágenes. *Gate: alcance de la v0.3 del sistema de diseño.*
-50. ¿Cuánto tiempo se conservan action logs, ranking público y datos del evento después de la feria, y qué se archiva o anonimiza? *Gate: persistir datos reales de participantes.* Se cruza con la pregunta 31.
+50. ~~¿Cuánto tiempo se conservan action logs, ranking público y datos del evento después de la feria, y qué se archiva o anonimiza?~~ **Cerrada por STAGE-09:** vencida la retención, se anonimiza el dato privado del participante —nombre, año, división y últimos cuatro dígitos— y sobreviven el alias, el puntaje verificado y la evidencia de replay, que no identifican a nadie y dejan el ranking legible el año siguiente. El número de días es configuración de la edición.
 51. ~~¿Tiempo activo verificable para desempate?~~ **Supersedida v1**, igual que 27: sin ranking temporal.
 52. ¿Qué nombres/hechos exactos tendrá cada logro? Tracks, slots y exclusiones cerrados en [Prestige](01-game-design/rare-events-and-prestige.md); falta contenido concreto. *Gate: autoría STAGE-08 y auditoría/freeze STAGE-09; no bloquea Phase 0.*
 53. ~~¿Vocabulario de recuperación?~~ **Cerrada:** label **REPASO**; recovery/review internos; previa como historia. Copy contextual sigue revisión editorial/docente sin reabrir label.
@@ -27032,6 +28129,9 @@ no sustituyen ni se presentan como playtest real con estudiantes.
 - [x] Arquitectura objetivo del motor con el estado real de cada capacidad.
 - [x] Modelo de contenido: familia de escenario, plantilla y variante, con catálogo separado del plan de la run.
 - [x] Pipeline de variantes: generación por restricción, validación con oráculos independientes, huella, deduplicación, auditoría y catálogo aprobado versionado.
+- [x] Identidad de participante y privacidad de menores en competencia (ADR-026): qué se pide, qué es público, por qué el documento se deriva y no se guarda, y qué implica rotar el secreto.
+- [x] Esquema de competencia implementado, con las restricciones de la base que hacen el trabajo de una transacción.
+- [x] Contrato HTTP vigente de participante y organizador, separado del antecedente histórico no normativo.
 
 ## Calidad
 - [x] Unit/integration/E2E.
@@ -27048,12 +28148,16 @@ no sustituyen ni se presentan como playtest real con estudiantes.
 - [x] Implementación de la remediación matemática documentada con veredicto `BLOCKED`, evidencia por contrato, inventario de feedback y los dos STOP como puntos de decisión abiertos, sin presentar re-auditoría ni sign-off como hechos.
 - [x] Adjudicación de los conflictos de contrato: qué enmienda se probó factible, cuál no, y qué decisión queda abierta, sin relajar ningún techo en silencio.
 - [x] Techo de estrategia ciega de la pantalla del acto: el mínimo factible, probado y alcanzado, con la remediación matemática cerrada en catorce contratos.
+- [x] Matriz de ataque de la competencia, con el resultado caso por caso y la propiedad común: el servidor falla cerrado y el ranking nunca queda contaminado.
+- [x] Amenazas de privacidad del dato de un menor, suplantación en el reingreso y purga prematura, con sus mitigaciones y lo que queda declarado como parcial.
+- [x] Estrategia de tests de competencia: contrato de persistencia contra dos implementaciones, carreras jugadas y no inventadas, y qué se saltea cuando no hay base.
 
 ## Operación
 - [x] Runbook de feria.
 - [x] Modo feria, política de intentos, congelamiento y control de cambios.
 - [x] Ranking/moderación.
 - [x] Fallback/incidentes.
+- [x] Operación de la competencia implementada: bootstrap, apertura y cierre, verificación de un ganador y purga, con el orden en que se usan y la advertencia de no purgar antes de entregar premios.
 
 ## Delivery
 - [x] Backlog priorizado.
@@ -27065,6 +28169,7 @@ no sustituyen ni se presentan como playtest real con estudiantes.
 - [x] Phase 0, Phase 1 y gate post-G1 cerrados; 2.º–5.º habilitados como siguiente tarea.
 - [x] Protocolo de actualización del roadmap para agentes futuros.
 - [x] Checklists de Teacher Gate 1 y 2 y de congelamiento de fundaciones.
+- [x] Cierre de STAGE-09: producto público unificado, decisiones de identificación y privacidad, modelo de datos, autoridad del servidor, ranking, herramienta del organizador, matriz de ataque, escala medida y riesgos reales.
 
 ## Referencia
 - [x] Investigación y fuentes.
@@ -27224,7 +28329,7 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 - `security-privacy.md`: seguridad, privacidad y anti-cheat.
 - `analytics-observability.md`: eventos, métricas y observabilidad.
 - `deployment-and-environments.md`: ambientes, CI/CD y despliegue.
-- `adr/`: decisiones arquitectónicas formales; [ADR-025](03-architecture/adr/ADR-025-full-career-contract-evolution.md) gobierna contratos futuros de carrera completa.
+- `adr/`: decisiones arquitectónicas formales; [ADR-025](03-architecture/adr/ADR-025-full-career-contract-evolution.md) gobierna contratos futuros de carrera completa y [ADR-026](03-architecture/adr/ADR-026-participant-identity-and-minor-privacy.md) la identidad de participante y la privacidad de menores en competencia.
 
 ### 04-quality
 - `ai-mathematics-department-provisional-signoff.md`: el gate que cierra la fase del Departamento de Matemática de IA: la cadena de evidencia completa, el endurecimiento acotado de la instrumentación —identidad semántica de magnitudes y profundidad de cobertura declarada— y las banderas que quedan para la revisión humana.
@@ -27271,6 +28376,7 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 - `teacher-gate-1/`: pack histórico, evidencia docente original, acta y trazabilidad de integración del Teacher Gate 1 ejecutado.
 - `definition-of-done.md`: DoD global y por tipo de cambio.
 - `stage-08-final-integration-pacing-closure.md`: el cierre de STAGE-08 como producto integrado —carrera completa, reanudación, idempotencia, motores, accesibilidad y build de producción— y la primera medición del ritmo de la carrera, con sus supuestos y su límite.
+- `stage-09-fair-mode-server-ranking.md`: el cierre de STAGE-09 —producto público unificado, identificación con privacidad por diseño, emisión e idempotencia del servidor, verificación por replay, ranking por mejor intento, herramienta del organizador, matriz de ataque y escala medida.
 - `repository-conventions.md`: estructura implementada, fronteras, comandos y reglas de dependencia.
 - `vertical-slice-grade-7.md`: alcance, contenido y criterios del primer slice jugable (7.º grado).
 

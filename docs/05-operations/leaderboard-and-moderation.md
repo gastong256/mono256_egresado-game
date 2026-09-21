@@ -1,6 +1,6 @@
 # Leaderboard y moderación
 
-**Dirección de producto v1 LOCKED; runtime no implementado.**
+**Dirección de producto v1 LOCKED; runtime implementado en STAGE-09.**
 
 ## Principios y comparador
 
@@ -17,7 +17,10 @@ STAGE-09 debe usar FairScore recomputado, no el campo legacy `officialScore`.
 Intentos ilimitados; una entrada por participante con su mejor resultado verificado
 según el comparador, no suma de intentos. Se reutiliza la Competition Seed de la
 edición conforme a [modo feria](fair-mode-and-competition-freeze.md).
-La implementación transaccional, identidad y persistencia siguen pendientes.
+La implementación está en [el cierre de STAGE-09](../06-delivery/stage-09-fair-mode-server-ranking.md):
+el mejor intento sale de la vista `competition_best_attempts`, el puesto lo
+calcula un comparador puro y la atomicidad la dan restricciones de la base, no
+un lock del proceso.
 
 ## Pantalla pública v1
 
@@ -34,8 +37,15 @@ comparaciones de valor personal o rachas de fracaso.
 ## Moderación
 
 Operadores autorizados pueden ocultar nickname manteniendo score como “Jugador
-oculto”, ocultar entrada, invalidar por abuso y restaurar. Cada acción audita actor,
-fecha y motivo. No se selecciona un schema o sistema de auth en este documento.
+oculto”, invalidar por abuso y restaurar, descalificar y reincorporar. Cada
+acción audita actor, fecha y motivo — y guarda **qué campos** cambiaron, nunca
+sus valores: un log con el nombre viejo y el nuevo sería una segunda copia del
+dato personal en un lugar que nadie purga.
+
+Implementado en `/organizer`, detrás de una credencial de despliegue derivada
+con scrypt y una sesión opaca de ocho horas. Una entrada nunca se borra: ocultar
+el alias conserva el puesto y el puntaje, porque borrarla le daría a un insulto
+el poder de sacar a alguien del ranking.
 
 ## Cierre, premios y exportación
 
@@ -44,7 +54,10 @@ acuerda premios compartidos o un desafío común separado si necesita un ganador
 único. Un ID interno sólo estabiliza display, nunca define un ganador.
 
 Antes de abrir se anuncian comparador, intentos, horario de cierre, tratamiento de
-envíos pendientes y moderación. Al cierre se exportan identificador interno,
-nickname, run elegida, FairScore/Prestige y desglose, versiones y verificación,
-sin datos personales innecesarios. Retención y tooling administrativo se cierran
-en STAGE-09 bajo [operaciones](fair-mode-and-competition-freeze.md).
+envíos pendientes y moderación. Al cierre se exporta un CSV con puesto, alias,
+nombre, año, división, últimos cuatro dígitos, mejores puntajes, cantidad de
+intentos y elegibilidad — sin clave de identidad, sin tokens, sin IP y sin logs
+de acciones. El texto del alias se neutraliza contra inyección de fórmulas.
+Retención y tooling quedaron cerrados en
+[STAGE-09](../06-delivery/stage-09-fair-mode-server-ranking.md); el procedimiento
+operativo está en el [runbook](fair-runbook.md#operación-de-la-competencia-implementada).

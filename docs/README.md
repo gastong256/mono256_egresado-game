@@ -85,7 +85,7 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 - `security-privacy.md`: seguridad, privacidad y anti-cheat.
 - `analytics-observability.md`: eventos, métricas y observabilidad.
 - `deployment-and-environments.md`: ambientes, CI/CD y despliegue.
-- `adr/`: decisiones arquitectónicas formales; [ADR-025](03-architecture/adr/ADR-025-full-career-contract-evolution.md) gobierna contratos futuros de carrera completa.
+- `adr/`: decisiones arquitectónicas formales; [ADR-025](03-architecture/adr/ADR-025-full-career-contract-evolution.md) gobierna contratos futuros de carrera completa y [ADR-026](03-architecture/adr/ADR-026-participant-identity-and-minor-privacy.md) la identidad de participante y la privacidad de menores en competencia.
 
 ### 04-quality
 - `ai-mathematics-department-provisional-signoff.md`: el gate que cierra la fase del Departamento de Matemática de IA: la cadena de evidencia completa, el endurecimiento acotado de la instrumentación —identidad semántica de magnitudes y profundidad de cobertura declarada— y las banderas que quedan para la revisión humana.
@@ -132,6 +132,7 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 - `teacher-gate-1/`: pack histórico, evidencia docente original, acta y trazabilidad de integración del Teacher Gate 1 ejecutado.
 - `definition-of-done.md`: DoD global y por tipo de cambio.
 - `stage-08-final-integration-pacing-closure.md`: el cierre de STAGE-08 como producto integrado —carrera completa, reanudación, idempotencia, motores, accesibilidad y build de producción— y la primera medición del ritmo de la carrera, con sus supuestos y su límite.
+- `stage-09-fair-mode-server-ranking.md`: el cierre de STAGE-09 —producto público unificado, identificación con privacidad por diseño, emisión e idempotencia del servidor, verificación por replay, ranking por mejor intento, herramienta del organizador, matriz de ataque y escala medida.
 - `repository-conventions.md`: estructura implementada, fronteras, comandos y reglas de dependencia.
 - `vertical-slice-grade-7.md`: alcance, contenido y criterios del primer slice jugable (7.º grado).
 

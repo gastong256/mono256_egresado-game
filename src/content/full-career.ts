@@ -148,14 +148,30 @@ export function createFullCareerDependencies(): EngineDependencies {
   }
 }
 
+/**
+ * Cómo se emite una carrera concreta a partir de la seed.
+ *
+ * El servidor de competencia necesita dos cosas que una práctica local no: un
+ * `runId` propio por intento —la edición comparte seed, así que el id es lo
+ * único que separa un intento de otro— y el modo `fair`, que es lo que hace
+ * que el epílogo hable de un puesto en vez de decir que el resultado es
+ * personal. Todo lo demás —plan, variantes, dificultad, oportunidades— sale de
+ * la seed y de las mismas políticas, que es exactamente el punto.
+ */
+export interface FullCareerRunOptions {
+  readonly runId?: string
+  readonly mode?: RunDescriptor['mode']
+}
+
 export function createFullCareerRunDescriptor(
   seed: string,
+  options: FullCareerRunOptions = {},
 ): Result<RunDescriptor, CompositionFailure> {
   const dependencies = createFullCareerDependencies()
   const base: RunDescriptor = {
-    runId: toRunId(`career-${seed}`),
+    runId: toRunId(options.runId ?? `career-${seed}`),
     seed: toRunSeed(seed),
-    mode: 'practice',
+    mode: options.mode ?? 'practice',
     difficulty: 'fixed',
     gameVersion: ENGINE_VERSION,
     rulesetVersion: FULL_CAREER_RULESET_VERSION,

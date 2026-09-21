@@ -97,9 +97,15 @@ No duplicar sin necesidad:
 
 Preferir query/view/materialized view según escala real.
 
-## Entidades objetivo del modo feria
+## Entidades del modo feria
 
-**No implementadas.** Los nombres se adaptan a las convenciones reales al escribir la migración.
+**Implementadas en STAGE-09**, en la migración `20260921000000_competition_fair_mode.sql`:
+`competitions`, `participants`, `participant_sessions`, `attempts`,
+`organizer_sessions`, `organizer_audit_log` y `rate_limit_counters`, más la vista
+`competition_best_attempts`. El esquema, sus restricciones y por qué cada una
+hace el trabajo que haría una transacción están en
+[el cierre de STAGE-09](../06-delivery/stage-09-fair-mode-server-ranking.md).
+La lista conceptual que sigue es la que guió el diseño.
 
 - **Evento:** vigencia, estado (`draft`/`frozen`/`live`/`closed`), tupla de versiones permitida, política de intentos y ajustes de ranking público.
 - **Participante:** id pseudónimo, evento, nickname, estado de moderación.

@@ -3,9 +3,54 @@
 Vista corta del estado de ejecución. El contrato completo y el protocolo de
 actualización están en el [roadmap](implementation-sequence.md).
 
+## STAGE-09 — Fair mode, servidor autoritativo y ranking
+
+**Estado:** `DONE` — 21 de septiembre de 2026. **Siguiente gate: Teacher Gate 2**,
+que es aceptación externa y no una etapa de ingeniería.
+
+El juego completo de STAGE-08 quedó envuelto en una competencia cuya integridad
+se puede defender. El producto público es **una sola dirección**: en `/` el
+estudiante entiende la competencia, ve el ranking, se identifica, juega la
+carrera entera y recibe un puntaje que el servidor recomputó volviendo a jugar
+su partida. Nada de lo que el navegador afirme sobre su propio resultado se lee.
+
+```text
+STAGE-08                                      DONE
+STAGE-09                                      DONE
+├── Producto público unificado en `/`          DONE · `/jugar` pasó a `/dev/grade-7`
+├── Identificación con privacidad por diseño   DONE · ADR-026
+│   ├── Alias público, todo lo demás privado   DONE · frontera verificada por tipos
+│   ├── DNI derivado con HMAC por competencia  DONE · sólo se guardan 4 dígitos
+│   └── Aviso de privacidad desde config       DONE · falla si falta el responsable
+├── Emisión autoritativa de intentos           DONE · seed compartida de la edición
+├── Verificación por replay                    DONE · compone `validate-run.ts`
+├── Idempotencia y concurrencia                DONE · restricciones de la base
+├── Ranking por mejor intento verificado       DONE · FairScore → Prestige → empate
+├── Herramienta del organizador                DONE · con auditoría y exportación
+├── Retención y purga                          DONE · explícita, nunca automática
+├── Matriz de ataque                           DONE · 21 casos, todos fail-closed
+└── Escala medida                              DONE · 500 participantes, mediana 7 ms
+
+GATE-TG2 · Teacher Gate 2                     NEXT · externo
+Revisión del Depto. de Matemática             DEFERRED · a Final Delivery
+Sign-off manual de la rueda                   PENDING · humana
+Pacing empírico con jugadores                 PENDING · humana
+```
+
+**La semántica del juego no se tocó.** Motor `10.0.0`, action log `7`, snapshot
+`8`, ruleset `1.0.0-full-career`, contenido `5.5.0-grade-5`, catálogo
+`grade-5-dev-6` y FairScore `2.0.0-post-tg1-candidate` quedan idénticos: la
+partida perfecta sigue valiendo 10 000 exactos, y el servidor llega a ese número
+reproduciendo el log. El contenido sigue `draft` y la edición `official: false`:
+oficializar y congelar la configuración de competencia es FREEZE, no esta etapa.
+
+El detalle completo —arquitectura, modelo de datos, decisiones de privacidad,
+matriz de ataque, medición y riesgos— está en
+[STAGE-09 · fair mode, servidor y ranking](stage-09-fair-mode-server-ranking.md).
+
 ## STAGE-08 — Contenido incremental de 1.º a 5.º
 
-**Estado:** `DONE` — 21 de septiembre de 2026. **Etapa actual: STAGE-09.**
+**Estado:** `DONE` — 21 de septiembre de 2026.
 
 Los gates que siguen abiertos son **humanos** y están fuera del alcance de
 STAGE-08: pacing con jugadores reales, revisión del Departamento de Matemática y
@@ -49,7 +94,7 @@ STAGE-08                                      DONE
     ├── Sign-off manual de la rueda            PENDING · humana
     └── Pacing empírico con jugadores          PENDING · humana
 
-STAGE-09 · fair mode, servidor y ranking      NEXT
+STAGE-09 · fair mode, servidor y ranking      DONE
 ```
 
 Phase 1 cerró el 11 de septiembre de 2026. Las cinco Templates de 1.º
@@ -327,8 +372,18 @@ STAGE-08 Final Integration & Pacing Closure — PASSED
   ritmo medido por primera vez: mediana ≈12,4 min contra un objetivo de 8–10
   entra en banda a ~215 palabras/min: lo decide mirar jugar, no el modelo
 
+STAGE-09 · fair mode, servidor autoritativo y ranking — DONE
+  producto público unificado en `/`; `/jugar` pasó a superficie de desarrollo
+  identidad con HMAC por competencia; el documento completo no se guarda
+  emisión autoritativa con la Competition Seed compartida de la edición
+  verificación por replay componiendo `validate-run.ts`, sin reimplementarlo
+  idempotencia, un intento activo y mejor intento por restricciones de la base
+  ranking FairScore → Prestige → puesto compartido, Top 3 por puesto
+  organizador con auditoría, exportación y purga de retención
+  21 casos de ataque, todos fail-closed; 500 participantes con mediana 7 ms
+
 Next:
-STAGE-09 · fair mode, servidor autoritativo y ranking
+GATE-TG2 · Teacher Gate 2 — aceptación externa, no es ingeniería
 (y los gates humanos de STAGE-08 que siguen abiertos)
 ```
 
@@ -353,7 +408,9 @@ cambiar ninguna decisión de producto.
 
 ## Scope OUT y gates restantes
 
-No duplicar sistemas fundamentales y no implementar servidor/ranking de STAGE-09.
+No duplicar sistemas fundamentales. El servidor y el ranking de STAGE-09 ya
+están implementados; lo que sigue fuera de alcance es congelar la configuración
+de competencia (FREEZE) y el hardening y despliegue (STAGE-10).
 Las calibraciones recomendadas y Teacher Gate no se vuelven constantes inmutables
 ni configuración oficial.
 
