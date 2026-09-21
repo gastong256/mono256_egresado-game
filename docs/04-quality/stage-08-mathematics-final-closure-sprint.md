@@ -198,7 +198,7 @@ dos es directamente la peor.
 
 | | ronda 2 | cierre |
 |---|---|---|
-| multisets `(margen, minutos)` distintos | **1** | **6** |
+| multisets `(margen, minutos)` distintos | **1** | **5** [^erratum-economias] |
 | «menos minutos primero» | 100,00 · 100 % | **81,80 · 44 %** |
 | «repartir la cocina en partes iguales» | 98,00 · 92 % | **0 de 25 óptimas, por gate** |
 | planes válidos que son `optimal` | ~47 % | ≤ 20 %, por gate |
@@ -304,7 +304,7 @@ techo real y agregando el gate de selectividad (F.1, F.2).
 
 El error exacto que `y4.margin-review` repara: no restar lo que cuesta preparar.
 **Cerrado** ensanchando el rango de costos, para que el precio deje de ser un
-proxy del margen. Hoy rinde 77,60 · 48 %.
+proxy del margen. Hoy rinde 77,60 · 48 % [^erratum-senuelo].
 
 ### H.3 `y4` · empezar por la más barata — 99,00 · 96 %
 
@@ -405,7 +405,7 @@ planes del catálogo:
 
 ```text
 responder al azar sobre todo el espacio     15,52
-cualquier plan VÁLIDO                       78,63   · óptimo en 19,9 %
+cualquier plan VÁLIDO                       78,63   · óptimo en 19,9 %   [^erratum-piso]
 la política de orden fijo                   86,00   · óptima en 44,0 %
 ```
 
@@ -638,3 +638,32 @@ AI Mathematics Department Provisional Sign-Off — PENDING
 Human Mathematics Department Review            — DEFERRED
 Real-player pacing validation                  — PENDING
 ```
+
+## Erratas
+
+Verificadas de forma independiente por la
+[auditoría final de cierre](final-mathematics-closure-audit.md) (MAT-FC-004) y
+reconciliadas durante el
+[sign-off provisional](ai-mathematics-department-provisional-signoff.md). El
+texto original se conserva: lo que sigue dice qué midió este informe y qué midió
+la auditoría, y cuál es la cifra canónica.
+
+[^erratum-economias]: **Este informe dijo 6; la cifra canónica es 5.** El
+    generador declara seis economías, pero el catálogo publicado
+    `grade-4-dev-5` sólo materializa cinco multisets `(margen, minutos)`
+    distintos: la economía `[(1200, 10), (5000, 20), (6000, 40)]` no quedó
+    representada en ninguna de las 25 variantes aprobadas. `RS-CLO-002` pide
+    **≥ 5** y se cumple con margen cero, no con uno.
+
+[^erratum-senuelo]: **Este informe dijo 77,60 · 48 %.** La auditoría final midió
+    el señuelo del precio por minuto de cocina en **72,80 · 40 %**, y encontró
+    que la política que sí rinde 77,40 · 48 % es «empezar por la bandeja más
+    barata». Las dos quedan muy por debajo del techo, así que la conclusión del
+    sprint no cambia; la cifra que hay que citar es la de la auditoría.
+
+[^erratum-piso]: **Este informe dijo 78,63 · óptimo en 19,9 %.** La auditoría
+    final midió el piso sobre los **630 planes válidos** del catálogo y obtuvo
+    **80,71 · óptimo en 28,4 %**; el 19,9 % salía de dividir por 900 en vez de
+    por 630. La corrección **refuerza** la aceptación de `y1.mobile-data`: la
+    política de orden fijo queda 5,29 puntos por encima de «producir cualquier
+    plan válido», no 7,37.
