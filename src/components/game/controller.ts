@@ -142,9 +142,11 @@ export function createGameController(
   }
 
   if (resumed === undefined) {
-    const initialRejection = start(descriptor)
-    if (initialRejection !== undefined) {
-      throw new Error(`Could not create the run: ${initialRejection.kind}`)
+    // A run that cannot be created is a configuration error, not a player
+    // action, so it fails loudly at construction time.
+    const rejection = start(descriptor)
+    if (rejection !== undefined) {
+      throw new Error(`Could not create the run: ${rejection.kind}`)
     }
   } else {
     state = {
@@ -154,13 +156,6 @@ export function createGameController(
       lastEvents: [],
       lastRejection: undefined,
     }
-  }
-
-  const initialRejection = undefined as EngineRejection | undefined
-  if (initialRejection !== undefined) {
-    // A run that cannot be created is a configuration error, not a player
-    // action, so it fails loudly at construction time.
-    throw new Error(`Could not create the run: ${initialRejection.kind}`)
   }
 
   return {
