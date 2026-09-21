@@ -960,8 +960,22 @@ el techo real de la cocina— y tres atajos más cerrados dentro del sprint. Sei
 catálogos republicados; motor, action log, snapshot, rulesets y FairScore
 intactos.
 
-**Siguiente tarea:** `Final Mathematics Closure Audit`, de sólo lectura.
-El Provisional Sign-Off sigue bloqueado hasta su PASS.
+**Auditoría final de cierre.** PASSED WITH NON-BLOCKING FINDINGS. La
+[auditoría](../04-quality/final-mathematics-closure-audit.md) re-derivó toda
+métrica fuera de la instrumentación del implementador antes de leer su informe y
+confirmó que ninguna Template puntuable cae ante una política de las ocho
+familias congeladas. Cinco hallazgos `MAT-FC`, ninguno bloqueante; dos de ellos
+del **instrumento**, no del producto.
+
+**Sign-off provisional del Departamento de Matemática de IA.** PASSED. El
+[sign-off](../04-quality/ai-mathematics-department-provisional-signoff.md) cerró
+MAT-FC-001 —identidad semántica de magnitudes—, endureció MAT-FC-002
+—profundidad de cobertura declarada y políticas derivadas de atributos en los
+motores de construcción— y reconcilió MAT-FC-004 con erratas que conservan la
+procedencia. MAT-FC-003 y MAT-FC-005 quedan diferidos porque tocarlos cambiaría
+contenido. `src/` intacto.
+
+**Siguiente tarea:** el trabajo de producto continúa en `STAGE-09`.
 Siguen además los gates humanos de STAGE-08 que no se difirieron:
 sign-off manual de la rueda del Día del Estudiante y playtests de pacing con
 jugadores reales. La revisión del Departamento de Matemática humano sobre las 42

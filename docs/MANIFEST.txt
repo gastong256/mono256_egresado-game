@@ -62,6 +62,7 @@
 03-architecture/game-engine.md
 03-architecture/security-privacy.md
 03-architecture/target-engine-architecture.md
+04-quality/ai-mathematics-department-provisional-signoff.md
 04-quality/competition-fairness-audit.md
 04-quality/content-validation.md
 04-quality/final-mathematics-closure-audit.md

@@ -39,7 +39,7 @@ STAGE-08                                      IN_PROGRESS · CURRENT
     │   ├── Re-Auditoría Ronda 2                  FAILED · 5/5 contratos PASS, 3 hallazgos bloqueantes
     │   ├── Sprint de Cierre Matemático            DONE · MAT-RA2-001…005 cerrados
     │   ├── Final Mathematics Closure Audit        PASSED · con hallazgos no bloqueantes
-    │   └── Provisional Sign-Off                  NEXT · el cierre pasó
+    │   └── Provisional Sign-Off                  PASSED · MAT-FC-001/002/004 cerrados
     ├── Revisión del Depto. de Matemática      DEFERRED · a Final Delivery / Pre-Release
     ├── Sign-off manual de la rueda            PENDING · humana
     └── Pacing empírico con jugadores          PENDING · humana
@@ -303,8 +303,19 @@ Final Mathematics Closure Audit — PASSED WITH NON-BLOCKING FINDINGS
   MAT-FC-003 MEDIUM · g7.group-tasks: 1–2 permutaciones factibles de 24
   MAT-FC-004/005 LOW · cifras del informe y población desbalanceada
 
+AI Mathematics Department Provisional Sign-Off — PASSED
+  MAT-FC-001 RESUELTO · identidad semántica de magnitudes en la auditoría
+  y3.course-project-tech: el instrumento informaba 47,00 / 4 %; mide 79,40 / 40 %
+  MAT-FC-002 ENDURECIDO · profundidad declarada y políticas por atributo
+  10 EXHAUSTIVE_AND_ATTRIBUTE · 14 EXHAUSTIVE_ONLY · 14 ATTRIBUTE · 4 POSITIONAL
+  g7.group-tasks: 90,00 / 83,3 % ahora se mide, y queda aceptado con piso medido
+  MAT-FC-004 RESUELTO · tres cifras del sprint reconciliadas con errata
+  MAT-FC-003 y MAT-FC-005 DIFERIDOS · revisión humana y backlog
+  producto intacto: `git status --porcelain -- src/` vacío
+
 Next:
-AI MATHEMATICS DEPARTMENT PROVISIONAL SIGN-OFF
+STAGE-09 · fair mode, servidor autoritativo y ranking
+(y los gates humanos de STAGE-08 que siguen abiertos)
 ```
 
 La [auditoría de implementación de carrera completa](../04-quality/full-career-implementation-audit.md)
@@ -376,6 +387,34 @@ egresadas; replay y servidor fail-closed contra las versiones nuevas. Tres
 `pnpm verify` consecutivos en verde con 1898 tests y 174 E2E.
 
 ## Última reconciliación
+
+21 de septiembre de 2026: **sign-off provisional del Departamento de Matemática
+de IA**. Veredicto `PASSED`. Cerró los tres hallazgos acotados que la auditoría
+final dejó abiertos, todos de instrumento o documentación y ninguno de producto.
+**MAT-FC-001**: las magnitudes de la auditoría se identifican ahora por clave
+semántica tipada —`min de notebook` no es `min de laboratorio`— y el tope espurio
+que subestimaba `y3.course-project-tech` desapareció: el instrumento informaba
+47,00 / 4 % y mide 79,40 / 40 %, la misma cifra que la auditoría había derivado
+por su cuenta; radio de impacto, una sola Template. **MAT-FC-002**: cada política
+declara si sale de las cifras de la variante o de la forma de la pantalla, cada
+fila declara su profundidad —10 exhaustivas con atributo, 14 exhaustivas, 14 por
+atributo, 4 posicionales dichas como tales— y los tableros de asignación, las
+agendas y los planos ganaron políticas derivadas de lo que imprimen; con eso el
+instrumento ve las dos políticas de `g7.group-tasks` que la auditoría había
+medido sola, y `RS-CLO-001` dejó de pasar de forma vacua. Esa exposición quedó
+declarada con el **piso estructural que el propio instrumento vuelve a medir**
+—1 o 2 repartos factibles de 24, piso 82,00 · 70 %—, así que el contrato quedó
+con más dientes, no con menos. **MAT-FC-004**: tres cifras del informe del sprint
+reconciliadas con errata al pie, sin borrar lo que dijo. **MAT-FC-003** y
+**MAT-FC-005** diferidos: tocarlos cambiaría contenido después de la auditoría
+que lo aprobó. `src/` intacto; 97 archivos y **1914** Vitest en verde en las dos
+corridas de `pnpm verify`, con 174 E2E en la segunda y 173 / 174 en la primera
+por un flake de contraste bajo carga que quedó anotado como **MAT-SO-001** —no
+lo causó este gate y volvió a verde solo, en la suite entera y en la corrida
+completa—; auditoría 1 149,8–1 184,3 ms. Siguiente gate:
+**STAGE-09**, con la revisión humana diferida. Detalle en el
+[sign-off provisional](../04-quality/ai-mathematics-department-provisional-signoff.md).
+Sin push.
 
 20 de septiembre de 2026: **auditoría final de cierre matemático**. Veredicto
 `PASSED WITH NON-BLOCKING FINDINGS`. Toda métrica se re-derivó fuera de la

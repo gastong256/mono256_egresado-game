@@ -88,6 +88,7 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 - `adr/`: decisiones arquitectónicas formales; [ADR-025](03-architecture/adr/ADR-025-full-career-contract-evolution.md) gobierna contratos futuros de carrera completa.
 
 ### 04-quality
+- `ai-mathematics-department-provisional-signoff.md`: el gate que cierra la fase del Departamento de Matemática de IA: la cadena de evidencia completa, el endurecimiento acotado de la instrumentación —identidad semántica de magnitudes y profundidad de cobertura declarada— y las banderas que quedan para la revisión humana.
 - `content-validation.md`: pipeline de schema, matemática, generación, UI y playtest.
 - `final-mathematics-closure-audit.md`: la auditoría final de sólo lectura del cierre matemático, con la re-derivación independiente de las ocho familias congeladas, la adjudicación de la peña y de los datos móviles, y los dos defectos del instrumento que el producto sobrevive.
 - `competition-fairness-audit.md`: preguntas de equidad que un ranking con premios debe poder contestar.
