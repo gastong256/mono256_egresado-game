@@ -5,3 +5,12 @@ allowBuilds:
 overrides:
   # Remove after next-devtools-mcp adopts the patched MCP SDK and passes its runtime smoke.
   '@modelcontextprotocol/sdk': 1.26.0
+  # Advisories reachable only through devDependencies — the MCP devtool and the
+  # ESLint toolchain — so none of them ships in a production bundle. Pinned to
+  # the smallest patched release inside the same major anyway: a release
+  # candidate should not hand an operator a red `pnpm security:audit` and ask
+  # them to remember which ten findings were the harmless ones.
+  qs: 6.16.0
+  fast-uri: 3.1.6
+  js-yaml: 4.3.2
+  hono: 4.13.8

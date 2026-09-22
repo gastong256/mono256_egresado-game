@@ -29,23 +29,100 @@ test('renders the landing page without browser errors', async ({ page }) => {
   expect(response?.headers()['referrer-policy']).toBe(
     'strict-origin-when-cross-origin',
   )
-  expect(response?.headers()['permissions-policy']).toBe(
-    'camera=(), geolocation=(), microphone=()',
-  )
-  expect(response?.headers()['content-security-policy']).toBe(
-    "frame-ancestors 'none'",
-  )
+  const permissions = response?.headers()['permissions-policy'] ?? ''
+  for (const feature of ['camera', 'geolocation', 'microphone', 'payment']) {
+    expect(permissions).toContain(`${feature}=()`)
+  }
   expect(response?.headers()['x-frame-options']).toBe('DENY')
+
+  /*
+   * La política de contenido del documento, con su nonce.
+   *
+   * Se comprueba por directiva y no como cadena exacta porque el nonce cambia
+   * en cada pedido — que es precisamente lo que lo hace servir para algo. Lo
+   * que importa es que `script-src` admita por nonce y no por `unsafe-inline`:
+   * un CSP que abriera los scripts en línea estaría presente en la respuesta y
+   * no protegería de nada, y ésa es exactamente la forma en que esto se rompe
+   * sin que nadie lo note.
+   */
+  const csp = response?.headers()['content-security-policy'] ?? ''
+  expect(csp).toContain("default-src 'self'")
+  expect(csp).toMatch(/script-src [^;]*'nonce-[A-Za-z0-9]+'/u)
+  expect(csp).toContain("'strict-dynamic'")
+  expect(csp).not.toContain("script-src 'self' 'unsafe-inline'")
+  expect(csp).toContain("connect-src 'self'")
+  expect(csp).toContain("frame-ancestors 'none'")
+  expect(csp).toContain("object-src 'none'")
+
+  // Y la prueba de que la política no rompe la página: sin esto, un CSP mal
+  // escrito bloquearía la hidratación y el test anterior seguiría en verde
+  // porque el HTML servido ya trae el encabezado correcto.
   expect(browserErrors).toEqual([])
 })
 
-test('exposes a minimal health response', async ({ request }) => {
+test('stamps the content-security-policy nonce on every script it serves', async ({
+  page,
+}) => {
+  await page.goto('/')
+  const scripts = await page.locator('script').evaluateAll((nodes) =>
+    nodes.map((node) => ({
+      nonce: node.getAttribute('nonce'),
+      src: node.getAttribute('src'),
+    })),
+  )
+  expect(scripts.length).toBeGreaterThan(0)
+  // Un solo script sin nonce es una página que el navegador bloquea a medias.
+  expect(scripts.filter((script) => script.nonce === null)).toEqual([])
+})
+
+test('exposes liveness with the release identity and nothing else', async ({
+  request,
+}) => {
   const response = await request.get('/api/health')
 
   expect(response.ok()).toBe(true)
   expect(response.headers()['cache-control']).toBe('no-store')
-  await expect(response.json()).resolves.toEqual({
-    status: 'ok',
-    service: 'egresado-web',
-  })
+
+  const body = (await response.json()) as {
+    status: string
+    service: string
+    release: Record<string, string>
+    checks: { name: string }[]
+  }
+  expect(body.status).toBe('ok')
+  expect(body.service).toBe('egresado-web')
+  // La identidad del release es la respuesta a «¿qué está desplegado?», que es
+  // la primera pregunta de cualquier incidente. Tiene que contestarse con curl.
+  expect(body.release['releaseId']).toBe('egresado-fair-edition-v1')
+  expect(body.release['releaseVersion']).toMatch(/^\d+\.\d+\.\d+/u)
+  expect(body.release['releaseFingerprint']).toMatch(/^[0-9a-f]{64}$/u)
+  // La vida es barata: no toca la base.
+  expect(body.checks.map((check) => check.name)).toEqual(['release-manifest'])
+
+  const serialized = JSON.stringify(body).toLowerCase()
+  for (const secret of ['sb_secret', 'postgres://', 'scrypt:', 'password']) {
+    expect(serialized).not.toContain(secret)
+  }
+})
+
+test('readiness reports the database and the edition, and stays quiet about how', async ({
+  request,
+}) => {
+  const response = await request.get('/api/health?ready=1')
+  const body = (await response.json()) as {
+    status: string
+    checks: { name: string; state: string; detail?: string }[]
+  }
+
+  expect(body.checks.map((check) => check.name)).toEqual([
+    'release-manifest',
+    'competition-config',
+    'database',
+    'competition',
+  ])
+  // Este servidor no tiene competencia configurada, así que está listo y lo
+  // dice sin enumerar variables de entorno ni cadenas de conexión.
+  expect(response.status()).toBe(200)
+  expect(body.status).not.toBe('error')
+  expect(JSON.stringify(body)).not.toContain('SUPABASE')
 })

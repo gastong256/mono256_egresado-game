@@ -73,6 +73,12 @@ export default defineConfig({
       reuseExistingServer,
       timeout: 120_000,
       env: {
+        // Un build de producción contra `127.0.0.1` es exactamente lo que la
+        // suite quiere probar, y exactamente lo que el contrato de producción
+        // rechaza. Declararlo `local` es la forma honesta de decirlo: el
+        // contrato se ejercita en su propio test, no rompiendo el arranque de
+        // un servidor de pruebas.
+        EGRESADO_ENVIRONMENT: 'local',
         // El harness no existe en un build de producción salvo que alguien lo
         // pida; la suite lo pide explícitamente en vez de que la ruta sea
         // alcanzable por defecto.
@@ -90,6 +96,7 @@ export default defineConfig({
       reuseExistingServer,
       timeout: 120_000,
       env: {
+        EGRESADO_ENVIRONMENT: 'local',
         // Sin opt-in: éste es el despliegue de feria, y ahí `/dev` no existe.
         EGRESADO_DEV_HARNESS: 'false',
       },

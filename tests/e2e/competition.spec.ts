@@ -597,11 +597,13 @@ test.describe('la autoridad es del servidor', () => {
       expect(raw).not.toContain(forbidden)
     }
     for (const entry of body.leaderboard) {
+      // Cuatro campos y ninguno más. `prestigeScore` salió del podio público
+      // con el congelamiento de v1: el techo ofrecido es 0, así que la columna
+      // diría cero para toda la feria.
       expect([...Object.keys(entry)].sort()).toEqual([
         'fairScore',
         'isYou',
         'nickname',
-        'prestigeScore',
         'rank',
       ])
     }

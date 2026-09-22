@@ -149,7 +149,6 @@ export function toPublicLeaderboard(
       rank: entry.rank,
       nickname: entry.result.nickname,
       fairScore: entry.result.fairScore,
-      prestigeScore: entry.result.prestigeScore,
       isYou:
         options.viewerParticipantId !== undefined &&
         entry.result.participantId === options.viewerParticipantId,

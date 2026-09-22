@@ -14,10 +14,21 @@ export interface PublicLeaderboardEntry {
   /** Lo único de una persona que este producto publica. */
   readonly nickname: string
   readonly fairScore: number
-  readonly prestigeScore: number
   /** Marca la fila del jugador que está mirando. Se resuelve en el servidor. */
   readonly isYou: boolean
 }
+
+/*
+ * Por qué el podio público no lleva Prestige.
+ *
+ * El servidor lo recomputa y lo usa como **segundo criterio** del ranking, así
+ * que decide puestos; lo que no hace es publicarlo. En Fair Edition v1 el techo
+ * ofrecido es 0 —el manifiesto lo congela así (D-S08-084)—, de modo que la
+ * columna diría `0` para todas las personas de la feria: ocuparía ancho en un
+ * teléfono de 360 px y, peor, sugeriría que hay algo que conseguir. Una edición
+ * futura que autorice oportunidades la reintroduce con su versión, que es
+ * cuando el número empieza a significar algo.
+ */
 
 export type PublicCompetitionStatus =
   'not-configured' | 'upcoming' | 'open' | 'closed'

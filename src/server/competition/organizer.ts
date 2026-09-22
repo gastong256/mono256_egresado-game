@@ -19,6 +19,7 @@ import type { Clock } from './clock'
 import type { CompetitionDeploymentConfig } from './config'
 import { toPrivateParticipant, type PrivateParticipant } from './dto'
 import { competitionError, type CompetitionError } from './errors'
+import { canOpenCompetition } from './freeze'
 import {
   createOpaqueToken,
   hashToken,
@@ -246,6 +247,15 @@ export async function setCompetitionStatus(
   status: CompetitionRow['status'],
   reason: string,
 ): Promise<Outcome<CompetitionRow>> {
+  // Abrir es el único cambio de estado que se niega. Una edición que no
+  // corresponde al release congelado se puede revisar, cerrar o archivar —para
+  // eso están esos estados—; lo que no puede es empezar a recibir partidas que
+  // después nadie va a poder verificar contra las reglas publicadas.
+  if (status === 'OPEN') {
+    const binding = canOpenCompetition(competition)
+    if (binding !== undefined) return { ok: false, error: binding }
+  }
+
   const updated = await dependencies.store.updateCompetition(competition.id, {
     status,
   })

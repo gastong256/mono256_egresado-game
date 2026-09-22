@@ -48,6 +48,11 @@ jobs:
       - name: Scan repository secret patterns
         run: pnpm secrets:check
 
+      - name: Verify release dependency floor and frozen manifest
+        run: |
+          pnpm release:check
+          pnpm release:verify
+
       - name: Audit all executable dependencies
         run: pnpm security:audit
 
@@ -137,6 +142,7 @@ jobs:
         run: >-
           docker run --detach
           --name egresado-container-smoke
+          --env EGRESADO_ENVIRONMENT=local
           --publish 127.0.0.1:3000:3000
           egresado:ci
 

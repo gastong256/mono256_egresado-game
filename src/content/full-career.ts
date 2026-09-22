@@ -8,17 +8,23 @@
  * pacing, razonamiento, cluster y arco— que hasta ahora sólo se habían probado
  * contra catálogos sintéticos.
  *
- * `official` sigue en false. Lo que define una run oficial —intentos, seed
- * emitida por servidor, ranking— es de STAGE-09; lo que esta pieza cierra es
- * que la carrera de nueve beats se puede componer con el contenido real.
+ * La política **competitiva** de esta edición sí es oficial desde el FREEZE de
+ * producción: `fair-score-v1`, con los mismos números que la candidata que la
+ * precedió. La ruleset, en cambio, sigue declarando `official: false`, y eso no
+ * es una contradicción: son dos banderas de capas distintas. La de la ruleset
+ * dice que composición, recuperación, rareza y costo siguen siendo políticas de
+ * desarrollo —subirlas exigiría versionarlas todas y mover la huella del plan,
+ * que es exactamente el riesgo de replay que un congelamiento existe para no
+ * correr—; la del score dice con qué calibración se rankea, que es la que un
+ * resultado publicado tiene que poder nombrar.
  */
 import {
   ENGINE_VERSION,
   EngineInvariantError,
   candidateDifficultyCostPolicy,
   buildEpilogue,
-  candidateFairScorePolicy,
   candidatePrestigePolicy,
+  officialFairScorePolicy,
   candidateRarePolicy,
   earnedMilestones,
   scorePrestige,
@@ -32,6 +38,7 @@ import {
   toRunId,
   toRunSeed,
   type CareerEpilogue,
+  type CompetitiveScorePolicy,
   type CompositionFailure,
   type CompositionPolicy,
   type EngineDependencies,
@@ -120,7 +127,25 @@ export const fullCareerCompositionPolicy: CompositionPolicy = {
   career: fullCareerV1Constraints,
 }
 
-export function createFullCareerDependencies(): EngineDependencies {
+/**
+ * Cómo se parametriza una edición de carrera completa.
+ *
+ * Una sola cosa: qué calibración competitiva rankea. El FREEZE de producción
+ * publicó `fair-score-v1` con los mismos números que `fair-score-dev-2`, y las
+ * partidas emitidas bajo la candidata tienen que poder seguir verificándose
+ * —el servidor vuelve a jugar el log contra las versiones que el intento fijó,
+ * y una calibración que ya no se puede resolver convierte evidencia guardada en
+ * un intento invalidable—. Por eso la política entra como parámetro en vez de
+ * estar cableada: no para poder elegirla en runtime, sino para que el registro
+ * de ediciones pueda declarar las dos que existen.
+ */
+export interface FullCareerEditionOptions {
+  readonly competitiveScore?: CompetitiveScorePolicy
+}
+
+export function createFullCareerDependencies(
+  options: FullCareerEditionOptions = {},
+): EngineDependencies {
   const base = createGrade5Dependencies()
   const created = createRuleset({
     ...base.ruleset,
@@ -140,6 +165,7 @@ export function createFullCareerDependencies(): EngineDependencies {
     ...base,
     ruleset: created.value,
     composition: fullCareerCompositionPolicy,
+    competitiveScore: options.competitiveScore ?? officialFairScorePolicy,
     rareEvents: careerRareEvents,
     prestige: {
       policy: candidatePrestigePolicy,
@@ -158,7 +184,7 @@ export function createFullCareerDependencies(): EngineDependencies {
  * personal. Todo lo demás —plan, variantes, dificultad, oportunidades— sale de
  * la seed y de las mismas políticas, que es exactamente el punto.
  */
-export interface FullCareerRunOptions {
+export interface FullCareerRunOptions extends FullCareerEditionOptions {
   readonly runId?: string
   readonly mode?: RunDescriptor['mode']
 }
@@ -167,7 +193,8 @@ export function createFullCareerRunDescriptor(
   seed: string,
   options: FullCareerRunOptions = {},
 ): Result<RunDescriptor, CompositionFailure> {
-  const dependencies = createFullCareerDependencies()
+  const competitiveScore = options.competitiveScore ?? officialFairScorePolicy
+  const dependencies = createFullCareerDependencies({ competitiveScore })
   const base: RunDescriptor = {
     runId: toRunId(options.runId ?? `career-${seed}`),
     seed: toRunSeed(seed),
@@ -177,7 +204,7 @@ export function createFullCareerRunDescriptor(
     rulesetVersion: FULL_CAREER_RULESET_VERSION,
     contentVersion: GRADE_5_CONTENT_VERSION,
     variantCatalogVersion: GRADE_5_VARIANT_CATALOG_VERSION,
-    scoreVersion: candidateFairScorePolicy.version,
+    scoreVersion: competitiveScore.version,
   }
   const composed = composeRun({
     seed: base.seed,

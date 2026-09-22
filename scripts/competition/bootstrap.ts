@@ -31,7 +31,9 @@ import { randomBytes } from 'node:crypto'
 import { loadCompetitionEnvironment } from './environment'
 import { requireCompetitionConfiguration } from '@/server/competition/config'
 import { FULL_CAREER_EDITION } from '@/server/competition/editions'
+import { releaseBindingIssues } from '@/server/competition/freeze'
 import { createCompetitionStore } from '@/server/competition/runtime'
+import { currentRelease, releaseFingerprint } from '@/release'
 
 /** El alfabeto de la seed: coincide con el charset que el motor acepta. */
 const SEED_ALPHABET = 'abcdefghijkmnpqrstuvwxyz23456789'
@@ -104,6 +106,8 @@ if (seed === undefined || fingerprint === undefined) {
   process.exit(1)
 }
 
+const release = currentRelease()
+
 const competition = await store.insertCompetition({
   slug: config.slug,
   name: argument('name') ?? `Egresado · ${config.slug}`,
@@ -118,9 +122,38 @@ const competition = await store.insertCompetition({
   ...FULL_CAREER_EDITION.versions,
 })
 
+/*
+ * La edición recién creada tiene que corresponder al release que este código
+ * implementa.
+ *
+ * La tupla sale del registro de ediciones, así que en condiciones normales
+ * coincide por construcción. La comprobación existe para la condición anormal:
+ * un `git checkout` a mitad de la tarde, un manifiesto editado sin regenerar el
+ * candado, una rama con una versión de contenido distinta. Cualquiera de las
+ * tres produce una competencia que después no se puede abrir, y es mucho mejor
+ * saberlo ahora —cuando la edición está vacía— que cuando ya haya cincuenta
+ * chicos anotados.
+ */
+const binding = releaseBindingIssues(competition, release)
+if (binding.length > 0) {
+  process.stderr.write(
+    [
+      `La edición creada no corresponde a ${release.releaseId} ${release.releaseVersion}:`,
+      ...binding.map(
+        (issue) =>
+          `  ${issue.field}: el release espera ${issue.expected} y la edición tiene ${issue.found}`,
+      ),
+      'No se va a poder abrir. Corregí el desvío y volvé a crearla.',
+      '',
+    ].join('\n'),
+  )
+  process.exit(1)
+}
+
 process.stdout.write(
   [
     `Edición creada: ${competition.slug} (${competition.status})`,
+    `  release: ${release.releaseId} ${release.releaseVersion} · huella ${releaseFingerprint(release)}`,
     `  edición de juego: ${FULL_CAREER_EDITION.label}`,
     `  motor ${competition.engineVersion} · ruleset ${competition.rulesetVersion}`,
     `  contenido ${competition.contentVersion} · catálogo ${competition.variantCatalogVersion}`,

@@ -154,7 +154,9 @@ describe('configuración de competencia', () => {
 
 describe('registro de ediciones', () => {
   it('resuelve por identidad exacta de la tupla', () => {
-    expect(resolveEdition(FULL_CAREER_EDITION.versions)?.id).toBe('full-career')
+    expect(resolveEdition(FULL_CAREER_EDITION.versions)?.id).toBe(
+      'full-career-v1',
+    )
   })
 
   it('no resuelve «la más parecida» cuando una versión cambió', () => {

@@ -88,21 +88,18 @@ describe('ranking', () => {
             rank: 1,
             nickname: 'Ana',
             fairScore: 9000,
-            prestigeScore: 0,
             isYou: false,
           },
           {
             rank: 1,
             nickname: 'Beto',
             fairScore: 9000,
-            prestigeScore: 0,
             isYou: false,
           },
           {
             rank: 3,
             nickname: 'Caro',
             fairScore: 8000,
-            prestigeScore: 0,
             isYou: false,
           },
         ]}
@@ -128,7 +125,6 @@ describe('ranking', () => {
             rank: 1,
             nickname: 'Ana',
             fairScore: 9000,
-            prestigeScore: 0,
             isYou: false,
           },
         ]}
@@ -154,7 +150,6 @@ describe('ranking', () => {
             rank: 1,
             nickname: 'Zoe',
             fairScore: 9000,
-            prestigeScore: 0,
             isYou: true,
           },
         ]}
@@ -507,7 +502,6 @@ describe('portada de la competencia', () => {
               rank: 1,
               nickname: 'Ana',
               fairScore: 9000,
-              prestigeScore: 0,
               isYou: false,
             },
           ],

@@ -39,6 +39,13 @@ run('Master specification sync', process.execPath, [
   '--check',
 ])
 run('Secret patterns', process.execPath, ['scripts/check-secrets.mjs'])
+// La compuerta de dependencias de despliegue público. Es barata, no toca la red
+// y gobierna un release, así que corre temprano: descubrir en el último paso
+// que la versión de Next está por debajo del parche anunciado desperdicia la
+// hora anterior.
+run('Release dependency gate', process.execPath, [
+  'scripts/check-release-readiness.mjs',
+])
 runPnpm('Formatting', ['format:check'])
 runPnpm('Lint and architecture boundaries', ['lint'])
 runPnpm('TypeScript', ['typecheck'])
@@ -137,5 +144,10 @@ runPnpm('Deterministic run simulation', [
   '--runs=200',
   '--verify=10',
 ])
+// El manifiesto del release se verifica después de los gates de contenido y
+// antes del build: recomputa las huellas de los catálogos y de las migraciones
+// desde la fuente, así que tiene sentido correrlo cuando el contenido ya se
+// validó y antes de empaquetar algo que declararía una identidad equivocada.
+runPnpm('Release manifest and freeze', ['release:verify'])
 runPnpm('Production build', ['build'])
 runPnpm('Browser smoke tests', ['test:e2e:only'])

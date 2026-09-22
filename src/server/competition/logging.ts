@@ -1,5 +1,7 @@
 import 'server-only'
 
+import { currentRelease, releaseFingerprint } from '@/release'
+
 /**
  * Registro operativo de la competencia.
  *
@@ -48,10 +50,50 @@ export const FORBIDDEN_LOG_FIELDS = [
   'ip',
 ] as const
 
+/**
+ * La identidad del release, resuelta una vez por proceso.
+ *
+ * Va en cada línea porque es lo que convierte un log en evidencia: durante un
+ * incidente, «esto pasó» sólo sirve junto con «bajo qué versión», y reconstruir
+ * la segunda mitad correlacionando con un panel de deploy es exactamente el
+ * trabajo que nadie quiere hacer a las once de la mañana de una feria.
+ *
+ * Se resuelve perezosamente y se cachea: el manifiesto es constante y volver a
+ * hashearlo en cada línea sería pagar un SHA-256 por evento.
+ */
+let releaseTag:
+  | { readonly releaseId: string; readonly releaseFingerprint: string }
+  | undefined
+
+function release(): {
+  readonly releaseId: string
+  readonly releaseFingerprint: string
+} {
+  if (releaseTag === undefined) {
+    const manifest = currentRelease()
+    releaseTag = {
+      releaseId: `${manifest.releaseId}@${manifest.releaseVersion}`,
+      releaseFingerprint: releaseFingerprint(manifest).slice(0, 12),
+    }
+  }
+  return releaseTag
+}
+
 export function competitionLog(fields: CompetitionLogFields): void {
   const line = {
     scope: 'competition',
-    ...fields,
+    ...release(),
+    // Pick fields explicitly: TypeScript cannot strip extra properties from
+    // an object received at runtime, including an accidentally spread DTO.
+    event: fields.event,
+    outcome: fields.outcome,
+    code: fields.code,
+    competitionId: fields.competitionId,
+    participantId: fields.participantId,
+    attemptId: fields.attemptId,
+    requestId: fields.requestId,
+    durationMs: fields.durationMs,
+    detail: fields.detail,
   }
   // Una línea JSON por evento: es lo que cualquier recolector entiende sin
   // configuración, y lo que permite `grep` en una feria sin infraestructura.

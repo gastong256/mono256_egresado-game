@@ -61,6 +61,26 @@ export default defineConfig({
       'tests/property/**/*.{test,spec}.{ts,tsx}',
     ],
     setupFiles: ['./tests/setup.ts'],
+    /*
+     * Treinta segundos, medidos y no elegidos por costumbre.
+     *
+     * El default de Vitest son cinco segundos, y es el correcto para una suite
+     * de unidades. Ésta no lo es: sus tests de integración **juegan carreras
+     * enteras** contra el motor —nueve beats, seis años, replay y snapshot— y
+     * los más pesados cuestan entre uno y veintiséis segundos de CPU medidos en
+     * aislamiento. Con dieciséis workers en paralelo, un test de un segundo y
+     * pico compite por núcleo y supera los cinco con facilidad.
+     *
+     * El efecto de dejarlo en cinco no era que la suite fallara: era que fallaba
+     * **a veces**, según qué más estuviera corriendo, que es la peor propiedad
+     * que puede tener un gate. Treinta segundos deja margen para la contención
+     * sin esconder un test colgado, que se nota igual porque la suite entera
+     * tarda cuatro minutos.
+     *
+     * Los tests que de verdad duran más —el ensayo de feria, la escala de 1500
+     * intentos— declaran el suyo, más largo, en su propia llamada.
+     */
+    testTimeout: 30_000,
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json-summary', 'html'],
@@ -68,7 +88,10 @@ export default defineConfig({
         'src/app/api/health/route.ts',
         'src/components/**/*.tsx',
         'src/config/env-schema.ts',
+        'src/config/production.ts',
         'src/game/**/*.{ts,tsx,mts}',
+        'src/lib/ui/security-headers.ts',
+        'src/release/**/*.ts',
       ],
       thresholds: {
         branches: 75,

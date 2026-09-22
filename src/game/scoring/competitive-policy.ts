@@ -6,13 +6,17 @@
  * `competitive-scoring-and-ranking.md` describes and the engine did not have:
  * what a whole run is worth when two people's runs are compared.
  *
- * ## Versioned, teacher-informed candidates
+ * ## Versioned calibrations, and one official one
  *
  * Teacher Gate 1 accepted 85/10/5, the four quality steps, opportunity
- * normalisation, and the principle of a small difficulty reward. The exact
- * reward factors and competition freeze remain candidates. Every calibration
- * therefore lives in its own object with `official: false`: recalibrating is a
- * versioned data change, never an in-place rewrite of historical results.
+ * normalisation, and the principle of a small difficulty reward. Every
+ * calibration lives in its own object: recalibrating is a versioned data
+ * change, never an in-place rewrite of historical results.
+ *
+ * Two of them are development candidates and carry `official: false`. The
+ * third, `fairScoreV1Policy`, is the Fair Edition v1 freeze — the same numbers
+ * as the second candidate under a stable identity that says so. Promotion
+ * copies; it never edits, and never touches a published version.
  *
  * ## Why the weights cannot be free
  *
@@ -121,16 +125,112 @@ export const fairScoreDev2Policy: CompetitiveScorePolicy = {
   componentCaps: { math: 10_000, team: 10_000, aura: 10_000 },
 }
 
+export const FAIR_SCORE_V1_VERSION = '1.0.0-fair-edition-v1'
+
+/**
+ * The official calibration of Egresado Fair Edition v1.
+ *
+ * Every number below is copied from `fairScoreDev2Policy`, and that is the
+ * whole point: officialisation is an act of **identity**, not of calibration.
+ * The weights Teacher Gate 1 accepted, the four quality steps, the difficulty
+ * reward and the component caps are the ones a year of audits converged on, and
+ * a release that changed any of them while promoting the policy would be
+ * publishing a different competition under the name of the reviewed one.
+ *
+ * `scorePolicyDifferences` below proves the copy is exact field by field, and
+ * `tests/unit/fair-score-officialisation.test.ts` re-derives a deterministic
+ * corpus of scored runs under both identities, so the equivalence is checked by
+ * arithmetic and not only by comparing configuration.
+ *
+ * `official: true` is what separates it from the two candidates. It is the flag
+ * a run's score claim carries, so a ranked result can be read back years later
+ * and say, by itself, whether it was produced under a competition-final
+ * calibration or under a development one.
+ *
+ * The two candidates stay in the registry, unedited. A historical replay of an
+ * attempt issued under `fair-score-dev-2` has to resolve `fair-score-dev-2`, and
+ * deleting it to tidy the registry would turn stored evidence into garbage.
+ */
+export const fairScoreV1Policy: CompetitiveScorePolicy = {
+  id: 'fair-score-v1',
+  version: FAIR_SCORE_V1_VERSION,
+  official: true,
+  weights: { math: 8_500, team: 1_000, aura: 500 },
+  discreteQuality: {
+    optimal: 10_000,
+    efficient: 7_500,
+    functional: 4_000,
+    invalid: 1_000,
+  },
+  difficultyReward: { core: 10_000, standard: 10_800, stretch: 11_500 },
+  componentCaps: { math: 10_000, team: 10_000, aura: 10_000 },
+}
+
 /** Version written by new competitive run descriptors. */
-export const SCORE_POLICY_VERSION = FAIR_SCORE_DEV_2_VERSION
+export const SCORE_POLICY_VERSION = FAIR_SCORE_V1_VERSION
 
 /** Backwards-compatible name for the current development candidate. */
 export const candidateFairScorePolicy = fairScoreDev2Policy
 
+/** The calibration a Fair Edition v1 competition ranks with. */
+export const officialFairScorePolicy = fairScoreV1Policy
+
 export const competitiveScorePolicies: readonly CompetitiveScorePolicy[] = [
   fairScoreDev1Policy,
   fairScoreDev2Policy,
+  fairScoreV1Policy,
 ]
+
+/**
+ * Everything that decides a score, flattened.
+ *
+ * Identity is excluded on purpose: two policies are *behaviourally* the same
+ * when every number they apply is the same, and that is the claim promotion has
+ * to support. Comparing the objects whole would only ever prove that two names
+ * differ.
+ */
+export function scoringShapeOf(
+  policy: CompetitiveScorePolicy,
+): Readonly<Record<string, number>> {
+  const shape: Record<string, number> = {}
+  for (const component of SCORE_COMPONENTS) {
+    shape[`weight.${component}`] = policy.weights[component]
+    shape[`cap.${component}`] = policy.componentCaps[component]
+  }
+  for (const quality of SOLUTION_QUALITIES) {
+    shape[`quality.${quality}`] = policy.discreteQuality[quality]
+  }
+  for (const band of DIFFICULTY_BANDS) {
+    shape[`difficulty.${band}`] = policy.difficultyReward[band]
+  }
+  return shape
+}
+
+/**
+ * Which numbers differ between two calibrations, if any.
+ *
+ * Used by the release verification and by the equivalence test. An empty list
+ * is the proof that promoting `fair-score-dev-2` to `fair-score-v1` moved no
+ * mathematics — which is the one thing a freeze is not allowed to do quietly.
+ */
+export function scorePolicyDifferences(
+  left: CompetitiveScorePolicy,
+  right: CompetitiveScorePolicy,
+): readonly string[] {
+  const leftShape = scoringShapeOf(left)
+  const rightShape = scoringShapeOf(right)
+  const keys = [
+    ...new Set([...Object.keys(leftShape), ...Object.keys(rightShape)]),
+  ].sort()
+  return keys.flatMap((key) => {
+    const a = leftShape[key]
+    const b = rightShape[key]
+    return a === b ? [] : [`${key}: ${String(a ?? '-')} vs ${String(b ?? '-')}`]
+  })
+}
+
+/** The promotion this release performs: candidate identity → official identity. */
+export const FAIR_SCORE_V1_PROMOTED_FROM = fairScoreDev2Policy
 
 export interface ScorePolicyResolutionFailure {
   readonly code: 'unknown-score-policy'

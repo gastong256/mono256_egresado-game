@@ -1,10 +1,13 @@
 import 'server-only'
 
-import { parseServerEnvironment } from './env-schema'
+import { parseServerEnvironment, type ServerEnvironment } from './env-schema'
 
-export function getServerEnvironment() {
+export type { ServerEnvironment }
+
+export function getServerEnvironment(): ServerEnvironment {
   return parseServerEnvironment({
     NODE_ENV: process.env['NODE_ENV'],
+    EGRESADO_ENVIRONMENT: process.env['EGRESADO_ENVIRONMENT'],
     NEXT_PUBLIC_APP_URL: process.env['NEXT_PUBLIC_APP_URL'],
     NEXT_PUBLIC_SUPABASE_URL: process.env['NEXT_PUBLIC_SUPABASE_URL'],
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:

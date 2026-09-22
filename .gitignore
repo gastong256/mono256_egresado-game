@@ -40,3 +40,6 @@ next-env.d.ts
 # supabase local state
 /supabase/.branches/
 /supabase/.temp/
+
+# Operational exports may contain private participant data.
+/backups/

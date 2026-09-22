@@ -411,7 +411,10 @@ export type Database = {
       }
     }
     Functions: {
-      [_ in never]: never
+      competition_bump_rate_limit: {
+        Args: { p_bucket: string; p_window_start: string }
+        Returns: number
+      }
     }
     Enums: {
       [_ in never]: never

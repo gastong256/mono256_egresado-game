@@ -5,12 +5,14 @@
 .next
 .vscode
 coverage
+backups
 docs
 node_modules
 playwright-report
 supabase
 test-results
-tests
+# Release scripts import typed test helpers during Next's build typecheck.
+# Tests enter the builder only; the runner copies the standalone output.
 
 .env*
 !.env.example

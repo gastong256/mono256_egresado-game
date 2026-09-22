@@ -75,6 +75,25 @@ export const serverEnvironmentSchema = z
     NODE_ENV: z
       .enum(['development', 'test', 'production'])
       .default('development'),
+    /**
+     * Para qué sirve este despliegue, declarado y no inferido.
+     *
+     * `NODE_ENV=production` sólo dice que el build está optimizado: es lo que
+     * `next start` pone en la máquina de quien desarrolla y en la suite de
+     * navegador, que corren un build de producción contra `localhost` a
+     * propósito. Lo que decide si hay que exigir un dominio real, una base real
+     * y una institución real es **esto**.
+     *
+     * Ausente con `NODE_ENV=production` significa `production`, que es el
+     * default seguro: un despliegue de verdad que se olvide de declararlo queda
+     * con las comprobaciones estrictas puestas, y el error se lee en el log del
+     * deploy. El único que tiene que decir algo es el caso local, que es el
+     * único que puede.
+     */
+    EGRESADO_ENVIRONMENT: z.preprocess(
+      emptyStringToUndefined,
+      z.enum(['local', 'staging', 'production']).optional(),
+    ),
     SUPABASE_INTERNAL_URL: optionalUrl,
     SUPABASE_SECRET_KEY: optionalSecretKey,
     /**

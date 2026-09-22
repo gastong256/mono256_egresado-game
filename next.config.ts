@@ -1,8 +1,10 @@
 import type { NextConfig } from 'next'
 import { parseServerEnvironment } from './src/config/env-schema'
+import { staticSecurityHeaders } from './src/lib/ui/security-headers'
 
 parseServerEnvironment({
   NODE_ENV: process.env['NODE_ENV'],
+  EGRESADO_ENVIRONMENT: process.env['EGRESADO_ENVIRONMENT'],
   NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
   NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:
@@ -47,24 +49,25 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   typedRoutes: true,
   async headers() {
+    // Los encabezados de base van a **todas** las rutas. La política de
+    // contenido completa, con su nonce por pedido, la pone `src/proxy.ts` sobre
+    // los documentos; lo que queda acá para el resto —respuestas de API,
+    // archivos estáticos, el manifiesto— es el piso que no depende del pedido.
+    //
+    // `frame-ancestors` está en los dos lados a propósito: un `.json` de la API
+    // no lo necesita, pero tampoco cuesta nada, y dejar una sola ruta sin la
+    // defensa de clickjacking por un matcher mal escrito es el tipo de error
+    // que nadie encuentra hasta que alguien lo usa.
+    const production = process.env['NODE_ENV'] === 'production'
     return [
       {
         source: '/:path*',
         headers: [
-          { key: 'X-Content-Type-Options', value: 'nosniff' },
-          {
-            key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin',
-          },
-          {
-            key: 'Permissions-Policy',
-            value: 'camera=(), geolocation=(), microphone=()',
-          },
+          ...staticSecurityHeaders({ production }),
           {
             key: 'Content-Security-Policy',
-            value: "frame-ancestors 'none'",
+            value: "frame-ancestors 'none'; base-uri 'self'; object-src 'none'",
           },
-          { key: 'X-Frame-Options', value: 'DENY' },
         ],
       },
     ]

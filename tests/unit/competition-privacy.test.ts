@@ -112,7 +112,6 @@ describe('respuesta pública del ranking', () => {
       'fairScore',
       'isYou',
       'nickname',
-      'prestigeScore',
       'rank',
     ])
   })

@@ -24,7 +24,10 @@ import {
   type RunState,
   type SolutionQuality,
 } from '@/game'
-import { FULL_CAREER_EDITION } from '@/server/competition/editions'
+import {
+  FULL_CAREER_EDITION,
+  listEditions,
+} from '@/server/competition/editions'
 import { fixedClock, type Clock } from '@/server/competition/clock'
 import { InMemoryCompetitionStore } from '@/server/persistence/competition/memory-store'
 import type {
@@ -156,7 +159,15 @@ export function playCareer(
   descriptor: RunDescriptor,
   quality: (templateId: string) => SolutionQuality = () => 'optimal',
 ): PlayedCareer {
-  const dependencies = FULL_CAREER_EDITION.createDependencies()
+  // Las dependencias salen de la edición que el descriptor declara, no de la
+  // vigente. Una partida emitida antes del congelamiento lleva la calibración
+  // candidata, y jugarla con la oficial la rechazaría por versión — que es
+  // exactamente lo que el servidor haría, y no lo que el test quiere probar.
+  const edition =
+    listEditions().find(
+      (entry) => entry.versions.scoreVersion === descriptor.scoreVersion,
+    ) ?? FULL_CAREER_EDITION
+  const dependencies = edition.createDependencies()
   const created = createRun(descriptor, dependencies)
   if (!created.ok) {
     throw new Error(`no se pudo crear la run: ${created.error.kind}`)

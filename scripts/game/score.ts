@@ -7,13 +7,19 @@
  * plan without collaboration or public-performance content costs a player
  * anything, and how far the secondary components can move a result.
  *
- *     pnpm game:score                      audit the candidate policy
+ *     pnpm game:score                      audit the official v1 policy
  *     pnpm game:score -- --runs=20000
- *     pnpm game:score -- --compare         candidate weights against alternatives
+ *     pnpm game:score -- --compare         official weights against alternatives
+ *
+ * Since the production freeze the audited policy is `fair-score-v1`, which is
+ * what a competition actually ranks with. Auditing the development candidate
+ * instead would report on a calibration nobody plays under — and the two produce
+ * identical numbers anyway, which `tests/unit/fair-score-officialisation.test.ts`
+ * proves over a deterministic corpus.
  *
  * The comparison preserves Teacher Gate 1 traceability: the same authoritative
- * evidence under historical dev-1 and post-Gate dev-2, plus useful controls. It
- * is not a ranking and it does not pick a winner.
+ * evidence under historical dev-1 and the frozen calibration, plus useful
+ * controls. It is not a ranking and it does not pick a winner.
  */
 
 import {
@@ -25,6 +31,7 @@ import {
   toRunSeed,
   candidateFairScorePolicy,
   fairScoreDev1Policy,
+  officialFairScorePolicy,
   AUDIT_PROFILES,
   SCORE_COMPONENTS,
   type AuditedPlan,
@@ -150,14 +157,18 @@ collect(
  */
 const ALTERNATIVES: readonly CompetitiveScorePolicy[] = [
   fairScoreDev1Policy,
+  // La candidata post-TG1 sigue en la comparación aunque sus números sean los
+  // de la oficial: verlos empatar fila a fila es la lectura visual de que la
+  // promoción no recalibró nada.
+  candidateFairScorePolicy,
   {
-    ...candidateFairScorePolicy,
+    ...officialFairScorePolicy,
     id: 'fair-score-alt-math-90',
     version: '1.0.0-comparison',
     weights: { math: 9_000, team: 1_000, aura: 0 },
   },
   {
-    ...candidateFairScorePolicy,
+    ...officialFairScorePolicy,
     id: 'fair-score-alt-no-reward',
     version: '1.0.0-comparison',
     difficultyReward: { core: 10_000, standard: 10_000, stretch: 10_000 },
@@ -205,7 +216,7 @@ function comparisonLines(): string[] {
     '  case                           policy             score   math   team   aura',
   ]
   for (const entry of COMPARISON_EVIDENCE) {
-    for (const policy of [fairScoreDev1Policy, candidateFairScorePolicy]) {
+    for (const policy of [fairScoreDev1Policy, officialFairScorePolicy]) {
       const result = aggregate([comparisonEvidence(entry)], policy)
       if (!isOk(result)) {
         lines.push(`  ${entry.label} ${policy.id} ERROR ${result.error.code}`)
@@ -289,7 +300,7 @@ function report(audit: ScoreAuditReport): string[] {
 const audits: ScoreAuditReport[] = [
   auditScorePolicy({
     plans,
-    policy: candidateFairScorePolicy,
+    policy: officialFairScorePolicy,
     profiles: AUDIT_PROFILES,
   }),
 ]

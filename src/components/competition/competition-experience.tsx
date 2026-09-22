@@ -1,5 +1,6 @@
 'use client'
 
+import dynamic from 'next/dynamic'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import type { RunDescriptor } from '@/game'
@@ -11,9 +12,51 @@ import type {
   SubmissionResponse,
 } from '@/lib/competition'
 import { Button, Callout, Eyebrow, Wordmark } from '@/components/ui'
-import { AttemptRun } from './attempt-run'
 import { IdentityForm } from './identity-form'
 import { Leaderboard } from './leaderboard'
+
+/**
+ * La partida se carga aparte de la portada.
+ *
+ * `AttemptRun` arrastra el motor y **el contenido de los seis años**: las
+ * veintiocho Templates, sus generadores de variantes y el catálogo aprobado de
+ * 1031 entradas. Todo eso tiene que llegar al navegador —el juego es
+ * local-first por ADR-006, y una carrera no puede pedirle un beat al servidor
+ * por decisión—, pero no tiene que llegar **antes de la portada**.
+ *
+ * La diferencia importa donde el producto se juega. Quien abre el enlace en un
+ * Android modesto sobre el Wi-Fi de una escuela llena quiere ver el ranking y
+ * el formulario; el contenido de 5.º año no le sirve hasta que toque «Jugar».
+ * Medido sobre el build de producción, separarlo saca ~1,3 MiB sin comprimir
+ * (~340 KiB con gzip) de la primera pantalla.
+ *
+ * Y para que esa separación no se pague como una espera al apretar el botón,
+ * el `prefetch` de abajo empieza a bajarlo en cuanto el estudiante entra a
+ * identificarse: mientras completa cuatro campos y el servidor emite el
+ * intento, el chunk ya está. La carga sólo se ve si alguien pasa de la portada
+ * a jugar más rápido que su propia conexión, y en ese caso ver «Preparando la
+ * partida…» es mejor que haber hecho esperar a todos los demás.
+ */
+const AttemptRun = dynamic(
+  async () => (await import('./attempt-run')).AttemptRun,
+  {
+    ssr: false,
+    loading: () => (
+      <main className="px-gutter pb-safe flex min-h-dvh w-full justify-center py-6">
+        <div className="max-w-viewport flex w-full flex-col gap-3">
+          <p className="text-body-lg text-ink-secondary" role="status">
+            Preparando la partida…
+          </p>
+        </div>
+      </main>
+    ),
+  },
+)
+
+/** Empieza a bajar la partida antes de que alguien la pida. */
+function prefetchAttemptRun(): void {
+  void import('./attempt-run').catch(() => undefined)
+}
 
 /**
  * El producto público, entero.
@@ -90,6 +133,10 @@ export function CompetitionExperience({
   const startAttempt = useCallback(async () => {
     setPending(true)
     setError(undefined)
+    // Quien ya tiene sesión entra a jugar desde la portada sin pasar por el
+    // formulario, así que acá es donde empieza su descarga. La emisión del
+    // intento tarda lo suyo y las dos cosas corren en paralelo.
+    prefetchAttemptRun()
     try {
       const response = await fetch('/api/competition/attempts', {
         method: 'POST',
@@ -268,6 +315,10 @@ export function CompetitionExperience({
                 <Button
                   onClick={() => {
                     setError(undefined)
+                    // La partida empieza a bajarse acá, mientras el estudiante
+                    // completa el formulario: cuatro campos y la emisión del
+                    // servidor alcanzan para que el chunk llegue antes que él.
+                    prefetchAttemptRun()
                     setScreen({ kind: 'identify' })
                   }}
                   data-testid="play"

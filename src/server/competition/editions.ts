@@ -6,6 +6,8 @@ import {
   SNAPSHOT_SCHEMA_VERSION,
   candidateFairScorePolicy,
   isOk,
+  officialFairScorePolicy,
+  type CompetitiveScorePolicy,
   type EngineDependencies,
   type RunDescriptor,
 } from '@/game'
@@ -30,10 +32,20 @@ import type { PinnedVersions } from '@/server/persistence/competition/rows'
  * versión cambió, el servidor **no adivina** — rechaza el envío con un código
  * tipado, que es la respuesta honesta.
  *
- * Hoy hay una sola edición: la carrera completa de nueve beats que STAGE-08
- * cerró. El registro existe igual porque la forma de la garantía no depende de
- * cuántas entradas tenga, y porque una segunda edición no debería poder
- * agregarse sin declarar su tupla.
+ * Hay dos entradas y difieren en un solo campo. `full-career-v1` es la edición
+ * de **Egresado Fair Edition v1**: la carrera completa de nueve beats bajo la
+ * política de score oficial `fair-score-v1`, y es la única que
+ * `pnpm competition:bootstrap` crea. `full-career-tg1-candidate` es la edición
+ * de STAGE-09, bajo la candidata `fair-score-dev-2`; se conserva **sólo para
+ * verificar lo ya emitido**. Sin ella, una competencia creada antes del FREEZE
+ * dejaría de resolver y todos sus intentos en curso se volverían inenviables —
+ * borrar la entrada no arreglaría nada, sólo perdería la evidencia.
+ *
+ * Las dos calibraciones producen números idénticos: la promoción copió y no
+ * recalibró, y `pnpm release:verify` lo comprueba campo por campo. La razón de
+ * que sean dos identidades y no una es que un resultado publicado tiene que
+ * decir, por sí solo, si se produjo bajo una calibración de competencia o bajo
+ * una de desarrollo.
  */
 
 export interface CompetitionEdition {
@@ -54,26 +66,61 @@ export interface CompetitionEdition {
   ) => RunDescriptor | undefined
 }
 
-export const FULL_CAREER_EDITION: CompetitionEdition = {
-  id: 'full-career',
-  label: 'Carrera completa 7.º → 5.º',
-  versions: {
-    engineVersion: ENGINE_VERSION,
-    rulesetVersion: FULL_CAREER_RULESET_VERSION,
-    contentVersion: GRADE_5_CONTENT_VERSION,
-    variantCatalogVersion: GRADE_5_VARIANT_CATALOG_VERSION,
-    scoreVersion: candidateFairScorePolicy.version,
-    actionLogVersion: ACTION_LOG_VERSION,
-    snapshotVersion: SNAPSHOT_SCHEMA_VERSION,
-  },
-  createDependencies: createFullCareerDependencies,
-  createDescriptor: (seed, runId) => {
-    const built = createFullCareerRunDescriptor(seed, { runId, mode: 'fair' })
-    return isOk(built) ? built.value : undefined
-  },
+function fullCareerEdition(
+  id: string,
+  label: string,
+  competitiveScore: CompetitiveScorePolicy,
+): CompetitionEdition {
+  return {
+    id,
+    label,
+    versions: {
+      engineVersion: ENGINE_VERSION,
+      rulesetVersion: FULL_CAREER_RULESET_VERSION,
+      contentVersion: GRADE_5_CONTENT_VERSION,
+      variantCatalogVersion: GRADE_5_VARIANT_CATALOG_VERSION,
+      scoreVersion: competitiveScore.version,
+      actionLogVersion: ACTION_LOG_VERSION,
+      snapshotVersion: SNAPSHOT_SCHEMA_VERSION,
+    },
+    createDependencies: () =>
+      createFullCareerDependencies({ competitiveScore }),
+    createDescriptor: (seed, runId) => {
+      const built = createFullCareerRunDescriptor(seed, {
+        runId,
+        mode: 'fair',
+        competitiveScore,
+      })
+      return isOk(built) ? built.value : undefined
+    },
+  }
 }
 
-const EDITIONS: readonly CompetitionEdition[] = [FULL_CAREER_EDITION]
+/** La edición de Fair Edition v1. La única que una competencia nueva usa. */
+export const FULL_CAREER_EDITION: CompetitionEdition = fullCareerEdition(
+  'full-career-v1',
+  'Carrera completa 7.º → 5.º · Fair Edition v1',
+  officialFairScorePolicy,
+)
+
+/**
+ * La edición de STAGE-09, previa al FREEZE.
+ *
+ * No se emite: `startAttempt` resuelve la edición por la tupla que la fila de
+ * la competencia congeló, así que sólo aparece para las competencias que ya
+ * existían. Una competencia nueva nace con la tupla oficial.
+ */
+export const FULL_CAREER_TG1_CANDIDATE_EDITION: CompetitionEdition =
+  fullCareerEdition(
+    'full-career-tg1-candidate',
+    'Carrera completa 7.º → 5.º · candidata post-TG1 (histórica)',
+    candidateFairScorePolicy,
+  )
+
+const EDITIONS: readonly CompetitionEdition[] = [
+  FULL_CAREER_EDITION,
+  FULL_CAREER_TG1_CANDIDATE_EDITION,
+]
 
 export function listEditions(): readonly CompetitionEdition[] {
   return EDITIONS

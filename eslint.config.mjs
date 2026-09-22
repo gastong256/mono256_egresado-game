@@ -37,13 +37,17 @@ export default defineConfig([
         { type: 'components', pattern: 'src/components/**' },
         { type: 'game', pattern: 'src/game/**' },
         { type: 'content', pattern: 'src/content/**' },
+        { type: 'release', pattern: 'src/release/**' },
         { type: 'server', pattern: 'src/server/**' },
         { type: 'lib', pattern: 'src/lib/**' },
         { type: 'config', pattern: 'src/config/**' },
         { type: 'config', pattern: 'src/types/**' },
       ],
       'boundaries/files': [
-        { category: 'framework-entry', pattern: 'src/instrumentation.ts' },
+        {
+          category: 'framework-entry',
+          pattern: ['src/instrumentation.ts', 'src/proxy.ts'],
+        },
       ],
     },
     rules: {
@@ -65,6 +69,10 @@ export default defineConfig([
             },
             {
               from: { element: { type: 'content' } },
+              allow: { to: { module: { origin: 'external' } } },
+            },
+            {
+              from: { element: { type: 'release' } },
               allow: { to: { module: { origin: 'external' } } },
             },
             {
@@ -92,15 +100,26 @@ export default defineConfig([
                         'server',
                         'lib',
                         'config',
+                        'release',
                       ],
                     },
                   },
                 },
               },
             },
+            // The framework entries are Next's own hooks: the boot check and
+            // the per-request nonce. They compose what already exists — the
+            // environment, the release identity, the header policy — and own no
+            // rule of their own.
             {
               from: { file: { categories: 'framework-entry' } },
-              allow: { to: { element: { type: 'config' } } },
+              allow: {
+                to: {
+                  element: {
+                    types: { anyOf: ['config', 'release', 'lib'] },
+                  },
+                },
+              },
             },
             {
               from: { element: { type: 'components' } },
@@ -151,13 +170,28 @@ export default defineConfig([
                 },
               },
             },
+            // The release manifest is frozen product semantics, so it may name
+            // the engine's identity primitives and nothing else. It deliberately
+            // cannot reach `config`: a release that could read the environment
+            // would stop being the same release on two deployments.
+            {
+              from: { element: { type: 'release' } },
+              allow: { to: { element: { type: 'game' } } },
+            },
             {
               from: { element: { type: 'server' } },
               allow: {
                 to: {
                   element: {
                     types: {
-                      anyOf: ['server', 'game', 'content', 'lib', 'config'],
+                      anyOf: [
+                        'server',
+                        'game',
+                        'content',
+                        'lib',
+                        'config',
+                        'release',
+                      ],
                     },
                   },
                 },

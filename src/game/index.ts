@@ -355,15 +355,21 @@ export {
 } from './challenges/scoring-profile'
 export {
   competitiveScorePolicyIssues,
+  scorePolicyDifferences,
+  scoringShapeOf,
   secondaryInfluence,
   weightOf,
   candidateFairScorePolicy,
   competitiveScorePolicies,
   fairScoreDev1Policy,
   fairScoreDev2Policy,
+  fairScoreV1Policy,
+  officialFairScorePolicy,
   resolveCompetitiveScorePolicy,
   FAIR_SCORE_DEV_1_VERSION,
   FAIR_SCORE_DEV_2_VERSION,
+  FAIR_SCORE_V1_PROMOTED_FROM,
+  FAIR_SCORE_V1_VERSION,
   MAX_DIFFICULTY_REWARD,
   SCORE_COMPONENTS,
   SCORE_POLICY_VERSION,
@@ -446,6 +452,10 @@ export {
   type ValidationIssue,
   type ValidationSeverity,
 } from './core/issues'
+
+// The seeded generator's identity. Part of the engine fingerprint, and part of
+// what a release manifest has to be able to name.
+export { RNG_ALGORITHM } from './random/rng'
 
 // Variant pipeline: sources, validation, fingerprints and approved catalogs
 export { sha256Hex } from './core/hash'
