@@ -355,3 +355,11 @@ saliencia ya no son aperturas de prediseño.
 | D-S10A-003 | Colegio Integral Piacentini, contacto/domicilio aprobados, feria 23/09 08:00 a 25/09 11:00 UTC−03, gracia 300 s, retención 30 días, seis años sin división, cuenta compartida organizador. | PRODUCT OWNER DECISION · configuración de edición | [perfil y handoff](../05-operations/vercel-supabase-production-deployment.md#perfil-aprobado) |
 | D-S10A-004 | RC.2 por adaptación de deployment; tag RC.1 inmutable, matemática/contenido/score/tupla/migraciones idénticos. | LOCKED | [reporte](../06-delivery/stage-10a-deployment-adaptation.md) |
 | D-S10A-005 | Corepack en Vercel para pnpm fijado; mantener Node local 24.19.0 y engines estricto. | ACCEPTED · plataforma | [contratos oficiales](../05-operations/vercel-supabase-production-deployment.md#contratos-oficiales-consultados) |
+
+## RC3 TASK-A — presentación de la competencia
+
+- **Estado: ACCEPTED / IMPLEMENTED**, autorización explícita del Product Owner, 2026-09-22.
+- Portada de evento ampliada dentro del DS; gameplay/formulario a 412 px. CTA único antes del ranking; countdown orientativo ocultable desde timestamps existentes, sin autoridad cliente.
+- Podio por puesto, empates completos, `isYou` y posición propia privada; sin extender datos públicos. Footer con las tres marcas suministradas y el aviso existente.
+- Revisión arquitectónica: detalle reversible de UI. No cambia API, trust boundaries, datos, versión competitiva ni dependencias; no requiere ADR nuevo.
+- Fuentes: [FR-001/012](../02-functional/functional-specification.md), [fundamentos DS](../09-design-system/foundations.md), [decisiones de TASK-A](../../.tmp/rc3-branding/task-a-home/ux-decisions.md).

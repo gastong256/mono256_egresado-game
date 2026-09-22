@@ -1,0 +1,17 @@
+{
+  "method": "Sum of individually gzipped JS/CSS responses on first / navigation, Chromium, production build, no interaction",
+  "baseline": "a1a6469",
+  "before": {
+    "js": 154080,
+    "css": 8728,
+    "files": 8
+  },
+  "after": {
+    "js": 161474,
+    "css": 9343,
+    "files": 9
+  },
+  "jsDelta": 7394,
+  "cssDelta": 615,
+  "footerWebpBytes": 49544
+}

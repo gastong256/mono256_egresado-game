@@ -377,6 +377,11 @@ function ColorSection() {
 
 const TYPE_ROLES = [
   {
+    role: 'event-title',
+    className: 'text-event-title font-display',
+    sample: 'Egresado',
+  },
+  {
     role: 'milestone',
     className: 'text-milestone font-display',
     sample: '7.º',

@@ -24,6 +24,7 @@ const merge = extendTailwindMerge<'eg-motion' | 'eg-canvas' | 'eg-text-shadow'>(
         'font-size': [
           {
             text: [
+              'event-title',
               'milestone',
               'display',
               'section',

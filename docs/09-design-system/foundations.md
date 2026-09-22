@@ -50,6 +50,21 @@ Los cuatro glifos son SVG inline con `currentColor` y terminación cuadrada. Van
 
 Estirar el juego a 1200 px no mejora ni leer un enunciado ni comparar cuatro opciones: sólo obliga a barrer la cabeza de un lado al otro de la pantalla.
 
+## Portada de evento (RC3 TASK-A)
+
+La entrada pública y su podio usan `max-w-event` (60rem): en desktop separan
+promesa y acceso en dos columnas; a 320 px se apilan. Es una composición de
+portada autorizada para TASK-A, no un cambio del viewport de juego. El formulario
+y la partida conservan `max-w-viewport` (412 px).
+
+`text-event-title` amplía la firma tipográfica existente sólo en la portada,
+con caja mixta, sin logo nuevo. Su escala fluida usa el ancho del contenedor
+(`cqi`, header con `@container`) para evitar solapamientos al ampliar al 200 %.
+El podio usa numerales de la escala existente,
+filetes y desniveles; el DOM siempre mantiene el orden de puestos del servidor.
+El contador reutiliza `motion-enter` por cifra, permite ocultar las actualizaciones
+y desactiva la animación con reduced motion. La fecha escrita permanece visible.
+
 ## El slot de acción
 
 **Existe exactamente un primario montado a la vez.** Mientras se decide vive dentro del bloque oscuro, junto a las opciones; al resolver salta al final del shell, debajo del panel de resultado. Nunca hay que scrollear para atrás para continuar.

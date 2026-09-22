@@ -16,6 +16,8 @@ import { cn } from '@/lib/ui/cn'
  */
 describe('cn', () => {
   it('no deja que un rol tipográfico pise un color', () => {
+    expect(cn('text-ink', 'text-event-title')).toBe('text-ink text-event-title')
+    expect(cn('text-display', 'text-event-title')).toBe('text-event-title')
     expect(cn('text-on-action', 'text-action')).toBe(
       'text-on-action text-action',
     )

@@ -107,6 +107,13 @@
   */
   --text-*: initial;
 
+  /* Entrada pública al evento; el juego conserva su escala y ancho. */
+  --text-event-title: clamp(2.75rem, 17cqi, 5rem);
+  --text-event-title--line-height: 0.95;
+  --text-event-title--letter-spacing: -0.05em;
+  --text-event-title--font-weight: 800;
+  --container-event: 60rem;
+
   /* Cierre de etapa: el numeral del año. */
   --text-milestone: 4.125rem;
   --text-milestone--line-height: 0.82;

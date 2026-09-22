@@ -20,12 +20,19 @@ import type { PrivacyNotice } from '@/lib/competition'
  * `<details>` nativo: teclado, lector de pantalla y estado abierto/cerrado sin
  * una línea de JavaScript ni un `aria-expanded` que se pueda desincronizar.
  */
-export function PrivacySummary({ notice }: { readonly notice: PrivacyNotice }) {
+export function PrivacySummary({
+  notice,
+  id,
+}: {
+  readonly notice: PrivacyNotice
+  readonly id?: string
+}) {
   const headingId = useId()
   const [open, setOpen] = useState(false)
 
   return (
     <section
+      id={id}
       aria-labelledby={headingId}
       className="bg-canvas-sunken border-ink flex flex-col gap-2 border-l-[3px] px-4 py-[14px]"
     >

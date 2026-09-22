@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { InstitutionalFooter } from '@/components/competition/institutional-footer'
 
 import { CompetitionExperience } from '@/components/competition/competition-experience'
 import { readPublicState } from '@/server/competition/api'
@@ -32,7 +33,13 @@ export default async function Home() {
     Promise.resolve(safeFormConfig()),
   ])
 
-  return <CompetitionExperience initialState={state} formConfig={formConfig} />
+  return (
+    <CompetitionExperience
+      initialState={state}
+      formConfig={formConfig}
+      footer={<InstitutionalFooter />}
+    />
+  )
 }
 
 /**

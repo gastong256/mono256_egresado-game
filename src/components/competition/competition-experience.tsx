@@ -1,7 +1,7 @@
 'use client'
 
 import dynamic from 'next/dynamic'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState, type ReactNode } from 'react'
 
 import type { RunDescriptor } from '@/game'
 import type {
@@ -14,6 +14,10 @@ import type {
 import { Button, Callout, Eyebrow, Wordmark } from '@/components/ui'
 import { IdentityForm } from './identity-form'
 import { Leaderboard } from './leaderboard'
+import { EventCountdown } from './event-countdown'
+import { GameModeSummary } from './game-mode-summary'
+import { PrivacySummary } from './privacy-summary'
+import { cn } from '@/lib/ui/cn'
 
 /**
  * La partida se carga aparte de la portada.
@@ -96,7 +100,9 @@ async function readError(response: Response): Promise<string> {
 export function CompetitionExperience({
   initialState,
   formConfig,
+  footer,
 }: {
+  readonly footer?: ReactNode
   readonly initialState: PublicCompetitionState
   readonly formConfig: IdentityFormConfig | undefined
 }) {
@@ -104,7 +110,6 @@ export function CompetitionExperience({
   const [screen, setScreen] = useState<Screen>({ kind: 'landing' })
   const [pending, setPending] = useState(false)
   const [error, setError] = useState<string | undefined>(undefined)
-  const statusRef = useRef<HTMLParagraphElement>(null)
 
   const refresh = useCallback(async () => {
     try {
@@ -121,7 +126,11 @@ export function CompetitionExperience({
 
   useEffect(() => {
     if (screen.kind === 'playing') return
-    if (state.competition.status !== 'open') return
+    if (
+      state.competition.status !== 'open' &&
+      state.competition.status !== 'upcoming'
+    )
+      return
     const timer = setInterval(() => {
       void refresh()
     }, REFRESH_MS)
@@ -231,216 +240,242 @@ export function CompetitionExperience({
   const open = competition.status === 'open'
 
   return (
-    <main className="px-gutter pb-safe flex min-h-dvh w-full justify-center py-6">
-      <div className="max-w-viewport flex w-full flex-col gap-3">
-        <div className="eg-canvas border-rule flex min-h-[560px] flex-col gap-5 border px-4 py-[18px]">
-          <header className="flex flex-col gap-3">
-            <Eyebrow>Juego de matemática escolar</Eyebrow>
-            <h1>
-              <Wordmark size="lg" />
-            </h1>
-            <p className="text-section font-display text-ink text-balance">
-              Seis años de secundaria en unos minutos.
-            </p>
-            <p className="text-body-lg text-ink-secondary text-pretty">
-              Comprás la pintura del mural, decidís en qué colectivo te subís y
-              repartís el trabajo grupal. Los números no son un ejercicio
-              aparte: son lo que te deja decidir bien.
-            </p>
-          </header>
-
-          <CompetitionStatusNote
-            status={competition.status}
-            name={competition.name}
-            closesAt={competition.closesAt}
-            opensAt={competition.opensAt}
-          />
-
-          {/*
-            El error se dibuja una sola vez. Mientras el formulario está
-            abierto, lo muestra el formulario —junto al campo que hay que
-            corregir— y repetirlo acá arriba diría dos veces lo mismo.
-          */}
-          {error === undefined || screen.kind === 'identify' ? null : (
-            <Callout tone="accent" title="No pudimos continuar">
-              {error}
-            </Callout>
-          )}
-
+    <div className="px-gutter pb-safe mx-auto min-h-dvh w-full py-4 sm:py-8">
+      <div
+        className={cn(
+          'mx-auto flex w-full flex-col',
+          screen.kind === 'identify' ? 'max-w-viewport' : 'max-w-event',
+        )}
+      >
+        <main className="eg-canvas border-rule flex min-w-0 flex-col border px-4 py-5 sm:px-6 sm:py-6">
           {screen.kind === 'identify' && formConfig !== undefined ? (
-            <IdentityForm
-              config={formConfig}
-              pending={pending}
-              serverError={error}
-              onSubmit={(submission) => {
-                void identify(submission)
-              }}
-            />
-          ) : (
             <>
-              {you === undefined ? null : (
-                <section className="flex flex-col gap-2">
-                  <p
-                    ref={statusRef}
-                    className="text-section font-display text-ink"
-                    data-testid="greeting"
-                  >
-                    Hola, {you.nickname}
-                  </p>
-                  <p className="text-meta text-ink-secondary">
-                    {you.bestFairScore === undefined
-                      ? 'Todavía no tenés una partida verificada.'
-                      : `Tu mejor puntaje: ${you.bestFairScore.toLocaleString('es-AR')}${
-                          you.rank === undefined
-                            ? ''
-                            : ` · puesto ${String(you.rank)}`
-                        }`}
-                  </p>
-                </section>
-              )}
-
-              <Leaderboard
-                entries={state.leaderboard}
-                you={you}
-                total={state.totalRanked}
+              <header className="mb-6">
+                <h1>
+                  <Wordmark size="lg" />
+                </h1>
+              </header>
+              <IdentityForm
+                config={formConfig}
+                pending={pending}
+                serverError={error}
+                onSubmit={(submission) => {
+                  void identify(submission)
+                }}
               />
-
-              <RankingRule />
-            </>
-          )}
-
-          <div className="mt-auto flex flex-col gap-2 pt-4">
-            {open && screen.kind === 'landing' ? (
-              you === undefined ? (
-                <Button
-                  onClick={() => {
-                    setError(undefined)
-                    // La partida empieza a bajarse acá, mientras el estudiante
-                    // completa el formulario: cuatro campos y la emisión del
-                    // servidor alcanzan para que el chunk llegue antes que él.
-                    prefetchAttemptRun()
-                    setScreen({ kind: 'identify' })
-                  }}
-                  data-testid="play"
-                >
-                  Jugar
-                </Button>
-              ) : (
-                <Button
-                  disabled={pending}
-                  onClick={() => {
-                    void startAttempt()
-                  }}
-                  data-testid="play"
-                >
-                  {you.attempts === 0 ? 'Jugar' : 'Jugar de nuevo'}
-                </Button>
-              )
-            ) : null}
-
-            {screen.kind === 'identify' ? (
               <Button
                 variant="secondary"
+                className="mt-4"
                 onClick={() => {
                   setScreen({ kind: 'landing' })
                 }}
               >
                 Volver
               </Button>
-            ) : null}
-
-            {you === undefined ? null : (
-              <Button
-                variant="secondary"
-                onClick={() => {
-                  void forget()
-                }}
-                data-testid="not-me"
+            </>
+          ) : (
+            <>
+              <div className="grid gap-6 pb-6 sm:grid-cols-2 sm:gap-8 sm:pb-8">
+                <header className="@container flex min-w-0 flex-col items-start gap-4">
+                  <Eyebrow>
+                    {competition.status === 'not-configured'
+                      ? 'Juego de matemática escolar'
+                      : competition.name}
+                  </Eyebrow>
+                  <h1>
+                    <Wordmark className="text-event-title" />
+                  </h1>
+                  <p className="text-section font-display text-ink text-balance">
+                    Tu secundaria.
+                    <br />
+                    Tus decisiones.
+                    <br />
+                    Tu lugar en el ranking.
+                  </p>
+                  <p className="text-body-lg text-ink-secondary max-w-viewport text-pretty">
+                    Del primer día a la graduación. Resolvé situaciones, hacé
+                    equipo y descubrí hasta dónde podés llegar.
+                  </p>
+                  <p
+                    className="text-label font-display text-ink-label border-rule mt-auto border-t pt-4 tabular-nums"
+                    aria-label="De séptimo a quinto año y graduación"
+                  >
+                    7.º → 1.º → 2.º → 3.º → 4.º → 5.º → Egreso
+                  </p>
+                </header>
+                <section
+                  className="flex min-w-0 flex-col gap-4"
+                  aria-label="Estado y acceso a la competencia"
+                >
+                  <CompetitionStatusNote
+                    status={competition.status}
+                    name={competition.name}
+                  />
+                  {error === undefined ? null : (
+                    <Callout tone="accent" title="No pudimos continuar">
+                      {error}
+                    </Callout>
+                  )}
+                  {you === undefined ? null : (
+                    <div className="flex min-w-0 flex-col gap-1">
+                      <p
+                        className="text-title font-display text-ink [overflow-wrap:anywhere]"
+                        data-testid="greeting"
+                      >
+                        Hola, {you.nickname}
+                      </p>
+                      <p className="text-meta text-ink-secondary tabular-nums">
+                        {you.bestFairScore === undefined
+                          ? 'Todavía no tenés una partida verificada.'
+                          : `Tu mejor puntaje: ${you.bestFairScore.toLocaleString('es-AR')}`}
+                      </p>
+                    </div>
+                  )}
+                  {open ? (
+                    <Button
+                      className="group min-h-16 justify-between px-5"
+                      disabled={
+                        pending ||
+                        (you === undefined && formConfig === undefined)
+                      }
+                      onClick={() => {
+                        if (you !== undefined) {
+                          void startAttempt()
+                          return
+                        }
+                        setError(undefined)
+                        prefetchAttemptRun()
+                        setScreen({ kind: 'identify' })
+                      }}
+                      data-testid="play"
+                    >
+                      {pending
+                        ? 'Preparando partida…'
+                        : you?.activeAttempt !== undefined
+                          ? 'Continuar partida'
+                          : you !== undefined && you.attempts > 0
+                            ? 'Jugar de nuevo'
+                            : 'Jugar ahora'}
+                      <span
+                        aria-hidden="true"
+                        className="text-section group-hover:translate-x-1 motion-reduce:transform-none"
+                      >
+                        →
+                      </span>
+                    </Button>
+                  ) : null}
+                  <EventCountdown
+                    competition={competition}
+                    onElapsed={() => {
+                      void refresh()
+                    }}
+                  />
+                  {open && formConfig !== undefined ? (
+                    <a
+                      href="#privacy"
+                      className="text-caption text-ink-secondary inline-flex min-h-11 items-center underline underline-offset-4"
+                    >
+                      Tus datos y privacidad, antes de jugar
+                    </a>
+                  ) : null}
+                  {you === undefined ? null : (
+                    <Button
+                      variant="ghost"
+                      className="self-start px-0"
+                      onClick={() => {
+                        void forget()
+                      }}
+                      data-testid="not-me"
+                    >
+                      No soy yo
+                    </Button>
+                  )}
+                </section>
+              </div>
+              {competition.status === 'closed' ? (
+                <>
+                  <Leaderboard
+                    entries={state.leaderboard}
+                    you={you}
+                    total={state.totalRanked}
+                    status={competition.status}
+                  />
+                  <GameModeSummary closed />
+                </>
+              ) : (
+                <>
+                  <GameModeSummary />
+                  <Leaderboard
+                    entries={state.leaderboard}
+                    you={you}
+                    total={state.totalRanked}
+                    status={competition.status}
+                  />
+                </>
+              )}
+              <section
+                className="border-rule border-t pt-5"
+                aria-label="Privacidad antes de jugar"
               >
-                No soy yo
-              </Button>
-            )}
-          </div>
-        </div>
+                {formConfig === undefined ? (
+                  <p id="privacy" className="text-meta text-ink-secondary">
+                    El aviso de privacidad estará disponible cuando se configure
+                    la competencia. Todavía no se solicitan datos.
+                  </p>
+                ) : (
+                  <PrivacySummary
+                    notice={formConfig.privacyNotice}
+                    id="privacy"
+                  />
+                )}
+              </section>
+            </>
+          )}
+        </main>
+        {footer}
       </div>
-    </main>
+    </div>
   )
-}
-
-function formatDate(value: string | undefined): string | undefined {
-  if (value === undefined) return undefined
-  const date = new Date(value)
-  return Number.isNaN(date.getTime())
-    ? undefined
-    : date.toLocaleString('es-AR', {
-        day: 'numeric',
-        month: 'long',
-        hour: '2-digit',
-        minute: '2-digit',
-      })
 }
 
 function CompetitionStatusNote({
   status,
   name,
-  opensAt,
-  closesAt,
 }: {
   readonly status: PublicCompetitionState['competition']['status']
   readonly name: string
-  readonly opensAt: string | undefined
-  readonly closesAt: string | undefined
 }) {
-  if (status === 'not-configured') {
+  if (status === 'not-configured')
     return (
       <Callout title="Todavía no hay una competencia">
-        El juego está listo, pero ningún organizador abrió una edición. Si sos
-        docente, configurá la competencia antes de la feria.
+        El juego está listo, pero ningún organizador abrió una edición. Volvé
+        cuando se anuncie la próxima competencia.
       </Callout>
     )
-  }
-
-  if (status === 'upcoming') {
-    const opens = formatDate(opensAt)
-    return (
-      <Callout title={`${name} todavía no empezó`}>
-        {opens === undefined
-          ? 'Volvé cuando el organizador la abra.'
-          : `Abre el ${opens}.`}
-      </Callout>
-    )
-  }
-
-  if (status === 'closed') {
-    return (
-      <Callout title={`${name} cerró`}>
-        El ranking queda publicado. Ya no se pueden empezar partidas nuevas.
-      </Callout>
-    )
-  }
-
-  const closes = formatDate(closesAt)
   return (
-    <Callout title={`${name} está abierta`}>
-      Jugás la carrera entera, de 7.º a 5.º año, y el servidor calcula tu
-      puntaje. Podés jugar todas las veces que quieras: cuenta tu mejor partida.
-      {closes === undefined ? '' : ` Cierra el ${closes}.`}
-    </Callout>
-  )
-}
-
-/**
- * La regla del ranking, dicha en una frase.
- *
- * Está a la vista y no escondida en un reglamento porque una competencia cuyo
- * criterio no se entiende se percibe como arbitraria, y eso es lo que un
- * ranking escolar no puede permitirse.
- */
-function RankingRule() {
-  return (
-    <p className="text-caption text-ink-secondary text-pretty">
-      Ordena el puntaje de la partida. Si dos personas empatan, comparten el
-      puesto: no gana quien llegó primero ni quien jugó más rápido.
-    </p>
+    <div className="border-ink flex flex-col gap-2 border-t-2 pt-3">
+      <p className="text-label font-display text-ink-label uppercase">
+        {status === 'open'
+          ? '● Competencia abierta'
+          : status === 'upcoming'
+            ? '◷ Próximamente'
+            : '■ Competencia cerrada'}
+      </p>
+      <h2 className="text-title font-display text-ink">
+        {name}{' '}
+        {status === 'open'
+          ? 'está abierta'
+          : status === 'upcoming'
+            ? 'todavía no empezó'
+            : 'cerró'}
+      </h2>
+      <p className="text-body text-ink-secondary">
+        {status === 'open'
+          ? 'Jugá, mejorá tu puntaje y buscá tu lugar en el podio.'
+          : status === 'upcoming'
+            ? 'La próxima partida puede ser la tuya. Volvé cuando se abra la competencia.'
+            : 'El ranking queda publicado. Ya no se pueden empezar partidas nuevas.'}
+      </p>
+    </div>
   )
 }

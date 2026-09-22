@@ -4992,6 +4992,24 @@ El sistema debe permitir iniciar una experiencia sin crear una cuenta tradiciona
 - Validar longitud y caracteres.
 - Crear identidad anónima local.
 
+### Portada competitiva vigente — RC3 TASK-A
+
+En `/`, la portada prioriza el acceso al evento. `upcoming` anticipa la apertura;
+`open` muestra un único CTA **Jugar ahora** (o **Jugar de nuevo / Continuar partida**
+según la sesión); `closed` prioriza los resultados y no ofrece nuevos intentos;
+`not-configured` explica la indisponibilidad. La identificación conserva ADR-026.
+El aviso configurado puede leerse en la portada y sigue presente en el formulario,
+antes del envío. Un pie institucional identifica Colegio Integral Piacentini,
+Feria del Libro 2026 y `developed by gastong256.dev`, con acceso al mismo aviso.
+
+El contador usa exclusivamente `opensAt`/`closesAt` del DTO vigente. Muestra
+segundos orientativos del reloj cliente y la fecha absoluta en hora argentina;
+se puede ocultar, no anuncia cada segundo y respeta reduced motion. Al vencer
+consulta el estado existente: nunca abre/cierra una edición ni autoriza intentos.
+El estado se refresca cada 20 s en portada/identificación cuando está abierto o
+próximo a abrir. La matemática es la contribución principal; Equipo y Aura también
+suman, conforme a FairScore v1, sin una nueva métrica «Amigos».
+
 ## FR-002 Creación de run
 En modos online oficiales, el cliente debe solicitar al servidor una run antes de jugar.
 
@@ -5065,6 +5083,18 @@ En un evento competitivo, mostrar mejores resultados verificados según
 [FairScore → Prestige → puesto compartido](01-game-design/competitive-scoring-and-ranking.md#desempate).
 Sin velocidad ni criterio oculto. Style sólo Career/Narrative; Prestige competitivo
 usa hechos independientes y su [presupuesto canónico](01-game-design/rare-events-and-prestige.md).
+
+### Presentación del podio vigente — RC3 TASK-A
+
+La UI agrupa las entradas por el puesto **ya calculado por el servidor**, conserva
+empates completos y nunca inventa un segundo puesto cuando el siguiente es tercero.
+Jerarquía visual 1 > 2 > 3, orden DOM por puesto, alias y puntaje legibles en móvil.
+`isYou` identifica al participante; si no aparece en el podio, se muestra su puesto
+privado con su mejor score. No se compara el puesto con la cantidad de filas.
+El ranking público sigue limitado a los primeros tres puestos, sin lista pública
+inferior ni Prestige (techo ofrecido 0). El vacío cambia su texto según el estado;
+al cerrar dice **Resultados del evento**, sin prometer una adjudicación definitiva
+mientras pueden existir envíos pendientes o moderación.
 
 ## FR-013 Reintento
 El jugador puede iniciar otra run. Fair v1 permite reintentos ilimitados sobre
@@ -5319,6 +5349,16 @@ Fuentes: [adjudicación](04-quality/mathematics-department-ai-adjudication.md),
 [adjudicación de conflictos de contrato](04-quality/mathematics-remediation-contract-conflict-adjudication.md),
 [adjudicación final del techo](04-quality/rs-mat-008-blind-ceiling-final-adjudication.md) y
 [decisiones D-S08-095 a D-S08-116](07-reference/decision-register.md).
+
+## RC3 TASK-A — entrada pública y evento
+
+| Requisito | Implementación | Evidencia |
+|---|---|---|
+| FR-001/014: CTA y estados del evento | `CompetitionExperience`, `EventCountdown` | `event-countdown.test.tsx`, `home-event.test.tsx`, `home-event.spec.ts` |
+| FR-012/020: podio por puesto y posición propia | `Leaderboard`; DTO y comparador sin cambios | `competition-ui.test.tsx`, `home-event.test.tsx`, `ranking-release-regression.test.ts` |
+| FR-001: aviso antes de datos y footer institucional | `PrivacySummary`, `InstitutionalFooter` | `home-event.test.tsx`, `competition.spec.ts`, `home-event.spec.ts` |
+
+Decisiones y evidencia de TASK-A en el [plan vivo](../.tmp/rc3-branding/task-a-home/README.md).
 
 ---
 
@@ -22686,6 +22726,15 @@ real al ejecutar el handoff. Ninguna consulta acredita una cuenta ni un deploy.
 Vista corta del estado de ejecución. El contrato completo y el protocolo de
 actualización están en el [roadmap](06-delivery/implementation-sequence.md).
 
+## Sprint visual RC3 — TASK-A
+
+Implementación autorizada por el Product Owner: Home, estados de evento,
+countdown, podio y footer institucional. Evidencia en el
+[plan vivo de TASK-A](../.tmp/rc3-branding/task-a-home/README.md).
+Es una mejora de presentación sobre RC.2; no reabre matemática, reglas, privacidad,
+contenido ni freeze. Branding, copy integral, ending y cierre RC3 siguen diferidos.
+No declara un GO de STAGE-10 ni administra Vercel.
+
 ## STAGE-10A — adaptación Vercel Hobby + Supabase Free
 
 **Estado:** `DONE` — 22 de septiembre de 2026. Adaptación de despliegue `READY`,
@@ -24607,6 +24656,13 @@ verificación   pnpm release:verify · 57 comprobaciones
 **Scope IN.** Simulación masiva de decenas de miles de runs; load testing por encima de la concurrencia esperada; degradación de red; QA móvil priorizando Android modestos en 360/390/430 y Safari/iOS; telemetría mínima sin PII innecesaria; runbook de incidentes; checklist de go-live.
 
 **Scope OUT.** Features nuevas. Cambios de contenido o de score que afecten equidad.
+
+**Excepción visual acotada, autorizada por el Product Owner: RC3 TASK-A.**
+Home, countdown de ventana pública, presentación de podio y footer institucional.
+Sólo presentación, accesibilidad y su verificación; sin cambios de motor, contenido,
+comparador, persistencia, contratos públicos ni lifecycle. Runtime sigue en RC.2;
+branding, ending y cierre RC3 quedan fuera. Evidencia en el
+[plan vivo](../.tmp/rc3-branding/task-a-home/README.md).
 
 **Subetapa STAGE-10A `DONE`, autorizada y cerrada el 22/09.** Configuración y herramientas adaptadas
 a Vercel Hobby `gru1` + Supabase Free `sa-east-1`, una producción desde `main`,
@@ -29581,6 +29637,14 @@ saliencia ya no son aperturas de prediseño.
 | D-S10A-003 | Colegio Integral Piacentini, contacto/domicilio aprobados, feria 23/09 08:00 a 25/09 11:00 UTC−03, gracia 300 s, retención 30 días, seis años sin división, cuenta compartida organizador. | PRODUCT OWNER DECISION · configuración de edición | [perfil y handoff](05-operations/vercel-supabase-production-deployment.md#perfil-aprobado) |
 | D-S10A-004 | RC.2 por adaptación de deployment; tag RC.1 inmutable, matemática/contenido/score/tupla/migraciones idénticos. | LOCKED | [reporte](06-delivery/stage-10a-deployment-adaptation.md) |
 | D-S10A-005 | Corepack en Vercel para pnpm fijado; mantener Node local 24.19.0 y engines estricto. | ACCEPTED · plataforma | [contratos oficiales](05-operations/vercel-supabase-production-deployment.md#contratos-oficiales-consultados) |
+
+## RC3 TASK-A — presentación de la competencia
+
+- **Estado: ACCEPTED / IMPLEMENTED**, autorización explícita del Product Owner, 2026-09-22.
+- Portada de evento ampliada dentro del DS; gameplay/formulario a 412 px. CTA único antes del ranking; countdown orientativo ocultable desde timestamps existentes, sin autoridad cliente.
+- Podio por puesto, empates completos, `isYou` y posición propia privada; sin extender datos públicos. Footer con las tres marcas suministradas y el aviso existente.
+- Revisión arquitectónica: detalle reversible de UI. No cambia API, trust boundaries, datos, versión competitiva ni dependencias; no requiere ADR nuevo.
+- Fuentes: [FR-001/012](02-functional/functional-specification.md), [fundamentos DS](09-design-system/foundations.md), [decisiones de TASK-A](../.tmp/rc3-branding/task-a-home/ux-decisions.md).
 
 ---
 

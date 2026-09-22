@@ -237,7 +237,7 @@ export function IdentityForm({
           </div>
         </fieldset>
 
-        <PrivacySummary notice={config.privacyNotice} />
+        <PrivacySummary notice={config.privacyNotice} id="privacy" />
 
         <div className="flex flex-col gap-1">
           <label className="text-meta text-ink flex min-h-11 items-start gap-3 text-pretty">

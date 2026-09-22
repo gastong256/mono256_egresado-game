@@ -167,3 +167,13 @@ Fuentes: [adjudicación](../04-quality/mathematics-department-ai-adjudication.md
 [adjudicación de conflictos de contrato](../04-quality/mathematics-remediation-contract-conflict-adjudication.md),
 [adjudicación final del techo](../04-quality/rs-mat-008-blind-ceiling-final-adjudication.md) y
 [decisiones D-S08-095 a D-S08-116](../07-reference/decision-register.md).
+
+## RC3 TASK-A — entrada pública y evento
+
+| Requisito | Implementación | Evidencia |
+|---|---|---|
+| FR-001/014: CTA y estados del evento | `CompetitionExperience`, `EventCountdown` | `event-countdown.test.tsx`, `home-event.test.tsx`, `home-event.spec.ts` |
+| FR-012/020: podio por puesto y posición propia | `Leaderboard`; DTO y comparador sin cambios | `competition-ui.test.tsx`, `home-event.test.tsx`, `ranking-release-regression.test.ts` |
+| FR-001: aviso antes de datos y footer institucional | `PrivacySummary`, `InstitutionalFooter` | `home-event.test.tsx`, `competition.spec.ts`, `home-event.spec.ts` |
+
+Decisiones y evidencia de TASK-A en el [plan vivo](../../.tmp/rc3-branding/task-a-home/README.md).

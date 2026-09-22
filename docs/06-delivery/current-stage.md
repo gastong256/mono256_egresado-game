@@ -3,6 +3,15 @@
 Vista corta del estado de ejecución. El contrato completo y el protocolo de
 actualización están en el [roadmap](implementation-sequence.md).
 
+## Sprint visual RC3 — TASK-A
+
+Implementación autorizada por el Product Owner: Home, estados de evento,
+countdown, podio y footer institucional. Evidencia en el
+[plan vivo de TASK-A](../../.tmp/rc3-branding/task-a-home/README.md).
+Es una mejora de presentación sobre RC.2; no reabre matemática, reglas, privacidad,
+contenido ni freeze. Branding, copy integral, ending y cierre RC3 siguen diferidos.
+No declara un GO de STAGE-10 ni administra Vercel.
+
 ## STAGE-10A — adaptación Vercel Hobby + Supabase Free
 
 **Estado:** `DONE` — 22 de septiembre de 2026. Adaptación de despliegue `READY`,

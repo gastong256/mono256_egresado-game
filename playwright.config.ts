@@ -31,7 +31,7 @@ const reuseExistingServer =
   !isCI && process.env['PLAYWRIGHT_REUSE_SERVER'] === 'true'
 
 /** Los specs que necesitan la competencia; el resto usa el harness. */
-const competitionSpecs = ['**/competition.spec.ts']
+const competitionSpecs = ['**/competition.spec.ts', '**/home-event.spec.ts']
 
 export default defineConfig({
   testDir: './tests/e2e',

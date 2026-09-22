@@ -19,6 +19,7 @@ La escala está apagada (`--text-*: initial`), así que `text-lg` y `text-2xl` n
 | Rol | Familia | Para qué |
 |---|---|---|
 | `text-milestone` | SG 800 | el numeral del año en el cierre de etapa |
+| `text-event-title` | SG 800 | firma tipográfica de la portada pública del evento, escala fluida |
 | `text-display` | SG 800 | título de pantalla |
 | `text-section` | SG 800 | título de sección, titular de banner |
 | `text-aura` | SG 800 | la cifra de Aura, dentro del bloque negro |

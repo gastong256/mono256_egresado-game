@@ -1154,6 +1154,13 @@ verificación   pnpm release:verify · 57 comprobaciones
 
 **Scope OUT.** Features nuevas. Cambios de contenido o de score que afecten equidad.
 
+**Excepción visual acotada, autorizada por el Product Owner: RC3 TASK-A.**
+Home, countdown de ventana pública, presentación de podio y footer institucional.
+Sólo presentación, accesibilidad y su verificación; sin cambios de motor, contenido,
+comparador, persistencia, contratos públicos ni lifecycle. Runtime sigue en RC.2;
+branding, ending y cierre RC3 quedan fuera. Evidencia en el
+[plan vivo](../../.tmp/rc3-branding/task-a-home/README.md).
+
 **Subetapa STAGE-10A `DONE`, autorizada y cerrada el 22/09.** Configuración y herramientas adaptadas
 a Vercel Hobby `gru1` + Supabase Free `sa-east-1`, una producción desde `main`,
 ensayo local equivalente a staging, privacidad/calendario aprobados y RC.2.

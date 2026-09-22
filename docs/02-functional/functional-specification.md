@@ -9,6 +9,24 @@ El sistema debe permitir iniciar una experiencia sin crear una cuenta tradiciona
 - Validar longitud y caracteres.
 - Crear identidad anónima local.
 
+### Portada competitiva vigente — RC3 TASK-A
+
+En `/`, la portada prioriza el acceso al evento. `upcoming` anticipa la apertura;
+`open` muestra un único CTA **Jugar ahora** (o **Jugar de nuevo / Continuar partida**
+según la sesión); `closed` prioriza los resultados y no ofrece nuevos intentos;
+`not-configured` explica la indisponibilidad. La identificación conserva ADR-026.
+El aviso configurado puede leerse en la portada y sigue presente en el formulario,
+antes del envío. Un pie institucional identifica Colegio Integral Piacentini,
+Feria del Libro 2026 y `developed by gastong256.dev`, con acceso al mismo aviso.
+
+El contador usa exclusivamente `opensAt`/`closesAt` del DTO vigente. Muestra
+segundos orientativos del reloj cliente y la fecha absoluta en hora argentina;
+se puede ocultar, no anuncia cada segundo y respeta reduced motion. Al vencer
+consulta el estado existente: nunca abre/cierra una edición ni autoriza intentos.
+El estado se refresca cada 20 s en portada/identificación cuando está abierto o
+próximo a abrir. La matemática es la contribución principal; Equipo y Aura también
+suman, conforme a FairScore v1, sin una nueva métrica «Amigos».
+
 ## FR-002 Creación de run
 En modos online oficiales, el cliente debe solicitar al servidor una run antes de jugar.
 
@@ -82,6 +100,18 @@ En un evento competitivo, mostrar mejores resultados verificados según
 [FairScore → Prestige → puesto compartido](../01-game-design/competitive-scoring-and-ranking.md#desempate).
 Sin velocidad ni criterio oculto. Style sólo Career/Narrative; Prestige competitivo
 usa hechos independientes y su [presupuesto canónico](../01-game-design/rare-events-and-prestige.md).
+
+### Presentación del podio vigente — RC3 TASK-A
+
+La UI agrupa las entradas por el puesto **ya calculado por el servidor**, conserva
+empates completos y nunca inventa un segundo puesto cuando el siguiente es tercero.
+Jerarquía visual 1 > 2 > 3, orden DOM por puesto, alias y puntaje legibles en móvil.
+`isYou` identifica al participante; si no aparece en el podio, se muestra su puesto
+privado con su mejor score. No se compara el puesto con la cantidad de filas.
+El ranking público sigue limitado a los primeros tres puestos, sin lista pública
+inferior ni Prestige (techo ofrecido 0). El vacío cambia su texto según el estado;
+al cerrar dice **Resultados del evento**, sin prometer una adjudicación definitiva
+mientras pueden existir envíos pendientes o moderación.
 
 ## FR-013 Reintento
 El jugador puede iniciar otra run. Fair v1 permite reintentos ilimitados sobre

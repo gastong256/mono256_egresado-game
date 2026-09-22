@@ -114,7 +114,9 @@ describe('ranking', () => {
     expect(within(items[0] as HTMLElement).getByText('1')).toBeInTheDocument()
     expect(within(items[1] as HTMLElement).getByText('1')).toBeInTheDocument()
     expect(within(items[2] as HTMLElement).getByText('3')).toBeInTheDocument()
-    expect(screen.getByRole('list')).toBeInTheDocument()
+    expect(
+      screen.getByRole('list', { name: 'Podio por puesto' }),
+    ).toBeInTheDocument()
   })
 
   it('marca la fila propia y muestra el puesto propio fuera del podio', () => {
@@ -551,9 +553,7 @@ describe('portada de la competencia', () => {
       />,
     )
     expect(screen.getByTestId('greeting')).toHaveTextContent('Hola, Tomi')
-    expect(
-      screen.getByText(/Tu mejor puntaje: 8.123 · puesto 4/u),
-    ).toBeInTheDocument()
+    expect(screen.getByText(/Tu mejor puntaje: 8.123/u)).toBeInTheDocument()
     expect(screen.getByTestId('play')).toHaveTextContent('Jugar de nuevo')
     expect(screen.getByTestId('not-me')).toBeInTheDocument()
   })
