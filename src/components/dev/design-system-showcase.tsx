@@ -70,6 +70,7 @@ import {
   Milestone,
 } from '@/components/game/milestone'
 import { OUTCOME } from '@/components/game/outcome'
+import { SceneMedia } from '@/components/game/scene-media'
 import { NarrativeCard, SituationCard } from '@/components/game/situation-card'
 import { formatAura, formatPromedio } from '@/components/game/format'
 import { cn } from '@/lib/ui/cn'
@@ -1423,17 +1424,16 @@ function ArtSection() {
             seleccionable.
           </Note>
         </div>
-        <div className="bg-surface border-rule flex flex-col gap-3 border p-4">
+        <div className="eg-canvas border-rule flex flex-col gap-3 border p-4">
           <Label>SceneMedia</Label>
-          <div className="border-rule text-ink-label flex aspect-3/2 items-center justify-center border border-dashed">
-            <span className="text-caption">sin imagen</span>
-          </div>
+          <SceneMedia src="/assets/scenes/y1-expo.webp" />
           <Note>
-            16:9 (3:2 en mobile), <code>object-fit: cover</code>, borde de 1 px,
-            radio 0, desaturado ~15 %.{' '}
-            <strong>El pack raster está briefeado y no generado</strong>, y
-            ninguna pantalla del slice de 7.º lo monta: todas corren con cero
-            imágenes, que es exactamente la apuesta UI-first.
+            16:9 en todos los anchos, <code>object-fit: cover</code>, filete de
+            1 px, radio 0, sin filtro de color y con el espacio reservado antes
+            de cargar. <strong>Veinticuatro escenas</strong> de la dirección
+            «Trayectoria en papel» acompañan a las Templates públicas; el
+            registro de presentación decide cuál va con cada situación y un
+            Repaso nunca la repite. Una pantalla sin escena sigue completa.
           </Note>
         </div>
       </Grid>

@@ -81,7 +81,7 @@ pnpm verify         # todo lo anterior, más lint, tipos, tests y build
 ## Lo que v0.2 deja afuera a propósito
 
 - **Tema oscuro completo.** Los tokens semánticos están armados para que un segundo tema sea un bloque de redefiniciones, pero no existe.
-- **Pack raster.** Briefeado y no generado. Todas las pantallas corren con cero imágenes; `SceneMedia` existe para cuando eso cambie.
+- **Pack raster.** Integrado en RC3 como escenas de situación —ver [assets](assets.md)—; toda pantalla sigue completa sin imágenes, y `SceneMedia` es la única puerta de entrada.
 - **Pictogramas.** Ocho planeados, ninguno dibujado. El prototipo no necesitó ninguno, y dibujar iconos antes de que una pantalla los pida es cómo se podrean las librerías.
 - **Audio.** Ocho briefs, nada producido.
 - **Avatar y arte de personaje.** Estacionados: piden un pipeline de assets que la filosofía UI-first todavía no quiere.

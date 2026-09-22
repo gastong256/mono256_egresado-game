@@ -8,12 +8,19 @@ import { cn } from '@/lib/ui/cn'
  *
  * Impone el orden en que se entiende un desafío y no lo deja a la maquetación:
  *
- *     contexto → datos → consigna → interacción → resultado
+ *     título → escena → contexto → datos → consigna → interacción → resultado
  *
  * El eyebrow rojo ubica el momento del año, el título va en **caja mixta** —las
  * mayúsculas quedan para las etiquetas de 9–11 px— y todo número con el que haya
  * que razonar baja a la grilla de datos. Un dato necesario escondido en la prosa
  * es la forma más rápida de convertir un juego en un ejercicio de lectura.
+ *
+ * La escena, cuando la hay, va **entre el título y la prosa**, como la foto
+ * debajo del titular de una nota: primero se nombra el evento, después se ve el
+ * lugar, y recién entonces se lee lo que pasa. Ponerla después de la prosa la
+ * metería entre lo que hay que leer y los datos con los que hay que razonar, y
+ * el jugador tendría que saltarla para volver al problema. Prosa, datos y
+ * decisión quedan contiguos.
  *
  * La consigna no vive acá: vive arriba de las opciones, dentro del bloque
  * oscuro, porque la pregunta y la elección tienen que leerse juntas.
@@ -31,7 +38,7 @@ export function SituationCard({
   readonly title: string
   readonly setup: string
   readonly data?: readonly DataGridItem[]
-  /** Imagen contextual, cuando la hay. Con frecuencia no la hay. */
+  /** La escena, cuando la hay. Un Repaso no la lleva. */
   readonly media?: ReactNode
   /** El bloque de decisión. */
   readonly children?: ReactNode
@@ -49,8 +56,8 @@ export function SituationCard({
       >
         {title}
       </h2>
-      <p className="text-body text-ink-secondary text-pretty">{setup}</p>
       {media}
+      <p className="text-body text-ink-secondary text-pretty">{setup}</p>
       {data === undefined || data.length === 0 ? null : (
         <DataGrid items={data} />
       )}

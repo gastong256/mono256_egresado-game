@@ -72,9 +72,9 @@ Dice **«vas camino a»** y no «sos»: 7.º es el primero de seis años, y un v
 
 ## SceneMedia
 
-Todo el tratamiento de imagen vive acá y no se repite por pantalla: 16:9 (3:2 en mobile), `object-fit: cover`, foco por `object-position`, borde de 1 px, radio 0, desaturado ~15 %.
+Todo el tratamiento de imagen vive acá y no se repite por pantalla: caja 16:9 en todos los anchos, `object-fit: cover`, foco por `object-position`, filete de 1 px, radio 0, sin filtro de color. La caja reserva su alto con `aspect-ratio` antes de que la imagen llegue; nunca se precarga.
 
-El pack raster está **briefeado y no generado**, y ninguna pantalla del slice de 7.º lo monta. El componente existe para que la primera imagen que se produzca entre por un solo lugar.
+`ChallengeFrame` la monta **entre el título y la prosa** de la situación cuando el registro de presentación (`scene-registry.ts`) tiene una escena para la Template: primero se nombra el evento, después se ve el lugar, y recién entonces se lee lo que pasa, con prosa, datos y decisión contiguos. Un Repaso no la lleva. El `alt` es vacío por defecto porque el eyebrow, el título y la prosa ya sitúan la escena; se pasa texto sólo cuando la imagen dice algo que el texto no dice.
 
 ## StageHeader: progreso de la etapa
 

@@ -7,44 +7,53 @@ import { cn } from '@/lib/ui/cn'
  *
  * Egresado es un juego cuya UI ya es su identidad visual: si una pantalla
  * funciona sin imagen, sale sin imagen. Como máximo una por situación ordinaria,
- * y con frecuencia cero. El arte enriquece; nunca estructura.
+ * ninguna en un Repaso. El arte enriquece; nunca estructura.
  *
- * Todo el tratamiento vive acá y no se repite por pantalla: 16:9 en desktop y
- * 3:2 en mobile, `object-fit: cover`, foco por `object-position`, borde de 1 px,
- * radio 0 y desaturado ~15 %. Montada sobre el papel como una foto pegada en una
- * carpeta.
+ * Todo el tratamiento vive acá y no se repite por pantalla: caja 16:9 en todos
+ * los anchos, `object-fit: cover`, foco por `object-position`, filete de 1 px,
+ * radio 0. Montada sobre el papel como una lámina pegada en una carpeta, sin
+ * tarjeta blanca ni sombra alrededor.
  *
- * `width`/`height` van fijos y la caja tiene `aspect-ratio`, así que el espacio
- * queda reservado antes de que la imagen llegue: una situación matemática que
- * salta 200 px mientras se lee es peor que no tener imagen.
+ * La caja tiene `aspect-ratio`, así que el espacio queda reservado antes de que
+ * la imagen llegue: una situación matemática que salta 200 px mientras se lee
+ * es peor que no tener imagen. Y la relación es una sola porque la columna de
+ * juego mide 412 px en todos los breakpoints: las ilustraciones se generaron a
+ * 16:9 con el sujeto en el 70 % central, y un recorte 3:2 en mobile ganaría
+ * pocos píxeles de alto a cambio de empujar la decisión más abajo.
+ *
+ * Sin filtro de color. Las escenas ya están pintadas con la paleta del sistema
+ * —papel, tinta, verde botella y rojo puntual—, y un desaturado pensado para
+ * fotografía las alejaría de los tokens que las rodean.
  *
  * **`priority` no se usa acá.** Precargar el arte de un desafío que todavía no
- * apareció le roba ancho de banda a la pantalla que el jugador está mirando.
+ * apareció le roba ancho de banda a la pantalla que el jugador está mirando; la
+ * imagen de la situación actual se pide sola cuando entra a pantalla.
  *
- * El alt describe el *lugar y el momento*, nunca la mecánica: «Una parada de
- * colectivo vacía a la mañana temprano», no «el desafío del colectivo».
- *
- * > Estado: el pack raster está briefeado y **no generado**. El componente
- * > existe para que la primera imagen que se produzca entre por un solo lugar;
- * > hoy ninguna pantalla del slice de 7.º lo monta, y eso es intencional.
+ * El `alt` es vacío por defecto: en una situación, el eyebrow dice el momento,
+ * el título nombra el evento y la prosa cuenta el lugar, así que la imagen es
+ * ambientación y describirla duplicaría la narración a quien usa un lector de
+ * pantalla. Se pasa un texto sólo cuando la imagen aporta algo que el texto de
+ * al lado no dice, y entonces describe el *lugar y el momento*, nunca la
+ * mecánica.
  */
 export function SceneMedia({
   src,
-  alt,
+  alt = '',
   focus = 'center',
   className,
 }: {
   readonly src: string
-  /** Lugar y momento. Nunca la mecánica del desafío. */
-  readonly alt: string
+  /** Vacío si el texto de al lado ya sitúa la escena; si no, lugar y momento. */
+  readonly alt?: string
   /** Punto focal, como `object-position`. */
   readonly focus?: 'left' | 'center' | 'right'
   readonly className?: string
 }) {
   return (
     <div
+      data-testid="scene-media"
       className={cn(
-        'border-rule relative aspect-3/2 w-full overflow-hidden border sm:aspect-video',
+        'border-rule relative aspect-video w-full overflow-hidden border',
         className,
       )}
     >
@@ -56,7 +65,7 @@ export function SceneMedia({
         // más grande que eso es descargar píxeles que nadie va a ver.
         sizes="(max-width: 412px) 100vw, 412px"
         className={cn(
-          'object-cover saturate-85',
+          'object-cover',
           focus === 'left' && 'object-left',
           focus === 'center' && 'object-center',
           focus === 'right' && 'object-right',

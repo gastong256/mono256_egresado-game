@@ -14,6 +14,10 @@
  * el bloque lo suelta y reaparece al final del shell, debajo del panel de
  * resultado: nunca hay dos primarios montados y nunca hay que scrollear para
  * atrás para continuar.
+ *
+ * La escena sale del registro de presentación por id de Template: una situación
+ * con ilustración la monta debajo del título; una sin ilustración —o un
+ * Repaso— se ve como siempre. La imagen no cambia nada de lo que se juega.
  */
 
 import type { ReactNode } from 'react'
@@ -28,6 +32,8 @@ import {
   missingRequirement,
   usesDecisionBlock,
 } from './interaction-area'
+import { SceneMedia } from './scene-media'
+import { sceneForChallenge } from './scene-registry'
 import { SituationCard } from './situation-card'
 
 export interface ChallengeFrameProps {
@@ -65,6 +71,7 @@ export function ChallengeFrame({
   const resolved = resolution !== undefined
   const missing = missingRequirement(view.interaction, draft)
   const inDecisionBlock = usesDecisionBlock(view.interaction)
+  const scene = sceneForChallenge(view)
 
   const controls = (
     <InteractionControls
@@ -84,6 +91,9 @@ export function ChallengeFrame({
       title={view.narrative.title}
       setup={view.narrative.setup}
       data={interactionData(view.interaction)}
+      {...(scene === undefined
+        ? {}
+        : { media: <SceneMedia src={scene.src} /> })}
     >
       {inDecisionBlock ? (
         <DecisionBlock

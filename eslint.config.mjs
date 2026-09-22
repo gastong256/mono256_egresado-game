@@ -21,6 +21,9 @@ const appDynamicImportRestriction = {
 }
 
 export default defineConfig([
+  // `.tmp/` es el área de trabajo local de handoffs (planes, evidencia de
+  // discovery); no es producto y no pasa por los gates de código.
+  globalIgnores(['.tmp/**']),
   ...nextVitals,
   ...nextTypeScript,
   {

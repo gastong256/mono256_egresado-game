@@ -17,11 +17,17 @@ Presupuesto total del sistema: **6–9 raster · 6–12 pictogramas · 1 wordmar
 
 **El wordmark no es una imagen.** Escala libre, recolorea por token, sin pipeline de assets, y sigue siendo texto seleccionable y buscable. Sólo haría falta un SVG para favicon y OG, donde no se puede usar texto — el concepto es un tilde verde sobre papel cuadriculado, y todavía no está dibujado.
 
-## Raster — briefeado, **no generado**
+## Raster — escenas de situación, integradas
 
-Ninguna de las ocho imágenes existe, y **ninguna pantalla las necesita**: todo el slice de 7.º corre con cero imágenes. El pack es enriquecimiento, nunca estructura. Si se produce, entra por `SceneMedia` y por ningún otro lado.
+Veinticuatro ilustraciones acompañan a las veintiocho Templates públicas de la carrera, bajo la dirección «Trayectoria en papel» del sprint RC3: ilustración editorial de formas planas, papel, tinta, verde botella y rojo puntual, sin texto ni cifras dentro de la imagen. Una escena por **situación visual** —las dos preguntas del colectivo comparten la parada; salón, cola y turnos del evento comparten el salón antes de abrir—, ninguna en un Repaso y ninguna para las Templates de 7.º que la carrera pública no alcanza.
 
-Spec compartido: 16:9 (1600×900), WebP, ≤120 KB, sin texto, sin logos, sin marcas legibles, contexto de secundaria argentina.
+Viven en `public/assets/scenes/*.webp`, a 1600×900 y entre 100 y 165 KB cada una; el mapping Template → escena es `src/components/game/scene-registry.ts` y la única puerta de entrada al layout sigue siendo `SceneMedia`, montada por `ChallengeFrame` entre el título y la prosa. **Ninguna pantalla las necesita**: una situación sin imagen —o sin red— sigue completa, y el motor no sabe que existen. La reconciliación con los originales, la optimización y las decisiones de UX están documentadas en el handoff local de RC3 (`.tmp/rc3-branding/`).
+
+Spec compartido: 16:9 (1600×900), WebP, ≈100–250 KB priorizando calidad, sin texto, sin logos, sin marcas legibles, contexto de secundaria argentina.
+
+### Brief histórico (v0.2, fotográfico)
+
+El brief siguiente es el de v0.2 y **quedó superado** por la dirección ilustrada del pack integrado; se conserva como registro hasta que la tarea de marca de RC3 ratifique la identidad visual en la documentación canónica.
 
 Estilo compartido: fotográfico-editorial levemente estilizado · poco ruido visual · una acción focal clara · composición simple · luz natural · algo desaturado. **No** hiperreal-glossy-AI, **no** anime, **no** render 3D, **no** cartoon infantil.
 
@@ -71,14 +77,14 @@ Loop opcional: marimba y contrabajo, escaso, 90 BPM, ≤60 s, −18 LUFS, tiene 
 
 Todo estado de UI · todos los paneles de resultado · el cierre de etapa · Estilo · Aura · el wordmark · el progreso · los cuatro patrones de interacción.
 
-## Dónde van si se producen
+## Dónde van
 
 ```text
-public/assets/scenes/*.webp
-public/assets/milestones/*.webp
+public/assets/scenes/*.webp        # escenas de situación (integradas)
+public/assets/milestones/*.webp    # reservado; nada producido
 ```
 
-Siempre vía `SceneMedia`, nunca con `priority` —precargar el arte de un desafío que todavía no apareció le roba ancho de banda a la pantalla que el jugador está mirando— y nunca cargados desde una ruta que no sea `public/`.
+Siempre vía `SceneMedia`, nunca con `priority` —precargar el arte de un desafío que todavía no apareció le roba ancho de banda a la pantalla que el jugador está mirando— y nunca cargados desde una ruta que no sea `public/`. Los originales no se sirven: `public/` sólo contiene derivados optimizados.
 
 ## Referencias visuales aprobadas
 
