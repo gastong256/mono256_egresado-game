@@ -1,0 +1,385 @@
+{
+  "families": 22,
+  "templates": 42,
+  "variants": 1031,
+  "templatesSummary": [
+    {
+      "id": "g7.bus-latest-departure",
+      "family": "bus",
+      "role": "anchor",
+      "interaction": "numeric-input",
+      "approved": 26,
+      "title": "La pregunta del grupo",
+      "public": true
+    },
+    {
+      "id": "g7.bus-timing",
+      "family": "bus",
+      "role": "anchor",
+      "interaction": "timeline",
+      "approved": 26,
+      "title": "El colectivo de siempre",
+      "public": true
+    },
+    {
+      "id": "g7.bus-travel-review",
+      "family": "bus",
+      "role": "recovery",
+      "interaction": "numeric-input",
+      "approved": 26,
+      "title": "El viaje de hoy",
+      "public": true
+    },
+    {
+      "id": "g7.group-tasks",
+      "family": "group-project",
+      "role": "anchor",
+      "interaction": "assignment-board",
+      "approved": 6,
+      "title": "El trabajo grupal",
+      "public": false
+    },
+    {
+      "id": "g7.may-25-act",
+      "family": "may-25",
+      "role": "special",
+      "interaction": "number-grid",
+      "approved": 27,
+      "title": "25 de Mayo",
+      "public": true
+    },
+    {
+      "id": "g7.mural-paint",
+      "family": "mural",
+      "role": "checkpoint",
+      "interaction": "decision-card",
+      "approved": 26,
+      "title": "El mural del curso",
+      "public": false
+    },
+    {
+      "id": "g7.notebook-offer",
+      "family": "notebook",
+      "role": "anchor",
+      "interaction": "decision-card",
+      "approved": 26,
+      "title": "La notebook del curso",
+      "public": false
+    },
+    {
+      "id": "g7.stand-supplies",
+      "family": "school-fair",
+      "role": "anchor",
+      "interaction": "budget-builder",
+      "approved": 26,
+      "title": "La merienda del stand",
+      "public": false
+    },
+    {
+      "id": "y1.classroom-layout",
+      "family": "classroom-space",
+      "role": "anchor",
+      "interaction": "spatial-layout",
+      "approved": 25,
+      "title": "Un aula que funcione",
+      "public": true
+    },
+    {
+      "id": "y1.course-project-expo",
+      "family": "course-project",
+      "role": "anchor",
+      "interaction": "assignment-board",
+      "approved": 25,
+      "title": "La primera expo",
+      "public": true
+    },
+    {
+      "id": "y1.mobile-data",
+      "family": "mobile-data",
+      "role": "checkpoint",
+      "interaction": "quantity-builder",
+      "approved": 25,
+      "title": "Datos para estos días",
+      "public": true
+    },
+    {
+      "id": "y1.rehearsal-schedule",
+      "family": "rehearsal-planning",
+      "role": "checkpoint",
+      "interaction": "schedule-builder",
+      "approved": 25,
+      "title": "Antes del ensayo",
+      "public": true
+    },
+    {
+      "id": "y1.scale-fit-review",
+      "family": "classroom-space",
+      "role": "recovery",
+      "interaction": "spatial-layout",
+      "approved": 24,
+      "title": "Repaso: medir y encastrar",
+      "public": true
+    },
+    {
+      "id": "y1.schedule-review",
+      "family": "rehearsal-planning",
+      "role": "recovery",
+      "interaction": "schedule-builder",
+      "approved": 25,
+      "title": "Repaso: dos cosas y un viaje",
+      "public": true
+    },
+    {
+      "id": "y1.student-day-challenge-wheel",
+      "family": "student-day",
+      "role": "anchor",
+      "interaction": "quantity-builder",
+      "approved": 25,
+      "title": "La rueda del curso",
+      "public": true
+    },
+    {
+      "id": "y2.course-project-survey",
+      "family": "course-project",
+      "role": "anchor",
+      "interaction": "classification",
+      "approved": 25,
+      "title": "Lo que dice la encuesta",
+      "public": true
+    },
+    {
+      "id": "y2.court-zones",
+      "family": "court-space",
+      "role": "anchor",
+      "interaction": "spatial-layout",
+      "approved": 25,
+      "title": "Las postas de la cancha",
+      "public": true
+    },
+    {
+      "id": "y2.data-claim-review",
+      "family": "course-project",
+      "role": "recovery",
+      "interaction": "classification",
+      "approved": 25,
+      "title": "Sobre cuánta gente",
+      "public": true
+    },
+    {
+      "id": "y2.intercurso-plan",
+      "family": "intercurso",
+      "role": "anchor",
+      "interaction": "assignment-board",
+      "approved": 25,
+      "title": "El plan del Intercurso",
+      "public": true
+    },
+    {
+      "id": "y2.standings-claim",
+      "family": "intercurso",
+      "role": "checkpoint",
+      "interaction": "classification",
+      "approved": 25,
+      "title": "La tabla del Intercurso",
+      "public": true
+    },
+    {
+      "id": "y2.team-kit-order",
+      "family": "team-kit",
+      "role": "checkpoint",
+      "interaction": "quantity-builder",
+      "approved": 24,
+      "title": "Las pecheras del Intercurso",
+      "public": true
+    },
+    {
+      "id": "y3.course-project-tech",
+      "family": "course-project",
+      "role": "anchor",
+      "interaction": "quantity-builder",
+      "approved": 25,
+      "title": "Proyecto del Curso: la feria de tecnología",
+      "public": true
+    },
+    {
+      "id": "y3.fixed-variable-review",
+      "family": "transporte",
+      "role": "recovery",
+      "interaction": "numeric-input",
+      "approved": 25,
+      "title": "Lo que se paga una vez",
+      "public": true
+    },
+    {
+      "id": "y3.friend-day",
+      "family": "dia-del-amigo",
+      "role": "anchor",
+      "interaction": "schedule-builder",
+      "approved": 25,
+      "title": "El Día del Amigo",
+      "public": true
+    },
+    {
+      "id": "y3.rate-capacity-review",
+      "family": "course-project",
+      "role": "recovery",
+      "interaction": "numeric-input",
+      "approved": 25,
+      "title": "Cuánto entra",
+      "public": true
+    },
+    {
+      "id": "y3.route-plan",
+      "family": "barrio",
+      "role": "anchor",
+      "interaction": "route-builder",
+      "approved": 24,
+      "title": "Los mandados del sábado",
+      "public": true
+    },
+    {
+      "id": "y3.transport-pass",
+      "family": "transporte",
+      "role": "checkpoint",
+      "interaction": "decision-card",
+      "approved": 25,
+      "title": "Cómo pagar el colectivo",
+      "public": true
+    },
+    {
+      "id": "y3.week-planner",
+      "family": "semana-propia",
+      "role": "checkpoint",
+      "interaction": "schedule-builder",
+      "approved": 25,
+      "title": "La semana que viene",
+      "public": true
+    },
+    {
+      "id": "y4.course-project-fundraiser",
+      "family": "course-project",
+      "role": "anchor",
+      "interaction": "quantity-builder",
+      "approved": 25,
+      "title": "Proyecto del Curso: la peña",
+      "public": true
+    },
+    {
+      "id": "y4.event-floor-plan",
+      "family": "evento-escolar",
+      "role": "anchor",
+      "interaction": "spatial-layout",
+      "approved": 25,
+      "title": "El salón del evento",
+      "public": true
+    },
+    {
+      "id": "y4.margin-review",
+      "family": "course-project",
+      "role": "recovery",
+      "interaction": "numeric-input",
+      "approved": 25,
+      "title": "Lo que deja cada bandeja",
+      "public": true
+    },
+    {
+      "id": "y4.represent-class",
+      "family": "consejo-escolar",
+      "role": "special",
+      "interaction": "classification",
+      "approved": 24,
+      "title": "Representar al curso",
+      "public": true
+    },
+    {
+      "id": "y4.school-event-flow",
+      "family": "evento-escolar",
+      "role": "anchor",
+      "interaction": "quantity-builder",
+      "approved": 24,
+      "title": "La cola del evento",
+      "public": true
+    },
+    {
+      "id": "y4.shift-coverage",
+      "family": "evento-escolar",
+      "role": "checkpoint",
+      "interaction": "assignment-board",
+      "approved": 24,
+      "title": "Los turnos del evento",
+      "public": true
+    },
+    {
+      "id": "y4.spatial-capacity-review",
+      "family": "evento-escolar",
+      "role": "recovery",
+      "interaction": "numeric-input",
+      "approved": 25,
+      "title": "Cuánta gente entra",
+      "public": true
+    },
+    {
+      "id": "y5.course-project-final",
+      "family": "course-project",
+      "role": "anchor",
+      "interaction": "classification",
+      "approved": 25,
+      "title": "Proyecto del Curso: la muestra final",
+      "public": true
+    },
+    {
+      "id": "y5.final-trip-or-event",
+      "family": "egreso",
+      "role": "anchor",
+      "interaction": "decision-card",
+      "approved": 25,
+      "title": "El viaje",
+      "public": true
+    },
+    {
+      "id": "y5.multi-option-comparison-review",
+      "family": "egreso",
+      "role": "recovery",
+      "interaction": "numeric-input",
+      "approved": 25,
+      "title": "Lo que no está incluido",
+      "public": true
+    },
+    {
+      "id": "y5.next-step-options",
+      "family": "despues-del-colegio",
+      "role": "checkpoint",
+      "interaction": "classification",
+      "approved": 25,
+      "title": "El año que viene",
+      "public": true
+    },
+    {
+      "id": "y5.proportion-capacity-review",
+      "family": "egreso",
+      "role": "recovery",
+      "interaction": "numeric-input",
+      "approved": 23,
+      "title": "Cuántas páginas pide",
+      "public": true
+    },
+    {
+      "id": "y5.stage-screen",
+      "family": "egreso",
+      "role": "anchor",
+      "interaction": "decision-card",
+      "approved": 25,
+      "title": "La pantalla del acto",
+      "public": true
+    },
+    {
+      "id": "y5.yearbook",
+      "family": "egreso",
+      "role": "checkpoint",
+      "interaction": "quantity-builder",
+      "approved": 25,
+      "title": "El anuario",
+      "public": true
+    }
+  ]
+}

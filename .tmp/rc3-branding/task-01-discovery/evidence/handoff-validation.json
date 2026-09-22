@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "checks": 946,
+  "localLinks": 20,
+  "untrackedFilesAtCheck": 30,
+  "templates": 42,
+  "publicTemplatesWitnessed": 38,
+  "runsCompleted": 128,
+  "visualContexts": 28,
+  "candidateContracts": 36,
+  "productModified": false
+}

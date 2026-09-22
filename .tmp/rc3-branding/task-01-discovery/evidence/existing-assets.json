@@ -1,0 +1,90 @@
+[
+  {
+    "path": "docs/09-design-system/reference/apertura.png",
+    "format": "png",
+    "dimensions": "417×484",
+    "bytes": 27063,
+    "used": "DOC-ONLY · referenciada por docs/09-design-system/assets.md",
+    "purpose": "Captura del handoff v0.2",
+    "style": "Papel editorial",
+    "quality": "Referencia de sistema; copy y valores pueden estar desactualizados",
+    "reuse": "Referencia sí; nunca rasterizar UI"
+  },
+  {
+    "path": "docs/09-design-system/reference/cierre-de-etapa.png",
+    "format": "png",
+    "dimensions": "424×841",
+    "bytes": 66330,
+    "used": "DOC-ONLY · referenciada por docs/09-design-system/assets.md",
+    "purpose": "Captura del handoff v0.2",
+    "style": "Papel editorial",
+    "quality": "Referencia de sistema; copy y valores pueden estar desactualizados",
+    "reuse": "Referencia sí; nunca rasterizar UI"
+  },
+  {
+    "path": "docs/09-design-system/reference/colectivo-resuelto.png",
+    "format": "png",
+    "dimensions": "424×1095",
+    "bytes": 77201,
+    "used": "DOC-ONLY · referenciada por docs/09-design-system/assets.md",
+    "purpose": "Captura del handoff v0.2",
+    "style": "Papel editorial",
+    "quality": "Referencia de sistema; copy y valores pueden estar desactualizados",
+    "reuse": "Referencia sí; nunca rasterizar UI"
+  },
+  {
+    "path": "docs/09-design-system/reference/colectivo-sin-resolver.png",
+    "format": "png",
+    "dimensions": "424×668",
+    "bytes": 46097,
+    "used": "DOC-ONLY · referenciada por docs/09-design-system/assets.md",
+    "purpose": "Captura del handoff v0.2",
+    "style": "Papel editorial",
+    "quality": "Referencia de sistema; copy y valores pueden estar desactualizados",
+    "reuse": "Referencia sí; nunca rasterizar UI"
+  },
+  {
+    "path": "docs/09-design-system/reference/grilla-25-de-mayo.png",
+    "format": "png",
+    "dimensions": "417×1134",
+    "bytes": 87102,
+    "used": "DOC-ONLY · referenciada por docs/09-design-system/assets.md",
+    "purpose": "Captura del handoff v0.2",
+    "style": "Papel editorial",
+    "quality": "Referencia de sistema; copy y valores pueden estar desactualizados",
+    "reuse": "Referencia sí; nunca rasterizar UI"
+  },
+  {
+    "path": "docs/09-design-system/reference/mural-resuelto.png",
+    "format": "png",
+    "dimensions": "425×1075",
+    "bytes": 71278,
+    "used": "DOC-ONLY · referenciada por docs/09-design-system/assets.md",
+    "purpose": "Captura del handoff v0.2",
+    "style": "Papel editorial",
+    "quality": "Referencia de sistema; copy y valores pueden estar desactualizados",
+    "reuse": "Referencia sí; nunca rasterizar UI"
+  },
+  {
+    "path": "src/app/fonts/libre-franklin-latin-variable.woff2",
+    "format": "woff2",
+    "dimensions": "N/A",
+    "bytes": 29292,
+    "used": "ACTIVE · src/app/fonts/index.ts",
+    "purpose": "Fuente local variable Latin 400–900",
+    "style": "Schibsted: títulos/datos; Libre Franklin: prosa",
+    "quality": "Formato web versionado; licencia OFL adjunta",
+    "reuse": "Sí, conservar"
+  },
+  {
+    "path": "src/app/fonts/schibsted-grotesk-latin-variable.woff2",
+    "format": "woff2",
+    "dimensions": "N/A",
+    "bytes": 46752,
+    "used": "ACTIVE · src/app/fonts/index.ts",
+    "purpose": "Fuente local variable Latin 400–900",
+    "style": "Schibsted: títulos/datos; Libre Franklin: prosa",
+    "quality": "Formato web versionado; licencia OFL adjunta",
+    "reuse": "Sí, conservar"
+  }
+]

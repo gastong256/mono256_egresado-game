@@ -1,0 +1,83 @@
+EGRESADO RC3 — TASK-01 VISUAL DISCOVERY
+=======================================
+
+Status:
+DONE
+
+Repository:
+main
+cfcde1e1fe0f52d2554134efa9c4f28d72c8b833
+
+Documentation reviewed:
+39 documentos, secciones declaradas en 08-source-map.md;
+roadmap/freeze, ADRs, contenido, UI, diseño y guías locales de Next.
+
+Grades inventoried:
+7.º ........ COMPLETE
+1.º ........ COMPLETE
+2.º ........ COMPLETE
+3.º ........ COMPLETE
+4.º ........ COMPLETE
+5.º ........ COMPLETE
+
+Scenarios:
+Families ............. 22
+Templates ............ 42 (38 públicas; 4 DEV-ONLY)
+Approved variants .... 1031
+Visual scenarios ..... 28 (24 públicos; 4 DEV-ONLY)
+
+UI surfaces .......... 36 unidades de revisión, no rutas
+Copy candidates ...... 36 registros de revisión
+
+Assets:
+Existing ............. 8 binarios (6 referencias PNG + 2 fuentes)
+Candidate ............ 36 contratos (no 36 imágenes IA)
+P0 ................... 8
+P1 ................... 16
+P2 ................... 12
+Brand ................ 6
+Scenario ............. 28
+Global UI ............ 2 (HTML/CSS; no generación IA)
+
+Recommended visual direction:
+Trayectoria en papel — propuesta pendiente de elección editorial.
+
+Pilot scenarios:
+1. scenario.g7.bus — parada de colectivo, exterior.
+2. scenario.y1.expo — primera exposición, interior/personas.
+3. scenario.y4.fundraiser — peña escolar, proyecto/objetos.
+
+Human input required for the next task:
+1. Elegir dirección visual entre las tres propuestas.
+2. Generar Wave 1/2 externamente; validar pilotos antes del resto.
+3. Entregar originales y procedencia en resources/rc3-assets/.
+   Primer pack recomendado: hasta 8 raster; DEV-ONLY excluido.
+
+Output:
+.tmp/rc3-branding/task-01-discovery/
+
+Verification:
+128/128 carreras egresadas; 38 Templates públicas y 4 raros observados.
+57 comprobaciones del verificador de release en verde con config sin .env.
+Toolchain, instalación congelada offline, diseño, agent workspace,
+master y release dependency gate: PASS.
+Validación integral del handoff: PASS.
+pnpm verify completo y QA visual de navegador: NOT RUN; ver 12-verification.md.
+
+Product source modified:
+NO
+
+Mathematics:
+UNCHANGED
+
+Competitive semantics:
+UNCHANGED
+
+Database:
+UNCHANGED
+
+Deployment:
+UNCHANGED
+
+Next recommended task:
+External asset generation Wave 1/2 → TASK-02
