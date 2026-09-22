@@ -42,6 +42,11 @@ function readEnvironmentFiles(): Record<string, string> {
 const fileEnvironment = readEnvironmentFiles()
 
 export default defineConfig({
+  // vite-node also uses this config and otherwise preloads/interpolates
+  // .env.local into process.env BEFORE the CLI's explicit --env-file loader.
+  // Vitest keeps its literal fileEnvironment below; operator scripts own their
+  // loading so only the real process environment outranks --env-file.
+  envDir: false,
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),

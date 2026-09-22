@@ -1,54 +1,74 @@
-/**
- * Carga `.env.local` y `.env` para los comandos de competencia.
- *
- * Next.js hace esto solo para la aplicación, pero un script que corre bajo
- * `vite-node` arranca con el entorno pelado. Sin esto, `pnpm
- * competition:bootstrap` obligaría a exportar ocho variables a mano cada vez, y
- * la primera vez que alguien se olvide una el error va a ser "falta el
- * responsable de los datos" en lugar de "olvidaste el archivo".
- *
- * Lo que ya está en el entorno **gana**. Es lo que permite que un pipeline pase
- * sus propios valores sin que un `.env.local` olvidado en la máquina los pise.
- */
-
-import { existsSync, readFileSync } from 'node:fs'
+/** Entorno de las CLI: proceso > --env-file > .env.local > .env. */
+import { existsSync, readFileSync, statSync } from 'node:fs'
 import { resolve } from 'node:path'
+import { parseEnv } from 'node:util'
 
-/** Los mismos archivos que Next.js lee, en el mismo orden de precedencia. */
-const FILES = ['.env.local', '.env'] as const
-
-function parse(contents: string): Map<string, string> {
-  const values = new Map<string, string>()
-  for (const line of contents.split(/\r?\n/)) {
-    const trimmed = line.trim()
-    if (trimmed.length === 0 || trimmed.startsWith('#')) continue
-    const separator = trimmed.indexOf('=')
-    if (separator === -1) continue
-    const key = trimmed.slice(0, separator).trim()
-    let value = trimmed.slice(separator + 1).trim()
-    // Comillas simples o dobles alrededor del valor: se sacan, y lo de adentro
-    // se toma literal. Un digest de scrypt lleva `$`, que sin comillas el shell
-    // expandiría antes de que el archivo llegue acá.
-    if (
-      value.length >= 2 &&
-      ((value.startsWith("'") && value.endsWith("'")) ||
-        (value.startsWith('"') && value.endsWith('"')))
-    ) {
-      value = value.slice(1, -1)
+function explicitFile(args: readonly string[]): string | undefined {
+  let selected: string | undefined
+  for (let index = 0; index < args.length; index += 1) {
+    const arg = args[index]
+    if (arg !== '--env-file' && !arg?.startsWith('--env-file=')) continue
+    const value =
+      arg === '--env-file' ? args[++index] : arg.slice('--env-file='.length)
+    if (selected !== undefined || !value || value.startsWith('--')) {
+      throw new Error('Indicá un único --env-file con una ruta no vacía.')
     }
-    values.set(key, value)
+    selected = value
   }
-  return values
+  return selected
 }
 
-export function loadCompetitionEnvironment(): void {
-  for (const file of FILES) {
+/**
+ * No usa shell ni expande $VARIABLE/$(comando). Node conserva Unicode y valores
+ * entre comillas. Lee y valida todo antes de modificar el entorno. Los errores
+ * no incluyen contenidos, rutas ni mensajes del sistema que puedan ser secretos.
+ * Los parsers de cada comando conservan sus argumentos; ignoran esta opción.
+ */
+export function loadCompetitionEnvironment(
+  args: readonly string[] = process.argv.slice(2),
+): void {
+  const explicit = explicitFile(args)
+  const files = [
+    ...(explicit === undefined ? [] : [{ file: explicit, required: true }]),
+    { file: '.env.local', required: false },
+    { file: '.env', required: false },
+  ]
+  const values = new Map<string, string>()
+  for (const { file, required } of files) {
     const path = resolve(process.cwd(), file)
-    if (!existsSync(path)) continue
-    for (const [key, value] of parse(readFileSync(path, 'utf8'))) {
-      if (process.env[key] === undefined) {
-        process.env[key] = value
+    if (!required && !existsSync(path)) continue
+    let contents: string
+    try {
+      const stat = statSync(path)
+      if (!stat.isFile()) throw new Error()
+      if (
+        required &&
+        process.platform !== 'win32' &&
+        (stat.mode & 0o077) !== 0
+      ) {
+        throw new Error('permissions')
       }
+      contents = readFileSync(path, 'utf8')
+    } catch {
+      throw new Error(
+        required
+          ? 'No se pudo leer --env-file: debe existir, ser un archivo legible y tener permisos privados (chmod 600 en POSIX).'
+          : 'No se pudo leer un archivo de entorno local.',
+      )
     }
+    let parsed: ReturnType<typeof parseEnv>
+    try {
+      parsed = parseEnv(contents)
+    } catch {
+      throw new Error(
+        'No se pudo interpretar el archivo de entorno; revisá su formato dotenv.',
+      )
+    }
+    for (const [key, value] of Object.entries(parsed)) {
+      if (value !== undefined && !values.has(key)) values.set(key, value)
+    }
+  }
+  for (const [key, value] of values) {
+    if (process.env[key] === undefined) process.env[key] = value
   }
 }
