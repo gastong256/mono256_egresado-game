@@ -170,3 +170,11 @@ Estas preguntas están registradas en [preguntas abiertas](07-reference/open-que
 - [x] Manifiesto y candado verificables con `pnpm release:verify`.
 - [x] [Reporte del RC](06-delivery/production-v1-release-candidate.md), [checklist](06-delivery/release-checklist.md) y [runbook operativo](05-operations/fair-operations-runbook.md).
 - [x] STAGE-10 conserva los ensayos remotos y GO/NO-GO.
+
+
+## STAGE-10A — preparación Vercel Hobby + Supabase Free
+
+- [x] [ADR-028](03-architecture/adr/ADR-028-zero-cost-fair-deployment.md) y registro: regiones, Git, secretos y ensayo local.
+- [x] [Handoff A–I](05-operations/vercel-supabase-production-deployment.md), plantilla pública y operación sin tercer proyecto remoto.
+- [x] [Reporte de adaptación](06-delivery/stage-10a-deployment-adaptation.md), con procedencia RC.1 y evidencia RC.2 separadas.
+- [x] Etapa actual, roadmap, arquitectura, runbooks e índices reconciliados; GO remoto pendiente.

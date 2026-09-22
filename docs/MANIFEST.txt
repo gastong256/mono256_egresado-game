@@ -55,6 +55,7 @@
 03-architecture/adr/ADR-025-full-career-contract-evolution.md
 03-architecture/adr/ADR-026-participant-identity-and-minor-privacy.md
 03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md
+03-architecture/adr/ADR-028-zero-cost-fair-deployment.md
 03-architecture/analytics-observability.md
 03-architecture/api-contracts.md
 03-architecture/architecture-overview.md
@@ -98,6 +99,7 @@
 05-operations/fair-runbook.md
 05-operations/fallback-and-incident-plan.md
 05-operations/leaderboard-and-moderation.md
+05-operations/vercel-supabase-production-deployment.md
 06-delivery/current-stage.md
 06-delivery/definition-of-done.md
 06-delivery/implementation-sequence.md
@@ -107,6 +109,7 @@
 06-delivery/repository-conventions.md
 06-delivery/stage-08-final-integration-pacing-closure.md
 06-delivery/stage-09-fair-mode-server-ranking.md
+06-delivery/stage-10a-deployment-adaptation.md
 06-delivery/teacher-gate-1/01-guion.md
 06-delivery/teacher-gate-1/02-checklist-facilitador.md
 06-delivery/teacher-gate-1/03-casos.md

@@ -3,7 +3,18 @@
 Vista corta del estado de ejecución. El contrato completo y el protocolo de
 actualización están en el [roadmap](implementation-sequence.md).
 
-## PRODUCTION V1 FREEZE — Egresado Fair Edition v1
+## STAGE-10A — adaptación Vercel Hobby + Supabase Free
+
+**Estado:** `DONE` — 22 de septiembre de 2026. Adaptación de despliegue `READY`,
+`1.0.0-rc.2`, `pnpm verify` verde: 2345 tests y 222 E2E. STAGE-10 sigue
+`IN_PROGRESS`; faltan despliegue, ensayos de proveedor y GO. [ADR-028](../03-architecture/adr/ADR-028-zero-cost-fair-deployment.md)
+fija Functions `gru1`, DB `sa-east-1`, producción desde main y ensayo local sin
+staging cloud. La institución, ventana y retención de 30 días están aprobadas.
+El [handoff A–I](../05-operations/vercel-supabase-production-deployment.md) indica
+los únicos pasos manuales de proveedor que faltan. Evidencia en el
+[reporte STAGE-10A](stage-10a-deployment-adaptation.md).
+
+## PRODUCTION V1 FREEZE — evidencia histórica RC.1
 
 **Estado:** `DONE` — 22 de septiembre de 2026. **Siguiente etapa: STAGE-10**,
 despliegue, hardening, dry run y GO/NO-GO.

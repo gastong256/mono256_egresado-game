@@ -4,7 +4,7 @@
 
 Egresado adopta un **monolito modular web + Backend for Frontend (BFF)** en una única aplicación Next.js ubicada en la raíz del repositorio. El motor de juego es una frontera de TypeScript puro dentro de esa aplicación, no un paquete publicable ni un servicio separado.
 
-La base técnica actual implementa el shell, los límites de módulos, la validación de entorno, los adaptadores iniciales de Supabase, los gates de calidad y un motor de juego determinista con contenido versionado de 7.º. Incluye la Teacher Demo local, la composición normal previa a ejecución y el caso de uso server-only que valida una submission por replay. Todavía no implementa autenticación, tablas de producto, emisión online de runs oficiales ni sus endpoints; esas capacidades deben respetar las decisiones y preguntas abiertas existentes cuando se incorporen.
+El RC implementa la carrera completa local-first, la emisión de intentos, sesiones de participante y organizador, replay autoritativo y ranking por mejor intento. La persistencia competitiva entra exclusivamente por el BFF server-only hacia Supabase Data API HTTPS. El estado de capacidades y evidencia está en [STAGE-09](../06-delivery/stage-09-fair-mode-server-ranking.md) y [el RC](../06-delivery/production-v1-release-candidate.md).
 
 ## Stack baseline implementado
 
@@ -16,7 +16,7 @@ La base técnica actual implementa el shell, los límites de módulos, la valida
 - Vercel como topología canónica de producción.
 - Vitest, Testing Library, fast-check y Playwright para la base automatizada.
 
-Las versiones exactas están fijadas en `package.json` y `pnpm-lock.yaml`. No se incorpora Zustand ni una plataforma de observabilidad hasta que una necesidad implementada lo justifique. El release público permanece bloqueado mientras Next.js sea `16.3.1`: `pnpm release:check` exige `>=16.3.2` antes de publicar.
+Las versiones exactas están fijadas en `package.json` y `pnpm-lock.yaml`. No se incorpora Zustand ni una plataforma de observabilidad hasta que una necesidad implementada lo justifique. Next.js `16.3.5` supera el piso de seguridad; `pnpm release:check` conserva ese gate.
 
 ## Diagrama de contexto objetivo
 
@@ -32,7 +32,7 @@ flowchart LR
     RT -. leaderboard futuro .-> P
 ```
 
-El diagrama conserva la topología aceptada, pero no implica que observabilidad externa, Realtime, ranking o persistencia de runs estén implementados en la base técnica.
+Ranking y persistencia están implementados. Observabilidad externa y Realtime siguen siendo opcionales no implementados.
 
 ## Contenedores y ejecución objetivo
 
@@ -56,10 +56,11 @@ flowchart TD
 
     DB[(Supabase Postgres)]
     Browser --> APP
-    USECASES --> DB
+    USECASES --> DATAAPI[Supabase Data API HTTPS]
+    DATAAPI --> DB
 ```
 
-El juego activo se ejecuta localmente para minimizar latencia y dependencia de red. El caso de uso server-only ya valida una finalización no confiable, recompone el `RunPlan` cuando corresponde y reproduce las acciones con el motor versionado; emitir la configuración oficial, exponer endpoints y persistir el resultado siguen pendientes. El browser sólo previsualiza; no es autoridad de score ni de estado final.
+El juego activo se ejecuta localmente para minimizar latencia y dependencia de red. El caso de uso server-only ya valida una finalización no confiable, recompone el `RunPlan` cuando corresponde y reproduce las acciones con el motor versionado; la emisión, los endpoints y la persistencia oficial están implementados desde STAGE-09. El browser sólo previsualiza; no es autoridad de score ni de estado final.
 
 ## Fronteras de módulos
 
@@ -100,7 +101,7 @@ Los imports directos de `@supabase/supabase-js` están permitidos sólo en los a
 - Supabase aloja PostgreSQL cuando el entorno tiene persistencia configurada.
 - La región de funciones debe quedar cercana a Postgres al configurar producción.
 - La imagen Docker standalone es un artefacto portable y un gate de paridad; no reemplaza a Vercel ni selecciona otro proveedor.
-- Postgres será la fuente de verdad de runs oficiales. La base actual no crea esas tablas ni vuelve obligatorio a Supabase para levantar el shell.
+- Postgres es la fuente de verdad de intentos oficiales. Production exige su configuración; sólo local permite el store en memoria. [ADR-028](adr/ADR-028-zero-cost-fair-deployment.md) fija Hobby `gru1`, Free `sa-east-1`, main-only y ensayo local.
 
 Los detalles operativos están en [despliegue y ambientes](deployment-and-environments.md).
 

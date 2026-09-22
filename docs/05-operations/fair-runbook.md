@@ -1,9 +1,11 @@
 # Runbook de feria
 
+Para Feria del Libro 2026, el [runbook Vercel/Supabase](vercel-supabase-production-deployment.md) fija valores y comandos reales. Ensayo local, una sola producción cloud y sin tercer proyecto Supabase.
+
 ## T-7 días
 
 - Congelar ruleset/content de feria.
-- Crear evento staging equivalente.
+- Crear evento sintético local equivalente.
 - Ejecutar simulation tests.
 - Revisar nicknames/moderation controls.
 - Probar QR en Android/iOS.
@@ -22,9 +24,9 @@
 
 ## Apertura
 
-1. Verificar `/health` o smoke endpoints.
-2. Ejecutar run completa real.
-3. Confirmar que score aparece.
+1. Verificar `/api/health` y `/api/health?ready=1`.
+2. Confirmar evidencia del ensayo local completo.
+3. Smoke cloud; partida sintética sólo en edición separada opcional.
 4. Confirmar moderación.
 5. Abrir leaderboard en pantalla.
 
@@ -63,13 +65,7 @@ lo que sigue es el orden en que se usan.
 
 ### Antes de la feria
 
-```bash
-pnpm competition:organizer:hash -- "<contraseña>"   # produce el digest
-pnpm db:reset                                       # aplica las migraciones
-pnpm competition:bootstrap -- --name="…" --status=UPCOMING \
-  --opens=2026-10-03T13:00:00-03:00 \
-  --closes=2026-10-03T18:00:00-03:00
-```
+Seguir las secciones B–F del [handoff](vercel-supabase-production-deployment.md): migraciones con `supabase link` y `db push`, preflight y bootstrap con `--env-file=.env.production.local`. `pnpm db:reset` sólo se usa en ensayo local descartable, nunca como preparación de producción.
 
 El despliegue necesita, además de la base: `EGRESADO_COMPETITION_SLUG`,
 `PARTICIPANT_IDENTITY_SECRET`, los tres campos del responsable de los datos,
@@ -107,9 +103,9 @@ la hace una persona mirando un documento, no una pantalla.
 ### Después de la feria
 
 - Exportar el CSV desde `/organizer` antes de cualquier purga.
-- Dejar pasar la ventana de retención —120 días por defecto— para atender
+- Dejar pasar la ventana de retención —30 días para esta feria— para atender
   reclamos.
-- Anonimizar: `pnpm competition:privacy:purge -- --apply`, o la acción del
+- Anonimizar: `pnpm competition:privacy:purge -- --env-file=.env.production.local --apply`, o la acción del
   organizador. Se van nombre, año, división y últimos cuatro dígitos; quedan el
   alias y el puntaje.
 

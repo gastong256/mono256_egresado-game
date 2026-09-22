@@ -1,5 +1,14 @@
 # PRODUCTION V1 FREEZE — Egresado Fair Edition v1 Release Candidate
 
+> Evidencia histórica de `v1.0.0-rc.1`, preservada. STAGE-10A prepara RC.2 con
+> cambios de despliegue y herramientas, sin alterar juego/matemática/contenido.
+> Identidad y verificaciones nuevas en el [reporte de adaptación](stage-10a-deployment-adaptation.md).
+> Los valores de institución, calendario y retención de la sección T ya fueron
+> aprobados; sólo quedan secretos, nombre disponible e infraestructura manual
+> del [handoff](../05-operations/vercel-supabase-production-deployment.md).
+> La expectativa histórica de staging remoto se sustituye por ensayo local bajo ADR-028.
+
+
 ## A. Veredicto
 
 ```text

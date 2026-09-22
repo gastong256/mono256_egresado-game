@@ -4,7 +4,7 @@
 
 Vercel es el destino canónico para la aplicación Next.js y sus Route Handlers; Supabase gestiona PostgreSQL cuando la persistencia está habilitada. La imagen Docker standalone definida por [ADR-010](adr/ADR-010-reproducible-node-pnpm-container-toolchain.md) es un artefacto portable para paridad y verificación, no un cambio de proveedor de producción.
 
-La base actual es local y no contiene gameplay, autenticación ni tablas de producto. No debe desplegarse públicamente con Next.js `16.3.1`: el gate `pnpm release:check` exige actualizar a `>=16.3.2`, regenerar el lockfile y volver a ejecutar la verificación completa.
+El RC implementa la carrera completa, competencia, sesiones y persistencia autoritativa. Next.js está fijado en `16.3.5` y supera el piso de `release:check`. [ADR-028](adr/ADR-028-zero-cost-fair-deployment.md) fija Vercel Hobby (`gru1`) + Supabase Free (`sa-east-1`) para la Feria del Libro 2026; el [runbook del proveedor](../05-operations/vercel-supabase-production-deployment.md) es el procedimiento vigente.
 
 ## Ambientes
 
@@ -12,20 +12,20 @@ La base actual es local y no contiene gameplay, autenticación ni tablas de prod
 |---|---|---|
 | Local nativo | Camino rápido con `pnpm dev`; Supabase local es opcional. | `.env.local` ignorado por Git; DB local o proyecto de desarrollo aislado. |
 | Local Compose | Paridad del runtime Linux y prueba del desarrollo contenedorizado. | El browser usa la URL pública del host y el proceso server usa la URL interna del contenedor. |
-| Preview | Cada PR/despliegue de Vercel cuando se habilite. | Recursos aislados; nunca datos reales de producción. |
-| Staging | Configuración cercana a feria para E2E, migraciones, carga y rehearsal. | Proyecto Supabase separado de producción. |
-| Production | Evento real y juego público, después de cerrar todos los gates de release. | Secretos gestionados por el proveedor y datos bajo la política legal/retención que aún debe cerrarse. |
+| Preview | Auto-deploy deshabilitado fuera de `main`. | Sin secretos ni datos reales de producción. |
+| Ensayo local | Supabase local como equivalente a staging para esta feria. | Datos sintéticos; restore cloud a base local descartable, sin tercer proyecto remoto. |
+| Production | Un proyecto Vercel Hobby, `main`, Node 24.x. | Un Supabase Free en São Paulo; retención privada aprobada de 30 días tras cierre. |
 
-La política legal y de retención, los SLO operativos y los requisitos exactos de rehearsal permanecen abiertos en [preguntas 30 y 31](../07-reference/open-questions.md#operación-seguridad-y-privacidad).
+La institución, contacto, ventana y retención están aprobados para esta edición en el runbook. El GO y los ensayos contra el deployment real permanecen pendientes; STAGE-10A prepara el repositorio.
 
 ## Configuración y URLs de Supabase
 
-La configuración se valida al iniciar y puede quedar completamente ausente para ejecutar el shell:
+La configuración se valida al iniciar. Sólo el entorno local puede ejecutar sin competencia; producción exige el contrato completo:
 
 - `NEXT_PUBLIC_APP_URL`: origen público de la aplicación; localmente tiene default `http://localhost:3000`.
-- `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`: par público obligatorio en conjunto. La publishable key no es un secreto y sólo es segura junto con grants/RLS mínimos.
-- `SUPABASE_INTERNAL_URL`: URL server-only opcional. En Compose usa por defecto `http://kong:8000`, alias interno del gateway en la red Docker local compartida.
-- `SUPABASE_SECRET_KEY`: credencial privilegiada server-only, sin default y nunca prefijada con `NEXT_PUBLIC_`.
+- `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`: par opcional de adapters locales; si se configura uno exige el otro. **Se omiten en Production**: el navegador usa el BFF de Egresado.
+- `SUPABASE_INTERNAL_URL`: Project URL HTTPS del Data API, server-only en Production; nunca connection string PostgreSQL. En Compose usa por defecto `http://kong:8000`, alias interno del gateway en la red Docker local compartida.
+- `SUPABASE_SECRET_KEY`: clave moderna `sb_secret_…`, privilegiada server-only, sin default y nunca prefijada con `NEXT_PUBLIC_`. El runtime no usa `DATABASE_URL`, pooler ni contraseña PostgreSQL.
 
 En desarrollo nativo, el server puede reutilizar `NEXT_PUBLIC_SUPABASE_URL`. En Compose, el browser conserva `http://127.0.0.1:54321` mientras el proceso server usa la red `egresado-supabase-local` y el alias interno `http://kong:8000`. La red compartida resuelve conectividad contenedor a contenedor, pero no garantiza por sí sola que los puertos publicados queden aislados de la LAN.
 
@@ -101,7 +101,7 @@ Un CI verde de la base técnica no reemplaza esos gates contextuales.
 
 - Los cambios viven como SQL versionado en `supabase/migrations/`.
 - `pnpm db:reset` demuestra que el historial reconstruye la DB local; `pnpm db:lint` revisa el schema y `pnpm db:types` regenera los tipos consumidos por TypeScript.
-- Toda migración de producto necesita revisión de índices y RLS/permisos, y se aplica a staging antes de producción.
+- Toda migración de producto necesita revisión de índices y RLS/permisos, y se ensaya localmente antes de `supabase db push --dry-run` / `db push` sobre el proyecto enlazado. Nunca seed ni reset en producción.
 - No editar el schema productivo manualmente sin registrar una migración.
 - La migración inicial sólo valida el pipeline; no decide el modelo de runs, eventos o acciones.
 
@@ -116,7 +116,7 @@ Los feature flags futuros deben limitarse a necesidades verificadas; no crear un
 
 ## Aislamiento de configuración competitiva
 
-Cuando exista el modo feria, cuatro ambientes con propósitos distintos: local con generadores sin restricción y herramientas de debug; demo docente con contenido estable de 7.º y pool determinista; staging o ensayo de feria con la misma forma de infraestructura y configuración que producción, participantes sintéticos y pruebas de carga y ranking; y producción de feria con configuración de evento congelada, catálogo oficial de variantes, verificación autoritativa, monitoreo y moderación.
+El modo feria existe desde STAGE-09. Para esta edición se separan herramientas/demo locales, ensayo local con participantes sintéticos y producción con la edición congelada. No se exige staging cloud ni se permite compartir sus secretos con Preview. `vercel.json` fija región y política Git; el dashboard fija Production Branch y `ENABLE_EXPERIMENTAL_COREPACK=1` para pnpm `11.22.0`.
 
 Regla dura: **una versión de desarrollo de score o de contenido no puede convertirse en versión oficial por accidente.** El registro del evento habilita explícitamente sólo la tupla congelada, y el flag `production` del ruleset ya se niega a construir un ruleset oficial desde una política de desarrollo. Ver [modo feria y congelamiento](../05-operations/fair-mode-and-competition-freeze.md).
 

@@ -6,7 +6,7 @@ El motor ejecuta una run completa de punta a punta: progresión por etapas, sele
 
 Desde STAGE-09 ese juego está envuelto en una **competencia con servidor autoritativo**: el producto público vive en `/`, el servidor emite cada intento, vuelve a jugar lo enviado para recomputar el puntaje y publica un ranking por mejor intento verificado donde lo único que se ve de una persona es su alias. La identificación del participante sigue [ADR-026](docs/03-architecture/adr/ADR-026-participant-identity-and-minor-privacy.md): el documento no se guarda, se deriva.
 
-**Egresado Fair Edition v1 — Release Candidate `1.0.0-rc.1`.** El manifiesto fija
+**Egresado Fair Edition v1 — Release Candidate `1.0.0-rc.2`.** El manifiesto fija
 motor, contenido, catálogos y reglas de competencia. FairScore se oficializa sin
 cambiar su matemática; las políticas de composición conservan sus identidades
 históricas. Ver [reporte del RC](docs/06-delivery/production-v1-release-candidate.md),
@@ -15,7 +15,7 @@ históricas. Ver [reporte del RC](docs/06-delivery/production-v1-release-candida
 
 Next.js está fijado en `16.3.5`; `pnpm release:check` y `pnpm release:verify`
 forman parte de `pnpm verify`. El RC no autoriza un despliegue: STAGE-10 conserva
-staging, ensayos remotos y GO/NO-GO. La revisión humana amplia no bloquea v1
+verificación cloud, restore cloud→local, rollback y GO/NO-GO. STAGE-10A prepara Vercel Hobby + Supabase Free; el ensayo equivalente a staging es local. Ver el [handoff de despliegue](docs/05-operations/vercel-supabase-production-deployment.md). La revisión humana amplia no bloquea v1
 ([ADR-027](docs/03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md)).
 
 ## Inicio rápido nativo

@@ -17,12 +17,13 @@ Si el roadmap y el código difieren, **el código gana** y el roadmap se corrige
 - Fases de validación externa y congelamiento: [ciclo de entrega real](../00-product/real-delivery-lifecycle.md).
 - Qué se construye por capas de alcance: [alcance y roadmap](../00-product/scope-and-roadmap.md) y [backlog](mvp-backlog.md).
 
-**Última reconciliación:** 22 de septiembre de 2026, **PRODUCTION V1 FREEZE**.
-Egresado Fair Edition v1 queda congelada en un manifiesto con huella
-(`1affb2a8…`), FairScore se oficializa como `fair-score-v1` sin mover un número,
+**Última reconciliación:** 22 de septiembre de 2026, **STAGE-10A** (preparación de despliegue; GO pendiente).
+RC.2 adapta el despliegue y conserva el freeze competitivo. La huella vigente es
+`0ea3c1de…80379cd0`; RC.1 (`1affb2a8…`) queda como evidencia histórica.
+FairScore se oficializó como `fair-score-v1` sin mover un número,
 y la revisión humana amplia deja de bloquear el roadmap
 ([ADR-027](../03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md),
-D-RC-001 a D-RC-012). La siguiente etapa es STAGE-10. Antecedente del 21 de
+D-RC-001 a D-RC-012). STAGE-10 está en curso: adaptación local, operación cloud pendiente. Antecedente del 21 de
 septiembre: STAGE-09 `DONE`. Antecedente del 18 de septiembre: adjudicación final del techo
 de estrategia ciega de `y5.stage-screen` —`K ≤ 78`, el mínimo factible demostrado—
 e implementación de WP-SCREEN: la remediación matemática cierra en **catorce de
@@ -81,7 +82,7 @@ Tabla de navegación. Los contratos de cada etapa, más abajo, son la autoridad.
 | [STAGE-09](#stage-09-fair-mode-servidor-autoritativo-y-ranking) | Fair mode, servidor autoritativo y ranking | `DONE` — 21 de septiembre de 2026 | STAGE-06 (`DONE`), STAGE-08 (`DONE`) | — |
 | [GATE-TG2](#gate-tg2-teacher-gate-2) | **Teacher Gate 2** | `SUPERSEDED` — no bloquea v1 ([ADR-027](../03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md)) | STAGE-09 (`DONE`) | externo, opcional |
 | [FREEZE](#freeze-congelamiento-de-competencia) | Congelamiento de competencia | `DONE` — 22 de septiembre de 2026 | STAGE-09 (`DONE`) | — |
-| [STAGE-10](#stage-10-production-hardening) | Production hardening | `READY` · **siguiente** | FREEZE (`DONE`) | go-live |
+| [STAGE-10](#stage-10-production-hardening) | Production hardening | `IN_PROGRESS` · STAGE-10A `DONE`, proveedor y GO pendientes | FREEZE (`DONE`) | go-live |
 | [RELEASE](#release-y-post-feria) | Feria y post-feria | `NOT_STARTED` | STAGE-10 | — |
 
 ### Grafo de dependencias
@@ -180,7 +181,7 @@ Estado real contra el código al 11 de septiembre de 2026, tras cerrar STAGE-08 
 | Presupuesto de beats por año | `DONE` como contrato validable | `DEFAULT_STAGE_BEAT_BUDGET`, `validateStagePlan` | STAGE-02 |
 | Contrato de configuración de producción | `DONE` | `src/config/production.ts`, `src/instrumentation.ts`, `pnpm release:preflight` | FREEZE |
 | Respaldo, restauración y exportación | `DONE` local | `pnpm ops:backup` · `ops:restore` · `ops:export`; probados contra la base local | FREEZE |
-| Production hardening | `NOT_STARTED` | remoto: staging, load test, rollback ensayado, dry run, GO/NO-GO | STAGE-10 |
+| Production hardening | `IN_PROGRESS` | STAGE-10A `DONE`: Vercel Hobby + Supabase Free preparados y ensayo local verde; cloud smoke/rollback/restore y GO pendientes | STAGE-10 |
 
 ### Discrepancias registradas
 
@@ -1143,7 +1144,7 @@ verificación   pnpm release:verify · 57 comprobaciones
 
 ### STAGE-10 — Production hardening
 
-- **Estado:** `READY` — **siguiente etapa**
+- **Estado:** `IN_PROGRESS` — STAGE-10A `DONE`; operación de proveedor y GO pendientes
 - **Depende de:** FREEZE (`DONE`)
 - **Desbloquea:** la feria
 
@@ -1152,6 +1153,18 @@ verificación   pnpm release:verify · 57 comprobaciones
 **Scope IN.** Simulación masiva de decenas de miles de runs; load testing por encima de la concurrencia esperada; degradación de red; QA móvil priorizando Android modestos en 360/390/430 y Safari/iOS; telemetría mínima sin PII innecesaria; runbook de incidentes; checklist de go-live.
 
 **Scope OUT.** Features nuevas. Cambios de contenido o de score que afecten equidad.
+
+**Subetapa STAGE-10A `DONE`, autorizada y cerrada el 22/09.** Configuración y herramientas adaptadas
+a Vercel Hobby `gru1` + Supabase Free `sa-east-1`, una producción desde `main`,
+ensayo local equivalente a staging, privacidad/calendario aprobados y RC.2.
+Fuera de alcance: push, login de proveedores, mutaciones remotas y deploy.
+[ADR-028](../03-architecture/adr/ADR-028-zero-cost-fair-deployment.md),
+[reporte](stage-10a-deployment-adaptation.md) y
+[handoff](../05-operations/vercel-supabase-production-deployment.md).
+No se exige un tercer proyecto cloud. Smoke cloud mínimo obligatorio; partida
+cloud completa opcional en slug sintético separado. No reemplaza el GO/NO-GO.
+Exit gate local: `pnpm verify` verde (2345 tests, 222 E2E), migraciones y restore
+en bases locales descartables, candado RC.2 y tag anotado local. RC.1 inmutable.
 
 **Lectura requerida.** [Modo feria y congelamiento](../05-operations/fair-mode-and-competition-freeze.md) · [runbook de feria](../05-operations/fair-runbook.md) · [fallback e incidentes](../05-operations/fallback-and-incident-plan.md) · [analytics y observabilidad](../03-architecture/analytics-observability.md) · [NFR](../04-quality/non-functional-requirements.md) · [estrategia de testing](../04-quality/testing-strategy.md).
 

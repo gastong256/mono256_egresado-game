@@ -6,9 +6,11 @@ Binario. Cada línea está `PASSED`, `READY FOR STAGE-10 REHEARSAL` o `FAILED`.
 infraestructura real y que este repositorio no puede afirmar sin mentir.
 
 ```text
-release   egresado-fair-edition-v1 · 1.0.0-rc.1
-huella    1affb2a82f4726a77cedbf4e20c82055f6c04a07d67e42674eb8e9e6da16007e
+release   egresado-fair-edition-v1 · 1.0.0-rc.2
+huella    0ea3c1de866aa0a25fb9e236baa122e935fcd37280c443ef4d42011680379cd0
 ```
+
+Las tablas de producto conservan evidencia del freeze RC.1. La validación nueva de RC.2 y las excepciones de entorno se registran en [STAGE-10A](stage-10a-deployment-adaptation.md). El [handoff A–I](../05-operations/vercel-supabase-production-deployment.md) es el procedimiento vigente.
 
 ## Producto congelado
 
@@ -89,8 +91,8 @@ huella    1affb2a82f4726a77cedbf4e20c82055f6c04a07d67e42674eb8e9e6da16007e
 | RELEASE ID VISIBLE | `PASSED` | health, arranque y cada línea de log |
 | STRUCTURED LOGS | `PASSED` | una línea JSON por evento |
 | LOG REDACTION | `PASSED` | probado sobre lo serializado |
-| BACKUP PROCEDURE | `PASSED` localmente | 3,67 MiB de datos públicos exportados con permisos 0600 |
-| RESTORE PROCEDURE | `PASSED` localmente | 6.087 intentos restaurados; rollback y rechazo de destino ocupado probados |
+| BACKUP PROCEDURE | `PASSED` localmente | RC.2: 16,2 KiB esquema + 4717,9 KiB datos de `public`, permisos 0600 |
+| RESTORE PROCEDURE | `PASSED` localmente | RC.2: 58 competencias / 2600 participantes / 7616 intentos y versiones cotejadas; destino local descartable eliminado |
 | RUNBOOK | `PASSED` | [runbook de operación](../05-operations/fair-operations-runbook.md) |
 | ROLLBACK PROCEDURE | `READY FOR STAGE-10 REHEARSAL` | escrito; no ensayado contra una plataforma |
 | REMOTE BACKUP / RESTORE | `READY FOR STAGE-10 REHEARSAL` | las herramientas apuntan a remoto; no se ejecutó |
@@ -100,8 +102,8 @@ huella    1affb2a82f4726a77cedbf4e20c82055f6c04a07d67e42674eb8e9e6da16007e
 | Item | Estado | Evidencia |
 |---|---|---|
 | BUILD GREEN | `PASSED` | sin una sola advertencia |
-| VERIFY GREEN | `PASSED` | evidencia anterior + una corrida de continuación por instrucción del Product Owner |
-| VITEST | `PASSED` | 119 archivos · 2.323 tests |
+| VERIFY GREEN | `PASSED` | RC.2: corrida completa tras corregir la precedencia real de vite-node |
+| VITEST | `PASSED` | 122 archivos · 2.345 tests |
 | COVERAGE | `PASSED` | 85,67 / 77,58 / 87,68 / 85,90 |
 | E2E | `PASSED` | 222 tests en cuatro proyectos |
 | ACCESSIBILITY | `PASSED` | axe, teclado, 360 px, sin desborde |
@@ -109,8 +111,8 @@ huella    1affb2a82f4726a77cedbf4e20c82055f6c04a07d67e42674eb8e9e6da16007e
 | PERFORMANCE BASELINE | `PASSED` | registro, emisión, verificación, ranking, exportación |
 | SYNTHETIC COMPETITION | `PASSED` | jornada entera contra Postgres real |
 | REMOTE LOAD TEST | `READY FOR STAGE-10 REHEARSAL` | — |
-| STAGING VALIDATION | `READY FOR STAGE-10 REHEARSAL` | — |
-| COMPETITION DRY RUN | `READY FOR STAGE-10 REHEARSAL` | — |
+| LOCAL REHEARSAL / CLOUD SMOKE | `READY FOR STAGE-10 REHEARSAL` | ensayo equivalente a staging local; smoke obligatorio en la producción real, sin proyecto cloud extra |
+| CLOUD FULL DRY RUN | `READY FOR STAGE-10 REHEARSAL` | opcional en slug sintético separado; ensayo local completo obligatorio |
 
 ## Gobernanza
 
@@ -120,18 +122,26 @@ huella    1affb2a82f4726a77cedbf4e20c82055f6c04a07d67e42674eb8e9e6da16007e
 | TARGETED HUMAN WINDOWS DOCUMENTED | `PASSED` | mismo ADR |
 | NEXT STAGE IS STAGE-10 | `PASSED` | [roadmap](implementation-sequence.md) |
 
-## Entradas que faltan, y no son ingeniería
+## Preparación del despliegue STAGE-10A
+
+- [x] Región `gru1` y Git main-only en `vercel.json` (incluidas ramas con `/`).
+- [x] Plantilla sin secretos, institución y calendario aprobados, retención de 30 días.
+- [x] Loader explícito con precedencia y permisos privados.
+- [x] RLS/grants existentes conservados; sin runtime PostgreSQL directo.
+- [x] Runbook de migración, bootstrap, scopes, smoke, rollback y restore cloud→local.
+- [x] Evidencia final de RC.2 registrada en STAGE-10A; `verify` y build verdes.
+
+## Entradas y acciones manuales restantes
 
 ```text
-proyecto y clave de producción
-dominio https
-PARTICIPANT_IDENTITY_SECRET de producción
-credencial de organizador con dueño
-nombre real de la institución responsable
-contacto y domicilio reales
-ventana real del evento
-EGRESADO_ENVIRONMENT=production
+proyecto Supabase Free sa-east-1, project-ref y Secret key nueva
+origen HTTPS disponible (preferido o fallback)
+PARTICIPANT_IDENTITY_SECRET generado y respaldado fuera de la DB
+contraseña privada de organizador y digest scrypt
+variables exclusivamente Production; Corepack=1
+migraciones remotas, deploy, bootstrap, cloud smoke y ensayos del handoff
 ```
 
-El arranque se niega a atender si falta alguno, o si alguno sigue siendo un
-valor de ejemplo. `pnpm release:preflight` los verifica sin imprimirlos.
+Institución/contacto/domicilio, ventana, años, ausencia de divisiones y retención
+están aprobados. El arranque rechaza configuración incompleta; verificarla con
+`pnpm release:preflight -- --env-file=.env.production.local` antes de operar.

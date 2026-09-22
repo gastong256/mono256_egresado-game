@@ -3,6 +3,8 @@
 Este documento se puede ejecutar **sin conocer el código**. Cada procedimiento
 dice qué comando correr o qué botón tocar, qué esperar y qué hacer si no pasa.
 
+Para Feria del Libro 2026 usar primero el [handoff Vercel/Supabase](vercel-supabase-production-deployment.md): fija institución, fechas, retención, URL, scopes y CLI. Los comandos siguientes apuntan explícitamente a su archivo privado.
+
 La coreografía del día —qué revisar a T-7, qué mirar durante— está en el
 [runbook de feria](fair-runbook.md). Acá están los comandos.
 
@@ -40,9 +42,9 @@ Esperado:
   "service": "egresado-web",
   "release": {
     "releaseId": "egresado-fair-edition-v1",
-    "releaseVersion": "1.0.0-rc.1",
+    "releaseVersion": "1.0.0-rc.2",
     "releaseChannel": "release-candidate",
-    "releaseFingerprint": "1affb2a8…"
+    "releaseFingerprint": "0ea3c1de866aa0a25fb9e236baa122e935fcd37280c443ef4d42011680379cd0"
   },
   "checks": [{ "name": "release-manifest", "state": "ok" }]
 }
@@ -75,7 +77,7 @@ hay que mirar antes de abrir; `/api/health` a secas es para el balanceador.
 ### 1.3 Verificar la configuración, sin imprimirla
 
 ```bash
-pnpm release:preflight
+pnpm release:preflight -- --env-file=.env.production.local
 ```
 
 Lista lo que falta por nombre de variable. **Nunca imprime un valor.**
@@ -113,10 +115,11 @@ reingresar. Entre ediciones no cuesta nada.
 
 ```bash
 pnpm competition:bootstrap -- \
-  --name="Feria de Ciencias 2026" \
+  --env-file=.env.production.local \
+  --name="Egresado - Feria del Libro 2026" \
   --status=UPCOMING \
-  --opens=2026-10-03T13:00:00-03:00 \
-  --closes=2026-10-03T18:00:00-03:00 \
+  --opens=2026-09-23T08:00:00-03:00 \
+  --closes=2026-09-25T11:00:00-03:00 \
   --grace=300
 ```
 
@@ -135,7 +138,7 @@ del congelamiento de v1—. El organizador ve:
 
 ```text
 COMPETITION_NOT_CONFIGURED — la edición no corresponde a
-egresado-fair-edition-v1 1.0.0-rc.1: scoreVersion esperaba … y tiene …
+egresado-fair-edition-v1 1.0.0-rc.2: scoreVersion esperaba … y tiene …
 ```
 
 La edición vieja **no se arregla**: sus intentos se jugaron bajo otras reglas y
@@ -143,15 +146,13 @@ reetiquetarlos sería reescribir resultados. Lo que se hace:
 
 1. Archivarla desde `/organizer` (se puede archivar siempre).
 2. Cambiar `EGRESADO_COMPETITION_SLUG` al slug de la edición nueva.
-3. `pnpm competition:bootstrap` con ese slug.
+3. `pnpm competition:bootstrap -- --env-file=.env.production.local` con ese slug.
 
 Los intentos viejos se siguen pudiendo verificar y exportar.
 
 ### 1.6 Ensayo con una partida real
 
-Antes de abrir al público, una persona juega la carrera entera desde `/` y
-confirma que el puntaje verificado aparece. Es el único chequeo que ejercita
-todo el camino a la vez.
+El ensayo local juega la carrera entera desde `/` y confirma el puntaje. En cloud, el smoke mínimo es obligatorio; una partida completa es opcional sobre el slug sintético separado del [handoff](vercel-supabase-production-deployment.md#g-verificación-cloud-y-go-pendiente). No contaminar el ranking final.
 
 ---
 
@@ -264,11 +265,12 @@ persona mirando un documento, no una pantalla.
 
 ### 4.2 Exportar el ranking final
 
-Desde `/organizer`, o:
+Desde `/organizer`, o (crear primero el directorio privado):
 
 ```bash
-pnpm ops:export -- --out=resultados-publicos.csv            # sin datos privados
-pnpm ops:export -- --private --out=resultados-premios.csv   # con nombre y últimos 4
+(umask 077; mkdir -p backups)
+pnpm ops:export -- --env-file=.env.production.local --out=backups/resultados-publicos.csv            # sin datos privados
+pnpm ops:export -- --env-file=.env.production.local --private --out=backups/resultados-premios.csv   # con nombre y últimos 4
 ```
 
 El archivo lleva un encabezado de procedencia con la edición, la seed, la huella
@@ -295,19 +297,19 @@ Cuenta el MEJOR intento verificado de cada persona, nunca la suma.
 
 ```bash
 # 1. Exportar ANTES de cualquier purga
-pnpm ops:export -- --private --out=resultados-premios.csv
+pnpm ops:export -- --env-file=.env.production.local --private --out=backups/resultados-premios.csv
 
 # 2. Respaldar
 pnpm ops:backup -- --linked --out=backups/post-feria
 
-# 3. Cerrar y archivar desde /organizer
+# 3. Confirmar CLOSED desde /organizer; mantener el ranking final público
 
 # 4. Mucho más tarde: purgar los datos privados
-pnpm competition:privacy:purge             # informa qué haría
-pnpm competition:privacy:purge -- --apply  # aplica si la retención venció
+pnpm competition:privacy:purge -- --env-file=.env.production.local # informa qué haría
+pnpm competition:privacy:purge -- --env-file=.env.production.local --apply  # aplica si la retención venció
 ```
 
-**No purgar antes de entregar los premios.** Sin nombre ni últimos cuatro
+**Retención de esta feria: 30 días después del cierre. Coordinar premios dentro de ese plazo.** No purgar antes de entregarlos. Sin nombre ni últimos cuatro
 dígitos ya no se puede verificar a un ganador que reclama después. Por eso la
 purga es explícita y nunca automática.
 
@@ -344,9 +346,7 @@ es una lectura.
 
 ### 6.3 Rollback de la aplicación
 
-Primero: **un rollback de aplicación no revierte la base.** Esta versión no
-introduce migraciones destructivas, así que la versión anterior corre contra
-este esquema sin cambios.
+Primero: **un rollback de aplicación no revierte la base.** La compatibilidad de esquema no demuestra compatibilidad de replay. En Hobby ensayar dos deployments consecutivos del mismo RC.2 y configuración final; ver el [procedimiento específico](vercel-supabase-production-deployment.md#rollback-de-hobby-después-del-primer-deploy).
 
 1. **Identificar qué está desplegado:**
    ```bash
@@ -354,7 +354,7 @@ este esquema sin cambios.
    ```
 2. **Revertir** al despliegue inmutable anterior desde el panel de la
    plataforma. No se reconstruye: se promueve el artefacto que ya existía.
-3. **Confirmar** que la huella cambió a la esperada:
+3. **Confirmar** deployment id y huella esperados (la huella se conserva entre dos deployments del mismo RC):
    ```bash
    curl -fsS "$APP_URL/api/health" | jq -r '.release.releaseVersion, .release.releaseFingerprint'
    curl -fsS "$APP_URL/api/health?ready=1" | jq -r '.status'
@@ -363,7 +363,7 @@ este esquema sin cambios.
    y la versión anterior no conoce esa calibración, sus intentos no se van a
    poder verificar. Esa es la única incompatibilidad real, y es de datos: la
    salida de 1.4 dice bajo qué tupla se creó.
-5. **Jugar una partida** de punta a punta antes de declarar el incidente cerrado.
+5. **Repetir el smoke cloud** del handoff antes de declarar el incidente cerrado; no agregar una partida sintética a la edición final.
 
 Cuándo **no** hacer rollback: si la edición ya recibió intentos verificados bajo
 el release nuevo. Ahí se arregla hacia adelante.

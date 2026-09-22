@@ -7772,6 +7772,81 @@ es exactamente el riesgo de replay que un congelamiento existe para no correr.
 
 ---
 
+# FILE: 03-architecture/adr/ADR-028-zero-cost-fair-deployment.md
+
+# ADR-028 — Despliegue de feria sin costo: Vercel Hobby y Supabase Free
+
+- Estado: Aceptado · LOCKED para Feria del Libro 2026
+- Fecha: 2026-09-22
+- Autoridad: configuración y alcance aprobados por el Product Owner en STAGE-10A.
+- Relacionado: [ADR-005](03-architecture/adr/ADR-005-postgres-supabase.md), [ADR-010](03-architecture/adr/ADR-010-reproducible-node-pnpm-container-toolchain.md), [ADR-026](03-architecture/adr/ADR-026-participant-identity-and-minor-privacy.md), [ADR-027](03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md).
+
+## Contexto
+
+Una aplicación pública, unos diez jugadores simultáneos y 200 partidas en tres
+días; presupuesto USD 0. La cuenta ya tiene otro proyecto Free de Supabase.
+El RC usa el Data API HTTPS desde el BFF con un cliente privilegiado server-only.
+No necesita conexiones PostgreSQL de aplicación ni servicios adicionales.
+
+## Decisión
+
+Vercel Hobby ejecuta Next.js/Node 24 en `gru1`; Supabase Free aloja el único
+proyecto de producción en `sa-east-1`. `vercel.json` fija una sola región y
+habilita despliegues automáticos únicamente de `main`. El dashboard debe
+identificar `main` como Production. Las variables reales sólo se asignan a ese
+scope. El ensayo equivalente a staging es local; no se exige otro proyecto cloud.
+
+El patrón `**: false` cubre ramas con `/`; `main: true` gana por la regla de
+coincidencias de Vercel. La política vive en cada revisión de Git, por lo que
+las ramas antiguas deben incorporar esta configuración antes de conectar el
+repositorio. No equivale a prohibir un despliegue manual autorizado en el proveedor.
+
+Se conservan Node local `24.19.0`, engines `>=24.19.0 <25` y pnpm `11.22.0`.
+Vercel selecciona la línea 24.x y administra sus parches. Se activa
+`ENABLE_EXPERIMENTAL_COREPACK=1` para respetar `packageManager`; el lockfile v9
+por sí solo no garantiza pnpm 11. Sin overrides de install/build/output.
+
+La aplicación usa `SUPABASE_INTERNAL_URL=https://<project-ref>.supabase.co` y
+`SUPABASE_SECRET_KEY=sb_secret_…`. No usa claves Supabase en el navegador,
+`DATABASE_URL`, pooler ni contraseña PostgreSQL en Vercel. La CLI de migración y
+respaldo tiene su conexión de base separada. RLS/grants existentes se preservan.
+
+Las CLI de competencia aceptan `--env-file`, con precedencia proceso > archivo
+explícito > `.env.local` > `.env`; un archivo explícito ausente o con permisos
+abiertos en POSIX detiene el comando. El operador usa un shell sin overrides y
+un archivo completo privado. No se ejecuta dotenv como código de shell. Se desactiva la precarga de entorno de
+Vite (`envDir: false`) para que vite-node no convierta `.env.local` en falsos
+overrides de proceso antes del loader; Vitest conserva su lectura explícita.
+
+La institución, horarios y retención de 30 días son configuración de esta
+edición, documentada en el [runbook del proveedor](05-operations/vercel-supabase-production-deployment.md).
+No cambian los defaults ni la semántica congelada. Se permite la cuenta compartida
+`organizador` para aproximadamente tres operadores; su auditoría identifica la
+cuenta, no cuál de las tres personas actuó. La contraseña la elige la institución.
+
+## Consecuencias y compatibilidad
+
+Se crea RC.2 y se conserva el tag RC.1. La versión del manifiesto y su huella
+cambian; la tupla competitiva, catálogos, matemática, ranking y migraciones no.
+El fingerprint es del manifiesto; Git/tag identifica además scripts y deployment.
+Un rollback se prueba entre dos despliegues del mismo RC y configuración. Después
+de intentos reales se prefiere fix-forward; no se promueve código pre-freeze.
+
+Free requiere respaldos lógicos manuales. El dump cloud se ensaya en una base
+local descartable, sin ocupar un tercer proyecto. El secreto HMAC se conserva
+por separado. No se agregan cron de keep-alive, pooler, Redis ni monitor externo.
+La disponibilidad y las cuotas gratuitas se comprueban antes de abrir; esta
+preparación no acredita un deploy ni el GO del evento.
+
+## Evidencia
+
+Contratos oficiales, fecha de consulta y handoff en el
+[runbook](05-operations/vercel-supabase-production-deployment.md#contratos-oficiales-consultados).
+Regresiones en `deployment-readiness.test.ts`, `competition-environment.test.ts`
+y `operator-environment-cli.test.ts`; RLS real y fronteras en las suites existentes.
+
+---
+
 # FILE: 03-architecture/analytics-observability.md
 
 # Analytics y observabilidad
@@ -8055,7 +8130,7 @@ autenticación siguen pendientes; no se inventa aquí un schema implementable.
 
 Egresado adopta un **monolito modular web + Backend for Frontend (BFF)** en una única aplicación Next.js ubicada en la raíz del repositorio. El motor de juego es una frontera de TypeScript puro dentro de esa aplicación, no un paquete publicable ni un servicio separado.
 
-La base técnica actual implementa el shell, los límites de módulos, la validación de entorno, los adaptadores iniciales de Supabase, los gates de calidad y un motor de juego determinista con contenido versionado de 7.º. Incluye la Teacher Demo local, la composición normal previa a ejecución y el caso de uso server-only que valida una submission por replay. Todavía no implementa autenticación, tablas de producto, emisión online de runs oficiales ni sus endpoints; esas capacidades deben respetar las decisiones y preguntas abiertas existentes cuando se incorporen.
+El RC implementa la carrera completa local-first, la emisión de intentos, sesiones de participante y organizador, replay autoritativo y ranking por mejor intento. La persistencia competitiva entra exclusivamente por el BFF server-only hacia Supabase Data API HTTPS. El estado de capacidades y evidencia está en [STAGE-09](06-delivery/stage-09-fair-mode-server-ranking.md) y [el RC](06-delivery/production-v1-release-candidate.md).
 
 ## Stack baseline implementado
 
@@ -8067,7 +8142,7 @@ La base técnica actual implementa el shell, los límites de módulos, la valida
 - Vercel como topología canónica de producción.
 - Vitest, Testing Library, fast-check y Playwright para la base automatizada.
 
-Las versiones exactas están fijadas en `package.json` y `pnpm-lock.yaml`. No se incorpora Zustand ni una plataforma de observabilidad hasta que una necesidad implementada lo justifique. El release público permanece bloqueado mientras Next.js sea `16.3.1`: `pnpm release:check` exige `>=16.3.2` antes de publicar.
+Las versiones exactas están fijadas en `package.json` y `pnpm-lock.yaml`. No se incorpora Zustand ni una plataforma de observabilidad hasta que una necesidad implementada lo justifique. Next.js `16.3.5` supera el piso de seguridad; `pnpm release:check` conserva ese gate.
 
 ## Diagrama de contexto objetivo
 
@@ -8083,7 +8158,7 @@ flowchart LR
     RT -. leaderboard futuro .-> P
 ```
 
-El diagrama conserva la topología aceptada, pero no implica que observabilidad externa, Realtime, ranking o persistencia de runs estén implementados en la base técnica.
+Ranking y persistencia están implementados. Observabilidad externa y Realtime siguen siendo opcionales no implementados.
 
 ## Contenedores y ejecución objetivo
 
@@ -8107,10 +8182,11 @@ flowchart TD
 
     DB[(Supabase Postgres)]
     Browser --> APP
-    USECASES --> DB
+    USECASES --> DATAAPI[Supabase Data API HTTPS]
+    DATAAPI --> DB
 ```
 
-El juego activo se ejecuta localmente para minimizar latencia y dependencia de red. El caso de uso server-only ya valida una finalización no confiable, recompone el `RunPlan` cuando corresponde y reproduce las acciones con el motor versionado; emitir la configuración oficial, exponer endpoints y persistir el resultado siguen pendientes. El browser sólo previsualiza; no es autoridad de score ni de estado final.
+El juego activo se ejecuta localmente para minimizar latencia y dependencia de red. El caso de uso server-only ya valida una finalización no confiable, recompone el `RunPlan` cuando corresponde y reproduce las acciones con el motor versionado; la emisión, los endpoints y la persistencia oficial están implementados desde STAGE-09. El browser sólo previsualiza; no es autoridad de score ni de estado final.
 
 ## Fronteras de módulos
 
@@ -8151,7 +8227,7 @@ Los imports directos de `@supabase/supabase-js` están permitidos sólo en los a
 - Supabase aloja PostgreSQL cuando el entorno tiene persistencia configurada.
 - La región de funciones debe quedar cercana a Postgres al configurar producción.
 - La imagen Docker standalone es un artefacto portable y un gate de paridad; no reemplaza a Vercel ni selecciona otro proveedor.
-- Postgres será la fuente de verdad de runs oficiales. La base actual no crea esas tablas ni vuelve obligatorio a Supabase para levantar el shell.
+- Postgres es la fuente de verdad de intentos oficiales. Production exige su configuración; sólo local permite el store en memoria. [ADR-028](03-architecture/adr/ADR-028-zero-cost-fair-deployment.md) fija Hobby `gru1`, Free `sa-east-1`, main-only y ensayo local.
 
 Los detalles operativos están en [despliegue y ambientes](03-architecture/deployment-and-environments.md).
 
@@ -8382,7 +8458,7 @@ Ver [arquitectura objetivo del motor](03-architecture/target-engine-architecture
 
 Vercel es el destino canónico para la aplicación Next.js y sus Route Handlers; Supabase gestiona PostgreSQL cuando la persistencia está habilitada. La imagen Docker standalone definida por [ADR-010](03-architecture/adr/ADR-010-reproducible-node-pnpm-container-toolchain.md) es un artefacto portable para paridad y verificación, no un cambio de proveedor de producción.
 
-La base actual es local y no contiene gameplay, autenticación ni tablas de producto. No debe desplegarse públicamente con Next.js `16.3.1`: el gate `pnpm release:check` exige actualizar a `>=16.3.2`, regenerar el lockfile y volver a ejecutar la verificación completa.
+El RC implementa la carrera completa, competencia, sesiones y persistencia autoritativa. Next.js está fijado en `16.3.5` y supera el piso de `release:check`. [ADR-028](03-architecture/adr/ADR-028-zero-cost-fair-deployment.md) fija Vercel Hobby (`gru1`) + Supabase Free (`sa-east-1`) para la Feria del Libro 2026; el [runbook del proveedor](05-operations/vercel-supabase-production-deployment.md) es el procedimiento vigente.
 
 ## Ambientes
 
@@ -8390,20 +8466,20 @@ La base actual es local y no contiene gameplay, autenticación ni tablas de prod
 |---|---|---|
 | Local nativo | Camino rápido con `pnpm dev`; Supabase local es opcional. | `.env.local` ignorado por Git; DB local o proyecto de desarrollo aislado. |
 | Local Compose | Paridad del runtime Linux y prueba del desarrollo contenedorizado. | El browser usa la URL pública del host y el proceso server usa la URL interna del contenedor. |
-| Preview | Cada PR/despliegue de Vercel cuando se habilite. | Recursos aislados; nunca datos reales de producción. |
-| Staging | Configuración cercana a feria para E2E, migraciones, carga y rehearsal. | Proyecto Supabase separado de producción. |
-| Production | Evento real y juego público, después de cerrar todos los gates de release. | Secretos gestionados por el proveedor y datos bajo la política legal/retención que aún debe cerrarse. |
+| Preview | Auto-deploy deshabilitado fuera de `main`. | Sin secretos ni datos reales de producción. |
+| Ensayo local | Supabase local como equivalente a staging para esta feria. | Datos sintéticos; restore cloud a base local descartable, sin tercer proyecto remoto. |
+| Production | Un proyecto Vercel Hobby, `main`, Node 24.x. | Un Supabase Free en São Paulo; retención privada aprobada de 30 días tras cierre. |
 
-La política legal y de retención, los SLO operativos y los requisitos exactos de rehearsal permanecen abiertos en [preguntas 30 y 31](07-reference/open-questions.md#operación-seguridad-y-privacidad).
+La institución, contacto, ventana y retención están aprobados para esta edición en el runbook. El GO y los ensayos contra el deployment real permanecen pendientes; STAGE-10A prepara el repositorio.
 
 ## Configuración y URLs de Supabase
 
-La configuración se valida al iniciar y puede quedar completamente ausente para ejecutar el shell:
+La configuración se valida al iniciar. Sólo el entorno local puede ejecutar sin competencia; producción exige el contrato completo:
 
 - `NEXT_PUBLIC_APP_URL`: origen público de la aplicación; localmente tiene default `http://localhost:3000`.
-- `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`: par público obligatorio en conjunto. La publishable key no es un secreto y sólo es segura junto con grants/RLS mínimos.
-- `SUPABASE_INTERNAL_URL`: URL server-only opcional. En Compose usa por defecto `http://kong:8000`, alias interno del gateway en la red Docker local compartida.
-- `SUPABASE_SECRET_KEY`: credencial privilegiada server-only, sin default y nunca prefijada con `NEXT_PUBLIC_`.
+- `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`: par opcional de adapters locales; si se configura uno exige el otro. **Se omiten en Production**: el navegador usa el BFF de Egresado.
+- `SUPABASE_INTERNAL_URL`: Project URL HTTPS del Data API, server-only en Production; nunca connection string PostgreSQL. En Compose usa por defecto `http://kong:8000`, alias interno del gateway en la red Docker local compartida.
+- `SUPABASE_SECRET_KEY`: clave moderna `sb_secret_…`, privilegiada server-only, sin default y nunca prefijada con `NEXT_PUBLIC_`. El runtime no usa `DATABASE_URL`, pooler ni contraseña PostgreSQL.
 
 En desarrollo nativo, el server puede reutilizar `NEXT_PUBLIC_SUPABASE_URL`. En Compose, el browser conserva `http://127.0.0.1:54321` mientras el proceso server usa la red `egresado-supabase-local` y el alias interno `http://kong:8000`. La red compartida resuelve conectividad contenedor a contenedor, pero no garantiza por sí sola que los puertos publicados queden aislados de la LAN.
 
@@ -8479,7 +8555,7 @@ Un CI verde de la base técnica no reemplaza esos gates contextuales.
 
 - Los cambios viven como SQL versionado en `supabase/migrations/`.
 - `pnpm db:reset` demuestra que el historial reconstruye la DB local; `pnpm db:lint` revisa el schema y `pnpm db:types` regenera los tipos consumidos por TypeScript.
-- Toda migración de producto necesita revisión de índices y RLS/permisos, y se aplica a staging antes de producción.
+- Toda migración de producto necesita revisión de índices y RLS/permisos, y se ensaya localmente antes de `supabase db push --dry-run` / `db push` sobre el proyecto enlazado. Nunca seed ni reset en producción.
 - No editar el schema productivo manualmente sin registrar una migración.
 - La migración inicial sólo valida el pipeline; no decide el modelo de runs, eventos o acciones.
 
@@ -8494,7 +8570,7 @@ Los feature flags futuros deben limitarse a necesidades verificadas; no crear un
 
 ## Aislamiento de configuración competitiva
 
-Cuando exista el modo feria, cuatro ambientes con propósitos distintos: local con generadores sin restricción y herramientas de debug; demo docente con contenido estable de 7.º y pool determinista; staging o ensayo de feria con la misma forma de infraestructura y configuración que producción, participantes sintéticos y pruebas de carga y ranking; y producción de feria con configuración de evento congelada, catálogo oficial de variantes, verificación autoritativa, monitoreo y moderación.
+El modo feria existe desde STAGE-09. Para esta edición se separan herramientas/demo locales, ensayo local con participantes sintéticos y producción con la edición congelada. No se exige staging cloud ni se permite compartir sus secretos con Preview. `vercel.json` fija región y política Git; el dashboard fija Production Branch y `ENABLE_EXPERIMENTAL_COREPACK=1` para pnpm `11.22.0`.
 
 Regla dura: **una versión de desarrollo de score o de contenido no puede convertirse en versión oficial por accidente.** El registro del evento habilita explícitamente sólo la tupla congelada, y el flag `production` del ruleset ya se niega a construir un ruleset oficial desde una política de desarrollo. Ver [modo feria y congelamiento](05-operations/fair-mode-and-competition-freeze.md).
 
@@ -21477,6 +21553,8 @@ Tiempo real es opcional. Un polling cada pocos segundos suele ser más simple y 
 Este documento se puede ejecutar **sin conocer el código**. Cada procedimiento
 dice qué comando correr o qué botón tocar, qué esperar y qué hacer si no pasa.
 
+Para Feria del Libro 2026 usar primero el [handoff Vercel/Supabase](05-operations/vercel-supabase-production-deployment.md): fija institución, fechas, retención, URL, scopes y CLI. Los comandos siguientes apuntan explícitamente a su archivo privado.
+
 La coreografía del día —qué revisar a T-7, qué mirar durante— está en el
 [runbook de feria](05-operations/fair-runbook.md). Acá están los comandos.
 
@@ -21514,9 +21592,9 @@ Esperado:
   "service": "egresado-web",
   "release": {
     "releaseId": "egresado-fair-edition-v1",
-    "releaseVersion": "1.0.0-rc.1",
+    "releaseVersion": "1.0.0-rc.2",
     "releaseChannel": "release-candidate",
-    "releaseFingerprint": "1affb2a8…"
+    "releaseFingerprint": "0ea3c1de866aa0a25fb9e236baa122e935fcd37280c443ef4d42011680379cd0"
   },
   "checks": [{ "name": "release-manifest", "state": "ok" }]
 }
@@ -21549,7 +21627,7 @@ hay que mirar antes de abrir; `/api/health` a secas es para el balanceador.
 ### 1.3 Verificar la configuración, sin imprimirla
 
 ```bash
-pnpm release:preflight
+pnpm release:preflight -- --env-file=.env.production.local
 ```
 
 Lista lo que falta por nombre de variable. **Nunca imprime un valor.**
@@ -21587,10 +21665,11 @@ reingresar. Entre ediciones no cuesta nada.
 
 ```bash
 pnpm competition:bootstrap -- \
-  --name="Feria de Ciencias 2026" \
+  --env-file=.env.production.local \
+  --name="Egresado - Feria del Libro 2026" \
   --status=UPCOMING \
-  --opens=2026-10-03T13:00:00-03:00 \
-  --closes=2026-10-03T18:00:00-03:00 \
+  --opens=2026-09-23T08:00:00-03:00 \
+  --closes=2026-09-25T11:00:00-03:00 \
   --grace=300
 ```
 
@@ -21609,7 +21688,7 @@ del congelamiento de v1—. El organizador ve:
 
 ```text
 COMPETITION_NOT_CONFIGURED — la edición no corresponde a
-egresado-fair-edition-v1 1.0.0-rc.1: scoreVersion esperaba … y tiene …
+egresado-fair-edition-v1 1.0.0-rc.2: scoreVersion esperaba … y tiene …
 ```
 
 La edición vieja **no se arregla**: sus intentos se jugaron bajo otras reglas y
@@ -21617,15 +21696,13 @@ reetiquetarlos sería reescribir resultados. Lo que se hace:
 
 1. Archivarla desde `/organizer` (se puede archivar siempre).
 2. Cambiar `EGRESADO_COMPETITION_SLUG` al slug de la edición nueva.
-3. `pnpm competition:bootstrap` con ese slug.
+3. `pnpm competition:bootstrap -- --env-file=.env.production.local` con ese slug.
 
 Los intentos viejos se siguen pudiendo verificar y exportar.
 
 ### 1.6 Ensayo con una partida real
 
-Antes de abrir al público, una persona juega la carrera entera desde `/` y
-confirma que el puntaje verificado aparece. Es el único chequeo que ejercita
-todo el camino a la vez.
+El ensayo local juega la carrera entera desde `/` y confirma el puntaje. En cloud, el smoke mínimo es obligatorio; una partida completa es opcional sobre el slug sintético separado del [handoff](05-operations/vercel-supabase-production-deployment.md#g-verificación-cloud-y-go-pendiente). No contaminar el ranking final.
 
 ---
 
@@ -21738,11 +21815,12 @@ persona mirando un documento, no una pantalla.
 
 ### 4.2 Exportar el ranking final
 
-Desde `/organizer`, o:
+Desde `/organizer`, o (crear primero el directorio privado):
 
 ```bash
-pnpm ops:export -- --out=resultados-publicos.csv            # sin datos privados
-pnpm ops:export -- --private --out=resultados-premios.csv   # con nombre y últimos 4
+(umask 077; mkdir -p backups)
+pnpm ops:export -- --env-file=.env.production.local --out=backups/resultados-publicos.csv            # sin datos privados
+pnpm ops:export -- --env-file=.env.production.local --private --out=backups/resultados-premios.csv   # con nombre y últimos 4
 ```
 
 El archivo lleva un encabezado de procedencia con la edición, la seed, la huella
@@ -21769,19 +21847,19 @@ Cuenta el MEJOR intento verificado de cada persona, nunca la suma.
 
 ```bash
 # 1. Exportar ANTES de cualquier purga
-pnpm ops:export -- --private --out=resultados-premios.csv
+pnpm ops:export -- --env-file=.env.production.local --private --out=backups/resultados-premios.csv
 
 # 2. Respaldar
 pnpm ops:backup -- --linked --out=backups/post-feria
 
-# 3. Cerrar y archivar desde /organizer
+# 3. Confirmar CLOSED desde /organizer; mantener el ranking final público
 
 # 4. Mucho más tarde: purgar los datos privados
-pnpm competition:privacy:purge             # informa qué haría
-pnpm competition:privacy:purge -- --apply  # aplica si la retención venció
+pnpm competition:privacy:purge -- --env-file=.env.production.local # informa qué haría
+pnpm competition:privacy:purge -- --env-file=.env.production.local --apply  # aplica si la retención venció
 ```
 
-**No purgar antes de entregar los premios.** Sin nombre ni últimos cuatro
+**Retención de esta feria: 30 días después del cierre. Coordinar premios dentro de ese plazo.** No purgar antes de entregarlos. Sin nombre ni últimos cuatro
 dígitos ya no se puede verificar a un ganador que reclama después. Por eso la
 purga es explícita y nunca automática.
 
@@ -21818,9 +21896,7 @@ es una lectura.
 
 ### 6.3 Rollback de la aplicación
 
-Primero: **un rollback de aplicación no revierte la base.** Esta versión no
-introduce migraciones destructivas, así que la versión anterior corre contra
-este esquema sin cambios.
+Primero: **un rollback de aplicación no revierte la base.** La compatibilidad de esquema no demuestra compatibilidad de replay. En Hobby ensayar dos deployments consecutivos del mismo RC.2 y configuración final; ver el [procedimiento específico](05-operations/vercel-supabase-production-deployment.md#rollback-de-hobby-después-del-primer-deploy).
 
 1. **Identificar qué está desplegado:**
    ```bash
@@ -21828,7 +21904,7 @@ este esquema sin cambios.
    ```
 2. **Revertir** al despliegue inmutable anterior desde el panel de la
    plataforma. No se reconstruye: se promueve el artefacto que ya existía.
-3. **Confirmar** que la huella cambió a la esperada:
+3. **Confirmar** deployment id y huella esperados (la huella se conserva entre dos deployments del mismo RC):
    ```bash
    curl -fsS "$APP_URL/api/health" | jq -r '.release.releaseVersion, .release.releaseFingerprint'
    curl -fsS "$APP_URL/api/health?ready=1" | jq -r '.status'
@@ -21837,7 +21913,7 @@ este esquema sin cambios.
    y la versión anterior no conoce esa calibración, sus intentos no se van a
    poder verificar. Esa es la única incompatibilidad real, y es de datos: la
    salida de 1.4 dice bajo qué tupla se creó.
-5. **Jugar una partida** de punta a punta antes de declarar el incidente cerrado.
+5. **Repetir el smoke cloud** del handoff antes de declarar el incidente cerrado; no agregar una partida sintética a la edición final.
 
 Cuándo **no** hacer rollback: si la edición ya recibió intentos verificados bajo
 el release nuevo. Ahí se arregla hacia adelante.
@@ -21914,10 +21990,12 @@ su candado.
 
 # Runbook de feria
 
+Para Feria del Libro 2026, el [runbook Vercel/Supabase](05-operations/vercel-supabase-production-deployment.md) fija valores y comandos reales. Ensayo local, una sola producción cloud y sin tercer proyecto Supabase.
+
 ## T-7 días
 
 - Congelar ruleset/content de feria.
-- Crear evento staging equivalente.
+- Crear evento sintético local equivalente.
 - Ejecutar simulation tests.
 - Revisar nicknames/moderation controls.
 - Probar QR en Android/iOS.
@@ -21936,9 +22014,9 @@ su candado.
 
 ## Apertura
 
-1. Verificar `/health` o smoke endpoints.
-2. Ejecutar run completa real.
-3. Confirmar que score aparece.
+1. Verificar `/api/health` y `/api/health?ready=1`.
+2. Confirmar evidencia del ensayo local completo.
+3. Smoke cloud; partida sintética sólo en edición separada opcional.
 4. Confirmar moderación.
 5. Abrir leaderboard en pantalla.
 
@@ -21977,13 +22055,7 @@ lo que sigue es el orden en que se usan.
 
 ### Antes de la feria
 
-```bash
-pnpm competition:organizer:hash -- "<contraseña>"   # produce el digest
-pnpm db:reset                                       # aplica las migraciones
-pnpm competition:bootstrap -- --name="…" --status=UPCOMING \
-  --opens=2026-10-03T13:00:00-03:00 \
-  --closes=2026-10-03T18:00:00-03:00
-```
+Seguir las secciones B–F del [handoff](05-operations/vercel-supabase-production-deployment.md): migraciones con `supabase link` y `db push`, preflight y bootstrap con `--env-file=.env.production.local`. `pnpm db:reset` sólo se usa en ensayo local descartable, nunca como preparación de producción.
 
 El despliegue necesita, además de la base: `EGRESADO_COMPETITION_SLUG`,
 `PARTICIPANT_IDENTITY_SECRET`, los tres campos del responsable de los datos,
@@ -22021,9 +22093,9 @@ la hace una persona mirando un documento, no una pantalla.
 ### Después de la feria
 
 - Exportar el CSV desde `/organizer` antes de cualquier purga.
-- Dejar pasar la ventana de retención —120 días por defecto— para atender
+- Dejar pasar la ventana de retención —30 días para esta feria— para atender
   reclamos.
-- Anonimizar: `pnpm competition:privacy:purge -- --apply`, o la acción del
+- Anonimizar: `pnpm competition:privacy:purge -- --env-file=.env.production.local --apply`, o la acción del
   organizador. Se van nombre, año, división y últimos cuatro dígitos; quedan el
   alias y el puntaje.
 
@@ -22189,6 +22261,419 @@ operativo está en el [runbook](05-operations/fair-runbook.md#operación-de-la-c
 
 ---
 
+# FILE: 05-operations/vercel-supabase-production-deployment.md
+
+# Feria del Libro 2026 — despliegue manual Vercel + Supabase
+
+Preparación STAGE-10A, 22 de septiembre de 2026. Decisión
+[ADR-028](03-architecture/adr/ADR-028-zero-cost-fair-deployment.md).
+Este procedimiento lo ejecuta el operador **después** del commit/tag local.
+STAGE-10A no inicia sesiones de proveedores, no crea proyectos, no hace push ni
+despliega. La evidencia local está en el
+[reporte de adaptación](06-delivery/stage-10a-deployment-adaptation.md).
+
+## Topología y límites
+
+```text
+Browser → Vercel Hobby / Next.js / Node.js Functions (gru1)
+        → HTTPS / Supabase Data API → PostgreSQL Free (sa-east-1)
+```
+
+Una aplicación Production, un proyecto Supabase de producción, una rama `main`,
+USD 0; aproximadamente diez jugadores simultáneos y 200 partidas en tres días.
+El Supabase local es el ensayo equivalente a staging. La cuenta ya tiene otro
+proyecto Free: no se pausa, borra ni reutiliza. No se requiere un tercero.
+
+`Supabase Project URL ≠ Postgres connection string`. El BFF usa
+`@supabase/supabase-js`, protegido por `server-only`. El navegador usa las API de
+Egresado; no consume Supabase directamente. `DATABASE_URL`, `POSTGRES_URL`, URLs
+de pooler y contraseña PostgreSQL no pertenecen al runtime Vercel. La CLI oficial
+puede conectar a PostgreSQL para migraciones/dumps, sin cambiar esta arquitectura.
+
+Las siete tablas de competencia tienen RLS sin policies y grants revocados a
+`anon`/`authenticated`. La vista de mejores intentos es `security_invoker` y
+también está cerrada. `service_role` tiene grants explícitos; es el rol que
+habilita la nueva clave secreta. Datos privados y sesiones sólo salen por casos
+de uso autorizados del servidor. No se reescriben las migraciones existentes.
+
+## Perfil aprobado
+
+| Campo | Valor |
+|---|---|
+| Institución responsable | Colegio Integral Piacentini |
+| Domicilio | Gobernador Florencio Tenev 250, Ruta Nacional 16, Colectora Norte Km 12, H3500 Resistencia, Chaco, Argentina |
+| Contacto | Profesora de Matemática (maitezacgorac97@gmail.com) |
+| Nombre público | Egresado - Feria del Libro 2026 |
+| Slug | `egresado-fdl-2026` |
+| Zona horaria | `America/Argentina/Buenos_Aires` |
+| Apertura | `2026-09-23T08:00:00-03:00` = `2026-09-23T11:00:00Z` |
+| Cierre | `2026-09-25T11:00:00-03:00` = `2026-09-25T14:00:00Z` |
+| Último envío | cierre + 300 s: `2026-09-25T11:05:00-03:00`, inclusive |
+| Retención privada | 30 días desde el cierre; vence `2026-10-25T14:00:00Z` |
+| Años | `7.º,1.º,2.º,3.º,4.º,5.º` |
+| División | no se configura ni recolecta |
+| Organizador | `organizador`, cuenta compartida aceptada para aproximadamente tres personas |
+| Después del cierre | sin nuevos intentos; ranking público legible |
+
+La contraseña no tiene default. La seed la genera el bootstrap canónico.
+
+## A. GitHub — publicar la fuente cuando el operador esté listo
+
+1. Verificar `git branch --show-current` = `main` y `git status --porcelain` vacío.
+2. `pnpm release:verify` debe identificar `1.0.0-rc.2` y la huella del
+   [checklist](06-delivery/release-checklist.md).
+3. El operador comprueba su acceso a GitHub y ejecuta:
+   ```bash
+   git push origin main
+   git push origin v1.0.0-rc.2
+   ```
+4. Antes de conectar Vercel, incorporar `vercel.json` a cualquier rama antigua
+   que se vaya a seguir usando. La configuración se lee de la revisión enviada;
+   una rama que todavía no la contiene no queda protegida por el archivo de main.
+
+La política Git deshabilita auto-deploys no-main, incluidas ramas con `/`, usando
+`**: false`, `main: true`. No reemplaza la selección de Production Branch en el
+panel ni bloquea despliegues manuales del propietario.
+
+## B. Supabase Dashboard — un proyecto Free de producción
+
+1. Crear **egresado-fdl-2026**, plan **Free**, región específica **South America —
+   São Paulo (`sa-east-1`)**. Confirmar el segundo cupo disponible; si la cuenta
+   no lo permite, detenerse y resolver el límite sin tocar el proyecto ajeno.
+2. Guardar contraseña de PostgreSQL y project-ref en el gestor privado del
+   operador. Verificar versión PostgreSQL compatible con el local (17).
+3. Obtener Project URL HTTPS y una clave **Secret `sb_secret_…`** en API Keys.
+   No usar la legacy JWT `service_role`; no crear claves públicas para la app.
+4. Mantener Data API habilitado para `public`. No agregar policies públicas ni
+   grants para resolver un error de acceso. Revisar Security Advisor después de
+   las migraciones, junto con los grants/RLS de la migración, sin abrir tablas.
+5. Confirmar que el proyecto está activo. No activar add-ons pagos.
+
+## C. Supabase CLI — aplicar el historial sin seed
+
+Desde la raíz del checkout RC.2, con Docker disponible para los dumps y la CLI
+fijada por el repositorio:
+
+```bash
+pnpm exec supabase login
+pnpm exec supabase link --project-ref <PROJECT_REF>
+pnpm exec supabase migration list --linked
+pnpm exec supabase db push --dry-run
+pnpm exec supabase db push
+pnpm exec supabase migration list --linked
+```
+
+Antes de confirmar el push, cotejar el project-ref enlazado con el Dashboard.
+La contraseña se entrega al prompt privado de la CLI. No guardarla en Vercel ni
+como argumento en un comando compartido. El dry-run debe listar solamente las
+migraciones pendientes del repositorio. Al terminar, local y remoto deben tener:
+
+```text
+20260820000000  technical_foundation
+20260921000000  competition_fair_mode   ← cabeza del release
+```
+
+**Nunca** usar `--include-seed`, `db reset --linked` ni `db reset --db-url` en
+producción. `pnpm db:reset` pertenece sólo a un stack local descartable. No
+pegar SQL de migraciones en Dashboard como ruta normal. Si falla el push,
+conservar el error saneado y revisar historia antes de reintentar; no usar
+`migration repair` para ocultar una aplicación incompleta.
+
+## D. Secretos locales y archivo del operador
+
+Crear una copia privada sin sobrescribir una anterior (Bash/POSIX):
+
+```bash
+(umask 077; set -C; cat deployment/vercel-supabase-production.env.example > .env.production.local)
+chmod 600 .env.production.local
+(umask 077; mkdir -p backups)
+```
+
+Editar localmente los placeholders. No ejecutar `source .env.production.local`:
+el loader interpreta dotenv literalmente, sin expansión de shell. En Windows,
+proteger con ACL privada del usuario; la comprobación de bits POSIX no aplica.
+El archivo queda ignorado por Git. No adjuntarlo a issues ni artefactos CI.
+
+En terminal privada, sin captura de salida:
+
+```bash
+pnpm secrets:generate
+pnpm competition:organizer:hash -- '<contraseña privada de al menos 12 caracteres>'
+```
+
+El segundo comando usa la contraseña elegida por la persona. Evitar dejarla en
+historial; en Bash se puede usar `read -rs -p 'Contraseña: ' organizer_password`,
+pasar `"$organizer_password"` al comando y luego `unset organizer_password`.
+El argumento sigue siendo visible para procesos locales autorizados mientras
+se deriva: ejecutar en la máquina privada del operador. Nunca copiar la
+contraseña a este repositorio. Guardar el digest como secreto también.
+
+`PARTICIPANT_IDENTITY_SECRET` es material de recuperación: guardarlo **separado
+de la base** en gestor de contraseñas o registro offline bajo control de la
+institución. Un dump no lo contiene. No rotarlo durante la edición. Compartir la
+credencial del organizador por un canal privado con las tres personas; la
+cuenta compartida no atribuye cada acción a una persona distinta.
+
+### Variables exactas en Vercel
+
+Todas van **sólo en Production**. Config = visible para operadores autorizados;
+Secret/Sensitive = valor sensible. No copiar secretos a Preview ni Development.
+Las comillas de dotenv delimitan valores; no pegarlas como parte del valor al
+cargar manualmente el dashboard.
+
+| Nombre | Clasificación | Configuración |
+|---|---|---|
+| `NEXT_PUBLIC_APP_URL` | pública / Config | origen HTTPS elegido, sin ruta ni query |
+| `EGRESADO_ENVIRONMENT` | servidor / Config | `production` |
+| `ENABLE_EXPERIMENTAL_COREPACK` | build / Config | `1` |
+| `SUPABASE_INTERNAL_URL` | servidor / Config | Project URL HTTPS de producción |
+| `SUPABASE_SECRET_KEY` | servidor / **sensible** | nueva Secret key; placeholder no válido |
+| `EGRESADO_DEV_HARNESS` | servidor / Config | `false` |
+| `EGRESADO_COMPETITION_SLUG` | servidor / Config | `egresado-fdl-2026` |
+| `PARTICIPANT_IDENTITY_SECRET` | servidor / **sensible** | generado y respaldado por separado |
+| `EGRESADO_PRIVACY_CONTROLLER_NAME` | servidor / Config | institución de la tabla aprobada |
+| `EGRESADO_PRIVACY_CONTROLLER_CONTACT` | servidor / Config | contacto aprobado |
+| `EGRESADO_PRIVACY_CONTROLLER_ADDRESS` | servidor / Config | domicilio aprobado |
+| `EGRESADO_PRIVACY_NOTICE_VERSION` | servidor / Config | `1` |
+| `EGRESADO_PRIVACY_RETENTION_DAYS` | servidor / Config | `30` |
+| `EGRESADO_SCHOOL_YEARS` | servidor / Config | `7.º,1.º,2.º,3.º,4.º,5.º` |
+| `EGRESADO_ORGANIZER_USERNAME` | servidor / Config | `organizador` |
+| `EGRESADO_ORGANIZER_PASSWORD_HASH` | servidor / **sensible** | digest scrypt del comando canónico |
+| `EGRESADO_SCHOOL_DIVISIONS` | omitida | no se recolecta |
+| `NEXT_PUBLIC_SUPABASE_URL` | omitida | no requerida por el navegador |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | omitida | no requerida por el navegador |
+| `DATABASE_URL`, `POSTGRES_URL`, `SUPABASE_DB_PASSWORD` | omitidas | sólo CLI separada cuando corresponda |
+| contraseña del organizador en claro | omitida | nunca es una variable de la aplicación |
+
+Los campos de privacidad son configuración server-only, pero se publican
+intencionalmente en el aviso. No son secretos.
+
+### Selección de entorno en las CLI
+
+```bash
+pnpm release:preflight -- --env-file=.env.production.local
+pnpm competition:privacy:purge -- --env-file=.env.production.local
+pnpm ops:export -- --env-file=.env.production.local --out=backups/ranking-publico.csv
+```
+
+Precedencia: **proceso > archivo explícito > `.env.local` > `.env`**. Ambas
+formas `--env-file=ruta` y `--env-file ruta` funcionan. Archivo explícito ausente,
+directorio, argumento duplicado/vacío o permisos abiertos en POSIX: fallo antes
+de acceder a la base. Nunca se imprimen valores del archivo.
+
+Usar un shell limpio, sin variables de Egresado/Supabase exportadas que anulen
+la copia privada. Completar todos los campos de la plantilla: no depender de
+fallbacks locales para URL, clave, slug o secretos. Si `.env.local`/`.env`
+contiene divisiones o el par público de Supabase, en la **copia privada para
+CLI** agregar esos tres nombres con valor vacío para anularlos; no cargarlos en
+Vercel. No ejecutar `pnpm verify`, builds locales, `db:env` ni tests mientras exista `.env.production.local` en el checkout: Next.js también lo carga automáticamente. Para volver al desarrollo, moverlo al almacenamiento privado externo y usar `--env-file` con esa ruta cuando se opere producción.
+El preflight valida forma/configuración; no demuestra conectividad ni que el
+project-ref sea el esperado. Cotejarlo antes de bootstrap, export o purga.
+
+`ops:backup -- --linked` usa el proyecto de la CLI, **no** este env-file.
+`ops:restore` exige su propio destino explícito. Revisar ambos por separado.
+
+## E. Vercel Dashboard — contrato del proyecto
+
+Importar `gastong256/mono256_egresado-game` desde GitHub, plan **Hobby**:
+
+| Ajuste | Valor |
+|---|---|
+| Framework preset | Next.js |
+| Root directory | raíz del repositorio |
+| Production Branch / Branch Tracking | `main` |
+| Node.js Version | `24.x` |
+| Install command | default / auto-detected |
+| Build command | default, script `build` → `next build` |
+| Output directory | default Next.js |
+| Function region | `gru1`, desde `vercel.json` |
+| Auto deployments | sólo `main` |
+
+Elegir nombre **egresado** si está disponible. Si no, **egresado-fdl26**.
+Antes de Deploy, poner el origen real correspondiente en `NEXT_PUBLIC_APP_URL`
+tanto en Vercel como en el archivo privado. Preferido
+`https://egresado.vercel.app`; fallback `https://egresado-fdl26.vercel.app`.
+Comprobar la URL asignada en Domains. No usar el hostname efímero del deployment
+para pruebas de POST: el control Origin espera el origen canónico.
+Si se cambia el nombre/origen, actualizar ambos y reconstruir: Next congela
+`NEXT_PUBLIC_*` en build. No agregar un alias que redirija sin revisar origen.
+
+Cargar la tabla de variables **antes** del primer build, sólo en Production.
+Corepack respeta pnpm `11.22.0`; comprobar esa versión y Node 24 en Build Logs.
+El rango `>=24.19.0 <25` conserva el mínimo local y selecciona la línea 24 de
+Vercel; el proveedor administra sus parches. Si el log muestra un parche menor
+al mínimo, detenerse por incompatibilidad efectiva; no desactivar engine-strict.
+No fijar timeout/memoria, no activar standalone ni duplicar headers en Vercel.
+Las API siguen en Node; CSP/nonce, HSTS, cookies y cierre de `/dev` los conserva
+Next.js. La región de las Functions no implica que assets/CDN y routing corran
+exclusivamente en São Paulo.
+
+## F. Bootstrap de la edición final
+
+Con RC.2 y preflight aprobado:
+
+```bash
+pnpm competition:bootstrap -- \
+  --env-file=.env.production.local \
+  --name="Egresado - Feria del Libro 2026" \
+  --status=UPCOMING \
+  --opens=2026-09-23T08:00:00-03:00 \
+  --closes=2026-09-25T11:00:00-03:00 \
+  --grace=300
+```
+
+No agregar `--seed`. Guardar stdout de bootstrap como evidencia privada de la
+seed, huella del plan y versiones. Es idempotente: si la edición existe **no la
+corrige ni la pisa**. Cotejar nombre, ventana y retención en el registro/panel;
+un mensaje «ya existe» no demuestra que tenga el perfil correcto.
+
+## G. Verificación cloud y GO pendiente
+
+```bash
+APP_URL=https://egresado.vercel.app  # o el fallback elegido
+curl -fsS "$APP_URL/api/health"
+curl -fsS "$APP_URL/api/health?ready=1"
+curl -sS -D - -o /dev/null "$APP_URL/"
+curl -sS -o /dev/null -w '%{http_code}\n' "$APP_URL/dev/grade-7"
+```
+
+Obligatorio antes de GO:
+
+- liveness 200 y release `1.0.0-rc.2`, fingerprint idéntico al candado;
+- readiness 200, `release-manifest`, `competition-config`, `database` y
+  `competition` en `ok`; antes del bootstrap, `competition: degraded`/503 es
+  esperado, después no;
+- landing con institución/contacto correctos, estado Upcoming y ranking vacío;
+- login real del organizador y operación desde el origen canónico;
+- headers CSP, HSTS, nosniff, frame protection y cookies seguras;
+- `/dev/grade-7` devuelve 404; sin acceso a herramientas de desarrollo;
+- Functions en `gru1`, Supabase en `sa-east-1`, migraciones coincidentes,
+  Secret key nueva, Security Advisor revisado y ausencia de secretos Production
+  en Preview/Development;
+- no errores del proveedor, dump hecho y restauración local comprobada.
+
+Ensayo cloud completo **recomendado y opcional**: antes del bootstrap final,
+configurar temporalmente `egresado-fdl-2026-smoke` en el archivo privado y en
+Vercel, reconstruir el mismo RC, bootstrap con una ventana breve propia y jugar
+sólo con datos sintéticos. Archivar smoke desde `/organizer`, restaurar slug
+final en ambos lugares, redeploy del mismo RC, ejecutar el bootstrap final de
+F y comprobar readiness. No insertar partidas de prueba en el ranking final.
+El ensayo local completo sigue siendo la evidencia de producto obligatoria.
+
+### Rollback de Hobby, después del primer deploy
+
+Crear dos deployments Production consecutivos del **mismo RC.2 y configuración
+final**, ambos servidos previamente por el dominio canónico. Anotar ids, commit,
+fingerprint y slug. Desde Production Deployment → Instant Rollback, volver al
+inmediatamente anterior y repetir health/readiness/login. La huella será la
+misma; cambia el deployment id. No confundir ese resultado con un fallo.
+
+Hobby permite volver al deployment inmediatamente anterior. El rollback conserva
+sus variables antiguas y no revierte la DB. Luego usar **Undo Rollback** para
+restaurar la asignación automática de dominios y confirmar que main vuelve a
+auto-publicar. No usar como target el deployment smoke con otro slug. Con intentos
+reales, preferir fix-forward salvo compatibilidad demostrada; código anterior
+al freeze puede desconocer FairScore oficial.
+
+## H. Backup y ensayo de restauración sin tercer proyecto
+
+La CLI debe seguir enlazada al project-ref de producción. Hacer dump antes del
+evento, al final de los días 23 y 24, y al cierre del 25. Al final de cada día
+exportar ranking público; al cierre, también resultados privados para premios.
+
+```bash
+pnpm ops:backup -- --linked --out=backups/pre-evento
+pnpm ops:export -- --env-file=.env.production.local --out=backups/ranking-dia-1.csv
+# Repetir dump con out=backups/dia-1, backups/dia-2 y backups/cierre.
+pnpm ops:export -- --env-file=.env.production.local --out=backups/ranking-final.csv
+pnpm ops:export -- --env-file=.env.production.local --private --out=backups/premios-final.csv
+```
+
+El wrapper genera `*.schema.sql` y `*.data.sql` de `public` con permisos 0600;
+CSV rechaza sobrescritura. No incluye auth/storage, roles globales, historial
+`supabase_migrations` ni secretos. Conservar también tag, lock, migration head,
+conteos y project-ref. HMAC separado. Copiar backups cifrados fuera del checkout;
+no enviarlos a GitHub, artefactos CI ni repositorios cloud con PII.
+
+Con el Supabase **local ya activo**, crear una base distinta y vacía, sin tocar
+`postgres` ni resetear datos locales preexistentes:
+
+```bash
+PGHOST=127.0.0.1 PGPORT=54322 PGUSER=postgres PGPASSWORD=postgres createdb egresado_restore_stage10
+pnpm ops:restore -- \
+  --schema=backups/pre-evento/<DUMP>.schema.sql \
+  --data=backups/pre-evento/<DUMP>.data.sql \
+  --db-url=postgresql://postgres:postgres@127.0.0.1:54322/egresado_restore_stage10
+```
+
+Los roles Supabase ya existen en ese cluster local. No usar `--force`. Exigir
+restauración atómica exitosa y cotejar conteos de competencias/participantes/
+intentos con los registrados del origen durante una ventana sin escrituras.
+Revisar columnas, constraints, RLS/grants y tupla de versiones de la edición
+restaurada contra `src/release/fair-edition-v1.ts`; `pnpm release:verify` valida
+la fuente, no consulta el dump. Para esquemas nuevos, comprobar que la versión
+de `psql`/Postgres local sea compatible con el servidor del dump.
+
+```bash
+psql postgresql://postgres:postgres@127.0.0.1:54322/egresado_restore_stage10 \
+  --no-psqlrc -c 'select slug, engine_version, ruleset_version, content_version, variant_catalog_version, score_version, action_log_version, snapshot_version from public.competitions;'
+# Sólo después de documentar el ensayo, borrar LA BASE DESCARTABLE:
+PGHOST=127.0.0.1 PGPORT=54322 PGUSER=postgres PGPASSWORD=postgres dropdb egresado_restore_stage10
+```
+
+Credenciales `postgres:postgres` de esos comandos son únicamente las locales del
+CLI. No sustituir por la contraseña cloud ni convertir esta restauración en una
+escritura remota. Un restore cloud descartable es opcional si existe capacidad
+adicional gratuita, nunca requisito ni motivo para pausar el proyecto ajeno.
+
+## I. Apertura, cierre y retención
+
+D-1 y cada mañana: readiness, proyecto activo, red externa, origen correcto,
+login organizador y snapshot de versión. Free puede pausar por baja actividad
+sostenida; revisar Dashboard si falla readiness. No se agrega keep-alive cron.
+
+El 23/09 alrededor de **07:50**, `/organizer` → **OPEN**, con motivo. El reloj
+del servidor bloquea nuevos intentos hasta **08:00**. El 25/09 a **11:00** deja
+de emitir automáticamente por `closesAt`, aunque el estado todavía diga OPEN.
+Mantener la ventana de envío hasta **11:05**, luego marcar/confirmar **CLOSED**,
+exportar y respaldar. Ranking permanece legible; no archivar la edición final
+como sustituto de cerrar. Conservar evidencia operativa en privado.
+
+El 25/10 a partir de 11:00, comprobar y aplicar la purga explícita:
+
+```bash
+pnpm competition:privacy:purge -- --env-file=.env.production.local
+pnpm competition:privacy:purge -- --env-file=.env.production.local --apply
+```
+
+Coordinar premios antes de ese plazo. La purga de DB no borra CSV ni dumps:
+eliminar también las copias privadas bajo la retención aprobada. Preservar sólo
+las exportaciones públicas y evidencia sin datos privados que corresponda.
+
+## Contratos oficiales consultados
+
+Consulta: **2026-09-22**, fuentes oficiales vivas; se revalidan en el dashboard
+real al ejecutar el handoff. Ninguna consulta acredita una cuenta ni un deploy.
+
+- [Vercel regions](https://vercel.com/docs/functions/configuring-functions/region): Hobby admite una región; se fija `gru1` cerca de la base.
+- [Vercel regions list](https://vercel.com/docs/regions): São Paulo es `gru1`.
+- [Node versions](https://vercel.com/docs/functions/runtimes/node-js/node-js-versions): Node 24.x soportado, parches administrados por Vercel.
+- [Package managers](https://vercel.com/docs/package-managers) y [Corepack](https://vercel.com/docs/builds/configure-a-build#corepack): lockfile v9 no fija pnpm 11; `ENABLE_EXPERIMENTAL_COREPACK=1` permite usar `packageManager` sin comando de instalación propio.
+- [Git configuration](https://vercel.com/docs/project-configuration/git-configuration): minimatch, default true para ramas sin regla, cualquier coincidencia true habilita. `**` cubre barras, `main` es la única excepción.
+- [Git deployments](https://vercel.com/docs/git): la rama Production se selecciona en el panel; las otras serían Preview por defecto.
+- [Environment variables](https://vercel.com/docs/environment-variables) y [Sensitive variables](https://vercel.com/docs/environment-variables/sensitive-environment-variables): scope Production separado; interfaz vigente Config/Secret, compatible con Sensitive legacy.
+- [Instant Rollback](https://vercel.com/docs/instant-rollback): Hobby al deployment inmediatamente anterior; variables conservadas y Undo Rollback para reanudar asignación automática.
+- [Esquema vercel.json](https://openapi.vercel.sh/vercel.json): validación sin login; no requiere instalar Vercel CLI.
+- [Supabase billing FAQ](https://supabase.com/docs/guides/platform/billing-faq): dos proyectos Free activos, con cuotas de miembros Owner/Admin de la organización.
+- [Supabase regions](https://supabase.com/docs/guides/platform/regions): región específica `sa-east-1`.
+- [API keys](https://supabase.com/docs/guides/getting-started/api-keys): `sb_secret_…` privilegiada y server-only; retirada de claves legacy anunciada para fin de 2026, sin inventar una fecha de corte más precisa.
+- [Data API](https://supabase.com/docs/guides/api): REST/PostgREST a partir del esquema, protegido con permisos y RLS.
+- [CLI](https://supabase.com/docs/reference/cli): login/link, migration list, db push dry-run/push; seed sólo mediante opción explícita.
+- [Backups](https://supabase.com/docs/guides/platform/backups): para Free, exportación regular con CLI y copia externa; no depender del workflow de backups descargables de planes pagos.
+- [Project pausing](https://supabase.com/docs/guides/platform/free-project-pausing): actividad baja en ventana de siete días puede causar pausa; revisar antes del evento, sin agregar infraestructura.
+
+---
+
 # FILE: 06-delivery/current-stage.md
 
 # Etapa actual
@@ -22196,7 +22681,18 @@ operativo está en el [runbook](05-operations/fair-runbook.md#operación-de-la-c
 Vista corta del estado de ejecución. El contrato completo y el protocolo de
 actualización están en el [roadmap](06-delivery/implementation-sequence.md).
 
-## PRODUCTION V1 FREEZE — Egresado Fair Edition v1
+## STAGE-10A — adaptación Vercel Hobby + Supabase Free
+
+**Estado:** `DONE` — 22 de septiembre de 2026. Adaptación de despliegue `READY`,
+`1.0.0-rc.2`, `pnpm verify` verde: 2345 tests y 222 E2E. STAGE-10 sigue
+`IN_PROGRESS`; faltan despliegue, ensayos de proveedor y GO. [ADR-028](03-architecture/adr/ADR-028-zero-cost-fair-deployment.md)
+fija Functions `gru1`, DB `sa-east-1`, producción desde main y ensayo local sin
+staging cloud. La institución, ventana y retención de 30 días están aprobadas.
+El [handoff A–I](05-operations/vercel-supabase-production-deployment.md) indica
+los únicos pasos manuales de proveedor que faltan. Evidencia en el
+[reporte STAGE-10A](06-delivery/stage-10a-deployment-adaptation.md).
+
+## PRODUCTION V1 FREEZE — evidencia histórica RC.1
 
 **Estado:** `DONE` — 22 de septiembre de 2026. **Siguiente etapa: STAGE-10**,
 despliegue, hardening, dry run y GO/NO-GO.
@@ -22970,12 +23466,13 @@ Si el roadmap y el código difieren, **el código gana** y el roadmap se corrige
 - Fases de validación externa y congelamiento: [ciclo de entrega real](00-product/real-delivery-lifecycle.md).
 - Qué se construye por capas de alcance: [alcance y roadmap](00-product/scope-and-roadmap.md) y [backlog](06-delivery/mvp-backlog.md).
 
-**Última reconciliación:** 22 de septiembre de 2026, **PRODUCTION V1 FREEZE**.
-Egresado Fair Edition v1 queda congelada en un manifiesto con huella
-(`1affb2a8…`), FairScore se oficializa como `fair-score-v1` sin mover un número,
+**Última reconciliación:** 22 de septiembre de 2026, **STAGE-10A** (preparación de despliegue; GO pendiente).
+RC.2 adapta el despliegue y conserva el freeze competitivo. La huella vigente es
+`0ea3c1de…80379cd0`; RC.1 (`1affb2a8…`) queda como evidencia histórica.
+FairScore se oficializó como `fair-score-v1` sin mover un número,
 y la revisión humana amplia deja de bloquear el roadmap
 ([ADR-027](03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md),
-D-RC-001 a D-RC-012). La siguiente etapa es STAGE-10. Antecedente del 21 de
+D-RC-001 a D-RC-012). STAGE-10 está en curso: adaptación local, operación cloud pendiente. Antecedente del 21 de
 septiembre: STAGE-09 `DONE`. Antecedente del 18 de septiembre: adjudicación final del techo
 de estrategia ciega de `y5.stage-screen` —`K ≤ 78`, el mínimo factible demostrado—
 e implementación de WP-SCREEN: la remediación matemática cierra en **catorce de
@@ -23034,7 +23531,7 @@ Tabla de navegación. Los contratos de cada etapa, más abajo, son la autoridad.
 | [STAGE-09](#stage-09-fair-mode-servidor-autoritativo-y-ranking) | Fair mode, servidor autoritativo y ranking | `DONE` — 21 de septiembre de 2026 | STAGE-06 (`DONE`), STAGE-08 (`DONE`) | — |
 | [GATE-TG2](#gate-tg2-teacher-gate-2) | **Teacher Gate 2** | `SUPERSEDED` — no bloquea v1 ([ADR-027](03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md)) | STAGE-09 (`DONE`) | externo, opcional |
 | [FREEZE](#freeze-congelamiento-de-competencia) | Congelamiento de competencia | `DONE` — 22 de septiembre de 2026 | STAGE-09 (`DONE`) | — |
-| [STAGE-10](#stage-10-production-hardening) | Production hardening | `READY` · **siguiente** | FREEZE (`DONE`) | go-live |
+| [STAGE-10](#stage-10-production-hardening) | Production hardening | `IN_PROGRESS` · STAGE-10A `DONE`, proveedor y GO pendientes | FREEZE (`DONE`) | go-live |
 | [RELEASE](#release-y-post-feria) | Feria y post-feria | `NOT_STARTED` | STAGE-10 | — |
 
 ### Grafo de dependencias
@@ -23133,7 +23630,7 @@ Estado real contra el código al 11 de septiembre de 2026, tras cerrar STAGE-08 
 | Presupuesto de beats por año | `DONE` como contrato validable | `DEFAULT_STAGE_BEAT_BUDGET`, `validateStagePlan` | STAGE-02 |
 | Contrato de configuración de producción | `DONE` | `src/config/production.ts`, `src/instrumentation.ts`, `pnpm release:preflight` | FREEZE |
 | Respaldo, restauración y exportación | `DONE` local | `pnpm ops:backup` · `ops:restore` · `ops:export`; probados contra la base local | FREEZE |
-| Production hardening | `NOT_STARTED` | remoto: staging, load test, rollback ensayado, dry run, GO/NO-GO | STAGE-10 |
+| Production hardening | `IN_PROGRESS` | STAGE-10A `DONE`: Vercel Hobby + Supabase Free preparados y ensayo local verde; cloud smoke/rollback/restore y GO pendientes | STAGE-10 |
 
 ### Discrepancias registradas
 
@@ -24096,7 +24593,7 @@ verificación   pnpm release:verify · 57 comprobaciones
 
 ### STAGE-10 — Production hardening
 
-- **Estado:** `READY` — **siguiente etapa**
+- **Estado:** `IN_PROGRESS` — STAGE-10A `DONE`; operación de proveedor y GO pendientes
 - **Depende de:** FREEZE (`DONE`)
 - **Desbloquea:** la feria
 
@@ -24105,6 +24602,18 @@ verificación   pnpm release:verify · 57 comprobaciones
 **Scope IN.** Simulación masiva de decenas de miles de runs; load testing por encima de la concurrencia esperada; degradación de red; QA móvil priorizando Android modestos en 360/390/430 y Safari/iOS; telemetría mínima sin PII innecesaria; runbook de incidentes; checklist de go-live.
 
 **Scope OUT.** Features nuevas. Cambios de contenido o de score que afecten equidad.
+
+**Subetapa STAGE-10A `DONE`, autorizada y cerrada el 22/09.** Configuración y herramientas adaptadas
+a Vercel Hobby `gru1` + Supabase Free `sa-east-1`, una producción desde `main`,
+ensayo local equivalente a staging, privacidad/calendario aprobados y RC.2.
+Fuera de alcance: push, login de proveedores, mutaciones remotas y deploy.
+[ADR-028](03-architecture/adr/ADR-028-zero-cost-fair-deployment.md),
+[reporte](06-delivery/stage-10a-deployment-adaptation.md) y
+[handoff](05-operations/vercel-supabase-production-deployment.md).
+No se exige un tercer proyecto cloud. Smoke cloud mínimo obligatorio; partida
+cloud completa opcional en slug sintético separado. No reemplaza el GO/NO-GO.
+Exit gate local: `pnpm verify` verde (2345 tests, 222 E2E), migraciones y restore
+en bases locales descartables, candado RC.2 y tag anotado local. RC.1 inmutable.
 
 **Lectura requerida.** [Modo feria y congelamiento](05-operations/fair-mode-and-competition-freeze.md) · [runbook de feria](05-operations/fair-runbook.md) · [fallback e incidentes](05-operations/fallback-and-incident-plan.md) · [analytics y observabilidad](03-architecture/analytics-observability.md) · [NFR](04-quality/non-functional-requirements.md) · [estrategia de testing](04-quality/testing-strategy.md).
 
@@ -24248,6 +24757,15 @@ Este backlog prioriza por features. El orden de las etapas que quedan después d
 # FILE: 06-delivery/production-v1-release-candidate.md
 
 # PRODUCTION V1 FREEZE — Egresado Fair Edition v1 Release Candidate
+
+> Evidencia histórica de `v1.0.0-rc.1`, preservada. STAGE-10A prepara RC.2 con
+> cambios de despliegue y herramientas, sin alterar juego/matemática/contenido.
+> Identidad y verificaciones nuevas en el [reporte de adaptación](06-delivery/stage-10a-deployment-adaptation.md).
+> Los valores de institución, calendario y retención de la sección T ya fueron
+> aprobados; sólo quedan secretos, nombre disponible e infraestructura manual
+> del [handoff](05-operations/vercel-supabase-production-deployment.md).
+> La expectativa histórica de staging remoto se sustituye por ensayo local bajo ADR-028.
+
 
 ## A. Veredicto
 
@@ -24977,9 +25495,11 @@ Binario. Cada línea está `PASSED`, `READY FOR STAGE-10 REHEARSAL` o `FAILED`.
 infraestructura real y que este repositorio no puede afirmar sin mentir.
 
 ```text
-release   egresado-fair-edition-v1 · 1.0.0-rc.1
-huella    1affb2a82f4726a77cedbf4e20c82055f6c04a07d67e42674eb8e9e6da16007e
+release   egresado-fair-edition-v1 · 1.0.0-rc.2
+huella    0ea3c1de866aa0a25fb9e236baa122e935fcd37280c443ef4d42011680379cd0
 ```
+
+Las tablas de producto conservan evidencia del freeze RC.1. La validación nueva de RC.2 y las excepciones de entorno se registran en [STAGE-10A](06-delivery/stage-10a-deployment-adaptation.md). El [handoff A–I](05-operations/vercel-supabase-production-deployment.md) es el procedimiento vigente.
 
 ## Producto congelado
 
@@ -25060,8 +25580,8 @@ huella    1affb2a82f4726a77cedbf4e20c82055f6c04a07d67e42674eb8e9e6da16007e
 | RELEASE ID VISIBLE | `PASSED` | health, arranque y cada línea de log |
 | STRUCTURED LOGS | `PASSED` | una línea JSON por evento |
 | LOG REDACTION | `PASSED` | probado sobre lo serializado |
-| BACKUP PROCEDURE | `PASSED` localmente | 3,67 MiB de datos públicos exportados con permisos 0600 |
-| RESTORE PROCEDURE | `PASSED` localmente | 6.087 intentos restaurados; rollback y rechazo de destino ocupado probados |
+| BACKUP PROCEDURE | `PASSED` localmente | RC.2: 16,2 KiB esquema + 4717,9 KiB datos de `public`, permisos 0600 |
+| RESTORE PROCEDURE | `PASSED` localmente | RC.2: 58 competencias / 2600 participantes / 7616 intentos y versiones cotejadas; destino local descartable eliminado |
 | RUNBOOK | `PASSED` | [runbook de operación](05-operations/fair-operations-runbook.md) |
 | ROLLBACK PROCEDURE | `READY FOR STAGE-10 REHEARSAL` | escrito; no ensayado contra una plataforma |
 | REMOTE BACKUP / RESTORE | `READY FOR STAGE-10 REHEARSAL` | las herramientas apuntan a remoto; no se ejecutó |
@@ -25071,8 +25591,8 @@ huella    1affb2a82f4726a77cedbf4e20c82055f6c04a07d67e42674eb8e9e6da16007e
 | Item | Estado | Evidencia |
 |---|---|---|
 | BUILD GREEN | `PASSED` | sin una sola advertencia |
-| VERIFY GREEN | `PASSED` | evidencia anterior + una corrida de continuación por instrucción del Product Owner |
-| VITEST | `PASSED` | 119 archivos · 2.323 tests |
+| VERIFY GREEN | `PASSED` | RC.2: corrida completa tras corregir la precedencia real de vite-node |
+| VITEST | `PASSED` | 122 archivos · 2.345 tests |
 | COVERAGE | `PASSED` | 85,67 / 77,58 / 87,68 / 85,90 |
 | E2E | `PASSED` | 222 tests en cuatro proyectos |
 | ACCESSIBILITY | `PASSED` | axe, teclado, 360 px, sin desborde |
@@ -25080,8 +25600,8 @@ huella    1affb2a82f4726a77cedbf4e20c82055f6c04a07d67e42674eb8e9e6da16007e
 | PERFORMANCE BASELINE | `PASSED` | registro, emisión, verificación, ranking, exportación |
 | SYNTHETIC COMPETITION | `PASSED` | jornada entera contra Postgres real |
 | REMOTE LOAD TEST | `READY FOR STAGE-10 REHEARSAL` | — |
-| STAGING VALIDATION | `READY FOR STAGE-10 REHEARSAL` | — |
-| COMPETITION DRY RUN | `READY FOR STAGE-10 REHEARSAL` | — |
+| LOCAL REHEARSAL / CLOUD SMOKE | `READY FOR STAGE-10 REHEARSAL` | ensayo equivalente a staging local; smoke obligatorio en la producción real, sin proyecto cloud extra |
+| CLOUD FULL DRY RUN | `READY FOR STAGE-10 REHEARSAL` | opcional en slug sintético separado; ensayo local completo obligatorio |
 
 ## Gobernanza
 
@@ -25091,21 +25611,29 @@ huella    1affb2a82f4726a77cedbf4e20c82055f6c04a07d67e42674eb8e9e6da16007e
 | TARGETED HUMAN WINDOWS DOCUMENTED | `PASSED` | mismo ADR |
 | NEXT STAGE IS STAGE-10 | `PASSED` | [roadmap](06-delivery/implementation-sequence.md) |
 
-## Entradas que faltan, y no son ingeniería
+## Preparación del despliegue STAGE-10A
+
+- [x] Región `gru1` y Git main-only en `vercel.json` (incluidas ramas con `/`).
+- [x] Plantilla sin secretos, institución y calendario aprobados, retención de 30 días.
+- [x] Loader explícito con precedencia y permisos privados.
+- [x] RLS/grants existentes conservados; sin runtime PostgreSQL directo.
+- [x] Runbook de migración, bootstrap, scopes, smoke, rollback y restore cloud→local.
+- [x] Evidencia final de RC.2 registrada en STAGE-10A; `verify` y build verdes.
+
+## Entradas y acciones manuales restantes
 
 ```text
-proyecto y clave de producción
-dominio https
-PARTICIPANT_IDENTITY_SECRET de producción
-credencial de organizador con dueño
-nombre real de la institución responsable
-contacto y domicilio reales
-ventana real del evento
-EGRESADO_ENVIRONMENT=production
+proyecto Supabase Free sa-east-1, project-ref y Secret key nueva
+origen HTTPS disponible (preferido o fallback)
+PARTICIPANT_IDENTITY_SECRET generado y respaldado fuera de la DB
+contraseña privada de organizador y digest scrypt
+variables exclusivamente Production; Corepack=1
+migraciones remotas, deploy, bootstrap, cloud smoke y ensayos del handoff
 ```
 
-El arranque se niega a atender si falta alguno, o si alguno sigue siendo un
-valor de ejemplo. `pnpm release:preflight` los verifica sin imprimirlos.
+Institución/contacto/domicilio, ventana, años, ausencia de divisiones y retención
+están aprobados. El arranque rechaza configuración incompleta; verificarla con
+`pnpm release:preflight -- --env-file=.env.production.local` antes de operar.
 
 ---
 
@@ -26170,6 +26698,185 @@ no oficializa la configuración de competencia: congelarla es FREEZE. El
 despliegue final y el hardening son STAGE-10; lo que STAGE-09 deja es una
 aplicación desplegable —build de producción, migración, validación de entorno,
 bootstrap de base, de competencia y de organizador— no desplegada.
+
+---
+
+# FILE: 06-delivery/stage-10a-deployment-adaptation.md
+
+# STAGE-10A — adaptación Vercel Hobby + Supabase Free
+
+Fecha: 2026-09-22. Alcance: preparar configuración, herramientas y operación del
+RC para el despliegue manual. Sin push, login, cuentas, deploy ni mutaciones
+remotas. El [handoff A–I](05-operations/vercel-supabase-production-deployment.md)
+contiene los pasos restantes y las fuentes oficiales consultadas.
+
+## Veredicto
+
+**VERCEL + SUPABASE DEPLOYMENT ADAPTATION — READY.** STAGE-10A `DONE`.
+La configuración, las herramientas y el handoff están preparados y verificados
+localmente. STAGE-10 sigue `IN_PROGRESS`: falta ejecutar el deployment y sus
+ensayos de proveedor antes del GO del evento.
+
+## Baseline y procedencia
+
+- `main` limpio en `935569d73d69e0e91f9eed13e265ffa16b84a1d2`.
+- Tag histórico `v1.0.0-rc.1`, release `egresado-fair-edition-v1` / `1.0.0-rc.1`.
+- Huella histórica: `1affb2a82f4726a77cedbf4e20c82055f6c04a07d67e42674eb8e9e6da16007e`.
+- `pnpm release:verify` de la baseline: 57 comprobaciones verdes.
+- `origin/main` local coincide. `git ls-remote origin refs/heads/main refs/tags/v1.0.0-rc.1`
+  falló por SSH `Permission denied (publickey)`: remoto vivo no verificado. No
+  se cambió el remoto ni se reescribió historia.
+
+## Arquitectura auditada y cambios
+
+Browser → Vercel Next.js → Supabase Data API HTTPS. `createCompetitionStore`
+selecciona el adapter Supabase, que crea el cliente privilegiado protegido por
+`server-only`. Se usan tablas/vista/RPC por HTTPS. El adapter público legado
+existe para pruebas/configuración local, pero la UI competitiva no lo consume.
+No se agregó driver SQL, pooler, `DATABASE_URL` ni claves de navegador.
+
+- `vercel.json`: Functions sólo `gru1`; Git `**: false`, `main: true`. El glob
+  doble cubre barras en nombres de ramas; verdadero gana entre coincidencias.
+- Plantilla pública con valores aprobados y placeholders; Corepack activado
+  explícitamente para pnpm fijado. Se mantienen Node 24.19.0 local, engine
+  `>=24.19.0 <25`, pnpm 11.22.0, Next 16.3.5 y lockfile.
+- Loader compartido: proceso > `--env-file` > `.env.local` > `.env`, dotenv nativo
+  sin interpolación, archivo explícito obligatorio y permisos POSIX privados.
+  Bootstrap, purge, export y preflight aceptan la opción sin cambiar sus flags.
+  `vitest.config.ts` desactiva `envDir` de Vite: su precarga convertía valores
+  locales en variables de proceso antes del loader. Vitest conserva su loader
+  literal existente para la suite; la regresión de CLI usa un proceso real.
+- Regresiones de selección/precedencia, no salida de secretos, perfil aprobado,
+  HTTPS sin variables públicas y bordes horarios de la feria.
+- ADR-028, registro de decisiones, arquitectura y runbooks reconciliados:
+  una Production, ensayo local, Secret keys nuevas, CLI migrations sin seed,
+  rollback compatible y restore cloud→local sin tercer proyecto.
+- RC.2 mediante versión de paquete/manifiesto y
+  `pnpm release:verify -- --update-lock`.
+
+## Release y compatibilidad
+
+```text
+releaseId       egresado-fair-edition-v1
+releaseVersion  1.0.0-rc.2
+fingerprint     0ea3c1de866aa0a25fb9e236baa122e935fcd37280c443ef4d42011680379cd0
+tag local       v1.0.0-rc.2 (anotado sobre el commit final)
+```
+
+En el manifiesto cambia sólo `releaseVersion`. Semántica de juego, matemática,
+contenido, pesos/tier, ranking, podio, intentos, seed policy y Prestige intactos.
+Motor `10.0.0`, action log `7`, snapshot `8`, ruleset `1.0.0-full-career`, contenido
+`5.5.0-grade-5`, catálogo `grade-5-dev-6` y score `1.0.0-fair-edition-v1` intactos.
+Migración head `20260921000000_competition_fair_mode.sql`, checksum
+`faf128c4491bb0f406b520b05094e2b2345324f1e2fc049cc762232005ae214f`, sin migración nueva.
+La retención de **esta edición** es 30 días por configuración; los defaults del
+manifiesto/base siguen siendo históricos y no se cambiaron.
+
+## Auditoría de proveedores
+
+Fuentes actuales oficiales en el [runbook](05-operations/vercel-supabase-production-deployment.md#contratos-oficiales-consultados).
+Vercel Hobby admite una región; Node 24.x y Corepack permiten conservar el
+runtime. Supabase Free admite dos proyectos activos sujeto a los miembros de
+la organización. São Paulo está disponible en ambos. No se constató una
+incompatibilidad que requiera cambiar de proveedor.
+
+La verificación del esquema Vercel se hizo sin login con Ajv y minimatch ya
+instalados transitivamente por ESLint, sin agregar dependencias. El esquema
+oficial descargado declara draft-04 pero contiene `exclusiveMinimum` numérico
+en una opción no usada (`experimentalTriggers`). La validación íntegra del
+meta-esquema falla por esa inconsistencia; se validaron **las propiedades
+oficiales usadas** (`$schema`, `regions`, `git`) y los casos de ramas con
+minimatch. El test permanente valida el contrato local con Zod. No se presenta
+esto como un build de Vercel ni validación autenticada del proveedor.
+
+## Base local y seguridad
+
+Supabase ya estaba activo. Conteos originales: **58 competencias / 2600
+participantes / 7616 intentos**. No se ejecutó `db:reset` sobre esa base ni se
+modificó `.env.local`. Los bindings Docker preexistentes son `0.0.0.0`/`::`;
+`db:start` intentaría detenerlos por la guarda de red. Por eso no se llamó
+`db:start`, `db:stop` ni se habilitó el override de red.
+
+En `egresado_stage10a_migrations`, una base vacía separada del mismo Postgres,
+se aplicaron las dos migraciones con `psql --single-transaction --set
+ON_ERROR_STOP=1`. Consulta de catálogo: siete tablas con RLS, y sin privilegios
+SELECT/INSERT/UPDATE/DELETE para `anon` ni `authenticated` sobre las tablas y la
+vista. Es evidencia equivalente de reconstrucción sin destruir datos ajenos;
+no se reporta como `pnpm db:reset` ejecutado.
+
+El dump con `pnpm ops:backup -- --out=<directorio-temporal-privado> --name=baseline`
+produjo 16,2 KiB de esquema y 4717,9 KiB de datos. El restore atómico en `egresado_stage10a_restore` recuperó **58/2600/7616**.
+Se cotejaron además todas las tuplas de versiones restauradas con las del
+origen, sin publicar datos personales. La suite existente ejercita
+Data API con clave publicable y control positivo privilegiado.
+
+Se eliminaron las dos bases descartables y el directorio privado del dump del
+ensayo. El stack original (DB, REST, Auth y Kong) permanece activo y sus datos
+preexistentes se conservaron. Las pruebas agregan sus propios fixtures sintéticos;
+no se presenta el entorno como una base vacía al finalizar.
+Conteos de cierre: **86 competencias / 3630 participantes / 10650 intentos**.
+
+## Verificación
+
+| Comando / comprobación | Resultado |
+|---|---|
+| `pnpm toolchain:check` | PASS · Node 24.19.0 / pnpm 11.22.0 |
+| `pnpm install --frozen-lockfile` | PASS · sin cambio de dependencias |
+| `pnpm release:check` | PASS · Next 16.3.5 |
+| `pnpm release:verify -- --update-lock` | PASS · RC.2, 54 checks antes del candado |
+| `pnpm release:verify` | PASS · 57 comprobaciones con el candado RC.2 |
+| `pnpm release:preflight` | PASS local · cuatro observaciones esperadas: origen HTTP/local y dos textos de ejemplo; no acredita Production |
+| `pnpm db:lint` | PASS · sin errores |
+| `pnpm db:types` | PASS · sin diff |
+| `pnpm security:audit` | PASS · sin vulnerabilidades conocidas |
+| Tests nuevos | 16 de loader/deploy y 6 de CLI, PASS en corridas puntuales |
+| `pnpm test:coverage` (dentro de `verify`) | PASS · 122 archivos, 2345 tests; incluye las 22 regresiones nuevas |
+| `pnpm lint` / `pnpm typecheck` | PASS por separado y dentro de `verify` |
+| `pnpm build` (dentro de `verify`) | PASS · Next 16.3.5, sin advertencias |
+| `pnpm verify` | PASS · exit 0, gate completo sobre código final |
+| `pnpm test:e2e:only` (dentro de `verify`) | PASS · 222 tests, cuatro proyectos, 2,4 min |
+| `pnpm secrets:check` | PASS · incluidos archivos nuevos sin trackear |
+| `node scripts/validate-agent-workspace.mjs` / `node scripts/sync-master-spec.mjs --check` | PASS · índices y master sincronizados |
+| `git diff --check` y revisión completa del diff | PASS |
+
+Cobertura (statements/branches/functions/lines): **85,67 / 77,58 / 87,68 /
+85,90 %**. Contenido de los seis años, catálogos, simulaciones y freeze verdes.
+El build no emitió advertencias. Playwright emitió avisos de `NO_COLOR` frente
+a `FORCE_COLOR`, sin fallos ni reintentos fallidos.
+
+Una prueba manual con archivo explícito detectó que vite-node precargaba el
+archivo local y anulaba la selección. Se interrumpió una primera corrida de
+`verify` durante coverage para corregir `envDir` y agregar la regresión real;
+no cuenta como gate completado. La corrida posterior cubre la configuración final.
+
+Los primeros intentos detectaron un tipo `parseEnv` nullable, un path de binario
+de test y la incompatibilidad del meta-esquema Vercel indicada arriba. Se
+corrigen y reejecutan los checks correspondientes; no se omitieron fallos.
+
+No se ejecutan login, link remoto, db push, deployment, rollback cloud ni smoke
+contra un proveedor. `db:start`/`db:reset` se sustituyen por inspección del stack
+activo y migraciones en base vacía separada por preservación de datos/puertos.
+No hay cambio de contenedores; Docker build/up/down no son parte de esta adaptación.
+Los barridos profundos de balance quedan como evidencia histórica del freeze;
+`verify` vuelve a correr los catálogos, simulación canónica y tests completos.
+
+## Handoff y estado final
+
+[Runbook A–I](05-operations/vercel-supabase-production-deployment.md): GitHub;
+Supabase Dashboard; Supabase CLI; secretos locales; Vercel Dashboard;
+bootstrap; verificación cloud; backup/restore; apertura. No falta una decisión
+de matemática ni una contraseña por defecto: falta ejecutar la operación manual
+con secretos privados y seleccionar el hostname disponible.
+
+Todos los cambios quedan en commits locales sobre `main`; el tag anotado
+`v1.0.0-rc.2` identifica el commit final de documentación y su árbol completo.
+Implementación y regresiones: `ffabb93` (`feat(deploy): prepare Vercel and explicit
+operator environments`). Freeze: `291f079` (`chore(release): freeze
+deployment-ready v1.0.0-rc.2`). El commit de documentación completa el handoff.
+`v1.0.0-rc.1` conserva `935569d73d69e0e91f9eed13e265ffa16b84a1d2`.
+Para reproducir la identidad final: `git rev-parse 'v1.0.0-rc.2^{commit}'`.
+Sin push, login de proveedores, deployment ni mutación remota. La limpieza del
+ensayo sólo quitó los recursos descartables creados por esta tarea.
 
 ---
 
@@ -28543,6 +29250,7 @@ De requisito de producto a estado de implementación. La columna de estado es un
 | ADR-025 | [Evolución acotada de contratos de carrera completa](03-architecture/adr/ADR-025-full-career-contract-evolution.md) | Aceptado; implementación futura |
 | ADR-026 | [Identidad de participante y privacidad de menores en competencia](03-architecture/adr/ADR-026-participant-identity-and-minor-privacy.md) | Aceptado; supersede parcialmente ADR-008 |
 | ADR-027 | [Congelamiento del release y gobernanza de v1](03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md) | Aceptado; supersede el carácter bloqueante de GATE-TG2 |
+| ADR-028 | [Despliegue de feria sin costo](03-architecture/adr/ADR-028-zero-cost-fair-deployment.md) | Aceptado; Vercel Hobby + Supabase Free, ensayo local y main-only |
 
 ## Regla para ADR nuevo
 
@@ -28858,6 +29566,16 @@ saliencia ya no son aperturas de prediseño.
 | D-RC-012 | **Ninguna revisión humana amplia bloquea v1.** Teacher Gate 2 y la revisión del Departamento de Matemática humano dejan de ser condición de congelamiento y de despliegue; supersede el carácter bloqueante de D-S08-094 y D-S08-095. El gate matemático vigente es el que el repositorio cerró. Quedan disponibles **ventanas de ajuste humano puntual**, acotadas y por hallazgo. Este repositorio **no afirma** `human-reviewed`, `human-certified`, `curriculum-certified` ni `teacher-approved`, y la evidencia histórica se conserva entera | PRODUCT OWNER DECISION · gobernanza | [ADR-027](03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md) |
 | D-RC-013 | **El gate de dependencias de despliegue entra en `pnpm verify`.** `pnpm release:check` existía, gobernaba despliegues públicos según `AGENTS.md`, y estaba en rojo sin que nadie lo corriera: Next.js estaba fijado en `16.3.1`, por debajo del parche `16.3.2` que el propio gate exige. Se subió a `16.3.5` y el gate corre dentro de la verificación transversal, que es donde una compuerta que nadie ejecuta deja de servir | ACCEPTED · release engineering | `scripts/verify.mjs` |
 | D-RC-014 | **El timeout de Vitest sube de 5 a 30 s, por medición.** El default de cinco segundos es correcto para una suite de unidades; ésta juega carreras enteras contra el motor y sus tests pesados cuestan entre uno y veintiséis segundos medidos en aislamiento. Con dieciséis workers, un test de un segundo y pico superaba los cinco según qué más estuviera corriendo: el efecto no era que la suite fallara sino que fallaba **a veces**, que es la peor propiedad de un gate | ACCEPTED · estabilidad de la verificación | `vitest.config.ts` |
+
+## STAGE-10A — decisiones de despliegue aprobadas
+
+| ID | Decisión | Madurez | Fuente |
+|---|---|---|---|
+| D-S10A-001 | Una Production Vercel Hobby `gru1` y Supabase Free `sa-east-1`; browser → BFF → Data API HTTPS. Sin pooler/runtime SQL ni claves browser. | LOCKED para esta feria | [ADR-028](03-architecture/adr/ADR-028-zero-cost-fair-deployment.md) |
+| D-S10A-002 | Main auto-publica Production; otras ramas deshabilitadas, secretos sólo Production. Ensayo y restore descartable locales, sin tercer proyecto cloud. | LOCKED | mismo ADR |
+| D-S10A-003 | Colegio Integral Piacentini, contacto/domicilio aprobados, feria 23/09 08:00 a 25/09 11:00 UTC−03, gracia 300 s, retención 30 días, seis años sin división, cuenta compartida organizador. | PRODUCT OWNER DECISION · configuración de edición | [perfil y handoff](05-operations/vercel-supabase-production-deployment.md#perfil-aprobado) |
+| D-S10A-004 | RC.2 por adaptación de deployment; tag RC.1 inmutable, matemática/contenido/score/tupla/migraciones idénticos. | LOCKED | [reporte](06-delivery/stage-10a-deployment-adaptation.md) |
+| D-S10A-005 | Corepack en Vercel para pnpm fijado; mantener Node local 24.19.0 y engines estricto. | ACCEPTED · plataforma | [contratos oficiales](05-operations/vercel-supabase-production-deployment.md#contratos-oficiales-consultados) |
 
 ---
 
@@ -29364,8 +30082,8 @@ Estas decisiones requieren evidencia de prototipo, playtest, implementación u o
 
 28. ¿Cuánto persisten checkpoints y acciones `pending_sync` después de cerrar la sesión, cuándo expiran y cómo se comunican conflictos o rechazos terminales? *Gate: aceptar persistencia y UX offline de MVP Feria.*
 29. ¿Cuál es el mecanismo mínimo de moderación y “reset” requerido para MVP Feria, y qué queda reservado para el Admin UI post-MVP? *Gate: cerrar tooling y runbook operativo de MVP Feria.*
-30. ¿Qué health checks, ownership, backup/restore, RPO/RTO y rehearsal son obligatorios antes de una feria? *Gate: aprobar staging y rehearsal de feria.*
-31. ~~¿Qué política legal y de retención/eliminación aplica a runs, actions, pseudónimos y auditoría en la institución anfitriona?~~ **Cerrada en lo técnico por STAGE-09,** y sólo en lo técnico. La retención es configuración del despliegue con default conservador —120 días desde el cierre—, la anonimización es una operación explícita y auditada, y el responsable de los datos se declara en la configuración: si falta, la aplicación no atiende. Ver [ADR-026](03-architecture/adr/ADR-026-participant-identity-and-minor-privacy.md). **La política legal aplicable la define la institución**, no este repositorio, y eso sigue siendo un acto externo previo a la feria.
+30. ¿Qué health checks, ownership, backup/restore, RPO/RTO y rehearsal son obligatorios antes de una feria? **Parcialmente resuelta para Feria del Libro 2026:** ADR-028 y el [handoff](05-operations/vercel-supabase-production-deployment.md) fijan checks, respaldo manual diario y ensayo cloud→local, sin staging cloud. RPO/RTO medidos y GO quedan para operación contra el deployment real. *Gate: completar el handoff y registrar tiempos de recuperación.*
+31. ~~¿Qué política legal y de retención/eliminación aplica a runs, actions, pseudónimos y auditoría en la institución anfitriona?~~ **Cerrada en lo técnico por STAGE-09,** y sólo en lo técnico. La retención es configuración del despliegue con default conservador —120 días desde el cierre—, la anonimización es una operación explícita y auditada, y el responsable de los datos se declara en la configuración: si falta, la aplicación no atiende. Ver [ADR-026](03-architecture/adr/ADR-026-participant-identity-and-minor-privacy.md). **La política legal aplicable la define la institución**, no este repositorio. Para Feria del Libro 2026 el Product Owner ya aprobó institución, contacto, domicilio y retención privada de 30 días (D-S10A-003); esos valores reemplazan el default en su configuración.
 
 ## Producto y proveedores
 
@@ -29857,6 +30575,14 @@ Estas preguntas están registradas en [preguntas abiertas](07-reference/open-que
 - [x] [Reporte del RC](06-delivery/production-v1-release-candidate.md), [checklist](06-delivery/release-checklist.md) y [runbook operativo](05-operations/fair-operations-runbook.md).
 - [x] STAGE-10 conserva los ensayos remotos y GO/NO-GO.
 
+
+## STAGE-10A — preparación Vercel Hobby + Supabase Free
+
+- [x] [ADR-028](03-architecture/adr/ADR-028-zero-cost-fair-deployment.md) y registro: regiones, Git, secretos y ensayo local.
+- [x] [Handoff A–I](05-operations/vercel-supabase-production-deployment.md), plantilla pública y operación sin tercer proyecto remoto.
+- [x] [Reporte de adaptación](06-delivery/stage-10a-deployment-adaptation.md), con procedencia RC.1 y evidencia RC.2 separadas.
+- [x] Etapa actual, roadmap, arquitectura, runbooks e índices reconciliados; GO remoto pendiente.
+
 ---
 
 # FILE: README.md
@@ -29948,7 +30674,7 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 - `security-privacy.md`: seguridad, privacidad y anti-cheat.
 - `analytics-observability.md`: eventos, métricas y observabilidad.
 - `deployment-and-environments.md`: ambientes, CI/CD y despliegue.
-- `adr/`: decisiones arquitectónicas formales; [ADR-025](03-architecture/adr/ADR-025-full-career-contract-evolution.md) gobierna contratos futuros de carrera completa y [ADR-026](03-architecture/adr/ADR-026-participant-identity-and-minor-privacy.md) la identidad de participante y la privacidad de menores en competencia; [ADR-027](03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md) gobierna el release y los gates de v1.
+- `adr/`: decisiones arquitectónicas formales; [ADR-025](03-architecture/adr/ADR-025-full-career-contract-evolution.md) gobierna contratos futuros de carrera completa y [ADR-026](03-architecture/adr/ADR-026-participant-identity-and-minor-privacy.md) la identidad de participante y la privacidad de menores en competencia; [ADR-027](03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md) gobierna el release y los gates de v1; [ADR-028](03-architecture/adr/ADR-028-zero-cost-fair-deployment.md) fija la topología gratuita y el ensayo local de la feria.
 
 ### 04-quality
 - `ai-mathematics-department-provisional-signoff.md`: el gate que cierra la fase del Departamento de Matemática de IA: la cadena de evidencia completa, el endurecimiento acotado de la instrumentación —identidad semántica de magnitudes y profundidad de cobertura declarada— y las banderas que quedan para la revisión humana.
@@ -29982,6 +30708,7 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 - `threat-model.md`: amenazas y mitigaciones.
 
 ### 05-operations
+- `vercel-supabase-production-deployment.md`: handoff manual para Feria del Libro 2026, Vercel Hobby y Supabase Free.
 - `fair-operations-runbook.md`: operación del RC v1, respaldo, restauración y rollback; ensayos remotos en STAGE-10.
 - `fair-runbook.md`: operación durante la feria.
 - `fair-mode-and-competition-freeze.md`: intentos, congelamiento de versiones, control de cambios, cierre y privacidad.
@@ -29989,6 +30716,7 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 - `fallback-and-incident-plan.md`: funcionamiento degradado y recuperación.
 
 ### 06-delivery
+- `stage-10a-deployment-adaptation.md`: adaptación del deploy y evidencia local de RC.2, sin deploy ni GO.
 - `production-v1-release-candidate.md`: identidad congelada, contratos y evidencia del RC v1.
 - `release-checklist.md`: checklist local y ensayos pendientes de STAGE-10.
 - `mvp-backlog.md`: backlog priorizado.

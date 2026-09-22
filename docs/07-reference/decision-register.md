@@ -29,6 +29,7 @@
 | ADR-025 | [Evolución acotada de contratos de carrera completa](../03-architecture/adr/ADR-025-full-career-contract-evolution.md) | Aceptado; implementación futura |
 | ADR-026 | [Identidad de participante y privacidad de menores en competencia](../03-architecture/adr/ADR-026-participant-identity-and-minor-privacy.md) | Aceptado; supersede parcialmente ADR-008 |
 | ADR-027 | [Congelamiento del release y gobernanza de v1](../03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md) | Aceptado; supersede el carácter bloqueante de GATE-TG2 |
+| ADR-028 | [Despliegue de feria sin costo](../03-architecture/adr/ADR-028-zero-cost-fair-deployment.md) | Aceptado; Vercel Hobby + Supabase Free, ensayo local y main-only |
 
 ## Regla para ADR nuevo
 
@@ -344,3 +345,13 @@ saliencia ya no son aperturas de prediseño.
 | D-RC-012 | **Ninguna revisión humana amplia bloquea v1.** Teacher Gate 2 y la revisión del Departamento de Matemática humano dejan de ser condición de congelamiento y de despliegue; supersede el carácter bloqueante de D-S08-094 y D-S08-095. El gate matemático vigente es el que el repositorio cerró. Quedan disponibles **ventanas de ajuste humano puntual**, acotadas y por hallazgo. Este repositorio **no afirma** `human-reviewed`, `human-certified`, `curriculum-certified` ni `teacher-approved`, y la evidencia histórica se conserva entera | PRODUCT OWNER DECISION · gobernanza | [ADR-027](../03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md) |
 | D-RC-013 | **El gate de dependencias de despliegue entra en `pnpm verify`.** `pnpm release:check` existía, gobernaba despliegues públicos según `AGENTS.md`, y estaba en rojo sin que nadie lo corriera: Next.js estaba fijado en `16.3.1`, por debajo del parche `16.3.2` que el propio gate exige. Se subió a `16.3.5` y el gate corre dentro de la verificación transversal, que es donde una compuerta que nadie ejecuta deja de servir | ACCEPTED · release engineering | `scripts/verify.mjs` |
 | D-RC-014 | **El timeout de Vitest sube de 5 a 30 s, por medición.** El default de cinco segundos es correcto para una suite de unidades; ésta juega carreras enteras contra el motor y sus tests pesados cuestan entre uno y veintiséis segundos medidos en aislamiento. Con dieciséis workers, un test de un segundo y pico superaba los cinco según qué más estuviera corriendo: el efecto no era que la suite fallara sino que fallaba **a veces**, que es la peor propiedad de un gate | ACCEPTED · estabilidad de la verificación | `vitest.config.ts` |
+
+## STAGE-10A — decisiones de despliegue aprobadas
+
+| ID | Decisión | Madurez | Fuente |
+|---|---|---|---|
+| D-S10A-001 | Una Production Vercel Hobby `gru1` y Supabase Free `sa-east-1`; browser → BFF → Data API HTTPS. Sin pooler/runtime SQL ni claves browser. | LOCKED para esta feria | [ADR-028](../03-architecture/adr/ADR-028-zero-cost-fair-deployment.md) |
+| D-S10A-002 | Main auto-publica Production; otras ramas deshabilitadas, secretos sólo Production. Ensayo y restore descartable locales, sin tercer proyecto cloud. | LOCKED | mismo ADR |
+| D-S10A-003 | Colegio Integral Piacentini, contacto/domicilio aprobados, feria 23/09 08:00 a 25/09 11:00 UTC−03, gracia 300 s, retención 30 días, seis años sin división, cuenta compartida organizador. | PRODUCT OWNER DECISION · configuración de edición | [perfil y handoff](../05-operations/vercel-supabase-production-deployment.md#perfil-aprobado) |
+| D-S10A-004 | RC.2 por adaptación de deployment; tag RC.1 inmutable, matemática/contenido/score/tupla/migraciones idénticos. | LOCKED | [reporte](../06-delivery/stage-10a-deployment-adaptation.md) |
+| D-S10A-005 | Corepack en Vercel para pnpm fijado; mantener Node local 24.19.0 y engines estricto. | ACCEPTED · plataforma | [contratos oficiales](../05-operations/vercel-supabase-production-deployment.md#contratos-oficiales-consultados) |
