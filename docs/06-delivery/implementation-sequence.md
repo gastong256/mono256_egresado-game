@@ -17,7 +17,13 @@ Si el roadmap y el código difieren, **el código gana** y el roadmap se corrige
 - Fases de validación externa y congelamiento: [ciclo de entrega real](../00-product/real-delivery-lifecycle.md).
 - Qué se construye por capas de alcance: [alcance y roadmap](../00-product/scope-and-roadmap.md) y [backlog](mvp-backlog.md).
 
-**Última reconciliación:** 18 de septiembre de 2026, adjudicación final del techo
+**Última reconciliación:** 22 de septiembre de 2026, **PRODUCTION V1 FREEZE**.
+Egresado Fair Edition v1 queda congelada en un manifiesto con huella
+(`1affb2a8…`), FairScore se oficializa como `fair-score-v1` sin mover un número,
+y la revisión humana amplia deja de bloquear el roadmap
+([ADR-027](../03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md),
+D-RC-001 a D-RC-012). La siguiente etapa es STAGE-10. Antecedente del 21 de
+septiembre: STAGE-09 `DONE`. Antecedente del 18 de septiembre: adjudicación final del techo
 de estrategia ciega de `y5.stage-screen` —`K ≤ 78`, el mínimo factible demostrado—
 e implementación de WP-SCREEN: la remediación matemática cierra en **catorce de
 catorce contratos** (D-S08-116). Antecedente del 17 de septiembre: adjudicación de
@@ -73,9 +79,9 @@ Tabla de navegación. Los contratos de cada etapa, más abajo, son la autoridad.
 | [STAGE-07](#stage-07-invariante-de-egreso-fail-forward-y-recuperaciones) | Egreso, fail-forward y recuperaciones | `DONE` | GATE-TG1 | — |
 | [STAGE-08](#stage-08-contenido-incremental-de-1º-a-5º) | Contenido incremental 1.º → 5.º | `DONE` · implementación e integración DONE · dos rondas de remediación y dos re-auditorías FAILED · sprint de cierre DONE · auditoría final de cierre PASSED · sign-off provisional de IA PASSED · cierre de integración y ritmo PASSED | STAGE-07 | gates humanos abiertos: pacing con jugadores, revisión de Matemática, rueda |
 | [STAGE-09](#stage-09-fair-mode-servidor-autoritativo-y-ranking) | Fair mode, servidor autoritativo y ranking | `DONE` — 21 de septiembre de 2026 | STAGE-06 (`DONE`), STAGE-08 (`DONE`) | — |
-| [GATE-TG2](#gate-tg2-teacher-gate-2) | **Teacher Gate 2** | `TEACHER_GATE` · **siguiente** | STAGE-09 (`DONE`) | externo |
-| [FREEZE](#freeze-congelamiento-de-competencia) | Congelamiento de competencia | `NOT_STARTED` | GATE-TG2 | — |
-| [STAGE-10](#stage-10-production-hardening) | Production hardening | `NOT_STARTED` | FREEZE | go-live |
+| [GATE-TG2](#gate-tg2-teacher-gate-2) | **Teacher Gate 2** | `SUPERSEDED` — no bloquea v1 ([ADR-027](../03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md)) | STAGE-09 (`DONE`) | externo, opcional |
+| [FREEZE](#freeze-congelamiento-de-competencia) | Congelamiento de competencia | `DONE` — 22 de septiembre de 2026 | STAGE-09 (`DONE`) | — |
+| [STAGE-10](#stage-10-production-hardening) | Production hardening | `READY` · **siguiente** | FREEZE (`DONE`) | go-live |
 | [RELEASE](#release-y-post-feria) | Feria y post-feria | `NOT_STARTED` | STAGE-10 | — |
 
 ### Grafo de dependencias
@@ -97,8 +103,8 @@ flowchart TD
     S7 --> S8[STAGE-08 · 1.º a 5.º]
     S6 --> S9[STAGE-09 · fair mode y ranking]
     S8 --> S9
-    S9 --> TG2{{GATE-TG2 · Teacher Gate 2}}
-    TG2 --> FZ[FREEZE · congelamiento]
+    S9 --> FZ[FREEZE · congelamiento]
+    S9 -.-> TG2{{GATE-TG2 · opcional, no bloquea}}
     FZ --> S10[STAGE-10 · hardening]
     S10 --> RL[Feria]
 ```
@@ -164,13 +170,17 @@ Estado real contra el código al 11 de septiembre de 2026, tras cerrar STAGE-08 
 | Ranking con personal best | `DONE` | vista `competition_best_attempts` más `src/lib/competition/ranking.ts`; mejor intento verificado por participante elegible, medido en 500 participantes × 3 intentos | STAGE-09 |
 | Desempate lexicográfico | `DONE` | FairScore → Prestige → puesto compartido, sin criterio terciario; `tests/unit/competition-ranking.test.ts` | STAGE-09 |
 | Fair mode operativo | `DONE` | la edición emite descriptores `mode: 'fair'` con dificultad fija y la seed compartida de la competencia; una submission en `practice` se rechaza | STAGE-09 |
-| Configuración de competencia | `NOT_STARTED` | — | FREEZE |
+| Configuración de competencia | `DONE` | manifiesto `src/release/fair-edition-v1.ts` con huella y candado; `pnpm release:verify`; `src/server/competition/freeze.ts` exige corresponder al release para abrir | FREEZE |
+| Identidad de release verificable | `DONE` | `releaseFingerprint` SHA-256 canónico; `tests/unit/release-manifest.test.ts` | FREEZE |
+| `ScorePolicy` oficial | `DONE` | `fair-score-v1@1.0.0-fair-edition-v1`, `official: true`, equivalente a la candidata; `tests/unit/fair-score-officialisation.test.ts` | FREEZE |
 | Simulación determinista masiva | `DONE` para el alcance actual | `src/game/testing/simulation.ts`, `pnpm game:simulate`, 200 runs de 7.º y 200 de `7.º → 1.º` en `pnpm verify`; reporta egresos, repasos y previas, y `not-graduated` es hallazgo | transversal |
 | E2E y accesibilidad automatizada | `DONE` para el alcance actual | `tests/e2e/`, `@axe-core/playwright`, 80 tests | transversal |
 | Catálogo de contenido separado del plan de la run | `DONE` | `ContentCatalog`, `RunPlan`, `tests/unit/content-model.test.ts` | STAGE-02 |
 | Elegibilidad por etapa y roles de colocación | `DONE` | declarativos por plantilla; elegibilidad no contigua probada | STAGE-02 |
 | Presupuesto de beats por año | `DONE` como contrato validable | `DEFAULT_STAGE_BEAT_BUDGET`, `validateStagePlan` | STAGE-02 |
-| Production hardening | `NOT_STARTED` | — | STAGE-10 |
+| Contrato de configuración de producción | `DONE` | `src/config/production.ts`, `src/instrumentation.ts`, `pnpm release:preflight` | FREEZE |
+| Respaldo, restauración y exportación | `DONE` local | `pnpm ops:backup` · `ops:restore` · `ops:export`; probados contra la base local | FREEZE |
+| Production hardening | `NOT_STARTED` | remoto: staging, load test, rollback ensayado, dry run, GO/NO-GO | STAGE-10 |
 
 ### Discrepancias registradas
 
@@ -1068,55 +1078,73 @@ El navegador **nunca** es autoridad de score. El precursor ya existe: `src/serve
 
 ### GATE-TG2 — Teacher Gate 2
 
-- **Estado:** `TEACHER_GATE` — pendiente. **No es una etapa de ingeniería.**
+- **Estado:** `SUPERSEDED` — 22 de septiembre de 2026. **Ya no bloquea el congelamiento ni el despliegue.**
 - **Depende de:** STAGE-09
-- **Desbloquea:** FREEZE
+- **Desbloquea:** nada; FREEZE dejó de depender de este gate
 
-Aceptación externa del juego completo antes del congelamiento. Detalle en [gates docentes](teacher-gates.md).
+Decisión de producto registrada en
+[ADR-027](../03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md):
+ninguna revisión humana amplia —ni Teacher Gate 2, ni la revisión del
+Departamento de Matemática humano— es requisito de v1 bajo la gobernanza actual.
+El gate matemático vigente es el que el repositorio efectivamente cerró: Pre-Review
+por IA → Adjudicación independiente → Remediación → Re-auditoría independiente →
+Sign-off provisional → Auditoría final de cierre.
 
-**Criterios de aceptación.**
+Lo que **sí** sigue siendo posible y deseable son **ventanas de ajuste humano
+puntual**: acotadas, con destinatario concreto, disparadas por un hallazgo
+reportado, y nunca como condición previa de un despliegue.
 
-- [ ] Correcciones pedagógicas registradas.
-- [ ] Scoring aprobado.
-- [ ] Política de intentos aprobada.
-- [ ] Política de empate aprobada.
-- [ ] Reglas de premio aprobadas.
-- [ ] Contenido de todos los años aceptado.
-- [ ] Sin P0/P1 funcionales abiertos.
-- [ ] Candidato a congelamiento declarado.
+Lo que este repositorio **no puede afirmar**, y no afirma en ningún documento:
+`human-reviewed`, `human-certified`, `curriculum-certified`, `teacher-approved`.
 
-**Exit gate.** ¿Está aprobado el juego completo y su competencia para congelar?
+El material preparado para este gate se conserva entero —[gates
+docentes](teacher-gates.md), [paquete de revisión del Departamento de
+Matemática](../04-quality/mathematics-department-human-review-packet.md)— porque
+un registro que reescribe lo que decía antes deja de ser un registro.
+
+**Exit gate.** No aplica: el gate no es bloqueante.
 
 ---
 
 ### FREEZE — Congelamiento de competencia
 
-- **Estado:** `NOT_STARTED`
-- **Depende de:** GATE-TG2
+- **Estado:** `DONE` — 22 de septiembre de 2026
+- **Depende de:** STAGE-09 (`DONE`). La dependencia de GATE-TG2 quedó superada por [ADR-027](../03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md)
 - **Desbloquea:** STAGE-10
 
 **Scope IN.** Congelar `rulesetVersion`, `scoreVersion`, `contentVersion`, `variantCatalogVersion`, política de dificultad, reglas de ranking y reglas de empate. Configuración de evento auditable e inmutable. Proceso de emergencia escrito.
 
 **Scope OUT.** Cambios funcionales de cualquier tipo.
 
-**Lectura requerida.** [Modo feria y congelamiento](../05-operations/fair-mode-and-competition-freeze.md) · [deploy y ambientes](../03-architecture/deployment-and-environments.md) · [ejemplo de configuración de evento](../07-reference/event-config.example.json).
+**Lectura requerida.** [Release candidate de producción v1](production-v1-release-candidate.md) · [checklist](release-checklist.md) · [runbook de operación](../05-operations/fair-operations-runbook.md) · [modo feria y congelamiento](../05-operations/fair-mode-and-competition-freeze.md) · [deploy y ambientes](../03-architecture/deployment-and-environments.md).
 
 **Criterios de aceptación.**
 
-- [ ] Las versiones oficiales están identificadas y el evento habilita **sólo** esa tupla.
-- [ ] La configuración del evento es auditable e inmutable.
-- [ ] Toda run oficial apunta a esa configuración.
-- [ ] El proceso de cambio de emergencia está documentado, con su política de recálculo.
-- [ ] Cualquier cambio posterior al congelamiento exige registro explícito.
+- [x] Las versiones oficiales están identificadas y el evento habilita **sólo** esa tupla — `src/release/fair-edition-v1.ts` y `resolveEdition`, que resuelve por identidad exacta y sin `latest`.
+- [x] La configuración del evento es auditable e inmutable — el puerto de persistencia acepta cuatro columnas operativas y ninguna competitiva; abrir exige corresponder al release.
+- [x] Toda run oficial apunta a esa configuración — el intento copia la tupla congelada al emitirse y la verificación resuelve contra ella.
+- [x] El proceso de cambio de emergencia está documentado, con su política de recálculo — [runbook de operación, sección 6.5](../05-operations/fair-operations-runbook.md).
+- [x] Cualquier cambio posterior al congelamiento exige registro explícito — mover una versión congelada rompe el candado de la huella y `pnpm release:verify`.
 
-**Exit gate.** ¿Puede un tercero reconstruir con qué reglas exactas se jugó la competencia?
+**Evidencia.**
+
+```text
+release        egresado-fair-edition-v1 · 1.0.0-rc.1
+huella         1affb2a82f4726a77cedbf4e20c82055f6c04a07d67e42674eb8e9e6da16007e
+score oficial  fair-score-v1 @ 1.0.0-fair-edition-v1
+verificación   pnpm release:verify · 57 comprobaciones
+```
+
+**Exit gate.** ¿Puede un tercero reconstruir con qué reglas exactas se jugó la competencia? **Sí:** `pnpm release:verify` recomputa desde la fuente las huellas de los catálogos y de las migraciones, comprueba que la política oficial es numéricamente idéntica a la candidata que promovió, y compara la huella del release con su candado.
+
+**Lo que no entró, y por qué.** No se desplegó nada, no se validó contra staging remoto, no se ensayó rollback contra una plataforma y no se hizo load test remoto: todo eso es [STAGE-10](#stage-10-production-hardening). No se autoró contenido de Prestige —el techo ofrecido sigue en 0 por D-S08-084— y no se republicó ningún catálogo por motivos cosméticos.
 
 ---
 
 ### STAGE-10 — Production hardening
 
-- **Estado:** `NOT_STARTED`
-- **Depende de:** FREEZE
+- **Estado:** `READY` — **siguiente etapa**
+- **Depende de:** FREEZE (`DONE`)
 - **Desbloquea:** la feria
 
 **Propósito.** Compensar técnicamente que la feria puede ser el primer contacto real y a escala con estudiantes. **Ninguno de estos controles equivale a validación de experiencia con usuarios reales**; ver [ciclo de entrega real](../00-product/real-delivery-lifecycle.md).

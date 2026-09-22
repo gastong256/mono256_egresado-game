@@ -133,7 +133,11 @@ Es opcional: una partida de práctica no está compitiendo, y ausente es una res
 
 ## Lo que esto no decide
 
-La política oficial. TG1 aceptó 85/10/5, los cuatro escalones y el principio de recompensa pequeña como dirección, pero `fair-score-dev-2` sigue `official: false`; los factores exactos de recompensa y el congelamiento final esperan datos/Teacher Gate 2 ([preguntas 24 y 44](../../07-reference/open-questions.md)). `createRuleset` se niega a construir un ruleset oficial con una calibración de desarrollo.
+La política oficial. TG1 aceptó 85/10/5, los cuatro escalones y el principio de recompensa pequeña como dirección.
+
+**Resuelto el 22 de septiembre de 2026 (D-RC-003, [ADR-027](ADR-027-release-freeze-and-v1-governance.md)).** El FREEZE de producción publicó `fair-score-v1@1.0.0-fair-edition-v1` con `official: true` y **los mismos números** que `fair-score-dev-2`: la promoción copió y no recalibró, y la equivalencia está probada sobre un corpus determinista, sobre evidencia arbitraria y sobre los 23.000 planes de `pnpm game:score`. Las [preguntas 24 y 44](../../07-reference/open-questions.md) quedan cerradas para v1.
+
+Lo que **no** cambió: `createRuleset` se sigue negando a construir un ruleset oficial con una calibración de desarrollo, y la ruleset de carrera completa sigue declarando `official: false` porque composición, recuperación, rareza y costo siguen siendo políticas de desarrollo. Son banderas de capas distintas.
 
 Que 23.000 runs se comporten como se espera dice que el mecanismo preserva sus invariantes. **No dice que 85/10/5 esté psicométricamente probado**, y ninguna barrida sintética puede decirlo.
 

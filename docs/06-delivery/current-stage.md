@@ -3,10 +3,61 @@
 Vista corta del estado de ejecución. El contrato completo y el protocolo de
 actualización están en el [roadmap](implementation-sequence.md).
 
+## PRODUCTION V1 FREEZE — Egresado Fair Edition v1
+
+**Estado:** `DONE` — 22 de septiembre de 2026. **Siguiente etapa: STAGE-10**,
+despliegue, hardening, dry run y GO/NO-GO.
+
+El producto dejó de desarrollarse y empezó a publicarse. Esta versión exacta
+quedó congelada en un manifiesto con huella, verificable con un comando, y el
+camino a producción ya no depende de ningún gate humano amplio.
+
+```text
+EGRESADO FAIR EDITION V1                      FROZEN
+RELEASE CANDIDATE                             READY · 1.0.0-rc.1
+huella                                        1affb2a8…da16007e
+
+├── Manifiesto de release legible por máquina  DONE · `src/release/`
+├── Huella determinista con candado            DONE · `pnpm release:verify`
+├── FairScore oficial                          DONE · `fair-score-v1`, sin mover un número
+├── Prestige v1 explícito                      DONE · techo ofrecido 0, fuera del podio
+├── Catálogos fijados por versión y SHA-256    DONE · cinco, sin renombrar
+├── Ranking, podio e intentos congelados       DONE
+├── Política de seed congelada                 DONE · compartida por edición
+├── Esquema congelado                          DONE · cabeza y huella
+├── Abrir exige corresponder al release        DONE · `src/server/competition/freeze.ts`
+├── Configuración de producción con fallo temprano DONE · `EGRESADO_ENVIRONMENT`
+├── CSP con nonce, HSTS, cookies verificadas   DONE · contra el servidor real
+├── Salud y readiness con identidad de release DONE · `/api/health?ready=1`
+├── Respaldo y restauración                    DONE local · remoto en STAGE-10
+├── Rollback escrito                           DONE · ensayo en STAGE-10
+├── Ensayo de feria de punta a punta           DONE · contra Postgres real
+└── Bundle del estudiante                      DONE · 189 KiB gzip, desde 608
+
+Revisión humana amplia                        NO REQUERIDA PARA V1 · ADR-027
+Ventanas de ajuste humano puntual             OPCIONALES · por hallazgo
+STAGE-10 — despliegue y GO/NO-GO              NEXT
+```
+
+**No se tocó la semántica del juego.** Motor `10.0.0`, action log `7`, snapshot
+`8`, ruleset `1.0.0-full-career`, contenido `5.5.0-grade-5` y catálogo
+`grade-5-dev-6` quedan idénticos. FairScore cambió de **identidad** y no de
+números: `2.0.0-post-tg1-candidate` se copió a `fair-score-v1` con
+`official: true`, y la equivalencia está probada sobre 2.142 secuencias sintéticas
+(1.936 puntuables), sobre evidencia arbitraria y sobre los 23.000 planes de
+`pnpm game:score`, donde la partida perfecta sigue valiendo 10 000 exactos.
+
+Este veredicto **no** dice `PRODUCTION READY — GO`. Eso pertenece a STAGE-10,
+después de ejecutarse contra infraestructura real.
+
+El detalle completo está en
+[el release candidate de producción v1](production-v1-release-candidate.md), con
+su [checklist](release-checklist.md) y el
+[runbook de operación](../05-operations/fair-operations-runbook.md).
+
 ## STAGE-09 — Fair mode, servidor autoritativo y ranking
 
-**Estado:** `DONE` — 21 de septiembre de 2026. **Siguiente gate: Teacher Gate 2**,
-que es aceptación externa y no una etapa de ingeniería.
+**Estado:** `DONE` — 21 de septiembre de 2026.
 
 El juego completo de STAGE-08 quedó envuelto en una competencia cuya integridad
 se puede defender. El producto público es **una sola dirección**: en `/` el
@@ -31,10 +82,10 @@ STAGE-09                                      DONE
 ├── Matriz de ataque                           DONE · 21 casos, todos fail-closed
 └── Escala medida                              DONE · 500 participantes, mediana 7 ms
 
-GATE-TG2 · Teacher Gate 2                     NEXT · externo
-Revisión del Depto. de Matemática             DEFERRED · a Final Delivery
-Sign-off manual de la rueda                   PENDING · humana
-Pacing empírico con jugadores                 PENDING · humana
+GATE-TG2 · Teacher Gate 2                     SUPERSEDED · ADR-027
+Revisión del Depto. de Matemática             NO REQUERIDA PARA V1 · ADR-027
+Sign-off manual de la rueda                   OPCIONAL · por hallazgo
+Pacing empírico con jugadores                 PENDIENTE · no bloquea v1
 ```
 
 **La semántica del juego no se tocó.** Motor `10.0.0`, action log `7`, snapshot
@@ -44,6 +95,11 @@ partida perfecta sigue valiendo 10 000 exactos, y el servidor llega a ese númer
 reproduciendo el log. El contenido sigue `draft` y la edición `official: false`:
 oficializar y congelar la configuración de competencia es FREEZE, no esta etapa.
 
+**Reconciliado el 22 de septiembre de 2026:** el FREEZE ocurrió. FairScore es
+ahora `fair-score-v1` con los mismos números, y las competencias creadas bajo la
+candidata se siguen verificando pero no se pueden reabrir. Ver
+[el release candidate](production-v1-release-candidate.md).
+
 El detalle completo —arquitectura, modelo de datos, decisiones de privacidad,
 matriz de ataque, medición y riesgos— está en
 [STAGE-09 · fair mode, servidor y ranking](stage-09-fair-mode-server-ranking.md).
@@ -52,9 +108,9 @@ matriz de ataque, medición y riesgos— está en
 
 **Estado:** `DONE` — 21 de septiembre de 2026.
 
-Los gates que siguen abiertos son **humanos** y están fuera del alcance de
-STAGE-08: pacing con jugadores reales, revisión del Departamento de Matemática y
-sign-off manual de la rueda.
+Al cierre histórico quedaron pendientes pacing con jugadores reales, revisión
+humana amplia y sign-off manual de la rueda. ADR-027 establece que no bloquean
+v1; los ajustes humanos futuros son puntuales y motivados por hallazgos.
 
 ```text
 STAGE-07                                      DONE

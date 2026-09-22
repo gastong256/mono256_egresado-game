@@ -90,7 +90,7 @@ El job `Quality and build` ejecuta coherencia del toolchain, validación documen
 
 Antes de un release público también deben pasar:
 
-- `pnpm release:check`; hoy falla de forma deliberada hasta instalar Next.js `>=16.3.2`;
+- `pnpm release:check` y `pnpm release:verify`, integrados al gate local y a CI; Next.js fijado en `16.3.5`;
 - `pnpm security:audit` y revisión de advisories/transitivas;
 - migraciones, RLS/permisos y pruebas de integración cuando exista schema de producto;
 - golden replays, validación de contenido, rehearsal y fallback cuando exista gameplay/release de feria.
@@ -119,3 +119,11 @@ Los feature flags futuros deben limitarse a necesidades verificadas; no crear un
 Cuando exista el modo feria, cuatro ambientes con propósitos distintos: local con generadores sin restricción y herramientas de debug; demo docente con contenido estable de 7.º y pool determinista; staging o ensayo de feria con la misma forma de infraestructura y configuración que producción, participantes sintéticos y pruebas de carga y ranking; y producción de feria con configuración de evento congelada, catálogo oficial de variantes, verificación autoritativa, monitoreo y moderación.
 
 Regla dura: **una versión de desarrollo de score o de contenido no puede convertirse en versión oficial por accidente.** El registro del evento habilita explícitamente sólo la tupla congelada, y el flag `production` del ruleset ya se niega a construir un ruleset oficial desde una política de desarrollo. Ver [modo feria y congelamiento](../05-operations/fair-mode-and-competition-freeze.md).
+
+## Release Candidate v1
+
+El [reporte RC](../06-delivery/production-v1-release-candidate.md) fija contratos
+y evidencia; el [runbook](../05-operations/fair-operations-runbook.md) prepara
+respaldo y rollback. Un smoke de contenedor sin competencia declara
+`EGRESADO_ENVIRONMENT=local` explícitamente; staging y producción no usan esa
+excepción. STAGE-10 debe ensayar contra infraestructura real antes de GO.

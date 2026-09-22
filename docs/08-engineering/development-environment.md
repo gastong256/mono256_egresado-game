@@ -1,6 +1,6 @@
 # Entorno de desarrollo
 
-Fecha de baseline: **20 de agosto de 2026**.
+Baseline técnica: **20 de agosto de 2026**. Actualización de release: **22 de septiembre de 2026**.
 
 Este documento describe la base técnica ejecutable del repositorio. No define comportamiento de producto ni habilita por sí solo gameplay, Auth, persistencia de participantes o un release público.
 
@@ -28,7 +28,7 @@ Quedan fuera deliberadamente gameplay, Auth, schema de dominio, datos de partici
 |---|---:|---|
 | Node.js | `24.19.0` | runtime LTS fijado en `.node-version`, `.nvmrc`, CI y Docker |
 | pnpm | `11.22.0` | único package manager, fijado en `packageManager` y Docker |
-| Next.js | `16.3.1` | App Router y Turbopack por defecto; bloqueado para release hasta `16.3.2+` |
+| Next.js | `16.3.5` | App Router y Turbopack; supera el piso de `release:check` |
 | React / React DOM | `19.2.8` | par compatible fijado |
 | TypeScript | `6.0.2` | versión estable compatible con el ecosistema instalado |
 | ESLint | `9.39.5` | excepción temporal de compatibilidad con Next.js/typescript-eslint |
@@ -64,21 +64,17 @@ pnpm peers check
 pnpm verify
 ```
 
-## Bloqueo de release de Next.js
+## Gate de release de Next.js
 
-Next.js `16.3.1` es la versión fijada, pero no se considera apta para publicación. El 20 de agosto de 2026 upstream anunció un parche crítico en `16.3.2`, programado para el 26 de agosto. El detalle permanecía embargado al crear esta baseline.
+El bloqueo histórico de `16.3.1` se resolvió durante el RC con Next.js y
+`eslint-config-next` `16.3.5`, lockfile congelado y auditoría de dependencias.
+`pnpm release:check` exige el piso `16.3.2` y ahora forma parte de `pnpm verify`,
+junto con `pnpm release:verify`. Pasarlos no reemplaza STAGE-10 ni su GO/NO-GO.
 
-`pnpm release:check` comprueba mecánicamente que la versión fijada sea `16.3.2` o superior y falla hoy de forma intencional. Ese resultado no invalida el desarrollo local, pero sí prohíbe preview externo, staging público o producción.
-
-Para levantar el bloqueo cuando exista la versión corregida:
-
-1. actualizar `next` y `eslint-config-next` en conjunto y con versiones exactas;
-2. regenerar `pnpm-lock.yaml`;
-3. releer `node_modules/next/dist/docs/` y las notas de seguridad de la versión;
-4. ejecutar `pnpm peers check`, `pnpm security:audit` y `pnpm verify`;
-5. ejecutar `pnpm release:check` y registrar evidencia antes de habilitar cualquier deploy.
-
-El check de versión no reemplaza la auditoría ni la verificación funcional.
+El build optimizado local requiere `EGRESADO_ENVIRONMENT=local` al ejecutar
+`pnpm start`. Staging y producción exigen el contrato de
+`src/config/production.ts`; valores reales, secretos y responsable de datos se
+configuran según el [runbook del RC](../05-operations/fair-operations-runbook.md).
 
 ## Requisitos locales
 

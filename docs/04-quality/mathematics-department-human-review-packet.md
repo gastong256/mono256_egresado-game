@@ -1,5 +1,9 @@
 # Paquete de revisión — Departamento de Matemática
 
+> **Gobernanza v1, 22-09-2026:** la revisión humana amplia no es un gate
+> bloqueante. Este paquete se conserva como evidencia histórica y recurso para
+> ajustes puntuales por hallazgo. [ADR-027](../03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md).
+
 - **Para:** el Departamento de Matemática que tiene que revisar y aprobar el
   contenido matemático de Egresado
 - **Fecha de preparación:** 16 de septiembre de 2026

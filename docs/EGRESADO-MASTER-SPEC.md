@@ -243,7 +243,10 @@ Con docentes primero y con jugadores recién en la feria. Ver [ciclo de entrega 
 
 # Ciclo de entrega real
 
-**Estado: LOCKED** para la secuencia de fases y la restricción externa; **TEACHER GATE** para lo que cada gate docente debe aprobar.
+**Estado: LOCKED** para la secuencia de fases y la restricción externa. La Fase E
+(Teacher Gate 2) dejó de ser bloqueante el 22 de septiembre de 2026
+([ADR-027](03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md));
+el resto de la secuencia no cambia.
 
 Este documento describe cómo se entrega Egresado *de verdad*, no un ciclo de producto genérico. La diferencia importa porque el ciclo real tiene una restricción que ningún proceso de documentación puede compensar: **es probable que no haya playtest con estudiantes antes de la feria**.
 
@@ -256,8 +259,8 @@ flowchart TD
     A[Fase A · Demo candidata de 7.º] --> B[Fase B · Teacher Gate 1]
     B --> C[Fase C · Correcciones y congelamiento de fundaciones]
     C --> D[Fase D · Juego completo 1.º–5.º + ranking]
-    D --> E[Fase E · Teacher Gate 2]
-    E --> F[Fase F · Congelamiento de competencia y hardening]
+    D --> F[Fase F · Congelamiento de competencia y hardening]
+    D -.-> E[Fase E · Teacher Gate 2 · opcional]
     F --> G[Fase G · Semana de feria]
     G --> H[Fase H · Post-feria]
 ```
@@ -290,24 +293,36 @@ escalabilidad post-G1 se ejecutó el 14 de septiembre y pasó con hardening
 resuelto, así que producir 2.º–5.º queda autorizado. Epílogo, carrera oficial y ranking siguen sin implementar.
 Ver [etapa actual](06-delivery/current-stage.md).
 
-**Validación matemática de Fase D (D-S08-095).** La revisión del Departamento de
-Matemática humano sobre 1.º–5.º **no se elimina: se difiere a Final Delivery /
-Pre-Release Acceptance**. Hasta entonces, el gate es un Departamento de
-Matemática provisional asistido por IA —pre-revisión, adjudicación independiente,
-remediación, re-auditoría independiente y sign-off provisional—, que reduce riesgo
-de contenido pero **no es aprobación docente** y no se presenta como tal. Cómo se
-ubica esa revisión humana respecto de Teacher Gate 2 es una
-[pregunta abierta](07-reference/open-questions.md). Estado en la
-[adjudicación](04-quality/mathematics-department-ai-adjudication.md).
+**Validación matemática de Fase D (D-S08-095, superado por D-RC-012).** La
+revisión del Departamento de Matemática humano sobre 1.º–5.º se había diferido a
+Final Delivery. Desde el **22 de septiembre de 2026** deja de ser requisito de
+v1: el gate vigente es el Departamento de Matemática asistido por IA
+—pre-revisión, adjudicación independiente, remediación, re-auditoría
+independiente, sign-off provisional y auditoría final de cierre—, que reduce
+riesgo de contenido y **no es aprobación docente**, y este repositorio no lo
+presenta como tal. Estado en la
+[adjudicación](04-quality/mathematics-department-ai-adjudication.md) y en
+[ADR-027](03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md).
 
 
-### Fase E — Teacher Gate 2
+### Fase E — Teacher Gate 2 · opcional desde 2026-09-22
+
+> **Ya no bloquea la Fase F.** El congelamiento ocurrió sin este gate
+> ([ADR-027](03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md)).
+> Lo que queda son ventanas de ajuste humano puntual, disparadas por un hallazgo
+> concreto y no por calendario.
 
 Revisión de aceptación del candidato completo. No es otra exploración de concepto: se revisan contenido final, progresión, comportamiento del score, duración, reglas de competencia y detalles de presentación.
 
 ### Fase F — Congelamiento de competencia y hardening
 
-Se congelan las versiones de contenido, reglas y score. Después corren simulación, carga, red, seguridad, accesibilidad, QA móvil y ensayo operativo. Ver [modo feria y congelamiento](05-operations/fair-mode-and-competition-freeze.md).
+**El congelamiento se completó el 22 de septiembre de 2026.** Las versiones de
+contenido, reglas y score quedaron fijadas en un manifiesto con huella; ver el
+[release candidate de producción v1](06-delivery/production-v1-release-candidate.md).
+El hardening contra infraestructura real —carga, red, rollback ensayado, dry run
+y GO/NO-GO— es
+[STAGE-10](06-delivery/implementation-sequence.md#stage-10-production-hardening).
+Ver también [modo feria y congelamiento](05-operations/fair-mode-and-competition-freeze.md).
 
 ### Fase G — Semana de feria
 
@@ -542,8 +557,8 @@ Las capas MVP describen **qué se construye**. Las fases del [ciclo de entrega r
 | — | Fase B — Teacher Gate 1 | Departamento de Matemática |
 | — | Fase C — congelamiento de fundaciones | equipo |
 | MVP 1 — producto web jugable | Fase D — producción del juego completo | tests, simulación y auditorías |
-| — | Fase E — Teacher Gate 2 | Departamento de Matemática |
-| MVP Feria — operación real | Fase F — congelamiento y hardening | ensayo de carga, red y operación |
+| — | Fase E — Teacher Gate 2 · **opcional desde 2026-09-22** | ventanas de ajuste puntual, por hallazgo ([ADR-027](03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md)) |
+| MVP Feria — operación real | Fase F — congelamiento **`DONE`** y hardening | congelamiento cerrado; carga, red y operación remotas en STAGE-10 |
 | — | Fase G — semana de feria | **primera evidencia real de uso** |
 | Post-MVP | Fase H — post-feria | decisión de producto |
 
@@ -5168,6 +5183,16 @@ Dónde vive cada capacidad de la competencia implementada.
 | Retención y purga | `src/server/competition/retention.ts`, `scripts/competition/purge.ts` | `tests/integration/competition-organizer.test.ts` |
 | Límite de tasa persistente | `src/server/competition/rate-limit.ts` + `competition_bump_rate_limit` | `tests/integration/competition-store.test.ts` |
 
+## Release Candidate v1 — ADR-027
+
+| Capacidad | Implementación | Evidencia |
+|---|---|---|
+| Contratos congelados y huella | `src/release/`, `scripts/release/verify.ts` | `tests/unit/release-manifest.test.ts`, `pnpm release:verify` |
+| FairScore oficial sin recalibración | `src/game/scoring/competitive-policy.ts` | `tests/unit/fair-score-officialisation.test.ts` |
+| Apertura contra release exacto | `src/server/competition/freeze.ts` | `tests/integration/competition-freeze.test.ts` |
+| Configuración, headers y logs | `src/config/production.ts`, `src/proxy.ts`, `src/server/competition/logging.ts` | tests `production-config`, `security-headers`, `observability-redaction` |
+| Respaldo/restauración y operación | `scripts/operations/` | [reporte RC](06-delivery/production-v1-release-candidate.md), [runbook](05-operations/fair-operations-runbook.md) |
+
 ## Regla de mantenimiento
 
 Toda feature nueva debe:
@@ -7068,7 +7093,11 @@ Es opcional: una partida de práctica no está compitiendo, y ausente es una res
 
 ## Lo que esto no decide
 
-La política oficial. TG1 aceptó 85/10/5, los cuatro escalones y el principio de recompensa pequeña como dirección, pero `fair-score-dev-2` sigue `official: false`; los factores exactos de recompensa y el congelamiento final esperan datos/Teacher Gate 2 ([preguntas 24 y 44](07-reference/open-questions.md)). `createRuleset` se niega a construir un ruleset oficial con una calibración de desarrollo.
+La política oficial. TG1 aceptó 85/10/5, los cuatro escalones y el principio de recompensa pequeña como dirección.
+
+**Resuelto el 22 de septiembre de 2026 (D-RC-003, [ADR-027](03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md)).** El FREEZE de producción publicó `fair-score-v1@1.0.0-fair-edition-v1` con `official: true` y **los mismos números** que `fair-score-dev-2`: la promoción copió y no recalibró, y la equivalencia está probada sobre un corpus determinista, sobre evidencia arbitraria y sobre los 23.000 planes de `pnpm game:score`. Las [preguntas 24 y 44](07-reference/open-questions.md) quedan cerradas para v1.
+
+Lo que **no** cambió: `createRuleset` se sigue negando a construir un ruleset oficial con una calibración de desarrollo, y la ruleset de carrera completa sigue declarando `official: false` porque composición, recuperación, rareza y costo siguen siendo políticas de desarrollo. Son banderas de capas distintas.
 
 Que 23.000 runs se comporten como se espera dice que el mecanismo preserva sus invariantes. **No dice que 85/10/5 esté psicométricamente probado**, y ninguna barrida sintética puede decirlo.
 
@@ -7599,6 +7628,147 @@ bajo la política de la institución responsable. El diseño se hizo mirando:
   de otra persona. El sistema no lo puede detectar; lo que hace es impedir el
   duplicado, no filtrar información sobre el registro existente y dejarle el
   caso a un organizador con un registro auditado.
+
+---
+
+# FILE: 03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md
+
+# ADR-027 — Congelamiento del release y gobernanza de v1
+
+- Estado: Aceptado
+- Fecha: 2026-09-22
+- Supersede: el carácter **bloqueante** de [GATE-TG2](06-delivery/teacher-gates.md) y de la revisión humana amplia del Departamento de Matemática (D-S08-094, D-S08-095)
+- Relacionado: [ADR-004](03-architecture/adr/ADR-004-server-authoritative-scoring.md) · [ADR-018](03-architecture/adr/ADR-018-blueprint-v0-2-decision-authority.md) · [ADR-023](03-architecture/adr/ADR-023-competitive-score-policy.md) · [ADR-026](03-architecture/adr/ADR-026-participant-identity-and-minor-privacy.md)
+
+## Contexto
+
+Hasta acá el proyecto sabía decir qué versiones corría —una tupla de siete
+campos en una fila de la base— pero no tenía un lugar donde decir **qué es esta
+versión del producto**. Las reglas de la competencia vivían repartidas: el
+ranking en una función pura, la política de intentos en un índice parcial de
+Postgres, el techo de Prestige en una lista vacía de contenido, la política de
+seed en un comentario de un script, y la relación entre todo eso en la memoria
+de quien lo armó.
+
+El exit gate del congelamiento formula la pregunta con precisión: **«¿puede un
+tercero reconstruir con qué reglas exactas se jugó la competencia?»** Con la
+información repartida, la respuesta honesta era «sí, leyendo el repositorio
+entero y sabiendo dónde mirar», que en la práctica es «no».
+
+Al mismo tiempo, dos gates humanos seguían declarados como bloqueantes —Teacher
+Gate 2 y la revisión del Departamento de Matemática humano— y el roadmap hacía
+depender de ellos el congelamiento y el despliegue. La dirección de producto
+cambió: esos gates dejan de ser condición de v1.
+
+Las dos cosas se deciden juntas porque son la misma decisión vista de dos lados:
+qué autoriza un release, y qué lo describe.
+
+## Decisión
+
+### 1. El release es un dato con huella
+
+Existe un manifiesto —`src/release/fair-edition-v1.ts`— que declara, en un solo
+lugar y en forma legible por máquina, todo lo que decide qué es esta
+competencia: identidades del motor, de la ruleset, del contenido y de los
+catálogos con sus SHA-256; la política de score oficial; la de Prestige; las
+reglas de intento, ranking y podio; la política de seed; el contrato de
+privacidad; y la cabeza del esquema con su huella.
+
+El manifiesto **declara y no deriva**. Si derivara sus valores del código diría
+siempre la verdad y no probaría nada: un catálogo regenerado cambiaría la huella
+y el manifiesto la seguiría sin quejarse. Declarándolos, `pnpm release:verify`
+recomputa cada uno desde la fuente y un cambio de contenido rompe la
+verificación, que es lo que un congelamiento tiene que hacer.
+
+Su identidad es una huella SHA-256 sobre su serialización canónica, fijada en un
+candado comprometido. No lleva fecha de build, rama, commit ni nombre de
+máquina: un artefacto reproducible da la misma huella hoy y dentro de un año, y
+el commit ya es la procedencia de la fuente.
+
+### 2. FairScore se oficializa por copia, nunca por edición
+
+`fair-score-dev-2@2.0.0-post-tg1-candidate` se promueve a
+`fair-score-v1@1.0.0-fair-edition-v1` copiando cada número y poniendo
+`official: true`. Las dos candidatas quedan en el registro sin editar.
+
+La regla que esto establece: **oficializar es un acto de identidad, no de
+calibración**. Un release que cambiara un peso mientras promueve estaría
+publicando una competencia distinta bajo el nombre de la revisada. La
+equivalencia se prueba por comparación de configuración, por un corpus
+determinista de partidas y por propiedad sobre evidencia arbitraria.
+
+### 3. No hay estado `FROZEN` nuevo; hay vínculo con el release
+
+Los campos competitivos de una edición ya son inmutables porque el puerto de
+persistencia acepta cuatro columnas operativas y ninguna de ellas es la seed, la
+tupla ni la versión del aviso. Agregar un estado para prohibir lo que el tipo no
+permite expresar sería un segundo lugar donde declarar la misma verdad.
+
+Lo que se agrega es la otra mitad: **abrir una edición exige que su tupla
+congelada sea la del release desplegado**. Cerrar y archivar se permiten
+siempre, porque negarse a cerrar dejaría a un organizador sin forma de sacar de
+circulación una edición equivocada.
+
+### 4. La seed se congela en la edición, no en el release
+
+El manifiesto congela la política —una seed compartida por edición, generada al
+crear la competencia— y deja el valor en la fila. Ponerlo en el release
+obligaría a publicar un artefacto nuevo por feria y, peor, haría que dos ferias
+distintas jugaran exactamente la misma partida.
+
+### 5. Ninguna revisión humana amplia bloquea v1
+
+```text
+Revisión amplia del Departamento de Matemática humano   NO REQUERIDA PARA V1
+Teacher Gate 2 como gate bloqueante                      SUPERSEDIDO
+Ventanas de ajuste humano puntual                        OPCIONALES, POR HALLAZGO
+```
+
+El gate matemático vigente es el que el repositorio efectivamente cerró: Pre-Review
+por IA → Adjudicación independiente → Remediación → Re-auditoría independiente →
+Sign-off provisional del AI Mathematics Department → Auditoría final de cierre.
+
+**Lenguaje admisible:**
+
+```text
+Validación de matemática y de producto por IA completa según los gates
+cerrados del repositorio.
+Ninguna revisión humana amplia es requisito de v1 bajo la gobernanza actual.
+Pueden ocurrir ajustes humanos puntuales, acotados y con ventana, si se
+reporta un problema concreto.
+```
+
+**Lenguaje inadmisible**, y que ningún documento de este repositorio usa:
+
+```text
+human-reviewed · human-certified · curriculum-certified · teacher-approved
+```
+
+### 6. La evidencia histórica no se borra
+
+Los documentos que esperaban un gate humano se conservan enteros, con una nota
+de superación. Un registro de decisiones que reescribe lo que decía antes deja
+de ser un registro.
+
+## Consecuencias
+
+**A favor.** Un tercero puede reconstruir las reglas exactas con un comando. Un
+cambio accidental a una semántica congelada rompe un gate en vez de llegar a una
+feria. Un resultado publicado dice por sí solo si se produjo bajo una
+calibración de competencia o de desarrollo. Y el camino a producción deja de
+depender de una disponibilidad humana que no estaba agendada.
+
+**En contra, y asumido.** Hay dos identidades de score con números idénticos, lo
+que cuesta una explicación cada vez que alguien lee el registro; el candado hay
+que regenerarlo a mano tras un cambio deliberado; y v1 sale sin validación
+pedagógica humana amplia, lo que es un riesgo real de producto —no de
+ingeniería— que esta decisión acepta explícitamente en lugar de disimular.
+
+**Lo que no cambia.** Teacher Gate 1 ocurrió y sus decisiones siguen integradas.
+El pacing con jugadores reales sigue sin hacerse y sigue documentado como
+pendiente. Y la ruleset sigue declarando `official: false`: subirla exigiría
+versionar composición, recuperación, rareza y costo, y mover la huella del plan
+es exactamente el riesgo de replay que un congelamiento existe para no correr.
 
 ---
 
@@ -8298,7 +8468,7 @@ El job `Quality and build` ejecuta coherencia del toolchain, validación documen
 
 Antes de un release público también deben pasar:
 
-- `pnpm release:check`; hoy falla de forma deliberada hasta instalar Next.js `>=16.3.2`;
+- `pnpm release:check` y `pnpm release:verify`, integrados al gate local y a CI; Next.js fijado en `16.3.5`;
 - `pnpm security:audit` y revisión de advisories/transitivas;
 - migraciones, RLS/permisos y pruebas de integración cuando exista schema de producto;
 - golden replays, validación de contenido, rehearsal y fallback cuando exista gameplay/release de feria.
@@ -8327,6 +8497,14 @@ Los feature flags futuros deben limitarse a necesidades verificadas; no crear un
 Cuando exista el modo feria, cuatro ambientes con propósitos distintos: local con generadores sin restricción y herramientas de debug; demo docente con contenido estable de 7.º y pool determinista; staging o ensayo de feria con la misma forma de infraestructura y configuración que producción, participantes sintéticos y pruebas de carga y ranking; y producción de feria con configuración de evento congelada, catálogo oficial de variantes, verificación autoritativa, monitoreo y moderación.
 
 Regla dura: **una versión de desarrollo de score o de contenido no puede convertirse en versión oficial por accidente.** El registro del evento habilita explícitamente sólo la tupla congelada, y el flag `production` del ruleset ya se niega a construir un ruleset oficial desde una política de desarrollo. Ver [modo feria y congelamiento](05-operations/fair-mode-and-competition-freeze.md).
+
+## Release Candidate v1
+
+El [reporte RC](06-delivery/production-v1-release-candidate.md) fija contratos
+y evidencia; el [runbook](05-operations/fair-operations-runbook.md) prepara
+respaldo y rollback. Un smoke de contenedor sin competencia declara
+`EGRESADO_ENVIRONMENT=local` explícitamente; staging y producción no usan esa
+excepción. STAGE-10 debe ensayar contra infraestructura real antes de GO.
 
 ---
 
@@ -8710,9 +8888,15 @@ El smoke E2E comprueba estos valores sobre una respuesta real. La CSP completa d
 - `pnpm security:audit` incluye dependencias de producción, desarrollo y tooling agentivo, y bloquea advisories de severidad alta o crítica; cualquier hallazgo requiere triage, no una excepción silenciosa.
 - La imagen portable fija Node por digest, usa un runtime mínimo, ejecuta como usuario no root e incorpora health check.
 
-### Bloqueo vigente de Next.js
+### Gate de dependencias y controles del RC v1
 
-La base fija temporalmente Next.js `16.3.1`, pero el release público está bloqueado hasta `>=16.3.2` por el parche anunciado para el 26 de agosto de 2026. `pnpm release:check` expresa este gate y debe pasar, junto con el lockfile actualizado y `pnpm verify`, antes de cualquier despliegue público. No se presume que un build o CI verde mitigue esa condición.
+El bloqueo histórico de Next.js `16.3.1` fue resuelto con `16.3.5` durante el
+RC. `pnpm release:check` conserva el piso exigido e integra `pnpm verify`.
+El [reporte del release](06-delivery/production-v1-release-candidate.md)
+registra auditoría de dependencias, CSP por nonce, cookies, configuración de
+producción y redacción de logs. El logger selecciona campos explícitos en
+runtime: las propiedades extra de un DTO no se serializan. STAGE-10 conserva
+los ensayos remotos y GO/NO-GO antes de cualquier despliegue público.
 
 ## Rate limits y moderación
 
@@ -14698,6 +14882,10 @@ Los identificadores son propios de este informe. La numeración canónica
 # FILE: 04-quality/mathematics-department-human-review-packet.md
 
 # Paquete de revisión — Departamento de Matemática
+
+> **Gobernanza v1, 22-09-2026:** la revisión humana amplia no es un gate
+> bloqueante. Este paquete se conserva como evidencia histórica y recurso para
+> ajustes puntuales por hallazgo. [ADR-027](03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md).
 
 - **Para:** el Departamento de Matemática que tiene que revisar y aprobar el
   contenido matemático de Egresado
@@ -20705,7 +20893,7 @@ Comandos más estrechos para iteración:
 | Tokens y contraste del sistema de diseño | `pnpm design:check` |
 | Lint + imports/límites prohibidos | `pnpm lint` |
 
-`pnpm release:check` es un gate adicional de seguridad: falla deliberadamente con Next.js `16.3.1` y debe pasar con `>=16.3.2` antes de publicar. No forma parte de `pnpm verify` porque hoy representa un bloqueo explícito, no una prueba verde de la base local.
+`pnpm release:check` verifica el piso de seguridad de Next.js y forma parte de `pnpm verify`, junto con `pnpm release:verify`, que comprueba el manifiesto congelado. La versión fijada es `16.3.5`. El GO de producción requiere además STAGE-10.
 
 ## CI
 
@@ -21130,10 +21318,10 @@ comparten evaluador prueban agregación; no se presentan como oráculos independ
 
 # Modo feria, congelamiento y control de cambios
 
-**Estado: dirección de producto v1 cerrada; implementada en STAGE-09.**
-El congelamiento sigue siendo política vigente ([runbook](05-operations/fair-runbook.md),
-[Definition of Done](06-delivery/definition-of-done.md)); cierre de diseño no
-oficializa las políticas de desarrollo.
+**Estado: implementado en STAGE-09 y congelado para v1 por ADR-027.**
+El [manifiesto y reporte RC](06-delivery/production-v1-release-candidate.md)
+fijan las versiones exactas; el [runbook operativo](05-operations/fair-operations-runbook.md)
+describe apertura, cierre, respaldo y recuperación. STAGE-10 conserva el GO.
 
 Este documento cubre la operación de la competencia. Las reglas del score están en [score competitivo y ranking](01-game-design/competitive-scoring-and-ranking.md); la presentación y moderación del ranking, en [leaderboard y moderación](05-operations/leaderboard-and-moderation.md).
 
@@ -21182,8 +21370,8 @@ Se congelan:
 - engine y Competition Seed/RunPlan de la edición;
 - `rulesetVersion`;
 - `contentVersion`;
-- `variantCatalogVersion` del catálogo oficial cuando el evento lo defina —el campo técnico ya existe, pero ninguno de los catálogos de desarrollo `grade-7-dev-1` a `dev-5` es un freeze de feria—;
-- `scoreVersion` de la política competitiva aprobada —el campo técnico y dos versiones resolubles ya existen, pero `fair-score-dev-2` sigue `official: false`—;
+- `variantCatalogVersion`: `grade-5-dev-6`, fijado por SHA-256 sin renombrarlo;
+- `scoreVersion`: `fair-score-v1@1.0.0-fair-edition-v1`, oficial y numéricamente equivalente a `fair-score-dev-2`, que se conserva para replay;
 - política de Prestige, slots/techos de evidencia y selección rara;
 - el comparador del leaderboard;
 - la política de intentos.
@@ -21279,6 +21467,446 @@ Los números de concurrencia salen de la asistencia estimada por un factor de se
 ## Refresco del ranking
 
 Tiempo real es opcional. Un polling cada pocos segundos suele ser más simple y más robusto a escala de feria. Se elige por carga real, no por novedad.
+
+---
+
+# FILE: 05-operations/fair-operations-runbook.md
+
+# Runbook de operación de la feria
+
+Este documento se puede ejecutar **sin conocer el código**. Cada procedimiento
+dice qué comando correr o qué botón tocar, qué esperar y qué hacer si no pasa.
+
+La coreografía del día —qué revisar a T-7, qué mirar durante— está en el
+[runbook de feria](05-operations/fair-runbook.md). Acá están los comandos.
+
+Los comandos de verificación no imprimen secretos. La generación de credenciales
+los muestra deliberadamente: ejecutar esa sección en una terminal privada y
+no copiar su salida a logs, chats ni archivos versionados.
+
+## Vocabulario mínimo
+
+| Palabra | Qué es |
+|---|---|
+| **Edición** | una feria concreta: su seed, su ventana, su estado. Una fila de la base. |
+| **Release** | las reglas con las que se juega: motor, contenido, score, ranking. Está en el código y tiene huella. |
+| **Intento** | una partida emitida por el servidor para una persona. |
+| **Participante** | una persona anotada. Lo público de ella es su alias. |
+
+Una edición sólo se puede **abrir** si corresponde al release desplegado. Si no
+corresponde, el organizador ve un error y la edición se queda donde está.
+
+---
+
+## 1. Antes del evento
+
+### 1.1 Verificar qué está desplegado
+
+```bash
+curl -fsS "$APP_URL/api/health" | jq
+```
+
+Esperado:
+
+```json
+{
+  "status": "ok",
+  "service": "egresado-web",
+  "release": {
+    "releaseId": "egresado-fair-edition-v1",
+    "releaseVersion": "1.0.0-rc.1",
+    "releaseChannel": "release-candidate",
+    "releaseFingerprint": "1affb2a8…"
+  },
+  "checks": [{ "name": "release-manifest", "state": "ok" }]
+}
+```
+
+La **huella** es la identidad exacta de las reglas. Anotala: es lo que permite
+decir, meses después, con qué reglas se jugó.
+
+Si `releaseFingerprint` no es la que se esperaba, lo desplegado no es lo
+aprobado. **No abrir.**
+
+### 1.2 Verificar que puede atender
+
+```bash
+curl -fsS "$APP_URL/api/health?ready=1" | jq
+```
+
+Los cuatro chequeos tienen que estar en `ok`:
+
+| Chequeo | Si está en rojo |
+|---|---|
+| `release-manifest` | el manifiesto no coincide con su candado: el despliegue está corrupto |
+| `competition-config` | falta configuración obligatoria; ver 1.3 |
+| `database` | la base no responde; ver 6.2 |
+| `competition` | `degraded` significa que falta el bootstrap (1.4); `error` significa que la edición no corresponde al release (1.5) |
+
+Un `503` es la respuesta correcta cuando algo está en rojo. `?ready=1` es lo que
+hay que mirar antes de abrir; `/api/health` a secas es para el balanceador.
+
+### 1.3 Verificar la configuración, sin imprimirla
+
+```bash
+pnpm release:preflight
+```
+
+Lista lo que falta por nombre de variable. **Nunca imprime un valor.**
+
+Lo que exige un despliegue de `staging` o `production`:
+
+```text
+NEXT_PUBLIC_APP_URL                   https, dominio propio, no local
+SUPABASE_SECRET_KEY                   presente
+SUPABASE_INTERNAL_URL                 presente
+EGRESADO_COMPETITION_SLUG             presente
+PARTICIPANT_IDENTITY_SECRET           ≥ 32 caracteres con entropía real
+EGRESADO_ORGANIZER_USERNAME           presente
+EGRESADO_ORGANIZER_PASSWORD_HASH      scrypt N=65536/131072, r=8, p=1
+EGRESADO_PRIVACY_CONTROLLER_NAME      la institución real
+EGRESADO_PRIVACY_CONTROLLER_CONTACT   un contacto real
+EGRESADO_PRIVACY_CONTROLLER_ADDRESS   un domicilio real
+EGRESADO_PRIVACY_NOTICE_VERSION       presente
+EGRESADO_PRIVACY_RETENTION_DAYS       explícito, 1..3650
+EGRESADO_DEV_HARNESS                  apagada
+```
+
+Generar los secretos:
+
+```bash
+pnpm secrets:generate                            # imprime, no escribe archivos
+pnpm competition:organizer:hash -- "<contraseña>"  # digest del organizador
+```
+
+**El secreto de identidad no se rota durante una edición abierta.** Las claves
+derivadas dependen de él: rotarlo deja a todos los participantes sin poder
+reingresar. Entre ediciones no cuesta nada.
+
+### 1.4 Crear la edición
+
+```bash
+pnpm competition:bootstrap -- \
+  --name="Feria de Ciencias 2026" \
+  --status=UPCOMING \
+  --opens=2026-10-03T13:00:00-03:00 \
+  --closes=2026-10-03T18:00:00-03:00 \
+  --grace=300
+```
+
+Imprime la seed compartida, la huella del plan y la tupla congelada. **Guardá esa
+salida.** Es el registro de con qué se jugó.
+
+Es idempotente: si la edición ya existe, no la toca. Cambiar la seed de una
+competencia en curso invalidaría todas las partidas jugadas.
+
+Una edición por feria. Para una feria nueva se usa un slug nuevo.
+
+### 1.5 Si la edición no corresponde al release
+
+Pasa cuando la edición se creó bajo otra versión del código —por ejemplo, antes
+del congelamiento de v1—. El organizador ve:
+
+```text
+COMPETITION_NOT_CONFIGURED — la edición no corresponde a
+egresado-fair-edition-v1 1.0.0-rc.1: scoreVersion esperaba … y tiene …
+```
+
+La edición vieja **no se arregla**: sus intentos se jugaron bajo otras reglas y
+reetiquetarlos sería reescribir resultados. Lo que se hace:
+
+1. Archivarla desde `/organizer` (se puede archivar siempre).
+2. Cambiar `EGRESADO_COMPETITION_SLUG` al slug de la edición nueva.
+3. `pnpm competition:bootstrap` con ese slug.
+
+Los intentos viejos se siguen pudiendo verificar y exportar.
+
+### 1.6 Ensayo con una partida real
+
+Antes de abrir al público, una persona juega la carrera entera desde `/` y
+confirma que el puntaje verificado aparece. Es el único chequeo que ejercita
+todo el camino a la vez.
+
+---
+
+## 2. Abrir y cerrar
+
+Ambas cosas desde `/organizer`, con sesión. Cada cambio pide un motivo y queda
+auditado con actor, acción, destino y fecha.
+
+| Acción | Efecto |
+|---|---|
+| `OPEN` | se pueden empezar partidas dentro de `[opensAt, closesAt)` |
+| `CLOSED` | no se empiezan partidas nuevas; el ranking sigue legible; la exportación sigue disponible |
+| `ARCHIVED` | como cerrada, y fuera de la operación normal |
+
+`OPEN` es el único cambio que se puede rechazar, y sólo por no corresponder al
+release (1.5).
+
+El reloj es **el del servidor**. Una partida emitida antes del cierre se puede
+enviar hasta `closesAt` más la tolerancia configurada (300 s por defecto). Eso
+se anuncia antes de abrir.
+
+---
+
+## 3. Durante el evento
+
+### 3.1 Mirar los logs
+
+Una línea JSON por evento, con la identidad del release en cada una:
+
+```bash
+# eventos rechazados
+… | jq 'select(.scope=="competition" and .outcome=="rejected")'
+
+# errores
+… | jq 'select(.outcome=="error")'
+
+# qué release los produjo
+… | jq -r '.releaseId' | sort -u
+```
+
+Los logs **no contienen** documento, nombre, alias, token, clave de identidad ni
+contraseña. Si algo de eso aparece, es un defecto grave y hay que reportarlo.
+
+### 3.2 Recuperar la sesión de un participante
+
+No hace falta hacer nada del lado del operador. La persona vuelve a `/`, toca
+«Jugar» y completa el mismo formulario: el servidor la reconoce por la clave
+derivada de su documento y **conserva su alias original**, que es la identidad
+pública que otros ya vieron en el ranking.
+
+Si el nombre no coincide con el registrado, el servidor **no dice de quién es el
+documento** y pide ayuda a un organizador. Desde `/organizer` se corrige el
+nombre (4.1) y la persona reintenta.
+
+### 3.3 Cambiar un alias inapropiado
+
+`/organizer` → participante → ocultar alias, con motivo.
+
+El puesto sigue existiendo y el puntaje sigue contando: en el ranking aparece
+«Jugador oculto». Borrar la entrada le daría a un insulto el poder de sacar a
+alguien del podio.
+
+También se puede corregir el alias por otro, si la persona lo pide.
+
+### 3.4 Ver los intentos rechazados
+
+`/organizer` muestra, por participante, cada intento con su estado y su código
+de rechazo. Los más comunes:
+
+| Código | Qué pasó |
+|---|---|
+| `not-graduated` | la carrera no llegó al final |
+| `ATTEMPT_VERSION_UNSUPPORTED` | el intento se emitió con versiones que el servidor ya no tiene |
+| `RUN_VALIDATION_FAILED` | el log enviado no corresponde a la emisión, o el motor no lo acepta |
+| `SUBMISSION_TOO_LATE` | se envió después de la tolerancia |
+
+Un intento rechazado **conserva su evidencia** y queda fuera del ranking.
+
+### 3.5 Invalidar un resultado
+
+`/organizer` → intento → invalidar, con motivo.
+
+El intento conserva su log, su puntaje y sus versiones; deja de rankear. El
+siguiente mejor intento de esa persona pasa a ser el efectivo. Es reversible:
+restaurar lo devuelve al ranking.
+
+### 3.6 Descalificar y reincorporar
+
+`/organizer` → participante → elegibilidad, con motivo.
+
+Al descalificar se revocan sus sesiones: si no, el navegador seguiría jugando
+partidas que ya no pueden entrar al ranking. Sus filas no se borran.
+
+---
+
+## 4. Premios
+
+### 4.1 Verificar la identidad de un ganador
+
+1. El ranking muestra el alias.
+2. En `/organizer` se abre el participante: nombre y apellido, año o curso,
+   división si la hubiera y **los últimos cuatro dígitos** del documento.
+3. Se le pide a quien reclama que se identifique; si la institución lo permite,
+   se comparan los cuatro dígitos con su documento.
+4. Se marca «identidad verificada», con motivo. Queda auditado.
+
+**El documento completo no está en el sistema.** No se guarda: se deriva con
+HMAC por competencia y sólo quedan cuatro dígitos. La verificación la hace una
+persona mirando un documento, no una pantalla.
+
+### 4.2 Exportar el ranking final
+
+Desde `/organizer`, o:
+
+```bash
+pnpm ops:export -- --out=resultados-publicos.csv            # sin datos privados
+pnpm ops:export -- --private --out=resultados-premios.csv   # con nombre y últimos 4
+```
+
+El archivo lleva un encabezado de procedencia con la edición, la seed, la huella
+del plan y la huella del release: sin eso, dentro de tres años nadie puede decir
+bajo qué reglas se produjeron esos números.
+
+**El archivo con `--private` contiene datos personales de menores.** Se guarda
+donde corresponda y se borra cuando deja de hacer falta.
+
+### 4.3 Las reglas del podio, para explicarlas
+
+```text
+Se publican los TRES PRIMEROS PUESTOS, no las tres primeras personas.
+Un empate en el podio entra entero: con 100, 100, 90 y 80 los puestos son
+1, 1, 3 y 4, y las cuatro primeras filas son tres puestos.
+Ordena FairScore; si empata, Prestige; si empata, el puesto se comparte.
+No hay tercer criterio: ni tiempo, ni orden de llegada, ni cantidad de intentos.
+Cuenta el MEJOR intento verificado de cada persona, nunca la suma.
+```
+
+---
+
+## 5. Después del evento
+
+```bash
+# 1. Exportar ANTES de cualquier purga
+pnpm ops:export -- --private --out=resultados-premios.csv
+
+# 2. Respaldar
+pnpm ops:backup -- --linked --out=backups/post-feria
+
+# 3. Cerrar y archivar desde /organizer
+
+# 4. Mucho más tarde: purgar los datos privados
+pnpm competition:privacy:purge             # informa qué haría
+pnpm competition:privacy:purge -- --apply  # aplica si la retención venció
+```
+
+**No purgar antes de entregar los premios.** Sin nombre ni últimos cuatro
+dígitos ya no se puede verificar a un ganador que reclama después. Por eso la
+purga es explícita y nunca automática.
+
+Qué se va y qué queda: se van nombre, año, división y últimos cuatro dígitos, y
+se revocan las sesiones. Quedan el alias, el puntaje verificado y la evidencia
+de replay, que no identifican a nadie y permiten que el ranking siga siendo
+legible el año que viene.
+
+---
+
+## 6. Incidentes
+
+### 6.1 El ranking no carga
+
+El juego sigue. Las partidas se emiten, se juegan y se envían igual: el ranking
+es una lectura.
+
+1. `curl -fsS "$APP_URL/api/health?ready=1"` para ver qué chequeo está en rojo.
+2. Si es `database`, ver 6.2.
+3. Poner en la pantalla pública «ranking temporalmente pausado».
+4. **No bloquear partidas.**
+
+### 6.2 La base no responde
+
+1. Confirmar con `?ready=1` que `database` está en `error`.
+2. Revisar el estado del proveedor.
+3. El límite de tasa falla **abierto** si su contador no está disponible, a
+   propósito: dejar a toda la feria afuera por una tabla auxiliar es peor. Las
+   restricciones de dominio siguen en pie.
+4. Las partidas en curso siguen jugándose en el navegador —el juego es
+   local-first—; lo que falla es emitir y enviar. Un envío que falla se puede
+   reintentar: es idempotente.
+5. Si hay que restaurar, ver 6.4.
+
+### 6.3 Rollback de la aplicación
+
+Primero: **un rollback de aplicación no revierte la base.** Esta versión no
+introduce migraciones destructivas, así que la versión anterior corre contra
+este esquema sin cambios.
+
+1. **Identificar qué está desplegado:**
+   ```bash
+   curl -fsS "$APP_URL/api/health" | jq -r '.release.releaseFingerprint'
+   ```
+2. **Revertir** al despliegue inmutable anterior desde el panel de la
+   plataforma. No se reconstruye: se promueve el artefacto que ya existía.
+3. **Confirmar** que la huella cambió a la esperada:
+   ```bash
+   curl -fsS "$APP_URL/api/health" | jq -r '.release.releaseVersion, .release.releaseFingerprint'
+   curl -fsS "$APP_URL/api/health?ready=1" | jq -r '.status'
+   ```
+4. **Comprobar la edición.** Si la edición activa se creó bajo el release nuevo
+   y la versión anterior no conoce esa calibración, sus intentos no se van a
+   poder verificar. Esa es la única incompatibilidad real, y es de datos: la
+   salida de 1.4 dice bajo qué tupla se creó.
+5. **Jugar una partida** de punta a punta antes de declarar el incidente cerrado.
+
+Cuándo **no** hacer rollback: si la edición ya recibió intentos verificados bajo
+el release nuevo. Ahí se arregla hacia adelante.
+
+### 6.4 Restaurar la base
+
+```bash
+pnpm ops:backup -- --linked --out=backups/antes-de-restaurar   # primero, siempre
+pnpm ops:restore -- --data=backups/x.data.sql --db-url="postgresql://…"
+```
+
+El respaldo incluye **sólo el esquema `public`**: tablas de Egresado, vistas,
+funciones, índices, grants, RLS y datos. No incluye los esquemas administrados
+`auth`/`storage`, roles globales del proveedor, configuración, archivos ni
+secretos. El destino debe contar con los roles Supabase `anon`, `authenticated`
+y `service_role`; para un destino sin tablas, aplicar primero las migraciones
+versionadas o pasar `--schema=backups/x.schema.sql` junto a `--data`.
+
+Guardas: destino único y explícito; archivos existentes; comprobación de todas
+las tablas de `public`. Si hay filas exige `--force`, que permite mezclar datos,
+no borra ni resuelve conflictos. Un error en la comprobación impide restaurar.
+Esquema y datos se aplican en una sola transacción: cualquier error revierte
+ambos. Los errores de COPY no se imprimen porque pueden contener datos privados.
+
+`backups/` está ignorado por Git. Los dumps se crean con permisos `0600` y el
+directorio nuevo con `0700`; la exportación CSV también usa `0600` y se niega a
+sobrescribir un archivo existente. Guardarlos fuera del checkout y con cifrado
+y acceso restringido según la operación del despliegue.
+
+El respaldo **no incluye** `PARTICIPANT_IDENTITY_SECRET`. Si ese secreto se
+perdió, las identidades restauradas no se pueden volver a derivar y nadie puede
+reingresar: los resultados siguen ahí, la continuidad de sesión no.
+
+Después de restaurar: `curl -fsS "$APP_URL/api/health?ready=1"`.
+
+### 6.5 Qué no se toca en vivo
+
+```text
+datos de desafíos · lógica de evaluación · coeficientes de score
+factores de dificultad · opciones de respuesta · aleatorización
+la seed de la edición · la tupla de versiones
+```
+
+Sí se puede desplegar: un arreglo visual que no altere información ni forma de
+responder, un arreglo de crash que preserve la semántica, escalado de
+infraestructura y acciones de moderación.
+
+Si un defecto de corrección obliga igual, se crea una **versión nueva** y se
+decide explícitamente si las partidas previas se recalculan. No se mezclan
+puntajes de versiones no comparables sin recomputación declarada.
+
+Y: una anécdota de la primera hora no es evidencia. Se anota para la próxima
+versión.
+
+---
+
+## 7. Verificar el release sin desplegar
+
+```bash
+pnpm release:verify     # 57 comprobaciones sobre el manifiesto y el código
+pnpm release:check      # compuerta de dependencias de despliegue público
+pnpm security:audit     # vulnerabilidades conocidas
+```
+
+`release:verify` recomputa desde la fuente las huellas de los catálogos y de las
+migraciones, comprueba que la política de score oficial existe y es
+numéricamente idéntica a la candidata que promovió, que la edición de
+competencia fija exactamente la tupla del release, y que la huella coincide con
+su candado.
 
 ---
 
@@ -21568,10 +22196,61 @@ operativo está en el [runbook](05-operations/fair-runbook.md#operación-de-la-c
 Vista corta del estado de ejecución. El contrato completo y el protocolo de
 actualización están en el [roadmap](06-delivery/implementation-sequence.md).
 
+## PRODUCTION V1 FREEZE — Egresado Fair Edition v1
+
+**Estado:** `DONE` — 22 de septiembre de 2026. **Siguiente etapa: STAGE-10**,
+despliegue, hardening, dry run y GO/NO-GO.
+
+El producto dejó de desarrollarse y empezó a publicarse. Esta versión exacta
+quedó congelada en un manifiesto con huella, verificable con un comando, y el
+camino a producción ya no depende de ningún gate humano amplio.
+
+```text
+EGRESADO FAIR EDITION V1                      FROZEN
+RELEASE CANDIDATE                             READY · 1.0.0-rc.1
+huella                                        1affb2a8…da16007e
+
+├── Manifiesto de release legible por máquina  DONE · `src/release/`
+├── Huella determinista con candado            DONE · `pnpm release:verify`
+├── FairScore oficial                          DONE · `fair-score-v1`, sin mover un número
+├── Prestige v1 explícito                      DONE · techo ofrecido 0, fuera del podio
+├── Catálogos fijados por versión y SHA-256    DONE · cinco, sin renombrar
+├── Ranking, podio e intentos congelados       DONE
+├── Política de seed congelada                 DONE · compartida por edición
+├── Esquema congelado                          DONE · cabeza y huella
+├── Abrir exige corresponder al release        DONE · `src/server/competition/freeze.ts`
+├── Configuración de producción con fallo temprano DONE · `EGRESADO_ENVIRONMENT`
+├── CSP con nonce, HSTS, cookies verificadas   DONE · contra el servidor real
+├── Salud y readiness con identidad de release DONE · `/api/health?ready=1`
+├── Respaldo y restauración                    DONE local · remoto en STAGE-10
+├── Rollback escrito                           DONE · ensayo en STAGE-10
+├── Ensayo de feria de punta a punta           DONE · contra Postgres real
+└── Bundle del estudiante                      DONE · 189 KiB gzip, desde 608
+
+Revisión humana amplia                        NO REQUERIDA PARA V1 · ADR-027
+Ventanas de ajuste humano puntual             OPCIONALES · por hallazgo
+STAGE-10 — despliegue y GO/NO-GO              NEXT
+```
+
+**No se tocó la semántica del juego.** Motor `10.0.0`, action log `7`, snapshot
+`8`, ruleset `1.0.0-full-career`, contenido `5.5.0-grade-5` y catálogo
+`grade-5-dev-6` quedan idénticos. FairScore cambió de **identidad** y no de
+números: `2.0.0-post-tg1-candidate` se copió a `fair-score-v1` con
+`official: true`, y la equivalencia está probada sobre 2.142 secuencias sintéticas
+(1.936 puntuables), sobre evidencia arbitraria y sobre los 23.000 planes de
+`pnpm game:score`, donde la partida perfecta sigue valiendo 10 000 exactos.
+
+Este veredicto **no** dice `PRODUCTION READY — GO`. Eso pertenece a STAGE-10,
+después de ejecutarse contra infraestructura real.
+
+El detalle completo está en
+[el release candidate de producción v1](06-delivery/production-v1-release-candidate.md), con
+su [checklist](06-delivery/release-checklist.md) y el
+[runbook de operación](05-operations/fair-operations-runbook.md).
+
 ## STAGE-09 — Fair mode, servidor autoritativo y ranking
 
-**Estado:** `DONE` — 21 de septiembre de 2026. **Siguiente gate: Teacher Gate 2**,
-que es aceptación externa y no una etapa de ingeniería.
+**Estado:** `DONE` — 21 de septiembre de 2026.
 
 El juego completo de STAGE-08 quedó envuelto en una competencia cuya integridad
 se puede defender. El producto público es **una sola dirección**: en `/` el
@@ -21596,10 +22275,10 @@ STAGE-09                                      DONE
 ├── Matriz de ataque                           DONE · 21 casos, todos fail-closed
 └── Escala medida                              DONE · 500 participantes, mediana 7 ms
 
-GATE-TG2 · Teacher Gate 2                     NEXT · externo
-Revisión del Depto. de Matemática             DEFERRED · a Final Delivery
-Sign-off manual de la rueda                   PENDING · humana
-Pacing empírico con jugadores                 PENDING · humana
+GATE-TG2 · Teacher Gate 2                     SUPERSEDED · ADR-027
+Revisión del Depto. de Matemática             NO REQUERIDA PARA V1 · ADR-027
+Sign-off manual de la rueda                   OPCIONAL · por hallazgo
+Pacing empírico con jugadores                 PENDIENTE · no bloquea v1
 ```
 
 **La semántica del juego no se tocó.** Motor `10.0.0`, action log `7`, snapshot
@@ -21609,6 +22288,11 @@ partida perfecta sigue valiendo 10 000 exactos, y el servidor llega a ese númer
 reproduciendo el log. El contenido sigue `draft` y la edición `official: false`:
 oficializar y congelar la configuración de competencia es FREEZE, no esta etapa.
 
+**Reconciliado el 22 de septiembre de 2026:** el FREEZE ocurrió. FairScore es
+ahora `fair-score-v1` con los mismos números, y las competencias creadas bajo la
+candidata se siguen verificando pero no se pueden reabrir. Ver
+[el release candidate](06-delivery/production-v1-release-candidate.md).
+
 El detalle completo —arquitectura, modelo de datos, decisiones de privacidad,
 matriz de ataque, medición y riesgos— está en
 [STAGE-09 · fair mode, servidor y ranking](06-delivery/stage-09-fair-mode-server-ranking.md).
@@ -21617,9 +22301,9 @@ matriz de ataque, medición y riesgos— está en
 
 **Estado:** `DONE` — 21 de septiembre de 2026.
 
-Los gates que siguen abiertos son **humanos** y están fuera del alcance de
-STAGE-08: pacing con jugadores reales, revisión del Departamento de Matemática y
-sign-off manual de la rueda.
+Al cierre histórico quedaron pendientes pacing con jugadores reales, revisión
+humana amplia y sign-off manual de la rueda. ADR-027 establece que no bloquean
+v1; los ajustes humanos futuros son puntuales y motivados por hallazgos.
 
 ```text
 STAGE-07                                      DONE
@@ -22286,7 +22970,13 @@ Si el roadmap y el código difieren, **el código gana** y el roadmap se corrige
 - Fases de validación externa y congelamiento: [ciclo de entrega real](00-product/real-delivery-lifecycle.md).
 - Qué se construye por capas de alcance: [alcance y roadmap](00-product/scope-and-roadmap.md) y [backlog](06-delivery/mvp-backlog.md).
 
-**Última reconciliación:** 18 de septiembre de 2026, adjudicación final del techo
+**Última reconciliación:** 22 de septiembre de 2026, **PRODUCTION V1 FREEZE**.
+Egresado Fair Edition v1 queda congelada en un manifiesto con huella
+(`1affb2a8…`), FairScore se oficializa como `fair-score-v1` sin mover un número,
+y la revisión humana amplia deja de bloquear el roadmap
+([ADR-027](03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md),
+D-RC-001 a D-RC-012). La siguiente etapa es STAGE-10. Antecedente del 21 de
+septiembre: STAGE-09 `DONE`. Antecedente del 18 de septiembre: adjudicación final del techo
 de estrategia ciega de `y5.stage-screen` —`K ≤ 78`, el mínimo factible demostrado—
 e implementación de WP-SCREEN: la remediación matemática cierra en **catorce de
 catorce contratos** (D-S08-116). Antecedente del 17 de septiembre: adjudicación de
@@ -22342,9 +23032,9 @@ Tabla de navegación. Los contratos de cada etapa, más abajo, son la autoridad.
 | [STAGE-07](#stage-07-invariante-de-egreso-fail-forward-y-recuperaciones) | Egreso, fail-forward y recuperaciones | `DONE` | GATE-TG1 | — |
 | [STAGE-08](#stage-08-contenido-incremental-de-1º-a-5º) | Contenido incremental 1.º → 5.º | `DONE` · implementación e integración DONE · dos rondas de remediación y dos re-auditorías FAILED · sprint de cierre DONE · auditoría final de cierre PASSED · sign-off provisional de IA PASSED · cierre de integración y ritmo PASSED | STAGE-07 | gates humanos abiertos: pacing con jugadores, revisión de Matemática, rueda |
 | [STAGE-09](#stage-09-fair-mode-servidor-autoritativo-y-ranking) | Fair mode, servidor autoritativo y ranking | `DONE` — 21 de septiembre de 2026 | STAGE-06 (`DONE`), STAGE-08 (`DONE`) | — |
-| [GATE-TG2](#gate-tg2-teacher-gate-2) | **Teacher Gate 2** | `TEACHER_GATE` · **siguiente** | STAGE-09 (`DONE`) | externo |
-| [FREEZE](#freeze-congelamiento-de-competencia) | Congelamiento de competencia | `NOT_STARTED` | GATE-TG2 | — |
-| [STAGE-10](#stage-10-production-hardening) | Production hardening | `NOT_STARTED` | FREEZE | go-live |
+| [GATE-TG2](#gate-tg2-teacher-gate-2) | **Teacher Gate 2** | `SUPERSEDED` — no bloquea v1 ([ADR-027](03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md)) | STAGE-09 (`DONE`) | externo, opcional |
+| [FREEZE](#freeze-congelamiento-de-competencia) | Congelamiento de competencia | `DONE` — 22 de septiembre de 2026 | STAGE-09 (`DONE`) | — |
+| [STAGE-10](#stage-10-production-hardening) | Production hardening | `READY` · **siguiente** | FREEZE (`DONE`) | go-live |
 | [RELEASE](#release-y-post-feria) | Feria y post-feria | `NOT_STARTED` | STAGE-10 | — |
 
 ### Grafo de dependencias
@@ -22366,8 +23056,8 @@ flowchart TD
     S7 --> S8[STAGE-08 · 1.º a 5.º]
     S6 --> S9[STAGE-09 · fair mode y ranking]
     S8 --> S9
-    S9 --> TG2{{GATE-TG2 · Teacher Gate 2}}
-    TG2 --> FZ[FREEZE · congelamiento]
+    S9 --> FZ[FREEZE · congelamiento]
+    S9 -.-> TG2{{GATE-TG2 · opcional, no bloquea}}
     FZ --> S10[STAGE-10 · hardening]
     S10 --> RL[Feria]
 ```
@@ -22433,13 +23123,17 @@ Estado real contra el código al 11 de septiembre de 2026, tras cerrar STAGE-08 
 | Ranking con personal best | `DONE` | vista `competition_best_attempts` más `src/lib/competition/ranking.ts`; mejor intento verificado por participante elegible, medido en 500 participantes × 3 intentos | STAGE-09 |
 | Desempate lexicográfico | `DONE` | FairScore → Prestige → puesto compartido, sin criterio terciario; `tests/unit/competition-ranking.test.ts` | STAGE-09 |
 | Fair mode operativo | `DONE` | la edición emite descriptores `mode: 'fair'` con dificultad fija y la seed compartida de la competencia; una submission en `practice` se rechaza | STAGE-09 |
-| Configuración de competencia | `NOT_STARTED` | — | FREEZE |
+| Configuración de competencia | `DONE` | manifiesto `src/release/fair-edition-v1.ts` con huella y candado; `pnpm release:verify`; `src/server/competition/freeze.ts` exige corresponder al release para abrir | FREEZE |
+| Identidad de release verificable | `DONE` | `releaseFingerprint` SHA-256 canónico; `tests/unit/release-manifest.test.ts` | FREEZE |
+| `ScorePolicy` oficial | `DONE` | `fair-score-v1@1.0.0-fair-edition-v1`, `official: true`, equivalente a la candidata; `tests/unit/fair-score-officialisation.test.ts` | FREEZE |
 | Simulación determinista masiva | `DONE` para el alcance actual | `src/game/testing/simulation.ts`, `pnpm game:simulate`, 200 runs de 7.º y 200 de `7.º → 1.º` en `pnpm verify`; reporta egresos, repasos y previas, y `not-graduated` es hallazgo | transversal |
 | E2E y accesibilidad automatizada | `DONE` para el alcance actual | `tests/e2e/`, `@axe-core/playwright`, 80 tests | transversal |
 | Catálogo de contenido separado del plan de la run | `DONE` | `ContentCatalog`, `RunPlan`, `tests/unit/content-model.test.ts` | STAGE-02 |
 | Elegibilidad por etapa y roles de colocación | `DONE` | declarativos por plantilla; elegibilidad no contigua probada | STAGE-02 |
 | Presupuesto de beats por año | `DONE` como contrato validable | `DEFAULT_STAGE_BEAT_BUDGET`, `validateStagePlan` | STAGE-02 |
-| Production hardening | `NOT_STARTED` | — | STAGE-10 |
+| Contrato de configuración de producción | `DONE` | `src/config/production.ts`, `src/instrumentation.ts`, `pnpm release:preflight` | FREEZE |
+| Respaldo, restauración y exportación | `DONE` local | `pnpm ops:backup` · `ops:restore` · `ops:export`; probados contra la base local | FREEZE |
+| Production hardening | `NOT_STARTED` | remoto: staging, load test, rollback ensayado, dry run, GO/NO-GO | STAGE-10 |
 
 ### Discrepancias registradas
 
@@ -23337,55 +24031,73 @@ El navegador **nunca** es autoridad de score. El precursor ya existe: `src/serve
 
 ### GATE-TG2 — Teacher Gate 2
 
-- **Estado:** `TEACHER_GATE` — pendiente. **No es una etapa de ingeniería.**
+- **Estado:** `SUPERSEDED` — 22 de septiembre de 2026. **Ya no bloquea el congelamiento ni el despliegue.**
 - **Depende de:** STAGE-09
-- **Desbloquea:** FREEZE
+- **Desbloquea:** nada; FREEZE dejó de depender de este gate
 
-Aceptación externa del juego completo antes del congelamiento. Detalle en [gates docentes](06-delivery/teacher-gates.md).
+Decisión de producto registrada en
+[ADR-027](03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md):
+ninguna revisión humana amplia —ni Teacher Gate 2, ni la revisión del
+Departamento de Matemática humano— es requisito de v1 bajo la gobernanza actual.
+El gate matemático vigente es el que el repositorio efectivamente cerró: Pre-Review
+por IA → Adjudicación independiente → Remediación → Re-auditoría independiente →
+Sign-off provisional → Auditoría final de cierre.
 
-**Criterios de aceptación.**
+Lo que **sí** sigue siendo posible y deseable son **ventanas de ajuste humano
+puntual**: acotadas, con destinatario concreto, disparadas por un hallazgo
+reportado, y nunca como condición previa de un despliegue.
 
-- [ ] Correcciones pedagógicas registradas.
-- [ ] Scoring aprobado.
-- [ ] Política de intentos aprobada.
-- [ ] Política de empate aprobada.
-- [ ] Reglas de premio aprobadas.
-- [ ] Contenido de todos los años aceptado.
-- [ ] Sin P0/P1 funcionales abiertos.
-- [ ] Candidato a congelamiento declarado.
+Lo que este repositorio **no puede afirmar**, y no afirma en ningún documento:
+`human-reviewed`, `human-certified`, `curriculum-certified`, `teacher-approved`.
 
-**Exit gate.** ¿Está aprobado el juego completo y su competencia para congelar?
+El material preparado para este gate se conserva entero —[gates
+docentes](teacher-gates.md), [paquete de revisión del Departamento de
+Matemática](../04-quality/mathematics-department-human-review-packet.md)— porque
+un registro que reescribe lo que decía antes deja de ser un registro.
+
+**Exit gate.** No aplica: el gate no es bloqueante.
 
 ---
 
 ### FREEZE — Congelamiento de competencia
 
-- **Estado:** `NOT_STARTED`
-- **Depende de:** GATE-TG2
+- **Estado:** `DONE` — 22 de septiembre de 2026
+- **Depende de:** STAGE-09 (`DONE`). La dependencia de GATE-TG2 quedó superada por [ADR-027](03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md)
 - **Desbloquea:** STAGE-10
 
 **Scope IN.** Congelar `rulesetVersion`, `scoreVersion`, `contentVersion`, `variantCatalogVersion`, política de dificultad, reglas de ranking y reglas de empate. Configuración de evento auditable e inmutable. Proceso de emergencia escrito.
 
 **Scope OUT.** Cambios funcionales de cualquier tipo.
 
-**Lectura requerida.** [Modo feria y congelamiento](05-operations/fair-mode-and-competition-freeze.md) · [deploy y ambientes](03-architecture/deployment-and-environments.md) · [ejemplo de configuración de evento](07-reference/event-config.example.json).
+**Lectura requerida.** [Release candidate de producción v1](06-delivery/production-v1-release-candidate.md) · [checklist](06-delivery/release-checklist.md) · [runbook de operación](05-operations/fair-operations-runbook.md) · [modo feria y congelamiento](05-operations/fair-mode-and-competition-freeze.md) · [deploy y ambientes](03-architecture/deployment-and-environments.md).
 
 **Criterios de aceptación.**
 
-- [ ] Las versiones oficiales están identificadas y el evento habilita **sólo** esa tupla.
-- [ ] La configuración del evento es auditable e inmutable.
-- [ ] Toda run oficial apunta a esa configuración.
-- [ ] El proceso de cambio de emergencia está documentado, con su política de recálculo.
-- [ ] Cualquier cambio posterior al congelamiento exige registro explícito.
+- [x] Las versiones oficiales están identificadas y el evento habilita **sólo** esa tupla — `src/release/fair-edition-v1.ts` y `resolveEdition`, que resuelve por identidad exacta y sin `latest`.
+- [x] La configuración del evento es auditable e inmutable — el puerto de persistencia acepta cuatro columnas operativas y ninguna competitiva; abrir exige corresponder al release.
+- [x] Toda run oficial apunta a esa configuración — el intento copia la tupla congelada al emitirse y la verificación resuelve contra ella.
+- [x] El proceso de cambio de emergencia está documentado, con su política de recálculo — [runbook de operación, sección 6.5](05-operations/fair-operations-runbook.md).
+- [x] Cualquier cambio posterior al congelamiento exige registro explícito — mover una versión congelada rompe el candado de la huella y `pnpm release:verify`.
 
-**Exit gate.** ¿Puede un tercero reconstruir con qué reglas exactas se jugó la competencia?
+**Evidencia.**
+
+```text
+release        egresado-fair-edition-v1 · 1.0.0-rc.1
+huella         1affb2a82f4726a77cedbf4e20c82055f6c04a07d67e42674eb8e9e6da16007e
+score oficial  fair-score-v1 @ 1.0.0-fair-edition-v1
+verificación   pnpm release:verify · 57 comprobaciones
+```
+
+**Exit gate.** ¿Puede un tercero reconstruir con qué reglas exactas se jugó la competencia? **Sí:** `pnpm release:verify` recomputa desde la fuente las huellas de los catálogos y de las migraciones, comprueba que la política oficial es numéricamente idéntica a la candidata que promovió, y compara la huella del release con su candado.
+
+**Lo que no entró, y por qué.** No se desplegó nada, no se validó contra staging remoto, no se ensayó rollback contra una plataforma y no se hizo load test remoto: todo eso es [STAGE-10](#stage-10-production-hardening). No se autoró contenido de Prestige —el techo ofrecido sigue en 0 por D-S08-084— y no se republicó ningún catálogo por motivos cosméticos.
 
 ---
 
 ### STAGE-10 — Production hardening
 
-- **Estado:** `NOT_STARTED`
-- **Depende de:** FREEZE
+- **Estado:** `READY` — **siguiente etapa**
+- **Depende de:** FREEZE (`DONE`)
 - **Desbloquea:** la feria
 
 **Propósito.** Compensar técnicamente que la feria puede ser el primer contacto real y a escala con estudiantes. **Ninguno de estos controles equivale a validación de experiencia con usuarios reales**; ver [ciclo de entrega real](00-product/real-delivery-lifecycle.md).
@@ -23530,6 +24242,870 @@ Aceptación externa del juego completo antes del congelamiento. Detalle en [gate
 ## Orden de trabajo posterior a la integración del blueprint
 
 Este backlog prioriza por features. El orden de las etapas que quedan después de integrar el blueprint v0.2 —análisis de brechas, arquitectura de variantes, esqueleto de score competitivo, gates docentes, contenido año por año, backend de feria y hardening— está en [la secuencia de implementación](06-delivery/implementation-sequence.md). Los dos ejes son complementarios: acá está el qué, allá el en qué orden y contra qué gate.
+
+---
+
+# FILE: 06-delivery/production-v1-release-candidate.md
+
+# PRODUCTION V1 FREEZE — Egresado Fair Edition v1 Release Candidate
+
+## A. Veredicto
+
+```text
+PRODUCTION V1 FREEZE & RELEASE CANDIDATE — READY
+```
+
+Este repositorio representa un **Release Candidate reproducible**: un tercero
+puede reconstruir con qué reglas exactas se juega la competencia, verificarlo
+con un comando y desplegarlo sin depender de nada que no esté versionado.
+
+Lo que **no** dice este veredicto: que esté desplegado, que se haya probado
+contra infraestructura real, ni que sea `PRODUCTION READY — GO`. Eso es
+[STAGE-10](06-delivery/implementation-sequence.md#stage-10-production-hardening).
+
+## B. Baseline de entrada
+
+- HEAD de entrada: `78fc6ee` — `feat(stage-09): close fair mode, authoritative server and ranking`.
+- [STAGE-09 `DONE`](06-delivery/stage-09-fair-mode-server-ranking.md); STAGE-08 `DONE`.
+- Tests de entrada: 108 archivos y 2135 tests de Vitest; 218 E2E de Playwright.
+- Base de datos de entrada: dos migraciones, cabeza
+  `20260921000000_competition_fair_mode.sql`.
+- Versiones de entrada: motor `10.0.0`, action log `7`, snapshot `8`, ruleset
+  `1.0.0-full-career`, contenido `5.5.0-grade-5`, catálogo `grade-5-dev-6`,
+  FairScore `2.0.0-post-tg1-candidate` (`official: false`).
+
+Un gate estaba en rojo al entrar y nadie lo había corrido: `pnpm release:check`
+fallaba porque Next.js estaba fijado en `16.3.1`, por debajo del parche de
+seguridad `16.3.2` que el propio gate exige. Ahora corre dentro de
+`pnpm verify`, que es donde tenía que estar.
+
+## C. Reconciliación de gobernanza
+
+**La revisión humana amplia deja de bloquear el roadmap.**
+
+| Antes | Ahora |
+|---|---|
+| `GATE-TG2 — Teacher Gate 2` · `TEACHER_GATE` · siguiente | `SUPERSEDED` como gate bloqueante |
+| Revisión del Departamento de Matemática humano · diferida a Final Delivery | **No requerida para v1** |
+| `FREEZE` dependía de `GATE-TG2` | `FREEZE` `DONE`, sin dependencia humana |
+
+El lenguaje correcto, y el único que este repositorio puede sostener:
+
+```text
+Validación de matemática y de producto por IA: completa según los gates
+cerrados del repositorio.
+Ninguna revisión humana amplia es requisito de v1 bajo la gobernanza actual.
+Pueden ocurrir ajustes humanos puntuales, en ventanas controladas, si se
+reporta un problema concreto.
+```
+
+**No** se afirma `human-reviewed`, `human-certified`, `curriculum-certified` ni
+`teacher-approved`, y ninguna frase de este repositorio lo hace.
+
+La evidencia histórica se conserva entera. Los documentos que esperaban un gate
+humano —[gates docentes](06-delivery/teacher-gates.md), [ciclo de entrega
+real](../00-product/real-delivery-lifecycle.md), el [paquete de revisión para el
+Departamento de Matemática](../04-quality/mathematics-department-human-review-packet.md)—
+siguen donde estaban, con una nota de superación encima. La decisión está en
+[ADR-027](03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md) y
+en el [registro de decisiones](07-reference/decision-register.md).
+
+Lo que **no** cambia: Teacher Gate 1 ocurrió y sus decisiones siguen integradas;
+los ajustes humanos puntuales siguen siendo posibles y deseables; y el pacing
+con jugadores reales sigue sin hacerse, y sigue documentado como tal.
+
+## D. Identidad del release
+
+```text
+releaseId          egresado-fair-edition-v1
+releaseName        Egresado Fair Edition v1
+releaseVersion     1.0.0-rc.1
+releaseChannel     release-candidate
+releaseFingerprint 1affb2a82f4726a77cedbf4e20c82055f6c04a07d67e42674eb8e9e6da16007e
+```
+
+La huella es SHA-256 sobre la serialización canónica del manifiesto entero. No
+lleva fecha de build, rama, commit ni nombre de máquina: un artefacto
+reproducible tiene que dar la misma huella hoy y dentro de un año. El commit es
+la procedencia de la fuente y la cuenta git.
+
+| Artefacto | Dónde |
+|---|---|
+| Manifiesto | `src/release/fair-edition-v1.ts` |
+| Contrato y parser | `src/release/manifest.ts` |
+| Candado de la huella | `src/release/fair-edition-v1.lock.json` |
+| Verificación | `pnpm release:verify` (57 comprobaciones) |
+| Regeneración deliberada | `pnpm release:verify -- --update-lock` |
+
+El manifiesto **declara** y no deriva. Si derivara sus valores del código diría
+siempre la verdad y no probaría nada: un catálogo regenerado cambiaría la huella
+y el manifiesto la seguiría sin quejarse. Declarándolos, un cambio de contenido
+rompe la verificación, que es lo que un congelamiento tiene que hacer.
+
+## E. Bundle congelado
+
+```text
+motor              10.0.0
+action log         7
+snapshot           8
+RNG                xoroshiro128plus
+edición            full-career-v1
+ruleset            full-career @ 1.0.0-full-career
+contenido          5.5.0-grade-5
+catálogo oficial   grade-5-dev-6 · 1031 entradas
+score              fair-score-v1 @ 1.0.0-fair-edition-v1 (official: true)
+prestige           prestige-dev-1 @ 1.0.0-candidate · techo ofrecido 0
+esquema            20260921000000_competition_fair_mode.sql · 2 migraciones
+```
+
+Huellas de integridad de los catálogos, recomputadas por `release:verify` desde
+los artefactos comprometidos:
+
+| Catálogo | Contenido | Entradas | SHA-256 | Rankea |
+|---|---|---|---|---|
+| `grade-5-dev-6` | `5.5.0-grade-5` | 1031 | `12c11dd8…4e8d1fdd` | sí |
+| `grade-4-dev-5` | `4.4.0-grade-4` | 858 | `a03d77cc…85914cd9` | no |
+| `grade-3-dev-5` | `3.4.0-grade-3` | 686 | `e0295877…adeae9ef` | no |
+| `grade-2-dev-5` | `2.4.0-grade-2` | 512 | `e7df495a…4948ca4d` | no |
+| `grade-1-dev-4` | `1.3.0-grade-1` | 363 | `ae911cab…6fb44aa4` | no |
+
+**No se renombró ni se republicó ningún catálogo.** Que un identificador diga
+`dev` es historia de cómo se generó, no una promesa de mutabilidad: cada versión
+publicada es inmutable y está validada. Republicar los cinco para que el nombre
+se lea mejor movería 3.450 entradas, y cada movimiento es riesgo de replay a
+cambio de nada.
+
+## F. Oficialización de FairScore
+
+```text
+fair-score-dev-2 @ 2.0.0-post-tg1-candidate  (official: false)
+        ↓  promoción por copia, sin recalibrar
+fair-score-v1    @ 1.0.0-fair-edition-v1     (official: true)
+```
+
+Las dos candidatas quedan en el registro, **sin editar**: un intento emitido
+bajo una calibración se verifica bajo esa calibración o no se verifica, y borrar
+una versión publicada convierte evidencia guardada en algo que nadie puede
+volver a puntuar.
+
+Evidencia de equivalencia, en cuatro formas independientes:
+
+| Prueba | Resultado |
+|---|---|
+| Comparación campo por campo (`scorePolicyDifferences`) | sin diferencias |
+| Corpus determinista de **2.142 secuencias sintéticas** sobre las 42 Templates del catálogo | 1.936 puntuables: FairScore/componentes idénticos; 206 rechazos iguales |
+| Propiedad sobre evidencia arbitraria (500 casos, `fast-check`) | idéntico |
+| `pnpm game:score` sobre 23.000 planes | `perfect min=10000 mean=10000 max=10000 spread=0`, `rounding ties 0` |
+
+Invariantes explícitamente comprobados y sin mover: partida perfecta = **10.000
+exactos** en las tres bandas y en la carrera de nueve beats; pesos **85 / 10 /
+5**; escalones **100 / 75 / 40 / 10**; factores de dificultad `core 1,00 ·
+standard 1,08 · stretch 1,15`; recuperación fuera del score; Estilo y Promedio
+sin peso.
+
+Lo único que cambia entre las dos identidades es la identidad: mismo
+`fairScore`, mismo `mathRaw`, mismo `mathMax`, mismos `components`, y
+`official` en `true`.
+
+**La ruleset sigue declarando `official: false`, y no es una contradicción.**
+Son dos banderas de capas distintas: la de la ruleset dice que composición,
+recuperación, rareza y costo siguen siendo políticas de desarrollo —subirlas
+exigiría versionarlas todas y mover la huella del plan, que es exactamente el
+riesgo de replay que un congelamiento existe para no correr—; la del score dice
+con qué calibración se rankea, que es la que un resultado publicado tiene que
+poder nombrar.
+
+## G. Prestige en v1
+
+```text
+infraestructura de Prestige        soportada
+oportunidad competitiva ofrecida   ninguna
+techo ofrecido efectivo            0
+rol en el ranking                  segundo criterio de desempate
+columna pública                    no
+```
+
+Congelado como realidad, no autorado. `careerPrestigeOpportunities` está vacío
+(D-S08-084) y `release:verify` lo recomputa: el techo ofrecido es 0 porque la
+suma de lo autorado es 0. El servidor lo sigue recomputando desde el replay y
+el ranking lo sigue usando para desempatar, así que una edición futura que
+autorice oportunidades no necesita tocar el ranking.
+
+**Cambio de v1:** `prestigeScore` salió del DTO del podio público. Una columna
+que diría `0` para toda la feria ocupa ancho en un teléfono de 360 px y sugiere
+que hay algo que conseguir. Sigue en la vista privada del organizador y en la
+respuesta de verificación del propio intento, donde el número significa algo.
+
+## H. Congelamiento de la competencia
+
+### Por qué no hay un estado `FROZEN` nuevo
+
+Los campos competitivos **ya son inmutables**, y no por disciplina:
+`CompetitionStore.updateCompetition` acepta cuatro columnas —`status`,
+`opensAt`, `closesAt`, `resultsFrozenAt`— y ninguna es la seed, la tupla ni la
+versión del aviso. No existe una ruta, una acción de organizador ni un método
+del puerto que las mueva. Agregar un estado para prohibir lo que el tipo ya no
+permite expresar sería un segundo lugar donde declarar la misma verdad, y por lo
+tanto un segundo lugar del que puede quedar desincronizada.
+
+Lo que faltaba era la otra mitad, y es lo que este freeze agrega: **abrir una
+edición exige que corresponda al release congelado**
+(`src/server/competition/freeze.ts`). Una edición creada antes del FREEZE tiene
+campos perfectamente estables que sencillamente no son los de Fair Edition v1.
+
+```text
+DRAFT / UPCOMING  →  OPEN     requiere coincidir con el manifiesto
+OPEN              →  CLOSED   siempre permitido
+cualquiera        →  ARCHIVED siempre permitido
+```
+
+Negarse a **abrir** es la garantía; negarse a cerrar dejaría a un organizador
+sin forma de sacar de circulación una edición equivocada.
+
+### Campos congelados e inmutables
+
+```text
+runSeed · runPlanFingerprint
+engineVersion · rulesetVersion · contentVersion · variantCatalogVersion
+scoreVersion · actionLogVersion · snapshotVersion
+privacyNoticeVersion
+```
+
+### Campos operativos, y los únicos que se mueven
+
+```text
+status · opensAt · closesAt · resultsFrozenAt
+```
+
+## I. Reglas de la competencia
+
+| Regla | v1 |
+|---|---|
+| Seed | una compartida por edición; se genera al hacer bootstrap y queda en la fila |
+| Intentos | ilimitados; **uno activo** por participante (índice único parcial) |
+| Intento que rankea | el **mejor verificado** de cada participante elegible |
+| Envío tardío | hasta `closesAt` más la tolerancia de la edición (300 s por defecto) |
+| Abandono | lo inicia el participante |
+| Orden | FairScore ↓, luego Prestige ↓ |
+| Tercer criterio | **ninguno** |
+| Empate | puesto compartido |
+| Podio | **tres puestos**, no tres filas: el empate entra entero |
+| Descalificado | fuera del ranking, con sus filas intactas |
+| Invalidado | fuera del ranking; el siguiente pasa a ser el efectivo; restaurable |
+
+### Por qué la seed se congela en la edición y no en el release
+
+La decisión canónica del repositorio trata la seed como configuración de la
+**edición**: se genera una vez con aleatoriedad criptográfica al crear la
+competencia, y queda en su fila junto con la huella del plan que produce. El
+manifiesto congela la **política** —`seedPolicy: shared-per-edition`,
+`seedFrozenAt: edition-bootstrap`— y deja el valor donde tiene que estar.
+
+Ponerlo en el release obligaría a publicar un artefacto nuevo por feria y, peor,
+haría que dos ferias distintas jugaran exactamente la misma partida. La
+operación de congelar el valor es de STAGE-10.
+
+## J. Producto público
+
+`/` sigue siendo la única puerta: portada, estado de la competencia, ranking,
+identificación, carrera completa, resultado verificado y volver a jugar son
+estados de una sola dirección. `/organizer` existe detrás de sesión y no se
+enlaza desde ninguna pantalla de estudiante.
+
+El build de producción confirma que no hay ruta pública de desarrollo: con una
+competencia configurada, `/dev/*` devuelve **404** incluso con
+`EGRESADO_DEV_HARNESS=true`. Verificado contra el servidor real, no sólo por
+tipos.
+
+## K. Modelo de datos y privacidad
+
+| Dato | Dónde vive |
+|---|---|
+| Alias | público |
+| Nombre y apellido, año, división | privado; sólo ruta autenticada de organizador |
+| Documento | **no se guarda**: HMAC-SHA-256 por competencia + últimos 4 dígitos |
+| Puntaje verificado, log de acciones | interno; el log no contiene datos de personas |
+| Seed y huella del plan | internos; no salen en el estado público |
+
+Contrato de privacidad congelado: versión del aviso, responsable, contacto,
+domicilio y retención son **configuración obligatoria del despliegue**, con
+nombres fijados en el manifiesto y valores que este repositorio no inventa.
+`EGRESADO_PRIVACY_RETENTION_DAYS` por defecto 120.
+
+## L. Base de datos
+
+```text
+cabeza          20260921000000_competition_fair_mode.sql
+migraciones     2
+huella          faf128c4491bb0f406b520b05094e2b2345324f1e2fc049cc762232005ae214f
+```
+
+- **Aplicación limpia verificada:** `pnpm db:reset` recrea el esquema desde cero
+  y aplica las dos migraciones, dos veces durante esta tarea.
+- **Camino de upgrade desde STAGE-09 verificado:** una edición con
+  `fair-score-dev-2` congelado sigue resolviendo su edición y sus intentos
+  siguen verificándose; lo que no puede es reabrirse bajo el release. Probado en
+  `tests/integration/competition-freeze.test.ts` y observado contra la base real.
+- **Acceso:** RLS habilitada en las siete tablas, sin una sola política; grants
+  revocados a `anon` y `authenticated`; único acceso por `service_role`.
+  Probado **con la clave publicable real** contra la API de datos en
+  `tests/integration/database-access-model.test.ts`, con control positivo: el
+  servidor ve la fila que `anon` no ve.
+- **Restricciones que hacen el trabajo:** identidad única por edición, alias
+  único por edición, índice único parcial de un solo intento activo,
+  finalización condicionada por estado, contador de tasa atómico.
+- **Índices:** `attempts_ranking_idx` parcial, `attempts_participant_idx`,
+  `participants_competition_status_idx`. Medidos, no supuestos (sección P).
+- **Migraciones destructivas:** ninguna. Esta versión no borra ni renombra nada,
+  así que la app anterior corre contra este esquema sin cambios.
+
+## M. Configuración y secretos
+
+### Semántica congelada (release)
+
+Versiones de motor, ruleset, score y catálogo; reglas de ranking, podio e
+intentos; política de seed; versión del contrato de privacidad; esquema.
+
+### Configuración del entorno (despliegue)
+
+```text
+EGRESADO_ENVIRONMENT                  local | staging | production
+NEXT_PUBLIC_APP_URL                   origen canónico
+SUPABASE_INTERNAL_URL                 proyecto
+SUPABASE_SECRET_KEY                   clave de servicio
+EGRESADO_COMPETITION_SLUG             edición activa
+PARTICIPANT_IDENTITY_SECRET           secreto del HMAC de identidad
+EGRESADO_ORGANIZER_USERNAME           credencial del organizador
+EGRESADO_ORGANIZER_PASSWORD_HASH      digest scrypt
+EGRESADO_PRIVACY_CONTROLLER_NAME      institución responsable
+EGRESADO_PRIVACY_CONTROLLER_CONTACT   canal de contacto
+EGRESADO_PRIVACY_CONTROLLER_ADDRESS   domicilio
+EGRESADO_PRIVACY_NOTICE_VERSION       versión del aviso
+EGRESADO_PRIVACY_RETENTION_DAYS       retención
+EGRESADO_SCHOOL_YEARS                 años elegibles (opcional)
+EGRESADO_SCHOOL_DIVISIONS             divisiones (opcional)
+```
+
+Sólo nombres. Ningún valor de este repositorio es una credencial.
+
+`EGRESADO_ENVIRONMENT` es nuevo y existe porque `NODE_ENV=production` sólo dice
+que el build está optimizado: es lo que `next start` pone en la máquina de quien
+desarrolla y en la suite de navegador, que corren un build de producción contra
+`127.0.0.1` a propósito. Ausente con `NODE_ENV=production` significa
+`production`, que es el default seguro.
+
+### Fallo temprano
+
+`src/instrumentation.ts` corre una vez por instancia, **antes del primer
+pedido**, y en `staging` o `production` exige el contrato completo
+(`src/config/production.ts`): https propio y no local, proyecto de base real,
+secreto con entropía real, digest de scrypt con `N ≥ 65536`, datos del
+responsable presentes y **no de ejemplo**, y la compuerta de desarrollo apagada.
+
+El mensaje nombra variables y problemas, **nunca valores**: un log de arranque
+termina en un panel que mira más gente de la que debería ver un secreto.
+
+`pnpm release:preflight` contesta la misma pregunta antes de desplegar.
+
+### Higiene de secretos
+
+- `.env.example` sólo tiene placeholders. `pnpm secrets:check` corre en `verify`.
+- `pnpm secrets:generate` imprime valores nuevos y **no escribe ningún archivo**.
+- Cualquier credencial que haya aparecido en un log, un chat o una nota es, por
+  definición, de desarrollo. La credencial de organizador local **no sirve** para
+  staging ni producción y no se reutiliza.
+- El secreto de identidad **no se rota dentro de una edición abierta**: las
+  claves derivadas dependen de él.
+
+## N. Seguridad
+
+| Control | Estado |
+|---|---|
+| `Content-Security-Policy` | nonce por pedido vía `src/proxy.ts`; `script-src` sin `unsafe-inline`; `connect-src 'self'` |
+| `Strict-Transport-Security` | `max-age=63072000; includeSubDomains`, sólo en producción, sin `preload` |
+| `X-Content-Type-Options` | `nosniff` |
+| `Referrer-Policy` | `strict-origin-when-cross-origin` |
+| `Permissions-Policy` | cámara, geolocalización, micrófono, pago, USB y cohorte apagados |
+| `frame-ancestors` / `X-Frame-Options` | `'none'` / `DENY` |
+| Cookies de sesión | `HttpOnly`, `Secure` en producción, `SameSite=Lax`, `path=/`, expiración del servidor |
+| Tokens | opacos, 32 bytes; la base guarda sólo el SHA-256 |
+| Organizador | scrypt `N = 2¹⁷`, sesión de 8 h |
+| Origen | `Origin` comprobado contra el host; un pedido sin `Origin` sólo pasa sin cookie |
+| Límite de tasa | ventana fija contada en Postgres |
+| Errores | códigos estables; ni stack, ni SQL, ni host, ni configuración |
+
+La política de contenido **se verificó contra el servidor real**: los 13 scripts
+que Next sirve en `/` llevan el nonce, y la suite de navegador carga la página
+entera sin un solo error de consola. Un CSP que rompe la hidratación se ve
+exactamente igual que uno que funciona si sólo se mira el encabezado.
+
+`style-src` admite `'unsafe-inline'` y es deliberado: React escribe atributos
+`style` —las grillas de la agenda y del plano calculan columnas— y restringirlo
+exigiría reescribir esas interacciones el mismo día del congelamiento, a cambio
+de cerrar un vector mucho más débil que el de script, que sí queda cerrado.
+
+### Límite de tasa y el NAT de la escuela
+
+```text
+registro               60 / 5 min   por IP derivada
+emisión de intento     30 / 5 min   por participante
+envío                  60 / 5 min   por participante
+acceso de organizador  10 / 15 min  por IP derivada
+estado público        240 / 1 min
+```
+
+Un edificio entero comparte una IP. El ensayo comprueba las dos mitades: 24
+registros seguidos desde una sola dirección pasan; un cliente que supera el
+límite se corta exactamente en 60 y el resto de la escuela sigue entrando. Los
+límites de intento y envío se cuentan por participante, así que el NAT no los
+toca. La topología real se valida en STAGE-10.
+
+## O. Salud y observabilidad
+
+```text
+GET /api/health            vida    release-manifest
+GET /api/health?ready=1    listo   + competition-config, database, competition
+```
+
+`?ready=1` devuelve **503** cuando algo está en rojo; la vida devuelve 200
+siempre que el proceso responda, porque un orquestador que reinicia por una base
+caída pierde las sesiones de toda la feria para arreglar algo que no está en el
+proceso.
+
+Ninguno de los dos publica un secreto, una cadena de conexión, un dato de una
+persona ni un stack. Probado enumerando cadenas prohibidas sobre la respuesta
+serializada.
+
+La identidad del release sale en tres lugares: el health, la línea JSON de
+arranque y **cada línea del log de competencia**. Durante un incidente, «¿qué
+está desplegado?» se contesta con `curl`.
+
+`CompetitionLogFields` sigue siendo un tipo cerrado de nueve campos opacos, y
+ahora hay un test que comprueba lo que se serializa de verdad, no sólo lo que el
+tipo permite.
+
+## P. Respaldo, restauración y rollback
+
+| Procedimiento | Estado |
+|---|---|
+| Respaldo de base (`pnpm ops:backup`) | **probado localmente**: 16,23 KiB de esquema público y 3,67 MiB de datos |
+| Restauración (`pnpm ops:restore`) | **probada localmente**: 44 competencias, 2.075 participantes y 6.087 intentos restaurados sobre un esquema recién creado |
+| Guardas de restauración | probadas: sin destino explícito no corre; sobre una base con filas exige `--force` |
+| Exportación de resultados (`pnpm ops:export`) | disponible, con encabezado de procedencia |
+| Respaldo/restauración **remotos** | `READY FOR STAGE-10 REHEARSAL` |
+| Rollback de aplicación | procedimiento escrito; `READY FOR STAGE-10 REHEARSAL` |
+
+Las herramientas envuelven `supabase db dump` y `psql`, no un formato propio: un
+respaldo en formato propio sólo se puede restaurar con el código que lo
+escribió, y el momento en que hace falta restaurar es exactamente el momento en
+que ese código puede ser el que falló.
+
+**Lo que un respaldo no devuelve:** `PARTICIPANT_IDENTITY_SECRET` no vive en la
+base. Sin él, las claves de identidad restauradas no se pueden volver a derivar
+y nadie puede reingresar.
+
+**Compatibilidad con rollback:** esta versión no introduce migraciones
+destructivas. El esquema de v1 es el mismo que el de STAGE-09, así que la app
+anterior corre contra esta base sin cambios. La incompatibilidad va en la otra
+dirección y es de datos, no de esquema: una competencia creada con
+`fair-score-v1` no la puede abrir una app que no conozca esa calibración.
+
+## Q. Rendimiento y bundle
+
+### Bundle del estudiante
+
+| Medida | Antes | Ahora |
+|---|---|---|
+| JS inicial de `/` sin comprimir | 2.270,5 KiB | **616,9 KiB** |
+| JS inicial de `/` con gzip | 608,5 KiB | **189,0 KiB** |
+| Chunks servidos en `/` | 11 | 8 |
+| HTML de `/` (gzip) | — | 4,1 KiB |
+| CSS | — | 40,1 KiB |
+| Fuentes | — | 74,3 KiB |
+| Total de chunks del build | — | 2.388,1 KiB |
+
+El cambio: `AttemptRun` —que arrastra el motor y el contenido de los seis años,
+28 Templates y 1031 variantes aprobadas— pasó a `next/dynamic`. Todo eso sigue
+llegando al navegador, porque el juego es local-first (ADR-006) y una carrera no
+puede pedirle un beat al servidor por decisión; lo que cambia es **cuándo**.
+
+Para que la separación no se pague como una espera, se prefetchea al entrar al
+formulario de identificación: mientras el estudiante completa cuatro campos y el
+servidor emite el intento, el chunk ya llegó. **Sin cambio semántico**: la
+partida, el replay y la verificación son idénticos, y la suite de navegador
+juega la carrera entera.
+
+### Baseline local
+
+Medido contra Postgres local. Son baselines de regresión, **no SLOs**: son
+números de una laptop.
+
+| Operación | Mediana | Peor |
+|---|---|---|
+| Registro de participante | 16 ms | 22 ms |
+| Emisión de intento | 432 ms | 446 ms |
+| Verificación por replay | 437 ms | 466 ms |
+| Estado público | 15 ms | 15 ms |
+| Exportación CSV | 28 ms | 28 ms |
+| Ranking · 500 participantes × 3 intentos | 15 ms | 15 ms |
+| Build de producción (limpio) | 15,7 s | — |
+| Carga de 1.500 intentos | 21,5 s | — |
+
+Los ~430 ms de emisión y verificación son **composición y replay del motor**, no
+base de datos: componer la carrera de nueve beats y volver a jugarla es el
+trabajo, y es el mismo que hace que el resultado no dependa del navegador.
+
+## R. Ensayo local de competencia
+
+`tests/integration/competition-rc-simulation.test.ts`, contra Postgres real y
+los servicios reales, recorre la jornada entera:
+
+```text
+abrir contra el release congelado            ✓
+24 registros desde una sola IP (NAT)         ✓
+6 participantes reales, carreras jugadas     ✓ nueve beats, seis años
+empate deliberado en el podio                ✓
+segundo intento peor no desplaza al mejor    ✓
+partida trucada rechazada y fuera del ranking ✓
+invalidar un resultado                       ✓
+descalificar un participante                 ✓
+auditoría sin datos personales               ✓
+podio por puesto con el empate entero        ✓
+exportación CSV sin claves ni tokens         ✓
+cerrar: ranking legible, sin partidas nuevas ✓
+purga de retención sobre datos sintéticos    ✓
+archivar                                     ✓
+```
+
+La escala vive aparte, en `competition-performance.test.ts`: 500 participantes y
+1.500 intentos verificados. Mezclarlas habría dado un test de veinte minutos que
+nadie corre.
+
+## S. Verificación
+
+La continuación ejecutó un único `pnpm verify` completo: exit 0 en **600,27 s**.
+Los barridos profundos identificados como evidencia anterior no se repitieron,
+por instrucción del Product Owner; los demás gates se midieron nuevamente.
+
+| Gate | Resultado |
+|---|---|
+| `pnpm toolchain:check` | verde |
+| `pnpm lint` (incluye fronteras de arquitectura) | verde |
+| `pnpm typecheck` | verde |
+| `pnpm format:check` | verde |
+| `pnpm design:check` | verde |
+| `pnpm test:coverage` | **119 archivos · 2.323 tests · 0 omitidos / todo** |
+| Cobertura | statements 85,67 % · branches 77,58 % · functions 87,68 % · lines 85,90 % |
+| `pnpm game:validate-content` ×6 | verde |
+| `pnpm game:variants check` ×6 | verde |
+| `pnpm game:simulate` ×6 | verde |
+| `pnpm game:simulate:deep` (agente anterior; evidencia aceptada) | 5000 / 5000 egresadas · 0 hallazgos · peor caso 1 Repaso |
+| `pnpm game:score` (agente anterior; evidencia aceptada) | `perfect 10000/10000/10000 spread=0` · `rounding ties 0` |
+| `pnpm game:blind-audit` (agente anterior; evidencia aceptada) | sin cambios · `y5.stage-screen` sigue en K 78,0 · S 40 % |
+| `pnpm game:pacing` (agente anterior; evidencia aceptada) | mediana 12,25–13,83 min sobre 125 carreras, como en STAGE-08 |
+| `pnpm release:check` | verde con Next.js 16.3.5 |
+| `pnpm release:verify` | 57 comprobaciones en verde |
+| `pnpm security:audit` | sin vulnerabilidades conocidas |
+| `pnpm build` | verde, **sin una sola advertencia** |
+| `pnpm test:e2e:only` | **222 tests** en cuatro proyectos |
+| `node scripts/sync-master-spec.mjs --check` | verde |
+| `git diff --check` | limpio |
+
+Delta contra la baseline de STAGE-09: **+11 archivos, +188 tests de Vitest, +4
+E2E**, todos de esta etapa.
+
+Suites nuevas:
+
+| Suite | Qué prueba |
+|---|---|
+| `tests/unit/fair-score-officialisation.test.ts` | equivalencia exacta de la promoción |
+| `tests/unit/release-manifest.test.ts` | manifiesto, huella y guardián de inmutabilidad |
+| `tests/unit/production-config.test.ts` | contrato de producción y fallo temprano |
+| `tests/unit/security-headers.test.ts` | cada directiva del CSP y cada encabezado |
+| `tests/unit/session-cookies.test.ts` | atributos de cookie en modo producción |
+| `tests/unit/observability-redaction.test.ts` | redacción de logs y saneamiento de errores |
+| `tests/unit/operations-restore.test.ts` | restauración atómica, comprobaciones fallidas y errores sin PII |
+| `tests/integration/competition-freeze.test.ts` | inmutabilidad y migración desde STAGE-09 |
+| `tests/integration/database-access-model.test.ts` | RLS y grants con la clave publicable real |
+| `tests/integration/ranking-release-regression.test.ts` | ranking y podio congelados |
+| `tests/integration/competition-rc-simulation.test.ts` | el ensayo de feria completo |
+
+## T. Lo que falta para desplegar
+
+Sólo valores del mundo real y la infraestructura. Ningún trabajo de ingeniería
+de producto.
+
+| Qué | Quién |
+|---|---|
+| Proyecto de Supabase de producción y su clave secreta | operación |
+| Dominio y `NEXT_PUBLIC_APP_URL` en https | operación |
+| `PARTICIPANT_IDENTITY_SECRET` generado en el gestor de secretos | operación |
+| Credencial del organizador, con dueño | institución |
+| **Nombre real de la institución responsable** | institución |
+| **Contacto y domicilio reales para el aviso de privacidad** | institución |
+| Ventana real de la feria (`opensAt` / `closesAt`) | institución |
+| Ventana de retención explícita (120 días es la referencia, no un default de producción) | institución |
+| `EGRESADO_ENVIRONMENT=production` | operación |
+
+`pnpm release:preflight` los verifica sin imprimirlos, y el arranque se niega a
+atender si falta alguno o si alguno sigue siendo un valor de ejemplo.
+
+## U. No bloqueantes, para después de v1
+
+- Techo de Prestige ofrecido en 0: es contenido, y autorarlo es una edición nueva.
+- Pacing validado con jugadores reales.
+- Republicación cosmética de los catálogos `*-dev-*` bajo nombres de release.
+- Oficializar composición, recuperación y rareza para poder declarar la ruleset
+  `official: true`.
+- Observabilidad con proveedor externo; hoy son líneas JSON en stdout.
+- `y5.multi-option-comparison-review`, `y4.shift-coverage` y `y2.intercurso-plan`
+  siguen auditados por políticas y no por barrido exhaustivo.
+- Restauración a un punto en el tiempo del proveedor, en vez de sólo dumps.
+
+## V. Próximo paso
+
+```text
+STAGE-10 — PRODUCTION DEPLOYMENT / HARDENING / DRY RUN / GO-NO-GO
+```
+
+Lo que **no** se hizo acá, por contrato: desplegar, validar contra staging
+remoto, ensayar respaldo y restauración contra producción, ensayar rollback
+remoto, load test remoto, dry run de competencia con infraestructura real y
+GO/NO-GO.
+
+## W. Continuación del trabajo interrumpido — 22 de septiembre
+
+Se retomó en `main`, HEAD `78fc6ee8882188a676074e0a11ca78e86e8b74eb`, con
+los cambios de este RC sin commit. STAGE-09 estaba canónicamente DONE. Los
+conteos y mediciones de las secciones anteriores fueron reportados por el
+agente anterior; esta sección identifica la evidencia nueva y sus diferencias.
+El Product Owner pidió **una sola ejecución completa adicional de `pnpm verify`**,
+aceptando la evidencia anterior cuando coincida, en lugar de repetir dos veces.
+
+Se cerraron estos defectos de terminación:
+
+- Índice, MANIFEST y master omitían cuatro documentos nuevos; se integraron,
+  con trazabilidad y reconciliación del README y de la gobernanza histórica.
+- El logger propagaba propiedades extra y el test aceptaba una fuga de DNI y
+  nombre. Ahora selecciona campos permitidos y el test exige que no se filtren.
+- El arranque anunciaba éxito antes de validar producción; ahora valida primero.
+- Readiness devolvía 200 ante edición ausente (`degraded`); devuelve 503 y dos
+  regresiones separan readiness de liveness.
+- Se corrigieron tres accesos de índice de TypeScript en el E2E de health; el
+  typecheck los detectó. El prefetch opcional del
+  cliente absorbe un fallo de descarga sin generar un rechazo sin manejar.
+- Configuración: se rechazan origen con ruta/query, IPv6 local y dominio de
+  ejemplo; se exige retención explícita y parámetros scrypt verificables.
+- El restore podía continuar tras una sonda fallida, restaurar parcialmente y
+  publicar errores COPY con datos privados. Ahora falla cerrado, restaura en una
+  transacción y sanea su salida; cuatro tests ejercitan esas condiciones.
+- El dump incluía `auth`, fuera de las migraciones de aplicación. La primera
+  restauración descartable lo detectó y se revirtió completamente. Se limita el
+  respaldo a `public`, que es la totalidad de la persistencia de Egresado.
+- Dumps con permisos privados, `backups/` ignorado y exportación sin sobrescribir.
+- El build Docker detectó que `.dockerignore` excluía helpers importados por
+  las CLI de auditoría/pacing. Los tests entran ahora al builder para el
+  typecheck; el runner sigue copiando sólo el standalone. Se excluye `backups/`
+  del contexto para no incorporar datos privados.
+- CI conserva su smoke local declarando el entorno, y ejecuta los dos controles
+  de release. Los tipos regenerados incorporan el RPC existente del rate limit.
+
+Evidencia nueva: instalación congelada, 52 tests puntuales, auditoría sin
+vulnerabilidades, `release:check`, `release:verify` (57 comprobaciones), `db:lint`
+y `db:types`. Ambas migraciones se aplicaron a una **base nueva descartable** en
+el Postgres local ya activo; luego `ops:restore` repuso **44 competencias,
+2.075 participantes y 6.087 intentos** desde `ops:backup`. El dump público midió
+**16.232 KiB de esquema y 3758.243 KiB de datos**, con permisos `0600`.
+Un segundo destino vacío se reconstruyó con esquema y datos del dump en una
+sola transacción, con los mismos conteos.
+Se conserva la base original: no se ejecuta `db:reset` sobre datos preexistentes.
+Los resets históricos de las tablas anteriores son evidencia reportada del
+agente anterior; el ensayo nuevo usa migraciones completas sobre base vacía.
+
+**Resultado: PASS.** Una sola ejecución completa de `pnpm verify`, exit 0,
+**600,27 s**; 119 archivos, **2.323 tests**, 0 omitidos/todo; **222 E2E** en
+cuatro proyectos (2,6 min). Incluye formato, lint/fronteras, TypeScript, diseño,
+cobertura, seis validaciones de contenido/catálogos, seis simulaciones,
+57 comprobaciones del manifiesto y build de producción. El build no emitió
+advertencias; Playwright informa sólo la colisión `NO_COLOR`/`FORCE_COLOR` del
+runner, sin fallos ni reintentos ocultos.
+
+**Reproducibilidad y operación:** instalación desde lockfile, migraciones
+completas en base vacía, restauración esquema+datos en otra base vacía,
+rechazo de destino ocupado y rollback real tras un SQL fallido. Se eliminó
+todo el esquema parcial de la prueba fallida. `pnpm docker:build` pasó tras
+corregir el contexto; el runner ejecuta como `node`, sirve `/` y health 200 en
+modo local, y responde 500 sin servir el producto si falta la configuración
+obligatoria de producción. El proceso de Next puede permanecer vivo con ese
+error: no se confunde con un arranque listo.
+
+**Bundle re-medido:** ocho scripts iniciales, **617,0 KiB raw / 188,5 KiB gzip**
+en el standalone. Concuerda con 616,9 / 189,0 del informe previo; el HTML sin
+competencia pesa 2,8 KiB gzip y no se compara con el HTML de una feria configurada.
+
+**Escala re-medida durante coverage paralelo:** 500 participantes × 3 intentos;
+ranking mediana **23 ms**, peor **28 ms**, carga 83,482 s. Ensayo de servicios
+contra Postgres: registro mediana 95 ms; emisión 1590 ms; replay 1552 ms;
+estado público 14 ms; exportación 52 ms. Es contención de tests en paralelo,
+no un SLO ni una comparación controlada con la medición aislada anterior.
+
+**Corrección de conteo de equivalencia:** el corpus existente no contenía 1.288
+partidas completas. Genera **2.142 secuencias sintéticas sobre 42 Templates**:
+**1.936 puntuables** con FairScore y componentes iguales y **206 rechazadas**
+por ambas políticas. Se corrigió el texto sin cambiar matemática ni tests.
+
+**Limpieza:** se eliminaron las dos bases descartables, los dumps privados y los
+contenedores creados para el smoke. Supabase ya estaba activo al retomar y se
+conserva. `.env.local` no se imprimió ni modificó. No se ejecutaron `docker:up`/
+`docker:down`: el workflow de desarrollo Compose no cambió; se probó el runner
+que sí afecta este RC. No se hizo deploy, push, ensayo remoto, revisión humana
+ni trabajo de producto nuevo. El siguiente paso es STAGE-10.
+
+El código y tests quedaron verificados antes de cerrar esta evidencia. Los
+últimos cambios son documentación y un comentario del corpus; se revalidan
+índices, master, formato y diff sin repetir el gate completo.
+
+---
+
+# FILE: 06-delivery/release-checklist.md
+
+# Checklist del Release Candidate — Egresado Fair Edition v1
+
+Binario. Cada línea está `PASSED`, `READY FOR STAGE-10 REHEARSAL` o `FAILED`.
+
+**`READY FOR STAGE-10 REHEARSAL` no es `PASSED`.** Marca lo que necesita
+infraestructura real y que este repositorio no puede afirmar sin mentir.
+
+```text
+release   egresado-fair-edition-v1 · 1.0.0-rc.1
+huella    1affb2a82f4726a77cedbf4e20c82055f6c04a07d67e42674eb8e9e6da16007e
+```
+
+## Producto congelado
+
+| Item | Estado | Evidencia |
+|---|---|---|
+| GAME FROZEN | `PASSED` | motor `10.0.0`, action log `7`, snapshot `8` en el manifiesto y comprobados |
+| MATH FROZEN | `PASSED` | `game:score` sin spread, `game:blind-audit` sin cambios, `game:simulate:deep` 5000/5000 |
+| CONTENT FROZEN | `PASSED` | cinco catálogos fijados por versión y SHA-256, recomputados |
+| SCORE OFFICIAL | `PASSED` | `fair-score-v1@1.0.0-fair-edition-v1`, `official: true`, equivalencia probada |
+| PRESTIGE V1 EXPLICIT | `PASSED` | techo ofrecido 0, recomputado; fuera del podio público |
+| RANKING FROZEN | `PASSED` | `ranking-release-regression.test.ts` |
+| PODIUM FROZEN | `PASSED` | tres puestos, empate entero |
+| ATTEMPTS FROZEN | `PASSED` | ilimitados, uno activo, mejor verificado, tolerancia |
+| SEED POLICY FROZEN | `PASSED` | `shared-per-edition`, valor en la edición |
+| SCHEMA FROZEN | `PASSED` | cabeza `20260921000000`, huella `faf128c4…` |
+
+## Identidad del release
+
+| Item | Estado | Evidencia |
+|---|---|---|
+| RELEASE MANIFEST | `PASSED` | `src/release/fair-edition-v1.ts` |
+| RELEASE FINGERPRINT | `PASSED` | SHA-256 canónico, candado comprometido |
+| `pnpm release:verify` | `PASSED` | 57 comprobaciones |
+| IMMUTABILITY GUARD | `PASSED` | mover cualquier versión congelada rompe el candado |
+| PACKAGE VERSION ALIGNED | `PASSED` | `package.json` = `releaseVersion` |
+
+## Competencia
+
+| Item | Estado | Evidencia |
+|---|---|---|
+| FROZEN FIELDS IMMUTABLE | `PASSED` | el puerto acepta cuatro columnas operativas |
+| OPEN REQUIRES RELEASE MATCH | `PASSED` | siete desvíos probados, uno por campo |
+| STAGE-09 UPGRADE PATH | `PASSED` | edición vieja verifica; no reabre |
+| SERVER AUTHORITY GREEN | `PASSED` | matriz de ataque de STAGE-09 + ensayo RC |
+| PUBLIC ROUTES CLEAN | `PASSED` | `/dev/*` 404 con competencia configurada |
+
+## Base de datos
+
+| Item | Estado | Evidencia |
+|---|---|---|
+| FRESH MIGRATION | `PASSED` | ambas migraciones en una base descartable vacía; resets del agente anterior conservados como evidencia histórica |
+| UPGRADE FROM STAGE-09 | `PASSED` | replay histórico probado; restauración de 6.087 intentos sobre esquema nuevo |
+| CONSTRAINTS REVIEWED | `PASSED` | suite de contrato contra memoria y Postgres |
+| RLS / GRANTS TESTED | `PASSED` | con la clave publicable real, con control positivo |
+| INDEXES REVIEWED | `PASSED` | ranking 15 ms sobre 500 × 3 |
+| NO DESTRUCTIVE MIGRATION | `PASSED` | esta versión no borra ni renombra |
+
+## Seguridad y configuración
+
+| Item | Estado | Evidencia |
+|---|---|---|
+| PRODUCTION CONFIG FAIL-FAST | `PASSED` | `src/config/production.ts` + arranque |
+| NO SECRETS COMMITTED | `PASSED` | `pnpm secrets:check` en `verify` |
+| CLIENT CANNOT IMPORT SERVER SECRETS | `PASSED` | `server-only` + fronteras de arquitectura |
+| SESSION COOKIES | `PASSED` | `HttpOnly`, `Secure`, `SameSite=Lax`, expiración |
+| ORGANIZER AUTH | `PASSED` | scrypt `N = 2¹⁷`, costo verificado en preflight |
+| RATE LIMIT HANDLES NAT | `PASSED` | 24 registros de una IP pasan; el abuso se corta |
+| SECURITY HEADERS | `PASSED` | CSP con nonce verificado contra el servidor real |
+| ERRORS SANITIZED | `PASSED` | sin stack, SQL, host ni configuración |
+| DEPENDENCY GATE | `PASSED` | `release:check` con Next.js 16.3.5 |
+| DEPENDENCY VULNERABILITIES | `PASSED` | `security:audit` sin hallazgos |
+
+## Privacidad
+
+| Item | Estado | Evidencia |
+|---|---|---|
+| PUBLIC / PRIVATE BOUNDARY | `PASSED` | `PublicSafe<…>` + tests de fuga |
+| RAW DNI NOT PERSISTED | `PASSED` | HMAC por competencia + últimos 4 |
+| PUBLIC PII LEAK TESTS | `PASSED` | DTO, HTML, JSON, logs, health, manifiesto |
+| PRIVACY CONFIG SCHEMA FROZEN | `PASSED` | nombres en el manifiesto, valores en el despliegue |
+| RETENTION / PURGE | `PASSED` | probado sobre datos sintéticos |
+
+## Operación
+
+| Item | Estado | Evidencia |
+|---|---|---|
+| HEALTH / READINESS | `PASSED` | `/api/health` y `?ready=1` |
+| RELEASE ID VISIBLE | `PASSED` | health, arranque y cada línea de log |
+| STRUCTURED LOGS | `PASSED` | una línea JSON por evento |
+| LOG REDACTION | `PASSED` | probado sobre lo serializado |
+| BACKUP PROCEDURE | `PASSED` localmente | 3,67 MiB de datos públicos exportados con permisos 0600 |
+| RESTORE PROCEDURE | `PASSED` localmente | 6.087 intentos restaurados; rollback y rechazo de destino ocupado probados |
+| RUNBOOK | `PASSED` | [runbook de operación](05-operations/fair-operations-runbook.md) |
+| ROLLBACK PROCEDURE | `READY FOR STAGE-10 REHEARSAL` | escrito; no ensayado contra una plataforma |
+| REMOTE BACKUP / RESTORE | `READY FOR STAGE-10 REHEARSAL` | las herramientas apuntan a remoto; no se ejecutó |
+
+## Calidad
+
+| Item | Estado | Evidencia |
+|---|---|---|
+| BUILD GREEN | `PASSED` | sin una sola advertencia |
+| VERIFY GREEN | `PASSED` | evidencia anterior + una corrida de continuación por instrucción del Product Owner |
+| VITEST | `PASSED` | 119 archivos · 2.323 tests |
+| COVERAGE | `PASSED` | 85,67 / 77,58 / 87,68 / 85,90 |
+| E2E | `PASSED` | 222 tests en cuatro proyectos |
+| ACCESSIBILITY | `PASSED` | axe, teclado, 360 px, sin desborde |
+| BUNDLE MEASURED | `PASSED` | 188,5 KiB gzip iniciales en standalone (baseline anterior: 189,0) |
+| PERFORMANCE BASELINE | `PASSED` | registro, emisión, verificación, ranking, exportación |
+| SYNTHETIC COMPETITION | `PASSED` | jornada entera contra Postgres real |
+| REMOTE LOAD TEST | `READY FOR STAGE-10 REHEARSAL` | — |
+| STAGING VALIDATION | `READY FOR STAGE-10 REHEARSAL` | — |
+| COMPETITION DRY RUN | `READY FOR STAGE-10 REHEARSAL` | — |
+
+## Gobernanza
+
+| Item | Estado | Evidencia |
+|---|---|---|
+| BROAD HUMAN REVIEW NOT BLOCKING | `PASSED` | [ADR-027](03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md) |
+| TARGETED HUMAN WINDOWS DOCUMENTED | `PASSED` | mismo ADR |
+| NEXT STAGE IS STAGE-10 | `PASSED` | [roadmap](06-delivery/implementation-sequence.md) |
+
+## Entradas que faltan, y no son ingeniería
+
+```text
+proyecto y clave de producción
+dominio https
+PARTICIPANT_IDENTITY_SECRET de producción
+credencial de organizador con dueño
+nombre real de la institución responsable
+contacto y domicilio reales
+ventana real del evento
+EGRESADO_ENVIRONMENT=production
+```
+
+El arranque se niega a atender si falta alguno, o si alguno sigue siendo un
+valor de ejemplo. `pnpm release:preflight` los verifica sin imprimirlos.
 
 ---
 
@@ -26328,7 +27904,23 @@ Los docentes validan matemática, terminología, ambigüedad, credibilidad del c
 
 # Gates docentes
 
-**Estado:** Teacher Gate 1 `PASSED_WITH_REQUIRED_ADJUSTMENTS`; Teacher Gate 2 pendiente. Este documento define qué se pide decidir y conserva el contrato histórico. El resultado TG1 está en su [acta](06-delivery/teacher-gate-1/09-acta.md).
+> **Superado el 22 de septiembre de 2026 en su carácter bloqueante.**
+> **Teacher Gate 2 ya no es condición de congelamiento ni de despliegue**
+> ([ADR-027](03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md),
+> D-RC-012). Lo que queda disponible son **ventanas de ajuste humano puntual**:
+> acotadas, con destinatario concreto, disparadas por un hallazgo reportado, y
+> nunca como requisito previo de un despliegue.
+>
+> Este documento se conserva entero porque describe un contrato real y porque un
+> registro que reescribe lo que decía antes deja de ser un registro. El marco de
+> revisión por plantilla sigue siendo la mejor guía disponible para una ventana
+> de ajuste puntual.
+>
+> Egresado Fair Edition v1 **no** está `human-reviewed`, `human-certified`,
+> `curriculum-certified` ni `teacher-approved`, y ningún documento de este
+> repositorio lo afirma.
+
+**Estado:** Teacher Gate 1 `PASSED_WITH_REQUIRED_ADJUSTMENTS`; Teacher Gate 2 `SUPERSEDED` como gate bloqueante. Este documento define qué se pide decidir y conserva el contrato histórico. El resultado TG1 está en su [acta](06-delivery/teacher-gate-1/09-acta.md).
 
 Ubicación en el ciclo: [ciclo de entrega real](00-product/real-delivery-lifecycle.md).
 
@@ -26950,6 +28542,7 @@ De requisito de producto a estado de implementación. La columna de estado es un
 | ADR-024 | [Progresión, recuperación y egreso](03-architecture/adr/ADR-024-progression-recovery-and-graduation.md) | Aceptado |
 | ADR-025 | [Evolución acotada de contratos de carrera completa](03-architecture/adr/ADR-025-full-career-contract-evolution.md) | Aceptado; implementación futura |
 | ADR-026 | [Identidad de participante y privacidad de menores en competencia](03-architecture/adr/ADR-026-participant-identity-and-minor-privacy.md) | Aceptado; supersede parcialmente ADR-008 |
+| ADR-027 | [Congelamiento del release y gobernanza de v1](03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md) | Aceptado; supersede el carácter bloqueante de GATE-TG2 |
 
 ## Regla para ADR nuevo
 
@@ -27246,6 +28839,25 @@ Siguen pendientes la oficialización/freeze, validación empírica, autoría eje
 catálogo concreto de logros, operación/auth/retención y el gate post-G1. Label,
 trigger v1, multiobligación, seed común, tracks Prestige, puesto compartido y
 saliencia ya no son aperturas de prediseño.
+
+## PRODUCTION V1 FREEZE — Release Candidate (2026-09-22)
+
+| ID | Decisión | Estado | Evidencia |
+|---|---|---|---|
+| D-RC-001 | **El release es un dato con huella, no un acuerdo.** Existe un manifiesto legible por máquina —`src/release/fair-edition-v1.ts`— que declara motor, action log, snapshot, RNG, ruleset, contenido, catálogos con su SHA-256, política de score, política de Prestige, reglas de intento/ranking/podio, política de seed, contrato de privacidad y cabeza del esquema. Su identidad es `releaseFingerprint`, SHA-256 sobre su serialización canónica, fijada en un candado comprometido. No lleva fecha de build, rama, commit ni máquina: un artefacto reproducible da la misma huella dentro de un año, y el commit ya es la procedencia de la fuente | ACCEPTED · arquitectura de release | [ADR-027](03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md); [RC, sección D](06-delivery/production-v1-release-candidate.md) |
+| D-RC-002 | **El manifiesto declara y no deriva.** Si derivara sus valores del código diría siempre la verdad y no probaría nada: un catálogo regenerado cambiaría la huella y el manifiesto la seguiría sin quejarse. `pnpm release:verify` recomputa cada valor desde la fuente y compara, de modo que un cambio de contenido rompe la verificación en vez de propagarse | ACCEPTED · dirección de la verificación | `scripts/release/verify.ts`, 57 comprobaciones |
+| D-RC-003 | **FairScore se oficializa por copia.** `fair-score-dev-2@2.0.0-post-tg1-candidate` → `fair-score-v1@1.0.0-fair-edition-v1` con `official: true` y **cada número idéntico**. Las dos candidatas quedan en el registro sin editar: un intento emitido bajo una calibración se verifica bajo esa calibración, y borrar una versión publicada convierte evidencia guardada en algo que nadie puede volver a puntuar. Oficializar es un acto de identidad, no de calibración | ACCEPTED · con prueba de equivalencia | corpus de 2.142 secuencias sintéticas (1.936 puntuables), propiedad sobre evidencia arbitraria y `pnpm game:score` con `spread 0` |
+| D-RC-004 | **La ruleset sigue `official: false` y no es una contradicción.** Son banderas de capas distintas: la del score dice con qué calibración se rankea; la de la ruleset dice que composición, recuperación, rareza y costo siguen siendo políticas de desarrollo. Subirla exigiría versionarlas todas y mover la huella del plan, que es exactamente el riesgo de replay que un congelamiento existe para no correr | ACCEPTED · alcance del congelamiento | [RC, sección F](06-delivery/production-v1-release-candidate.md) |
+| D-RC-005 | **No se introduce un estado `FROZEN`.** Los campos competitivos ya son inmutables porque el puerto de persistencia acepta cuatro columnas operativas y ninguna es la seed, la tupla ni la versión del aviso. Un estado nuevo sería un segundo lugar donde declarar la misma verdad, y por lo tanto uno del que puede quedar desincronizada. Lo que se agrega es el vínculo que faltaba: **abrir una edición exige que corresponda al release desplegado**. Cerrar y archivar se permiten siempre, porque negarse a cerrar dejaría a un organizador sin forma de retirar una edición equivocada | ACCEPTED · arquitectura | `src/server/competition/freeze.ts`; `tests/integration/competition-freeze.test.ts` |
+| D-RC-006 | **La seed sigue siendo configuración de la edición, no del release.** El manifiesto congela la política —`shared-per-edition`, `seedFrozenAt: edition-bootstrap`— y deja el valor en la fila. Ponerlo en el release obligaría a publicar un artefacto nuevo por feria y haría que dos ferias distintas jugaran la misma partida | ACCEPTED · confirma la decisión canónica | [modo feria y congelamiento](05-operations/fair-mode-and-competition-freeze.md) |
+| D-RC-007 | **Los catálogos se fijan, no se renombran.** Que un identificador diga `dev` es historia de cómo se generó, no una promesa de mutabilidad: cada versión publicada es inmutable y está validada. Republicar los cinco para que el nombre se lea mejor movería 3.450 entradas y cada movimiento es riesgo de replay a cambio de nada | ACCEPTED · gestión de riesgo | cinco catálogos con SHA-256 en el manifiesto |
+| D-RC-008 | **Prestige v1: techo ofrecido 0, congelado como realidad.** La maquinaria existe y el servidor la recomputa; lo que no hay es contenido que ofrezca una oportunidad (D-S08-084), y autorarla sería contenido nuevo. `prestigeScore` **sale del DTO del podio público**: una columna que diría 0 para toda la feria ocupa ancho en un teléfono de 360 px y sugiere que hay algo que conseguir. Sigue en la vista del organizador y en la verificación del propio intento | ACCEPTED · producto | [RC, sección G](06-delivery/production-v1-release-candidate.md) |
+| D-RC-009 | **`EGRESADO_ENVIRONMENT` clasifica el despliegue en vez de inferirlo.** `NODE_ENV=production` sólo dice que el build está optimizado: es lo que `next start` pone en la máquina de quien desarrolla y en la suite de navegador, que corren un build de producción contra `127.0.0.1` a propósito. Ausente con `NODE_ENV=production` significa `production`, que es el default seguro: un despliegue real que se olvide de declararlo arranca con las comprobaciones puestas. El arranque exige el contrato completo y **nombra variables, nunca valores** | ACCEPTED · configuración | `src/config/production.ts`, `src/instrumentation.ts`, `pnpm release:preflight` |
+| D-RC-010 | **La política de contenido usa nonce por pedido, no `unsafe-inline`.** Next escribe el payload de RSC en scripts en línea, así que `script-src 'self'` a secas rompería la aplicación; la salida barata era `'unsafe-inline'`, que deja la directiva presente y sin efecto. Se implementó el nonce con `src/proxy.ts` sobre los documentos y se **verificó contra el servidor real**: los trece scripts de `/` lo llevan y la página carga sin un error de consola. `style-src` sí admite `'unsafe-inline'`, porque React escribe atributos `style` en las grillas y cerrarlo exigiría reescribir esas interacciones el día del congelamiento | ACCEPTED · seguridad, con verificación | `src/lib/ui/security-headers.ts`; `tests/e2e/foundation.spec.ts` |
+| D-RC-011 | **La partida se carga aparte de la portada.** `AttemptRun` arrastra el motor y el contenido de los seis años; todo eso tiene que llegar al navegador (ADR-006) pero no antes de la portada. Con `next/dynamic` y prefetch al entrar al formulario, el JS inicial de `/` pasa de 608,5 a **189,0 KiB con gzip** sin un solo cambio semántico. Importa donde el producto se juega: un Android modesto sobre el Wi-Fi de una escuela llena | ACCEPTED · rendimiento, medido | [RC, sección Q](06-delivery/production-v1-release-candidate.md) |
+| D-RC-012 | **Ninguna revisión humana amplia bloquea v1.** Teacher Gate 2 y la revisión del Departamento de Matemática humano dejan de ser condición de congelamiento y de despliegue; supersede el carácter bloqueante de D-S08-094 y D-S08-095. El gate matemático vigente es el que el repositorio cerró. Quedan disponibles **ventanas de ajuste humano puntual**, acotadas y por hallazgo. Este repositorio **no afirma** `human-reviewed`, `human-certified`, `curriculum-certified` ni `teacher-approved`, y la evidencia histórica se conserva entera | PRODUCT OWNER DECISION · gobernanza | [ADR-027](03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md) |
+| D-RC-013 | **El gate de dependencias de despliegue entra en `pnpm verify`.** `pnpm release:check` existía, gobernaba despliegues públicos según `AGENTS.md`, y estaba en rojo sin que nadie lo corriera: Next.js estaba fijado en `16.3.1`, por debajo del parche `16.3.2` que el propio gate exige. Se subió a `16.3.5` y el gate corre dentro de la verificación transversal, que es donde una compuerta que nadie ejecuta deja de servir | ACCEPTED · release engineering | `scripts/verify.mjs` |
+| D-RC-014 | **El timeout de Vitest sube de 5 a 30 s, por medición.** El default de cinco segundos es correcto para una suite de unidades; ésta juega carreras enteras contra el motor y sus tests pesados cuestan entre uno y veintiséis segundos medidos en aislamiento. Con dieciséis workers, un test de un segundo y pico superaba los cinco según qué más estuviera corriendo: el efecto no era que la suite fallara sino que fallaba **a veces**, que es la peor propiedad de un gate | ACCEPTED · estabilidad de la verificación | `vitest.config.ts` |
 
 ---
 
@@ -27743,7 +29355,7 @@ Estas decisiones requieren evidencia de prototipo, playtest, implementación u o
 
 ## Engine y scoring
 
-24. ¿Qué aprobación/freeze y evidencia empírica requiere la política oficial? Mecanismo/redondeo implementados en ADR-023; se conserva `fair-score-dev-2` 85/10/5, no oficial. Velocidad/bonus temporales excluidos de v1. *Gate: STAGE-09/TG2 y FREEZE.*
+24. ~~¿Qué aprobación/freeze y evidencia empírica requiere la política oficial?~~ **Cerrada el 2026-09-22 (D-RC-003).** El FREEZE de producción publicó `fair-score-v1@1.0.0-fair-edition-v1` con `official: true` y **los mismos números** que `fair-score-dev-2`: 85/10/5, los cuatro escalones y los factores 1,00/1,08/1,15. La aprobación es la de los gates que el repositorio cerró —Teacher Gate 1 más el Departamento de Matemática asistido por IA—, y la evidencia de que la promoción no recalibró nada son 1.936 secuencias puntuadas de un corpus determinista de 2.142, una propiedad sobre evidencia arbitraria y los 23.000 planes de `pnpm game:score` con `spread 0`. Velocidad y bonus temporales siguen excluidos de v1. Ver [ADR-027](03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md).
 25. ~~¿Qué algoritmo PRNG y contrato de consumo/versionado se adopta para la primera implementación?~~ **Cerrada por [ADR-012](03-architecture/adr/ADR-012-seeded-prng-and-substreams.md)**: `pure-rand` `xoroshiro128plus` fijado, substreams derivados por namespace y golden replays en `tests/unit/engine-golden.test.ts`.
 26. ¿Durante cuánto tiempo y mediante qué artefactos se conservan engines, rulesets y contenido compatibles para reanudar o reproducir runs históricas? *Gate: prometer compatibilidad de resume/replay entre releases.*
 27. ~~¿Señal temporal para puntuar/desempatar?~~ **Supersedida v1:** tiempo sólo diagnóstico UX/telemetría. El cierre operativo del servidor no es velocidad de juego.
@@ -27777,7 +29389,7 @@ Incorporadas desde el [Project Blueprint v0.2](07-reference/blueprint-v0.2-integ
 41. ~~¿Tercer criterio?~~ **Cerrada v1:** puesto compartido. Premios comunes o desafío separado se anuncian por el organizador, sin agregar criterio al ranking. *Gate operativo: antes de repartir premios.*
 42. ~~¿El acto del 25 de Mayo entra a producción?~~ **Cerrada por TG1-13:** `KEEP` pedagógico; su narrativa debe enriquecerse y diversificarse en STAGE-08. No se agregó Aura competitiva porque hoy no existe una evidencia independiente del F1 matemático.
 43. ~~¿Cuál es la duración objetivo real?~~ **Cerrada por TG1-12:** 8–10 minutos para la carrera completa, como target UX sin timer ni score de velocidad.
-44. **Narrowed por TG1-03/TG1-08:** las bandas `CORE / STANDARD / STRETCH` y el principio de una recompensa competitiva pequeña están aceptados. Sigue **OPEN** la calibración exacta de factores; 1,00/1,08/1,15 permanece candidata y separada de los costos de scheduling 1,00/1,50/2,10.
+44. ~~**Narrowed por TG1-03/TG1-08:** ... la calibración exacta de factores.~~ **Cerrada para v1 el 2026-09-22 (D-RC-003).** Las bandas y el principio de recompensa pequeña siguen aceptados, y los factores **1,00/1,08/1,15 quedaron congelados** dentro de `fair-score-v1`, separados de los costos de scheduling 1,00/1,50/2,10. Sigue abierta la calibración empírica **para una edición futura**, que sería una versión nueva de la política y no una edición de ésta.
 45. ¿Qué desafíos deben ofrecer fórmula, calculadora o material de referencia, y esa disponibilidad cambia en modo competitivo? *Gate: Teacher Gate 1.* Se cruza con la pregunta 7.
 
 ## Contenido y producto, sin gate docente inmediato
@@ -27824,9 +29436,9 @@ ADR-025 y STOP post-G1 preservado. No se declara runtime nuevo.
 
 Abiertas por la [adjudicación del Departamento de Matemática provisional](04-quality/mathematics-department-ai-adjudication.md) y por el diferimiento de la revisión humana (D-S08-095). Las 63–65 no bloquean la remediación. La 66 y la 67 se cerraron el 17 y el 18 de septiembre con sus enmiendas de contrato, y con ellas cerró la remediación matemática completa. La 68 y la 69 las abrió la [re-auditoría independiente](04-quality/independent-mathematics-reaudit.md) del 18 de septiembre y las **cerró la [adjudicación posterior](04-quality/post-reaudit-mathematics-findings-adjudication.md)** del mismo día, convirtiéndolas en contratos ejecutables. La 70 y la 71 quedan abiertas para la revisión humana diferida.
 
-63. ¿Cómo se ejecuta la revisión del Departamento de Matemática humano diferida a Final Delivery / Pre-Release Acceptance respecto de Teacher Gate 2: es parte de TG2, lo precede o es un gate propio? *Gate: planificar la aceptación de pre-release.* Mientras tanto, ningún documento la da por hecha ni la fusiona con TG2.
-64. ¿Los sign-offs manuales explícitos que la [guía de autoría](01-game-design/content-authoring-guide.md#profundidad-de-variantes) exige para doce Templates —incluida la rueda del Día del Estudiante, que hoy figura como gate humano de STAGE-08— se ejecutan también en la revisión humana diferida, o conservan su momento actual? *Gate: cierre de STAGE-08.* La decisión D-S08-095 no los difirió.
-65. Las banderas de riesgo aceptado de la adjudicación —cobertura de probabilidad y funciones, memorización dentro de una edición Fair, piso de la opción segura del mural y de la escalera asimétrica— requieren juicio humano. *Gate: revisión humana diferida.* Ver [sección N](04-quality/mathematics-department-ai-adjudication.md#n-riesgos-aceptados-y-banderas-para-la-revisión-humana-final).
+63. ~~¿Cómo se ejecuta la revisión del Departamento de Matemática humano respecto de Teacher Gate 2?~~ **Cerrada el 2026-09-22 (D-RC-012).** La pregunta suponía que alguna de las dos era requisito de release, y bajo la gobernanza actual **ninguna lo es**: ni Teacher Gate 2 ni la revisión humana amplia bloquean el congelamiento ni el despliegue de v1. Lo que queda son **ventanas de ajuste humano puntual**, acotadas y disparadas por un hallazgo concreto, que no necesitan una posición en la secuencia de gates. Ningún documento de este repositorio da por hecha una revisión humana ni la presenta como ocurrida. Ver [ADR-027](03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md).
+64. ¿Los sign-offs manuales explícitos que la [guía de autoría](01-game-design/content-authoring-guide.md#profundidad-de-variantes) exige para doce Templates —incluida la rueda del Día del Estudiante, que hoy figura como gate humano de STAGE-08— se ejecutan también en la revisión humana diferida, o conservan su momento actual? *Gate: cierre de STAGE-08.* La decisión D-S08-095 no los difirió. **Actualización v1 (2026-09-22, ADR-027):** no bloquea v1; cualquier revisión manual se limita a una ventana puntual por hallazgo. Se conserva la pregunta histórica sobre organización de una eventual revisión.
+65. Las banderas de riesgo aceptado de la adjudicación —cobertura de probabilidad y funciones, memorización dentro de una edición Fair, piso de la opción segura del mural y de la escalera asimétrica— requieren juicio humano. *Gate: revisión humana diferida.* Ver [sección N](04-quality/mathematics-department-ai-adjudication.md#n-riesgos-aceptados-y-banderas-para-la-revisión-humana-final). **Actualización v1 (2026-09-22, ADR-027):** riesgos conservados, sin revisión humana amplia obligatoria; se atienden puntualmente si aparece un hallazgo concreto.
 66. ~~**RS-MAT-008 · `y5.stage-screen`: ¿con qué techo de estrategia ciega se mide la pantalla del acto?**~~ **Cerrada el 2026-09-18 (D-S08-116):** con el mínimo factible demostrado, `K ≤ 78` sobre veinticinco variantes. «Entera» es válida en toda variante y nunca baja de `efficient` donde algún recorte vale, así que `K = 75 + 25·w`, y los puntos 7 y 9 obligan a `w ≥ 1/10`. El catálogo publicado toca ese piso exacto. Ver la [adjudicación final del techo](04-quality/rs-mat-008-blind-ceiling-final-adjudication.md).
 67. ~~**STOP de RS-NEW-001, criterio 3**~~ **Cerrada el 2026-09-17 (D-S08-113):** el criterio se reformuló sobre planes matemáticamente válidos —las tres disposiciones aparecen en planes válidos, «recortar» alcanza `efficient` y los óptimos siguen usando mantener y repartir—, sin tocar la escalera. El catálogo vigente ya lo cumple en 25 de 25 variantes. Ver la [adjudicación](04-quality/mathematics-remediation-contract-conflict-adjudication.md#e-oq-67-y5course-project-final).
 68. ~~**¿Con qué techo de estrategia ciega se miden las Templates de construcción, y cómo se protege a las de cantidades de la respuesta constante?**~~ **Cerrada el 2026-09-18 (D-S08-123, D-S08-124):** con techos **por Template**, no universales. `y3.course-project-tech` y `y4.course-project-fundraiser` quedan en `K ≤ 65 · S ≤ 35 %`, justificados por estudio de factibilidad —57,50 y 40,00 alcanzables— y elegidos de modo que **ninguna corrección de una sola palanca los cumpla**. La protección es la que ya funciona en las Templates sanas, pero por su razón matemática: en 3.º, ampliar el espacio de objetivos **y** hacer que los topes aprieten; en 4.º, **rotar el orden de los ítems por margen por minuto**. Ver [RS-RA-002](04-quality/post-reaudit-mathematics-remediation-spec.md#5-rs-ra-002-y3course-project-tech) y [RS-RA-003](04-quality/post-reaudit-mathematics-remediation-spec.md#6-rs-ra-003-y4course-project-fundraiser). Texto original: La re-auditoría encontró que `y3.course-project-tech` se resuelve con video 4 · entrevistas 4 · láminas 6 (`K 95,83`, óptima en 83 %) y `y4.course-project-fundraiser` con panchos 3 · tortas 0 · bebidas 9 (`K 92,80`, óptima en 92 %), las dos puntuables y por encima de todo techo que la remediación fijó (D-S08-119). La causa está identificada —sus máximos de ítem son constantes en todo el catálogo mientras los objetivos por variante recorren un rango chico— y la protección que ya funciona en las otras cuatro Templates de cantidades también: **variar ítems o máximos entre variantes**. Falta decidir el techo y si la corrección va por generador, por catálogo o por gate. *Gate: nueva adjudicación matemática, antes del sign-off provisional.*
@@ -28238,6 +29850,13 @@ Estas preguntas están registradas en [preguntas abiertas](07-reference/open-que
 - [x] Re-auditoría independiente de ronda 2: los cinco contratos verificados desde afuera y el veredicto `FAILED` con sus tres bloqueantes, en [la re-auditoría de ronda 2](04-quality/independent-mathematics-reaudit-round-2.md).
 - [x] Sprint de cierre matemático de STAGE-08: la familia finita de ocho atajos de baja complejidad, el rediseño de `y3.course-project-tech` y de `y4.course-project-fundraiser`, los tres atajos cerrados dentro del sprint y la matriz final de exposición, en [el informe de cierre](04-quality/stage-08-mathematics-final-closure-sprint.md); la auditoría final de cierre queda pendiente.
 
+## Release Candidate v1
+
+- [x] ADR-027 y registro de decisiones: gobernanza v1 y revisión humana amplia no bloqueante.
+- [x] Manifiesto y candado verificables con `pnpm release:verify`.
+- [x] [Reporte del RC](06-delivery/production-v1-release-candidate.md), [checklist](06-delivery/release-checklist.md) y [runbook operativo](05-operations/fair-operations-runbook.md).
+- [x] STAGE-10 conserva los ensayos remotos y GO/NO-GO.
+
 ---
 
 # FILE: README.md
@@ -28329,7 +29948,7 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 - `security-privacy.md`: seguridad, privacidad y anti-cheat.
 - `analytics-observability.md`: eventos, métricas y observabilidad.
 - `deployment-and-environments.md`: ambientes, CI/CD y despliegue.
-- `adr/`: decisiones arquitectónicas formales; [ADR-025](03-architecture/adr/ADR-025-full-career-contract-evolution.md) gobierna contratos futuros de carrera completa y [ADR-026](03-architecture/adr/ADR-026-participant-identity-and-minor-privacy.md) la identidad de participante y la privacidad de menores en competencia.
+- `adr/`: decisiones arquitectónicas formales; [ADR-025](03-architecture/adr/ADR-025-full-career-contract-evolution.md) gobierna contratos futuros de carrera completa y [ADR-026](03-architecture/adr/ADR-026-participant-identity-and-minor-privacy.md) la identidad de participante y la privacidad de menores en competencia; [ADR-027](03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md) gobierna el release y los gates de v1.
 
 ### 04-quality
 - `ai-mathematics-department-provisional-signoff.md`: el gate que cierra la fase del Departamento de Matemática de IA: la cadena de evidencia completa, el endurecimiento acotado de la instrumentación —identidad semántica de magnitudes y profundidad de cobertura declarada— y las banderas que quedan para la revisión humana.
@@ -28363,12 +29982,15 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 - `threat-model.md`: amenazas y mitigaciones.
 
 ### 05-operations
+- `fair-operations-runbook.md`: operación del RC v1, respaldo, restauración y rollback; ensayos remotos en STAGE-10.
 - `fair-runbook.md`: operación durante la feria.
 - `fair-mode-and-competition-freeze.md`: intentos, congelamiento de versiones, control de cambios, cierre y privacidad.
 - `leaderboard-and-moderation.md`: rankings, nicknames y moderación.
 - `fallback-and-incident-plan.md`: funcionamiento degradado y recuperación.
 
 ### 06-delivery
+- `production-v1-release-candidate.md`: identidad congelada, contratos y evidencia del RC v1.
+- `release-checklist.md`: checklist local y ensayos pendientes de STAGE-10.
 - `mvp-backlog.md`: backlog priorizado.
 - `implementation-sequence.md`: roadmap canónico — etapas, estado, alcance, dependencias, gates y criterios de aceptación.
 - `current-stage.md`: vista corta de la etapa activa, su alcance y qué no implementar todavía.

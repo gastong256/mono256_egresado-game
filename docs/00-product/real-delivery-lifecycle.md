@@ -1,6 +1,9 @@
 # Ciclo de entrega real
 
-**Estado: LOCKED** para la secuencia de fases y la restricción externa; **TEACHER GATE** para lo que cada gate docente debe aprobar.
+**Estado: LOCKED** para la secuencia de fases y la restricción externa. La Fase E
+(Teacher Gate 2) dejó de ser bloqueante el 22 de septiembre de 2026
+([ADR-027](../03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md));
+el resto de la secuencia no cambia.
 
 Este documento describe cómo se entrega Egresado *de verdad*, no un ciclo de producto genérico. La diferencia importa porque el ciclo real tiene una restricción que ningún proceso de documentación puede compensar: **es probable que no haya playtest con estudiantes antes de la feria**.
 
@@ -13,8 +16,8 @@ flowchart TD
     A[Fase A · Demo candidata de 7.º] --> B[Fase B · Teacher Gate 1]
     B --> C[Fase C · Correcciones y congelamiento de fundaciones]
     C --> D[Fase D · Juego completo 1.º–5.º + ranking]
-    D --> E[Fase E · Teacher Gate 2]
-    E --> F[Fase F · Congelamiento de competencia y hardening]
+    D --> F[Fase F · Congelamiento de competencia y hardening]
+    D -.-> E[Fase E · Teacher Gate 2 · opcional]
     F --> G[Fase G · Semana de feria]
     G --> H[Fase H · Post-feria]
 ```
@@ -47,24 +50,36 @@ escalabilidad post-G1 se ejecutó el 14 de septiembre y pasó con hardening
 resuelto, así que producir 2.º–5.º queda autorizado. Epílogo, carrera oficial y ranking siguen sin implementar.
 Ver [etapa actual](../06-delivery/current-stage.md).
 
-**Validación matemática de Fase D (D-S08-095).** La revisión del Departamento de
-Matemática humano sobre 1.º–5.º **no se elimina: se difiere a Final Delivery /
-Pre-Release Acceptance**. Hasta entonces, el gate es un Departamento de
-Matemática provisional asistido por IA —pre-revisión, adjudicación independiente,
-remediación, re-auditoría independiente y sign-off provisional—, que reduce riesgo
-de contenido pero **no es aprobación docente** y no se presenta como tal. Cómo se
-ubica esa revisión humana respecto de Teacher Gate 2 es una
-[pregunta abierta](../07-reference/open-questions.md). Estado en la
-[adjudicación](../04-quality/mathematics-department-ai-adjudication.md).
+**Validación matemática de Fase D (D-S08-095, superado por D-RC-012).** La
+revisión del Departamento de Matemática humano sobre 1.º–5.º se había diferido a
+Final Delivery. Desde el **22 de septiembre de 2026** deja de ser requisito de
+v1: el gate vigente es el Departamento de Matemática asistido por IA
+—pre-revisión, adjudicación independiente, remediación, re-auditoría
+independiente, sign-off provisional y auditoría final de cierre—, que reduce
+riesgo de contenido y **no es aprobación docente**, y este repositorio no lo
+presenta como tal. Estado en la
+[adjudicación](../04-quality/mathematics-department-ai-adjudication.md) y en
+[ADR-027](../03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md).
 
 
-### Fase E — Teacher Gate 2
+### Fase E — Teacher Gate 2 · opcional desde 2026-09-22
+
+> **Ya no bloquea la Fase F.** El congelamiento ocurrió sin este gate
+> ([ADR-027](../03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md)).
+> Lo que queda son ventanas de ajuste humano puntual, disparadas por un hallazgo
+> concreto y no por calendario.
 
 Revisión de aceptación del candidato completo. No es otra exploración de concepto: se revisan contenido final, progresión, comportamiento del score, duración, reglas de competencia y detalles de presentación.
 
 ### Fase F — Congelamiento de competencia y hardening
 
-Se congelan las versiones de contenido, reglas y score. Después corren simulación, carga, red, seguridad, accesibilidad, QA móvil y ensayo operativo. Ver [modo feria y congelamiento](../05-operations/fair-mode-and-competition-freeze.md).
+**El congelamiento se completó el 22 de septiembre de 2026.** Las versiones de
+contenido, reglas y score quedaron fijadas en un manifiesto con huella; ver el
+[release candidate de producción v1](../06-delivery/production-v1-release-candidate.md).
+El hardening contra infraestructura real —carga, red, rollback ensayado, dry run
+y GO/NO-GO— es
+[STAGE-10](../06-delivery/implementation-sequence.md#stage-10-production-hardening).
+Ver también [modo feria y congelamiento](../05-operations/fair-mode-and-competition-freeze.md).
 
 ### Fase G — Semana de feria
 

@@ -163,3 +163,10 @@ Estas preguntas están registradas en [preguntas abiertas](07-reference/open-que
 - [x] Ronda 2: implementación, matriz 42/42 y verificación completa en [el reporte](04-quality/targeted-post-reaudit-mathematics-remediation.md); re-audit independiente separado.
 - [x] Re-auditoría independiente de ronda 2: los cinco contratos verificados desde afuera y el veredicto `FAILED` con sus tres bloqueantes, en [la re-auditoría de ronda 2](04-quality/independent-mathematics-reaudit-round-2.md).
 - [x] Sprint de cierre matemático de STAGE-08: la familia finita de ocho atajos de baja complejidad, el rediseño de `y3.course-project-tech` y de `y4.course-project-fundraiser`, los tres atajos cerrados dentro del sprint y la matriz final de exposición, en [el informe de cierre](04-quality/stage-08-mathematics-final-closure-sprint.md); la auditoría final de cierre queda pendiente.
+
+## Release Candidate v1
+
+- [x] ADR-027 y registro de decisiones: gobernanza v1 y revisión humana amplia no bloqueante.
+- [x] Manifiesto y candado verificables con `pnpm release:verify`.
+- [x] [Reporte del RC](06-delivery/production-v1-release-candidate.md), [checklist](06-delivery/release-checklist.md) y [runbook operativo](05-operations/fair-operations-runbook.md).
+- [x] STAGE-10 conserva los ensayos remotos y GO/NO-GO.

@@ -6,9 +6,17 @@ El motor ejecuta una run completa de punta a punta: progresión por etapas, sele
 
 Desde STAGE-09 ese juego está envuelto en una **competencia con servidor autoritativo**: el producto público vive en `/`, el servidor emite cada intento, vuelve a jugar lo enviado para recomputar el puntaje y publica un ranking por mejor intento verificado donde lo único que se ve de una persona es su alias. La identificación del participante sigue [ADR-026](docs/03-architecture/adr/ADR-026-participant-identity-and-minor-privacy.md): el documento no se guarda, se deriva.
 
-Todavía no hay contenido de juego definitivo. Las políticas de scoring, dificultad y perfil siguen siendo de desarrollo: `createRuleset({ official: true })` falla a propósito mientras existan, y oficializar la configuración de competencia es FREEZE, no esta etapa.
+**Egresado Fair Edition v1 — Release Candidate `1.0.0-rc.1`.** El manifiesto fija
+motor, contenido, catálogos y reglas de competencia. FairScore se oficializa sin
+cambiar su matemática; las políticas de composición conservan sus identidades
+históricas. Ver [reporte del RC](docs/06-delivery/production-v1-release-candidate.md),
+[checklist](docs/06-delivery/release-checklist.md) y
+[runbook operativo](docs/05-operations/fair-operations-runbook.md).
 
-> **Release público bloqueado:** el repositorio fija Next.js `16.3.1`, anterior al parche de seguridad anunciado para `16.3.2`. `pnpm release:check` falla deliberadamente hasta actualizar Next.js y su lockfile, y volver a ejecutar todos los gates. No desplegar esta revisión públicamente.
+Next.js está fijado en `16.3.5`; `pnpm release:check` y `pnpm release:verify`
+forman parte de `pnpm verify`. El RC no autoriza un despliegue: STAGE-10 conserva
+staging, ensayos remotos y GO/NO-GO. La revisión humana amplia no bloquea v1
+([ADR-027](docs/03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md)).
 
 ## Inicio rápido nativo
 
@@ -33,6 +41,8 @@ pnpm db:start
 pnpm db:env
 pnpm dev
 ```
+
+Para ejecutar un build local con `pnpm start`, declarará `EGRESADO_ENVIRONMENT=local` en `.env.local`; staging y producción exigen configuración real.
 
 `pnpm db:env` crea `.env.local` atómicamente y no muestra valores. Usa modo `0600` en POSIX; en Windows hereda la ACL del checkout, por lo que debe usarse un directorio de usuario no compartido. La salida directa del CLI de Supabase puede contener credenciales locales: no copiarla en issues, chats ni logs compartidos. Al terminar:
 
@@ -91,14 +101,14 @@ pnpm exec playwright install chromium
 - `src/components`: UI; no importa servidor ni Supabase directamente.
 - `src/game`: motor TypeScript puro, determinista y sin React, DOM, red, DB, `process`, hora global ni `Math.random()`. Sólo admite `zod` y `pure-rand`, declarados en una lista blanca de fronteras. Ver [game engine](docs/03-architecture/game-engine.md).
 - `src/components/game`: adaptador entre React y el motor. Recoge respuestas y despacha comandos; nunca evalúa una respuesta.
-- `src/content`: frontera reservada para contenido como datos; se creará cuando exista contenido ejecutable autorizado. Las fixtures de desarrollo viven aisladas en `src/game/testing`.
+- `src/content`: contenido versionado de los seis años; las fixtures de desarrollo viven aisladas en `src/game/testing`.
 - `src/server`: casos de uso autoritativos y adapters de persistencia.
 - `src/lib`: utilidades y adapters compartidos explícitamente aprobados.
 - `src/config`: validación tipada de ambiente público y server-only.
-- `supabase`: configuración, migraciones y seed locales; hoy no define tablas de juego.
+- `supabase`: configuración, migraciones y tablas de competencia, identidad, sesiones, intentos y auditoría.
 - `tests`: unit, component, integration, property y E2E.
 
-ESLint y un `tsconfig` aislado del game core hacen cumplir estas fronteras. El navegador sigue siendo no confiable y el score oficial futuro deberá reconstruirse en servidor.
+ESLint y un `tsconfig` aislado del game core hacen cumplir estas fronteras. El navegador sigue siendo no confiable y el score oficial se reconstruye en servidor.
 
 ## Documentación
 
@@ -117,10 +127,9 @@ ESLint y un `tsconfig` aislado del game core hacen cumplir estas fronteras. El n
 
 Vercel continúa siendo la topología canónica prevista para producción; la imagen Docker es un artefacto portable y de paridad, no una decisión de proveedor alternativa. Ningún despliegue público está habilitado en esta base.
 
-## Estado de la remediación matemática
+## Estado actual
 
-La [ronda 2](docs/04-quality/targeted-post-reaudit-mathematics-remediation.md)
-está DONE con tres `pnpm verify` consecutivos en verde. STAGE-08 sigue IN_PROGRESS;
-el siguiente gate es Independent Mathematics Re-Audit Round 2. No constituye
-sign-off provisional ni revisión humana. Estado completo en
-[la etapa actual](docs/06-delivery/current-stage.md).
+STAGE-08 y STAGE-09 están cerrados. El congelamiento de v1 y sus controles se
+documentan en [la etapa actual](docs/06-delivery/current-stage.md). La validación
+matemática por IA está completa según los gates cerrados; no se afirma revisión
+humana amplia. El siguiente paso es STAGE-10.

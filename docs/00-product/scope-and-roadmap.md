@@ -116,8 +116,8 @@ Las capas MVP describen **qué se construye**. Las fases del [ciclo de entrega r
 | — | Fase B — Teacher Gate 1 | Departamento de Matemática |
 | — | Fase C — congelamiento de fundaciones | equipo |
 | MVP 1 — producto web jugable | Fase D — producción del juego completo | tests, simulación y auditorías |
-| — | Fase E — Teacher Gate 2 | Departamento de Matemática |
-| MVP Feria — operación real | Fase F — congelamiento y hardening | ensayo de carga, red y operación |
+| — | Fase E — Teacher Gate 2 · **opcional desde 2026-09-22** | ventanas de ajuste puntual, por hallazgo ([ADR-027](../03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md)) |
+| MVP Feria — operación real | Fase F — congelamiento **`DONE`** y hardening | congelamiento cerrado; carga, red y operación remotas en STAGE-10 |
 | — | Fase G — semana de feria | **primera evidencia real de uso** |
 | Post-MVP | Fase H — post-feria | decisión de producto |
 

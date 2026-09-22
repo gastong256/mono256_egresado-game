@@ -1,9 +1,9 @@
 # Modo feria, congelamiento y control de cambios
 
-**Estado: dirección de producto v1 cerrada; implementada en STAGE-09.**
-El congelamiento sigue siendo política vigente ([runbook](fair-runbook.md),
-[Definition of Done](../06-delivery/definition-of-done.md)); cierre de diseño no
-oficializa las políticas de desarrollo.
+**Estado: implementado en STAGE-09 y congelado para v1 por ADR-027.**
+El [manifiesto y reporte RC](../06-delivery/production-v1-release-candidate.md)
+fijan las versiones exactas; el [runbook operativo](fair-operations-runbook.md)
+describe apertura, cierre, respaldo y recuperación. STAGE-10 conserva el GO.
 
 Este documento cubre la operación de la competencia. Las reglas del score están en [score competitivo y ranking](../01-game-design/competitive-scoring-and-ranking.md); la presentación y moderación del ranking, en [leaderboard y moderación](leaderboard-and-moderation.md).
 
@@ -52,8 +52,8 @@ Se congelan:
 - engine y Competition Seed/RunPlan de la edición;
 - `rulesetVersion`;
 - `contentVersion`;
-- `variantCatalogVersion` del catálogo oficial cuando el evento lo defina —el campo técnico ya existe, pero ninguno de los catálogos de desarrollo `grade-7-dev-1` a `dev-5` es un freeze de feria—;
-- `scoreVersion` de la política competitiva aprobada —el campo técnico y dos versiones resolubles ya existen, pero `fair-score-dev-2` sigue `official: false`—;
+- `variantCatalogVersion`: `grade-5-dev-6`, fijado por SHA-256 sin renombrarlo;
+- `scoreVersion`: `fair-score-v1@1.0.0-fair-edition-v1`, oficial y numéricamente equivalente a `fair-score-dev-2`, que se conserva para replay;
 - política de Prestige, slots/techos de evidencia y selección rara;
 - el comparador del leaderboard;
 - la política de intentos.

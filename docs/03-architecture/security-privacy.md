@@ -74,9 +74,15 @@ El smoke E2E comprueba estos valores sobre una respuesta real. La CSP completa d
 - `pnpm security:audit` incluye dependencias de producción, desarrollo y tooling agentivo, y bloquea advisories de severidad alta o crítica; cualquier hallazgo requiere triage, no una excepción silenciosa.
 - La imagen portable fija Node por digest, usa un runtime mínimo, ejecuta como usuario no root e incorpora health check.
 
-### Bloqueo vigente de Next.js
+### Gate de dependencias y controles del RC v1
 
-La base fija temporalmente Next.js `16.3.1`, pero el release público está bloqueado hasta `>=16.3.2` por el parche anunciado para el 26 de agosto de 2026. `pnpm release:check` expresa este gate y debe pasar, junto con el lockfile actualizado y `pnpm verify`, antes de cualquier despliegue público. No se presume que un build o CI verde mitigue esa condición.
+El bloqueo histórico de Next.js `16.3.1` fue resuelto con `16.3.5` durante el
+RC. `pnpm release:check` conserva el piso exigido e integra `pnpm verify`.
+El [reporte del release](../06-delivery/production-v1-release-candidate.md)
+registra auditoría de dependencias, CSP por nonce, cookies, configuración de
+producción y redacción de logs. El logger selecciona campos explícitos en
+runtime: las propiedades extra de un DTO no se serializan. STAGE-10 conserva
+los ensayos remotos y GO/NO-GO antes de cualquier despliegue público.
 
 ## Rate limits y moderación
 

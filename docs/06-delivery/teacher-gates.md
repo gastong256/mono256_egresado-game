@@ -1,6 +1,22 @@
 # Gates docentes
 
-**Estado:** Teacher Gate 1 `PASSED_WITH_REQUIRED_ADJUSTMENTS`; Teacher Gate 2 pendiente. Este documento define qué se pide decidir y conserva el contrato histórico. El resultado TG1 está en su [acta](teacher-gate-1/09-acta.md).
+> **Superado el 22 de septiembre de 2026 en su carácter bloqueante.**
+> **Teacher Gate 2 ya no es condición de congelamiento ni de despliegue**
+> ([ADR-027](../03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md),
+> D-RC-012). Lo que queda disponible son **ventanas de ajuste humano puntual**:
+> acotadas, con destinatario concreto, disparadas por un hallazgo reportado, y
+> nunca como requisito previo de un despliegue.
+>
+> Este documento se conserva entero porque describe un contrato real y porque un
+> registro que reescribe lo que decía antes deja de ser un registro. El marco de
+> revisión por plantilla sigue siendo la mejor guía disponible para una ventana
+> de ajuste puntual.
+>
+> Egresado Fair Edition v1 **no** está `human-reviewed`, `human-certified`,
+> `curriculum-certified` ni `teacher-approved`, y ningún documento de este
+> repositorio lo afirma.
+
+**Estado:** Teacher Gate 1 `PASSED_WITH_REQUIRED_ADJUSTMENTS`; Teacher Gate 2 `SUPERSEDED` como gate bloqueante. Este documento define qué se pide decidir y conserva el contrato histórico. El resultado TG1 está en su [acta](teacher-gate-1/09-acta.md).
 
 Ubicación en el ciclo: [ciclo de entrega real](../00-product/real-delivery-lifecycle.md).
 

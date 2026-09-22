@@ -54,6 +54,7 @@
 03-architecture/adr/ADR-024-progression-recovery-and-graduation.md
 03-architecture/adr/ADR-025-full-career-contract-evolution.md
 03-architecture/adr/ADR-026-participant-identity-and-minor-privacy.md
+03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md
 03-architecture/analytics-observability.md
 03-architecture/api-contracts.md
 03-architecture/architecture-overview.md
@@ -93,6 +94,7 @@
 04-quality/threat-model.md
 04-quality/variant-validation-and-audit.md
 05-operations/fair-mode-and-competition-freeze.md
+05-operations/fair-operations-runbook.md
 05-operations/fair-runbook.md
 05-operations/fallback-and-incident-plan.md
 05-operations/leaderboard-and-moderation.md
@@ -100,6 +102,8 @@
 06-delivery/definition-of-done.md
 06-delivery/implementation-sequence.md
 06-delivery/mvp-backlog.md
+06-delivery/production-v1-release-candidate.md
+06-delivery/release-checklist.md
 06-delivery/repository-conventions.md
 06-delivery/stage-08-final-integration-pacing-closure.md
 06-delivery/stage-09-fair-mode-server-ranking.md

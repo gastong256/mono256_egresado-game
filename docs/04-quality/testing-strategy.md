@@ -111,7 +111,7 @@ Comandos más estrechos para iteración:
 | Tokens y contraste del sistema de diseño | `pnpm design:check` |
 | Lint + imports/límites prohibidos | `pnpm lint` |
 
-`pnpm release:check` es un gate adicional de seguridad: falla deliberadamente con Next.js `16.3.1` y debe pasar con `>=16.3.2` antes de publicar. No forma parte de `pnpm verify` porque hoy representa un bloqueo explícito, no una prueba verde de la base local.
+`pnpm release:check` verifica el piso de seguridad de Next.js y forma parte de `pnpm verify`, junto con `pnpm release:verify`, que comprueba el manifiesto congelado. La versión fijada es `16.3.5`. El GO de producción requiere además STAGE-10.
 
 ## CI
 

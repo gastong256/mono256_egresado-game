@@ -85,7 +85,7 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 - `security-privacy.md`: seguridad, privacidad y anti-cheat.
 - `analytics-observability.md`: eventos, métricas y observabilidad.
 - `deployment-and-environments.md`: ambientes, CI/CD y despliegue.
-- `adr/`: decisiones arquitectónicas formales; [ADR-025](03-architecture/adr/ADR-025-full-career-contract-evolution.md) gobierna contratos futuros de carrera completa y [ADR-026](03-architecture/adr/ADR-026-participant-identity-and-minor-privacy.md) la identidad de participante y la privacidad de menores en competencia.
+- `adr/`: decisiones arquitectónicas formales; [ADR-025](03-architecture/adr/ADR-025-full-career-contract-evolution.md) gobierna contratos futuros de carrera completa y [ADR-026](03-architecture/adr/ADR-026-participant-identity-and-minor-privacy.md) la identidad de participante y la privacidad de menores en competencia; [ADR-027](03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md) gobierna el release y los gates de v1.
 
 ### 04-quality
 - `ai-mathematics-department-provisional-signoff.md`: el gate que cierra la fase del Departamento de Matemática de IA: la cadena de evidencia completa, el endurecimiento acotado de la instrumentación —identidad semántica de magnitudes y profundidad de cobertura declarada— y las banderas que quedan para la revisión humana.
@@ -119,12 +119,15 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 - `threat-model.md`: amenazas y mitigaciones.
 
 ### 05-operations
+- `fair-operations-runbook.md`: operación del RC v1, respaldo, restauración y rollback; ensayos remotos en STAGE-10.
 - `fair-runbook.md`: operación durante la feria.
 - `fair-mode-and-competition-freeze.md`: intentos, congelamiento de versiones, control de cambios, cierre y privacidad.
 - `leaderboard-and-moderation.md`: rankings, nicknames y moderación.
 - `fallback-and-incident-plan.md`: funcionamiento degradado y recuperación.
 
 ### 06-delivery
+- `production-v1-release-candidate.md`: identidad congelada, contratos y evidencia del RC v1.
+- `release-checklist.md`: checklist local y ensayos pendientes de STAGE-10.
 - `mvp-backlog.md`: backlog priorizado.
 - `implementation-sequence.md`: roadmap canónico — etapas, estado, alcance, dependencias, gates y criterios de aceptación.
 - `current-stage.md`: vista corta de la etapa activa, su alcance y qué no implementar todavía.

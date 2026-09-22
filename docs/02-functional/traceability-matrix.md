@@ -31,6 +31,16 @@ Dónde vive cada capacidad de la competencia implementada.
 | Retención y purga | `src/server/competition/retention.ts`, `scripts/competition/purge.ts` | `tests/integration/competition-organizer.test.ts` |
 | Límite de tasa persistente | `src/server/competition/rate-limit.ts` + `competition_bump_rate_limit` | `tests/integration/competition-store.test.ts` |
 
+## Release Candidate v1 — ADR-027
+
+| Capacidad | Implementación | Evidencia |
+|---|---|---|
+| Contratos congelados y huella | `src/release/`, `scripts/release/verify.ts` | `tests/unit/release-manifest.test.ts`, `pnpm release:verify` |
+| FairScore oficial sin recalibración | `src/game/scoring/competitive-policy.ts` | `tests/unit/fair-score-officialisation.test.ts` |
+| Apertura contra release exacto | `src/server/competition/freeze.ts` | `tests/integration/competition-freeze.test.ts` |
+| Configuración, headers y logs | `src/config/production.ts`, `src/proxy.ts`, `src/server/competition/logging.ts` | tests `production-config`, `security-headers`, `observability-redaction` |
+| Respaldo/restauración y operación | `scripts/operations/` | [reporte RC](../06-delivery/production-v1-release-candidate.md), [runbook](../05-operations/fair-operations-runbook.md) |
+
 ## Regla de mantenimiento
 
 Toda feature nueva debe:
