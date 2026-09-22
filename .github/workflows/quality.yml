@@ -18,7 +18,7 @@ jobs:
   quality:
     name: Quality and build
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -65,6 +65,11 @@ jobs:
       - name: Type-check
         run: pnpm typecheck
 
+      - name: Start isolated local Supabase
+        run: |
+          pnpm db:start
+          pnpm db:env
+
       - name: Run covered tests
         run: pnpm test:coverage
 
@@ -79,10 +84,14 @@ jobs:
       - name: Build production application
         run: pnpm build
 
+      - name: Stop local Supabase
+        if: ${{ always() }}
+        run: pnpm db:stop || true
+
   e2e:
     name: Browser smoke tests
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -104,6 +113,46 @@ jobs:
       - name: Install Chromium
         run: pnpm exec playwright install --with-deps chromium
 
+      - name: Start isolated local Supabase
+        run: |
+          pnpm db:start
+          pnpm db:env
+
+      - name: Configure synthetic CI competition
+        run: |
+          set -euo pipefail
+
+          cat >> .env.local <<'EOF'
+          EGRESADO_ENVIRONMENT=local
+          EGRESADO_DEV_HARNESS=false
+          EGRESADO_COMPETITION_SLUG=egresado-ci
+          PARTICIPANT_IDENTITY_SECRET=ci-local-only-participant-identity-secret-0123456789abcdef
+          EGRESADO_PRIVACY_CONTROLLER_NAME=Egresado CI
+          EGRESADO_PRIVACY_CONTROLLER_CONTACT=ci@example.invalid
+          EGRESADO_PRIVACY_CONTROLLER_ADDRESS=CI local ephemeral environment
+          EGRESADO_PRIVACY_NOTICE_VERSION=1
+          EGRESADO_PRIVACY_RETENTION_DAYS=30
+          EGRESADO_SCHOOL_YEARS=7.º,1.º,2.º,3.º,4.º,5.º
+          EGRESADO_ORGANIZER_USERNAME=organizador-ci
+          EOF
+
+          pnpm exec vite-node \
+            --config vitest.config.ts \
+            scripts/competition/organizer-hash.ts \
+            -- 'ci-only-organizer-password-1234' \
+            | grep '^EGRESADO_ORGANIZER_PASSWORD_HASH=' \
+            >> .env.local
+
+      - name: Bootstrap synthetic CI competition
+        run: |
+          pnpm competition:bootstrap -- \
+            --name="Egresado CI" \
+            --status=OPEN \
+            --opens=2020-01-01T00:00:00Z \
+            --closes=2099-12-31T23:59:59Z \
+            --grace=300 \
+            --seed=egresado-ci
+
       - name: Build production application
         run: pnpm build
 
@@ -117,6 +166,10 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 14
+
+      - name: Stop local Supabase
+        if: ${{ always() }}
+        run: pnpm db:stop || true
 
   container-smoke:
     name: Production container smoke

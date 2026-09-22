@@ -117,18 +117,23 @@ Comandos más estrechos para iteración:
 
 GitHub Actions separa tres jobs:
 
-- `Quality and build`: instalación congelada, toolchain, documentación/workspace, formato, lint/fronteras, typecheck, cobertura y build.
-- `Browser smoke tests`: instalación congelada, Chromium con dependencias, build, E2E desktop/mobile y artefacto del reporte.
+- `Quality and build`: instalación congelada, toolchain, documentación/workspace, formato, lint/fronteras, typecheck, Supabase local efímero, cobertura contra la DB real y build.
+- `Browser smoke tests`: instalación congelada, Chromium con dependencias, Supabase local efímero, competencia sintética exclusiva de CI, build, E2E desktop/mobile y artefacto del reporte.
 - `Production container smoke`: build del target standalone, ejecución no-root y smoke de `/` y `/api/health` con publicación sólo en loopback del runner.
 
-CI no inicia Supabase ni el workflow Compose de desarrollo. Cuando un cambio toque esas superficies, ejecutar y reportar los gates manuales aplicables:
+Los jobs que necesitan DB inician y detienen su propio Supabase local, generan
+`.env.local` con credenciales efímeras y nunca usan secretos cloud. No ejecutan
+el workflow Compose de desarrollo. Cuando un cambio toque otras superficies de
+DB o Docker, ejecutar y reportar los gates manuales aplicables:
 
 - DB: `pnpm db:start`, `pnpm db:reset`, `pnpm db:lint` y `pnpm db:types`;
 - Docker desarrollo: `pnpm docker:up` y health check;
 - Docker portable: además del job CI, `pnpm docker:build` y smoke local de `/api/health` cuando cambie el runtime;
 - supply chain: `pnpm security:audit` y `pnpm release:check`.
 
-Agregar gates de DB/Compose a CI cuando exista una señal útil y estable que justifique su costo; no declarar cobertura CI si sólo se verificó localmente.
+Agregar otros gates de DB/Compose a CI sólo cuando exista una señal útil y
+estable que justifique su costo; no declarar cobertura CI si sólo se verificó
+localmente.
 
 ## Pirámide objetivo para producto
 

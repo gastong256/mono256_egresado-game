@@ -86,7 +86,7 @@ Las variables `NEXT_PUBLIC_*` quedan congeladas por Next.js durante el build. El
 
 GitHub Actions usa Node desde `.node-version`, pnpm desde `packageManager` y dependencias congeladas. `pnpm toolchain:check` exige que `.node-version`, `.nvmrc`, `engines`, `packageManager` y el `Dockerfile` permanezcan alineados. Las actions están fijadas por SHA y los permisos del workflow son sólo de lectura.
 
-El job `Quality and build` ejecuta coherencia del toolchain, validación documental/agentic, scanner de secretos, auditoría del árbol completo de dependencias, formato, lint/fronteras arquitectónicas, typecheck, cobertura y build. El job `Browser smoke tests` instala Chromium, construye la aplicación, ejecuta Playwright en desktop/mobile y conserva el reporte. El job `Production container smoke` prueba el runner standalone no-root y su health. Dependabot revisa semanalmente dependencias npm, GitHub Actions y Docker.
+El job `Quality and build` ejecuta coherencia del toolchain, validación documental/agentic, scanner de secretos, auditoría del árbol completo de dependencias, formato, lint/fronteras arquitectónicas, typecheck, cobertura contra un Supabase local efímero y build. El job `Browser smoke tests` instala Chromium, levanta su propio Supabase local, bootstrappea una competencia sintética exclusiva del runner, construye la aplicación, ejecuta Playwright en desktop/mobile y conserva el reporte. Ambos generan las credenciales locales con `pnpm db:env`, limpian el stack aun ante fallos y no reciben secretos cloud. El job `Production container smoke` prueba el runner standalone no-root y su health. Dependabot revisa semanalmente dependencias npm, GitHub Actions y Docker.
 
 Antes de un release público también deben pasar:
 
