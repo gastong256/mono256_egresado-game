@@ -5,18 +5,30 @@ import Link from 'next/link'
 export function InstitutionalFooter() {
   return (
     <footer
-      className="border-rule text-ink-secondary mt-4 grid min-h-52 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-3 border-t px-2 py-4 md:min-h-40 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:gap-x-6"
+      className="border-rule text-ink-secondary mt-4 grid min-h-72 grid-cols-1 items-center gap-x-3 gap-y-2 border-t px-2 py-3 md:min-h-40 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:gap-x-6 md:gap-y-3 md:py-4"
       aria-label="Institución y créditos"
     >
-      <Link
-        href="/privacidad"
-        prefetch={false}
-        className="text-caption text-ink row-start-2 inline-flex min-h-11 items-center justify-self-start underline underline-offset-4 md:col-start-1 md:row-start-1"
+      <nav
+        aria-label="Información del juego"
+        className="row-start-2 flex min-w-0 flex-col items-start justify-self-start md:col-start-1 md:row-start-1"
       >
-        Política de privacidad y uso de datos
-      </Link>
+        <Link
+          href="/privacidad"
+          prefetch={false}
+          className="text-caption text-ink inline-flex min-h-11 items-center underline underline-offset-4"
+        >
+          Política de privacidad y uso de datos
+        </Link>
+        <Link
+          href="/puntajes"
+          prefetch={false}
+          className="text-caption text-ink inline-flex min-h-11 items-center underline underline-offset-4"
+        >
+          Cómo se calculan los puntos
+        </Link>
+      </nav>
       <div
-        className="col-span-2 col-start-1 row-start-1 flex h-28 items-center justify-center gap-5 md:col-span-1 md:col-start-2"
+        className="col-start-1 row-start-1 flex h-28 items-center justify-center gap-5 md:col-start-2"
         data-testid="institutional-marks"
       >
         <Image
@@ -36,7 +48,7 @@ export function InstitutionalFooter() {
           className="h-28 w-auto shrink-0 object-contain"
         />
       </div>
-      <div className="col-start-2 row-start-2 flex min-w-0 items-center justify-self-end md:col-start-3 md:row-start-1">
+      <div className="col-start-1 row-start-3 flex min-w-0 items-center justify-self-end md:col-start-3 md:row-start-1">
         <a
           href="https://gastong256.dev"
           target="_blank"

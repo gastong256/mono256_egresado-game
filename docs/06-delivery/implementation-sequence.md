@@ -1163,6 +1163,11 @@ schema SQL y despliegue remoto. Exit gate: persistencia/privacidad, equivalencia
 con el cierre, backfill, moderación, UI accesible y verify al final.
 
 **Excepción visual acotada, autorizada por el Product Owner: RC3 TASK-A.**
+
+Ampliación informativa autorizada (23/09): `/puntajes`, con explicación simple
+de las reglas vigentes y enlace debajo de privacidad en el footer. Sin cambios
+de motor, score o persistencia; gate dirigido de navegación, responsive y accesibilidad.
+
 Home, countdown de ventana pública, presentación de podio y footer institucional.
 Sólo presentación, accesibilidad y su verificación; sin cambios de motor, contenido,
 comparador, persistencia, contratos públicos ni lifecycle. Runtime sigue en RC.2;

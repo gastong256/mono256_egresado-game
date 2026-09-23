@@ -175,8 +175,7 @@ for (const width of [320, 360, 390, 412, 768, 1280, 1920]) {
       'href',
       'https://github.com/gastong256/mono256_egresado-game',
     )
-    expect(privacy.x + privacy.width).toBeLessThanOrEqual(dev.x)
-    expect(footerBox.height).toBeLessThanOrEqual(width < 768 ? 240 : 176)
+    expect(footerBox.height).toBeLessThanOrEqual(width < 768 ? 304 : 176)
     expect(
       Math.abs(marks.x + marks.width / 2 - (footerBox.x + footerBox.width / 2)),
     ).toBeLessThanOrEqual(1)
@@ -185,6 +184,14 @@ for (const width of [320, 360, 390, 412, 768, 1280, 1920]) {
       expect(marks.x + marks.width).toBeLessThanOrEqual(dev.x)
     } else {
       expect(marks.y + marks.height).toBeLessThanOrEqual(privacy.y)
+      const points = (await footer
+        .getByRole('link', { name: 'Cómo se calculan los puntos' })
+        .boundingBox())!
+      expect(points.y).toBeGreaterThanOrEqual(privacy.y + privacy.height)
+      expect(points.y + points.height).toBeLessThanOrEqual(dev.y)
+      expect(dev.x + dev.width).toBeLessThanOrEqual(
+        footerBox.x + footerBox.width,
+      )
     }
     await expect(page.locator('#privacy')).toHaveCount(0)
     const accessibility = await new AxeBuilder({ page })

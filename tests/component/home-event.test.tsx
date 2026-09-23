@@ -134,6 +134,9 @@ describe('footer institucional', () => {
         name: 'Política de privacidad y uso de datos',
       }),
     ).toHaveAttribute('href', '/privacidad')
+    expect(
+      screen.getByRole('link', { name: 'Cómo se calculan los puntos' }),
+    ).toHaveAttribute('href', '/puntajes')
   })
 })
 

@@ -5013,14 +5013,16 @@ El aviso configurado v1 completo se publica en `/privacidad`, accesible sin
 identificación y sin JavaScript. Un pie institucional identifica Colegio Integral
 Piacentini, Feria del Libro 2026 y `developed by gastong256.dev`, con un único enlace
 «Política de privacidad y uso de datos»; Home no repite el aviso.
+Debajo aparece «Cómo se calculan los puntos», que abre `/puntajes`.
 El pie es compacto: enlace legal a la izquierda, marcas institucionales de igual
 altura al centro y crédito del desarrollador pequeño a la derecha. En móvil, las
-marcas ocupan una primera fila y los enlaces una segunda; la altura admite
+marcas ocupan una primera fila, los enlaces informativos una segunda y el crédito
+del desarrollador una tercera, alineado a la derecha; la altura admite
 crecimiento por texto ampliado. Los logos institucionales tienen 112 px de alto;
 el de Piacentini usa una máscara circular. El crédito del desarrollador es sólo
 texto con enlace a `https://gastong256.dev`; un icono independiente de GitHub
 enlaza a `https://github.com/gastong256/mono256_egresado-game`. El pie aparece
-únicamente en la portada Home y `/privacidad`, nunca en identificación, partidas
+únicamente en la portada Home, `/privacidad` y `/puntajes`, nunca en identificación, partidas
 de competencia, resultados de la partida ni en el modo práctica.
 
 Según [ADR-030](03-architecture/adr/ADR-030-privacy-page-and-action-acknowledgement.md),
@@ -5159,6 +5161,16 @@ al grupo entero. `isYou` mantiene visible la mejor partida de la sesión y los
 saltos muestran participantes omitidos. Sólo los puestos reales 1/2/3 llevan
 medalla. No se publican identidad privada, mastery, logs ni Prestige.
 El vacío cambia según el estado; al cerrar dice **Resultados del evento**.
+
+### Explicación pública del puntaje
+
+`/puntajes` explica las reglas vigentes en el mismo tono simple y estructura de
+párrafos breves de `/privacidad`: máximo 10.000, pesos 85/10/5 sujetos a las
+oportunidades disponibles, diferencia entre métricas de carrera y puntaje,
+mejor intento, práctica fuera del ranking, ausencia de ventaja por velocidad
+y puestos compartidos con ejemplo 1.º, 1.º, 3.º. No incorpora una calculadora
+ni modifica reglas. Es pública y legible sin JavaScript, con regreso al Home
+y enlace a la documentación técnica de v1 en GitHub para ampliar.
 
 ## FR-013 Reintento
 El jugador puede iniciar otra run. Fair v1 permite reintentos ilimitados sobre
@@ -5448,7 +5460,7 @@ Fuentes: [adjudicación](04-quality/mathematics-department-ai-adjudication.md),
 | FR-001: copy Feria del Libro, hero a todo el ancho, reloj visible y footer compacto | `HomeHero`, `CompetitionExperience`, `EventCountdown`, `text-countdown` | `home-event.spec.ts`: geometría responsive de cabecera/reloj/CTA/footer, zoom, teclado y axe; `cn.test.ts`: rol numérico |
 | FR-001/012: acentos, iconos de aportes y medallas del Home | `GameModeSummary`, `home-marks`, `Leaderboard`, tokens `podium-*` | `home-event.test.tsx`, `home-event.spec.ts`, `design:check`: etiquetas, empates, numerales y contraste |
 | FR-012/020: podio por puesto y posición propia | `Leaderboard`; DTO y comparador sin cambios | `competition-ui.test.tsx`, `home-event.test.tsx`, `ranking-release-regression.test.ts` |
-| FR-001: aviso v1 completo en `/privacidad`, footer y aceptación al iniciar | `PrivacyPolicy`, `IdentityForm`, `InstitutionalFooter`, `app/privacidad/page.tsx` | `competition-ui.test.tsx`, `privacy-page.test.tsx`, `privacy.spec.ts`, `competition.spec.ts`; integridad del aviso, footer sólo en Home/privacidad, SSR sin JS, teclado/axe, campos conservados y rechazo API sin reconocimiento vigente |
+| FR-001: aviso v1 completo en `/privacidad`, footer y aceptación al iniciar | `PrivacyPolicy`, `IdentityForm`, `InstitutionalFooter`, `app/privacidad/page.tsx` | `competition-ui.test.tsx`, `privacy-page.test.tsx`, `privacy.spec.ts`, `competition.spec.ts`; integridad del aviso, footer fuera de las partidas, SSR sin JS, teclado/axe, campos conservados y rechazo API sin reconocimiento vigente |
 
 Decisiones y evidencia de TASK-A en el [plan vivo](../.tmp/rc3-branding/task-a-home/README.md).
 
@@ -5466,6 +5478,7 @@ Decisiones y evidencia de TASK-A en el [plan vivo](../.tmp/rc3-branding/task-a-h
 | Requisito | Implementación | Evidencia |
 |---|---|---|
 | FR-012: resumen de la mejor partida y ventana de 12 filas | ADR-031, `summarizeVerifiedRun`, `selectRankingWindow`, `Leaderboard` | `ranking-summary.test.ts`, `ranking-window.test.ts`, `ranking-run-details.test.tsx`, `home-event.spec.ts` |
+| FR-001/012: explicación simple de puntos en `/puntajes`, enlazada debajo de privacidad | `app/puntajes/page.tsx`, `InstitutionalFooter`; política v1 sin cambios | `points.spec.ts`: navegación, orden de enlaces, SSR sin JS, zoom, teclado y axe; `home-event.test.tsx` y `home-event.spec.ts`: footer responsive |
 | FR-018: datos públicos acotados, sin PII ni replay en GET | schema de proyección, batch de resúmenes, backfill explícito | `competition-store.test.ts`, `competition-attack.test.ts`, `competition.spec.ts` |
 
 ---
@@ -25162,6 +25175,11 @@ schema SQL y despliegue remoto. Exit gate: persistencia/privacidad, equivalencia
 con el cierre, backfill, moderación, UI accesible y verify al final.
 
 **Excepción visual acotada, autorizada por el Product Owner: RC3 TASK-A.**
+
+Ampliación informativa autorizada (23/09): `/puntajes`, con explicación simple
+de las reglas vigentes y enlace debajo de privacidad en el footer. Sin cambios
+de motor, score o persistencia; gate dirigido de navegación, responsive y accesibilidad.
+
 Home, countdown de ventana pública, presentación de podio y footer institucional.
 Sólo presentación, accesibilidad y su verificación; sin cambios de motor, contenido,
 comparador, persistencia, contratos públicos ni lifecycle. Runtime sigue en RC.2;

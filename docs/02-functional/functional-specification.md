@@ -19,14 +19,16 @@ El aviso configurado v1 completo se publica en `/privacidad`, accesible sin
 identificación y sin JavaScript. Un pie institucional identifica Colegio Integral
 Piacentini, Feria del Libro 2026 y `developed by gastong256.dev`, con un único enlace
 «Política de privacidad y uso de datos»; Home no repite el aviso.
+Debajo aparece «Cómo se calculan los puntos», que abre `/puntajes`.
 El pie es compacto: enlace legal a la izquierda, marcas institucionales de igual
 altura al centro y crédito del desarrollador pequeño a la derecha. En móvil, las
-marcas ocupan una primera fila y los enlaces una segunda; la altura admite
+marcas ocupan una primera fila, los enlaces informativos una segunda y el crédito
+del desarrollador una tercera, alineado a la derecha; la altura admite
 crecimiento por texto ampliado. Los logos institucionales tienen 112 px de alto;
 el de Piacentini usa una máscara circular. El crédito del desarrollador es sólo
 texto con enlace a `https://gastong256.dev`; un icono independiente de GitHub
 enlaza a `https://github.com/gastong256/mono256_egresado-game`. El pie aparece
-únicamente en la portada Home y `/privacidad`, nunca en identificación, partidas
+únicamente en la portada Home, `/privacidad` y `/puntajes`, nunca en identificación, partidas
 de competencia, resultados de la partida ni en el modo práctica.
 
 Según [ADR-030](../03-architecture/adr/ADR-030-privacy-page-and-action-acknowledgement.md),
@@ -165,6 +167,16 @@ al grupo entero. `isYou` mantiene visible la mejor partida de la sesión y los
 saltos muestran participantes omitidos. Sólo los puestos reales 1/2/3 llevan
 medalla. No se publican identidad privada, mastery, logs ni Prestige.
 El vacío cambia según el estado; al cerrar dice **Resultados del evento**.
+
+### Explicación pública del puntaje
+
+`/puntajes` explica las reglas vigentes en el mismo tono simple y estructura de
+párrafos breves de `/privacidad`: máximo 10.000, pesos 85/10/5 sujetos a las
+oportunidades disponibles, diferencia entre métricas de carrera y puntaje,
+mejor intento, práctica fuera del ranking, ausencia de ventaja por velocidad
+y puestos compartidos con ejemplo 1.º, 1.º, 3.º. No incorpora una calculadora
+ni modifica reglas. Es pública y legible sin JavaScript, con regreso al Home
+y enlace a la documentación técnica de v1 en GitHub para ampliar.
 
 ## FR-013 Reintento
 El jugador puede iniciar otra run. Fair v1 permite reintentos ilimitados sobre
