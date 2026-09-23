@@ -128,7 +128,7 @@ describe.skipIf(!databaseConfigured)('escala de feria sobre postgres', () => {
       samples.push(Date.now() - started)
       expect(state.totalRanked).toBe(PARTICIPANTS)
       expect(state.leaderboard.length).toBeGreaterThanOrEqual(1)
-      expect(state.leaderboard.every((entry) => entry.rank <= 3)).toBe(true)
+      expect(state.leaderboard.length).toBeLessThanOrEqual(12)
     }
 
     const sorted = [...samples].sort((a, b) => a - b)

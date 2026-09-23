@@ -22,17 +22,20 @@ el mejor intento sale de la vista `competition_best_attempts`, el puesto lo
 calcula un comparador puro y la atomicidad la dan restricciones de la base, no
 un lock del proceso.
 
-## Pantalla pública v1
+## Pantalla pública vigente RC3
 
-Top 3 destacado, nickname/pseudónimo, FairScore y Prestige secundario; iconografía
-de Hitos opcional. El Top 3 refiere a puestos: un empate legítimo no se corta
-arbitrariamente para mostrar exactamente tres personas.
+[ADR-031](../03-architecture/adr/ADR-031-persisted-run-summary-ranking-window.md)
+amplía el Top 3 a una ventana de doce filas como máximo, con mejor partida,
+contexto propio, métricas del juego e hitos. Todos los empatados cuentan: la fila
+representante declara «Compartido con X más» y mantiene el puesto original.
+El comparador y los premios no cambian. Sin copy de vergüenza ni juicios sobre
+la persona. Nunca curso real, edad, nombre legal, contacto o mastery.
 
-La posición propia, resultado y personal best pueden mostrarse privadamente al
-jugador, con CTA de reintento. Se supersede el top5/10 genérico y no se exige una
-lista pública infinita de estudiantes con posiciones bajas. No se muestran curso,
-edad, nombre legal, contacto, mastery ni métricas ocultas. Sin copy de vergüenza,
-comparaciones de valor personal o rachas de fracaso.
+Los resúmenes antiguos se completan fuera del tráfico público con
+`pnpm competition:summaries` (diagnóstico) y `pnpm competition:summaries -- --write`
+(escritura explícita). Guardar respaldo antes. Las versiones no soportadas se
+omiten; no se reinterpreta una partida con reglas actuales incompatibles.
+No requiere migración SQL. La versión anterior de la app ignora el JSON adicional.
 
 ## Moderación
 

@@ -3,6 +3,14 @@
 Vista corta del estado de ejecución. El contrato completo y el protocolo de
 actualización están en el [roadmap](implementation-sequence.md).
 
+**Excepción RC3 autorizada por el PO, 23/09: ranking ampliado.**
+[ADR-031](../03-architecture/adr/ADR-031-persisted-run-summary-ranking-window.md)
+permite persistir el resumen del replay, publicarlo en una ventana de doce filas,
+compactar empates conservando membresía y puesto, contexto propio y seed local
+variado. Scope OUT: motor, contenido, reglas, comparador, versiones competitivas,
+schema SQL y despliegue remoto. Exit gate: persistencia/privacidad, equivalencia
+con el cierre, backfill, moderación, UI accesible y verify al final.
+
 ## Sprint visual RC3 — TASK-A
 
 Implementación autorizada por el Product Owner: Home, estados de evento,

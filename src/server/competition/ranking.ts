@@ -1,5 +1,8 @@
 import 'server-only'
 
+import { selectRankingWindow } from './ranking-window'
+import { readRunSummary } from '@/lib/competition/run-summary'
+
 import type {
   CompetitionRow,
   ParticipantRow,
@@ -7,25 +10,14 @@ import type {
 import type { CompetitionStore } from '@/server/persistence/competition/store'
 import {
   rankOf,
-  toPublicLeaderboard,
+  displayNickname,
   toPublicSummary,
   type PublicCompetitionState,
   type PublicSelfSummary,
 } from './dto'
 
-/**
- * El estado público de la competencia.
- *
- * Una sola consulta arma lo que `/` muestra: la edición, el podio y —si hay
- * sesión— el puesto propio. Se resuelve en el servidor porque el podio es dato
- * de todos y el puesto propio es dato de uno, y mezclarlos en el navegador
- * significaría haber mandado los dos.
- *
- * `MAX_PUBLIC_RANK` es 3 por decisión de producto v1: se destaca el podio, no
- * se publica una lista de estudiantes con puestos bajos. El corte es por
- * **puesto**, no por cantidad de filas, así que un empate legítimo en el tercer
- * lugar muestra a las tres personas empatadas en vez de elegir arbitrariamente
- * a una. El puesto propio se ve siempre, en privado, sin importar cuál sea.
+/** Public window of best runs; ties keep their true rank and total membership.
+ * MAX_PUBLIC_RANK is the frozen podium boundary, not the display row limit.
  */
 export const MAX_PUBLIC_RANK = 3
 
@@ -39,32 +31,60 @@ export async function loadPublicState(
   viewer: ParticipantRow | undefined,
 ): Promise<PublicCompetitionState> {
   const best = await dependencies.store.bestVerifiedAttempts(competition.id)
-  const board = toPublicLeaderboard(best, {
-    maxRank: MAX_PUBLIC_RANK,
-    ...(viewer === undefined ? {} : { viewerParticipantId: viewer.id }),
+  const window = selectRankingWindow(best, viewer?.id)
+  const summaries = new Map(
+    (
+      await dependencies.store.readAttemptSummaries(
+        window.map(({ row }) => row.attemptId),
+      )
+    ).map(({ id, summary }) => [id, summary]),
+  )
+  const entries = window.map(({ row, rank, sharedCount, gapBefore }) => {
+    const stored = summaries.get(row.attemptId)
+    const candidate =
+      typeof stored === 'object' && stored !== null && 'ranking' in stored
+        ? readRunSummary(stored.ranking)
+        : undefined
+    // A stale or corrupt projection cannot contradict the official total.
+    const summary =
+      candidate?.components.reduce(
+        (sum, part) => sum + part.contribution,
+        0,
+      ) === row.verifiedFairScore
+        ? candidate
+        : undefined
+    return {
+      rank,
+      nickname: displayNickname(row),
+      fairScore: row.verifiedFairScore,
+      isYou: row.participantId === viewer?.id,
+      sharedCount,
+      gapBefore,
+      ...(summary === undefined ? {} : { summary }),
+    }
   })
 
   let you: PublicSelfSummary | undefined
   if (viewer !== undefined) {
     const mine = best.find((row) => row.participantId === viewer.id)
-    const attempts = await dependencies.store.listAttemptsForParticipant(
-      viewer.id,
-    )
-    const active = attempts.find((attempt) => attempt.status === 'STARTED')
+    const [attemptCount, active] = await Promise.all([
+      dependencies.store.countAttempts(viewer.id),
+      dependencies.store.findActiveAttempt(viewer.id),
+    ])
     you = {
       nickname: viewer.publicNickname,
       bestFairScore: mine?.verifiedFairScore,
       bestPrestigeScore: mine?.verifiedPrestigeScore,
       rank: mine === undefined ? undefined : rankOf(best, viewer.id),
-      attempts: attempts.length,
+      attempts: attemptCount,
       activeAttempt: active?.id,
     }
   }
 
   return {
     competition: toPublicSummary(competition),
-    leaderboard: board.entries,
-    totalRanked: board.total,
+    leaderboard: entries,
+    totalRanked: best.length,
     you,
   }
 }

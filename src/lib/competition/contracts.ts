@@ -1,3 +1,5 @@
+import type { PublicRunSummary } from './run-summary'
+
 /**
  * Los contratos que cruzan la red.
  *
@@ -10,8 +12,13 @@
  */
 
 export interface PublicLeaderboardEntry {
+  /** Other participants sharing this exact rank (not hidden better ranks). */
+  readonly sharedCount?: number
+  /** Participants omitted between this row and the previous visible group. */
+  readonly gapBefore?: number
+  readonly summary?: PublicRunSummary
   readonly rank: number
-  /** Lo único de una persona que este producto publica. */
+  /** Único dato de identidad que se publica; el resumen describe el juego. */
   readonly nickname: string
   readonly fairScore: number
   /** Marca la fila del jugador que está mirando. Se resuelve en el servidor. */

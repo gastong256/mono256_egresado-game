@@ -35,6 +35,7 @@ const competitionSpecs = [
   '**/competition.spec.ts',
   '**/home-event.spec.ts',
   '**/privacy.spec.ts',
+  '**/points.spec.ts',
 ]
 const practiceSpecs = ['**/practice.spec.ts']
 

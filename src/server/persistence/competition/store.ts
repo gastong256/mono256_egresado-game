@@ -188,6 +188,18 @@ export interface CompetitionStore {
   ): Promise<AttemptRow | undefined>
   restoreAttempt(id: string): Promise<AttemptRow | undefined>
 
+  /** Offline maintenance, keyset-paged: at most 100 legacy verified logs. */
+  listLegacySummaryAttempts(
+    competitionId: string,
+    afterId?: string,
+  ): Promise<readonly AttemptRow[]>
+  /** Bounded batch: never fetch action logs for a public ranking read. */
+  readAttemptSummaries(
+    ids: readonly string[],
+  ): Promise<readonly { readonly id: string; readonly summary: unknown }[]>
+  /** Idempotent repair of a legacy projection, preserving scores and evidence. */
+  saveAttemptSummary(id: string, summary: unknown): Promise<boolean>
+
   bestVerifiedAttempts(
     competitionId: string,
   ): Promise<readonly BestAttemptRow[]>

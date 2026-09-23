@@ -1,3 +1,4 @@
+import { publicRunSummary } from '../helpers/ranking-summary'
 import { expect, test, type Page } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
 import type {
@@ -29,15 +30,21 @@ function fixture(
       closesAt: '2026-10-03T12:00:00Z',
     },
     leaderboard: [
-      { rank: 1, nickname: 'PrimerPuesto', fairScore: 9800, isYou: false },
+      {
+        rank: 1,
+        nickname: 'PrimerPuesto',
+        fairScore: 9800,
+        isYou: false,
+        summary: publicRunSummary,
+      },
       { rank: 2, nickname: 'SegundoPuesto', fairScore: 9600, isYou: false },
       {
         rank: 3,
         nickname: 'AliasLargoDePruebaABC',
+        sharedCount: 1,
         fairScore: 9500,
         isYou: false,
       },
-      { rank: 3, nickname: 'EmpateCompleto', fairScore: 9500, isYou: false },
     ],
     totalRanked: 17,
     you: {
@@ -118,10 +125,8 @@ for (const width of [320, 360, 390, 412, 768, 1280, 1920]) {
       .getByRole('link', { name: 'Practicar' })
       .evaluate((node) => parseFloat(getComputedStyle(node).borderTopWidth))
     expect(practiceBorder).toBeGreaterThan(0)
-    await expect(page.getByTestId('leaderboard-entry')).toHaveCount(4)
-    await expect(
-      page.getByTestId('podium-rank-3').getByTestId('leaderboard-entry'),
-    ).toHaveCount(2)
+    await expect(page.getByTestId('leaderboard-entry')).toHaveCount(3)
+    await expect(page.getByText('Compartido con 1 más')).toBeVisible()
     await expect(page.getByTestId('own-rank')).toContainText('17')
     expect(
       await page.evaluate(
@@ -170,8 +175,7 @@ for (const width of [320, 360, 390, 412, 768, 1280, 1920]) {
       'href',
       'https://github.com/gastong256/mono256_egresado-game',
     )
-    expect(privacy.x + privacy.width).toBeLessThanOrEqual(dev.x)
-    expect(footerBox.height).toBeLessThanOrEqual(width < 768 ? 240 : 176)
+    expect(footerBox.height).toBeLessThanOrEqual(width < 768 ? 304 : 176)
     expect(
       Math.abs(marks.x + marks.width / 2 - (footerBox.x + footerBox.width / 2)),
     ).toBeLessThanOrEqual(1)
@@ -180,6 +184,14 @@ for (const width of [320, 360, 390, 412, 768, 1280, 1920]) {
       expect(marks.x + marks.width).toBeLessThanOrEqual(dev.x)
     } else {
       expect(marks.y + marks.height).toBeLessThanOrEqual(privacy.y)
+      const points = (await footer
+        .getByRole('link', { name: 'Cómo se calculan los puntos' })
+        .boundingBox())!
+      expect(points.y).toBeGreaterThanOrEqual(privacy.y + privacy.height)
+      expect(points.y + points.height).toBeLessThanOrEqual(dev.y)
+      expect(dev.x + dev.width).toBeLessThanOrEqual(
+        footerBox.x + footerBox.width,
+      )
     }
     await expect(page.locator('#privacy')).toHaveCount(0)
     const accessibility = await new AxeBuilder({ page })
@@ -289,4 +301,27 @@ test('podio vacío anticipa partidas, sin ganadores de relleno', async ({
   )
   await expect(page.getByTestId('leaderboard-entry')).toHaveCount(0)
   await expect(page.getByTestId('play')).toHaveText(/Jugar ahora/u)
+})
+
+test('el detalle de una partida se abre con teclado y conserva contraste', async ({
+  page,
+}) => {
+  await showState(page, fixture())
+  const summary = page
+    .locator('summary')
+    .filter({ hasText: 'Ver partida' })
+    .first()
+  await summary.focus()
+  await page.keyboard.press('Enter')
+  await expect(page.getByText('Aportes al puntaje')).toBeVisible()
+  await expect(page.getByText('Todo Óptimo en 2.º.')).toBeVisible()
+  const scan = await new AxeBuilder({ page })
+    .include('[data-testid="leaderboard"]')
+    .analyze()
+  expect(scan.violations).toEqual([])
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+  ).toBe(true)
 })

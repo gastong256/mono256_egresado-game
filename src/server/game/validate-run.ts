@@ -38,10 +38,13 @@ import {
   type Result,
   type FairScoreResult,
   type RunId,
+  type RunState,
   type VersionTriple,
 } from '@/game'
 
 export interface AuthoritativeRunResult {
+  /** Server-internal replay evidence. Never serialized into public responses. */
+  readonly finalState: RunState
   readonly runId: RunId
   /** Recomputed by replay. Never taken from the submission. */
   readonly officialScore: number
@@ -260,6 +263,7 @@ export function validateSubmittedRun(
         )
 
   return ok({
+    finalState: state,
     runId: state.descriptor.runId,
     officialScore: state.completion.totalScore,
     profile: state.completion.profile.profileId,
