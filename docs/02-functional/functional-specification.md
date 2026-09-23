@@ -48,7 +48,10 @@ escritorio comparte con él una fila independiente de la marca y la presentació
 Si la edición no tiene fecha configurada no inventa un plazo. La ilustración del
 hero ocupa una fila completa, sin recortar, tanto en móvil como en escritorio.
 El ranking agrega encima del total de participantes un aviso de urgencia escrito:
-horas o minutos restantes con un límite superior verdadero, o «Últimos segundos».
+días cuando faltan 12 horas o más (singular «Queda menos de un día» cuando
+corresponde), horas por debajo de 12, minutos por debajo de una hora y
+«Últimos segundos» por debajo de un minuto. Los plazos son límites superiores
+verdaderos: por ejemplo, 55 horas se presenta como «Quedan menos de 3 días».
 Sólo aparece con competencia abierta y cierre futuro válido; desaparece al vencer,
 no anuncia cada segundo ni sustituye al contador principal.
 

@@ -5042,7 +5042,10 @@ escritorio comparte con él una fila independiente de la marca y la presentació
 Si la edición no tiene fecha configurada no inventa un plazo. La ilustración del
 hero ocupa una fila completa, sin recortar, tanto en móvil como en escritorio.
 El ranking agrega encima del total de participantes un aviso de urgencia escrito:
-horas o minutos restantes con un límite superior verdadero, o «Últimos segundos».
+días cuando faltan 12 horas o más (singular «Queda menos de un día» cuando
+corresponde), horas por debajo de 12, minutos por debajo de una hora y
+«Últimos segundos» por debajo de un minuto. Los plazos son límites superiores
+verdaderos: por ejemplo, 55 horas se presenta como «Quedan menos de 3 días».
 Sólo aparece con competencia abierta y cierre futuro válido; desaparece al vencer,
 no anuncia cada segundo ni sustituye al contador principal.
 
@@ -5428,7 +5431,7 @@ Fuentes: [adjudicación](04-quality/mathematics-department-ai-adjudication.md),
 
 | Requisito | Implementación | Evidencia |
 |---|---|---|
-| FR-001/014: aviso de plazo restante encima del total del ranking | `RankingDeadlineNotice`, `useEventSecondsRemaining` | `ranking-deadline-notice.test.tsx`: límites, estados, vencimiento y cambio de fecha; `home-event.spec.ts`: posición del aviso |
+| FR-001/014: aviso de plazo restante encima del total del ranking | `RankingDeadlineNotice`, `useEventSecondsRemaining` | `ranking-deadline-notice.test.tsx`: límites de días/horas/minutos, estados, vencimiento y cambio de fecha; `home-event.spec.ts`: posición del aviso |
 | FR-001/014: CTA y estados del evento | `CompetitionExperience`, `EventCountdown` | `event-countdown.test.tsx`, `home-event.test.tsx`, `home-event.spec.ts` |
 | FR-001: copy Feria del Libro, hero a todo el ancho, reloj visible y footer compacto | `HomeHero`, `CompetitionExperience`, `EventCountdown`, `text-countdown` | `home-event.spec.ts`: geometría responsive de cabecera/reloj/CTA/footer, zoom, teclado y axe; `cn.test.ts`: rol numérico |
 | FR-012/020: podio por puesto y posición propia | `Leaderboard`; DTO y comparador sin cambios | `competition-ui.test.tsx`, `home-event.test.tsx`, `ranking-release-regression.test.ts` |

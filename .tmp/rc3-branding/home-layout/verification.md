@@ -65,3 +65,16 @@ local del E2E funcionaron en 127.0.0.1:3100/3101 y todos los casos pasaron.
 - Capturas revisadas: `/tmp/egresado-home-layout/footer-larger-*.png`.
 - Sin nuevo build ni suite E2E completa ni verify: cambio acotado de presentación,
   probado contra el servidor dev existente en localhost:3000. Sin push.
+
+## Ajuste posterior: días en el aviso del ranking
+
+El aviso usa días desde 12 horas restantes; por debajo conserva horas, minutos y
+últimos segundos. Para 55 horas: «¡Mejorá tu marca! Quedan menos de 3 días».
+Singular: «Queda menos de un día». Los límites superiores siguen siendo verdaderos.
+
+- `pnpm test tests/component/ranking-deadline-notice.test.tsx`: 25 PASS; incluye
+  los bordes de 12/24/48 horas y el ejemplo de 55 horas.
+- Prettier y ESLint sobre los dos archivos afectados: PASS.
+- Workspace, sincronización/check del master y `git diff --check`: PASS.
+- Sin build, E2E ni verify adicionales: sólo cambia la selección de copy,
+  cubierta por los tests específicos. Sin push.

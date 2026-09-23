@@ -6,6 +6,12 @@ import { useEventSecondsRemaining } from './event-countdown'
 /** Coarse, truthful time windows: a call to play, not a second ticking clock. */
 export function rankingDeadlineMessage(seconds: number): string | undefined {
   if (!Number.isFinite(seconds) || seconds <= 0) return undefined
+  if (seconds >= 12 * 3600) {
+    const days = Math.floor(seconds / 86400) + 1
+    return days === 1
+      ? '¡Mejorá tu marca! Queda menos de un día.'
+      : `¡Mejorá tu marca! Quedan menos de ${days} días.`
+  }
   if (seconds >= 3600)
     return `¡Mejorá tu marca! Quedan menos de ${Math.floor(seconds / 3600) + 1} horas.`
   if (seconds >= 60)

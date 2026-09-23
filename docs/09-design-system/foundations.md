@@ -64,7 +64,7 @@ escritorio, en papel hundido con filetes
 de tinta y cifras `text-countdown` fluidas. Los segundos de cierre reutilizan
 `motion-resolve` al cambiar; la urgencia escrita y el rojo siguen dependiendo
 del tiempo real restante. El contador permanece visible sin botón para ocultarlo
-y conserva reduced motion. El ranking agrega un aviso escrito de horas/minutos
+y conserva reduced motion. El ranking agrega un aviso escrito de días/horas/minutos
 restantes con `text-goal`, filete y rojo semántico; sólo se anima al cambiar la
 frase, respetando reduced motion.
 

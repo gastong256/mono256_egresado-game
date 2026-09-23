@@ -22,6 +22,13 @@ const tick = (ms = 0) =>
 
 describe('aviso de cierre en el ranking', () => {
   it.each([
+    [55 * 3600, '¡Mejorá tu marca! Quedan menos de 3 días.'],
+    [48 * 3600, '¡Mejorá tu marca! Quedan menos de 3 días.'],
+    [48 * 3600 - 1, '¡Mejorá tu marca! Quedan menos de 2 días.'],
+    [24 * 3600, '¡Mejorá tu marca! Quedan menos de 2 días.'],
+    [24 * 3600 - 1, '¡Mejorá tu marca! Queda menos de un día.'],
+    [12 * 3600, '¡Mejorá tu marca! Queda menos de un día.'],
+    [12 * 3600 - 1, '¡Mejorá tu marca! Quedan menos de 12 horas.'],
     [7200, '¡Mejorá tu marca! Quedan menos de 3 horas.'],
     [7199, '¡Mejorá tu marca! Quedan menos de 2 horas.'],
     [3600, '¡Mejorá tu marca! Quedan menos de 2 horas.'],
