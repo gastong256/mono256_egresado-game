@@ -74,3 +74,20 @@ Si de verdad hace falta:
 4. correr `pnpm design:check`.
 
 El paso 3 no es opcional. Un color que no está en la lista es un color que nadie midió.
+
+## Acentos de la landing pública
+
+El ajuste visual de Home autorizado el 23/09 conserva el verde escolar para la
+promesa, el estado abierto y los aportes de Matemática/Equipo. Aura se presenta
+con su estrella de cuatro puntas y verde neón exclusivamente sobre `aura-surface`.
+La lima continúa reservada al CTA principal. Los iconos acompañan etiquetas;
+ningún puesto, aporte o estado se interpreta sólo por color.
+
+El podio incorpora metales mates como extensión acotada de presentación:
+`podium-gold`, `podium-silver`, `podium-bronze` y sus roles `*-surface`.
+Oro y bronce añaden pigmentos ocre/cobre; plata reutiliza tinta secundaria y
+papel cuadriculado. Sólo se usan en medallas y filetes del Home. No sustituyen
+colores de resultado, selección, progreso ni Aura en el juego. Cada medalla
+conserva el numeral y la etiqueta de puesto, incluidos los puestos compartidos.
+Los contrastes de los numerales sobre su tinte son 4,91:1, 7,16:1 y 5,49:1;
+los nueve pares adicionales del Home se verifican en `pnpm design:check`.

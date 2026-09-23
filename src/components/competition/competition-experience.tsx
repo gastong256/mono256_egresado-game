@@ -314,9 +314,11 @@ export function CompetitionExperience({
                     <p className="text-section font-display text-ink text-balance">
                       Tu secundaria.
                       <br />
-                      Tus decisiones.
+                      <span className="text-ink-secondary">
+                        Tus decisiones.
+                      </span>
                       <br />
-                      Tu propia historia.
+                      <span className="text-green">Tu propia historia.</span>
                     </p>
                     <p className="text-body-lg text-ink-secondary max-w-viewport text-pretty">
                       Del primer día a la graduación. Resolvé situaciones, hacé
@@ -501,11 +503,18 @@ function CompetitionStatusNote({
   return (
     <div className="border-ink flex flex-col gap-2 border-t-2 pt-3">
       <p className="text-label font-display text-ink-label uppercase">
-        {status === 'open'
-          ? '● Competencia abierta'
-          : status === 'upcoming'
-            ? '◷ Próximamente'
-            : '■ Competencia cerrada'}
+        {status === 'open' ? (
+          <>
+            <span className="text-green" aria-hidden="true">
+              ●
+            </span>{' '}
+            Competencia abierta
+          </>
+        ) : status === 'upcoming' ? (
+          '◷ Próximamente'
+        ) : (
+          '■ Competencia cerrada'
+        )}
       </p>
       <h2 className="text-title font-display text-ink">
         {status === 'open'

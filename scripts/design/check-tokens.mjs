@@ -47,6 +47,8 @@ const PIGMENTS = [
   'neon-(?:400|500)',
   'coral-400',
   'ash-400',
+  'ochre-(?:100|700)',
+  'copper-(?:100|700)',
 ].join('|')
 
 const RULES = [

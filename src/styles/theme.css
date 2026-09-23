@@ -87,6 +87,14 @@
   --outcome-partial: var(--color-ink-500);
   --outcome-insufficient: var(--color-tartan-600);
 
+  /* ---- Podio Home: medallas; número y texto conservan el significado ---- */
+  --podium-gold: var(--color-ochre-700);
+  --podium-gold-surface: var(--color-ochre-100);
+  --podium-silver: var(--color-ink-700);
+  --podium-silver-surface: var(--color-paper-grid);
+  --podium-bronze: var(--color-copper-700);
+  --podium-bronze-surface: var(--color-copper-100);
+
   /* ---- Progreso: celdas de la cuadrícula, no una barra ------------------ */
   --progress-done: var(--color-bottle-600);
   --progress-current: var(--color-ink-900);
@@ -160,6 +168,13 @@
   --color-outcome-resolved: var(--outcome-resolved);
   --color-outcome-partial: var(--outcome-partial);
   --color-outcome-insufficient: var(--outcome-insufficient);
+
+  --color-podium-gold: var(--podium-gold);
+  --color-podium-gold-surface: var(--podium-gold-surface);
+  --color-podium-silver: var(--podium-silver);
+  --color-podium-silver-surface: var(--podium-silver-surface);
+  --color-podium-bronze: var(--podium-bronze);
+  --color-podium-bronze-surface: var(--podium-bronze-surface);
 
   --color-progress-done: var(--progress-done);
   --color-progress-current: var(--progress-current);

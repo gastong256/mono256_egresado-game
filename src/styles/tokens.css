@@ -51,6 +51,12 @@
   --color-bottle-800: #14572f;
   --color-bottle-050: #e3efe7;
 
+  /* Metales mates: sólo medallas del podio público, nunca feedback de juego. */
+  --color-ochre-700: #805a12;
+  --color-ochre-100: #f5e4b6;
+  --color-copper-700: #87462b;
+  --color-copper-100: #f2ded1;
+
   /* Rojo escocés. Tensión y restricción; no es «error». */
   --color-tartan-600: #c0272d;
   --color-tartan-050: #fbeaea;

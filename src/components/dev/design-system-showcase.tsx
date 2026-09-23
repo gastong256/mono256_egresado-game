@@ -339,6 +339,24 @@ const PALETTE = [
   { name: 'aura-surface', className: 'bg-aura-surface', hex: '#0A0C0A' },
   { name: 'aura-gain', className: 'bg-aura-gain', hex: '#4AE88C' },
   { name: 'aura-loss', className: 'bg-aura-loss', hex: '#FF5C63' },
+  { name: 'podium-gold', className: 'bg-podium-gold', hex: '#805A12' },
+  {
+    name: 'podium-gold-surface',
+    className: 'bg-podium-gold-surface',
+    hex: '#F5E4B6',
+  },
+  { name: 'podium-silver', className: 'bg-podium-silver', hex: '#45494A' },
+  {
+    name: 'podium-silver-surface',
+    className: 'bg-podium-silver-surface',
+    hex: '#E6E4DC',
+  },
+  { name: 'podium-bronze', className: 'bg-podium-bronze', hex: '#87462B' },
+  {
+    name: 'podium-bronze-surface',
+    className: 'bg-podium-bronze-surface',
+    hex: '#F2DED1',
+  },
 ] as const
 
 function ColorSection() {

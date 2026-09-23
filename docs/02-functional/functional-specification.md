@@ -64,6 +64,13 @@ servidor. Se elimina la secuencia textual de años; **Practicar** se presenta co
 botón con borde y menor jerarquía que **Jugar ahora**. Son cambios editoriales, no
 cambios de consignas o contenido jugable.
 
+Mejora visual de Home autorizada por el PO (23/09): promesa con acento verde,
+punto verde junto a «Competencia abierta», explicación de Matemática/Equipo/Aura
+con iconos y medallas numeradas oro/plata/bronce para los tres puestos. Los colores
+complementan palabras y números. No se recalculan puestos ni se ocultan empates;
+los cambios se limitan a la landing y no afectan identificación, práctica,
+partidas ni cierres. El contador y los accesos conservan su comportamiento.
+
 El estado se refresca cada 20 s en portada/identificación cuando está abierto o
 próximo a abrir. La matemática es la contribución principal; Equipo y Aura también
 suman, conforme a FairScore v1, sin una nueva métrica «Amigos».

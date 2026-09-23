@@ -88,6 +88,25 @@ un recorte de presentación de ese insumo solicitado por el PO; no cambia el
 radio cero de los componentes. Los WebP se derivan de `resources/footer/` con
 `scripts/brand/build-footer-assets.ts`.
 
+### Jerarquía cromática del Home
+
+La promesa conserva el primer renglón en tinta, baja el segundo a tinta secundaria
+y destaca «Tu propia historia» con verde escolar. El punto de competencia abierta
+usa ese mismo verde junto a la palabra, sin parpadeo ni significado exclusivo del color.
+
+La explicación del puntaje usa `Surface` y tres bloques con iconos vectoriales:
+operaciones matemáticas, compañeros y estrella de cuatro puntas. En escritorio
+forman una fila; en móvil se apilan en el mismo orden. Matemática lleva un tinte
+verde y filete más pesado; Equipo queda en papel; Aura usa la superficie negra
+existente con neón y texto secundario de contraste medido. La explicación de la
+contribución al puntaje permanece escrita: el tamaño de los bloques no es un gráfico.
+
+Las medallas se limitan al podio del Home y acompañan los numerales 1/2/3.
+El primer puesto mantiene mayor escala y las columnas su desnivel; los empates
+no duplican medallas ni alteran el orden del servidor. Los SVG son decorativos,
+`aria-hidden`, de trazo consistente y sin animación adicional. Los bordes,
+el radio cero y la cuadrícula continúan siendo los del sistema.
+
 ## El slot de acción
 
 **Existe exactamente un primario montado a la vez.** Mientras se decide vive dentro del bloque oscuro, junto a las opciones; al resolver salta al final del shell, debajo del panel de resultado. Nunca hay que scrollear para atrás para continuar.

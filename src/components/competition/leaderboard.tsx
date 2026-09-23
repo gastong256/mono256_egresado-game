@@ -4,6 +4,7 @@ import type {
   PublicSelfSummary,
 } from '@/lib/competition'
 import { cn } from '@/lib/ui/cn'
+import { PodiumMedal } from './home-marks'
 import { RankingDeadlineNotice } from './ranking-deadline-notice'
 
 /** Group the server's ranks for display. Never slice ties or recompute places. */
@@ -100,26 +101,15 @@ export function Leaderboard({
               className={cn(
                 'border-rule bg-surface min-w-0 border p-4',
                 rank === 1
-                  ? 'border-t-ink border-t-4 sm:min-h-64'
+                  ? 'border-t-podium-gold border-t-4 sm:min-h-64'
                   : rank === 2
-                    ? 'border-t-ink border-t-2 sm:mt-8 sm:min-h-56'
-                    : 'sm:mt-16 sm:min-h-48',
+                    ? 'border-t-podium-silver border-t-2 sm:mt-8 sm:min-h-56'
+                    : 'border-t-podium-bronze border-t-2 sm:mt-16 sm:min-h-48',
               )}
               data-testid={`podium-rank-${String(rank)}`}
             >
-              <h3 className="font-display text-ink flex items-baseline gap-3">
-                <span
-                  className={cn(
-                    'tabular-nums',
-                    rank === 1
-                      ? 'text-milestone'
-                      : rank === 2
-                        ? 'text-display'
-                        : 'text-section',
-                  )}
-                >
-                  {rank}
-                </span>
+              <h3 className="font-display text-ink flex items-center gap-3">
+                <PodiumMedal rank={rank} />
                 <span className="text-label uppercase">
                   {players.length > 1 ? 'Puesto compartido' : 'Puesto'}
                 </span>
@@ -138,7 +128,7 @@ export function Leaderboard({
                     key={`${entry.nickname}-${String(index)}`}
                     className={cn(
                       'flex min-w-0 flex-col gap-2 py-3',
-                      entry.isYou && 'border-l-ink border-l-2 pl-3',
+                      entry.isYou && 'border-l-green border-l-2 pl-3',
                     )}
                     data-testid="leaderboard-entry"
                   >
@@ -174,7 +164,7 @@ export function Leaderboard({
 
       {outsidePodium && you !== undefined ? (
         <div
-          className="border-ink bg-canvas-sunken flex flex-wrap items-center justify-between gap-4 border-l-4 p-4"
+          className="border-green bg-green-tint flex flex-wrap items-center justify-between gap-4 border-l-4 p-4"
           data-testid="own-rank"
         >
           <div className="min-w-0">

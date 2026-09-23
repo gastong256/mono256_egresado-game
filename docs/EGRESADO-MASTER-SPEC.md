@@ -5058,6 +5058,13 @@ servidor. Se elimina la secuencia textual de años; **Practicar** se presenta co
 botón con borde y menor jerarquía que **Jugar ahora**. Son cambios editoriales, no
 cambios de consignas o contenido jugable.
 
+Mejora visual de Home autorizada por el PO (23/09): promesa con acento verde,
+punto verde junto a «Competencia abierta», explicación de Matemática/Equipo/Aura
+con iconos y medallas numeradas oro/plata/bronce para los tres puestos. Los colores
+complementan palabras y números. No se recalculan puestos ni se ocultan empates;
+los cambios se limitan a la landing y no afectan identificación, práctica,
+partidas ni cierres. El contador y los accesos conservan su comportamiento.
+
 El estado se refresca cada 20 s en portada/identificación cuando está abierto o
 próximo a abrir. La matemática es la contribución principal; Equipo y Aura también
 suman, conforme a FairScore v1, sin una nueva métrica «Amigos».
@@ -5434,6 +5441,7 @@ Fuentes: [adjudicación](04-quality/mathematics-department-ai-adjudication.md),
 | FR-001/014: aviso de plazo restante encima del total del ranking | `RankingDeadlineNotice`, `useEventSecondsRemaining` | `ranking-deadline-notice.test.tsx`: límites de días/horas/minutos, estados, vencimiento y cambio de fecha; `home-event.spec.ts`: posición del aviso |
 | FR-001/014: CTA y estados del evento | `CompetitionExperience`, `EventCountdown` | `event-countdown.test.tsx`, `home-event.test.tsx`, `home-event.spec.ts` |
 | FR-001: copy Feria del Libro, hero a todo el ancho, reloj visible y footer compacto | `HomeHero`, `CompetitionExperience`, `EventCountdown`, `text-countdown` | `home-event.spec.ts`: geometría responsive de cabecera/reloj/CTA/footer, zoom, teclado y axe; `cn.test.ts`: rol numérico |
+| FR-001/012: acentos, iconos de aportes y medallas del Home | `GameModeSummary`, `home-marks`, `Leaderboard`, tokens `podium-*` | `home-event.test.tsx`, `home-event.spec.ts`, `design:check`: etiquetas, empates, numerales y contraste |
 | FR-012/020: podio por puesto y posición propia | `Leaderboard`; DTO y comparador sin cambios | `competition-ui.test.tsx`, `home-event.test.tsx`, `ranking-release-regression.test.ts` |
 | FR-001: aviso v1 completo en `/privacidad`, footer y aceptación al iniciar | `PrivacyPolicy`, `IdentityForm`, `InstitutionalFooter`, `app/privacidad/page.tsx` | `competition-ui.test.tsx`, `privacy-page.test.tsx`, `privacy.spec.ts`, `competition.spec.ts`; integridad del aviso, footer sólo en Home/privacidad, SSR sin JS, teclado/axe, campos conservados y rechazo API sin reconocimiento vigente |
 

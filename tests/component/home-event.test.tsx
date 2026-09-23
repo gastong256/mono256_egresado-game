@@ -55,6 +55,16 @@ describe('podio por puestos', () => {
     ).toHaveLength(2)
     expect(screen.queryByTestId('podium-rank-2')).not.toBeInTheDocument()
     expect(
+      within(screen.getByTestId('podium-rank-1')).getByRole('heading', {
+        name: /1\s*Puesto compartido/u,
+      }),
+    ).toBeVisible()
+    expect(
+      within(screen.getByTestId('podium-rank-3')).getByRole('heading', {
+        name: /3\s*Puesto compartido/u,
+      }),
+    ).toBeVisible()
+    expect(
       within(screen.getByTestId('podium-rank-3')).getAllByTestId(
         'leaderboard-entry',
       ),
@@ -223,6 +233,16 @@ describe('autoridad de estado en home', () => {
     expect(screen.getByText('Matemática')).toBeInTheDocument()
     expect(screen.getByText('Equipo')).toBeInTheDocument()
     expect(screen.getByText('Aura')).toBeInTheDocument()
+    const explanation = screen.getByRole('region', {
+      name: /La matemática manda/u,
+    })
+    expect(
+      within(explanation)
+        .getAllByRole('term')
+        .map((term) => term.textContent),
+    ).toEqual(['Matemática', 'Equipo', 'Aura'])
+    // Icons accompany text and never add duplicate accessible image names.
+    expect(within(explanation).queryByRole('img')).not.toBeInTheDocument()
     expect(screen.queryByText(/Prestige/u)).not.toBeInTheDocument()
   })
 })
