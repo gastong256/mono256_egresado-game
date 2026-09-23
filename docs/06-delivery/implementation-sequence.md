@@ -17,15 +17,16 @@ Si el roadmap y el código difieren, **el código gana** y el roadmap se corrige
 - Fases de validación externa y congelamiento: [ciclo de entrega real](../00-product/real-delivery-lifecycle.md).
 - Qué se construye por capas de alcance: [alcance y roadmap](../00-product/scope-and-roadmap.md) y [backlog](mvp-backlog.md).
 
-**Última reconciliación:** 23 de septiembre de 2026, **RC5 `DONE` localmente**;
+**Última reconciliación:** 23 de septiembre de 2026, **RC6 `DONE` localmente**;
 STAGE-10 mantiene pendientes las comprobaciones remotas y el GO del operador.
-Identidad vigente `1.0.0-rc.5`; huella `ac1307fabcbcbcdb8ee8c224b016583f0b46801d5813aa968085416d4d69ce30`.
-[Cierre de RC5](rc5-release-closure.md): acceso del Home e identidad del nuevo corte.
-Scope IN autorizado: jerarquía del bloque de acceso, ventana temporal presentada
-por ese bloque, responsive móvil/tablet y documentación/identidad de release.
-Scope OUT: reglas, motor, contenido, score, ranking, persistencia, migraciones y deploy remoto.
-Exit gate: evidencia dirigida de UI preservada, build, freeze, health y controles
-de release; commit en main y tag local, sin push. RC1–RC4 siguen como antecedentes.
+Identidad vigente `1.0.0-rc.6`; huella `5d32953278e33a6139bf61be1cd204b6a4d93e5307262bde0d71765937c7e7f2`.
+[Cierre de RC6](rc6-release-closure.md): jerarquía visual del ranking y conteo de desafíos.
+Scope IN autorizado: podio escalonado, filas compactas, fila propia persistente,
+reconocimientos y detalle responsive, conteo desde evidencia persistida,
+documentación, identidad de release, commit y tag local en main.
+Scope OUT: motor, contenido, comparador, score, persistencia, migraciones y deploy remoto.
+Exit gate: pruebas dirigidas, responsive, teclado/axe, build, freeze, health y
+controles de release. Push manual del operador. RC1–RC5 siguen inmutables.
 Las excepciones RC3 más abajo registran autorizaciones históricas ya entregadas.
 FairScore se oficializó como `fair-score-v1` sin mover un número,
 y la revisión humana amplia deja de bloquear el roadmap

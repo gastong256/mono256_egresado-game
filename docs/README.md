@@ -127,6 +127,7 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 - `fallback-and-incident-plan.md`: funcionamiento degradado y recuperación.
 
 ### 06-delivery
+- `rc6-release-closure.md`: jerarquía del ranking, conteo de desafíos, validaciones e identidad de RC6.
 - `rc5-release-closure.md`: cierre del acceso del Home, procedencia de checks, identidad y publicación manual de RC5.
 - `rc4-release-closure.md`: corte urgente posterior a RC3, cambios incluidos, controles y publicación manual.
 - `rc3-release-closure.md`: cierre local de RC3, notas de versión, procedencia de la validación y publicación manual.

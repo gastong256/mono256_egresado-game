@@ -11,7 +11,7 @@ export const publicRunSummary: PublicRunSummary = {
   },
   profile: 'strategist',
   graduated: true,
-  eventsPlayed: 9,
+  eventsPlayed: 20,
   recoveries: 0,
   previas: 0,
   optimalCount: 7,

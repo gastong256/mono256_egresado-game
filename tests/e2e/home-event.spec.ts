@@ -399,7 +399,18 @@ test('podio vacío anticipa partidas, sin ganadores de relleno', async ({
 test('el detalle de una partida se abre con teclado y conserva contraste', async ({
   page,
 }) => {
-  await showState(page, fixture())
+  const state = fixture()
+  await showState(page, {
+    ...state,
+    leaderboard: state.leaderboard.map((entry, index) =>
+      index === 0
+        ? {
+            ...entry,
+            summary: { ...publicRunSummary, eventsPlayed: 22, recoveries: 2 },
+          }
+        : entry,
+    ),
+  })
   const summary = page
     .locator('summary')
     .filter({ hasText: 'Ver partida' })
@@ -408,13 +419,69 @@ test('el detalle de una partida se abre con teclado y conserva contraste', async
   await page.keyboard.press('Enter')
   await expect(page.getByText('Aportes al puntaje')).toBeVisible()
   await expect(page.getByText('Todo Óptimo en 2.º.')).toBeVisible()
-  const scan = await new AxeBuilder({ page })
-    .include('[data-testid="leaderboard"]')
-    .analyze()
-  expect(scan.violations).toEqual([])
-  expect(
-    await page.evaluate(
-      () => document.documentElement.scrollWidth <= window.innerWidth,
-    ),
-  ).toBe(true)
+  await expect(
+    page.getByText('9 desafíos resueltos · 7 resoluciones óptimas'),
+  ).toBeVisible()
+  await expect(page.getByText(/situaciones jugadas/u)).toHaveCount(0)
+  await expect(page.getByText('2 repasos realizados')).toBeVisible()
+  for (const width of [320, 768, 1280]) {
+    await page.setViewportSize({ width, height: 900 })
+    const scan = await new AxeBuilder({ page })
+      .include('[data-testid="leaderboard"]')
+      .analyze()
+    expect(scan.violations).toEqual([])
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= window.innerWidth,
+      ),
+    ).toBe(true)
+  }
+})
+
+test('el podio escala, las filas comunes conservan tamaño y el detalle sigue accesible', async ({
+  page,
+}) => {
+  const state = fixture()
+  await showState(page, {
+    ...state,
+    leaderboard: [1, 2, 3, 4, 5].map((rank) => ({
+      rank,
+      nickname: ['Meli', 'Gaston', 'Cami', 'Valen', 'Sofi'][rank - 1]!,
+      fairScore: 9900 - rank * 100,
+      isYou: rank === 5,
+      summary: publicRunSummary,
+    })),
+    you: { ...state.you!, nickname: 'Sofi', rank: 5 },
+  })
+  const rows = page.getByTestId('leaderboard-entry')
+  for (const width of [390, 768, 1280]) {
+    await page.setViewportSize({ width, height: 900 })
+    const heights = await rows.evaluateAll((nodes) =>
+      nodes.map((node) => node.getBoundingClientRect().height),
+    )
+    expect(heights[0]!).toBeGreaterThan(heights[1]!)
+    expect(heights[1]!).toBeGreaterThan(heights[2]!)
+    expect(heights[2]!).toBeGreaterThan(heights[3]!)
+    expect(Math.abs(heights[3]! - heights[4]!)).toBeLessThanOrEqual(1)
+    await expect(rows.nth(4)).toContainText('Tu mejor partida')
+    expect(
+      (
+        await new AxeBuilder({ page })
+          .include('[data-testid="leaderboard"]')
+          .analyze()
+      ).violations,
+    ).toEqual([])
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true)
+  }
+  const disclosure = rows.nth(4).locator('summary')
+  await disclosure.focus()
+  await page.keyboard.press('Enter')
+  await expect(rows.nth(4).getByText('Aportes al puntaje')).toBeVisible()
+  await expect(rows.nth(4).getByText('Todo Óptimo en 2.º.')).toBeVisible()
+  await page.keyboard.press('Enter')
+  await expect(rows.nth(4).getByText('Aportes al puntaje')).not.toBeVisible()
 })

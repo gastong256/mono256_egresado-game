@@ -90,6 +90,9 @@ const PAIRS = [
   [4.5, 'red', 'surface'],
   [4.5, 'red', 'canvas-sunken'],
   [4.5, 'green-deep', 'green-tint'],
+  [4.5, 'green-deep', 'surface'],
+  [4.5, 'ink-label', 'green-tint'],
+  [4.5, 'podium-gold', 'green-tint'],
   [4.5, 'ink-secondary', 'green-tint'],
   [4.5, 'ink', 'green-tint'],
   [3, 'green', 'green-tint'],
@@ -101,7 +104,7 @@ const PAIRS = [
   [4.5, 'podium-gold', 'podium-gold-surface'],
   [4.5, 'podium-silver', 'podium-silver-surface'],
   [4.5, 'podium-bronze', 'podium-bronze-surface'],
-  [3, 'podium-gold', 'surface'],
+  [4.5, 'podium-gold', 'surface'],
   [3, 'podium-silver', 'surface'],
   [3, 'podium-bronze', 'surface'],
 

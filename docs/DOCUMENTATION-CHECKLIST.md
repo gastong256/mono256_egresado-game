@@ -214,3 +214,9 @@ Estas preguntas están registradas en [preguntas abiertas](07-reference/open-que
 - [x] Estado, roadmap, checklist y runbooks vigentes actualizados; RC4 inmutable.
 - [x] Sin nuevas migraciones ni cambios en las versiones competitivas.
 - [ ] Push manual, despliegue y comprobaciones cloud a cargo del operador.
+
+## Cierre RC6 — presentación del ranking
+
+- [x] [Cierre RC6](06-delivery/rc6-release-closure.md): alcance autorizado, compatibilidad y publicación manual.
+- [x] FR-012, trazabilidad, fundamentos visuales, registro de decisiones y estado actualizados.
+- [x] Conteo desde evidencia matemática persistida, sin migración ni replay nuevo.

@@ -8,8 +8,7 @@ import type {
   PublicSelfSummary,
 } from '@/lib/competition'
 import { cn } from '@/lib/ui/cn'
-import { RankingRunMetrics, RankingRunDetails } from './ranking-run-details'
-import { PodiumMedal } from './home-marks'
+import { RankingEntry } from './ranking-entry'
 import { RankingDeadlineNotice } from './ranking-deadline-notice'
 
 /**
@@ -136,54 +135,7 @@ export function Leaderboard({
                   estos puestos<span aria-hidden="true"> ···</span>
                 </p>
               ) : null}
-              <article
-                className={cn(
-                  'bg-surface grid min-w-0 grid-cols-[2.5rem_minmax(0,1fr)] gap-x-3 gap-y-3 p-3 sm:grid-cols-[3rem_minmax(0,1fr)_auto] sm:gap-x-5 sm:p-5',
-                  entry.isYou && 'border-l-green bg-green-tint border-l-4',
-                )}
-                data-testid="leaderboard-entry"
-                aria-label={`${entry.nickname}, puesto ${entry.rank}${entry.isYou ? ', tu mejor partida' : ''}`}
-              >
-                <div className="row-span-2 flex justify-center pt-1">
-                  <span className="sr-only">Puesto </span>
-                  <PodiumMedal rank={entry.rank} compact />
-                </div>
-                <div className="flex min-w-0 flex-col gap-1">
-                  <h3 className="text-option font-display text-ink [overflow-wrap:anywhere]">
-                    {entry.nickname}
-                    {entry.isYou ? (
-                      <span className="text-caption text-green-deep ml-2">
-                        (vos)
-                      </span>
-                    ) : null}
-                  </h3>
-                  {(entry.sharedCount ?? 0) > 0 ? (
-                    <p className="text-caption text-ink-secondary tabular-nums">
-                      Compartido con{' '}
-                      {entry.sharedCount?.toLocaleString('es-AR')} más
-                    </p>
-                  ) : null}
-                </div>
-                <p className="text-caption text-ink-secondary col-start-2 sm:col-start-3 sm:row-start-1 sm:text-right">
-                  <strong className="text-section font-display text-ink tabular-nums">
-                    {entry.fairScore.toLocaleString('es-AR')}
-                  </strong>{' '}
-                  puntos <span className="sr-only">de la partida</span>
-                </p>
-                {entry.summary ? (
-                  <div className="col-span-2 flex min-w-0 flex-col gap-3 sm:col-span-2 sm:col-start-2">
-                    <RankingRunMetrics summary={entry.summary} />
-                    <RankingRunDetails
-                      summary={entry.summary}
-                      nickname={entry.nickname}
-                    />
-                  </div>
-                ) : (
-                  <p className="text-caption text-ink-secondary col-span-2 sm:col-start-2">
-                    Partida finalizada · detalle no disponible
-                  </p>
-                )}
-              </article>
+              <RankingEntry entry={entry} />
             </li>
           ))}
         </ol>

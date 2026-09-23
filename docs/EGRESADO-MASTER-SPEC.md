@@ -5165,6 +5165,12 @@ usa hechos independientes y su [presupuesto canónico](01-game-design/rare-event
 Una fila resume la mejor partida de un participante: alias, puesto real,
 FairScore destacado, Promedio/Equipo/Aura establecidos y hasta dos reconocimientos.
 «Ver partida» despliega aportes al score, estilo, hitos y recorrido por año.
+Muestra desafíos resueltos a partir de las oportunidades matemáticas
+del resumen oficial guardado, y los repasos realizados en una línea aparte
+cuando son mayores que cero. No presenta `eventsPlayed` como desafíos: ese total
+también contiene escenas narrativas. Sin componente matemático omite la cantidad,
+sin asumir nueve ni reconstruir el historial. Usa los mismos resúmenes v1, sin
+backfill, consultas adicionales o cambios de score.
 Nunca mezcla máximos de intentos distintos ni presenta notas del juego como
 calificaciones escolares reales. Sin resumen histórico, mantiene el puntaje y
 explica que el detalle no está disponible.
@@ -5192,6 +5198,17 @@ del establecimiento organizador define el criterio y resuelve el desempate.
 Egresado no tiene esa función ni asume responsabilidad por esa decisión externa;
 el ranking conserva los puestos compartidos. Aclaración editorial autorizada
 para RC4, sin modificar el comparador ni crear un desempate automático.
+
+La presentación RC6 jerarquiza por puesto real: primero destacado, segundo y
+tercero progresivamente más compactos; los demás comparten densidad. Un empate
+conserva el tratamiento de su puesto, sin recalcularlo. La fila propia se identifica
+con fondo, borde y texto persistentes, también sin hover. El puntaje oficial
+predomina sobre promedio, equipo y Aura; las dimensiones ausentes se omiten.
+El podio anticipa hasta dos reconocimientos (uno en tercero), con iconos semánticos;
+las filas comunes resumen su cantidad y todas permiten abrir el detalle completo
+con teclado o toque. Aportes, reconocimientos y recorrido se agrupan, seguidos
+del estilo de decisiones. El total mostrado sigue siendo el del servidor.
+Se conserva el plegado móvil y la ventana acotada de ADR-031, sin nuevas consultas.
 
 ## FR-013 Reintento
 El jugador puede iniciar otra run. Fair v1 permite reintentos ilimitados sobre
@@ -5523,6 +5540,19 @@ reflow, teclado, accesibilidad, carga real y avance con imágenes bloqueadas).
 |---|---|---|
 | FR-001: estado abierto explícito, Jugar prioritario, contador completo y práctica secundaria; reflow móvil/tablet | `CompetitionExperience`, `EventCountdown` | `home-event.spec.ts`: 320–1920 px, tablet 768/1024, zoom, teclado, axe y reduced motion |
 | FR-001: OPEN respeta la ventana anunciada en el bloque de acceso, sin promover UPCOMING | `useAccessStatus`, servidor existente sin cambios | `home-event.test.tsx`, `event-countdown.test.tsx`, `home-event.spec.ts`: límites, pestaña suspendida y actualización de horarios |
+
+## Desafíos y repasos en el detalle del ranking
+
+| Requisito | Implementación | Evidencia |
+|---|---|---|
+| FR-012: desafíos resueltos excluyen narrativa; repasos separados, sin inventar cantidades ausentes | `RankingRunDetails`, campos existentes `components[math].opportunities` y `recoveries` | `ranking-run-details.test.tsx`: total 20, repasos, singular y datos ausentes; `ranking-summary.test.ts`: equivalencia con partidas reproducidas; `home-event.spec.ts`: teclado, axe y reflow |
+
+## RC6 — presentación del ranking
+
+| Requisito | Implementación | Evidencia |
+|---|---|---|
+| FR-012: jerarquía por puesto, identidad propia y detalle completo | `ranking-entry.tsx`, `ranking-run-details.tsx`, `achievement-mark.tsx` | `ranking-run-details.test.tsx`, `home-event.test.tsx`, `competition-ui.test.tsx`, `home-event.spec.ts` (escala, teclado, axe y responsive) |
+| FR-012: desafíos puntuables separados de escenas y repasos | oportunidades matemáticas del resumen persistido | `ranking-summary.test.ts`, `ranking-run-details.test.tsx`, `home-event.spec.ts` |
 
 ---
 
@@ -22165,9 +22195,9 @@ Esperado:
   "service": "egresado-web",
   "release": {
     "releaseId": "egresado-fair-edition-v1",
-    "releaseVersion": "1.0.0-rc.5",
+    "releaseVersion": "1.0.0-rc.6",
     "releaseChannel": "release-candidate",
-    "releaseFingerprint": "ac1307fabcbcbcdb8ee8c224b016583f0b46801d5813aa968085416d4d69ce30"
+    "releaseFingerprint": "5d32953278e33a6139bf61be1cd204b6a4d93e5307262bde0d71765937c7e7f2"
   },
   "checks": [{ "name": "release-manifest", "state": "ok" }]
 }
@@ -22261,7 +22291,7 @@ del congelamiento de v1—. El organizador ve:
 
 ```text
 COMPETITION_NOT_CONFIGURED — la edición no corresponde a
-egresado-fair-edition-v1 1.0.0-rc.5: scoreVersion esperaba … y tiene …
+egresado-fair-edition-v1 1.0.0-rc.6: scoreVersion esperaba … y tiene …
 ```
 
 La edición vieja **no se arregla**: sus intentos se jugaron bajo otras reglas y
@@ -22843,6 +22873,27 @@ Egresado no dispone de esa función ni es responsable de esa decisión externa:
 su ranking mantiene los puestos compartidos. La aclaración aparece en `/puntajes`
 y no autoriza a cambiar puntajes, comparador o versiones de partidas.
 
+## Cantidad de desafíos en el detalle
+
+«Ver partida» muestra `components[math].opportunities` como desafíos resueltos,
+porque cada desafío ordinario puntuable aporta evidencia matemática y el score
+excluye los repasos. `recoveries` se presenta por separado si es mayor que cero.
+`eventsPlayed` conserva su significado de eventos totales (incluye narrativa)
+y deja de mostrarse como «situaciones jugadas». No se modifica el JSON guardado:
+el cambio se aplica también a resúmenes v1 existentes, sin backfill ni replay.
+Sin componente matemático se omite la cantidad, sin deducirla del total de eventos.
+
+## Presentación RC6
+
+El ranking público usa el resumen persistido existente. Podio escalonado por
+puesto real, filas comunes compactas y fila propia marcada sin depender de hover.
+Los iconos de reconocimientos explican hitos existentes; no crean premios ni
+puntos nuevos. Todas las filas conservan el detalle, agrupado por aportes al
+puntaje, reconocimientos, años y estilo. El total proviene de `fairScore` oficial;
+no se reconstruye sumando indicadores de carrera.
+Sin migración, seed, backfill ni replay adicional para desplegar RC6. Los registros
+sin resumen conservan el fallback de puntaje y detalle no disponible.
+
 ---
 
 # FILE: 05-operations/vercel-supabase-production-deployment.md
@@ -22904,11 +22955,11 @@ La contraseña no tiene default. La seed la genera el bootstrap canónico.
 ## A. GitHub — publicar la fuente cuando el operador esté listo
 
 1. Verificar `git branch --show-current` = `main` y `git status --porcelain` vacío.
-2. `pnpm release:verify` debe identificar `1.0.0-rc.5` y la huella del
+2. `pnpm release:verify` debe identificar `1.0.0-rc.6` y la huella del
    [checklist](06-delivery/release-checklist.md).
 3. El operador comprueba su acceso a GitHub y ejecuta:
    ```bash
-   git push --atomic origin main v1.0.0-rc.5
+   git push --atomic origin main v1.0.0-rc.6
    ```
 4. Antes de conectar Vercel, incorporar `vercel.json` a cualquier rama antigua
    que se vaya a seguir usando. La configuración se lee de la revisión enviada;
@@ -22918,7 +22969,7 @@ La política Git deshabilita auto-deploys no-main, incluidas ramas con `/`, usan
 `**: false`, `main: true`. No reemplaza la selección de Production Branch en el
 panel ni bloquea despliegues manuales del propietario.
 
-RC5 conserva el esquema de RC2/RC3/RC4. El PO confirma el 23/09 que las migraciones
+RC6 conserva el esquema de RC2/RC3/RC4. El PO confirma el 23/09 que las migraciones
 ya están en producción y todavía no hubo partidas allí: no se vuelve a aplicar
 el historial, no se ejecuta el seed local ni `competition:summaries`. Las partidas
 nuevas guardan automáticamente el resumen del ranking. La confirmación es del
@@ -22940,7 +22991,7 @@ operador; este cierre no inspeccionó ni modificó Supabase remoto.
 
 ## C. Supabase CLI — aplicar el historial sin seed
 
-Desde la raíz del checkout RC5, con Docker disponible para los dumps y la CLI
+Desde la raíz del checkout RC6, con Docker disponible para los dumps y la CLI
 fijada por el repositorio:
 
 ```bash
@@ -23099,7 +23150,7 @@ exclusivamente en São Paulo.
 
 ## F. Bootstrap de la edición final
 
-Con RC5 y preflight aprobado:
+Con RC6 y preflight aprobado:
 
 ```bash
 pnpm competition:bootstrap -- \
@@ -23128,7 +23179,7 @@ curl -sS -o /dev/null -w '%{http_code}\n' "$APP_URL/dev/grade-7"
 
 Obligatorio antes de GO:
 
-- liveness 200 y release `1.0.0-rc.5`, fingerprint idéntico al candado;
+- liveness 200 y release `1.0.0-rc.6`, fingerprint idéntico al candado;
 - readiness 200, `release-manifest`, `competition-config`, `database` y
   `competition` en `ok`; antes del bootstrap, `competition: degraded`/503 es
   esperado, después no;
@@ -23270,6 +23321,18 @@ real al ejecutar el handoff. Ninguna consulta acredita una cuenta ni un deploy.
 
 Vista corta del estado de ejecución. El contrato completo y el protocolo de
 actualización están en el [roadmap](06-delivery/implementation-sequence.md).
+
+## RC6 — jerarquía del ranking
+
+**Estado: `DONE` localmente — 23 de septiembre de 2026.** Release
+`1.0.0-rc.6`, rama `main`, tag `v1.0.0-rc.6`.
+[Cierre y evidencia](06-delivery/rc6-release-closure.md). Implementa el mock aprobado:
+podio escalonado, filas compactas, partida propia siempre identificada,
+reconocimientos diferenciados y detalle agrupado por aportes, hitos y recorrido.
+El conteo usa desafíos puntuables guardados; escenas y repasos no se confunden
+con desafíos. No cambia motor, score, comparador, datos ni migraciones.
+Push, deploy y comprobaciones cloud quedan a cargo del operador.
+RC5 y los apartados siguientes se conservan como evidencia histórica.
 
 ## RC5 — acceso del Home
 
@@ -24118,15 +24181,16 @@ Si el roadmap y el código difieren, **el código gana** y el roadmap se corrige
 - Fases de validación externa y congelamiento: [ciclo de entrega real](00-product/real-delivery-lifecycle.md).
 - Qué se construye por capas de alcance: [alcance y roadmap](00-product/scope-and-roadmap.md) y [backlog](06-delivery/mvp-backlog.md).
 
-**Última reconciliación:** 23 de septiembre de 2026, **RC5 `DONE` localmente**;
+**Última reconciliación:** 23 de septiembre de 2026, **RC6 `DONE` localmente**;
 STAGE-10 mantiene pendientes las comprobaciones remotas y el GO del operador.
-Identidad vigente `1.0.0-rc.5`; huella `ac1307fabcbcbcdb8ee8c224b016583f0b46801d5813aa968085416d4d69ce30`.
-[Cierre de RC5](06-delivery/rc5-release-closure.md): acceso del Home e identidad del nuevo corte.
-Scope IN autorizado: jerarquía del bloque de acceso, ventana temporal presentada
-por ese bloque, responsive móvil/tablet y documentación/identidad de release.
-Scope OUT: reglas, motor, contenido, score, ranking, persistencia, migraciones y deploy remoto.
-Exit gate: evidencia dirigida de UI preservada, build, freeze, health y controles
-de release; commit en main y tag local, sin push. RC1–RC4 siguen como antecedentes.
+Identidad vigente `1.0.0-rc.6`; huella `5d32953278e33a6139bf61be1cd204b6a4d93e5307262bde0d71765937c7e7f2`.
+[Cierre de RC6](06-delivery/rc6-release-closure.md): jerarquía visual del ranking y conteo de desafíos.
+Scope IN autorizado: podio escalonado, filas compactas, fila propia persistente,
+reconocimientos y detalle responsive, conteo desde evidencia persistida,
+documentación, identidad de release, commit y tag local en main.
+Scope OUT: motor, contenido, comparador, score, persistencia, migraciones y deploy remoto.
+Exit gate: pruebas dirigidas, responsive, teclado/axe, build, freeze, health y
+controles de release. Push manual del operador. RC1–RC5 siguen inmutables.
 Las excepciones RC3 más abajo registran autorizaciones históricas ya entregadas.
 FairScore se oficializó como `fair-score-v1` sin mover un número,
 y la revisión humana amplia deja de bloquear el roadmap
@@ -26567,6 +26631,129 @@ No se mueve RC4 ni otro tag anterior. Push y deploy quedan a cargo del operador.
 
 ---
 
+# FILE: 06-delivery/rc6-release-closure.md
+
+# RC6 — ranking con jerarquía y detalle de partida
+
+Fecha: 23 de septiembre de 2026. Estado: **CLOSED LOCALLY — READY TO PUBLISH**.
+Publicación manual del operador; este cierre no acredita deploy ni GO remoto.
+
+## Identidad y alcance
+
+| Campo | Valor |
+|---|---|
+| Release | `egresado-fair-edition-v1` |
+| Versión | `1.0.0-rc.6` |
+| Tag anotado | `v1.0.0-rc.6` |
+| Rama | `main` |
+| Base y predecesor inmutable | `v1.0.0-rc.5` → `2f9d3c9` |
+| Huella | `5d32953278e33a6139bf61be1cd204b6a4d93e5307262bde0d71765937c7e7f2` |
+
+Implementa el mock aprobado por el PO, limitado a presentación del ranking:
+
+- Primer puesto destacado; segundo y tercero progresivamente más compactos;
+  filas comunes con la misma densidad. Altura fluida ante alias largos, empates,
+  datos ausentes o zoom. El puesto proviene del servidor, incluso si es compartido.
+- Puntaje oficial predominante, promedio y equipo agrupados con iconos; Aura
+  conserva negro/neón. La partida propia tiene fondo, borde y texto persistentes.
+- Reconocimientos existentes con iconos distintos; el podio anticipa hasta dos
+  (uno en tercero). Todos los puestos conservan el detalle nativo por teclado/toque.
+- Detalle agrupado en aportes al puntaje, reconocimientos, recorrido y estilo.
+  El total mostrado es el oficial, no una suma de métricas de carrera.
+- Conteo de desafíos desde `components.math.opportunities` persistido; escenas
+  narrativas no se presentan como desafíos. Los repasos se muestran aparte.
+  Se preserva `eventsPlayed` para compatibilidad y no se fija nueve en la UI.
+- Ventana acotada, plegado móvil, reconocimientos reales, omisión de dimensiones
+  ausentes y fallback de partidas sin resumen se conservan.
+
+Fuentes: [FR-012](02-functional/functional-specification.md),
+[trazabilidad](02-functional/traceability-matrix.md),
+[operación del ranking](05-operations/leaderboard-and-moderation.md) y
+[fundamentos visuales](09-design-system/foundations.md).
+Autorización en el [registro de decisiones](07-reference/decision-register.md).
+Corte según ADR-027/028, sin decisión arquitectónica nueva ni dependencias.
+
+## Compatibilidad y despliegue
+
+Motor `10.0.0`, action log `7`, snapshot `8`, ruleset `1.0.0-full-career`,
+contenido `5.5.0-grade-5`, catálogo `grade-5-dev-6` y score
+`fair-score-v1@1.0.0-fair-edition-v1` siguen iguales a RC5.
+Sólo cambia `releaseVersion` en el manifiesto; el candado se regenera y luego
+se verifica sin actualizarlo. No cambia comparador, premios, API ni replay.
+
+**Sin migraciones, backfill, seed ni variables nuevas.** Cabeza del esquema:
+`20260921000000_competition_fair_mode.sql`. Producción ya migrada para RC2/RC3
+sólo requiere el deploy de código. No resetear ni recrear la competencia;
+se conservan edición, horarios, seed, identidad y resultados.
+No se inspeccionó ni modificó Supabase remoto.
+
+## Validación y procedencia
+
+| Comando / alcance | Resultado |
+|---|---|
+| `pnpm toolchain:check`, `pnpm install --frozen-lockfile` | PASS; Node 24.19.0, pnpm 11.22.0, lockfile sin cambios |
+| Vitest: presentación, Home, UI competitiva y resumen persistido | PASS; 74 tests en cuatro suites; 68 de UI repetidos tras el ajuste móvil final |
+| Vitest: manifiesto, readiness, despliegue, health, freeze y ranking | PASS; 83 tests en seis suites |
+| Playwright: `home-event.spec.ts` y `competition.spec.ts`, desktop y mobile | PASS; 76 casos antes del ajuste final de densidad del segundo puesto móvil |
+| Playwright Home después del ajuste móvil final | 31/32 PASS; fallo intermitente de foco del CTA, seguido de 4/4 PASS aislados (dos por dispositivo) |
+| `pnpm build`, `pnpm typecheck`, `pnpm lint`, `pnpm design:check` | PASS; roles existentes y pares de contraste explícitos |
+| `pnpm release:verify -- --update-lock` | PASS; 54 controles, candado RC6 generado |
+| `pnpm release:verify`, `pnpm release:check` | PASS; 57 controles y Next.js 16.3.5 |
+| `pnpm release:preflight -- --env-file=.env.production.local` | PASS; contrato local, sin conexión remota |
+| `pnpm security:audit` | PASS; sin vulnerabilidades conocidas |
+| Artefacto local: `/api/health` y `/api/health?ready=1` | PASS; 200, versión/huella RC6 y checks `ok` |
+| Formato, secretos, workspace, master y `git diff --check` | PASS |
+
+La revisión final de Home falló una vez en `toBeFocused()` del botón Jugar,
+con tres workers; la prueba había pasado en la corrida completa de 76.
+Sin modificar el CTA ni relajar la aserción, se repitió únicamente ese caso
+con `--grep 'teclado, foco' --workers=1 --repeat-each=2`: cuatro casos PASS.
+Se registra como intermitencia pendiente de seguimiento; no se presenta la
+corrida de 32 como una ejecución única completamente verde.
+
+Las cuatro suites de UI/resumen son `ranking-run-details.test.tsx`,
+`home-event.test.tsx`, `competition-ui.test.tsx` y `ranking-summary.test.ts`.
+La primera corrida detectó una aserción ambigua al incorporar el total dentro
+del detalle; la aserción identifica ahora el puntaje principal y las 74 pasan.
+Las seis suites de release son `release-manifest.test.ts`,
+`release-readiness.test.ts`, `deployment-readiness.test.ts`, `health-route.test.ts`,
+`competition-freeze.test.ts` y `ranking-release-regression.test.ts`.
+
+Playwright cubre 320/360/390/412/768/1024/1280/1920 px, zoom 200 %, alias largos,
+empates, ranking vacío, resumen ausente, fila propia, plegado móvil, teclado,
+reduced motion y axe. Agrega una comprobación de escala del podio, densidad
+uniforme de filas comunes y acceso al detalle fuera del podio a 390/768/1280 px.
+Los escenarios competitivos recorren identidad, mejor intento y replay existentes.
+La inspección visual adicional usa datos ilustrativos en el navegador, sin sembrar
+ni modificar partidas. Los mocks quedan en `.tmp/`, fuera del release.
+
+Tests con DB, build y servidor del artefacto precargan `.env.local` y exigen
+Supabase loopback. No usan las credenciales del preflight productivo.
+No se repite `pnpm verify`, cobertura global, balance/contenido, migraciones ni
+contenedores: esas fronteras no cambiaron. La evidencia histórica no se presenta
+como una corrida nueva sobre RC6. El preflight no prueba la configuración remota.
+
+## Publicación manual
+
+```bash
+git push --atomic origin main v1.0.0-rc.6
+```
+
+1. Revisar CI y deployment Production de Vercel para ese mismo commit.
+2. Comprobar `/api/health` y `/api/health?ready=1`: HTTP 200, versión
+   `1.0.0-rc.6`, huella de este reporte y checks `ok`.
+3. Revisar Home/ranking en móvil y escritorio, expandir una partida y comprobar
+   la fila propia. Continuar el [handoff](05-operations/vercel-supabase-production-deployment.md)
+   para las comprobaciones remotas pendientes antes del GO operativo.
+
+Se confirmó por HTTPS de sólo lectura que `main` remoto aún apuntaba a
+`2f9d3c9`; la consulta SSH no pudo autenticarse en el entorno del agente.
+El trabajo se integra directamente sobre `main` local, sin reescribir historia.
+
+RC1–RC5 permanecen inmutables. Push y deploy quedan a cargo del operador.
+
+---
+
 # FILE: 06-delivery/release-checklist.md
 
 # Checklist del Release Candidate — Egresado Fair Edition v1
@@ -26577,16 +26764,15 @@ Binario. Cada línea está `PASSED`, `READY FOR STAGE-10 REHEARSAL` o `FAILED`.
 infraestructura real y que este repositorio no puede afirmar sin mentir.
 
 ```text
-release   egresado-fair-edition-v1 · 1.0.0-rc.5
-huella    ac1307fabcbcbcdb8ee8c224b016583f0b46801d5813aa968085416d4d69ce30
+release   egresado-fair-edition-v1 · 1.0.0-rc.6
+huella    5d32953278e33a6139bf61be1cd204b6a4d93e5307262bde0d71765937c7e7f2
 ```
 
-La evidencia histórica de RC1–RC4 se conserva en sus reportes. La identidad
-vigente y la procedencia de cada check están en el [cierre de RC5](06-delivery/rc5-release-closure.md).
-RC5 integra el bloque de acceso aprobado en `685ea32`: acción principal,
-contador, práctica secundaria y presentación de la ventana temporal.
-Se reutilizan sus pruebas de UI y se verifican los controles del nuevo corte;
-no se presenta una nueva corrida completa de verify.
+La evidencia histórica de RC1–RC5 se conserva en sus reportes. La identidad
+vigente y los checks actuales están en el [cierre de RC6](06-delivery/rc6-release-closure.md).
+RC6 aplica la jerarquía visual aprobada del ranking y corrige el conteo público
+de desafíos. Se ejecutan checks dirigidos de UI, regresión competitiva y release;
+no se atribuye una nueva corrida completa de verify.
 El [handoff A–I](05-operations/vercel-supabase-production-deployment.md) es el procedimiento vigente.
 
 ## Producto congelado
@@ -26679,13 +26865,13 @@ El [handoff A–I](05-operations/vercel-supabase-production-deployment.md) es el
 | Item | Estado | Evidencia |
 |---|---|---|
 | BUILD GREEN | `PASSED` | sin una sola advertencia |
-| VERIFY GREEN | `PASSED` histórico RC3 | no repetido en RC5; controles actuales y evidencia reutilizada separados en su cierre |
-| VITEST | `PASSED` | 69 tests de identidad RC5; 77 tests de UI en `685ea32`, reutilizados |
+| VERIFY GREEN | `PASSED` histórico RC3 | no repetido en RC6; controles actuales y evidencia reutilizada separados en su cierre |
+| VITEST | `PASSED` | evidencia dirigida RC6 en su reporte de cierre |
 | COVERAGE | `PASSED` (reutilizada) | 86,92 / 79,91 / 89,36 / 87,15; no recalculada en el corte |
-| E2E | `PASSED` | 30 casos Home en `685ea32`, reutilizados: 28 aprobados y 2 de 320 px aprobados tras corregir el espaciado; no repetidos en el corte |
-| ACCESSIBILITY | `PASSED` | axe, teclado, 360 px, sin desborde |
-| BUNDLE MEASURED | `PASSED` (histórico) | 188,5 KiB gzip iniciales en standalone (baseline anterior: 189,0); no recalculado en RC5 |
-| PERFORMANCE BASELINE | `PASSED` (histórico) | registro, emisión, verificación, ranking, exportación; no repetido en RC5 |
+| E2E | `PASSED` | 76 casos Home/competencia; Home final 31/32 y foco aislado 4/4; intermitencia registrada en cierre RC6 |
+| ACCESSIBILITY | `PASSED` | axe, teclado, 320–1920 px, zoom y jerarquía responsive |
+| BUNDLE MEASURED | `PASSED` (histórico) | 188,5 KiB gzip iniciales en standalone (baseline anterior: 189,0); no recalculado en RC6 |
+| PERFORMANCE BASELINE | `PASSED` (histórico) | registro, emisión, verificación, ranking, exportación; no repetido en RC6 |
 | SYNTHETIC COMPETITION | `PASSED` | jornada entera contra Postgres real |
 | REMOTE LOAD TEST | `READY FOR STAGE-10 REHEARSAL` | — |
 | LOCAL REHEARSAL / CLOUD SMOKE | `READY FOR STAGE-10 REHEARSAL` | ensayo equivalente a staging local; smoke obligatorio en la producción real, sin proyecto cloud extra |
@@ -30729,6 +30915,16 @@ saliencia ya no son aperturas de prediseño.
 - Corte mediante ADR-027/028, sin ADR nuevo ni movimiento del tag RC4.
   [Cierre RC5](06-delivery/rc5-release-closure.md).
 
+## RC6 — jerarquía visual del ranking
+
+- **ACCEPTED · PO · 23/09/2026.** Mock aprobado: podio escalonado, filas comunes
+  compactas, fila propia persistente, hitos con iconos y detalle organizado.
+- El contador público usa oportunidades matemáticas persistidas y separa repasos;
+  `eventsPlayed` conserva su significado interno de eventos, incluidas escenas.
+- Sin cambios de motor, gameplay, comparador, API, esquema ni dependencias.
+  Corte por ADR-027/028; no requiere un nuevo ADR. RC5 permanece inmutable.
+  [Cierre RC6](06-delivery/rc6-release-closure.md).
+
 ---
 
 # FILE: 07-reference/formulas-and-algorithms.md
@@ -31771,6 +31967,12 @@ Estas preguntas están registradas en [preguntas abiertas](07-reference/open-que
 - [x] Sin nuevas migraciones ni cambios en las versiones competitivas.
 - [ ] Push manual, despliegue y comprobaciones cloud a cargo del operador.
 
+## Cierre RC6 — presentación del ranking
+
+- [x] [Cierre RC6](06-delivery/rc6-release-closure.md): alcance autorizado, compatibilidad y publicación manual.
+- [x] FR-012, trazabilidad, fundamentos visuales, registro de decisiones y estado actualizados.
+- [x] Conteo desde evidencia matemática persistida, sin migración ni replay nuevo.
+
 ---
 
 # FILE: README.md
@@ -31904,6 +32106,7 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 - `fallback-and-incident-plan.md`: funcionamiento degradado y recuperación.
 
 ### 06-delivery
+- `rc6-release-closure.md`: jerarquía del ranking, conteo de desafíos, validaciones e identidad de RC6.
 - `rc5-release-closure.md`: cierre del acceso del Home, procedencia de checks, identidad y publicación manual de RC5.
 - `rc4-release-closure.md`: corte urgente posterior a RC3, cambios incluidos, controles y publicación manual.
 - `rc3-release-closure.md`: cierre local de RC3, notas de versión, procedencia de la validación y publicación manual.

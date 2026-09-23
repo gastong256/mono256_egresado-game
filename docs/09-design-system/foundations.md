@@ -164,3 +164,14 @@ El confeti del cierre son 18 tiras de CSS de 3×12 px con posiciones y retardos 
 ## Reduced motion
 
 Un solo bloque global lleva las cinco duraciones a 1 ms. **Ninguna información se transmite sólo por movimiento**: los porcentajes de Estilo están impresos, el resultado está escrito y el progreso se distingue por forma. El confeti directamente no se dibuja — una tira detenida sobre el título no es una celebración discreta.
+
+## Ranking público: jerarquía RC6
+
+El puesto real decide densidad y escala: primero destacado, segundo y tercero
+más compactos, resto uniforme mientras el contenido lo permita. Alturas fluidas
+para alias largos, empates, zoom y métricas ausentes; nunca recortar para cumplir
+una altura fija. Se reutilizan roles tipográficos existentes, medallas y tokens
+semánticos. Oro/plata/bronce identifican el podio, verde escolar identifica la
+fila propia y los iconos; Aura mantiene su negro/neón. La lima sigue reservada
+al CTA principal. El detalle nativo se abre con teclado/toque; ninguna información
+requiere hover. Los reconocimientos combinan icono con nombre escrito.

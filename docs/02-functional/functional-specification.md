@@ -171,6 +171,12 @@ usa hechos independientes y su [presupuesto canónico](../01-game-design/rare-ev
 Una fila resume la mejor partida de un participante: alias, puesto real,
 FairScore destacado, Promedio/Equipo/Aura establecidos y hasta dos reconocimientos.
 «Ver partida» despliega aportes al score, estilo, hitos y recorrido por año.
+Muestra desafíos resueltos a partir de las oportunidades matemáticas
+del resumen oficial guardado, y los repasos realizados en una línea aparte
+cuando son mayores que cero. No presenta `eventsPlayed` como desafíos: ese total
+también contiene escenas narrativas. Sin componente matemático omite la cantidad,
+sin asumir nueve ni reconstruir el historial. Usa los mismos resúmenes v1, sin
+backfill, consultas adicionales o cambios de score.
 Nunca mezcla máximos de intentos distintos ni presenta notas del juego como
 calificaciones escolares reales. Sin resumen histórico, mantiene el puntaje y
 explica que el detalle no está disponible.
@@ -198,6 +204,17 @@ del establecimiento organizador define el criterio y resuelve el desempate.
 Egresado no tiene esa función ni asume responsabilidad por esa decisión externa;
 el ranking conserva los puestos compartidos. Aclaración editorial autorizada
 para RC4, sin modificar el comparador ni crear un desempate automático.
+
+La presentación RC6 jerarquiza por puesto real: primero destacado, segundo y
+tercero progresivamente más compactos; los demás comparten densidad. Un empate
+conserva el tratamiento de su puesto, sin recalcularlo. La fila propia se identifica
+con fondo, borde y texto persistentes, también sin hover. El puntaje oficial
+predomina sobre promedio, equipo y Aura; las dimensiones ausentes se omiten.
+El podio anticipa hasta dos reconocimientos (uno en tercero), con iconos semánticos;
+las filas comunes resumen su cantidad y todas permiten abrir el detalle completo
+con teclado o toque. Aportes, reconocimientos y recorrido se agrupan, seguidos
+del estilo de decisiones. El total mostrado sigue siendo el del servidor.
+Se conserva el plegado móvil y la ventana acotada de ADR-031, sin nuevas consultas.
 
 ## FR-013 Reintento
 El jugador puede iniciar otra run. Fair v1 permite reintentos ilimitados sobre

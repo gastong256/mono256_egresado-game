@@ -72,3 +72,24 @@ establecimiento organizador define los criterios y resuelve la decisión.
 Egresado no dispone de esa función ni es responsable de esa decisión externa:
 su ranking mantiene los puestos compartidos. La aclaración aparece en `/puntajes`
 y no autoriza a cambiar puntajes, comparador o versiones de partidas.
+
+## Cantidad de desafíos en el detalle
+
+«Ver partida» muestra `components[math].opportunities` como desafíos resueltos,
+porque cada desafío ordinario puntuable aporta evidencia matemática y el score
+excluye los repasos. `recoveries` se presenta por separado si es mayor que cero.
+`eventsPlayed` conserva su significado de eventos totales (incluye narrativa)
+y deja de mostrarse como «situaciones jugadas». No se modifica el JSON guardado:
+el cambio se aplica también a resúmenes v1 existentes, sin backfill ni replay.
+Sin componente matemático se omite la cantidad, sin deducirla del total de eventos.
+
+## Presentación RC6
+
+El ranking público usa el resumen persistido existente. Podio escalonado por
+puesto real, filas comunes compactas y fila propia marcada sin depender de hover.
+Los iconos de reconocimientos explican hitos existentes; no crean premios ni
+puntos nuevos. Todas las filas conservan el detalle, agrupado por aportes al
+puntaje, reconocimientos, años y estilo. El total proviene de `fairScore` oficial;
+no se reconstruye sumando indicadores de carrera.
+Sin migración, seed, backfill ni replay adicional para desplegar RC6. Los registros
+sin resumen conservan el fallback de puntaje y detalle no disponible.

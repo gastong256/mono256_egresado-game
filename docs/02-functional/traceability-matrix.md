@@ -219,3 +219,16 @@ reflow, teclado, accesibilidad, carga real y avance con imágenes bloqueadas).
 |---|---|---|
 | FR-001: estado abierto explícito, Jugar prioritario, contador completo y práctica secundaria; reflow móvil/tablet | `CompetitionExperience`, `EventCountdown` | `home-event.spec.ts`: 320–1920 px, tablet 768/1024, zoom, teclado, axe y reduced motion |
 | FR-001: OPEN respeta la ventana anunciada en el bloque de acceso, sin promover UPCOMING | `useAccessStatus`, servidor existente sin cambios | `home-event.test.tsx`, `event-countdown.test.tsx`, `home-event.spec.ts`: límites, pestaña suspendida y actualización de horarios |
+
+## Desafíos y repasos en el detalle del ranking
+
+| Requisito | Implementación | Evidencia |
+|---|---|---|
+| FR-012: desafíos resueltos excluyen narrativa; repasos separados, sin inventar cantidades ausentes | `RankingRunDetails`, campos existentes `components[math].opportunities` y `recoveries` | `ranking-run-details.test.tsx`: total 20, repasos, singular y datos ausentes; `ranking-summary.test.ts`: equivalencia con partidas reproducidas; `home-event.spec.ts`: teclado, axe y reflow |
+
+## RC6 — presentación del ranking
+
+| Requisito | Implementación | Evidencia |
+|---|---|---|
+| FR-012: jerarquía por puesto, identidad propia y detalle completo | `ranking-entry.tsx`, `ranking-run-details.tsx`, `achievement-mark.tsx` | `ranking-run-details.test.tsx`, `home-event.test.tsx`, `competition-ui.test.tsx`, `home-event.spec.ts` (escala, teclado, axe y responsive) |
+| FR-012: desafíos puntuables separados de escenas y repasos | oportunidades matemáticas del resumen persistido | `ranking-summary.test.ts`, `ranking-run-details.test.tsx`, `home-event.spec.ts` |

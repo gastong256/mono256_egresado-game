@@ -396,3 +396,13 @@ saliencia ya no son aperturas de prediseño.
   del servidor. Reglas y versiones competitivas siguen congeladas.
 - Corte mediante ADR-027/028, sin ADR nuevo ni movimiento del tag RC4.
   [Cierre RC5](../06-delivery/rc5-release-closure.md).
+
+## RC6 — jerarquía visual del ranking
+
+- **ACCEPTED · PO · 23/09/2026.** Mock aprobado: podio escalonado, filas comunes
+  compactas, fila propia persistente, hitos con iconos y detalle organizado.
+- El contador público usa oportunidades matemáticas persistidas y separa repasos;
+  `eventsPlayed` conserva su significado interno de eventos, incluidas escenas.
+- Sin cambios de motor, gameplay, comparador, API, esquema ni dependencias.
+  Corte por ADR-027/028; no requiere un nuevo ADR. RC5 permanece inmutable.
+  [Cierre RC6](../06-delivery/rc6-release-closure.md).

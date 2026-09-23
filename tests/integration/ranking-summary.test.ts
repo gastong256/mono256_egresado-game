@@ -16,7 +16,7 @@ import {
 } from '@/lib/presentation/ending-model'
 import { readRunSummary } from '@/lib/competition/run-summary'
 
-async function fixture() {
+async function fixture(quality: 'optimal' | 'invalid' = 'optimal') {
   const store = new InMemoryCompetitionStore()
   const context = await createTestContext({ store })
   const identified = await identifyParticipant(
@@ -28,7 +28,7 @@ async function fixture() {
   const participant = identified.value.participant
   const issued = await startAttempt(context, context.competition, participant)
   if (!issued.ok) throw new Error('fixture attempt')
-  const played = playCareer(issued.value.descriptor)
+  const played = playCareer(issued.value.descriptor, () => quality)
   const submitted = await submitAttempt(
     context,
     context.competition,
@@ -54,6 +54,12 @@ describe('authoritative ranking summary', () => {
     // Integration with the RC3 content fix: a fully optimal run stores 10,
     // rather than the old expo-only average, and publishes that same grade.
     expect(summary?.career.promedio).toBe(10)
+    expect(summary?.eventsPlayed).toBe(20)
+    expect(
+      summary?.components.find((part) => part.component === 'math')
+        ?.opportunities,
+    ).toBe(9)
+    expect(summary?.recoveries).toBe(0)
     expect(summary?.achievements).toEqual(
       deriveAchievements(
         context.played.final,
@@ -66,6 +72,26 @@ describe('authoritative ranking summary', () => {
     ).toBe(state.leaderboard[0]?.fairScore)
     expect(JSON.stringify(state)).not.toMatch(
       /actionLog|mastery|fullName|dni|finalState|participantId/u,
+    )
+  })
+  it('el resumen ya guardado separa desafíos puntuables de escenas y repasos', async () => {
+    const context = await fixture('invalid')
+    const state = await loadPublicState(context, context.competition, undefined)
+    const summary = state.leaderboard[0]!.summary!
+    const history = context.played.final.history
+    const challenges = history.filter(
+      (entry) => entry.challengeId !== undefined && entry.recovery !== true,
+    )
+    const recoveries = history.filter((entry) => entry.recovery === true)
+    expect(challenges).toHaveLength(9)
+    expect(recoveries.length).toBeGreaterThan(0)
+    expect(
+      summary.components.find((part) => part.component === 'math')
+        ?.opportunities,
+    ).toBe(challenges.length)
+    expect(summary.recoveries).toBe(recoveries.length)
+    expect(summary.eventsPlayed).toBeGreaterThan(
+      challenges.length + recoveries.length,
     )
   })
   it('backfills once, supports dry-run and preserves scores, evidence and legacy data', async () => {

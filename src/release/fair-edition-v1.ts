@@ -28,7 +28,7 @@ export const FAIR_EDITION_V1: ReleaseManifest = parseReleaseManifest({
 
   releaseId: 'egresado-fair-edition-v1',
   releaseName: 'Egresado Fair Edition v1',
-  releaseVersion: '1.0.0-rc.5',
+  releaseVersion: '1.0.0-rc.6',
   releaseChannel: 'release-candidate',
 
   engine: {

@@ -3,6 +3,18 @@
 Vista corta del estado de ejecución. El contrato completo y el protocolo de
 actualización están en el [roadmap](implementation-sequence.md).
 
+## RC6 — jerarquía del ranking
+
+**Estado: `DONE` localmente — 23 de septiembre de 2026.** Release
+`1.0.0-rc.6`, rama `main`, tag `v1.0.0-rc.6`.
+[Cierre y evidencia](rc6-release-closure.md). Implementa el mock aprobado:
+podio escalonado, filas compactas, partida propia siempre identificada,
+reconocimientos diferenciados y detalle agrupado por aportes, hitos y recorrido.
+El conteo usa desafíos puntuables guardados; escenas y repasos no se confunden
+con desafíos. No cambia motor, score, comparador, datos ni migraciones.
+Push, deploy y comprobaciones cloud quedan a cargo del operador.
+RC5 y los apartados siguientes se conservan como evidencia histórica.
+
 ## RC5 — acceso del Home
 
 **Estado: `DONE` localmente — 23 de septiembre de 2026.** Release `1.0.0-rc.5`,
