@@ -11,6 +11,7 @@
  */
 
 export { Badge, Eyebrow, Label, type BadgeProps } from './badge'
+export { BrandLogo, BrandMark } from './brand'
 export { Button, type ButtonProps } from './button'
 export { Callout } from './callout'
 export {

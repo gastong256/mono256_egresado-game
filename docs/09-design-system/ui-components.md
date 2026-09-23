@@ -90,3 +90,9 @@ La primitiva no clasifica: recibe el estado de cada celda ya decidido. Quién cu
 ## Marks
 
 `TickMark`, `SlashMark`, `PartialMark`, `MilestoneTick`. SVG inline con `currentColor`, no un icon font ni archivos. Van `aria-hidden` sin excepción: acompañan una palabra que ya dice lo mismo, y anunciarla dos veces es ruido.
+
+## BrandMark, BrandLogo y Wordmark
+
+La marca en tres piezas. `BrandMark` es el isotipo —sumatoria, birrete, listón y rombo— como SVG inline en `currentColor`, de `1em` de alto; sólo el rombo lleva `fill-green`, y con `mono` cae a la tinta para invertir sobre un fondo oscuro. `Wordmark` es la palabra: Schibsted Grotesk 800 en caja mixta, texto seleccionable. `BrandLogo` compone las dos con el símbolo apoyado en la línea base, en cuatro tamaños (`sm`, `md`, `lg`, `event`).
+
+El símbolo va `aria-hidden` siempre: un `<h1>` con el lockup se llama «Egresado», ni «sumatoria» ni el nombre dos veces. Donde el nombre ya está escrito al lado —el encabezado de la práctica— alcanza el `BrandMark` solo. No hay variante apilada porque ninguna superficie la pide; el juego no lleva marca durante un desafío. La geometría y los archivos derivados están descritos en [assets](assets.md).

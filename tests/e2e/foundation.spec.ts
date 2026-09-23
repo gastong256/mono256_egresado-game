@@ -60,6 +60,42 @@ test('renders the landing page without browser errors', async ({ page }) => {
   expect(browserErrors).toEqual([])
 })
 
+test('declara el favicon, el ícono y el de Apple, y todos se sirven', async ({
+  page,
+  request,
+}) => {
+  await page.goto('/')
+  const icons = await page
+    .locator('link[rel="icon"], link[rel="apple-touch-icon"]')
+    .evaluateAll((nodes) =>
+      nodes.map((node) => ({
+        rel: node.getAttribute('rel') ?? '',
+        href: node.getAttribute('href') ?? '',
+        type: node.getAttribute('type') ?? '',
+      })),
+    )
+  // Los tres caminos: el `.ico` para el navegador que no lee SVG, el SVG
+  // para el que sí, y el de Apple para la pantalla de inicio.
+  expect(icons.some((icon) => icon.href.includes('favicon.ico'))).toBe(true)
+  expect(icons.some((icon) => icon.type === 'image/svg+xml')).toBe(true)
+  expect(icons.some((icon) => icon.rel === 'apple-touch-icon')).toBe(true)
+  for (const icon of icons) {
+    const response = await request.get(icon.href)
+    expect(response.ok(), icon.href).toBe(true)
+    expect(response.headers()['content-type'], icon.href).toMatch(/^image\//u)
+  }
+
+  const manifest = await request.get('/manifest.webmanifest')
+  expect(manifest.ok()).toBe(true)
+  const body = (await manifest.json()) as {
+    icons: readonly { src: string; sizes: string }[]
+  }
+  expect(body.icons.map((icon) => icon.sizes)).toContain('512x512')
+  for (const src of new Set(body.icons.map((icon) => icon.src))) {
+    expect((await request.get(src)).ok(), src).toBe(true)
+  }
+})
+
 test('stamps the content-security-policy nonce on every script it serves', async ({
   page,
 }) => {

@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useEffect } from 'react'
 
-import { Button, Wordmark } from '@/components/ui'
+import { BrandLogo, Button } from '@/components/ui'
 
 /**
  * Algo se rompió al dibujar una página.
@@ -28,7 +28,7 @@ export default function ErrorPage({
   return (
     <main className="px-gutter pb-safe max-w-viewport mx-auto flex min-h-dvh w-full flex-col justify-center py-6">
       <section className="eg-canvas border-rule flex flex-col gap-4 border p-5">
-        <Wordmark size="md" />
+        <BrandLogo size="md" />
         <h1 className="text-section font-display text-ink text-balance">
           Algo salió mal al mostrar esta página.
         </h1>

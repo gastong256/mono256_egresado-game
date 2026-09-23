@@ -13,7 +13,7 @@ import type {
   PublicCompetitionState,
   SubmissionResponse,
 } from '@/lib/competition'
-import { Button, Callout, Eyebrow, Wordmark } from '@/components/ui'
+import { BrandLogo, Button, Callout, Eyebrow } from '@/components/ui'
 import { IdentityForm } from './identity-form'
 import { Leaderboard } from './leaderboard'
 import { EventCountdown } from './event-countdown'
@@ -266,7 +266,7 @@ export function CompetitionExperience({
             <>
               <header className="mb-6">
                 <h1>
-                  <Wordmark size="lg" />
+                  <BrandLogo size="lg" />
                 </h1>
               </header>
               <IdentityForm
@@ -297,7 +297,7 @@ export function CompetitionExperience({
                       : competition.name}
                   </Eyebrow>
                   <h1>
-                    <Wordmark className="text-event-title" />
+                    <BrandLogo size="event" />
                   </h1>
                   <p className="text-section font-display text-ink text-balance">
                     Tu secundaria.

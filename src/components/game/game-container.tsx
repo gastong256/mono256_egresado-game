@@ -25,7 +25,7 @@ import {
   type EngineDependencies,
   type RunDescriptor,
 } from '@/game'
-import { Button, Eyebrow, Wordmark } from '@/components/ui'
+import { BrandLogo, Button, Eyebrow } from '@/components/ui'
 import { createGameController, type GameController } from './controller'
 import { GameCanvas, GameSheet, SceneColumn, ActionSlot } from './game-shell'
 import { NicknameForm } from './nickname-form'
@@ -191,7 +191,7 @@ export function GameContainer({ initialSeed }: GameContainerProps = {}) {
           <GameSheet>
             <SceneColumn className="justify-center">
               <h1>
-                <Wordmark size="lg" />
+                <BrandLogo size="lg" />
               </h1>
               <p className="text-body text-ink-secondary">
                 Un segundo, estamos viendo si dejaste una partida empezada…
@@ -269,7 +269,7 @@ export function GameContainer({ initialSeed }: GameContainerProps = {}) {
             <SceneColumn>
               <header className="flex flex-col gap-3">
                 <h1>
-                  <Wordmark size="lg" />
+                  <BrandLogo size="lg" />
                 </h1>
                 <p className="text-body-lg text-ink-secondary text-pretty">
                   Seis años de secundaria en unos minutos. Empezás en {stage} y

@@ -6,6 +6,8 @@ import { describe, expect, it, vi } from 'vitest'
 
 import {
   Badge,
+  BrandLogo,
+  BrandMark,
   Button,
   Callout,
   ChoiceCard,
@@ -484,5 +486,42 @@ describe('Badge, Surface, Callout y Wordmark', () => {
     render(<Wordmark />)
     // Es texto compuesto, no una imagen: seleccionable y buscable.
     expect(screen.getByText('Egresado').textContent?.trim()).toBe('Egresado')
+  })
+})
+
+describe('BrandMark y BrandLogo', () => {
+  it('el isotipo es decorativo: no tiene nombre ni rol', () => {
+    render(<BrandMark />)
+    const mark = screen.getByTestId('brand-mark')
+    expect(mark.tagName).toBe('svg')
+    expect(mark).toHaveAttribute('aria-hidden', 'true')
+    expect(mark.querySelector('title')).toBeNull()
+    expect(screen.queryByRole('img')).not.toBeInTheDocument()
+  })
+
+  it('el lockup se nombra sólo por la palabra, una vez', () => {
+    render(
+      <h1>
+        <BrandLogo size="event" />
+      </h1>,
+    )
+    // Con el símbolo al lado, un `<h1>` sigue llamándose «Egresado»: ni
+    // «sumatoria», ni «birrete», ni el nombre dos veces.
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Egresado' }),
+    ).toBeInTheDocument()
+    expect(screen.getAllByText('Egresado')).toHaveLength(1)
+    expect(
+      screen.getByRole('heading', { level: 1 }).querySelector('svg'),
+    ).not.toBeNull()
+  })
+
+  it('en mono el rombo también es tinta', () => {
+    const { container } = render(<BrandLogo mono />)
+    // El rombo es el último trazo; en mono no lleva su clase de verde y toma
+    // el color del texto como todo lo demás.
+    const paths = container.querySelectorAll('path')
+    expect(paths.length).toBeGreaterThan(1)
+    expect(paths[paths.length - 1]?.getAttribute('class')).toBeNull()
   })
 })

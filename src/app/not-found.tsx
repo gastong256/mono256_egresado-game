@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-import { Wordmark } from '@/components/ui'
+import { BrandLogo } from '@/components/ui'
 
 /**
  * Página que no existe.
@@ -13,7 +13,7 @@ export default function NotFound() {
   return (
     <main className="px-gutter pb-safe max-w-viewport mx-auto flex min-h-dvh w-full flex-col justify-center py-6">
       <section className="eg-canvas border-rule flex flex-col gap-4 border p-5">
-        <Wordmark size="md" />
+        <BrandLogo size="md" />
         <h1 className="text-section font-display text-ink text-balance">
           Esa página no está.
         </h1>

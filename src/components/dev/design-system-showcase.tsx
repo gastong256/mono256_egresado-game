@@ -1,5 +1,7 @@
 'use client'
 
+import Image from 'next/image'
+
 /**
  * Vitrina del sistema de diseño.
  *
@@ -44,12 +46,13 @@ import {
   RecordRow,
   Separator,
   SlashMark,
+  BrandLogo,
+  BrandMark,
   StageProgress,
   Stamp,
   Surface,
   TextField,
   TickMark,
-  Wordmark,
   type OutcomeTone,
 } from '@/components/ui'
 import { AuraBlock, AuraCell, AuraChip } from '@/components/game/aura-display'
@@ -1421,12 +1424,38 @@ function ArtSection() {
     <Section title="Arte" aside="UI primero">
       <Grid min={300}>
         <div className="eg-canvas border-rule flex flex-col gap-3 border p-4">
-          <Label>Wordmark</Label>
-          <Wordmark size="lg" />
+          <Label>Marca</Label>
+          <BrandLogo size="lg" />
+          <BrandLogo size="sm" />
+          <div className="text-ink flex items-end gap-4">
+            <BrandMark className="h-4" />
+            <BrandMark className="h-6" />
+            <BrandMark className="h-8" />
+            <BrandMark className="h-16" />
+            <BrandMark className="h-16" mono />
+          </div>
+          <div className="bg-decision text-on-decision p-3">
+            <BrandLogo size="md" mono className="text-on-decision" />
+          </div>
+          <div className="flex items-end gap-3">
+            {[16, 32, 48].map((size) => (
+              <Image
+                key={size}
+                src="/icon.svg"
+                alt=""
+                width={size}
+                height={size}
+                unoptimized
+              />
+            ))}
+          </div>
           <Note>
-            No es una imagen: es Schibsted Grotesk 800 con tracking −0,03em.
-            Escala libre, recolorea por token, y sigue siendo texto
-            seleccionable.
+            La sumatoria con el birrete y el listón, inline y en{' '}
+            <code>currentColor</code>; sólo el rombo lleva el verde y en{' '}
+            <code>mono</code> cae a la tinta. La palabra sigue siendo Schibsted
+            Grotesk 800 en caja mixta, texto seleccionable. Los íconos de
+            pestaña usan una construcción más simple del mismo símbolo. La
+            geometría vive en <code>src/lib/ui/brand-mark.ts</code>.
           </Note>
         </div>
         <div className="eg-canvas border-rule flex flex-col gap-3 border p-4">

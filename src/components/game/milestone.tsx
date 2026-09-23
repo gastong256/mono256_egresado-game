@@ -53,12 +53,16 @@ export function Milestone({
       <div className="border-ink flex items-end gap-3 border-b-2 pb-2.5">
         <Heading
           id="milestone-title"
-          className="text-milestone font-display text-ink"
+          className={cn(
+            'text-milestone font-display text-ink',
+            // «Egresado» a 66 px mide 285 px y la hoja de 320 px le da 256: la
+            // palabra baja a 56 px sólo ahí, y el tilde, decorativo, cede el
+            // lugar hasta que la palabra y él entren juntos.
+            headingLevel === 1 && 'max-[359px]:text-[3.5rem]',
+          )}
         >
           {numeral}
         </Heading>
-        {/* «Egresado» a 66 px ocupa la hoja entera a 320 px: el tilde,
-            decorativo, cede el lugar hasta que la palabra y él entren juntos. */}
         <MilestoneTick
           className={cn(
             'mb-1.5 shrink-0',

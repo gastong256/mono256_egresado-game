@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { ACTION_LOG_VERSION, parseActionLog, type RunDescriptor } from '@/game'
-import { Button, Callout, Eyebrow, Wordmark } from '@/components/ui'
+import { BrandLogo, BrandMark, Button, Callout, Eyebrow } from '@/components/ui'
 import { practiceErrorMessage } from '@/lib/practice/contracts'
 import {
   readPracticeCheckpoint,
@@ -93,11 +93,16 @@ export function PracticeExperience() {
     <div className="min-h-dvh">
       <header className="bg-canvas border-rule sticky top-0 z-10 border-b">
         <div className="max-w-viewport px-gutter mx-auto flex min-h-14 flex-wrap items-center justify-between gap-x-3 py-2">
-          <div>
-            <Eyebrow>Modo práctica</Eyebrow>
-            <p className="text-caption text-ink-secondary">
-              No participa del ranking.
-            </p>
+          <div className="flex items-center gap-3">
+            {/* El isotipo solo: la identidad acompaña la práctica sin repetir
+                el nombre, que ya está en la introducción y en la pestaña. */}
+            <BrandMark className="text-ink h-7" />
+            <div>
+              <Eyebrow>Modo práctica</Eyebrow>
+              <p className="text-caption text-ink-secondary">
+                No participa del ranking.
+              </p>
+            </div>
           </div>
           {session === undefined ? (
             <Link
@@ -135,7 +140,7 @@ export function PracticeExperience() {
       ) : (
         <main className="max-w-viewport px-gutter mx-auto py-6">
           <section className="eg-canvas border-rule flex flex-col gap-5 border p-4">
-            <Wordmark size="lg" />
+            <BrandLogo size="lg" />
             <h1 className="text-section font-display text-ink text-balance">
               Probá Egresado sin competir.
             </h1>
