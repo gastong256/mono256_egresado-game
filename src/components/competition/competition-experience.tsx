@@ -18,6 +18,7 @@ import { IdentityForm } from './identity-form'
 import { Leaderboard } from './leaderboard'
 import { EventCountdown } from './event-countdown'
 import { GameModeSummary } from './game-mode-summary'
+import { HomeHero } from './home-hero'
 import { cn } from '@/lib/ui/cn'
 
 /**
@@ -289,8 +290,15 @@ export function CompetitionExperience({
             </>
           ) : (
             <>
+              {/*
+                Tres piezas en dos columnas. En un teléfono el orden es el del
+                DOM: marca y promesa, estado y acción, y recién después el hero,
+                así «Jugar ahora» queda donde TASK-A y TASK-D lo dejaron. Desde
+                `sm` el hero baja a la columna de la marca y la acción ocupa la
+                derecha entera: marca + mundo a un lado, la CTA al otro.
+              */}
               <div className="grid gap-6 pb-6 sm:grid-cols-2 sm:gap-8 sm:pb-8">
-                <header className="@container flex min-w-0 flex-col items-start gap-4">
+                <header className="@container flex min-w-0 flex-col items-start gap-4 sm:col-start-1 sm:row-start-1">
                   <Eyebrow>
                     {competition.status === 'not-configured'
                       ? 'Un juego sobre decidir en la escuela'
@@ -318,7 +326,7 @@ export function CompetitionExperience({
                   </p>
                 </header>
                 <section
-                  className="flex min-w-0 flex-col gap-4"
+                  className="flex min-w-0 flex-col gap-4 sm:col-start-2 sm:row-span-2 sm:row-start-1"
                   aria-label="Estado y acceso a la competencia"
                 >
                   <CompetitionStatusNote
@@ -425,6 +433,7 @@ export function CompetitionExperience({
                     </Button>
                   )}
                 </section>
+                <HomeHero className="sm:col-start-1 sm:row-start-2" />
               </div>
               {competition.status === 'closed' ? (
                 <>

@@ -44,7 +44,13 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title,
     description,
-    openGraph: { title, description, type: 'website', locale: 'es_AR' },
+    openGraph: {
+      title,
+      description,
+      siteName: 'Egresado',
+      type: 'website',
+      locale: 'es_AR',
+    },
   }
 }
 

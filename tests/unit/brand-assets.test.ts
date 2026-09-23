@@ -90,6 +90,72 @@ function pngSize(png: Buffer): { width: number; height: number } {
   return { width: png.readUInt32BE(16), height: png.readUInt32BE(20) }
 }
 
+/** Ancho y alto de un WebP: VP8X (canvas), VP8L (bits empaquetados) o VP8. */
+function webpSize(webp: Buffer): { width: number; height: number } {
+  expect(webp.toString('ascii', 0, 4)).toBe('RIFF')
+  expect(webp.toString('ascii', 8, 12)).toBe('WEBP')
+  const chunk = webp.toString('ascii', 12, 16)
+  if (chunk === 'VP8X')
+    return {
+      width: webp.readUIntLE(24, 3) + 1,
+      height: webp.readUIntLE(27, 3) + 1,
+    }
+  if (chunk === 'VP8L') {
+    const bits = webp.readUInt32LE(21)
+    return { width: (bits & 0x3fff) + 1, height: ((bits >> 14) & 0x3fff) + 1 }
+  }
+  expect(chunk).toBe('VP8 ')
+  return {
+    width: webp.readUInt16LE(26) & 0x3fff,
+    height: webp.readUInt16LE(28) & 0x3fff,
+  }
+}
+
+/** Ancho y alto del primer SOF de un JPEG. */
+function jpegSize(jpeg: Buffer): { width: number; height: number } {
+  expect(jpeg.readUInt16BE(0)).toBe(0xffd8)
+  let at = 2
+  while (at < jpeg.length) {
+    expect(jpeg.readUInt8(at)).toBe(0xff)
+    const marker = jpeg.readUInt8(at + 1)
+    const length = jpeg.readUInt16BE(at + 2)
+    if (
+      marker >= 0xc0 &&
+      marker <= 0xcf &&
+      ![0xc4, 0xc8, 0xcc].includes(marker)
+    )
+      return {
+        height: jpeg.readUInt16BE(at + 5),
+        width: jpeg.readUInt16BE(at + 7),
+      }
+    at += 2 + length
+  }
+  throw new Error('sin SOF')
+}
+
+describe('el hero y la imagen social', () => {
+  it.each([
+    ['public/assets/brand/egresado-hero-800.webp', 800, 450],
+    ['public/assets/brand/egresado-hero-1200.webp', 1200, 675],
+  ])('%s es un WebP 16:9 de %i px', (file, width, height) => {
+    // Dos anchos y no uno: el `srcset` de la portada elige por DPR y tamaño
+    // real del contenedor, y ninguna pantalla pide más de 1200.
+    expect(webpSize(read(file))).toEqual({ width, height })
+    expect(read(file).length).toBeLessThan(180 * 1024)
+  })
+
+  it('la imagen social mide 1200 × 630 y tiene texto alternativo', () => {
+    expect(jpegSize(read('src/app/opengraph-image.jpg'))).toEqual({
+      width: 1200,
+      height: 630,
+    })
+    expect(read('src/app/opengraph-image.jpg').length).toBeLessThan(400 * 1024)
+    const alt = read('src/app/opengraph-image.alt.txt').toString('utf8').trim()
+    expect(alt).toContain('Egresado')
+    expect(alt.length).toBeGreaterThan(40)
+  })
+})
+
 describe('los íconos raster', () => {
   it.each([
     ['public/assets/brand/egresado-icon-192.png', 192],

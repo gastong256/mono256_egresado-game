@@ -12,6 +12,7 @@ export const metadata: Metadata = {
     title: 'Modo práctica · Egresado',
     description:
       'La secundaria completa, de 7.º a 5.º, sin identificarte ni entrar al ranking.',
+    siteName: 'Egresado',
     type: 'website',
     locale: 'es_AR',
   },

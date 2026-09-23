@@ -28,6 +28,8 @@
     "test:e2e:ui": "playwright test --ui",
     "design:check": "node scripts/design/check-tokens.mjs && node scripts/design/check-contrast.mjs",
     "brand:build": "vite-node --config vitest.config.ts scripts/brand/build-brand-assets.ts",
+    "brand:hero": "vite-node --config vitest.config.ts scripts/brand/build-hero-assets.ts",
+    "brand:og": "vite-node --config vitest.config.ts scripts/brand/build-og-image.ts",
     "game:validate-content": "vite-node --config vitest.config.ts scripts/game/validate-content.ts",
     "game:variants": "vite-node --config vitest.config.ts scripts/game/variants.ts",
     "game:compose": "vite-node --config vitest.config.ts scripts/game/compose.ts",

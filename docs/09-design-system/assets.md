@@ -2,7 +2,7 @@
 
 Qué arte existe, qué está briefeado y no producido, y qué es deliberadamente texto.
 
-Presupuesto total del sistema: **6–9 raster · 6–12 pictogramas · 1 isotipo · 1 wordmark · íconos derivados · 1 lenguaje de hito.** No es una limitación de recursos: es la posición de arte. Egresado es un juego cuya UI ya es su identidad visual, y si una pantalla funciona sin imagen, sale sin imagen.
+Presupuesto total del sistema: **1 hero · 24 escenas · 6–12 pictogramas · 1 isotipo · 1 wordmark · íconos derivados · 1 imagen social · 1 lenguaje de hito.** No es una limitación de recursos: es la posición de arte. Egresado es un juego cuya UI ya es su identidad visual, y si una pantalla funciona sin imagen, sale sin imagen.
 
 ## Producido y en el código
 
@@ -12,6 +12,8 @@ Presupuesto total del sistema: **6–9 raster · 6–12 pictogramas · 1 isotipo
 | Lockup | `BrandLogo`: el isotipo apoyado en la línea base del wordmark |
 | Wordmark | Schibsted Grotesk 800 con tracking −0,03em |
 | Favicon e íconos | derivados del isotipo por `pnpm brand:build` (`src/app/favicon.ico`, `icon.svg`, `apple-icon.png`, `public/assets/brand/`) |
+| Hero de la portada | `HomeHero`: la ilustración aprobada del recorrido, en dos WebP (`egresado-hero-{800,1200}.webp`, `pnpm brand:hero`) con `srcset`, caja 16:9 sin recorte, `alt=""` |
+| Imagen social | `src/app/opengraph-image.jpg` (1200 × 630) compuesta por `pnpm brand:og` con el isotipo, la Schibsted real, la promesa de la portada y el hero; Next la publica en Open Graph y X/Twitter |
 | Lenguaje de hito | CSS: numeral + tilde + sello + confeti |
 | EstiloTriangle | SVG inline, data-driven |
 | Marcas de corrección | SVG inline con `currentColor` |
@@ -20,7 +22,9 @@ Presupuesto total del sistema: **6–9 raster · 6–12 pictogramas · 1 isotipo
 
 **El wordmark no es una imagen.** Escala libre, recolorea por token, sin pipeline de assets, y sigue siendo texto seleccionable y buscable.
 
-**El isotipo sí es un dibujo, y es uno solo.** La sumatoria con el birrete encima, el listón a la derecha y el rombo en verde escolar: matemática, trayectoria y egreso en una marca. Lo aprobó el Product Owner en RC3 sobre una referencia raster y se reconstruyó geométricamente —tres direcciones de trazo, dos grosores, caja de 200 × 240— en `src/lib/ui/brand-mark.ts`. De ese módulo salen el componente inline, los tres SVG de `public/assets/brand/` (principal, mono y reversa) y todos los íconos raster; a 16–48 px usa una construcción más simple del mismo símbolo, no otro. Un test comprueba que lo versionado es exactamente lo que el módulo produce. La imagen social (OG) sigue pendiente: espera al hero.
+**El isotipo sí es un dibujo, y es uno solo.** La sumatoria con el birrete encima, el listón a la derecha y el rombo en verde escolar: matemática, trayectoria y egreso en una marca. Lo aprobó el Product Owner en RC3 sobre una referencia raster y se reconstruyó geométricamente —tres direcciones de trazo, dos grosores, caja de 200 × 240— en `src/lib/ui/brand-mark.ts`. De ese módulo salen el componente inline, los tres SVG de `public/assets/brand/` (principal, mono y reversa) y todos los íconos raster; a 16–48 px usa una construcción más simple del mismo símbolo, no otro. Un test comprueba que lo versionado es exactamente lo que el módulo produce.
+
+**El hero es la única ilustración de la portada.** La misma dirección «Trayectoria en papel» que las escenas —la entrada a la escuela, el grupo, la mano que ayuda, el egreso arriba a la derecha—, aprobada por el Product Owner sobre un source de 1672 × 941 y servida como dos WebP de 800 y 1200 px que el `srcset` elige por DPR y ancho real (256–440 px CSS). Vive en la columna de la marca, nunca sobre la acción: en un teléfono va después de «Jugar ahora», y desde `sm` debajo de la promesa, con la CTA a la derecha. No se recorta en ningún ancho porque la trayectoria ocupa la lámina entera. La imagen social se compone desde él, el isotipo y la tipografía real; no es una ilustración aparte.
 
 ## Raster — escenas de situación, integradas
 
@@ -85,13 +89,14 @@ Todo estado de UI · todos los paneles de resultado · el cierre de etapa · Est
 ## Dónde van
 
 ```text
-public/assets/brand/               # isotipo (SVG ×3) e íconos de app (PNG 192/512)
+public/assets/brand/               # isotipo (SVG ×3), íconos de app (PNG 192/512), hero (WebP 800/1200)
 src/app/{favicon.ico,icon.svg,apple-icon.png}   # íconos por convención de Next
+src/app/opengraph-image.{jpg,alt.txt}           # imagen social por convención de Next
 public/assets/scenes/*.webp        # escenas de situación (integradas)
 public/assets/milestones/*.webp    # reservado; nada producido
 ```
 
-Los de marca no se editan a mano: `pnpm brand:build` los vuelve a derivar del módulo de geometría.
+Los de marca no se editan a mano: `pnpm brand:build` vuelve a derivar íconos y SVG del módulo de geometría, `pnpm brand:hero <source>` el hero desde su source y `pnpm brand:og` la imagen social desde lo anterior.
 
 Siempre vía `SceneMedia`, nunca con `priority` —precargar el arte de un desafío que todavía no apareció le roba ancho de banda a la pantalla que el jugador está mirando— y nunca cargados desde una ruta que no sea `public/`. Los originales no se sirven: `public/` sólo contiene derivados optimizados.
 

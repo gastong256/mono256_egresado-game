@@ -60,7 +60,7 @@ test('renders the landing page without browser errors', async ({ page }) => {
   expect(browserErrors).toEqual([])
 })
 
-test('declara el favicon, el ícono y el de Apple, y todos se sirven', async ({
+test('declara favicon, íconos, imagen social y hero, y todos se sirven', async ({
   page,
   request,
 }) => {
@@ -84,6 +84,43 @@ test('declara el favicon, el ícono y el de Apple, y todos se sirven', async ({
     expect(response.ok(), icon.href).toBe(true)
     expect(response.headers()['content-type'], icon.href).toMatch(/^image\//u)
   }
+
+  // La imagen social: Open Graph la declara con URL absoluta desde
+  // `metadataBase`, X/Twitter la hereda con la tarjeta grande, y el archivo
+  // se sirve como imagen.
+  const social = await page
+    .locator(
+      'meta[property="og:image"], meta[name="twitter:card"], meta[name="twitter:image"], meta[property="og:image:alt"], meta[property="og:site_name"]',
+    )
+    .evaluateAll((nodes) =>
+      Object.fromEntries(
+        nodes.map((node) => [
+          node.getAttribute('property') ?? node.getAttribute('name') ?? '',
+          node.getAttribute('content') ?? '',
+        ]),
+      ),
+    )
+  expect(social['og:image']).toMatch(/^https?:\/\/.+opengraph-image/u)
+  expect(social['og:image:alt']).toContain('Egresado')
+  expect(social['og:site_name']).toBe('Egresado')
+  expect(social['twitter:card']).toBe('summary_large_image')
+  expect(social['twitter:image']).toMatch(/opengraph-image/u)
+  const ogImage = await request.get(new URL(social['og:image'] ?? '').pathname)
+  expect(ogImage.ok()).toBe(true)
+  expect(ogImage.headers()['content-type']).toBe('image/jpeg')
+
+  // El hero de la portada: dos WebP en `srcset`, el que corresponda cargado.
+  const hero = page.getByTestId('home-hero').locator('img')
+  await expect(hero).toBeVisible()
+  await expect
+    .poll(() =>
+      hero.evaluate((node) => (node as HTMLImageElement).naturalWidth),
+    )
+    .toBeGreaterThan(0)
+  expect(await hero.getAttribute('alt')).toBe('')
+  expect(
+    await hero.evaluate((node) => (node as HTMLImageElement).currentSrc),
+  ).toMatch(/egresado-hero-(?:800|1200)\.webp$/u)
 
   const manifest = await request.get('/manifest.webmanifest')
   expect(manifest.ok()).toBe(true)
