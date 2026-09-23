@@ -48,7 +48,7 @@ export function buildPrivacyNotice(
       {
         heading: 'Para qué pedimos estos datos',
         body: [
-          `Para organizar la competencia de ${config.slug} y poder verificar quién ganó. El alias es para que puedas verte en el ranking; el nombre, el año o curso y los últimos cuatro dígitos del documento son para que un organizador pueda confirmar que el premio se entrega a la persona correcta.`,
+          `Para organizar la competencia de Egresado en la Feria del Libro y poder verificar quién ganó. El alias es para que puedas verte en el ranking; el nombre, el año o curso y los últimos cuatro dígitos del documento son para que un organizador pueda confirmar que el premio se entrega a la persona correcta.`,
           'No pedimos correo, teléfono, domicilio, fecha de nacimiento ni foto: para esta competencia no hacen falta.',
         ],
       },

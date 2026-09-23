@@ -70,7 +70,7 @@ for (const width of [320, 360, 390, 412, 768, 1280]) {
     await expect(page.getByRole('textbox')).toHaveCount(0)
     await expect(page.getByRole('combobox')).toHaveCount(0)
     await expect(
-      page.getByRole('heading', { name: 'Probá Egresado sin competir.' }),
+      page.getByRole('heading', { name: 'Practicá a tu ritmo.' }),
     ).toBeVisible()
     expect(
       await page.evaluate(
@@ -300,7 +300,7 @@ test('home enlaza práctica y las rutas de desarrollo siguen cerradas', async ({
   page,
 }) => {
   await page.goto('/')
-  await page.getByRole('link', { name: 'Probar sin competir' }).click()
+  await page.getByRole('link', { name: 'Practicar' }).click()
   await expect(page).toHaveURL(/\/test$/u)
   await expect(page.getByText('Modo práctica', { exact: true })).toBeVisible()
   for (const path of [

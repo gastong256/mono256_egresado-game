@@ -5027,6 +5027,17 @@ El contador usa exclusivamente `opensAt`/`closesAt` del DTO vigente. Muestra
 segundos orientativos del reloj cliente y la fecha absoluta en hora argentina;
 se puede ocultar, no anuncia cada segundo y respeta reduced motion. Al vencer
 consulta el estado existente: nunca abre/cierra una edición ni autoriza intentos.
+Se presenta destacado arriba del botón de jugar; si la edición no tiene fecha
+configurada no inventa un plazo. La ilustración del hero ocupa una fila completa,
+sin recortar, tanto en móvil como en escritorio.
+
+Copy de interfaz actualizado por encargo del PO (23/09): «Tu secundaria. Tus
+decisiones. Tu propia historia.», «Es tu turno», «Practicar» y «Así va la
+competencia». El nombre público se configura como «Feria del Libro 2026» y el
+footer identifica la 36° edición. Se evita «partida verificada» en la interfaz
+pública; el cálculo y la publicación del puntaje siguen requiriendo replay
+servidor. Son cambios editoriales, no cambios de consignas o contenido jugable.
+
 El estado se refresca cada 20 s en portada/identificación cuando está abierto o
 próximo a abrir. La matemática es la contribución principal; Equipo y Aura también
 suman, conforme a FairScore v1, sin una nueva métrica «Amigos».
@@ -5401,6 +5412,7 @@ Fuentes: [adjudicación](04-quality/mathematics-department-ai-adjudication.md),
 | Requisito | Implementación | Evidencia |
 |---|---|---|
 | FR-001/014: CTA y estados del evento | `CompetitionExperience`, `EventCountdown` | `event-countdown.test.tsx`, `home-event.test.tsx`, `home-event.spec.ts` |
+| FR-001: copy Feria del Libro, hero a todo el ancho y reloj antes del CTA | `HomeHero`, `CompetitionExperience`, `EventCountdown`, `text-countdown` | `home-event.spec.ts`: geometría responsive, orden reloj/CTA, zoom, teclado y axe; `cn.test.ts`: rol numérico |
 | FR-012/020: podio por puesto y posición propia | `Leaderboard`; DTO y comparador sin cambios | `competition-ui.test.tsx`, `home-event.test.tsx`, `ranking-release-regression.test.ts` |
 | FR-001: aviso v1 completo en `/privacidad`, footer y aceptación al iniciar | `PrivacyPolicy`, `IdentityForm`, `InstitutionalFooter`, `app/privacidad/page.tsx` | `competition-ui.test.tsx`, `privacy-page.test.tsx`, `privacy.spec.ts`, `competition.spec.ts`; integridad del aviso, SSR sin JS, teclado/axe, campos conservados y rechazo API sin reconocimiento vigente |
 

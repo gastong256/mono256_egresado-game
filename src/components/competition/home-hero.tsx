@@ -6,14 +6,13 @@ import { cn } from '@/lib/ui/cn'
  * La ilustración aprobada del recorrido: la entrada a la escuela a la
  * izquierda, el grupo y la mano que ayuda en el medio, el egreso arriba a la
  * derecha. Es el mundo de Egresado al lado de la marca, y por eso vive en la
- * columna de la promesa y no encima de la acción: la CTA lima sigue siendo lo
- * único que pide hacer algo.
+ * fila completa bajo la promesa y el acceso: el recorrido se ve de lado a lado.
  *
  * Se sirve como `<img>` con `srcset` sobre dos WebP ya optimizados (800 y
  * 1200 px) en lugar de `next/image`: con `unoptimized` —lo que este despliegue
  * sin costo usa— `next/image` no genera `srcset`, y sin él un teléfono a
- * 320 px bajaría el archivo de escritorio. Los dos anchos cubren DPR 1–3 en
- * cada tamaño real del contenedor (256–440 px CSS).
+ * 320 px bajaría el archivo de escritorio. El navegador elige el archivo
+ * según el ancho del contenedor y la densidad de pantalla.
  *
  * Caja 16:9 con `aspect-ratio` y `width`/`height` intrínsecos: el espacio
  * queda reservado antes de que llegue un byte, así que no hay salto de layout.
@@ -31,11 +30,9 @@ const HERO = {
     '/assets/brand/egresado-hero-800.webp 800w, /assets/brand/egresado-hero-1200.webp 1200w',
   width: 1200,
   height: 675,
-  // La columna mide ~440 px CSS desde el ancho máximo de la portada (60rem),
-  // la mitad del ancho menos márgenes en tablet, y el ancho menos gutters en
-  // un teléfono.
+  // Portada de 60rem menos padding del panel; nunca media columna.
   sizes:
-    '(min-width: 60rem) 27.5rem, (min-width: 40rem) calc(50vw - 2.5rem), calc(100vw - 4rem)',
+    '(min-width: 64rem) 56rem, (min-width: 40rem) calc(100vw - 6rem), calc(100vw - 4rem)',
 } as const
 
 export function HomeHero({ className }: { readonly className?: string }) {

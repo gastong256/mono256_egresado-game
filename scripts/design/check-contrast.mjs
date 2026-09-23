@@ -88,6 +88,7 @@ const PAIRS = [
   [4.5, 'green', 'surface'],
   [4.5, 'red', 'canvas'],
   [4.5, 'red', 'surface'],
+  [4.5, 'red', 'canvas-sunken'],
   [4.5, 'green-deep', 'green-tint'],
 
   // El primario y su deshabilitado.

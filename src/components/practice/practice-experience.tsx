@@ -142,7 +142,7 @@ export function PracticeExperience() {
           <section className="eg-canvas border-rule flex flex-col gap-5 border p-4">
             <BrandLogo size="lg" />
             <h1 className="text-section font-display text-ink text-balance">
-              Probá Egresado sin competir.
+              Practicá a tu ritmo.
             </h1>
             <p className="text-body text-ink-secondary">
               Es el mismo juego, de 7.º a 5.º, con las mismas reglas de puntaje.

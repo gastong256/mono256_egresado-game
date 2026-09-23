@@ -146,7 +146,7 @@ export function CompetitionResult({
           id="ending-result-title"
           className="text-goal font-display text-ink"
         >
-          Verificando tu partida…
+          Preparando tu resultado…
         </h2>
         <p className="text-meta text-ink-secondary text-pretty">
           Cuando termine, vas a ver tu puntaje y tu puesto acá.
@@ -165,7 +165,7 @@ export function CompetitionResult({
         <h2 id="ending-result-title" className="sr-only">
           Resultado
         </h2>
-        <Callout tone="accent" title="No pudimos verificar tu partida">
+        <Callout tone="accent" title="No pudimos publicar tu resultado">
           {result.message} Tu recorrido no se pierde: reintentá cuando tengas
           conexión.
         </Callout>
@@ -203,7 +203,7 @@ export function CompetitionResult({
         Resultado
       </h2>
       <ScoreFigure
-        label="Puntaje verificado"
+        label="Tu puntaje"
         value={payload.fairScore}
         testId="verified-fair-score"
       />

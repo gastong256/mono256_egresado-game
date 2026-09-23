@@ -29,7 +29,7 @@ export function InstitutionalFooter() {
             unoptimized
             className="h-40 w-32 shrink-0 object-contain"
           />
-          <p className="text-meta">Feria del Libro 2026</p>
+          <p className="text-meta">36° Feria del Libro · 2026</p>
         </div>
         <a
           href="https://gastong256.dev"

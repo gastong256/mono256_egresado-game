@@ -114,6 +114,12 @@
   --text-event-title--font-weight: 800;
   --container-event: 60rem;
 
+  /* Reloj de evento: cuatro cifras legibles desde 320 px hasta desktop. */
+  --text-countdown: clamp(1.9375rem, 12cqi, 4.125rem);
+  --text-countdown--line-height: 1;
+  --text-countdown--letter-spacing: -0.05em;
+  --text-countdown--font-weight: 800;
+
   /* Cierre de etapa: el numeral del año. */
   --text-milestone: 4.125rem;
   --text-milestone--line-height: 0.82;

@@ -87,9 +87,7 @@ describe('podio por puestos', () => {
   it('un solo puesto no agrega personas ni premios de relleno', () => {
     render(<Leaderboard entries={[entry(1, 'A')]} you={undefined} total={1} />)
     expect(screen.getAllByTestId('leaderboard-entry')).toHaveLength(1)
-    expect(
-      screen.getByText('1 participante con partida verificada'),
-    ).toBeInTheDocument()
+    expect(screen.getByText('1 participante en el ranking')).toBeInTheDocument()
   })
   it('cerrado y vacío no invita a publicar una partida nueva', () => {
     render(

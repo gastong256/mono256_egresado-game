@@ -79,7 +79,7 @@ body{width:${String(OG_SIZE.width)}px;height:${String(OG_SIZE.height)}px;positio
 <div class="text">
   <div class="eyebrow">Un juego sobre decidir en la escuela</div>
   <div class="lockup">${mark}<span>Egresado</span></div>
-  <div class="promise">Tu secundaria.<br>Tus decisiones.<br>Tu lugar en el ranking.</div>
+  <div class="promise">Tu secundaria.<br>Tus decisiones.<br>Tu propia historia.</div>
 </div>
 <div class="rule"></div>
 <div class="label">7.º → 1.º → 2.º → 3.º → 4.º → 5.º → Egreso &nbsp;·&nbsp; Feria del Libro 2026</div>

@@ -123,13 +123,13 @@ export function EventCountdown({
 
   return (
     <div
-      className="border-rule flex min-w-0 flex-col gap-3 border-t pt-4"
+      className="border-ink bg-canvas-sunken @container flex min-w-0 flex-col gap-3 border-y-2 px-3 py-4 sm:px-4"
       data-testid="event-countdown"
       data-urgency={urgency}
     >
       <p
         className={cn(
-          'text-label font-display uppercase',
+          'text-goal font-display',
           urgency === 'high' || urgency === 'critical'
             ? 'text-red'
             : 'text-ink-label',
@@ -160,12 +160,13 @@ export function EventCountdown({
               <span
                 key={values?.[index]}
                 className={cn(
-                  'text-display font-display text-ink tabular-nums motion-reduce:animate-none',
-                  // Cada cifra entra al cambiar; sobre la hora los segundos
-                  // «saltan» con el pop de resolución en vez de deslizarse.
-                  urgency === 'critical' && index === 3
-                    ? 'motion-resolve'
-                    : 'motion-enter',
+                  'text-countdown font-display text-ink tabular-nums motion-reduce:animate-none',
+                  // El pulso de los segundos hace visible el paso del tiempo.
+                  // La urgencia escrita y el rojo dependen del plazo real.
+                  !opening && index === 3 ? 'motion-resolve' : 'motion-enter',
+                  (urgency === 'high' || urgency === 'critical') &&
+                    index === 3 &&
+                    'text-red',
                 )}
               >
                 {values?.[index]?.toLocaleString('es-AR', {
@@ -186,6 +187,11 @@ export function EventCountdown({
         >
           El horario anunciado se cumplió. Esperando confirmación de la
           competencia.
+        </p>
+      ) : null}
+      {!opening && remaining !== 0 ? (
+        <p className="text-meta text-ink">
+          Queda tiempo para jugar y superarte.
         </p>
       ) : null}
       <p className="text-caption text-ink-secondary">

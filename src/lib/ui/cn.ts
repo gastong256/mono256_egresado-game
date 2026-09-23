@@ -25,6 +25,7 @@ const merge = extendTailwindMerge<'eg-motion' | 'eg-canvas' | 'eg-text-shadow'>(
           {
             text: [
               'event-title',
+              'countdown',
               'milestone',
               'display',
               'section',

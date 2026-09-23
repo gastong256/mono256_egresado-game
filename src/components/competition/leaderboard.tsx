@@ -35,7 +35,7 @@ export function Leaderboard({
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div className="flex flex-col gap-2">
           <p className="text-label font-display text-ink-label uppercase">
-            {closed ? 'Competencia cerrada' : 'Los puestos que cuentan'}
+            {closed ? 'Competencia cerrada' : 'Así va la competencia'}
           </p>
           <h2
             id="ranking-heading"
@@ -47,8 +47,8 @@ export function Leaderboard({
         <p className="text-caption text-ink-secondary tabular-nums">
           {total.toLocaleString('es-AR')}{' '}
           {total === 1
-            ? 'participante con partida verificada'
-            : 'participantes con partida verificada'}
+            ? 'participante en el ranking'
+            : 'participantes en el ranking'}
         </p>
       </div>
 
@@ -64,14 +64,14 @@ export function Leaderboard({
             —
           </span>
           <h3 className="text-section font-display text-ink">
-            {closed ? 'Sin partidas verificadas' : 'Todavía no hay puestos.'}
+            {closed ? 'Todavía no hay resultados' : 'Todavía no hay puestos.'}
           </h3>
           <p className="text-body text-ink-secondary text-pretty">
             {closed
               ? 'La competencia cerró sin resultados publicados.'
               : status !== 'open'
                 ? 'Cuando abra la competencia, las mejores partidas van a estar acá.'
-                : 'Nadie tiene todavía una partida verificada. Jugá una y tu puntaje aparece acá.'}
+                : 'El ranking empieza con la primera partida. Jugá y dejá tu marca.'}
           </p>
         </div>
       ) : (
@@ -193,8 +193,8 @@ export function Leaderboard({
         </div>
       ) : null}
       <p className="text-caption text-ink-secondary text-pretty">
-        Cuenta tu mejor partida verificada. Si hay empate, se comparte el
-        puesto: no gana quien llegó primero ni quien jugó más rápido.
+        Cuenta tu mejor puntaje. Si hay empate, se comparte el puesto: no gana
+        quien llegó primero ni quien jugó más rápido.
       </p>
     </section>
   )

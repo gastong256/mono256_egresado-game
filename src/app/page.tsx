@@ -35,11 +35,11 @@ export async function generateMetadata(): Promise<Metadata> {
     : 'Egresado — un juego sobre decidir en la escuela'
   const description =
     competition.status === 'open'
-      ? `${competition.name} está abierta: recorré la secundaria de 7.º a 5.º tomando decisiones con números y buscá tu puesto en el ranking.`
+      ? `Es tu turno en ${competition.name}: recorré la secundaria de 7.º a 5.º, tomá decisiones y buscá tu mejor puntaje.`
       : competition.status === 'upcoming'
-        ? `${competition.name} abre pronto. Mientras tanto, probá Egresado sin competir: la secundaria de 7.º a 5.º en decisiones con números.`
+        ? `Se viene ${competition.name}. Mientras tanto, practicá a tu ritmo y recorré la secundaria de 7.º a 5.º.`
         : competition.status === 'closed'
-          ? `${competition.name} cerró. Mirá los resultados y practicá la secundaria de 7.º a 5.º con decisiones con números.`
+          ? `Terminó la competencia de ${competition.name}. Mirá los resultados y seguí practicando a tu ritmo.`
           : 'Recorré la secundaria de 7.º a 5.º tomando decisiones donde los números importan. Jugá la competencia y mirá el ranking.'
   return {
     title,

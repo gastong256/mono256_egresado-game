@@ -291,11 +291,8 @@ export function CompetitionExperience({
           ) : (
             <>
               {/*
-                Tres piezas en dos columnas. En un teléfono el orden es el del
-                DOM: marca y promesa, estado y acción, y recién después el hero,
-                así «Jugar ahora» queda donde TASK-A y TASK-D lo dejaron. Desde
-                `sm` el hero baja a la columna de la marca y la acción ocupa la
-                derecha entera: marca + mundo a un lado, la CTA al otro.
+                Promesa y acceso se acompañan en desktop. El hero ocupa una
+                fila completa; en móvil se conserva el acceso antes de la imagen.
               */}
               <div className="grid gap-6 pb-6 sm:grid-cols-2 sm:gap-8 sm:pb-8">
                 <header className="@container flex min-w-0 flex-col items-start gap-4 sm:col-start-1 sm:row-start-1">
@@ -312,7 +309,7 @@ export function CompetitionExperience({
                     <br />
                     Tus decisiones.
                     <br />
-                    Tu lugar en el ranking.
+                    Tu propia historia.
                   </p>
                   <p className="text-body-lg text-ink-secondary max-w-viewport text-pretty">
                     Del primer día a la graduación. Resolvé situaciones, hacé
@@ -326,13 +323,10 @@ export function CompetitionExperience({
                   </p>
                 </header>
                 <section
-                  className="flex min-w-0 flex-col gap-4 sm:col-start-2 sm:row-span-2 sm:row-start-1"
+                  className="flex min-w-0 flex-col gap-4 sm:col-start-2 sm:row-start-1"
                   aria-label="Estado y acceso a la competencia"
                 >
-                  <CompetitionStatusNote
-                    status={competition.status}
-                    name={competition.name}
-                  />
+                  <CompetitionStatusNote status={competition.status} />
                   {error === undefined ? null : (
                     <Callout tone="accent" title="No pudimos continuar">
                       {error}
@@ -348,11 +342,17 @@ export function CompetitionExperience({
                       </p>
                       <p className="text-meta text-ink-secondary tabular-nums">
                         {you.bestFairScore === undefined
-                          ? 'Todavía no tenés una partida verificada.'
+                          ? 'Todavía no tenés un puntaje en el ranking.'
                           : `Tu mejor puntaje: ${you.bestFairScore.toLocaleString('es-AR')}. Es el que cuenta en el ranking.`}
                       </p>
                     </div>
                   )}
+                  <EventCountdown
+                    competition={competition}
+                    onElapsed={() => {
+                      void refresh()
+                    }}
+                  />
                   {open ? (
                     <Button
                       // El único lima de la portada entra con el pop de
@@ -404,7 +404,7 @@ export function CompetitionExperience({
                         : 'text-action bg-action text-on-action hover:bg-action-hover motion-resolve inline-flex min-h-[50px] w-full items-center justify-center px-6 uppercase'
                     }
                   >
-                    Probar sin competir
+                    Practicar
                   </Link>
                   {competition.status === 'closed' ? (
                     <a
@@ -414,12 +414,6 @@ export function CompetitionExperience({
                       Ver resultados
                     </a>
                   ) : null}
-                  <EventCountdown
-                    competition={competition}
-                    onElapsed={() => {
-                      void refresh()
-                    }}
-                  />
                   {you === undefined ? null : (
                     <Button
                       variant="ghost"
@@ -433,7 +427,7 @@ export function CompetitionExperience({
                     </Button>
                   )}
                 </section>
-                <HomeHero className="sm:col-start-1 sm:row-start-2" />
+                <HomeHero className="sm:col-span-2" />
               </div>
               {competition.status === 'closed' ? (
                 <>
@@ -467,17 +461,15 @@ export function CompetitionExperience({
 
 function CompetitionStatusNote({
   status,
-  name,
 }: {
   readonly status: PublicCompetitionState['competition']['status']
-  readonly name: string
 }) {
   if (status === 'not-configured')
     return (
       <Callout title="Todavía no hay una competencia">
         El juego está listo, pero ningún organizador abrió una edición. Mientras
-        tanto podés probar sin competir; cuando se anuncie la próxima
-        competencia, jugás acá.
+        tanto podés practicar; cuando se anuncie la próxima competencia, jugás
+        acá.
       </Callout>
     )
   return (
@@ -490,18 +482,17 @@ function CompetitionStatusNote({
             : '■ Competencia cerrada'}
       </p>
       <h2 className="text-title font-display text-ink">
-        {name}{' '}
         {status === 'open'
-          ? 'está abierta'
+          ? 'Es tu turno'
           : status === 'upcoming'
-            ? 'todavía no empezó'
-            : 'cerró'}
+            ? 'Preparate para jugar'
+            : 'Así terminó la competencia'}
       </h2>
       <p className="text-body text-ink-secondary">
         {status === 'open'
-          ? 'Jugá las veces que quieras: en el ranking cuenta tu mejor partida verificada.'
+          ? 'Jugá todas las veces que quieras. Tu mejor puntaje es el que cuenta.'
           : status === 'upcoming'
-            ? 'Cuando abra vas a poder jugar desde acá. Mientras tanto, podés probar sin competir.'
+            ? 'Cuando abra vas a poder jugar desde acá. Mientras tanto, podés practicar.'
             : 'El ranking queda publicado. Ya no se pueden empezar partidas nuevas.'}
       </p>
     </div>

@@ -42,8 +42,9 @@ describe('página pública de privacidad', () => {
       screen.getByText(/cuando se configure la competencia/u),
     ).toBeVisible()
     expect(screen.queryByText(/Versión del aviso:/u)).not.toBeInTheDocument()
-    expect(
-      screen.getByRole('link', { name: 'Probar sin competir' }),
-    ).toHaveAttribute('href', '/test')
+    expect(screen.getByRole('link', { name: 'Practicar' })).toHaveAttribute(
+      'href',
+      '/test',
+    )
   })
 })

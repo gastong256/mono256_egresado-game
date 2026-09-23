@@ -38,7 +38,7 @@ export default function PrivacyPage() {
             prefetch={false}
             className="text-meta text-ink inline-flex min-h-11 items-center underline underline-offset-4"
           >
-            Probar sin competir
+            Practicar
           </Link>
         </section>
       ) : (

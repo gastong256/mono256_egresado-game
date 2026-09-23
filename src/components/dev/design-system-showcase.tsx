@@ -380,6 +380,11 @@ function ColorSection() {
 
 const TYPE_ROLES = [
   {
+    role: 'countdown',
+    className: 'text-countdown font-display tabular-nums',
+    sample: '02 : 07 : 18',
+  },
+  {
     role: 'event-title',
     className: 'text-event-title font-display',
     sample: 'Egresado',

@@ -33,6 +33,17 @@ El contador usa exclusivamente `opensAt`/`closesAt` del DTO vigente. Muestra
 segundos orientativos del reloj cliente y la fecha absoluta en hora argentina;
 se puede ocultar, no anuncia cada segundo y respeta reduced motion. Al vencer
 consulta el estado existente: nunca abre/cierra una edición ni autoriza intentos.
+Se presenta destacado arriba del botón de jugar; si la edición no tiene fecha
+configurada no inventa un plazo. La ilustración del hero ocupa una fila completa,
+sin recortar, tanto en móvil como en escritorio.
+
+Copy de interfaz actualizado por encargo del PO (23/09): «Tu secundaria. Tus
+decisiones. Tu propia historia.», «Es tu turno», «Practicar» y «Así va la
+competencia». El nombre público se configura como «Feria del Libro 2026» y el
+footer identifica la 36° edición. Se evita «partida verificada» en la interfaz
+pública; el cálculo y la publicación del puntaje siguen requiriendo replay
+servidor. Son cambios editoriales, no cambios de consignas o contenido jugable.
+
 El estado se refresca cada 20 s en portada/identificación cuando está abierto o
 próximo a abrir. La matemática es la contribución principal; Equipo y Aura también
 suman, conforme a FairScore v1, sin una nueva métrica «Amigos».

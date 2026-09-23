@@ -57,6 +57,12 @@ promesa y acceso en dos columnas; a 320 px se apilan. Es una composición de
 portada autorizada para TASK-A, no un cambio del viewport de juego. El formulario
 y la partida conservan `max-w-viewport` (412 px).
 
+El ajuste de Home autorizado el 23/09 muestra la ilustración a todo el ancho de
+ambas columnas. El reloj precede al CTA de juego, en papel hundido con filetes
+de tinta y cifras `text-countdown` fluidas. Los segundos de cierre reutilizan
+`motion-resolve` al cambiar; la urgencia escrita y el rojo siguen dependiendo
+del tiempo real restante. Se mantiene ocultar contador y reduced motion.
+
 `text-event-title` amplía la firma tipográfica existente sólo en la portada,
 con caja mixta, sin logo nuevo. Su escala fluida usa el ancho del contenedor
 (`cqi`, header con `@container`) para evitar solapamientos al ampliar al 200 %.
@@ -91,8 +97,8 @@ RC3 (TASK-D) reutiliza los mismos tres keyframes para la energía competitiva
 sin agregar un cuarto: el CTA lima de la portada y el puntaje verificado del
 cierre entran con `motion-resolve`; las tarjetas del medallero entran con
 `motion-enter` escalonado por `animation-delay`; y el reloj del evento cambia
-de `motion-enter` a `motion-resolve` en los segundos sólo por debajo de diez
-minutos (`data-urgency`, derivado del tiempo real que falta). Ninguna
+de `motion-enter` a `motion-resolve` en los segundos de cierre (ajuste de Home
+del 23/09); `data-urgency` deriva del tiempo real que falta. Ninguna
 animación es continua ni bloquea; con reduced motion todas duran 1 ms.
 
 El confeti del cierre son 18 tiras de CSS de 3×12 px con posiciones y retardos deterministas. Deterministas a propósito: el mismo cierre tiene que verse igual en dos capturas, y una captura de regresión con `Math.random()` adentro no sirve para nada. Dispara en cierre de etapa, egreso y Aura de `+1.000`, y en ningún otro lugar.

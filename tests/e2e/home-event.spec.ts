@@ -70,9 +70,9 @@ async function showState(page: Page, state: PublicCompetitionState) {
   await page.clock.runFor(20_000)
   await expect(
     page
-      .getByText('Feria de prueba está abierta')
-      .or(page.getByText('Feria de prueba todavía no empezó'))
-      .or(page.getByText('Feria de prueba cerró')),
+      .getByText('Es tu turno')
+      .or(page.getByText('Preparate para jugar'))
+      .or(page.getByText('Así terminó la competencia')),
   ).toBeVisible()
   await page.clock.runFor(1000)
 }
@@ -86,6 +86,13 @@ for (const width of [320, 360, 390, 412, 768, 1280, 1920]) {
     await expectTitleWithinColumn(page)
     await expect(page.getByTestId('play')).toHaveText(/Jugar de nuevo/u)
     await expect(page.getByTestId('countdown-digits')).toBeVisible()
+    // La ilustración usa el ancho de ambas columnas, y el reloj precede al CTA.
+    const hero = await page.getByTestId('home-hero').boundingBox()
+    const main = await page.getByRole('main').boundingBox()
+    expect(hero!.width / main!.width).toBeGreaterThan(0.78)
+    const countdown = await page.getByTestId('event-countdown').boundingBox()
+    const play = await page.getByTestId('play').boundingBox()
+    expect(countdown!.y + countdown!.height).toBeLessThanOrEqual(play!.y)
     await expect(page.getByTestId('leaderboard-entry')).toHaveCount(4)
     await expect(
       page.getByTestId('podium-rank-3').getByTestId('leaderboard-entry'),
@@ -150,29 +157,27 @@ test('teclado, foco visible, contador ocultable y movimiento reducido', async ({
   const state = { ...fixture(), you: undefined }
   await showState(page, state)
   await page.keyboard.press('Tab')
-  await expect(page.getByTestId('play')).toBeFocused()
-  const focus = await page
-    .getByTestId('play')
-    .evaluate((node) => getComputedStyle(node).outlineWidth)
-  expect(parseFloat(focus)).toBeGreaterThanOrEqual(2)
+  await expect(
+    page.getByRole('button', { name: 'Ocultar contador' }),
+  ).toBeFocused()
   const motion = await page
     .getByTestId('countdown-digits')
     .locator('span')
     .first()
     .evaluate((node) => getComputedStyle(node).animationName)
   expect(motion).toBe('none')
-  await page.keyboard.press('Tab')
-  await expect(
-    page.getByRole('link', { name: 'Probar sin competir' }),
-  ).toBeFocused()
-  await page.keyboard.press('Tab')
-  await expect(
-    page.getByRole('button', { name: 'Ocultar contador' }),
-  ).toBeFocused()
   await page.keyboard.press('Enter')
   await expect(page.getByTestId('countdown-digits')).toHaveCount(0)
   await expect(page.getByText(/hora argentina/u)).toBeVisible()
-  await page.getByTestId('play').focus()
+  await page.keyboard.press('Tab')
+  await expect(page.getByTestId('play')).toBeFocused()
+  const focus = await page
+    .getByTestId('play')
+    .evaluate((node) => getComputedStyle(node).outlineWidth)
+  expect(parseFloat(focus)).toBeGreaterThanOrEqual(2)
+  await page.keyboard.press('Tab')
+  await expect(page.getByRole('link', { name: 'Practicar' })).toBeFocused()
+  await page.keyboard.press('Shift+Tab')
   await page.keyboard.press('Enter')
   await expect(page.getByLabel('Alias')).toBeVisible()
   await expect(page.locator('[data-primary]')).toHaveCount(1)

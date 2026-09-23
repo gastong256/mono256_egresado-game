@@ -63,7 +63,7 @@ Agregar a `.env.local` el digest impreso más `EGRESADO_COMPETITION_SLUG`,
 
 ```bash
 pnpm db:reset
-pnpm competition:bootstrap -- --name="Feria local" --status=OPEN
+pnpm competition:bootstrap -- --name="Feria del Libro 2026" --status=OPEN --closes=2026-09-25T11:00:00-03:00
 ```
 
 Sin el responsable de los datos configurado, la aplicación **no atiende** la

@@ -78,7 +78,7 @@ describe('ranking', () => {
   it('dice que el primer puesto está libre cuando no hay nada', () => {
     render(<Leaderboard entries={[]} you={undefined} total={0} />)
     expect(
-      screen.getByText(/Nadie tiene todavía una partida verificada/u),
+      screen.getByText(/El ranking empieza con la primera partida/u),
     ).toBeInTheDocument()
   })
 
@@ -473,7 +473,7 @@ describe('portada de la competencia', () => {
         formConfig={formConfig}
       />,
     )
-    expect(screen.getByText(/Feria 2026 está abierta/u)).toBeInTheDocument()
+    expect(screen.getByText(/Es tu turno/u)).toBeInTheDocument()
     expect(screen.getByTestId('play')).toBeInTheDocument()
   })
 
@@ -491,10 +491,10 @@ describe('portada de la competencia', () => {
         formConfig={formConfig}
       />,
     )
-    expect(screen.getByText(/todavía no empezó/u)).toBeInTheDocument()
+    expect(screen.getByText('Preparate para jugar')).toBeInTheDocument()
     expect(screen.queryByTestId('play')).not.toBeInTheDocument()
     // Practicar es lo único jugable: toma el lugar del primario, y es el único.
-    const practice = screen.getByRole('link', { name: 'Probar sin competir' })
+    const practice = screen.getByRole('link', { name: 'Practicar' })
     expect(practice).toHaveAttribute('data-primary', 'true')
     expect(document.querySelectorAll('[data-primary]')).toHaveLength(1)
   })
@@ -522,7 +522,7 @@ describe('portada de la competencia', () => {
         formConfig={formConfig}
       />,
     )
-    expect(screen.getByText(/Feria 2026 cerró/u)).toBeInTheDocument()
+    expect(screen.getByText('Así terminó la competencia')).toBeInTheDocument()
     expect(screen.queryByTestId('play')).not.toBeInTheDocument()
     expect(screen.getByTestId('leaderboard')).toHaveTextContent('Ana')
   })

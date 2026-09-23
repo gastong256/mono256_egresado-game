@@ -24,8 +24,8 @@ export function GameModeSummary({
         <p className="text-body text-ink-secondary text-pretty">
           Recorré de 7.º a 5.º año resolviendo situaciones de la vida escolar.{' '}
           {closed
-            ? 'En esta competencia contó tu mejor partida verificada.'
-            : 'Podés volver a jugar: cuenta tu mejor partida verificada.'}
+            ? 'En esta competencia contó tu mejor puntaje.'
+            : 'Podés volver a jugar: cuenta tu mejor puntaje.'}
         </p>
       </div>
       <dl className="border-rule divide-rule divide-y border-y">
