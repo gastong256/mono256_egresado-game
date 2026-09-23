@@ -30,7 +30,7 @@ import { formatEquipo, formatPromedio, NOT_ESTABLISHED } from './format'
 import { ActionSlot, GameSheet, SceneColumn, StageHeader } from './game-shell'
 import { ArchetypeStamp, MemorablePanel, Milestone } from './milestone'
 import { profileLabel } from './profile-label'
-import { stageLabel } from './stage-label'
+import { stageLabel, stageNumeral } from './stage-label'
 
 /**
  * Lo más memorable del año.
@@ -90,7 +90,10 @@ export function YearResult({
       <CareerStrip career={career} />
 
       <SceneColumn>
-        <Milestone eyebrow="Cierre de etapa" numeral={stageNumeral(state)}>
+        <Milestone
+          eyebrow="Cierre de etapa"
+          numeral={stageNumeral(state.stage)}
+        >
           <div className="flex flex-col" data-testid="year-record">
             <RecordRow
               label="Promedio"
@@ -131,7 +134,7 @@ export function YearResult({
           {completion === undefined ? null : (
             <ArchetypeStamp
               archetype={profileLabel(completion.profile.profileId)}
-              stampLine={`DIC · ${stageNumeral(state)}`}
+              stampLine={`DIC · ${stageNumeral(state.stage)}`}
             />
           )}
         </Milestone>
@@ -148,10 +151,4 @@ export function YearResult({
       </SceneColumn>
     </GameSheet>
   )
-}
-
-/** El numeral del año, sin la palabra: «7.º», no «7.º grado». */
-function stageNumeral(state: RunState): string {
-  const [numeral] = stageLabel(state.stage).split(' ')
-  return numeral ?? stageLabel(state.stage)
 }

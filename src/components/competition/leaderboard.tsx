@@ -64,16 +64,14 @@ export function Leaderboard({
             —
           </span>
           <h3 className="text-section font-display text-ink">
-            {closed
-              ? 'Sin partidas verificadas'
-              : 'El podio está por escribirse.'}
+            {closed ? 'Sin partidas verificadas' : 'Todavía no hay puestos.'}
           </h3>
           <p className="text-body text-ink-secondary text-pretty">
             {closed
               ? 'La competencia cerró sin resultados publicados.'
               : status !== 'open'
                 ? 'Cuando abra la competencia, las mejores partidas van a estar acá.'
-                : 'El primer puesto está libre. Completá una partida y dejá tu puntaje.'}
+                : 'Nadie tiene todavía una partida verificada. Jugá una y tu puntaje aparece acá.'}
           </p>
         </div>
       ) : (

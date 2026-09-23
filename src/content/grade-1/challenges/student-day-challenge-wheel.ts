@@ -564,7 +564,7 @@ export const studentDayWheel = defineChallenge<WheelParams, WheelParams>({
   narrate: (p) => ({
     title: 'La rueda del curso',
     setup:
-      'Es 21 de septiembre. El curso arma una rueda para decidir qué toca en cada vuelta del Día del Estudiante; cada posición tiene la misma posibilidad de salir.',
+      'El curso arma una rueda para decidir qué toca en cada vuelta del Día del Estudiante; cada posición tiene la misma posibilidad de salir.',
     goal: `Completá las ${String(p.total)} posiciones. ${wheelRuleText(p)} Pedido de calidad: al menos tres tipos de actividad y ${preferenceText(p)}.`,
   }),
   present: (p) => ({

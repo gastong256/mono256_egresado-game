@@ -301,7 +301,7 @@ test.describe('competencia', () => {
 
     expect(worse).toBeLessThan(best)
     await expect(page.getByTestId('personal-best')).toContainText(
-      'Tu mejor partida anterior',
+      'sigue contando la anterior',
     )
 
     const state = await competitionState(page)

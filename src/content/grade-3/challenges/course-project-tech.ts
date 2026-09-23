@@ -740,8 +740,8 @@ export const courseProjectTech: ChallengeDefinition = defineChallenge<
       ? []
       : ['el laboratorio no alcanza ni para una parte del pendrive'],
   narrate: (_p, context) => ({
-    title: 'Proyecto del Curso: la feria de tecnología',
-    setup: `${projectArcCallback(context.flags)}La feria es el viernes y el curso tiene que armar el stand con la notebook prestada, el pendrive y una hora de laboratorio.`,
+    title: 'La feria de tecnología',
+    setup: `${projectArcCallback(context.flags)}La feria es el viernes y el curso arma el stand con lo que hay: una notebook prestada, un pendrive y un rato de laboratorio.`,
     goal: 'Decidí cuántas piezas hacer de cada cosa: que entren en los recursos, que lleguen a lo prometido y que el grupo trabaje parejo.',
   }),
   present: (p) => ({

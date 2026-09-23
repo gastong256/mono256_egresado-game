@@ -1,7 +1,9 @@
 /**
  * 7.º grado — el colectivo demorado.
  *
- * Situación: el 60 viene con demora y hay que decidir en qué horario salir.
+ * Situación: el colectivo viene con demora y hay que decidir en qué horario
+ * salir. No se nombra una línea: el número de un colectivo real no aporta a la
+ * cuenta y ata la escena a una ciudad que el juego no declara.
  *
  * La matemática es tiempo con un porcentaje simple aplicado a una duración. No
  * se le pregunta al jugador cuánto es el 25 % de 28: se le pregunta en qué
@@ -174,7 +176,7 @@ export const busTiming: ChallengeDefinition = defineChallenge<
     return {
       title: 'El colectivo de siempre',
       setup:
-        'El 60 viene con demora otra vez. En el grupo del curso ya avisaron y todos están calculando a qué hora salir.',
+        'El colectivo viene con demora otra vez. En el grupo del curso ya avisaron y todos están calculando a qué hora salir.',
       goal: 'Elegí en qué colectivo te subís para llegar a horario.',
     }
   },

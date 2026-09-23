@@ -220,7 +220,7 @@ test('podio vacío anticipa partidas, sin ganadores de relleno', async ({
     you: undefined,
   })
   await expect(page.getByTestId('ranking-empty')).toContainText(
-    'El podio está por escribirse',
+    'Todavía no hay puestos',
   )
   await expect(page.getByTestId('leaderboard-entry')).toHaveCount(0)
   await expect(page.getByTestId('play')).toHaveText(/Jugar ahora/u)

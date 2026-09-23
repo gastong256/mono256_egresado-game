@@ -141,7 +141,7 @@ export function CareerEpilogueView({
           <p className="text-caption text-ink-secondary text-center text-pretty">
             {epilogue.mode === 'practice'
               ? 'Esto es una partida de práctica: el resultado es tuyo y no entra en ningún ranking.'
-              : 'El puesto oficial se publica con el cierre de la edición.'}
+              : 'Tu puntaje verificado aparece más abajo. En el ranking cuenta tu mejor partida.'}
           </p>
         </ActionSlot>
       </SceneColumn>

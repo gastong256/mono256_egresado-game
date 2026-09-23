@@ -660,7 +660,7 @@ export const courseProjectFundraiser: ChallengeDefinition = defineChallenge<
       ? []
       : ['una bandeja se vende a menos de lo que cuesta'],
   narrate: (_p, context) => ({
-    title: 'Proyecto del Curso: la peña',
+    title: 'La peña',
     setup: `${projectArcCallback(context.flags)}El curso alquila el salón para la peña y hay que decidir cuánto preparar de cada cosa.`,
     goal: 'Armá la producción: primero, no perder plata; después, llegar al objetivo; y lo mejor, llegar con el colchón.',
   }),

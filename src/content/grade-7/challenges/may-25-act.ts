@@ -266,7 +266,7 @@ export const may25Act: ChallengeDefinition = defineChallenge<
     return {
       title: '25 de Mayo',
       setup:
-        'Te toca la coreografía folklórica frente a toda la escuela. No te acordás los pasos de memoria, así que armaste una ayudamemoria: cada paso tiene una regla, y de la tira de números que canta la maestra acompañás sólo los que la cumplen.',
+        'Te toca la coreografía frente a toda la escuela y no te sabés los pasos de memoria. Armaste una ayudamemoria: cada paso tiene una regla, y de los números que canta la maestra acompañás sólo los que la cumplen.',
       goal: 'Marcá, en cada paso, los números que cumplen su regla.',
     }
   },

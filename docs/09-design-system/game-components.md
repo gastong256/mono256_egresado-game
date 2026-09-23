@@ -70,6 +70,22 @@ El único momento del juego donde la marca sube el volumen, y por eso el único 
 
 Dice **«vas camino a»** y no «sos»: 7.º es el primero de seis años, y un veredicto cerrado sobre alguien de doce años sería el lenguaje clínico que el GDD prohíbe.
 
+## YearMilestone
+
+El cierre de un año, **en la misma pantalla** que el último resultado. Aparece
+una vez por año, entre el panel de resultado y el botón de acción, cuando el
+motor está en el último evento de la etapa y no debe un Repaso. Reusa la
+gramática del boletín a escala de sección —filete de 2 px, numeral, tilde— y
+no dispara confeti: el volumen máximo sigue reservado para el egreso.
+
+Todo lo que dice se deriva del estado —numeral de la etapa, si el año registró
+un Repaso, si todos los resultados ordinarios fueron óptimos— y la deriva
+`progression-copy.ts`, que también decide qué dice el botón: «Seguir» entre dos
+eventos del mismo año, «Empezar 2.º» en la apertura de un año, «Ir al Repaso»
+cuando el año debe algo, «Pasar a 3.º» al cerrar un año y «Ver mi egreso» al
+cerrar 5.º. Ninguna pantalla vuelve a decidir esas palabras, y ninguna
+transición del motor existe sólo para que un botón pueda decirlas.
+
 ## SceneMedia
 
 Todo el tratamiento de imagen vive acá y no se repite por pantalla: caja 16:9 en todos los anchos, `object-fit: cover`, foco por `object-position`, filete de 1 px, radio 0, sin filtro de color. La caja reserva su alto con `aspect-ratio` antes de que la imagen llegue; nunca se precarga.

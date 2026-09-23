@@ -473,7 +473,7 @@ export const routePlan = defineChallenge<RouteParams, RouteParams>({
   narrate: () => ({
     title: 'Los mandados del sábado',
     setup:
-      'Te tocan los mandados y a las dos hay almuerzo en casa. Cada lugar abre y cierra a su hora.',
+      'Te tocan los mandados del sábado y hay que estar de vuelta para el almuerzo. Cada lugar abre y cierra a su hora.',
     goal: 'Armá el orden del recorrido para llegar a todo y volver a tiempo.',
   }),
   present: (p) => ({

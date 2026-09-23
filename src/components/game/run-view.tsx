@@ -40,8 +40,15 @@ import { ActionSlot, GameSheet, SceneColumn, StageHeader } from './game-shell'
 import { isDraftSubmittable } from './interaction-area'
 import { NarrativeCard } from './situation-card'
 import { OUTCOME } from './outcome'
+import {
+  completesYear,
+  continueIntent,
+  continueLabel,
+  yearMilestoneCopy,
+} from './progression-copy'
 import { stageLabel } from './stage-label'
 import { useGameRun } from './use-game-run'
+import { YearMilestone } from './year-milestone'
 
 export interface RunViewProps {
   readonly controller: GameController
@@ -115,6 +122,22 @@ export function RunView({ controller, dependencies }: RunViewProps) {
     canSubmitAnswer(state.run) &&
     isDraftSubmittable(view.interaction, draft)
 
+  /*
+   * Qué va a pasar al seguir, dicho en el botón.
+   *
+   * El motor no le pone nombre a la transición; lo que sí expone es dónde está
+   * la run, y de ahí se deriva si «seguir» es un evento más, el Repaso, el año
+   * siguiente o el egreso. Cuando lo que sigue es cambiar de etapa, el cierre
+   * del año se muestra acá mismo, arriba del botón: un hito reconocible sin
+   * una pantalla ni una acción extra.
+   */
+  const intent = continueIntent(state.run, dependencies.ruleset)
+  const showsContinue = resolved || active?.challenge === undefined
+  const milestone =
+    showsContinue && completesYear(intent)
+      ? yearMilestoneCopy(state.run, intent)
+      : undefined
+
   return (
     <GameSheet>
       {/* A stage header counts its own stage: a 7.º → 1.º run shows each year's cells, not the career's. */}
@@ -133,13 +156,27 @@ export function RunView({ controller, dependencies }: RunViewProps) {
             data-testid="review-notes"
             className="border-rule bg-surface border p-3"
           >
+            {/*
+              Mientras se responde, las notas nombran lo que se practica. Una
+              vez resuelto, el motor ya cerró las obligaciones y la lista
+              queda vacía: el bloque pasa a decir que el año quedó cerrado.
+            */}
             <h2
               id="review-notes-title"
               className="text-goal text-ink font-display"
             >
-              Repaso:{' '}
-              {view.review.practised.map((note) => note.title).join(' · ')}
+              {view.review.practised.length === 0
+                ? 'Repaso'
+                : `Repaso: ${view.review.practised
+                    .map((note) => note.title)
+                    .join(' · ')}`}
             </h2>
+            {/* Qué pasó y qué se hace ahora, antes de cómo se hace. */}
+            <p className="text-body text-ink-secondary">
+              {view.review.practised.length === 0
+                ? 'Quedó algo dando vueltas este año y lo cerraste acá. El año sigue.'
+                : 'Quedó algo dando vueltas este año. Lo cerrás acá, con una cuenta más corta; salga como salga, el año sigue.'}
+            </p>
             {view.review.practised.map((note) => (
               <p
                 key={note.obligationId}
@@ -148,10 +185,6 @@ export function RunView({ controller, dependencies }: RunViewProps) {
                 {note.text}
               </p>
             ))}
-            <p className="text-caption text-ink-label mt-2">
-              Un único Repaso cierra lo que quedó pendiente este año, aunque la
-              respuesta no salga completa.
-            </p>
             {view.review.debriefed.length === 0 ? null : (
               <ul
                 aria-label="Para recordar"
@@ -164,7 +197,8 @@ export function RunView({ controller, dependencies }: RunViewProps) {
                     </h3>
                     <p className="text-body text-ink-secondary">{note.text}</p>
                     <p className="text-caption text-ink-label">
-                      Se comenta acá; no se practica en otra interacción.
+                      Esto se explica acá y se cierra con el mismo Repaso; no
+                      hay otra situación para practicarlo.
                     </p>
                   </li>
                 ))}
@@ -210,13 +244,17 @@ export function RunView({ controller, dependencies }: RunViewProps) {
 
         {ownsPrimary ? null : (
           <ActionSlot>
-            {resolved || active?.challenge === undefined ? (
+            {milestone === undefined ? null : (
+              <YearMilestone copy={milestone} className="mb-2" />
+            )}
+            {showsContinue ? (
               <Button
                 onClick={advance}
                 disabled={!canContinue(state.run)}
                 data-testid="continue"
+                data-intent={intent.kind}
               >
-                Seguir
+                {continueLabel(intent)}
               </Button>
             ) : (
               <Button
@@ -236,7 +274,8 @@ export function RunView({ controller, dependencies }: RunViewProps) {
             className="text-caption text-red"
             data-testid="rejection"
           >
-            El motor rechazó la acción: {state.lastRejection.kind}
+            No se pudo aplicar esa acción. Probá de nuevo. (
+            {state.lastRejection.kind})
           </p>
         )}
       </SceneColumn>

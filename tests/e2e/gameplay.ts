@@ -91,7 +91,7 @@ export async function reachOptionChallenge(
       return
     }
 
-    const advance = page.getByRole('button', { name: 'Seguir' })
+    const advance = page.getByTestId('continue')
     if ((await advance.count()) > 0) {
       await advance.first().click()
       await onStep?.()

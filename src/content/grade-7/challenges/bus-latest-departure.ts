@@ -2,7 +2,7 @@
  * 7.º grado — con cuánto tiempo hay que salir.
  *
  * Segunda plantilla de la familia **colectivo**, y la razón por la que la
- * familia existe: la situación es la misma —el 60 viene con demora— pero la
+ * familia existe: la situación es la misma —el colectivo viene con demora— pero la
  * pregunta se da vuelta.
  *
  * `g7.bus-timing` **evalúa**: hay cuatro salidas, calculá cuándo llega cada una
@@ -158,7 +158,7 @@ export const busLatestDeparture: ChallengeDefinition = defineChallenge<
     return {
       title: 'La pregunta del grupo',
       setup:
-        'En el grupo del curso alguien tira la pregunta que todos se hacen: el 60 sigue viniendo con demora y nadie quiere volver a entrar con el timbre sonando.',
+        'En el grupo del curso alguien tira la pregunta que todos se hacen: el colectivo sigue viniendo con demora y nadie quiere volver a entrar con el timbre sonando.',
       goal: 'Decí con cuántos minutos de anticipación hay que salir.',
     }
   },

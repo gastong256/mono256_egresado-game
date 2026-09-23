@@ -25,6 +25,17 @@ export function stageLabel(stage: StageId | string): string {
   )
 }
 
+/**
+ * El numeral de una etapa, sin la palabra: «7.º», no «7.º grado».
+ *
+ * Es lo que va en un botón —«Pasar a 3.º»— y en el hito de cierre, donde la
+ * palabra la pone el contexto. El egreso no tiene numeral y se nombra entero.
+ */
+export function stageNumeral(stage: StageId | string): string {
+  const [numeral] = stageLabel(stage).split(' ')
+  return numeral ?? stageLabel(stage)
+}
+
 /** La primera etapa que juega un content set, para nombrarla antes de empezar. */
 export function firstStageLabel(stages: readonly StageConfig[]): string {
   const first = stages[0]

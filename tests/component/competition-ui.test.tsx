@@ -77,7 +77,9 @@ afterEach(() => {
 describe('ranking', () => {
   it('dice que el primer puesto está libre cuando no hay nada', () => {
     render(<Leaderboard entries={[]} you={undefined} total={0} />)
-    expect(screen.getByText(/primer puesto está libre/u)).toBeInTheDocument()
+    expect(
+      screen.getByText(/Nadie tiene todavía una partida verificada/u),
+    ).toBeInTheDocument()
   })
 
   it('es una lista ordenada con el puesto dibujado como número', () => {
@@ -238,7 +240,7 @@ describe('resultado verificado', () => {
       />,
     )
     expect(screen.getByTestId('personal-best')).toHaveTextContent(
-      'Tu mejor partida anterior',
+      'sigue contando la anterior',
     )
     expect(screen.getByText(/Prestige: 7/u)).toBeInTheDocument()
   })

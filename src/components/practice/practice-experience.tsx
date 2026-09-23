@@ -140,13 +140,13 @@ export function PracticeExperience() {
               Probá Egresado sin competir.
             </h1>
             <p className="text-body text-ink-secondary">
-              Recorré la secundaria completa, de 7.º a 5.º. Tu puntaje se
-              calcula con las mismas reglas, pero esta práctica no aparece en el
-              ranking ni modifica tu resultado competitivo.
+              Es el mismo juego, de 7.º a 5.º, con las mismas reglas de puntaje.
+              Lo que hagas acá no entra al ranking ni cambia tu resultado en la
+              competencia.
             </p>
             <p className="text-meta text-ink-secondary">
-              No te pedimos nombre, DNI ni año real. El avance se guarda en este
-              navegador para que puedas continuar después.
+              No te pedimos nombre, DNI ni curso. El avance se guarda en este
+              navegador para que puedas seguir después.
             </p>
             {stored?.kind === 'unavailable' ? (
               <Callout title="No se puede guardar el avance">

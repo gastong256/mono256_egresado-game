@@ -39,10 +39,11 @@ export function VerificationPanel({
         className="flex flex-col gap-2"
         data-testid="verification-pending"
       >
-        <p className="text-goal font-display text-ink">Verificando…</p>
+        <p className="text-goal font-display text-ink">
+          Verificando tu partida…
+        </p>
         <p className="text-meta text-ink-secondary text-pretty">
-          El servidor está volviendo a jugar tu partida para calcular el
-          puntaje. Tarda unos segundos.
+          Cuando termine, vas a ver tu puntaje acá.
         </p>
       </div>
     )
@@ -51,8 +52,9 @@ export function VerificationPanel({
   if (phase === 'failed') {
     return (
       <div className="flex flex-col gap-3" data-testid="verification-failed">
-        <Callout tone="accent" title="No se pudo verificar">
-          {message ?? 'Probá de nuevo en unos segundos.'}
+        <Callout tone="accent" title="No pudimos verificar tu partida">
+          {message ?? 'Probá de nuevo en unos segundos.'} Tu recorrido no se
+          pierde: reintentá cuando tengas conexión.
         </Callout>
         <div className="flex flex-wrap gap-2">
           <Button variant="secondary" onClick={onRetry}>
@@ -70,8 +72,8 @@ export function VerificationPanel({
     return (
       <div className="flex flex-col gap-3" data-testid="verification-rejected">
         <Callout tone="accent" title="Esta partida no entra al ranking">
-          El servidor no pudo confirmar el resultado de esta partida. Podés
-          jugar otra.
+          No pudimos confirmar el resultado de esta partida, así que no suma al
+          ranking. Podés jugar otra.
         </Callout>
         <div className="flex flex-wrap gap-2">
           <Button variant="secondary" onClick={onPlayAgain}>
@@ -113,7 +115,7 @@ export function VerificationPanel({
       <p className="text-meta text-ink text-pretty" data-testid="personal-best">
         {result.personalBest
           ? 'Es tu mejor partida hasta ahora. Es la que cuenta en el ranking.'
-          : 'Tu mejor partida anterior sigue siendo la que cuenta en el ranking.'}
+          : 'No superó tu mejor partida: en el ranking sigue contando la anterior.'}
       </p>
 
       <div className="flex flex-wrap gap-2">

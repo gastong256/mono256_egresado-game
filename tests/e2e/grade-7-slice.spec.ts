@@ -29,7 +29,7 @@ async function startRun(page: Page, nickname: string): Promise<void> {
   await page.goto('/dev/grade-7')
   await page.getByLabel('¿Cómo te decimos?').fill(nickname)
   await page.getByRole('button', { name: 'Empezar 7.º grado' }).click()
-  await expect(page.getByRole('button', { name: 'Seguir' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Empezar 7.º' })).toBeVisible()
 }
 
 /** Juega el año entero y devuelve cuántas situaciones se respondieron. */
@@ -44,7 +44,7 @@ async function playYear(
       break
     }
 
-    const advance = page.getByRole('button', { name: 'Seguir' })
+    const advance = page.getByTestId('continue')
     if ((await advance.count()) > 0) {
       await advance.first().click()
       continue
@@ -82,7 +82,7 @@ test('un estudiante juega 7.º grado de principio a fin', async ({ page }) => {
   await expect(page.getByText('Evento 1 de 8')).toBeVisible()
   // La tira de carrera arranca ausente: `null` no es 0.
   await expect(page.getByTestId('career-strip')).toHaveCount(0)
-  await page.getByRole('button', { name: 'Seguir' }).click()
+  await page.getByRole('button', { name: 'Empezar 7.º' }).click()
 
   /*
    * Primera situación: el colectivo.
@@ -202,7 +202,7 @@ test('un año que sale mal pide un repaso y cierra igual', async ({ page }) => {
  * por una ruta de demo— es justamente lo que estos tests tienen que probar.
  */
 async function reachTheAct(page: Page): Promise<void> {
-  await page.getByRole('button', { name: 'Seguir' }).click()
+  await page.getByRole('button', { name: 'Empezar 7.º' }).click()
   // Primera situación: el colectivo.
   await answerChallenge(page, 'primera')
   await page.getByRole('button', { name: 'Seguir' }).click()
@@ -487,7 +487,7 @@ test('recargar en medio del año ofrece seguir la partida', async ({ page }) => 
   await startRun(page, 'Ivo')
 
   // Se avanzan un par de eventos para que exista un checkpoint.
-  await page.getByRole('button', { name: 'Seguir' }).click()
+  await page.getByRole('button', { name: 'Empezar 7.º' }).click()
   await answerChallenge(page, 'primera')
   await page.getByRole('button', { name: 'Seguir' }).click()
 
@@ -509,7 +509,7 @@ test('recargar en medio del año ofrece seguir la partida', async ({ page }) => 
 
 test('descartar la partida guardada empieza de nuevo', async ({ page }) => {
   await startRun(page, 'Cami')
-  await page.getByRole('button', { name: 'Seguir' }).click()
+  await page.getByRole('button', { name: 'Empezar 7.º' }).click()
   await answerChallenge(page, 'primera')
   await page.getByRole('button', { name: 'Seguir' }).click()
 
@@ -566,7 +566,7 @@ test('se puede jugar sólo con el teclado', async ({ page }) => {
     page.getByRole('heading', { name: 'Arranca séptimo' }),
   ).toBeVisible()
 
-  const advance = page.getByRole('button', { name: 'Seguir' })
+  const advance = page.getByRole('button', { name: 'Empezar 7.º' })
   await advance.focus()
   await expect(advance).toBeFocused()
   await page.keyboard.press('Enter')
@@ -610,7 +610,7 @@ test('no hay desbordes horizontales en pantallas chicas', async ({ page }) => {
 
   expect(await overflow()).toBe(false)
 
-  await page.getByRole('button', { name: 'Seguir' }).click()
+  await page.getByRole('button', { name: 'Empezar 7.º' }).click()
   expect(await overflow()).toBe(false)
 
   await answerChallenge(page, 'primera')
@@ -660,7 +660,7 @@ test('las pantallas principales no tienen violaciones de accesibilidad', async (
   await page.getByRole('button', { name: 'Empezar 7.º grado' }).click()
   await scan('apertura')
 
-  await page.getByRole('button', { name: 'Seguir' }).click()
+  await page.getByRole('button', { name: 'Empezar 7.º' }).click()
   await scan('situación')
 
   await answerChallenge(page, 'primera')

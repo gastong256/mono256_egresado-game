@@ -280,7 +280,7 @@ export function CompetitionExperience({
                 <header className="@container flex min-w-0 flex-col items-start gap-4">
                   <Eyebrow>
                     {competition.status === 'not-configured'
-                      ? 'Juego de matemática escolar'
+                      ? 'Un juego sobre decidir en la escuela'
                       : competition.name}
                   </Eyebrow>
                   <h1>
@@ -328,7 +328,7 @@ export function CompetitionExperience({
                       <p className="text-meta text-ink-secondary tabular-nums">
                         {you.bestFairScore === undefined
                           ? 'Todavía no tenés una partida verificada.'
-                          : `Tu mejor puntaje: ${you.bestFairScore.toLocaleString('es-AR')}`}
+                          : `Tu mejor puntaje: ${you.bestFairScore.toLocaleString('es-AR')}. Es el que cuenta en el ranking.`}
                       </p>
                     </div>
                   )}
@@ -456,8 +456,9 @@ function CompetitionStatusNote({
   if (status === 'not-configured')
     return (
       <Callout title="Todavía no hay una competencia">
-        El juego está listo, pero ningún organizador abrió una edición. Volvé
-        cuando se anuncie la próxima competencia.
+        El juego está listo, pero ningún organizador abrió una edición. Mientras
+        tanto podés probar sin competir; cuando se anuncie la próxima
+        competencia, jugás acá.
       </Callout>
     )
   return (
@@ -479,9 +480,9 @@ function CompetitionStatusNote({
       </h2>
       <p className="text-body text-ink-secondary">
         {status === 'open'
-          ? 'Jugá, mejorá tu puntaje y buscá tu lugar en el podio.'
+          ? 'Jugá las veces que quieras: en el ranking cuenta tu mejor partida verificada.'
           : status === 'upcoming'
-            ? 'La próxima partida puede ser la tuya. Volvé cuando se abra la competencia.'
+            ? 'Cuando abra vas a poder jugar desde acá. Mientras tanto, podés probar sin competir.'
             : 'El ranking queda publicado. Ya no se pueden empezar partidas nuevas.'}
       </p>
     </div>

@@ -608,7 +608,7 @@ export const courseProjectFinal = defineChallenge<FinalParams, FinalParams>({
       ? []
       : ['quien no está tiene horas disponibles'],
   narrate: (_p, context) => ({
-    title: 'Proyecto del Curso: la muestra final',
+    title: 'La muestra final',
     setup: `${projectArcCallback(context.flags)}${teamworkCallback(context.flags)}Faltan tres días para la muestra y se cae algo. Las tareas ya estaban repartidas.`,
     goal: 'Rehacé el plan con lo que queda, y decidí qué dice el curso sobre el cambio.',
   }),

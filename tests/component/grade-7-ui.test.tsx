@@ -272,7 +272,7 @@ describe('el resumen del año', () => {
 async function resolveFirstChallenge(
   user: ReturnType<typeof userEvent.setup>,
 ): Promise<void> {
-  await user.click(await screen.findByRole('button', { name: 'Seguir' }))
+  await user.click(await screen.findByRole('button', { name: 'Empezar 7.º' }))
 
   // El slot del colectivo tiene dos plantillas y el seed elige cuál sale, así
   // que el helper no puede asumir la interacción: responde la que aparezca.
@@ -308,7 +308,7 @@ describe('la familia colectivo en pantalla', () => {
     const user = userEvent.setup()
     renderRun('ui-1')
 
-    await user.click(await screen.findByRole('button', { name: 'Seguir' }))
+    await user.click(await screen.findByRole('button', { name: 'Empezar 7.º' }))
     expect(screen.getByText('La pregunta del grupo')).toBeDefined()
 
     const field = screen.getByRole('spinbutton')
@@ -332,7 +332,7 @@ describe('la familia colectivo en pantalla', () => {
     const user = userEvent.setup()
     renderRun('ui-2')
 
-    await user.click(await screen.findByRole('button', { name: 'Seguir' }))
+    await user.click(await screen.findByRole('button', { name: 'Empezar 7.º' }))
     const field = screen.getByRole<HTMLInputElement>('spinbutton')
 
     await user.type(field, '40')
@@ -346,7 +346,7 @@ describe('la familia colectivo en pantalla', () => {
     const user = userEvent.setup()
     renderRun('ui-0')
 
-    await user.click(await screen.findByRole('button', { name: 'Seguir' }))
+    await user.click(await screen.findByRole('button', { name: 'Empezar 7.º' }))
     const options = screen.getAllByRole('radio')
     expect(options.length).toBeGreaterThan(1)
 
@@ -382,7 +382,9 @@ describe('la partida con sorteo fijo', () => {
       await user.click(
         screen.getByRole('button', { name: 'Empezar 7.º grado' }),
       )
-      await user.click(await screen.findByRole('button', { name: 'Seguir' }))
+      await user.click(
+        await screen.findByRole('button', { name: 'Empezar 7.º' }),
+      )
 
       titles.push(screen.getByRole('heading', { level: 2 }).textContent ?? '')
       unmount()
@@ -404,7 +406,7 @@ describe('la partida con sorteo fijo', () => {
       'Docente',
     )
     await user.click(screen.getByRole('button', { name: 'Empezar 7.º grado' }))
-    await user.click(await screen.findByRole('button', { name: 'Seguir' }))
+    await user.click(await screen.findByRole('button', { name: 'Empezar 7.º' }))
 
     // TG1-B: la misma familia, la pregunta dada vuelta.
     expect(screen.getByRole('heading', { level: 2 }).textContent).toBe(

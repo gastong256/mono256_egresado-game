@@ -129,10 +129,11 @@ export function IdentityForm({
     <section aria-labelledby={headingId} className="flex flex-col gap-4">
       <div className="flex flex-col gap-1">
         <h2 id={headingId} className="text-section font-display text-ink">
-          ¿Cómo querés aparecer?
+          Elegí cómo aparecer en el ranking
         </h2>
         <p className="text-meta text-ink-secondary text-pretty">
-          Si ya jugaste antes, completá los mismos datos y seguís siendo vos.
+          Después van unos datos para validar que sos vos. Si ya jugaste antes,
+          completá los mismos y seguís con tu alias.
         </p>
       </div>
 
@@ -151,7 +152,7 @@ export function IdentityForm({
           onBlur={() => {
             setTouched((current) => ({ ...current, nickname: true }))
           }}
-          hint="Es lo único que se ve en el ranking."
+          hint="Es lo único que se ve en el ranking. No hace falta tu nombre real."
           autoComplete="nickname"
           maxLength={40}
           {...(visible.nickname === undefined
