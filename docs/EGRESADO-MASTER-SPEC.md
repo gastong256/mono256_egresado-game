@@ -22165,9 +22165,9 @@ Esperado:
   "service": "egresado-web",
   "release": {
     "releaseId": "egresado-fair-edition-v1",
-    "releaseVersion": "1.0.0-rc.4",
+    "releaseVersion": "1.0.0-rc.5",
     "releaseChannel": "release-candidate",
-    "releaseFingerprint": "4b320b09693c4550b422cfbe21f0bc742b65f27b3761b30854d9edf4580a19a2"
+    "releaseFingerprint": "ac1307fabcbcbcdb8ee8c224b016583f0b46801d5813aa968085416d4d69ce30"
   },
   "checks": [{ "name": "release-manifest", "state": "ok" }]
 }
@@ -22261,7 +22261,7 @@ del congelamiento de v1—. El organizador ve:
 
 ```text
 COMPETITION_NOT_CONFIGURED — la edición no corresponde a
-egresado-fair-edition-v1 1.0.0-rc.4: scoreVersion esperaba … y tiene …
+egresado-fair-edition-v1 1.0.0-rc.5: scoreVersion esperaba … y tiene …
 ```
 
 La edición vieja **no se arregla**: sus intentos se jugaron bajo otras reglas y
@@ -22904,11 +22904,11 @@ La contraseña no tiene default. La seed la genera el bootstrap canónico.
 ## A. GitHub — publicar la fuente cuando el operador esté listo
 
 1. Verificar `git branch --show-current` = `main` y `git status --porcelain` vacío.
-2. `pnpm release:verify` debe identificar `1.0.0-rc.4` y la huella del
+2. `pnpm release:verify` debe identificar `1.0.0-rc.5` y la huella del
    [checklist](06-delivery/release-checklist.md).
 3. El operador comprueba su acceso a GitHub y ejecuta:
    ```bash
-   git push --atomic origin main v1.0.0-rc.4
+   git push --atomic origin main v1.0.0-rc.5
    ```
 4. Antes de conectar Vercel, incorporar `vercel.json` a cualquier rama antigua
    que se vaya a seguir usando. La configuración se lee de la revisión enviada;
@@ -22918,7 +22918,7 @@ La política Git deshabilita auto-deploys no-main, incluidas ramas con `/`, usan
 `**: false`, `main: true`. No reemplaza la selección de Production Branch en el
 panel ni bloquea despliegues manuales del propietario.
 
-RC4 conserva el esquema de RC2/RC3. El PO confirma el 23/09 que las migraciones
+RC5 conserva el esquema de RC2/RC3/RC4. El PO confirma el 23/09 que las migraciones
 ya están en producción y todavía no hubo partidas allí: no se vuelve a aplicar
 el historial, no se ejecuta el seed local ni `competition:summaries`. Las partidas
 nuevas guardan automáticamente el resumen del ranking. La confirmación es del
@@ -22940,7 +22940,7 @@ operador; este cierre no inspeccionó ni modificó Supabase remoto.
 
 ## C. Supabase CLI — aplicar el historial sin seed
 
-Desde la raíz del checkout RC4, con Docker disponible para los dumps y la CLI
+Desde la raíz del checkout RC5, con Docker disponible para los dumps y la CLI
 fijada por el repositorio:
 
 ```bash
@@ -23099,7 +23099,7 @@ exclusivamente en São Paulo.
 
 ## F. Bootstrap de la edición final
 
-Con RC4 y preflight aprobado:
+Con RC5 y preflight aprobado:
 
 ```bash
 pnpm competition:bootstrap -- \
@@ -23128,7 +23128,7 @@ curl -sS -o /dev/null -w '%{http_code}\n' "$APP_URL/dev/grade-7"
 
 Obligatorio antes de GO:
 
-- liveness 200 y release `1.0.0-rc.4`, fingerprint idéntico al candado;
+- liveness 200 y release `1.0.0-rc.5`, fingerprint idéntico al candado;
 - readiness 200, `release-manifest`, `competition-config`, `database` y
   `competition` en `ok`; antes del bootstrap, `competition: degraded`/503 es
   esperado, después no;
@@ -23152,7 +23152,7 @@ El ensayo local completo sigue siendo la evidencia de producto obligatoria.
 
 ### Rollback de Hobby, después del primer deploy
 
-Crear dos deployments Production consecutivos del **mismo RC.4 y configuración
+Crear dos deployments Production consecutivos del **mismo RC.5 y configuración
 final**, ambos servidos previamente por el dominio canónico. Anotar ids, commit,
 fingerprint y slug. Desde Production Deployment → Instant Rollback, volver al
 inmediatamente anterior y repetir health/readiness/login. La huella será la
@@ -23270,6 +23270,20 @@ real al ejecutar el handoff. Ninguna consulta acredita una cuenta ni un deploy.
 
 Vista corta del estado de ejecución. El contrato completo y el protocolo de
 actualización están en el [roadmap](06-delivery/implementation-sequence.md).
+
+## RC5 — acceso del Home
+
+**Estado: `DONE` localmente — 23 de septiembre de 2026.** Release `1.0.0-rc.5`,
+rama `main`, tag `v1.0.0-rc.5`. [Cierre y evidencia](06-delivery/rc5-release-closure.md).
+Integra `685ea32`: estado abierto explícito, Jugar prioritario, contador completo
+y práctica secundaria, con jerarquía móvil/tablet. La ventana temporal se refleja
+sólo en el bloque de acceso; el servidor conserva la autorización de intentos.
+Sin cambios de motor, contenido, score, ranking, persistencia ni migraciones.
+
+La validación de UI del commit base se conserva y el corte verifica su nueva
+identidad, candado, build y health. No se repite el verify completo.
+Push, despliegue y comprobaciones cloud quedan a cargo del operador.
+RC4 y los apartados siguientes se conservan como evidencia histórica.
 
 ## RC4 — cierre urgente de presentación
 
@@ -24104,15 +24118,15 @@ Si el roadmap y el código difieren, **el código gana** y el roadmap se corrige
 - Fases de validación externa y congelamiento: [ciclo de entrega real](00-product/real-delivery-lifecycle.md).
 - Qué se construye por capas de alcance: [alcance y roadmap](00-product/scope-and-roadmap.md) y [backlog](06-delivery/mvp-backlog.md).
 
-**Última reconciliación:** 23 de septiembre de 2026, **RC4 `DONE` localmente**;
+**Última reconciliación:** 23 de septiembre de 2026, **RC5 `DONE` localmente**;
 STAGE-10 mantiene pendientes las comprobaciones remotas y el GO del operador.
-Identidad vigente `1.0.0-rc.4`; huella `4b320b09693c4550b422cfbe21f0bc742b65f27b3761b30854d9edf4580a19a2`.
-[Cierre de RC4](06-delivery/rc4-release-closure.md): alcance y evidencia del corte urgente.
-Scope IN autorizado: imágenes de interludios/egreso, ajuste móvil ya integrado,
-título del Home, aclaración editorial de desempates externos y release/documentación.
-Scope OUT: reglas, motor, contenido, score, persistencia, migraciones y despliegue remoto.
-Exit gate: checks focalizados de UI/metadata, build, freeze y controles de release;
-commit en main y tag local, sin push. RC1/RC2/RC3 se conservan como antecedentes.
+Identidad vigente `1.0.0-rc.5`; huella `ac1307fabcbcbcdb8ee8c224b016583f0b46801d5813aa968085416d4d69ce30`.
+[Cierre de RC5](06-delivery/rc5-release-closure.md): acceso del Home e identidad del nuevo corte.
+Scope IN autorizado: jerarquía del bloque de acceso, ventana temporal presentada
+por ese bloque, responsive móvil/tablet y documentación/identidad de release.
+Scope OUT: reglas, motor, contenido, score, ranking, persistencia, migraciones y deploy remoto.
+Exit gate: evidencia dirigida de UI preservada, build, freeze, health y controles
+de release; commit en main y tag local, sin push. RC1–RC4 siguen como antecedentes.
 Las excepciones RC3 más abajo registran autorizaciones históricas ya entregadas.
 FairScore se oficializó como `fair-score-v1` sin mover un número,
 y la revisión humana amplia deja de bloquear el roadmap
@@ -26447,6 +26461,112 @@ No se mueve ningún tag anterior. No se hace push ni deploy desde este cierre.
 
 ---
 
+# FILE: 06-delivery/rc5-release-closure.md
+
+# RC5 — cierre del acceso del Home
+
+Fecha: 23 de septiembre de 2026. Estado: **CLOSED LOCALLY — READY TO PUBLISH**.
+Publicación manual por el operador; el cierre local no acredita un deploy ni GO remoto.
+
+## Identidad y alcance
+
+| Campo | Valor |
+|---|---|
+| Release | `egresado-fair-edition-v1` |
+| Versión | `1.0.0-rc.5` |
+| Tag anotado | `v1.0.0-rc.5` |
+| Rama | `main` |
+| Base del corte | `685ea32` |
+| Predecesor inmutable | `v1.0.0-rc.4` → `6de4a30` |
+| Huella | `ac1307fabcbcbcdb8ee8c224b016583f0b46801d5813aa968085416d4d69ce30` |
+
+RC5 incorpora el ajuste autorizado del bloque de acceso del Home (`685ea32`):
+
+- «Competencia abierta» y «Ya podés jugar», acción principal más grande,
+  contador completo rotulado «Tiempo que queda para jugar» y práctica secundaria.
+- Botón antes del reloj en móvil/tablet vertical; dos columnas desde 1024 px.
+  Cuatro unidades visibles desde 320 px, sin controles para ocultarlas ni parpadeos.
+- Verde escolar para disponibilidad y rojo para la última hora; lima sólo para
+  la acción primaria. No agrega dependencias.
+- Presentación local de apertura/cierre dentro del bloque, revisada en los límites
+  y al volver a la pestaña, sin renderizar todo el Home cada segundo. UPCOMING
+  sigue requiriendo confirmación del servidor; la emisión valida estado y horario.
+- Versión, candado, documentación de estado y runbooks actualizados al nuevo corte.
+
+Fuentes: [FR-001](02-functional/functional-specification.md),
+[trazabilidad](02-functional/traceability-matrix.md) y
+[fundamentos visuales](09-design-system/foundations.md).
+El corte aplica ADR-027/028; no introduce una decisión arquitectónica nueva.
+
+## Compatibilidad y despliegue
+
+Motor `10.0.0`, action log `7`, snapshot `8`, ruleset `1.0.0-full-career`,
+contenido `5.5.0-grade-5`, catálogo `grade-5-dev-6` y score
+`fair-score-v1@1.0.0-fair-edition-v1` siguen iguales a RC4.
+En el manifiesto sólo cambia `releaseVersion`; el candado se regenera con el
+comando mantenido y se verifica después sin actualizarlo.
+
+**Sin migraciones, dependencias ni variables nuevas.** Cabeza del esquema:
+`20260921000000_competition_fair_mode.sql`. Sobre producción ya migrada para
+RC2/RC3/RC4, basta desplegar el código: no reset, seed, bootstrap ni backfill por RC5.
+Se conservan edición, horarios, seed, identidad y resultados. No se inspeccionó
+ni modificó Supabase remoto.
+
+## Validación y procedencia
+
+El árbol de UI, tests, configuración y dependencias de `685ea32` se conserva
+exactamente en este corte; los únicos cambios ejecutables son las identidades
+de package/manifiesto/candado. Por eso se reutiliza su evidencia:
+
+- `pnpm test tests/component/home-event.test.tsx tests/component/event-countdown.test.tsx tests/component/competition-ui.test.tsx`: **77 tests PASS**.
+- `pnpm test:e2e:only tests/e2e/home-event.spec.ts --project=competition-desktop --project=competition-mobile --workers=3`: **28 casos PASS**, con dos fallos de espaciado de «HORAS» a 320 px. Corregido el espaciado, los **dos casos de 320 px PASS** al repetirlos con `--grep 'home a 320px' --workers=2`. Total: 30 casos cubiertos, no una corrida única de 30 verdes.
+- Lint, ambos typechecks, formato, contraste/tokens y build: PASS después de las correcciones.
+- Inspección del bloque a 320, 390, 768, 1024 y 1280 px: sin desbordes internos;
+  Playwright además cubre 360/412/1920 px, zoom, teclado, axe y reduced motion.
+
+### Controles del corte RC5
+
+| Comando / alcance | Resultado |
+|---|---|
+| `pnpm toolchain:check`, `pnpm install --frozen-lockfile` | PASS; Node 24.19.0, pnpm 11.22.0, lockfile sin cambios |
+| `pnpm release:verify -- --update-lock` | PASS; 54 controles y candado RC5 generado |
+| `pnpm release:verify` | PASS; 57 controles, sin actualizar candado |
+| `pnpm release:check` | PASS; Next.js 16.3.5 |
+| `pnpm release:preflight -- --env-file=.env.production.local` | PASS; contrato local, sin conexión al proveedor |
+| `pnpm security:audit` | PASS; sin vulnerabilidades conocidas |
+| `pnpm test` con cinco suites de release | PASS; 69 tests |
+| `pnpm build` | PASS; artefacto RC5 y TypeScript de Next |
+| Artefacto servido localmente: `/api/health`, `/api/health?ready=1` | PASS; HTTP 200, versión/huella RC5 y todos los checks `ok` |
+| `pnpm format:check`, `pnpm secrets:check`, `git diff --check` | PASS |
+| Workspace documental y master, también desde export limpio de Git | PASS |
+
+Las cinco suites del corte son `release-manifest.test.ts`,
+`release-readiness.test.ts`, `deployment-readiness.test.ts`, `health-route.test.ts`
+y `competition-freeze.test.ts`. Test, build y servidor local precargan `.env.local`
+y exigen una URL Supabase loopback; no usan credenciales productivas.
+
+No se repite `pnpm verify`, cobertura completa, simulación de balance ni checks
+de DB/contenedores: no cambiaron esas fronteras. El verify histórico de RC3 y
+las comprobaciones de RC4 permanecen en sus respectivos reportes; no se atribuyen
+al árbol actual. El preflight local no prueba variables ni servicios remotos.
+
+## Publicación manual
+
+1. Publicar main y el tag juntos:
+   ```bash
+   git push --atomic origin main v1.0.0-rc.5
+   ```
+2. Revisar CI y deployment Production de Vercel para el mismo commit.
+3. Comprobar `/api/health` y `/api/health?ready=1`: HTTP 200, versión
+   `1.0.0-rc.5`, huella de este reporte y checks `ok`.
+4. Revisar el acceso del Home en teléfono/tablet y confirmar estado y horarios
+   desde organizador. El [handoff](05-operations/vercel-supabase-production-deployment.md)
+   conserva los ensayos remotos pendientes antes de GO.
+
+No se mueve RC4 ni otro tag anterior. Push y deploy quedan a cargo del operador.
+
+---
+
 # FILE: 06-delivery/release-checklist.md
 
 # Checklist del Release Candidate — Egresado Fair Edition v1
@@ -26457,16 +26577,16 @@ Binario. Cada línea está `PASSED`, `READY FOR STAGE-10 REHEARSAL` o `FAILED`.
 infraestructura real y que este repositorio no puede afirmar sin mentir.
 
 ```text
-release   egresado-fair-edition-v1 · 1.0.0-rc.4
-huella    4b320b09693c4550b422cfbe21f0bc742b65f27b3761b30854d9edf4580a19a2
+release   egresado-fair-edition-v1 · 1.0.0-rc.5
+huella    ac1307fabcbcbcdb8ee8c224b016583f0b46801d5813aa968085416d4d69ce30
 ```
 
-La evidencia histórica de RC1/RC2/RC3 se conserva en sus reportes. La identidad
-y validación vigente están en el [cierre de RC4](06-delivery/rc4-release-closure.md).
-RC4 incluye las láminas narrativas, las correcciones móviles de `1d15d35`,
-el título del Home y la aclaración sobre desempates externos. Los checks
-focalizados del corte se distinguen del verify histórico; no se afirma una
-nueva corrida completa de verify.
+La evidencia histórica de RC1–RC4 se conserva en sus reportes. La identidad
+vigente y la procedencia de cada check están en el [cierre de RC5](06-delivery/rc5-release-closure.md).
+RC5 integra el bloque de acceso aprobado en `685ea32`: acción principal,
+contador, práctica secundaria y presentación de la ventana temporal.
+Se reutilizan sus pruebas de UI y se verifican los controles del nuevo corte;
+no se presenta una nueva corrida completa de verify.
 El [handoff A–I](05-operations/vercel-supabase-production-deployment.md) es el procedimiento vigente.
 
 ## Producto congelado
@@ -26559,13 +26679,13 @@ El [handoff A–I](05-operations/vercel-supabase-production-deployment.md) es el
 | Item | Estado | Evidencia |
 |---|---|---|
 | BUILD GREEN | `PASSED` | sin una sola advertencia |
-| VERIFY GREEN | `PASSED` histórico RC3 | no repetido en RC4; gates dirigidos actuales documentados en su cierre |
-| VITEST | `PASSED` | RC4: 15 archivos / 223 tests dirigidos; verify histórico RC3: 2542 tests |
+| VERIFY GREEN | `PASSED` histórico RC3 | no repetido en RC5; controles actuales y evidencia reutilizada separados en su cierre |
+| VITEST | `PASSED` | 69 tests de identidad RC5; 77 tests de UI en `685ea32`, reutilizados |
 | COVERAGE | `PASSED` (reutilizada) | 86,92 / 79,91 / 89,36 / 87,15; no recalculada en el corte |
-| E2E | `PASSED` | RC4: 78 dirigidos en cuatro proyectos; 270 históricos de RC3, no repetidos como suite completa |
+| E2E | `PASSED` | 30 casos Home en `685ea32`, reutilizados: 28 aprobados y 2 de 320 px aprobados tras corregir el espaciado; no repetidos en el corte |
 | ACCESSIBILITY | `PASSED` | axe, teclado, 360 px, sin desborde |
-| BUNDLE MEASURED | `PASSED` (histórico) | 188,5 KiB gzip iniciales en standalone (baseline anterior: 189,0); no recalculado en RC4 |
-| PERFORMANCE BASELINE | `PASSED` (histórico) | registro, emisión, verificación, ranking, exportación; no repetido en RC4 |
+| BUNDLE MEASURED | `PASSED` (histórico) | 188,5 KiB gzip iniciales en standalone (baseline anterior: 189,0); no recalculado en RC5 |
+| PERFORMANCE BASELINE | `PASSED` (histórico) | registro, emisión, verificación, ranking, exportación; no repetido en RC5 |
 | SYNTHETIC COMPETITION | `PASSED` | jornada entera contra Postgres real |
 | REMOTE LOAD TEST | `READY FOR STAGE-10 REHEARSAL` | — |
 | LOCAL REHEARSAL / CLOUD SMOKE | `READY FOR STAGE-10 REHEARSAL` | ensayo equivalente a staging local; smoke obligatorio en la producción real, sin proyecto cloud extra |
@@ -30599,6 +30719,16 @@ saliencia ya no son aperturas de prediseño.
 - Sólo cambia la identidad del release según ADR-027/028; no requiere ADR nuevo.
   El tag RC3 permanece inmutable. [Cierre RC4](06-delivery/rc4-release-closure.md).
 
+## RC5 — jerarquía del acceso del Home
+
+- **ACCEPTED · PO · 23/09/2026.** El bloque de acceso aprobado se entrega como
+  `1.0.0-rc.5`: estado explícito, acción principal, reloj completo y práctica
+  secundaria, con presentación responsive de la ventana temporal.
+- La restricción horaria visual no cambia estado persistido, ranking ni permisos
+  del servidor. Reglas y versiones competitivas siguen congeladas.
+- Corte mediante ADR-027/028, sin ADR nuevo ni movimiento del tag RC4.
+  [Cierre RC5](06-delivery/rc5-release-closure.md).
+
 ---
 
 # FILE: 07-reference/formulas-and-algorithms.md
@@ -31634,6 +31764,13 @@ Estas preguntas están registradas en [preguntas abiertas](07-reference/open-que
 - [x] Aclaración de desempates externos trazada a FR-012; comparador sin cambios.
 - [ ] Push manual y comprobaciones de producción a cargo del operador.
 
+## Cierre RC5 — acceso del Home
+
+- [x] [Cierre de RC5](06-delivery/rc5-release-closure.md): alcance, identidad, controles nuevos y evidencia reutilizada.
+- [x] Estado, roadmap, checklist y runbooks vigentes actualizados; RC4 inmutable.
+- [x] Sin nuevas migraciones ni cambios en las versiones competitivas.
+- [ ] Push manual, despliegue y comprobaciones cloud a cargo del operador.
+
 ---
 
 # FILE: README.md
@@ -31767,6 +31904,7 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 - `fallback-and-incident-plan.md`: funcionamiento degradado y recuperación.
 
 ### 06-delivery
+- `rc5-release-closure.md`: cierre del acceso del Home, procedencia de checks, identidad y publicación manual de RC5.
 - `rc4-release-closure.md`: corte urgente posterior a RC3, cambios incluidos, controles y publicación manual.
 - `rc3-release-closure.md`: cierre local de RC3, notas de versión, procedencia de la validación y publicación manual.
 - `stage-10a-deployment-adaptation.md`: adaptación del deploy y evidencia local de RC.2, sin deploy ni GO.

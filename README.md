@@ -6,10 +6,10 @@ El motor ejecuta una run completa de punta a punta: progresión por etapas, sele
 
 Desde STAGE-09 ese juego está envuelto en una **competencia con servidor autoritativo**: el producto público vive en `/`, el servidor emite cada intento, vuelve a jugar lo enviado para recomputar el puntaje y publica un ranking por mejor intento verificado con alias y resumen público de su mejor partida, sin publicar su identidad privada. La identificación del participante sigue [ADR-026](docs/03-architecture/adr/ADR-026-participant-identity-and-minor-privacy.md): el documento no se guarda, se deriva.
 
-**Egresado Fair Edition v1 — Release Candidate `1.0.0-rc.4`.** El manifiesto fija
+**Egresado Fair Edition v1 — Release Candidate `1.0.0-rc.5`.** El manifiesto fija
 motor, contenido, catálogos y reglas de competencia. FairScore se oficializa sin
 cambiar su matemática; las políticas de composición conservan sus identidades
-históricas. Ver [cierre de RC4](docs/06-delivery/rc4-release-closure.md),
+históricas. Ver [cierre de RC5](docs/06-delivery/rc5-release-closure.md),
 [checklist](docs/06-delivery/release-checklist.md) y
 [runbook operativo](docs/05-operations/fair-operations-runbook.md).
 

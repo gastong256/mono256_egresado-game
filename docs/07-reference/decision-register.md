@@ -386,3 +386,13 @@ saliencia ya no son aperturas de prediseño.
   Los puestos compartidos y el comparador siguen vigentes.
 - Sólo cambia la identidad del release según ADR-027/028; no requiere ADR nuevo.
   El tag RC3 permanece inmutable. [Cierre RC4](../06-delivery/rc4-release-closure.md).
+
+## RC5 — jerarquía del acceso del Home
+
+- **ACCEPTED · PO · 23/09/2026.** El bloque de acceso aprobado se entrega como
+  `1.0.0-rc.5`: estado explícito, acción principal, reloj completo y práctica
+  secundaria, con presentación responsive de la ventana temporal.
+- La restricción horaria visual no cambia estado persistido, ranking ni permisos
+  del servidor. Reglas y versiones competitivas siguen congeladas.
+- Corte mediante ADR-027/028, sin ADR nuevo ni movimiento del tag RC4.
+  [Cierre RC5](../06-delivery/rc5-release-closure.md).

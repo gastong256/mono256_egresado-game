@@ -42,9 +42,9 @@ Esperado:
   "service": "egresado-web",
   "release": {
     "releaseId": "egresado-fair-edition-v1",
-    "releaseVersion": "1.0.0-rc.4",
+    "releaseVersion": "1.0.0-rc.5",
     "releaseChannel": "release-candidate",
-    "releaseFingerprint": "4b320b09693c4550b422cfbe21f0bc742b65f27b3761b30854d9edf4580a19a2"
+    "releaseFingerprint": "ac1307fabcbcbcdb8ee8c224b016583f0b46801d5813aa968085416d4d69ce30"
   },
   "checks": [{ "name": "release-manifest", "state": "ok" }]
 }
@@ -138,7 +138,7 @@ del congelamiento de v1—. El organizador ve:
 
 ```text
 COMPETITION_NOT_CONFIGURED — la edición no corresponde a
-egresado-fair-edition-v1 1.0.0-rc.4: scoreVersion esperaba … y tiene …
+egresado-fair-edition-v1 1.0.0-rc.5: scoreVersion esperaba … y tiene …
 ```
 
 La edición vieja **no se arregla**: sus intentos se jugaron bajo otras reglas y

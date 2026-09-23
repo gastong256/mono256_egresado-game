@@ -207,3 +207,10 @@ Estas preguntas están registradas en [preguntas abiertas](07-reference/open-que
 - [x] Estado, roadmap, checklist y runbooks actualizados; RC3 conservado como historia.
 - [x] Aclaración de desempates externos trazada a FR-012; comparador sin cambios.
 - [ ] Push manual y comprobaciones de producción a cargo del operador.
+
+## Cierre RC5 — acceso del Home
+
+- [x] [Cierre de RC5](06-delivery/rc5-release-closure.md): alcance, identidad, controles nuevos y evidencia reutilizada.
+- [x] Estado, roadmap, checklist y runbooks vigentes actualizados; RC4 inmutable.
+- [x] Sin nuevas migraciones ni cambios en las versiones competitivas.
+- [ ] Push manual, despliegue y comprobaciones cloud a cargo del operador.

@@ -3,6 +3,20 @@
 Vista corta del estado de ejecución. El contrato completo y el protocolo de
 actualización están en el [roadmap](implementation-sequence.md).
 
+## RC5 — acceso del Home
+
+**Estado: `DONE` localmente — 23 de septiembre de 2026.** Release `1.0.0-rc.5`,
+rama `main`, tag `v1.0.0-rc.5`. [Cierre y evidencia](rc5-release-closure.md).
+Integra `685ea32`: estado abierto explícito, Jugar prioritario, contador completo
+y práctica secundaria, con jerarquía móvil/tablet. La ventana temporal se refleja
+sólo en el bloque de acceso; el servidor conserva la autorización de intentos.
+Sin cambios de motor, contenido, score, ranking, persistencia ni migraciones.
+
+La validación de UI del commit base se conserva y el corte verifica su nueva
+identidad, candado, build y health. No se repite el verify completo.
+Push, despliegue y comprobaciones cloud quedan a cargo del operador.
+RC4 y los apartados siguientes se conservan como evidencia histórica.
+
 ## RC4 — cierre urgente de presentación
 
 **Estado: `DONE` — 23 de septiembre de 2026.** Release `1.0.0-rc.4`,
