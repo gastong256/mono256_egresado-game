@@ -38,6 +38,7 @@ import {
   spaceOf,
   tierWitnessIssues,
 } from '@/content/authoring'
+import { graded } from '../../grades'
 
 export const BLOCKS = [
   { id: 'b1', label: '17 a 18' },
@@ -405,7 +406,7 @@ export const shiftVariants = generatedSource({
   gates: shiftGates,
 })
 
-export const shiftCoverage = defineChallenge<ShiftParams, ShiftParams>({
+const shiftCoverageDefinition = defineChallenge<ShiftParams, ShiftParams>({
   id: toChallengeId('y4.shift-coverage'),
   family: toScenarioFamilyId('evento-escolar'),
   placement: 'checkpoint',
@@ -484,3 +485,6 @@ export const shiftCoverage = defineChallenge<ShiftParams, ShiftParams>({
           detail: 'se esperaba un cronograma de turnos',
         }),
 })
+
+/** Con nota por calidad (10/8/6/4). Ver `src/content/grades.ts`. */
+export const shiftCoverage = graded(shiftCoverageDefinition)

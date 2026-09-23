@@ -41,6 +41,7 @@ import {
   tierWitnessIssues,
   type StyledPlan,
 } from '@/content/authoring'
+import { graded } from '../../grades'
 
 export const DAYS = ['Lun', 'Mar', 'Mié', 'Jue'] as const
 /** La tarde libre de cada día: de cuatro a nueve. */
@@ -489,7 +490,7 @@ export const weekVariants = generatedSource({
   gates: weekGates,
 })
 
-export const weekPlanner = defineChallenge<WeekParams, WeekParams>({
+const weekPlannerDefinition = defineChallenge<WeekParams, WeekParams>({
   id: toChallengeId('y3.week-planner'),
   family: toScenarioFamilyId('semana-propia'),
   placement: 'checkpoint',
@@ -595,3 +596,6 @@ export const weekPlanner = defineChallenge<WeekParams, WeekParams>({
           detail: 'se esperaba una semana armada',
         }),
 })
+
+/** Con nota por calidad (10/8/6/4). Ver `src/content/grades.ts`. */
+export const weekPlanner = graded(weekPlannerDefinition)

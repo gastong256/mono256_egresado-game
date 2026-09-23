@@ -38,6 +38,7 @@ import {
   spaceOf,
   tierWitnessIssues,
 } from '@/content/authoring'
+import { graded } from '../../grades'
 
 export const PACKAGES = [
   { id: 'costa', label: 'Cinco días a la costa' },
@@ -344,7 +345,7 @@ export const tripVariants = generatedSource({
 
 const EGRESO_FAMILY = toScenarioFamilyId('egreso')
 
-export const finalTripOrEvent: ChallengeDefinition = defineChallenge<
+const finalTripOrEventDefinition: ChallengeDefinition = defineChallenge<
   TripParams,
   TripParams
 >({
@@ -425,6 +426,9 @@ export const finalTripOrEvent: ChallengeDefinition = defineChallenge<
       ? evaluateTrip(p, answer.optionId)
       : err({ kind: 'invalid-answer', detail: 'se esperaba una elección' }),
 })
+
+/** Con nota por calidad (10/8/6/4). Ver `src/content/grades.ts`. */
+export const finalTripOrEvent = graded(finalTripOrEventDefinition)
 
 /* -------------------------------------------------------------------------
  * Repaso: comparar cuando el precio no es el único dato.

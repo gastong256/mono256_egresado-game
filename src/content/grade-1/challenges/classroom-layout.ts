@@ -39,6 +39,7 @@ import {
   spaceOf,
   tierWitnessIssues,
 } from '../authoring'
+import { graded } from '../../grades'
 
 const cellSchema = z.strictObject({
   x: z.number().int().min(0).max(11),
@@ -958,5 +959,6 @@ function layoutTemplate(review: boolean) {
   })
 }
 
-export const classroomLayout = layoutTemplate(false)
+/** Con nota por calidad (10/8/6/4). Ver `src/content/grades.ts`. */
+export const classroomLayout = graded(layoutTemplate(false))
 export const scaleFitReview = layoutTemplate(true)

@@ -40,6 +40,7 @@ import {
   spaceOf,
   tierWitnessIssues,
 } from '@/content/authoring'
+import { graded } from '../../grades'
 
 /** Los puestos, en el orden en el que la gente los cruza. */
 export const STATIONS = [
@@ -337,7 +338,7 @@ export const flowVariants = generatedSource({
   gates: flowGates,
 })
 
-export const schoolEventFlow = defineChallenge<FlowParams, FlowParams>({
+const schoolEventFlowDefinition = defineChallenge<FlowParams, FlowParams>({
   id: toChallengeId('y4.school-event-flow'),
   family: toScenarioFamilyId('evento-escolar'),
   placement: 'anchor',
@@ -417,3 +418,6 @@ export const schoolEventFlow = defineChallenge<FlowParams, FlowParams>({
           detail: 'se esperaba un reparto de ayudantes',
         }),
 })
+
+/** Con nota por calidad (10/8/6/4). Ver `src/content/grades.ts`. */
+export const schoolEventFlow = graded(schoolEventFlowDefinition)

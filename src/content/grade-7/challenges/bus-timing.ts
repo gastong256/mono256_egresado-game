@@ -36,6 +36,7 @@ import {
 } from '@/game'
 import { BUS_FAMILY } from '../families'
 import { busTimingVariants, type BusParams } from './bus-timing.variants'
+import { graded } from '../../grades'
 
 interface Departure {
   readonly id: string
@@ -95,7 +96,7 @@ function bestMargin(model: BusModel): number | undefined {
   return safe[0]
 }
 
-export const busTiming: ChallengeDefinition = defineChallenge<
+const busTimingDefinition: ChallengeDefinition = defineChallenge<
   BusModel,
   BusParams
 >({
@@ -343,6 +344,9 @@ export const busTiming: ChallengeDefinition = defineChallenge<
     })
   },
 })
+
+/** Con nota por calidad (10/8/6/4). Ver `src/content/grades.ts`. */
+export const busTiming = graded(busTimingDefinition)
 
 /** Expuesto para los tests de contenido, que verifican la matemática autorada. */
 export const busTimingReference = {

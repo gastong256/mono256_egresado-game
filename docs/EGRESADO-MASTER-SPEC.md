@@ -1610,7 +1610,7 @@ de prediseño no sustituye ninguno de esos checks.
 
 ¿El evento toca genuinamente Promedio, Equipo, Aura o Estilo? La mayoría de los eventos deberían tocar **una o dos** dimensiones, no las cuatro. Una clave ausente significa que el evento no puede mover esa dimensión, y por eso `Promedio +0` ni siquiera es representable. Ver [ADR-016](03-architecture/adr/ADR-016-career-player-model.md).
 
-Promedio se mueve sólo si el evento es genuinamente académico. Aura se mueve sólo si el momento es socialmente memorable: un cálculo correcto no produce Aura.
+Promedio lo mueve toda situación ordinaria con la nota de su calidad (10 / 8 / 6 / 4), puesta por la regla de contenido `graded` de `src/content/grades.ts` al materializar la Template: una Template no autora su propia escala, y un Repaso no pone nota. Aura se mueve sólo si el momento es socialmente memorable: un cálculo correcto no produce Aura.
 
 ### Efectos de competencia: separados de las stats visibles
 
@@ -2270,7 +2270,7 @@ Cuatro dimensiones visibles. Nada más es permanente: energía, plata y similare
 
 | | Tipo | Rango | Cambia cuando |
 |---|---|---|---|
-| **Promedio** | nota | 1,0–10,0 · un decimal | el evento es **genuinamente académico** |
+| **Promedio** | nota | 1,0–10,0 · un decimal | toda situación ordinaria, con la nota de su calidad (10 / 8 / 6 / 4); los Repasos no |
 | **Equipo** | colaboración | 0–100 | está en juego la conducta hacia el grupo |
 | **Aura** | reputación | con signo, sin techo | el momento es **socialmente memorable** |
 | **Estilo** | ternario | Aplicado / Estratega / Improvisador, suman 100 | evidencia estratégica significativa, no calidad Math por sí sola |
@@ -2278,7 +2278,7 @@ Cuatro dimensiones visibles. Nada más es permanente: energía, plata y similare
 Tres reglas que definen el modelo tanto como los nombres:
 
 - **`null` no es 0.** Una dimensión que la run no tocó todavía no tiene valor, y no se dibuja. Aparecen de a una, la primera vez que algo las mueve.
-- **Promedio se deriva de notas reales**, no se acumula como un contador. Una decisión de colectivo ejercita matemática pero no es académica: no lo mueve.
+- **Promedio se deriva de notas reales**, no se acumula como un contador. Desde RC3 cada situación ordinaria del año deja su nota según cómo salió (Óptimo 10, Resuelto 8, Parcial 6, Insuficiente 4); el Repaso no deja nota. Quien resuelve todo mal egresa igual, con un promedio que lo dice (enmienda de [ADR-016](03-architecture/adr/ADR-016-career-player-model.md)).
 - **Ningún eje de Estilo es el malo.** Un Improvisador tiene que poder egresar.
 
 ### Derivadas/ocultas
@@ -6302,6 +6302,8 @@ El estado guarda la lista de notas y `promedio()` devuelve su media redondeada a
 De ahí sale la regla de contenido más importante del modelo: **un evento mueve Promedio sólo si es genuinamente académico**. Decidir a qué hora tomar el colectivo ejercita porcentaje y tiempo, pero nadie pone una nota, así que no toca Promedio. El mural sí: la profesora lo toma como parte del trabajo del trimestre.
 
 Guardar las notas y no el promedio es lo que hace que esa afirmación sea auditable, y lo que permite que en 3.º año haya varias notas por trimestre sin cambiar nada del motor.
+
+**Enmienda RC3 (23 de septiembre de 2026, autorizada por el Product Owner).** La regla «sólo un evento genuinamente académico pone nota» dejó la carrera pública con una sola nota —la expo de 1.º, con una escala propia— y un Promedio que no se movía con ninguna otra situación. Desde RC3, **toda situación ordinaria pone la nota de su calidad** con una escala única de contenido (`src/content/grades.ts`: Óptimo 10, Resuelto 8, Parcial 6, Insuficiente 4), aplicada al materializar cada Template ordinaria; los Repasos siguen sin nota (ADR-024). El modelo no cambia: el estado sigue guardando notas reales y `promedio()` sigue siendo su media; lo que cambia es qué situación entra al legajo. FairScore no lee el Promedio, el action log no cambia y ninguna versión del motor, la ruleset ni el contenido se mueve: la nota es un efecto derivado de una calidad que ya estaba en el estado. Ver `D-RC3-P-004`.
 
 ### 3. Cada evento declara sólo lo que puede tocar
 
@@ -30047,6 +30049,7 @@ saliencia ya no son aperturas de prediseño.
 | D-RC3-P-001 | `/test` es pública permanentemente, aun sin evento, antes de abrir y después del cierre. Mismo motor y FairScore; sin participante, sesión, intento ni ranking competitivo. | ACCEPTED · PO | [ADR-029](03-architecture/adr/ADR-029-public-practice-mode.md) |
 | D-RC3-P-002 | Emisión aleatoria independiente y replay stateless; descriptor recompuesto, sin firma ni secreto nuevo. Checkpoint versionado local, última escritura entre pestañas. | ACCEPTED · arquitectura | ADR-029 |
 | D-RC3-P-003 | `practice-limits-v1`: 120 emisiones / 240 verificaciones por 300 s y dirección derivada. Sólo persiste contador de seguridad, fallo cerrado en despliegue público. | ACCEPTED · política operativa versionada | ADR-029 |
+| D-RC3-P-004 | Toda situación ordinaria pone la nota de su calidad con una escala única de contenido (10 / 8 / 6 / 4); los Repasos no. Corrige el Promedio, que sólo movía la expo de 1.º. Sin bump de motor, ruleset ni contenido: no cambia action log, FairScore, replay ni catálogos; los resúmenes ya verificados conservan su valor. | ACCEPTED · PO · excepción RC3 | [ADR-016 enmienda](03-architecture/adr/ADR-016-career-player-model.md#2-promedio-se-deriva-de-notas-reales); `src/content/grades.ts` |
 
 ---
 

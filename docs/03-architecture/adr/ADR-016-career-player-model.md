@@ -46,6 +46,8 @@ De ahí sale la regla de contenido más importante del modelo: **un evento mueve
 
 Guardar las notas y no el promedio es lo que hace que esa afirmación sea auditable, y lo que permite que en 3.º año haya varias notas por trimestre sin cambiar nada del motor.
 
+**Enmienda RC3 (23 de septiembre de 2026, autorizada por el Product Owner).** La regla «sólo un evento genuinamente académico pone nota» dejó la carrera pública con una sola nota —la expo de 1.º, con una escala propia— y un Promedio que no se movía con ninguna otra situación. Desde RC3, **toda situación ordinaria pone la nota de su calidad** con una escala única de contenido (`src/content/grades.ts`: Óptimo 10, Resuelto 8, Parcial 6, Insuficiente 4), aplicada al materializar cada Template ordinaria; los Repasos siguen sin nota (ADR-024). El modelo no cambia: el estado sigue guardando notas reales y `promedio()` sigue siendo su media; lo que cambia es qué situación entra al legajo. FairScore no lee el Promedio, el action log no cambia y ninguna versión del motor, la ruleset ni el contenido se mueve: la nota es un efecto derivado de una calidad que ya estaba en el estado. Ver `D-RC3-P-004`.
+
 ### 3. Cada evento declara sólo lo que puede tocar
 
 ```ts

@@ -46,6 +46,7 @@ import {
   type StyledPlan,
 } from '@/content/authoring'
 import { projectArcCallback, teamworkCallback } from '../../career-facts'
+import { graded } from '../../grades'
 
 export const CREW = [
   { id: 'lu', label: 'Lu' },
@@ -569,7 +570,7 @@ export const finalVariants = generatedSource({
   addressGates: finalRoleGates,
 })
 
-export const courseProjectFinal = defineChallenge<FinalParams, FinalParams>({
+const courseProjectFinalDefinition = defineChallenge<FinalParams, FinalParams>({
   id: toChallengeId('y5.course-project-final'),
   family: toScenarioFamilyId('course-project'),
   placement: 'anchor',
@@ -668,3 +669,6 @@ export const courseProjectFinal = defineChallenge<FinalParams, FinalParams>({
           detail: 'se esperaba un plan con postura',
         }),
 })
+
+/** Con nota por calidad (10/8/6/4). Ver `src/content/grades.ts`. */
+export const courseProjectFinal = graded(courseProjectFinalDefinition)

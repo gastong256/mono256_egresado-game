@@ -45,6 +45,7 @@ import {
   type StyledPlan,
 } from '@/content/authoring'
 import { projectArcCallback } from '../../career-facts'
+import { graded } from '../../grades'
 
 /** Se vende por bandeja: los números quedan legibles y la cuenta, entera. */
 export const ITEMS = [
@@ -618,7 +619,7 @@ export const fundraiserVariants = generatedSource({
 
 const PROJECT_FAMILY = toScenarioFamilyId('course-project')
 
-export const courseProjectFundraiser: ChallengeDefinition = defineChallenge<
+const courseProjectFundraiserDefinition: ChallengeDefinition = defineChallenge<
   FundraiserParams,
   FundraiserParams
 >({
@@ -701,6 +702,9 @@ export const courseProjectFundraiser: ChallengeDefinition = defineChallenge<
           detail: 'se esperaba un plan de producción',
         }),
 })
+
+/** Con nota por calidad (10/8/6/4). Ver `src/content/grades.ts`. */
+export const courseProjectFundraiser = graded(courseProjectFundraiserDefinition)
 
 /* -------------------------------------------------------------------------
  * Repaso: cubrir el costo fijo.

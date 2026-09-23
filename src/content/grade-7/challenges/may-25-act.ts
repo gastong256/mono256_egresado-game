@@ -16,9 +16,9 @@
  * cuaderno. Un acto escolar es exactamente el tipo de escena donde alguien de
  * doce años se hace o se quema una reputación en cuatro minutos.
  *
- * Por qué **no** pone nota: no es una evaluación de matemática. Promedio sale del
- * legajo de notas reales, y el acto del 25 de Mayo no lleva una. Que un desafío
- * tenga números no lo vuelve académico.
+ * La nota no la pone esta Template: la pone la regla de contenido (`graded`,
+ * 10/8/6/4 por calidad) como a toda situación ordinaria del año. Lo que sigue
+ * siendo propio del acto es Aura, que no se gana en el cuaderno.
  *
  * Por qué no toca Equipo: bailás vos. El curso mira. Coordinar con otros sería
  * otro evento.
@@ -65,6 +65,7 @@ import {
 } from '@/game'
 import { may25ActVariants, type May25Params } from './may-25-act.variants'
 import { MAY_25_FAMILY } from '../families'
+import { graded } from '../../grades'
 
 interface ActRound {
   readonly id: string
@@ -161,7 +162,7 @@ function selectionFor(
   return answer.rounds.find((round) => round.roundId === roundId)?.numbers ?? []
 }
 
-export const may25Act: ChallengeDefinition = defineChallenge<
+const may25ActDefinition: ChallengeDefinition = defineChallenge<
   May25Model,
   May25Params
 >({
@@ -447,6 +448,9 @@ export const may25Act: ChallengeDefinition = defineChallenge<
     })
   },
 })
+
+/** Con nota por calidad (10/8/6/4). Ver `src/content/grades.ts`. */
+export const may25Act = graded(may25ActDefinition)
 
 /** Expuesto para los tests de contenido. */
 export const may25ActReference = {

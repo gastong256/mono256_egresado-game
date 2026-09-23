@@ -40,6 +40,7 @@ import {
   parameters,
   spaceOf,
 } from '@/content/authoring'
+import { graded } from '../../grades'
 
 export const PROPOSALS = [
   { id: 'torneo', label: 'Un torneo entre cursos' },
@@ -359,105 +360,107 @@ export const representVariants = generatedSource({
   gates: representGates,
 })
 
-export const representClass = defineChallenge<RepresentParams, RepresentParams>(
-  {
-    id: toChallengeId('y4.represent-class'),
-    family: toScenarioFamilyId('consejo-escolar'),
-    // «special» es el rol que la composición agenda **en lugar de** una
-    // oportunidad compatible: nunca agrega un beat ni techo de FairScore.
-    placement: 'special',
-    variants: authoredVariantIds(representVariants.authored),
-    variantSource: representVariants,
-    interaction: 'classification',
-    stages: ['year-4'],
-    categories: ['optimization-and-constraints', 'quantity'],
-    baseDifficulty: 3,
-    cognitive: {
-      steps: 2,
-      constraints: 3,
-      selection: 1,
-      optimization: 0,
-      uncertainty: 0,
-      construction: 0,
-    },
-    composition: {
-      primaryReasoningFamily: 'LOGIC_CLASSIFICATION',
-      interactionEngine: 'choice-compare',
-      pacingClass: 'MEDIUM',
-      chronology: 60,
-    },
-    scoring: {
-      math: 'discrete-quality',
-      team: 'none',
-      aura: ({ metrics: evidence }) => performanceFromRatio(1 - evidence.risk),
-      rationale:
-        'Math mide si la propuesta se sostiene con la plata, el tiempo y el lugar que hay. Aura mide otra cosa y se lee de otro campo de la respuesta: cómo lo dice el curso frente a a quién afecta. Clasificar bien no concede Aura y una postura afortunada no arregla una propuesta que no entra. Prestige no se otorga acá: aparecer vale cero.',
-    },
-    tools: ['calculator', 'notepad'],
-    generate: ({ params }) => parameters(representSchema, params),
-    verify: (p) =>
-      PROPOSALS.some((_, index) => fits(p, index))
-        ? []
-        : ['ninguna propuesta entra en los límites'],
-    narrate: () => ({
-      title: 'Representar al curso',
-      setup:
-        'El consejo escolar escucha propuestas y el curso manda a alguien con las ideas que juntó.',
-      goal: 'Decidí cuáles se sostienen con lo que hay, y cómo las presenta el curso.',
-    }),
-    present: (p) => ({
-      kind: 'classification',
-      instructions:
-        'Marcá cuáles entran en los tres límites. Después, decidí cómo lo dice el curso.',
-      data: [
-        { label: 'Plata', value: `$${mil(p.budget)}`, constraint: true },
-        {
-          label: 'Reunión',
-          value: String(p.minutes),
-          unit: 'minutos',
-          constraint: true,
-        },
-        {
-          label: 'Lugar',
-          value: String(p.capacity),
-          unit: 'personas',
-          constraint: true,
-        },
-        {
-          label: 'Afecta a',
-          value:
-            p.stakes === 'todo-el-colegio'
-              ? 'todo el colegio'
-              : 'sólo el curso',
-          span: 2,
-        },
-      ],
-      statements: PROPOSALS.map((entry, index) => {
-        const data = p.proposals[index]
-        return {
-          id: entry.id,
-          label: entry.label,
-          detail: `$${mil(data?.cost ?? 0)} · ${String(data?.minutes ?? 0)} min · ${String(data?.people ?? 0)} personas`,
-        }
-      }),
-      labels: [
-        { id: 'entra', label: 'Entra en los límites' },
-        { id: 'no-entra', label: 'No entra' },
-      ],
-      stance: {
-        prompt: '¿Cómo lo presenta el curso?',
-        options: STANCES.map((option) => ({
-          id: option.id,
-          label: option.label,
-        })),
-      },
-    }),
-    evaluate: (p, answer: InteractionAnswer) =>
-      answer.kind === 'classification'
-        ? evaluateRepresent(p, answer.entries, answer.stance)
-        : err({
-            kind: 'invalid-answer',
-            detail: 'se esperaba una clasificación con postura',
-          }),
+const representClassDefinition = defineChallenge<
+  RepresentParams,
+  RepresentParams
+>({
+  id: toChallengeId('y4.represent-class'),
+  family: toScenarioFamilyId('consejo-escolar'),
+  // «special» es el rol que la composición agenda **en lugar de** una
+  // oportunidad compatible: nunca agrega un beat ni techo de FairScore.
+  placement: 'special',
+  variants: authoredVariantIds(representVariants.authored),
+  variantSource: representVariants,
+  interaction: 'classification',
+  stages: ['year-4'],
+  categories: ['optimization-and-constraints', 'quantity'],
+  baseDifficulty: 3,
+  cognitive: {
+    steps: 2,
+    constraints: 3,
+    selection: 1,
+    optimization: 0,
+    uncertainty: 0,
+    construction: 0,
   },
-)
+  composition: {
+    primaryReasoningFamily: 'LOGIC_CLASSIFICATION',
+    interactionEngine: 'choice-compare',
+    pacingClass: 'MEDIUM',
+    chronology: 60,
+  },
+  scoring: {
+    math: 'discrete-quality',
+    team: 'none',
+    aura: ({ metrics: evidence }) => performanceFromRatio(1 - evidence.risk),
+    rationale:
+      'Math mide si la propuesta se sostiene con la plata, el tiempo y el lugar que hay. Aura mide otra cosa y se lee de otro campo de la respuesta: cómo lo dice el curso frente a a quién afecta. Clasificar bien no concede Aura y una postura afortunada no arregla una propuesta que no entra. Prestige no se otorga acá: aparecer vale cero.',
+  },
+  tools: ['calculator', 'notepad'],
+  generate: ({ params }) => parameters(representSchema, params),
+  verify: (p) =>
+    PROPOSALS.some((_, index) => fits(p, index))
+      ? []
+      : ['ninguna propuesta entra en los límites'],
+  narrate: () => ({
+    title: 'Representar al curso',
+    setup:
+      'El consejo escolar escucha propuestas y el curso manda a alguien con las ideas que juntó.',
+    goal: 'Decidí cuáles se sostienen con lo que hay, y cómo las presenta el curso.',
+  }),
+  present: (p) => ({
+    kind: 'classification',
+    instructions:
+      'Marcá cuáles entran en los tres límites. Después, decidí cómo lo dice el curso.',
+    data: [
+      { label: 'Plata', value: `$${mil(p.budget)}`, constraint: true },
+      {
+        label: 'Reunión',
+        value: String(p.minutes),
+        unit: 'minutos',
+        constraint: true,
+      },
+      {
+        label: 'Lugar',
+        value: String(p.capacity),
+        unit: 'personas',
+        constraint: true,
+      },
+      {
+        label: 'Afecta a',
+        value:
+          p.stakes === 'todo-el-colegio' ? 'todo el colegio' : 'sólo el curso',
+        span: 2,
+      },
+    ],
+    statements: PROPOSALS.map((entry, index) => {
+      const data = p.proposals[index]
+      return {
+        id: entry.id,
+        label: entry.label,
+        detail: `$${mil(data?.cost ?? 0)} · ${String(data?.minutes ?? 0)} min · ${String(data?.people ?? 0)} personas`,
+      }
+    }),
+    labels: [
+      { id: 'entra', label: 'Entra en los límites' },
+      { id: 'no-entra', label: 'No entra' },
+    ],
+    stance: {
+      prompt: '¿Cómo lo presenta el curso?',
+      options: STANCES.map((option) => ({
+        id: option.id,
+        label: option.label,
+      })),
+    },
+  }),
+  evaluate: (p, answer: InteractionAnswer) =>
+    answer.kind === 'classification'
+      ? evaluateRepresent(p, answer.entries, answer.stance)
+      : err({
+          kind: 'invalid-answer',
+          detail: 'se esperaba una clasificación con postura',
+        }),
+})
+
+/** Con nota por calidad (10/8/6/4). Ver `src/content/grades.ts`. */
+export const representClass = graded(representClassDefinition)

@@ -34,6 +34,7 @@ import {
   spaceOf,
   tierWitnessIssues,
 } from '../authoring'
+import { graded } from '../../grades'
 
 export const WHEEL_CATEGORIES = [
   {
@@ -534,7 +535,7 @@ function ruleDatum(p: WheelParams) {
   }
 }
 
-export const studentDayWheel = defineChallenge<WheelParams, WheelParams>({
+const studentDayWheelDefinition = defineChallenge<WheelParams, WheelParams>({
   id: toChallengeId('y1.student-day-challenge-wheel'),
   family: toScenarioFamilyId('student-day'),
   placement: 'anchor',
@@ -596,3 +597,6 @@ export const studentDayWheel = defineChallenge<WheelParams, WheelParams>({
           detail: 'se esperaba una distribución de posiciones',
         }),
 })
+
+/** Con nota por calidad (10/8/6/4). Ver `src/content/grades.ts`. */
+export const studentDayWheel = graded(studentDayWheelDefinition)

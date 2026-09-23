@@ -38,6 +38,7 @@ import {
   spaceOf,
   tierWitnessIssues,
 } from '@/content/authoring'
+import { graded } from '../../grades'
 
 export const WAYS = [
   { id: 'entera', label: 'Que entre entera, con bandas a los costados' },
@@ -527,7 +528,7 @@ export const screenVariants = generatedSource({
   addressGates: screenRoleGates,
 })
 
-export const stageScreen = defineChallenge<ScreenParams, ScreenParams>({
+const stageScreenDefinition = defineChallenge<ScreenParams, ScreenParams>({
   id: toChallengeId('y5.stage-screen'),
   family: toScenarioFamilyId('egreso'),
   placement: 'anchor',
@@ -638,3 +639,6 @@ export const stageScreen = defineChallenge<ScreenParams, ScreenParams>({
       ? evaluateScreen(p, answer.optionId)
       : err({ kind: 'invalid-answer', detail: 'se esperaba una elección' }),
 })
+
+/** Con nota por calidad (10/8/6/4). Ver `src/content/grades.ts`. */
+export const stageScreen = graded(stageScreenDefinition)

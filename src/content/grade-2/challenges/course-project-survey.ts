@@ -36,6 +36,7 @@ import {
   tierWitnessIssues,
 } from '@/content/authoring'
 import { projectArcCallback } from '../../career-facts'
+import { graded } from '../../grades'
 
 /** What the course may say about a claim. Two labels, one decision. */
 export const CLAIM_LABELS = [
@@ -496,7 +497,10 @@ export const surveyVariants = generatedSource({
   addressGates: surveyRoleGates,
 })
 
-export const courseProjectSurvey = defineChallenge<SurveyParams, SurveyParams>({
+const courseProjectSurveyDefinition = defineChallenge<
+  SurveyParams,
+  SurveyParams
+>({
   id: toChallengeId('y2.course-project-survey'),
   family: toScenarioFamilyId('course-project'),
   placement: 'anchor',
@@ -568,6 +572,9 @@ export const courseProjectSurvey = defineChallenge<SurveyParams, SurveyParams>({
           detail: 'se esperaba una clasificación',
         }),
 })
+
+/** Con nota por calidad (10/8/6/4). Ver `src/content/grades.ts`. */
+export const courseProjectSurvey = graded(courseProjectSurveyDefinition)
 
 /**
  * Repaso · Sobre cuánta gente (`y2.data-claim-review`).

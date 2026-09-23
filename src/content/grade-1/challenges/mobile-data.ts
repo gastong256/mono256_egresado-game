@@ -45,6 +45,7 @@ import {
   tierWitnessIssues,
   type StyledPlan,
 } from '../authoring'
+import { graded } from '../../grades'
 
 /** Public item limits. Large enough that «elegir todo» is always a failed plan. */
 export const MUSIC_MAX = 24
@@ -453,7 +454,10 @@ export const mobileDataVariants = generatedSource({
   gates: mobileGates,
 })
 
-export const mobileData = defineChallenge<MobileDataParams, MobileDataParams>({
+const mobileDataDefinition = defineChallenge<
+  MobileDataParams,
+  MobileDataParams
+>({
   id: toChallengeId('y1.mobile-data'),
   family: toScenarioFamilyId('mobile-data'),
   placement: 'checkpoint',
@@ -527,3 +531,6 @@ export const mobileData = defineChallenge<MobileDataParams, MobileDataParams>({
           detail: 'se esperaba un plan de cantidades',
         }),
 })
+
+/** Con nota por calidad (10/8/6/4). Ver `src/content/grades.ts`. */
+export const mobileData = graded(mobileDataDefinition)

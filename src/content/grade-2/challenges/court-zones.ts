@@ -32,6 +32,7 @@ import {
   spaceOf,
   tierWitnessIssues,
 } from '@/content/authoring'
+import { graded } from '../../grades'
 
 export const POSTS = [
   { id: 'saque', label: 'Posta de saque', code: 'S' },
@@ -360,7 +361,7 @@ export const courtVariants = generatedSource({
   gates: courtGates,
 })
 
-export const courtZones = defineChallenge<CourtParams, CourtParams>({
+const courtZonesDefinition = defineChallenge<CourtParams, CourtParams>({
   id: toChallengeId('y2.court-zones'),
   family: toScenarioFamilyId('court-space'),
   placement: 'anchor',
@@ -458,3 +459,6 @@ export const courtZones = defineChallenge<CourtParams, CourtParams>({
           detail: 'se esperaba un plano de postas',
         }),
 })
+
+/** Con nota por calidad (10/8/6/4). Ver `src/content/grades.ts`. */
+export const courtZones = graded(courtZonesDefinition)

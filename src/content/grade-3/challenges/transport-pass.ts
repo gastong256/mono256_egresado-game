@@ -40,6 +40,7 @@ import {
   spaceOf,
   tierWitnessIssues,
 } from '@/content/authoring'
+import { graded } from '../../grades'
 
 export const OPTIONS = [
   { id: 'suelto', label: 'Boleto suelto' },
@@ -451,7 +452,7 @@ export const passVariants = generatedSource({
 
 const TRANSPORT_FAMILY = toScenarioFamilyId('transporte')
 
-export const transportPass: ChallengeDefinition = defineChallenge<
+const transportPassDefinition: ChallengeDefinition = defineChallenge<
   PassParams,
   PassParams
 >({
@@ -528,6 +529,9 @@ export const transportPass: ChallengeDefinition = defineChallenge<
       ? evaluatePass(p, answer.optionId)
       : err({ kind: 'invalid-answer', detail: 'se esperaba una elección' }),
 })
+
+/** Con nota por calidad (10/8/6/4). Ver `src/content/grades.ts`. */
+export const transportPass = graded(transportPassDefinition)
 
 /* -------------------------------------------------------------------------
  * Repaso: costo fijo contra costo por viaje.

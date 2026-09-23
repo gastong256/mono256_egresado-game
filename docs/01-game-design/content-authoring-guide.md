@@ -158,7 +158,7 @@ de prediseño no sustituye ninguno de esos checks.
 
 ¿El evento toca genuinamente Promedio, Equipo, Aura o Estilo? La mayoría de los eventos deberían tocar **una o dos** dimensiones, no las cuatro. Una clave ausente significa que el evento no puede mover esa dimensión, y por eso `Promedio +0` ni siquiera es representable. Ver [ADR-016](../03-architecture/adr/ADR-016-career-player-model.md).
 
-Promedio se mueve sólo si el evento es genuinamente académico. Aura se mueve sólo si el momento es socialmente memorable: un cálculo correcto no produce Aura.
+Promedio lo mueve toda situación ordinaria con la nota de su calidad (10 / 8 / 6 / 4), puesta por la regla de contenido `graded` de `src/content/grades.ts` al materializar la Template: una Template no autora su propia escala, y un Repaso no pone nota. Aura se mueve sólo si el momento es socialmente memorable: un cálculo correcto no produce Aura.
 
 ### Efectos de competencia: separados de las stats visibles
 

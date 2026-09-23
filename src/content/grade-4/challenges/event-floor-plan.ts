@@ -37,6 +37,7 @@ import {
   spaceOf,
   tierWitnessIssues,
 } from '@/content/authoring'
+import { graded } from '../../grades'
 
 export const ZONES = [
   {
@@ -537,7 +538,7 @@ export const floorVariants = generatedSource({
 
 const EVENT_FAMILY = toScenarioFamilyId('evento-escolar')
 
-export const eventFloorPlan: ChallengeDefinition = defineChallenge<
+const eventFloorPlanDefinition: ChallengeDefinition = defineChallenge<
   FloorParams,
   FloorParams
 >({
@@ -628,6 +629,9 @@ export const eventFloorPlan: ChallengeDefinition = defineChallenge<
       ? evaluateFloor(p, answer.placements)
       : err({ kind: 'invalid-answer', detail: 'se esperaba un plano' }),
 })
+
+/** Con nota por calidad (10/8/6/4). Ver `src/content/grades.ts`. */
+export const eventFloorPlan = graded(eventFloorPlanDefinition)
 
 /* -------------------------------------------------------------------------
  * Repaso: cuánta gente entra en el espacio que queda.

@@ -40,6 +40,7 @@ import {
   spaceOf,
   tierWitnessIssues,
 } from '@/content/authoring'
+import { graded } from '../../grades'
 
 export const STANDING_LABELS = [
   { id: 'seguro', label: 'Ya está asegurado' },
@@ -608,95 +609,99 @@ export const standingsVariants = generatedSource({
   addressGates: standingsRoleGates,
 })
 
-export const standingsClaim = defineChallenge<StandingsParams, StandingsParams>(
-  {
-    id: toChallengeId('y2.standings-claim'),
-    family: toScenarioFamilyId('intercurso'),
-    placement: 'checkpoint',
-    variants: authoredVariantIds(standingsVariants.authored),
-    variantSource: standingsVariants,
-    interaction: 'classification',
-    stages: ['year-2'],
-    categories: ['patterns-and-relations', 'probability-and-uncertainty'],
-    baseDifficulty: 3,
-    cognitive: {
-      steps: 2,
-      constraints: 2,
-      selection: 1,
-      optimization: 0,
-      uncertainty: 1,
-      construction: 0,
-    },
-    composition: {
-      primaryReasoningFamily: 'LOGIC_CLASSIFICATION',
-      interactionEngine: 'choice-compare',
-      pacingClass: 'QUICK',
-      chronology: 60,
-      eventCluster: 'intercurso',
-    },
-    scoring: {
-      math: 'discrete-quality',
-      team: 'none',
-      // La postura pública viaja por `risk` justamente para que no se confunda
-      // con la calidad de la clasificación: son dos decisiones distintas y el
-      // agregador lee dos canales distintos.
-      aura: ({ metrics: evidence }) => performanceFromRatio(1 - evidence.risk),
-      rationale:
-        'Math mide separar lo asegurado de lo posible y lo imposible con los puntos que faltan. Aura mide si lo que el curso publica se sostiene con esa misma tabla, y se calcula sólo desde la decisión pública: leer bien la tabla nunca concede Aura por sí solo.',
-    },
-    tools: ['calculator'],
-    generate: ({ params }) => parameters(standingsSchema, params),
-    verify: (p) =>
-      p.points.every(
-        (value, index) => value >= 0 && (p.remaining[index] ?? 0) >= 0,
-      )
-        ? []
-        : ['la tabla tiene valores negativos'],
-    narrate: (p) => ({
-      title: 'La tabla del Intercurso',
-      setup: `Faltan partidos entre estos cuatro cursos y el curso quiere publicar algo. Cada partido lo gana uno de los dos, y el que gana suma ${String(p.perWin)} puntos.`,
-      goal: 'Separá lo que ya está asegurado de lo que puede pasar y de lo que ya no, y decidí qué publica el curso.',
-    }),
-    present: (p) => ({
-      kind: 'classification',
-      data: [
-        ...CLAIM_TEAMS.map((team, index) => ({
-          label: team.label,
-          value: String(p.points[index] ?? 0),
-          unit: `pts · ${String(p.remaining[index] ?? 0)} por jugar`,
-        })),
-        {
-          label: 'Cada victoria',
-          value: String(p.perWin),
-          unit: 'puntos',
-          constraint: true,
-        },
-      ],
-      statements: standingClaims(p).map((claim) => ({
-        id: claim.id,
-        label: claim.label,
-        detail: claim.detail,
-      })),
-      labels: STANDING_LABELS.map((label) => ({
-        id: label.id,
-        label: label.label,
-      })),
-      stance: {
-        prompt: '¿Qué publica el curso hoy?',
-        options: STANCES.map((option) => ({
-          id: option.id,
-          label: option.label,
-        })),
-      },
-      instructions:
-        'Mirá cuánto puede sumar cada equipo con los partidos que le quedan. Después decidí qué publica el curso: es otra decisión, y no depende de cuántas categorías acertaste.',
-    }),
-    evaluate: (p, answer: InteractionAnswer) =>
-      answer.kind === 'classification'
-        ? evaluateStandings(p, answer.entries, answer.stance)
-        : err({
-            kind: 'invalid-answer',
-            detail: 'se esperaba una clasificación',
-          }),
+const standingsClaimDefinition = defineChallenge<
+  StandingsParams,
+  StandingsParams
+>({
+  id: toChallengeId('y2.standings-claim'),
+  family: toScenarioFamilyId('intercurso'),
+  placement: 'checkpoint',
+  variants: authoredVariantIds(standingsVariants.authored),
+  variantSource: standingsVariants,
+  interaction: 'classification',
+  stages: ['year-2'],
+  categories: ['patterns-and-relations', 'probability-and-uncertainty'],
+  baseDifficulty: 3,
+  cognitive: {
+    steps: 2,
+    constraints: 2,
+    selection: 1,
+    optimization: 0,
+    uncertainty: 1,
+    construction: 0,
   },
-)
+  composition: {
+    primaryReasoningFamily: 'LOGIC_CLASSIFICATION',
+    interactionEngine: 'choice-compare',
+    pacingClass: 'QUICK',
+    chronology: 60,
+    eventCluster: 'intercurso',
+  },
+  scoring: {
+    math: 'discrete-quality',
+    team: 'none',
+    // La postura pública viaja por `risk` justamente para que no se confunda
+    // con la calidad de la clasificación: son dos decisiones distintas y el
+    // agregador lee dos canales distintos.
+    aura: ({ metrics: evidence }) => performanceFromRatio(1 - evidence.risk),
+    rationale:
+      'Math mide separar lo asegurado de lo posible y lo imposible con los puntos que faltan. Aura mide si lo que el curso publica se sostiene con esa misma tabla, y se calcula sólo desde la decisión pública: leer bien la tabla nunca concede Aura por sí solo.',
+  },
+  tools: ['calculator'],
+  generate: ({ params }) => parameters(standingsSchema, params),
+  verify: (p) =>
+    p.points.every(
+      (value, index) => value >= 0 && (p.remaining[index] ?? 0) >= 0,
+    )
+      ? []
+      : ['la tabla tiene valores negativos'],
+  narrate: (p) => ({
+    title: 'La tabla del Intercurso',
+    setup: `Faltan partidos entre estos cuatro cursos y el curso quiere publicar algo. Cada partido lo gana uno de los dos, y el que gana suma ${String(p.perWin)} puntos.`,
+    goal: 'Separá lo que ya está asegurado de lo que puede pasar y de lo que ya no, y decidí qué publica el curso.',
+  }),
+  present: (p) => ({
+    kind: 'classification',
+    data: [
+      ...CLAIM_TEAMS.map((team, index) => ({
+        label: team.label,
+        value: String(p.points[index] ?? 0),
+        unit: `pts · ${String(p.remaining[index] ?? 0)} por jugar`,
+      })),
+      {
+        label: 'Cada victoria',
+        value: String(p.perWin),
+        unit: 'puntos',
+        constraint: true,
+      },
+    ],
+    statements: standingClaims(p).map((claim) => ({
+      id: claim.id,
+      label: claim.label,
+      detail: claim.detail,
+    })),
+    labels: STANDING_LABELS.map((label) => ({
+      id: label.id,
+      label: label.label,
+    })),
+    stance: {
+      prompt: '¿Qué publica el curso hoy?',
+      options: STANCES.map((option) => ({
+        id: option.id,
+        label: option.label,
+      })),
+    },
+    instructions:
+      'Mirá cuánto puede sumar cada equipo con los partidos que le quedan. Después decidí qué publica el curso: es otra decisión, y no depende de cuántas categorías acertaste.',
+  }),
+  evaluate: (p, answer: InteractionAnswer) =>
+    answer.kind === 'classification'
+      ? evaluateStandings(p, answer.entries, answer.stance)
+      : err({
+          kind: 'invalid-answer',
+          detail: 'se esperaba una clasificación',
+        }),
+})
+
+/** Con nota por calidad (10/8/6/4). Ver `src/content/grades.ts`. */
+export const standingsClaim = graded(standingsClaimDefinition)

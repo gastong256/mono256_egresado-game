@@ -111,7 +111,7 @@ describe('1.º · Proyecto del Curso I', () => {
     }
   })
 
-  it('efectos de carrera: nota del proyecto, Equipo desde acuerdos, Estilo sólo en planes válidos', () => {
+  it('efectos de carrera: Equipo desde acuerdos, Estilo sólo en planes válidos; la nota la pone `graded`', () => {
     const p = approved[0]!.params
     const plans = expoPlans(p)
     const best = evaluate(
@@ -119,12 +119,14 @@ describe('1.º · Proyecto del Curso I', () => {
       plans.find((plan) => plan.quality === 'optimal' && plan.team === 3)!
         .assignments,
     )
-    expect(best.careerEffects.grade).toBe(8.8)
+    // El evaluador de la expo ya no autora su propia escala: la nota la pone
+    // la regla de contenido (10/8/6/4) al materializar. Ver content-grades.
+    expect(best.careerEffects.grade).toBeUndefined()
     expect(best.careerEffects.equipo).toBe(4)
     expect(best.careerEffects.estilo?.amount).toBeGreaterThan(0)
     const failed = evaluate(p, [])
     expect(failed.quality).toBe('invalid')
-    expect(failed.careerEffects).toEqual({ grade: 7, equipo: -2 })
+    expect(failed.careerEffects).toEqual({ equipo: -2 })
     expect(failed.metrics.efficiency).toBe(0)
     expect(courseProjectExpo.scoring.aura).toBe('none')
   })

@@ -335,7 +335,7 @@ describe('placement roles', () => {
     }
     // Y el rol de una plantilla no dice nada de lo que el evento le hace a la
     // carrera: el acto es `special` y mueve Aura; el mural es `checkpoint` y
-    // pone nota.
+    // mueve Estilo. La nota la ponen los dos, por la regla de contenido.
     expect(template(grade7Catalog, MAY_25).placement).toBe('special')
     expect(template(grade7Catalog, MURAL).placement).toBe('checkpoint')
   })

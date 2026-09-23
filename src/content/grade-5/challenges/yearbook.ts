@@ -37,6 +37,7 @@ import {
   tierWitnessIssues,
 } from '@/content/authoring'
 import { friendDayCallback } from '../../career-facts'
+import { graded } from '../../grades'
 
 export const SECTIONS = [
   { id: 'cursos', label: 'Fotos de los cursos', max: 12 },
@@ -378,7 +379,7 @@ export const yearbookVariants = generatedSource({
 
 const EGRESO_FAMILY = toScenarioFamilyId('egreso')
 
-export const yearbook: ChallengeDefinition = defineChallenge<
+const yearbookDefinition: ChallengeDefinition = defineChallenge<
   YearbookParams,
   YearbookParams
 >({
@@ -460,6 +461,9 @@ export const yearbook: ChallengeDefinition = defineChallenge<
           detail: 'se esperaba un reparto de páginas',
         }),
 })
+
+/** Con nota por calidad (10/8/6/4). Ver `src/content/grades.ts`. */
+export const yearbook = graded(yearbookDefinition)
 
 /* -------------------------------------------------------------------------
  * Repaso: cuántas páginas pide una sección.

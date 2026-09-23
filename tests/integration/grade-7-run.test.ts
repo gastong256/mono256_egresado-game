@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
+import { GRADE_BY_QUALITY } from '@/content/grades'
+
 import {
   promedio,
   activeChallengeView,
@@ -351,8 +353,8 @@ describe('la run de 7.º grado', () => {
 
     expect(strong.state.scorePreview).toBeGreaterThan(weak.state.scorePreview)
 
-    // El mural es el único evento académico del año, así que el Promedio es la
-    // dimensión que separa a las dos partidas.
+    // Cada situación ordinaria pone la nota de su calidad, así que el Promedio
+    // separa a las dos partidas.
     const strongAverage = promedio(strong.state.career)
     const weakAverage = promedio(weak.state.career)
     expect(strongAverage).not.toBeNull()
@@ -441,7 +443,7 @@ describe('Aura', () => {
     expect(played.state.career.aura).toBe(afterAct?.career.aura)
   })
 
-  it('el acto no pone nota ni mueve Equipo', () => {
+  it('el acto pone la nota de su calidad y no mueve Equipo', () => {
     const played = play('slice-aura-limites', 'fuerte')
     const before = beforeResolving(played, grade7StoryletIds.may25)
     const after = played.states.find((state) =>
@@ -451,10 +453,16 @@ describe('Aura', () => {
     )
     if (after === undefined) throw new Error('el año nunca llegó al acto')
 
-    // El legajo de notas y la conducta hacia el grupo quedan donde estaban:
-    // tener números no vuelve académico a un evento, y bailar solo no es
-    // trabajar en equipo.
-    expect(after.career.grades).toEqual(before.career.grades)
+    // El acto entra al legajo con la nota de su calidad, como toda situación
+    // ordinaria; bailar solo sigue sin ser trabajar en equipo.
+    const act = after.history.find(
+      (entry) => entry.storyletId === grade7StoryletIds.may25,
+    )
+    if (act?.quality === undefined) throw new Error('el acto no se resolvió')
+    expect(after.career.grades).toEqual([
+      ...before.career.grades,
+      GRADE_BY_QUALITY[act.quality],
+    ])
     expect(after.career.equipo).toBe(before.career.equipo)
   })
 

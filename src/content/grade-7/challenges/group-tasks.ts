@@ -29,6 +29,7 @@ import {
 } from '@/game'
 import { groupTasksVariants, type GroupParams } from './group-tasks.variants'
 import { GROUP_PROJECT_FAMILY } from '../families'
+import { graded } from '../../grades'
 
 interface Task {
   readonly id: string
@@ -126,7 +127,7 @@ function bestPossibleSkill(model: GroupModel): number {
   return best
 }
 
-export const groupTasks: ChallengeDefinition = defineChallenge<
+const groupTasksDefinition: ChallengeDefinition = defineChallenge<
   GroupModel,
   GroupParams
 >({
@@ -365,6 +366,9 @@ export const groupTasks: ChallengeDefinition = defineChallenge<
     })
   },
 })
+
+/** Con nota por calidad (10/8/6/4). Ver `src/content/grades.ts`. */
+export const groupTasks = graded(groupTasksDefinition)
 
 /** Expuesto para los tests de contenido. */
 export const groupTasksReference = {

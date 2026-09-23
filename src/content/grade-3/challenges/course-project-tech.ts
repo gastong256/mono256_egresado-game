@@ -49,6 +49,7 @@ import {
   tierWitnessIssues,
 } from '@/content/authoring'
 import { projectArcCallback } from '../../career-facts'
+import { graded } from '../../grades'
 
 /** Quién se ofreció para qué. El dueño no cambia lo que el plan puede producir. */
 export const CREW = [
@@ -698,7 +699,7 @@ export const techVariants = generatedSource({
 
 const PROJECT_FAMILY = toScenarioFamilyId('course-project')
 
-export const courseProjectTech: ChallengeDefinition = defineChallenge<
+const courseProjectTechDefinition: ChallengeDefinition = defineChallenge<
   TechParams,
   TechParams
 >({
@@ -808,6 +809,9 @@ export const courseProjectTech: ChallengeDefinition = defineChallenge<
           detail: 'se esperaba un plan de producción',
         }),
 })
+
+/** Con nota por calidad (10/8/6/4). Ver `src/content/grades.ts`. */
+export const courseProjectTech = graded(courseProjectTechDefinition)
 
 /* -------------------------------------------------------------------------
  * Repaso: cuánto entra a este consumo.

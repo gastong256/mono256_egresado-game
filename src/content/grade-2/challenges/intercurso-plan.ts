@@ -39,6 +39,7 @@ import {
   tierWitnessIssues,
   type StyledPlan,
 } from '@/content/authoring'
+import { graded } from '../../grades'
 
 export const SLOTS = [
   { id: 'manana', label: 'mañana' },
@@ -400,7 +401,7 @@ export const planVariants = generatedSource({
   gates: planGates,
 })
 
-export const intercursoPlan = defineChallenge<PlanParams, PlanParams>({
+const intercursoPlanDefinition = defineChallenge<PlanParams, PlanParams>({
   id: toChallengeId('y2.intercurso-plan'),
   family: toScenarioFamilyId('intercurso'),
   placement: 'anchor',
@@ -481,3 +482,6 @@ export const intercursoPlan = defineChallenge<PlanParams, PlanParams>({
           detail: 'se esperaba un plan de asignación',
         }),
 })
+
+/** Con nota por calidad (10/8/6/4). Ver `src/content/grades.ts`. */
+export const intercursoPlan = graded(intercursoPlanDefinition)

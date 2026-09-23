@@ -87,7 +87,7 @@ Cuatro dimensiones visibles. Nada más es permanente: energía, plata y similare
 
 | | Tipo | Rango | Cambia cuando |
 |---|---|---|---|
-| **Promedio** | nota | 1,0–10,0 · un decimal | el evento es **genuinamente académico** |
+| **Promedio** | nota | 1,0–10,0 · un decimal | toda situación ordinaria, con la nota de su calidad (10 / 8 / 6 / 4); los Repasos no |
 | **Equipo** | colaboración | 0–100 | está en juego la conducta hacia el grupo |
 | **Aura** | reputación | con signo, sin techo | el momento es **socialmente memorable** |
 | **Estilo** | ternario | Aplicado / Estratega / Improvisador, suman 100 | evidencia estratégica significativa, no calidad Math por sí sola |
@@ -95,7 +95,7 @@ Cuatro dimensiones visibles. Nada más es permanente: energía, plata y similare
 Tres reglas que definen el modelo tanto como los nombres:
 
 - **`null` no es 0.** Una dimensión que la run no tocó todavía no tiene valor, y no se dibuja. Aparecen de a una, la primera vez que algo las mueve.
-- **Promedio se deriva de notas reales**, no se acumula como un contador. Una decisión de colectivo ejercita matemática pero no es académica: no lo mueve.
+- **Promedio se deriva de notas reales**, no se acumula como un contador. Desde RC3 cada situación ordinaria del año deja su nota según cómo salió (Óptimo 10, Resuelto 8, Parcial 6, Insuficiente 4); el Repaso no deja nota. Quien resuelve todo mal egresa igual, con un promedio que lo dice (enmienda de [ADR-016](../03-architecture/adr/ADR-016-career-player-model.md)).
 - **Ningún eje de Estilo es el malo.** Un Improvisador tiene que poder egresar.
 
 ### Derivadas/ocultas

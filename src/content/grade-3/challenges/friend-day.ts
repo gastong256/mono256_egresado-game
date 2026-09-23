@@ -43,6 +43,7 @@ import {
   tierWitnessIssues,
   type StyledPlan,
 } from '@/content/authoring'
+import { graded } from '../../grades'
 
 export const FRIENDS = [
   { id: 'ale', label: 'Ale' },
@@ -553,7 +554,7 @@ export const friendDayVariants = generatedSource({
   gates: dayGates,
 })
 
-export const friendDay = defineChallenge<FriendDayParams, FriendDayParams>({
+const friendDayDefinition = defineChallenge<FriendDayParams, FriendDayParams>({
   id: toChallengeId('y3.friend-day'),
   family: toScenarioFamilyId('dia-del-amigo'),
   placement: 'anchor',
@@ -649,3 +650,6 @@ export const friendDay = defineChallenge<FriendDayParams, FriendDayParams>({
       ? evaluateDay(p, answer.placements)
       : err({ kind: 'invalid-answer', detail: 'se esperaba una tarde armada' }),
 })
+
+/** Con nota por calidad (10/8/6/4). Ver `src/content/grades.ts`. */
+export const friendDay = graded(friendDayDefinition)

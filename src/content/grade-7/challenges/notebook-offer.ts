@@ -33,6 +33,7 @@ import {
 import { NOTEBOOK_FAMILY } from '../families'
 
 import { pesos } from '../../pesos'
+import { graded } from '../../grades'
 
 interface Offer {
   readonly id: string
@@ -61,7 +62,7 @@ function percentOfMinor(amountMinor: number, percent: number): number {
   return Math.round((amountMinor * percent) / 100)
 }
 
-export const notebookOffer: ChallengeDefinition = defineChallenge<
+const notebookOfferDefinition: ChallengeDefinition = defineChallenge<
   NotebookModel,
   NotebookParams
 >({
@@ -289,6 +290,9 @@ export const notebookOffer: ChallengeDefinition = defineChallenge<
     })
   },
 })
+
+/** Con nota por calidad (10/8/6/4). Ver `src/content/grades.ts`. */
+export const notebookOffer = graded(notebookOfferDefinition)
 
 /**
  * Qué descuento era mayor en pesos, dicho con los dos montos de esta variante.

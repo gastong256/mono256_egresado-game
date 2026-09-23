@@ -41,6 +41,7 @@ import {
   spaceOf,
   tierWitnessIssues,
 } from '@/content/authoring'
+import { graded } from '../../grades'
 
 /** Three teams keep the proportional split readable without a spreadsheet. */
 export const TEAMS = [
@@ -384,7 +385,7 @@ export const kitOrderVariants = generatedSource({
   gates: kitGates,
 })
 
-export const teamKitOrder = defineChallenge<KitOrderParams, KitOrderParams>({
+const teamKitOrderDefinition = defineChallenge<KitOrderParams, KitOrderParams>({
   id: toChallengeId('y2.team-kit-order'),
   family: toScenarioFamilyId('team-kit'),
   placement: 'checkpoint',
@@ -450,3 +451,6 @@ export const teamKitOrder = defineChallenge<KitOrderParams, KitOrderParams>({
           detail: 'se esperaba un pedido de cantidades',
         }),
 })
+
+/** Con nota por calidad (10/8/6/4). Ver `src/content/grades.ts`. */
+export const teamKitOrder = graded(teamKitOrderDefinition)

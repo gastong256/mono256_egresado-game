@@ -36,6 +36,7 @@ import {
   spaceOf,
 } from '@/content/authoring'
 import { teamworkCallback } from '../../career-facts'
+import { graded } from '../../grades'
 
 export const SCENARIOS = [
   { id: 'facultad', label: 'Cursar en la facultad' },
@@ -393,7 +394,10 @@ export const nextStepVariants = generatedSource({
   gates: nextStepGates,
 })
 
-export const nextStepOptions = defineChallenge<NextStepParams, NextStepParams>({
+const nextStepOptionsDefinition = defineChallenge<
+  NextStepParams,
+  NextStepParams
+>({
   id: toChallengeId('y5.next-step-options'),
   family: toScenarioFamilyId('despues-del-colegio'),
   placement: 'checkpoint',
@@ -487,3 +491,6 @@ export const nextStepOptions = defineChallenge<NextStepParams, NextStepParams>({
           detail: 'se esperaba una clasificación de escenarios',
         }),
 })
+
+/** Con nota por calidad (10/8/6/4). Ver `src/content/grades.ts`. */
+export const nextStepOptions = graded(nextStepOptionsDefinition)

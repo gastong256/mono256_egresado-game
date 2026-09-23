@@ -39,6 +39,7 @@ import {
   type StyledPlan,
 } from '../authoring'
 import { grade7TimingCallback } from '../career-facts'
+import { graded } from '../../grades'
 
 const PLACE_LABEL = { school: 'Escuela', hall: 'Salón del club' } as const
 type Place = keyof typeof PLACE_LABEL
@@ -945,5 +946,6 @@ function scheduleTemplate(review: boolean) {
   })
 }
 
-export const rehearsalSchedule = scheduleTemplate(false)
+/** Con nota por calidad (10/8/6/4). Ver `src/content/grades.ts`. */
+export const rehearsalSchedule = graded(scheduleTemplate(false))
 export const scheduleReview = scheduleTemplate(true)

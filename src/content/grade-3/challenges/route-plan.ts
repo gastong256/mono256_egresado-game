@@ -35,6 +35,7 @@ import {
   spaceOf,
   tierWitnessIssues,
 } from '@/content/authoring'
+import { graded } from '../../grades'
 
 /** El barrio: nueve por siete esquinas, que es lo que entra a 320 px. */
 export const MAP = { width: 8, height: 6 } as const
@@ -429,7 +430,7 @@ export const routeVariants = generatedSource({
   gates: routeGates,
 })
 
-export const routePlan = defineChallenge<RouteParams, RouteParams>({
+const routePlanDefinition = defineChallenge<RouteParams, RouteParams>({
   id: toChallengeId('y3.route-plan'),
   family: toScenarioFamilyId('barrio'),
   placement: 'anchor',
@@ -523,3 +524,6 @@ export const routePlan = defineChallenge<RouteParams, RouteParams>({
       ? evaluateRoute(p, answer.stops)
       : err({ kind: 'invalid-answer', detail: 'se esperaba un recorrido' }),
 })
+
+/** Con nota por calidad (10/8/6/4). Ver `src/content/grades.ts`. */
+export const routePlan = graded(routePlanDefinition)

@@ -42,6 +42,7 @@ import {
   busLatestDepartureVariants,
   type LatestDepartureParams,
 } from './bus-latest-departure.variants'
+import { graded } from '../../grades'
 
 interface LatestDepartureModel {
   readonly scheduledMinutes: number
@@ -78,7 +79,7 @@ function travelWithDelay(scheduled: number, delayPercent: number): number {
   return scheduled + (scheduled * delayPercent) / 100
 }
 
-export const busLatestDeparture: ChallengeDefinition = defineChallenge<
+const busLatestDepartureDefinition: ChallengeDefinition = defineChallenge<
   LatestDepartureModel,
   LatestDepartureParams
 >({
@@ -353,6 +354,9 @@ export const busLatestDeparture: ChallengeDefinition = defineChallenge<
     })
   },
 })
+
+/** Con nota por calidad (10/8/6/4). Ver `src/content/grades.ts`. */
+export const busLatestDeparture = graded(busLatestDepartureDefinition)
 
 /** Expuesto para los tests de contenido, que verifican la matemática autorada. */
 export const busLatestDepartureReference = {

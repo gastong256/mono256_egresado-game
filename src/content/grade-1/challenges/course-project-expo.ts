@@ -41,6 +41,7 @@ import {
   tierWitnessIssues,
   type StyledPlan,
 } from '../authoring'
+import { graded } from '../../grades'
 
 const ROLES = ['production', 'voice', 'setup'] as const
 type Role = (typeof ROLES)[number]
@@ -498,10 +499,8 @@ export function evaluateExpo(
           } ${teamSentence}`,
     },
     {
-      // The expo is the course's graded project: it puts a grade, like the mural in 7.º.
-      grade: { optimal: 8.8, efficient: 8.3, functional: 7.8, invalid: 7 }[
-        quality
-      ],
+      // La nota la pone la regla de contenido (`graded`, 10/8/6/4 por
+      // calidad), la misma para toda situación ordinaria de la carrera.
       equipo: valid ? ([-1, 1, 2, 4][agreements] ?? 0) : -2,
       ...(valid
         ? { estilo: { axis: result.style, amount: grade1StylePolicy.evidence } }
@@ -559,7 +558,7 @@ function callback(flags: Readonly<Record<string, boolean | number | string>>) {
   return ''
 }
 
-export const courseProjectExpo = defineChallenge<ExpoParams, ExpoParams>({
+const courseProjectExpoDefinition = defineChallenge<ExpoParams, ExpoParams>({
   id: toChallengeId('y1.course-project-expo'),
   family: toScenarioFamilyId('course-project'),
   placement: 'anchor',
@@ -626,3 +625,6 @@ export const courseProjectExpo = defineChallenge<ExpoParams, ExpoParams>({
           detail: 'se esperaba un reparto de tareas',
         }),
 })
+
+/** Con nota por calidad (10/8/6/4). Ver `src/content/grades.ts`. */
+export const courseProjectExpo = graded(courseProjectExpoDefinition)

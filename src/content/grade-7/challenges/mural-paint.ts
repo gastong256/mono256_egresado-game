@@ -37,6 +37,7 @@ import { MURAL_FAMILY } from '../families'
 import { cifra, medida } from '@/content/numeros'
 
 import { pesos } from '../../pesos'
+import { graded } from '../../grades'
 
 interface PaintTin {
   readonly id: string
@@ -67,7 +68,7 @@ const TINS = [
   { id: 'lata-4l', litres: '4', priceMinor: 3_800_000 },
 ] as const
 
-export const muralPaint: ChallengeDefinition = defineChallenge<
+const muralPaintDefinition: ChallengeDefinition = defineChallenge<
   MuralModel,
   MuralParams
 >({
@@ -244,12 +245,10 @@ export const muralPaint: ChallengeDefinition = defineChallenge<
           precision: 0.3,
           risk: 0.4,
         }),
-        // El mural es el único evento académico de 7.º: la profesora lo toma
-        // como parte del trabajo del trimestre, así que pone nota. Las tres notas
-        // están autoradas para que el promedio del año caiga donde el diseño de
-        // referencia lo muestra.
+        // La nota la pone la regla de contenido (`graded`, 10/8/6/4 por
+        // calidad); la profesora toma el mural como parte del trimestre igual
+        // que a cualquier otra situación del año.
         careerEffects: {
-          grade: 7.4,
           estilo: { axis: 'improvisador', amount: 10 },
         },
         flagEffects: [{ flag: 'g7.muralFaltoPintura', value: true }],
@@ -277,7 +276,6 @@ export const muralPaint: ChallengeDefinition = defineChallenge<
         },
         metrics: metrics({ efficiency, precision: 1, risk: 0 }),
         careerEffects: {
-          grade: 8.4,
           estilo: { axis: 'estratega', amount: 10 },
         },
         flagEffects: [{ flag: 'g7.muralOptimo', value: true }],
@@ -301,13 +299,15 @@ export const muralPaint: ChallengeDefinition = defineChallenge<
       },
       metrics: metrics({ efficiency, precision: 1, risk: 0 }),
       careerEffects: {
-        grade: 8.1,
         estilo: { axis: 'improvisador', amount: 10 },
       },
       flagEffects: [{ flag: 'g7.muralPintado', value: true }],
     })
   },
 })
+
+/** Con nota por calidad (10/8/6/4). Ver `src/content/grades.ts`. */
+export const muralPaint = graded(muralPaintDefinition)
 
 /** Expuesto para los tests de contenido. */
 export const muralPaintReference = {

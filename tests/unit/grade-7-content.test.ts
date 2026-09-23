@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
+import { GRADE_BY_QUALITY } from '@/content/grades'
+
 import {
   createContentCatalog,
   targetsFor,
@@ -598,7 +600,7 @@ describe('el acto del 25 de Mayo · clasificación y Aura', () => {
     expect(facts['Coreografía']).toBe('100 %')
   })
 
-  it('ningún resultado pone nota ni toca Equipo', () => {
+  it('todo resultado pone la nota de su calidad y ninguno toca Equipo', () => {
     for (const instance of instancesOf(definition)) {
       const answers: InteractionAnswer[] = [
         perfect(instance),
@@ -611,9 +613,11 @@ describe('el acto del 25 de Mayo · clasificación y Aura', () => {
 
       for (const answer of answers) {
         const effects = effectsOf(instance, answer)
-        // Un acto escolar no es una evaluación de matemática y no se baila en
-        // grupo: mueve Aura y Estilo, y nada más.
-        expect(effects.grade).toBeUndefined()
+        // La nota la pone la regla de contenido según la calidad; el acto no
+        // se baila en grupo, así que mueve Aura y Estilo y nada más.
+        expect(effects.grade).toBe(
+          GRADE_BY_QUALITY[qualityOf(instance, answer)],
+        )
         expect(effects.equipo).toBeUndefined()
         expect(effects.aura).toBeDefined()
         expect(effects.estilo).toBeDefined()
