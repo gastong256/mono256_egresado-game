@@ -117,3 +117,11 @@ La lista conceptual que sigue es la que guió el diseño.
 - **Auditoría de moderación:** actor, participante, acción, motivo y timestamp.
 
 Ver [arquitectura objetivo del motor](target-engine-architecture.md) y [modo feria y congelamiento](../05-operations/fair-mode-and-competition-freeze.md). La retención de cada una es una decisión abierta ([preguntas 31 y 50](../07-reference/open-questions.md)).
+
+## Proyección de partida RC3
+
+[ADR-031](adr/ADR-031-persisted-run-summary-ranking-window.md) agrega la propiedad
+versionada `ranking` al JSONB `attempts.verified_summary`, calculada en la misma
+validación y finalización condicional. No cambia tablas, índices, permisos, vista
+de mejor intento o retención. La consulta pública pide sólo ids/resúmenes de su
+ventana seleccionada; nunca carga evidencia de replay para mostrar detalles.

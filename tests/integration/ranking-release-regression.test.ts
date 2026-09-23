@@ -231,7 +231,7 @@ describe('el podio se corta por puesto', () => {
     expect(podium.tieHandling).toBe('whole-tie-group-enters')
   })
 
-  it('un empate en el tercer puesto entra completo, aunque sean cinco filas', async () => {
+  it('el tercer puesto conserva el tamaño completo del empate en una fila', async () => {
     const { store, competition } = await scenario()
     const scores = [9_000, 8_000, 7_000, 7_000, 7_000, 6_000]
     for (const [index, fair] of scores.entries()) {
@@ -248,11 +248,11 @@ describe('el podio se corta por puesto', () => {
 
     const state = await loadPublicState({ store }, competition, undefined)
     expect(state.totalRanked).toBe(6)
-    // Tres puestos, cinco personas: 1.º, 2.º y tres empatadas en 3.º.
-    expect(state.leaderboard).toHaveLength(5)
-    expect(state.leaderboard.map((entry) => entry.rank)).toEqual([
-      1, 2, 3, 3, 3,
-    ])
+    expect(
+      state.leaderboard.find((entry) => entry.rank === 3)?.sharedCount,
+    ).toBe(2)
+    expect(state.leaderboard).toHaveLength(4)
+    expect(state.leaderboard.map((entry) => entry.rank)).toEqual([1, 2, 3, 6])
   })
 
   it('un empate en el primer puesto no inventa un segundo', async () => {
@@ -270,9 +270,8 @@ describe('el podio se corta por puesto', () => {
     }
 
     const state = await loadPublicState({ store }, competition, undefined)
-    // El cuarto queda fuera del podio: el corte es por puesto, y el 4.º no es
-    // uno de los tres primeros aunque haya sólo tres personas por delante.
-    expect(state.leaderboard.map((entry) => entry.rank)).toEqual([1, 1, 3])
+    // El cuarto aparece como contexto, conservando su puesto real.
+    expect(state.leaderboard.map((entry) => entry.rank)).toEqual([1, 3, 4])
   })
 })
 

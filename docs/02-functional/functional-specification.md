@@ -149,17 +149,22 @@ En un evento competitivo, mostrar mejores resultados verificados según
 Sin velocidad ni criterio oculto. Style sólo Career/Narrative; Prestige competitivo
 usa hechos independientes y su [presupuesto canónico](../01-game-design/rare-events-and-prestige.md).
 
-### Presentación del podio vigente — RC3 TASK-A
+### Presentación vigente — RC3 / ADR-031
 
-La UI agrupa las entradas por el puesto **ya calculado por el servidor**, conserva
-empates completos y nunca inventa un segundo puesto cuando el siguiente es tercero.
-Jerarquía visual 1 > 2 > 3, orden DOM por puesto, alias y puntaje legibles en móvil.
-`isYou` identifica al participante; si no aparece en el podio, se muestra su puesto
-privado con su mejor score. No se compara el puesto con la cantidad de filas.
-El ranking público sigue limitado a los primeros tres puestos, sin lista pública
-inferior ni Prestige (techo ofrecido 0). El vacío cambia su texto según el estado;
-al cerrar dice **Resultados del evento**, sin prometer una adjudicación definitiva
-mientras pueden existir envíos pendientes o moderación.
+Una fila resume la mejor partida de un participante: alias, puesto real,
+FairScore destacado, Promedio/Equipo/Aura establecidos y hasta dos reconocimientos.
+«Ver partida» despliega aportes al score, estilo, hitos y recorrido por año.
+Nunca mezcla máximos de intentos distintos ni presenta notas del juego como
+calificaciones escolares reales. Sin resumen histórico, mantiene el puntaje y
+explica que el detalle no está disponible.
+
+Máximo doce filas, con contexto propio y empates compactados según
+[ADR-031](../03-architecture/adr/ADR-031-persisted-run-summary-ranking-window.md).
+El representante no gana prioridad competitiva: «Compartido con X más» cuenta
+al grupo entero. `isYou` mantiene visible la mejor partida de la sesión y los
+saltos muestran participantes omitidos. Sólo los puestos reales 1/2/3 llevan
+medalla. No se publican identidad privada, mastery, logs ni Prestige.
+El vacío cambia según el estado; al cerrar dice **Resultados del evento**.
 
 ## FR-013 Reintento
 El jugador puede iniciar otra run. Fair v1 permite reintentos ilimitados sobre

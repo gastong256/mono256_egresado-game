@@ -314,9 +314,14 @@ describe('aviso de privacidad', () => {
     expect(notice.version).toBe('2')
   })
 
-  it('dice que sólo el alias es público', () => {
+  it('explica qué resultados del juego son públicos sin confundirlos con notas escolares', () => {
     const notice = buildPrivacyNotice(config)
-    expect(notice.summary.join(' ')).toContain('únicamente tu alias')
+    expect(notice.summary.join(' ')).toContain(
+      'tu alias y los resultados de tu mejor partida',
+    )
+    expect(JSON.stringify(notice.sections)).toContain(
+      'no calificaciones escolares reales',
+    )
   })
 
   it('afirma que el documento completo no se guarda, y eso es cierto', () => {

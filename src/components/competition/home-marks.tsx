@@ -54,19 +54,27 @@ export function AuraMark() {
 }
 
 /** The numeral remains text; metal colors and artwork never carry rank alone. */
-export function PodiumMedal({ rank }: { readonly rank: number }) {
+export function PodiumMedal({
+  rank,
+  compact = false,
+}: {
+  readonly rank: number
+  readonly compact?: boolean
+}) {
   if (rank < 1 || rank > 3)
     return <span className="text-section tabular-nums">{rank}</span>
 
   return (
     <span
       className={cn(
-        'relative inline-grid shrink-0 place-items-center pb-6',
+        'relative inline-grid shrink-0 place-items-center',
+        compact ? 'h-12 w-10 pb-3' : 'pb-6',
         rank === 1
-          ? 'text-podium-gold h-24 w-20'
+          ? 'text-podium-gold'
           : rank === 2
-            ? 'text-podium-silver h-20 w-16'
-            : 'text-podium-bronze h-20 w-16',
+            ? 'text-podium-silver'
+            : 'text-podium-bronze',
+        !compact && (rank === 1 ? 'h-24 w-20' : 'h-20 w-16'),
       )}
     >
       <svg
@@ -101,7 +109,12 @@ export function PodiumMedal({ rank }: { readonly rank: number }) {
         />
         <circle cx="32" cy="29" r="20" fill="none" strokeWidth={1} />
       </svg>
-      <span className="text-section font-display relative tabular-nums">
+      <span
+        className={cn(
+          'font-display relative tabular-nums',
+          compact ? 'text-option' : 'text-section',
+        )}
+      >
         {rank}
       </span>
     </span>

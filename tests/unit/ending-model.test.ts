@@ -557,3 +557,49 @@ describe('posición competitiva', () => {
     ).toContain('Es tu mejor partida')
   })
 })
+
+// The compact ranking must not turn a shared first place into an exclusive record.
+it('recognizes ties from compressed server membership', () => {
+  const state = {
+    competition: {
+      name: 'Test',
+      status: 'open' as const,
+      opensAt: undefined,
+      closesAt: undefined,
+    },
+    leaderboard: [
+      {
+        rank: 1,
+        nickname: 'Yo',
+        fairScore: 10000,
+        isYou: true,
+        sharedCount: 499,
+      },
+    ],
+    totalRanked: 500,
+    you: {
+      nickname: 'Yo',
+      rank: 1,
+      bestFairScore: 10000,
+      bestPrestigeScore: 0,
+      attempts: 1,
+      activeAttempt: undefined,
+    },
+  }
+  const result = {
+    attemptId: 'a',
+    status: 'VERIFIED' as const,
+    fairScore: 10000,
+    prestigeScore: 0,
+    graduated: true,
+    rejectionCode: undefined,
+    personalBest: true,
+  }
+  const placement = deriveCompetitivePlacement(result, state, {
+    rank: undefined,
+    bestFairScore: undefined,
+    topScore: 9000,
+  })
+  expect(placement.shared).toBe(true)
+  expect(placement.record).toBe(false)
+})

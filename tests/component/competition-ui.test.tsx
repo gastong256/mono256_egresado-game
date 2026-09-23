@@ -117,7 +117,7 @@ describe('ranking', () => {
     expect(within(items[1] as HTMLElement).getByText('1')).toBeInTheDocument()
     expect(within(items[2] as HTMLElement).getByText('3')).toBeInTheDocument()
     expect(
-      screen.getByRole('list', { name: 'Podio por puesto' }),
+      screen.getByRole('list', { name: 'Ranking de mejores partidas' }),
     ).toBeInTheDocument()
   })
 

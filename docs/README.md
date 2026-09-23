@@ -255,3 +255,7 @@ Las versiones exactas están fijadas en `package.json` y `pnpm-lock.yaml` bajo [
 ## Privacidad UX RC3
 
 [ADR-030](03-architecture/adr/ADR-030-privacy-page-and-action-acknowledgement.md) centraliza el aviso v1 en `/privacidad` y vincula la aceptación al CTA del formulario. Comportamiento en FR-001, evidencia en `tests/e2e/privacy.spec.ts` y `tests/e2e/competition.spec.ts`.
+
+## Ranking ampliado RC3
+
+[ADR-031](03-architecture/adr/ADR-031-persisted-run-summary-ranking-window.md) documenta el resumen persistido de la mejor partida, la ventana pública de 12 filas, empates compactados y actualización histórica explícita.

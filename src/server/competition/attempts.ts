@@ -1,5 +1,7 @@
 import 'server-only'
 
+import { summarizeVerifiedRun } from './run-summary'
+
 import { createHash } from 'node:crypto'
 
 import {
@@ -522,6 +524,7 @@ export async function submitAttempt(
       verifiedFairScore: fairScore,
       verifiedPrestigeScore: result.prestige?.total ?? 0,
       verifiedSummary: {
+        ranking: summarizeVerifiedRun(result),
         graduated: result.graduated,
         profile: result.profile,
         eventsPlayed: result.eventsPlayed,

@@ -32,6 +32,7 @@
 | ADR-028 | [Despliegue de feria sin costo](../03-architecture/adr/ADR-028-zero-cost-fair-deployment.md) | Aceptado; Vercel Hobby + Supabase Free, ensayo local y main-only |
 | ADR-029 | [Práctica pública aislada](../03-architecture/adr/ADR-029-public-practice-mode.md) | Aceptado por encargo explícito del PO; carrera real sin persistencia competitiva |
 | ADR-030 | [Privacidad centralizada y aceptación al iniciar](../03-architecture/adr/ADR-030-privacy-page-and-action-acknowledgement.md) | Aceptado por encargo explícito del PO; supersede presentación de ADR-026, sin cambiar el aviso v1 ni resolver la base jurídica institucional |
+| ADR-031 | [Resumen de partida y ventana del ranking](../03-architecture/adr/ADR-031-persisted-run-summary-ranking-window.md) | Aceptado por autorización del PO; proyección aditiva, máximo 12 filas y empates completos representados, sin cambios de motor o comparador |
 
 ## Regla para ADR nuevo
 

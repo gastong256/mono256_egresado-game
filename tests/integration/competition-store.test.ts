@@ -263,6 +263,29 @@ for (const implementation of implementations) {
 
         const current = await store.findAttemptById(attempt.attempt.id)
         expect(current?.verifiedFairScore).toBe(8000)
+        expect(await store.readAttemptSummaries([attempt.attempt.id])).toEqual([
+          { id: attempt.attempt.id, summary: { graduated: true } },
+        ])
+        const repaired = { graduated: true, ranking: { version: 1 } }
+        expect(
+          await store.saveAttemptSummary(attempt.attempt.id, repaired),
+        ).toBe(true)
+        expect(
+          await store.saveAttemptSummary(attempt.attempt.id, {
+            ranking: { version: 2 },
+          }),
+        ).toBe(false)
+        expect(
+          (await store.findAttemptById(attempt.attempt.id))?.verifiedSummary,
+        ).toEqual(repaired)
+        await store.invalidateAttempt(
+          attempt.attempt.id,
+          '2026-10-03T16:00:00.000Z',
+          'test',
+        )
+        expect(await store.readAttemptSummaries([attempt.attempt.id])).toEqual(
+          [],
+        )
       })
 
       it('deriva el mejor intento verificado de cada participante elegible', async () => {

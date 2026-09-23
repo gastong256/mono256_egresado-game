@@ -5143,17 +5143,22 @@ En un evento competitivo, mostrar mejores resultados verificados según
 Sin velocidad ni criterio oculto. Style sólo Career/Narrative; Prestige competitivo
 usa hechos independientes y su [presupuesto canónico](01-game-design/rare-events-and-prestige.md).
 
-### Presentación del podio vigente — RC3 TASK-A
+### Presentación vigente — RC3 / ADR-031
 
-La UI agrupa las entradas por el puesto **ya calculado por el servidor**, conserva
-empates completos y nunca inventa un segundo puesto cuando el siguiente es tercero.
-Jerarquía visual 1 > 2 > 3, orden DOM por puesto, alias y puntaje legibles en móvil.
-`isYou` identifica al participante; si no aparece en el podio, se muestra su puesto
-privado con su mejor score. No se compara el puesto con la cantidad de filas.
-El ranking público sigue limitado a los primeros tres puestos, sin lista pública
-inferior ni Prestige (techo ofrecido 0). El vacío cambia su texto según el estado;
-al cerrar dice **Resultados del evento**, sin prometer una adjudicación definitiva
-mientras pueden existir envíos pendientes o moderación.
+Una fila resume la mejor partida de un participante: alias, puesto real,
+FairScore destacado, Promedio/Equipo/Aura establecidos y hasta dos reconocimientos.
+«Ver partida» despliega aportes al score, estilo, hitos y recorrido por año.
+Nunca mezcla máximos de intentos distintos ni presenta notas del juego como
+calificaciones escolares reales. Sin resumen histórico, mantiene el puntaje y
+explica que el detalle no está disponible.
+
+Máximo doce filas, con contexto propio y empates compactados según
+[ADR-031](03-architecture/adr/ADR-031-persisted-run-summary-ranking-window.md).
+El representante no gana prioridad competitiva: «Compartido con X más» cuenta
+al grupo entero. `isYou` mantiene visible la mejor partida de la sesión y los
+saltos muestran participantes omitidos. Sólo los puestos reales 1/2/3 llevan
+medalla. No se publican identidad privada, mastery, logs ni Prestige.
+El vacío cambia según el estado; al cerrar dice **Resultados del evento**.
 
 ## FR-013 Reintento
 El jugador puede iniciar otra run. Fair v1 permite reintentos ilimitados sobre
@@ -5455,6 +5460,13 @@ Decisiones y evidencia de TASK-A en el [plan vivo](../.tmp/rc3-branding/task-a-h
 | FR-021: sin identidad ni persistencia competitiva | Runtime con puerto exclusivo de contador; endpoints propios | Prueba DB antes/después y sólo dos RPC de contador; lint de fronteras; ranking/best/cookie E2E |
 | FR-016/017/021: guardado local, resume y reintento | `components/practice`, namespace v1 | `component/practice.test.tsx`, `component/practice-run.test.tsx`, recorrido E2E de tres desafíos y carrera completa |
 | FR-001/021: enlace Home, aviso permanente, accesibilidad | `PracticeExperience`, `CompetitionExperience` | E2E 320/360/390/412/768/1280, teclado, zoom y axe |
+
+## RC3 — Resumen y ventana del ranking
+
+| Requisito | Implementación | Evidencia |
+|---|---|---|
+| FR-012: resumen de la mejor partida y ventana de 12 filas | ADR-031, `summarizeVerifiedRun`, `selectRankingWindow`, `Leaderboard` | `ranking-summary.test.ts`, `ranking-window.test.ts`, `ranking-run-details.test.tsx`, `home-event.spec.ts` |
+| FR-018: datos públicos acotados, sin PII ni replay en GET | schema de proyección, batch de resúmenes, backfill explícito | `competition-store.test.ts`, `competition-attack.test.ts`, `competition.spec.ts` |
 
 ---
 
@@ -8140,6 +8152,95 @@ E2E en producción local, móvil, teclado, axe y guards de rutas; `pnpm verify`.
 
 ---
 
+# FILE: 03-architecture/adr/ADR-031-persisted-run-summary-ranking-window.md
+
+# ADR-031 — Resumen persistido y ventana del ranking
+
+- Estado: Aceptado por encargo explícito del Product Owner
+- Fecha: 2026-09-23
+- Alcance: excepción RC3 posterior al freeze; presentación y proyección de resultados, sin cambiar juego ni comparador.
+
+## Contexto
+
+El ranking exponía sólo alias, puesto y FairScore del Top 3. Los hechos del cierre
+existían en el replay, pero no todos se guardaban en `verified_summary`. Repetir
+ese trabajo en cada polling sería innecesario. El PO autoriza publicar el resumen
+de la mejor partida, compactar empates, mostrar contexto propio y actualizar el
+seed local. No autoriza modificar el motor sellado, reglas, contenido o puntajes.
+
+## Decisión
+
+1. Persistir `verified_summary.ranking`, proyección con `version: 1`, en la misma
+   finalización condicional que guarda score y log. Incluye Promedio/Equipo/Aura,
+   Estilo establecido, perfil, estilo editorial, componentes del FairScore,
+   graduación, eventos/óptimos, recuperaciones/previas del juego, hitos, recorrido
+   por año y recuerdos seleccionados. No incluye mastery, flags crudos, respuestas,
+   identidad ni datos escolares reales. El cliente no aporta este resumen.
+2. El validador devuelve el estado final **sólo al caso de uso servidor**. La
+   proyección usa ese estado ya reproducido, sin segundo replay. Las derivaciones
+   existentes del cierre se comparten en `src/lib/presentation`, frontera pura que
+   puede leer `game` y `lib`, pero no red, persistencia, servidor o React. No se
+   modifica `src/game`, `src/content`, sus versiones ni el manifiesto congelado.
+3. Conservar tabla, JSONB, vista de mejores intentos, RLS e índices existentes.
+   Elegir primero una ventana del índice compacto de mejores resultados; pedir
+   sus resúmenes en un único batch de hasta 12 ids. No leer action logs de
+   partidas finalizadas al consultar el ranking. La posición nunca se persiste.
+4. Política de presentación `RANKING_WINDOW` v1: máximo 12 grupos/filas. Primeros
+   siete grupos y hasta dos grupos antes/después del propio, completando cupos
+   libres desde arriba. Sin resultado propio: primeros nueve y últimos tres
+   cuando hay más de doce grupos. Una fila representa una partida concreta;
+   si hay empate se elige un representante estable, con prioridad a la persona
+   de la sesión, y se informa el número completo de acompañantes. La elección
+   del representante no adjudica ventaja o premio. Los saltos declaran cuántas
+   personas no se dibujan. Todos los miembros del podio siguen contabilizados.
+5. Conservar FairScore → Prestige → puesto compartido y medallas sólo para
+   puestos reales 1/2/3. No renumerar grupos: seis primeros implican siguiente
+   puesto 7. El cierre usa `sharedCount` para no confundir una fila compactada
+   con un récord exclusivo. Prestige sigue sin mostrarse (techo ofrecido 0).
+6. DTO por whitelist y schema anidado: `summary`, `sharedCount`, `gapBefore` son
+   adiciones. Resumen antiguo/inválido: puntaje vigente y detalle no disponible,
+   sin ceros inventados ni replay en GET. El aviso de privacidad describe los
+   resultados del juego ahora públicos; los campos privados permanecen privados.
+7. `pnpm competition:summaries` realiza simulación sin escritura por defecto;
+   `-- --write` completa una sola vez los intentos históricos compatibles.
+   Verifica edición exacta, emisión, score y Prestige antes de escribir; no
+   sobrescribe otra versión ni toca resultado/log. Debe ejecutarse expresamente
+   en el entorno objetivo. Nunca corre al iniciar la app o desde una ruta pública.
+8. `pnpm competition:seed:local` sólo admite loopback, crea la edición aislada
+   `ranking-demo-local` con participantes ficticios y partidas reproducibles de
+   distintas calidades. Es idempotente y no reemplaza ediciones anteriores.
+
+## Consecuencias y alternativas
+
+No hay migración SQL ni infraestructura nueva. Un despliegue anterior ignora la
+propiedad JSON adicional; la proyección es aditiva. Volver al código anterior
+restaura su presentación, sin recalcular ni revertir puntajes. Las runs antiguas
+sin versiones compatibles mantienen score y se reportan como omitidas.
+
+Se rechazan caché global personalizada (podría mezclar `isYou`), reconstrucción
+en cada GET, copias separadas de las reglas de hitos, un leaderboard materializado
+que se desincronice de moderación y agregar reglas como Abanderado/Escolta.
+
+El ranking sigue ordenando el índice compacto en servidor; el batch de detalle y
+la respuesta pública están acotados. Esto es apropiado para la escala de feria;
+un índice SQL de posiciones sería otro cambio, sujeto a medición.
+
+## UX y evidencia requerida
+
+Puntaje de la partida como dato principal, métricas secundarias con sus escalas,
+dos reconocimientos visibles y `details/summary` nativo para el resto. Alias largo,
+320 px, tablet, desktop, teclado y axe. Sin dependencia nueva ni cambios de identidad.
+Referencia: [divulgación progresiva de NN/g](https://www.nngroup.com/articles/progressive-disclosure/)
+y [alineación numérica de GOV.UK](https://design-system.service.gov.uk/components/table/).
+
+Pruebas: equivalencia con cierre existente; selección con empates masivos, límites,
+contexto propio y huecos; backfill idempotente/fail-closed; puerto en memoria y
+Postgres; invalidación, mejor intento, ausencia de PII; accesibilidad y freeze.
+La excepción modifica la superficie pública de FR-012 y supersede el límite de
+presentación Top 3 de ADR-026/TASK-A; no su elegibilidad, ranking o premios.
+
+---
+
 # FILE: 03-architecture/analytics-observability.md
 
 # Analytics y observabilidad
@@ -8262,6 +8363,16 @@ El cliente los envía al confirmar **Aceptar y jugar** en el formulario válido,
 sin checkbox (ADR-030). `GET /privacidad` es una página pública SSR, no un endpoint
 de aceptación: usa la configuración existente, sin consultar identidad o DB ni
 emitir cookies. Leerla no registra una aceptación.
+
+### Proyección pública RC3 — ADR-031
+
+`leaderboard` tiene como máximo doce filas. Cada entrada agrega `sharedCount`
+(otros participantes del mismo puesto), `gapBefore` (personas omitidas entre
+filas) y `summary?` (proyección v1 de la misma mejor partida). No hay ids de
+terceros, logs, respuestas, flags crudos, mastery o datos privados. La ausencia
+de resumen mantiene válida la fila y no dispara replay. El cierre usa el conteo
+de empate, no la cantidad de representantes visibles. El schema ejecutable vive
+en `src/lib/competition/run-summary.ts`.
 
 ### Organizador
 
@@ -8572,6 +8683,14 @@ no guarda runs ni resultados de práctica. Emisión y verificación no dependen 
 estado del evento ni leen su seed. La topología Vercel/Supabase y los contratos
 congelados del motor no cambian.
 
+## Presentación compartida del cierre y ranking
+
+[ADR-031](03-architecture/adr/ADR-031-persisted-run-summary-ranking-window.md) extrae las funciones
+puras existentes a `src/lib/presentation`. Esta frontera puede leer `game` y
+`lib`; UI y servidor pueden consumirla, pero ella no importa React, contenido,
+servidor ni persistencia. La excepción está controlada por ESLint; el resto de
+`lib` mantiene sus fronteras anteriores. El motor sellado no cambia.
+
 ---
 
 # FILE: 03-architecture/content-model-migration.md
@@ -8782,6 +8901,14 @@ La lista conceptual que sigue es la que guió el diseño.
 - **Auditoría de moderación:** actor, participante, acción, motivo y timestamp.
 
 Ver [arquitectura objetivo del motor](03-architecture/target-engine-architecture.md) y [modo feria y congelamiento](05-operations/fair-mode-and-competition-freeze.md). La retención de cada una es una decisión abierta ([preguntas 31 y 50](07-reference/open-questions.md)).
+
+## Proyección de partida RC3
+
+[ADR-031](03-architecture/adr/ADR-031-persisted-run-summary-ranking-window.md) agrega la propiedad
+versionada `ranking` al JSONB `attempts.verified_summary`, calculada en la misma
+validación y finalización condicional. No cambia tablas, índices, permisos, vista
+de mejor intento o retención. La consulta pública pide sólo ids/resúmenes de su
+ventana seleccionada; nunca carga evidencia de replay para mostrar detalles.
 
 ---
 
@@ -22607,17 +22734,20 @@ el mejor intento sale de la vista `competition_best_attempts`, el puesto lo
 calcula un comparador puro y la atomicidad la dan restricciones de la base, no
 un lock del proceso.
 
-## Pantalla pública v1
+## Pantalla pública vigente RC3
 
-Top 3 destacado, nickname/pseudónimo, FairScore y Prestige secundario; iconografía
-de Hitos opcional. El Top 3 refiere a puestos: un empate legítimo no se corta
-arbitrariamente para mostrar exactamente tres personas.
+[ADR-031](03-architecture/adr/ADR-031-persisted-run-summary-ranking-window.md)
+amplía el Top 3 a una ventana de doce filas como máximo, con mejor partida,
+contexto propio, métricas del juego e hitos. Todos los empatados cuentan: la fila
+representante declara «Compartido con X más» y mantiene el puesto original.
+El comparador y los premios no cambian. Sin copy de vergüenza ni juicios sobre
+la persona. Nunca curso real, edad, nombre legal, contacto o mastery.
 
-La posición propia, resultado y personal best pueden mostrarse privadamente al
-jugador, con CTA de reintento. Se supersede el top5/10 genérico y no se exige una
-lista pública infinita de estudiantes con posiciones bajas. No se muestran curso,
-edad, nombre legal, contacto, mastery ni métricas ocultas. Sin copy de vergüenza,
-comparaciones de valor personal o rachas de fracaso.
+Los resúmenes antiguos se completan fuera del tráfico público con
+`pnpm competition:summaries` (diagnóstico) y `pnpm competition:summaries -- --write`
+(escritura explícita). Guardar respaldo antes. Las versiones no soportadas se
+omiten; no se reinterpreta una partida con reglas actuales incompatibles.
+No requiere migración SQL. La versión anterior de la app ignora el JSON adicional.
 
 ## Moderación
 
@@ -23068,6 +23198,14 @@ real al ejecutar el handoff. Ninguna consulta acredita una cuenta ni un deploy.
 
 Vista corta del estado de ejecución. El contrato completo y el protocolo de
 actualización están en el [roadmap](06-delivery/implementation-sequence.md).
+
+**Excepción RC3 autorizada por el PO, 23/09: ranking ampliado.**
+[ADR-031](03-architecture/adr/ADR-031-persisted-run-summary-ranking-window.md)
+permite persistir el resumen del replay, publicarlo en una ventana de doce filas,
+compactar empates conservando membresía y puesto, contexto propio y seed local
+variado. Scope OUT: motor, contenido, reglas, comparador, versiones competitivas,
+schema SQL y despliegue remoto. Exit gate: persistencia/privacidad, equivalencia
+con el cierre, backfill, moderación, UI accesible y verify al final.
 
 ## Sprint visual RC3 — TASK-A
 
@@ -25014,6 +25152,14 @@ verificación   pnpm release:verify · 57 comprobaciones
 **Scope IN.** Simulación masiva de decenas de miles de runs; load testing por encima de la concurrencia esperada; degradación de red; QA móvil priorizando Android modestos en 360/390/430 y Safari/iOS; telemetría mínima sin PII innecesaria; runbook de incidentes; checklist de go-live.
 
 **Scope OUT.** Features nuevas. Cambios de contenido o de score que afecten equidad.
+
+**Excepción RC3 autorizada por el PO, 23/09: ranking ampliado.**
+[ADR-031](03-architecture/adr/ADR-031-persisted-run-summary-ranking-window.md)
+permite persistir el resumen del replay, publicarlo en una ventana de doce filas,
+compactar empates conservando membresía y puesto, contexto propio y seed local
+variado. Scope OUT: motor, contenido, reglas, comparador, versiones competitivas,
+schema SQL y despliegue remoto. Exit gate: persistencia/privacidad, equivalencia
+con el cierre, backfill, moderación, UI accesible y verify al final.
 
 **Excepción visual acotada, autorizada por el Product Owner: RC3 TASK-A.**
 Home, countdown de ventana pública, presentación de podio y footer institucional.
@@ -29706,6 +29852,7 @@ De requisito de producto a estado de implementación. La columna de estado es un
 | ADR-028 | [Despliegue de feria sin costo](03-architecture/adr/ADR-028-zero-cost-fair-deployment.md) | Aceptado; Vercel Hobby + Supabase Free, ensayo local y main-only |
 | ADR-029 | [Práctica pública aislada](03-architecture/adr/ADR-029-public-practice-mode.md) | Aceptado por encargo explícito del PO; carrera real sin persistencia competitiva |
 | ADR-030 | [Privacidad centralizada y aceptación al iniciar](03-architecture/adr/ADR-030-privacy-page-and-action-acknowledgement.md) | Aceptado por encargo explícito del PO; supersede presentación de ADR-026, sin cambiar el aviso v1 ni resolver la base jurídica institucional |
+| ADR-031 | [Resumen de partida y ventana del ranking](03-architecture/adr/ADR-031-persisted-run-summary-ranking-window.md) | Aceptado por autorización del PO; proyección aditiva, máximo 12 filas y empates completos representados, sin cambios de motor o comparador |
 
 ## Regla para ADR nuevo
 
@@ -31066,6 +31213,8 @@ Estas preguntas están registradas en [preguntas abiertas](07-reference/open-que
 - [x] FR-001, flujos, trazabilidad, contratos, seguridad y excepción acotada del roadmap reconciliados.
 - [x] Ruta pública, integridad del aviso v1 y aceptación al enviar cubiertas por pruebas de componente y navegador.
 
+- [x] [ADR-031](03-architecture/adr/ADR-031-persisted-run-summary-ranking-window.md): resumen autoritativo persistido, ranking acotado y actualización histórica.
+
 ---
 
 # FILE: README.md
@@ -31327,3 +31476,7 @@ Las versiones exactas están fijadas en `package.json` y `pnpm-lock.yaml` bajo [
 ## Privacidad UX RC3
 
 [ADR-030](03-architecture/adr/ADR-030-privacy-page-and-action-acknowledgement.md) centraliza el aviso v1 en `/privacidad` y vincula la aceptación al CTA del formulario. Comportamiento en FR-001, evidencia en `tests/e2e/privacy.spec.ts` y `tests/e2e/competition.spec.ts`.
+
+## Ranking ampliado RC3
+
+[ADR-031](03-architecture/adr/ADR-031-persisted-run-summary-ranking-window.md) documenta el resumen persistido de la mejor partida, la ventana pública de 12 filas, empates compactados y actualización histórica explícita.

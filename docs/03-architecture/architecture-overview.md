@@ -125,3 +125,11 @@ El descriptor, snapshot y action log viven en memoria/browser local; el servidor
 no guarda runs ni resultados de práctica. Emisión y verificación no dependen del
 estado del evento ni leen su seed. La topología Vercel/Supabase y los contratos
 congelados del motor no cambian.
+
+## Presentación compartida del cierre y ranking
+
+[ADR-031](adr/ADR-031-persisted-run-summary-ranking-window.md) extrae las funciones
+puras existentes a `src/lib/presentation`. Esta frontera puede leer `game` y
+`lib`; UI y servidor pueden consumirla, pero ella no importa React, contenido,
+servidor ni persistencia. La excepción está controlada por ESLint; el resto de
+`lib` mantiene sus fronteras anteriores. El motor sellado no cambia.

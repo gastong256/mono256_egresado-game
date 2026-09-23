@@ -578,11 +578,67 @@ export class SupabaseCompetitionStore implements CompetitionStore {
     return data === null ? undefined : toAttempt(data)
   }
 
-  async bestVerifiedAttempts(competitionId: string) {
-    const { data, error } = await this.table('competition_best_attempts')
+  async listLegacySummaryAttempts(competitionId: string, afterId?: string) {
+    let query = this.table('attempts')
       .select('*')
       .eq('competition_id', competitionId)
-    if (error) fail('bestVerifiedAttempts', error)
+      .eq('status', 'VERIFIED')
+      .is('invalidated_at', null)
+      .is('verified_summary->ranking', null)
+      .order('id')
+      .limit(100)
+    if (afterId !== undefined) query = query.gt('id', afterId)
+    const { data, error } = await query
+    if (error) fail('listLegacySummaryAttempts', error)
+    return (data ?? []).map(toAttempt)
+  }
+
+  async readAttemptSummaries(ids: readonly string[]) {
+    if (ids.length === 0) return []
+    if (ids.length > 12) throw new Error('Summary batch exceeds ranking window')
+    const { data, error } = await this.table('attempts')
+      .select('id,verified_summary')
+      .in('id', [...ids])
+      .eq('status', 'VERIFIED')
+      .is('invalidated_at', null)
+    if (error) fail('readAttemptSummaries', error)
+    return (data ?? []).map((row: any) => ({
+      id: row.id as string,
+      summary: row.verified_summary as unknown,
+    }))
+  }
+
+  async saveAttemptSummary(id: string, summary: unknown) {
+    const { data, error } = await this.table('attempts')
+      .update({ verified_summary: summary })
+      .eq('id', id)
+      .eq('status', 'VERIFIED')
+      .is('invalidated_at', null)
+      .is('verified_summary->ranking', null)
+      .select('id')
+    if (error) fail('saveAttemptSummary', error)
+    return (data ?? []).length === 1
+  }
+
+  async bestVerifiedAttempts(competitionId: string) {
+    // PostgREST caps responses at 1000. Stable keyset pages keep counts and
+    // distant personal positions correct beyond that cap, without reading logs.
+    const data: any[] = []
+    let after: string | undefined
+    for (;;) {
+      let query = this.table('competition_best_attempts')
+        .select('*')
+        .eq('competition_id', competitionId)
+        .order('participant_id')
+        .limit(500)
+      if (after !== undefined) query = query.gt('participant_id', after)
+      const page = await query
+      if (page.error) fail('bestVerifiedAttempts', page.error)
+      const rows = page.data ?? []
+      data.push(...rows)
+      if (rows.length < 500) break
+      after = rows.at(-1)?.participant_id as string
+    }
     return (data ?? []).map((row: any): BestAttemptRow => ({
       competitionId: row.competition_id,
       participantId: row.participant_id,

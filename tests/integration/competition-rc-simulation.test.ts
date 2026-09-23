@@ -9,7 +9,7 @@ import {
   setParticipantEligibility,
 } from '@/server/competition/organizer'
 import { exportParticipantsCsv } from '@/server/competition/export'
-import { loadPublicState, MAX_PUBLIC_RANK } from '@/server/competition/ranking'
+import { loadPublicState } from '@/server/competition/ranking'
 import { planPurge, purgeCompetition } from '@/server/competition/retention'
 import {
   clientFingerprint,
@@ -382,11 +382,8 @@ describe('ensayo de feria sobre la configuración del release', () => {
     )
     record('estado público', durations)
 
-    expect(
-      state.leaderboard.every((entry) => entry.rank <= MAX_PUBLIC_RANK),
-    ).toBe(true)
+    expect(state.leaderboard.length).toBeLessThanOrEqual(12)
     expect(state.totalRanked).toBeGreaterThan(0)
-
     const best = await store.bestVerifiedAttempts(competition.id)
     const ranked = rankEntries(
       best.map((row) => ({
@@ -395,10 +392,11 @@ describe('ensayo de feria sobre la configuración del release', () => {
         prestigeScore: row.verifiedPrestigeScore,
       })),
     )
-    // El corte es por puesto y no por cantidad de filas: si hay tres personas
-    // en el tercer puesto, las tres salen.
-    const expected = ranked.filter((entry) => entry.rank <= MAX_PUBLIC_RANK)
-    expect(state.leaderboard).toHaveLength(expected.length)
+    for (const entry of state.leaderboard) {
+      expect(entry.sharedCount).toBe(
+        ranked.filter((row) => row.rank === entry.rank).length - 1,
+      )
+    }
 
     // Prestige v1: el techo ofrecido es 0, así que nadie lo usa para desempatar.
     expect(best.every((row) => row.verifiedPrestigeScore === 0)).toBe(true)

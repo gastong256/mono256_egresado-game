@@ -42,6 +42,7 @@ export default defineConfig([
         { type: 'content', pattern: 'src/content/**' },
         { type: 'release', pattern: 'src/release/**' },
         { type: 'server', pattern: 'src/server/**' },
+        { type: 'presentation', pattern: 'src/lib/presentation/**' },
         { type: 'lib', pattern: 'src/lib/**' },
         { type: 'config', pattern: 'src/config/**' },
         { type: 'config', pattern: 'src/types/**' },
@@ -83,6 +84,16 @@ export default defineConfig([
               allow: { to: { module: { origin: 'external' } } },
             },
             {
+              from: { element: { type: 'presentation' } },
+              allow: {
+                to: {
+                  element: {
+                    types: { anyOf: ['presentation', 'game', 'lib'] },
+                  },
+                },
+              },
+            },
+            {
               from: { element: { type: 'lib' } },
               allow: { to: { module: { origin: 'external' } } },
             },
@@ -99,6 +110,7 @@ export default defineConfig([
                       anyOf: [
                         'app',
                         'components',
+                        'presentation',
                         'game',
                         'server',
                         'lib',
@@ -133,7 +145,15 @@ export default defineConfig([
                     // set has to reach the browser. Content is data over
                     // existing interactions (ADR-007) and decides no UI or
                     // persistence, so the client composition root may import it.
-                    types: { anyOf: ['components', 'content', 'game', 'lib'] },
+                    types: {
+                      anyOf: [
+                        'components',
+                        'presentation',
+                        'content',
+                        'game',
+                        'lib',
+                      ],
+                    },
                   },
                 },
               },
@@ -189,6 +209,7 @@ export default defineConfig([
                     types: {
                       anyOf: [
                         'server',
+                        'presentation',
                         'game',
                         'content',
                         'lib',

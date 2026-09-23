@@ -39,7 +39,7 @@ export function buildPrivacyNotice(
   return {
     version: privacy.noticeVersion,
     summary: [
-      'En el ranking público se muestra únicamente tu alias.',
+      'En el ranking público se muestran tu alias y los resultados de tu mejor partida.',
       'Tu nombre, tu año y tu documento los usan sólo los organizadores para validar los resultados.',
       'No guardamos tu número de documento completo: sólo los últimos cuatro dígitos.',
     ],
@@ -55,7 +55,7 @@ export function buildPrivacyNotice(
       {
         heading: 'Qué es público y qué no',
         body: [
-          'Público: tu alias, tu puntaje verificado y tu puesto.',
+          'Público: tu alias, tu puntaje y tu puesto, junto con el resumen de tu mejor partida: Promedio, Equipo, Aura, estilo, reconocimientos y recorrido. Son resultados dentro del juego, no calificaciones escolares reales.',
           'Privado: tu nombre y apellido, tu año o curso, tu división si la hubiera, y los últimos cuatro dígitos de tu documento. Nada de eso aparece en el ranking ni se envía al navegador de otra persona.',
         ],
       },

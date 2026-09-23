@@ -549,15 +549,20 @@ test.describe('la autoridad es del servidor', () => {
       expect(raw).not.toContain(forbidden)
     }
     for (const entry of body.leaderboard) {
-      // Cuatro campos y ninguno más. `prestigeScore` salió del podio público
-      // con el congelamiento de v1: el techo ofrecido es 0, así que la columna
-      // diría cero para toda la feria.
-      expect([...Object.keys(entry)].sort()).toEqual([
-        'fairScore',
-        'isYou',
-        'nickname',
-        'rank',
-      ])
+      // Public whitelist includes the bounded authoritative run projection.
+      expect(
+        Object.keys(entry).every((key) =>
+          [
+            'fairScore',
+            'isYou',
+            'nickname',
+            'rank',
+            'sharedCount',
+            'gapBefore',
+            'summary',
+          ].includes(key),
+        ),
+      ).toBe(true)
     }
   })
 })

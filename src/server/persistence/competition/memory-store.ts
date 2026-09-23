@@ -375,6 +375,48 @@ export class InMemoryCompetitionStore implements CompetitionStore {
     return next
   }
 
+  async listLegacySummaryAttempts(competitionId: string, afterId?: string) {
+    return [...this.attempts.values()]
+      .filter(
+        (row) =>
+          row.competitionId === competitionId &&
+          row.status === 'VERIFIED' &&
+          row.invalidatedAt === undefined &&
+          (afterId === undefined || row.id > afterId) &&
+          !(
+            typeof row.verifiedSummary === 'object' &&
+            row.verifiedSummary !== null &&
+            'ranking' in row.verifiedSummary
+          ),
+      )
+      .sort((a, b) => (a.id < b.id ? -1 : 1))
+      .slice(0, 100)
+  }
+
+  async readAttemptSummaries(ids: readonly string[]) {
+    if (ids.length > 12) throw new Error('Summary batch exceeds ranking window')
+    return ids.flatMap((id) => {
+      const row = this.attempts.get(id)
+      return row?.status === 'VERIFIED' && row.invalidatedAt === undefined
+        ? [{ id, summary: row.verifiedSummary }]
+        : []
+    })
+  }
+
+  async saveAttemptSummary(id: string, summary: unknown) {
+    const row = this.attempts.get(id)
+    if (row?.status !== 'VERIFIED' || row.invalidatedAt !== undefined)
+      return false
+    if (
+      typeof row.verifiedSummary === 'object' &&
+      row.verifiedSummary !== null &&
+      'ranking' in row.verifiedSummary
+    )
+      return false
+    this.attempts.set(id, { ...row, verifiedSummary: summary })
+    return true
+  }
+
   async bestVerifiedAttempts(competitionId: string) {
     const best = new Map<string, BestAttemptRow>()
     const candidates = [...this.attempts.values()]

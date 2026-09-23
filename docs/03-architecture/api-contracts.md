@@ -26,6 +26,16 @@ sin checkbox (ADR-030). `GET /privacidad` es una página pública SSR, no un end
 de aceptación: usa la configuración existente, sin consultar identidad o DB ni
 emitir cookies. Leerla no registra una aceptación.
 
+### Proyección pública RC3 — ADR-031
+
+`leaderboard` tiene como máximo doce filas. Cada entrada agrega `sharedCount`
+(otros participantes del mismo puesto), `gapBefore` (personas omitidas entre
+filas) y `summary?` (proyección v1 de la misma mejor partida). No hay ids de
+terceros, logs, respuestas, flags crudos, mastery o datos privados. La ausencia
+de resumen mantiene válida la fila y no dispara replay. El cierre usa el conteo
+de empate, no la cantidad de representantes visibles. El schema ejecutable vive
+en `src/lib/competition/run-summary.ts`.
+
 ### Organizador
 
 | Método y ruta | Qué hace |

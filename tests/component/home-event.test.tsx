@@ -34,44 +34,23 @@ afterEach(() => {
 })
 
 describe('podio por puestos', () => {
-  it('conserva todas las personas empatadas, sin inventar puestos omitidos', () => {
+  it('representa empates completos sin inventar puestos omitidos', () => {
     render(
       <Leaderboard
         entries={[
-          entry(1, 'A'),
-          entry(1, 'B'),
-          entry(3, 'C'),
-          entry(3, 'D'),
-          entry(3, 'E'),
+          { ...entry(1, 'A'), sharedCount: 1 },
+          { ...entry(3, 'C'), sharedCount: 2 },
         ]}
         you={you}
         total={8}
       />,
     )
-    expect(
-      within(screen.getByTestId('podium-rank-1')).getAllByTestId(
-        'leaderboard-entry',
-      ),
-    ).toHaveLength(2)
-    expect(screen.queryByTestId('podium-rank-2')).not.toBeInTheDocument()
-    expect(
-      within(screen.getByTestId('podium-rank-1')).getByRole('heading', {
-        name: /1\s*Puesto compartido/u,
-      }),
-    ).toBeVisible()
-    expect(
-      within(screen.getByTestId('podium-rank-3')).getByRole('heading', {
-        name: /3\s*Puesto compartido/u,
-      }),
-    ).toBeVisible()
-    expect(
-      within(screen.getByTestId('podium-rank-3')).getAllByTestId(
-        'leaderboard-entry',
-      ),
-    ).toHaveLength(3)
-    // Shared ranking skips places: five public participants precede rank 6.
+    const rows = screen.getAllByTestId('leaderboard-entry')
+    expect(rows).toHaveLength(2)
+    expect(rows[0]).toHaveTextContent('Compartido con 1 más')
+    expect(rows[1]).toHaveTextContent('Compartido con 2 más')
+    expect(screen.queryByLabelText(/puesto 2/u)).not.toBeInTheDocument()
     expect(screen.getByTestId('own-rank')).toHaveTextContent('Tu puesto: 6')
-    expect(screen.getByTestId('own-rank')).toHaveTextContent('9.400')
   })
   it('mantiene orden lógico 1, 2, 3 y resalta a quien está en el podio', () => {
     render(
@@ -82,7 +61,7 @@ describe('podio por puestos', () => {
       />,
     )
     const groups = screen.getByRole('list', {
-      name: 'Podio por puesto',
+      name: 'Ranking de mejores partidas',
     }).children
     expect([...groups].map((group) => group.getAttribute('value'))).toEqual([
       '1',
@@ -90,7 +69,9 @@ describe('podio por puestos', () => {
       '3',
     ])
     expect(
-      within(screen.getByTestId('podium-rank-2')).getByText('(vos)'),
+      within(screen.getByLabelText('Yo, puesto 2, tu mejor partida')).getByText(
+        '(vos)',
+      ),
     ).toBeInTheDocument()
     expect(screen.queryByTestId('own-rank')).not.toBeInTheDocument()
   })

@@ -4,10 +4,11 @@ import type {
   PublicSelfSummary,
 } from '@/lib/competition'
 import { cn } from '@/lib/ui/cn'
+import { RankingRunMetrics, RankingRunDetails } from './ranking-run-details'
 import { PodiumMedal } from './home-marks'
 import { RankingDeadlineNotice } from './ranking-deadline-notice'
 
-/** Group the server's ranks for display. Never slice ties or recompute places. */
+/** Render the bounded server window. Never recompute ranks or personal best. */
 export function Leaderboard({
   entries,
   you,
@@ -21,12 +22,6 @@ export function Leaderboard({
   readonly status?: PublicCompetitionStatus
   readonly closesAt?: string | undefined
 }) {
-  const groups = new Map<number, PublicLeaderboardEntry[]>()
-  for (const entry of entries) {
-    const group = groups.get(entry.rank) ?? []
-    group.push(entry)
-    groups.set(entry.rank, group)
-  }
   const closed = status === 'closed'
   const outsidePodium =
     you?.rank !== undefined && !entries.some((entry) => entry.isYou)
@@ -83,80 +78,70 @@ export function Leaderboard({
         </div>
       ) : (
         <ol
-          className={cn(
-            'grid items-start gap-4',
-            groups.size === 1
-              ? 'sm:grid-cols-1'
-              : groups.size === 2
-                ? 'sm:grid-cols-2'
-                : 'sm:grid-cols-3',
-          )}
-          aria-label="Podio por puesto"
+          className="divide-rule border-rule divide-y border-y"
+          aria-label="Ranking de mejores partidas"
           data-testid="leaderboard"
         >
-          {[...groups].map(([rank, players]) => (
+          {entries.map((entry, index) => (
             <li
-              key={rank}
-              value={rank}
-              className={cn(
-                'border-rule bg-surface min-w-0 border p-4',
-                rank === 1
-                  ? 'border-t-podium-gold border-t-4 sm:min-h-64'
-                  : rank === 2
-                    ? 'border-t-podium-silver border-t-2 sm:mt-8 sm:min-h-56'
-                    : 'border-t-podium-bronze border-t-2 sm:mt-16 sm:min-h-48',
-              )}
-              data-testid={`podium-rank-${String(rank)}`}
+              key={`${entry.rank}-${entry.nickname}-${index}`}
+              value={entry.rank}
             >
-              <h3 className="font-display text-ink flex items-center gap-3">
-                <PodiumMedal rank={rank} />
-                <span className="text-label uppercase">
-                  {players.length > 1 ? 'Puesto compartido' : 'Puesto'}
-                </span>
-              </h3>
-              <ul
+              {(entry.gapBefore ?? 0) > 0 ? (
+                <p className="text-caption text-ink-secondary bg-canvas-sunken px-4 py-3 text-center tabular-nums">
+                  <span aria-hidden="true">··· </span>
+                  {entry.gapBefore?.toLocaleString('es-AR')} participantes entre
+                  estos puestos<span aria-hidden="true"> ···</span>
+                </p>
+              ) : null}
+              <article
                 className={cn(
-                  'divide-rule mt-4 divide-y',
-                  groups.size === 1 &&
-                    players.length > 1 &&
-                    'grid gap-x-6 sm:grid-cols-3',
+                  'bg-surface grid min-w-0 grid-cols-[2.5rem_minmax(0,1fr)] gap-x-3 gap-y-3 p-3 sm:grid-cols-[3rem_minmax(0,1fr)_auto] sm:gap-x-5 sm:p-5',
+                  entry.isYou && 'border-l-green bg-green-tint border-l-4',
                 )}
-                aria-label={`Participantes en el puesto ${String(rank)}`}
+                data-testid="leaderboard-entry"
+                aria-label={`${entry.nickname}, puesto ${entry.rank}${entry.isYou ? ', tu mejor partida' : ''}`}
               >
-                {players.map((entry, index) => (
-                  <li
-                    key={`${entry.nickname}-${String(index)}`}
-                    className={cn(
-                      'flex min-w-0 flex-col gap-2 py-3',
-                      entry.isYou && 'border-l-green border-l-2 pl-3',
-                    )}
-                    data-testid="leaderboard-entry"
-                  >
-                    <span className="sr-only">
-                      Puesto <span>{entry.rank}</span>.
-                    </span>
-                    <p className="text-option font-display text-ink [overflow-wrap:anywhere]">
-                      {entry.nickname}
-                      {entry.isYou ? (
-                        <span className="text-caption text-ink-secondary ml-2">
-                          (vos)
-                        </span>
-                      ) : null}
+                <div className="row-span-2 flex justify-center pt-1">
+                  <span className="sr-only">Puesto </span>
+                  <PodiumMedal rank={entry.rank} compact />
+                </div>
+                <div className="flex min-w-0 flex-col gap-1">
+                  <h3 className="text-option font-display text-ink [overflow-wrap:anywhere]">
+                    {entry.nickname}
+                    {entry.isYou ? (
+                      <span className="text-caption text-green-deep ml-2">
+                        (vos)
+                      </span>
+                    ) : null}
+                  </h3>
+                  {(entry.sharedCount ?? 0) > 0 ? (
+                    <p className="text-caption text-ink-secondary tabular-nums">
+                      Compartido con{' '}
+                      {entry.sharedCount?.toLocaleString('es-AR')} más
                     </p>
-                    <p className="text-caption text-ink-secondary">
-                      <span
-                        className={cn(
-                          'font-display text-ink tabular-nums',
-                          rank === 1 ? 'text-section' : 'text-data-lg',
-                        )}
-                      >
-                        {entry.fairScore.toLocaleString('es-AR')}
-                      </span>{' '}
-                      puntos
-                    </p>
-                  </li>
-                ))}
-              </ul>
+                  ) : null}
+                </div>
+                <p className="text-caption text-ink-secondary col-start-2 sm:col-start-3 sm:row-start-1 sm:text-right">
+                  <strong className="text-section font-display text-ink tabular-nums">
+                    {entry.fairScore.toLocaleString('es-AR')}
+                  </strong>{' '}
+                  puntos <span className="sr-only">de la partida</span>
+                </p>
+                {entry.summary ? (
+                  <div className="col-span-2 flex min-w-0 flex-col gap-3 sm:col-span-2 sm:col-start-2">
+                    <RankingRunMetrics summary={entry.summary} />
+                    <RankingRunDetails
+                      summary={entry.summary}
+                      nickname={entry.nickname}
+                    />
+                  </div>
+                ) : (
+                  <p className="text-caption text-ink-secondary col-span-2 sm:col-start-2">
+                    Partida finalizada · detalle no disponible
+                  </p>
+                )}
+              </article>
             </li>
           ))}
         </ol>

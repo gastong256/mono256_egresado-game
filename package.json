@@ -37,6 +37,8 @@
     "game:blind-audit": "vite-node --config vitest.config.ts scripts/game/blind-audit.ts",
     "game:pacing": "vite-node --config vitest.config.ts scripts/game/pacing.ts",
     "teacher-gate": "vite-node --config vitest.config.ts scripts/teacher-gate/present.ts",
+    "competition:summaries": "vite-node --config vitest.config.ts scripts/competition/backfill-summaries.ts",
+    "competition:seed:local": "vite-node --config vitest.config.ts scripts/competition/seed-local-ranking.ts",
     "competition:bootstrap": "vite-node --config vitest.config.ts scripts/competition/bootstrap.ts",
     "competition:organizer:hash": "vite-node --config vitest.config.ts scripts/competition/organizer-hash.ts",
     "competition:privacy:purge": "vite-node --config vitest.config.ts scripts/competition/purge.ts",
