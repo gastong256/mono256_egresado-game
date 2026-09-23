@@ -178,6 +178,96 @@ describe('footer institucional', () => {
 })
 
 describe('autoridad de estado en home', () => {
+  it('OPEN respeta apertura y cierre sin esperar el siguiente poll', async () => {
+    vi.useFakeTimers()
+    vi.setSystemTime('2026-10-03T12:00:00Z')
+    const state: PublicCompetitionState = {
+      competition: {
+        name: 'Feria',
+        status: 'open',
+        opensAt: '2026-10-03T12:00:02Z',
+        closesAt: '2026-10-03T12:00:04Z',
+      },
+      you,
+      leaderboard: [],
+      totalRanked: 0,
+    }
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => ({ ok: true, json: async () => state })),
+    )
+    render(
+      <CompetitionExperience initialState={state} formConfig={undefined} />,
+    )
+    await act(async () => {
+      vi.advanceTimersByTime(0)
+    })
+    expect(screen.queryByTestId('play')).not.toBeInTheDocument()
+    expect(screen.getByText('Preparate para jugar')).toBeInTheDocument()
+    await act(async () => {
+      vi.advanceTimersByTime(2000)
+    })
+    expect(screen.getByText('Ya podés jugar')).toBeInTheDocument()
+    expect(screen.getByTestId('play')).toHaveTextContent('Jugar de nuevo')
+    await act(async () => {
+      vi.advanceTimersByTime(2000)
+    })
+    expect(screen.queryByTestId('play')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('event-countdown')).not.toBeInTheDocument()
+    expect(screen.getByText('Así terminó la competencia')).toBeInTheDocument()
+  })
+
+  it('revisa la ventana al volver a la pestaña y al cambiar los horarios', async () => {
+    vi.useFakeTimers()
+    vi.setSystemTime('2026-10-03T12:00:00Z')
+    const initialState: PublicCompetitionState = {
+      competition: {
+        name: 'Feria',
+        status: 'open',
+        opensAt: undefined,
+        closesAt: '2026-10-03T13:00:00Z',
+      },
+      you,
+      leaderboard: [],
+      totalRanked: 0,
+    }
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => ({
+        ok: true,
+        json: async () => ({
+          ...initialState,
+          competition: {
+            ...initialState.competition,
+            closesAt: '2026-10-03T16:00:00Z',
+          },
+        }),
+      })),
+    )
+    render(
+      <CompetitionExperience
+        initialState={initialState}
+        formConfig={undefined}
+      />,
+    )
+    await act(async () => {
+      vi.advanceTimersByTime(0)
+    })
+    expect(screen.getByTestId('play')).toBeInTheDocument()
+    vi.setSystemTime('2026-10-03T14:00:00Z')
+    await act(async () => {
+      document.dispatchEvent(new Event('visibilitychange'))
+    })
+    expect(screen.queryByTestId('play')).not.toBeInTheDocument()
+    await act(async () => {
+      vi.advanceTimersByTime(20_000)
+    })
+    await act(async () => {
+      vi.advanceTimersByTime(0)
+    })
+    expect(screen.getByTestId('play')).toBeInTheDocument()
+  })
+
   it('llegar a cero sólo refresca; Jugar aparece cuando lo confirma el servidor', async () => {
     vi.useFakeTimers()
     vi.setSystemTime('2026-10-03T12:00:00Z')

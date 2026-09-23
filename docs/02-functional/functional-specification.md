@@ -45,8 +45,16 @@ segundos orientativos del reloj cliente y la fecha absoluta en hora argentina;
 permanece visible sin un control para ocultarlo, no anuncia cada segundo y
 respeta reduced motion. Al vencer
 consulta el estado existente: nunca abre/cierra una edición ni autoriza intentos.
-Conserva sus cifras grandes y animación: en móvil precede al botón de jugar y en
-escritorio comparte con él una fila independiente de la marca y la presentación.
+Conserva sus cuatro unidades y cifras grandes sin parpadeos. El bloque abierto
+reúne «Competencia abierta», «Ya podés jugar», CTA principal y «Tiempo que queda
+para jugar». En móvil y tablet vertical el botón precede al reloj, y Practicar
+queda debajo como secundario; desde 1024 px, acceso y reloj comparten una fila
+independiente de la marca y la presentación.
+Sólo dentro del bloque de acceso, un estado `open` fuera de la ventana anunciada
+se presenta como próximo/cerrado según corresponda. Se revisa al alcanzar los
+límites y al volver a la pestaña; `upcoming` nunca se promueve sin confirmación
+del servidor. Esto no modifica la edición, el ranking ni la autorización del
+servidor, que sigue comprobando estado y horario al emitir el intento.
 Si la edición no tiene fecha configurada no inventa un plazo. La ilustración del
 hero ocupa una fila completa, sin recortar, tanto en móvil como en escritorio.
 El ranking agrega encima del total de participantes un aviso de urgencia escrito:

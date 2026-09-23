@@ -212,3 +212,10 @@ reflow, teclado, accesibilidad, carga real y avance con imágenes bloqueadas).
 |---|---|---|
 | FR-001: título del Home «Egresado», sin concatenar el nombre de edición | `app/page.tsx`, título de pestaña y Open Graph | `points.spec.ts`, navegación al Home real |
 | FR-012: responsabilidad del organizador por un desempate externo; puesto compartido intacto | `app/puntajes/page.tsx` | `points.spec.ts`, lectura sin JavaScript y accesibilidad |
+
+## Ajuste acotado del acceso del Home posterior a RC4
+
+| Requisito | Implementación | Evidencia |
+|---|---|---|
+| FR-001: estado abierto explícito, Jugar prioritario, contador completo y práctica secundaria; reflow móvil/tablet | `CompetitionExperience`, `EventCountdown` | `home-event.spec.ts`: 320–1920 px, tablet 768/1024, zoom, teclado, axe y reduced motion |
+| FR-001: OPEN respeta la ventana anunciada en el bloque de acceso, sin promover UPCOMING | `useAccessStatus`, servidor existente sin cambios | `home-event.test.tsx`, `event-countdown.test.tsx`, `home-event.spec.ts`: límites, pestaña suspendida y actualización de horarios |

@@ -473,7 +473,7 @@ describe('portada de la competencia', () => {
         formConfig={formConfig}
       />,
     )
-    expect(screen.getByText(/Es tu turno/u)).toBeInTheDocument()
+    expect(screen.getByText(/Ya podés jugar/u)).toBeInTheDocument()
     expect(screen.getByTestId('play')).toBeInTheDocument()
   })
 

@@ -59,9 +59,20 @@ portada autorizada para TASK-A, no un cambio del viewport de juego. El formulari
 y la partida conservan `max-w-viewport` (412 px).
 
 El ajuste de Home autorizado el 23/09 muestra la ilustración a todo el ancho de
-ambas columnas. El reloj precede al CTA de juego en móvil y lo acompaña en
-escritorio, en papel hundido con filetes
-de tinta y cifras `text-countdown` fluidas. Las cifras cambian sin fundido: un
+ambas columnas. El bloque de acceso abierto reúne estado, acción y reloj sobre
+superficie blanca con filete superior verde escolar. «Ya podés jugar» explicita
+la disponibilidad; el único primario lima usa `text-data-lg` en teléfono y
+`text-section` desde 640 px, con altura mínima de 72/80 px respectivamente.
+En móvil y tablet vertical, el orden es estado y sesión, Jugar, contador y
+Practicar secundario. Desde 1024 px, acceso y reloj comparten dos columnas;
+así la tablet vertical no comprime las cifras ni los textos de sesión.
+El contador conserva las cuatro unidades, cifras `text-countdown` fluidas y
+la fecha absoluta en hora argentina. «Tiempo que queda para jugar» e icono de
+reloj acompañan el tinte verde escolar; durante la última hora, el tinte rojo
+y «Última hora para jugar» / «Últimos minutos para jugar» refuerzan la urgencia.
+La lima permanece exclusiva del botón. La espera de apertura conserva papel
+hundido y «Empieza en» para diferenciarla de la ventana jugable.
+Las cifras cambian sin fundido: un
 pop por segundo era movimiento continuo y su opacidad a mitad de camino dejaba la
 cifra en gris (un escaneo de contraste la medía en 2,6:1). La urgencia escrita y
 el rojo siguen dependiendo del tiempo real restante. El contador permanece visible sin botón para ocultarlo

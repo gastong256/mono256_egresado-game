@@ -17,6 +17,7 @@ import { BrandLogo, Button, Callout, Eyebrow } from '@/components/ui'
 import { IdentityForm } from './identity-form'
 import { Leaderboard } from './leaderboard'
 import { EventCountdown, eventDeadline } from './event-countdown'
+import { useAccessStatus } from './use-access-status'
 import { GameModeSummary } from './game-mode-summary'
 import { HomeHero } from './home-hero'
 import { cn } from '@/lib/ui/cn'
@@ -111,6 +112,7 @@ export function CompetitionExperience({
   readonly formConfig: IdentityFormConfig | undefined
 }) {
   const [state, setState] = useState(initialState)
+  const accessStatus = useAccessStatus(state.competition)
   const [screen, setScreen] = useState<Screen>({ kind: 'landing' })
   const [pending, setPending] = useState(false)
   const [error, setError] = useState<string | undefined>(undefined)
@@ -252,8 +254,9 @@ export function CompetitionExperience({
   }
 
   const { competition, you } = state
-  const open = competition.status === 'open'
-  const hasCountdown = eventDeadline(competition) !== undefined
+  const accessCompetition = { ...competition, status: accessStatus }
+  const open = accessStatus === 'open'
+  const hasCountdown = eventDeadline(accessCompetition) !== undefined
 
   return (
     <div className="px-gutter pb-safe mx-auto min-h-dvh w-full py-4 sm:py-8">
@@ -292,8 +295,8 @@ export function CompetitionExperience({
           ) : (
             <>
               {/*
-                Marca y presentación comparten una fila. Debajo, reloj y
-                acceso se equilibran; móvil conserva el orden de lectura.
+                Marca y presentación comparten una fila. El bloque de acceso pone
+                primero la acción; el reloj acompaña y conserva sus cifras.
               */}
               <div className="flex flex-col gap-6 pb-6 sm:gap-8 sm:pb-8">
                 <header
@@ -344,19 +347,16 @@ export function CompetitionExperience({
                 </header>
                 <section
                   className={cn(
-                    'grid min-w-0 gap-4',
-                    hasCountdown && 'md:grid-cols-2 md:gap-x-8',
+                    'grid min-w-0 gap-5',
+                    open &&
+                      'border-rule border-t-green bg-surface border border-t-[3px] p-3 sm:p-6',
+                    hasCountdown && 'lg:grid-cols-2 lg:gap-x-6',
                   )}
                   aria-label="Estado y acceso a la competencia"
                   data-testid="home-access"
                 >
-                  <div
-                    className={cn(
-                      'flex min-w-0 flex-col gap-3',
-                      hasCountdown && 'md:col-start-2 md:row-start-1',
-                    )}
-                  >
-                    <CompetitionStatusNote status={competition.status} />
+                  <div className="flex min-w-0 flex-col gap-4">
+                    <CompetitionStatusNote status={accessStatus} />
                     {error === undefined ? null : (
                       <Callout tone="accent" title="No pudimos continuar">
                         {error}
@@ -377,28 +377,11 @@ export function CompetitionExperience({
                         </p>
                       </div>
                     )}
-                  </div>
-                  {hasCountdown ? (
-                    <div className="min-w-0 md:col-start-1 md:row-span-2 md:row-start-1">
-                      <EventCountdown
-                        competition={competition}
-                        onElapsed={() => {
-                          void refresh()
-                        }}
-                      />
-                    </div>
-                  ) : null}
-                  <div
-                    className={cn(
-                      'flex min-w-0 flex-col gap-3',
-                      hasCountdown && 'md:col-start-2 md:row-start-2',
-                    )}
-                  >
                     {open ? (
                       <Button
                         // El único lima de la portada entra con el pop de
                         // resolución: es la acción de la pantalla y se nota.
-                        className="group motion-resolve min-h-16 justify-between px-5 hover:-translate-y-px motion-reduce:transform-none"
+                        className="group motion-resolve text-data-lg sm:text-section min-h-18 justify-between gap-3 px-3 text-left sm:min-h-20 sm:px-5"
                         disabled={
                           pending ||
                           (you === undefined && formConfig === undefined)
@@ -423,31 +406,53 @@ export function CompetitionExperience({
                               : 'Jugar ahora'}
                         <span
                           aria-hidden="true"
-                          className="text-section group-hover:translate-x-1 motion-reduce:transform-none"
+                          className="text-display shrink-0 group-hover:translate-x-1 motion-reduce:transform-none"
                         >
                           →
                         </span>
                       </Button>
                     ) : null}
+                  </div>
+                  {hasCountdown ? (
+                    <div className="flex min-w-0 flex-col">
+                      <EventCountdown
+                        competition={accessCompetition}
+                        onElapsed={refresh}
+                      />
+                    </div>
+                  ) : null}
+                  <div
+                    className={cn(
+                      'flex min-w-0 flex-col gap-3',
+                      hasCountdown && 'lg:col-span-2',
+                    )}
+                  >
                     {/*
                     Sin competencia abierta, practicar es lo único que se puede
                     jugar: toma el lugar del primario. Abierta, vuelve a ser un
                     botón secundario debajo del lima. Cerrada, los resultados ya
                     están en la página y un enlace lleva hasta ellos.
                   */}
-                    <Link
-                      href="/test"
-                      prefetch={false}
-                      {...(open ? {} : { 'data-primary': 'true' })}
-                      className={
-                        open
-                          ? 'text-action font-display border-ink text-ink hover:bg-canvas-sunken motion-select inline-flex min-h-11 items-center justify-center self-start border-[1.5px] px-5 uppercase'
-                          : 'text-action bg-action text-on-action hover:bg-action-hover motion-resolve inline-flex min-h-[50px] w-full items-center justify-center px-6 uppercase'
-                      }
-                    >
-                      Practicar
-                    </Link>
-                    {competition.status === 'closed' ? (
+                    <div className="flex flex-wrap items-center gap-3">
+                      <Link
+                        href="/test"
+                        prefetch={false}
+                        {...(open ? {} : { 'data-primary': 'true' })}
+                        className={
+                          open
+                            ? 'text-action font-display border-ink text-ink hover:bg-canvas-sunken motion-select inline-flex min-h-11 items-center justify-center self-start border-[1.5px] px-5 uppercase'
+                            : 'text-action bg-action text-on-action hover:bg-action-hover motion-resolve inline-flex min-h-[50px] w-full items-center justify-center px-6 uppercase'
+                        }
+                      >
+                        Practicar
+                      </Link>
+                      {open ? (
+                        <p className="text-caption text-ink-secondary">
+                          Para conocer el juego.
+                        </p>
+                      ) : null}
+                    </div>
+                    {accessStatus === 'closed' ? (
                       <a
                         href="#ranking-heading"
                         className="text-action border-ink text-ink hover:bg-canvas-sunken inline-flex min-h-[46px] w-full items-center justify-center border-[1.5px] px-5 uppercase"
@@ -517,8 +522,18 @@ function CompetitionStatusNote({
       </Callout>
     )
   return (
-    <div className="border-ink flex flex-col gap-2 border-t-2 pt-3">
-      <p className="text-label font-display text-ink-label uppercase">
+    <div
+      className={cn(
+        'flex flex-col gap-3',
+        status !== 'open' && 'border-ink border-t-2 pt-3',
+      )}
+    >
+      <p
+        className={cn(
+          'text-label font-display uppercase',
+          status === 'open' ? 'text-green' : 'text-ink-label',
+        )}
+      >
         {status === 'open' ? (
           <>
             <span className="text-green" aria-hidden="true">
@@ -532,9 +547,14 @@ function CompetitionStatusNote({
           '■ Competencia cerrada'
         )}
       </p>
-      <h2 className="text-title font-display text-ink">
+      <h2
+        className={cn(
+          'font-display text-ink',
+          status === 'open' ? 'text-display' : 'text-title',
+        )}
+      >
         {status === 'open'
-          ? 'Es tu turno'
+          ? 'Ya podés jugar'
           : status === 'upcoming'
             ? 'Preparate para jugar'
             : 'Así terminó la competencia'}

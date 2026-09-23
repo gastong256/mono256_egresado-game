@@ -93,6 +93,9 @@ const PAIRS = [
   [4.5, 'ink-secondary', 'green-tint'],
   [4.5, 'ink', 'green-tint'],
   [3, 'green', 'green-tint'],
+  // Reloj del Home durante la última hora: urgencia escrita sobre tinte rojo.
+  [4.5, 'red', 'red-tint'],
+  [4.5, 'ink-secondary', 'red-tint'],
 
   // Medallas del Home: numeral y contorno en metal oscuro sobre tinte mate.
   [4.5, 'podium-gold', 'podium-gold-surface'],

@@ -41,16 +41,19 @@ const URGENCY_LABEL: Readonly<
     { readonly opening: string; readonly closing: string }
   >
 > = {
-  calm: { opening: 'Empieza en', closing: 'Cierra en' },
+  calm: { opening: 'Empieza en', closing: 'Tiempo que queda para jugar' },
   near: {
     opening: 'Empieza en menos de un día',
-    closing: 'Cierra en menos de un día',
+    closing: 'Menos de un día para jugar',
   },
   high: {
     opening: 'Empieza en menos de una hora',
-    closing: 'Cierra en menos de una hora',
+    closing: 'Última hora para jugar',
   },
-  critical: { opening: 'Empieza en minutos', closing: 'Últimos minutos' },
+  critical: {
+    opening: 'Empieza en minutos',
+    closing: 'Últimos minutos para jugar',
+  },
 }
 
 export function formatEventDate(value: string): string {
@@ -110,6 +113,7 @@ export function EventCountdown({
   if (deadline === undefined) return null
   const opening = competition.status === 'upcoming'
   const urgency = remaining === undefined ? 'calm' : countdownUrgency(remaining)
+  const urgent = urgency === 'high' || urgency === 'critical'
   const values =
     remaining === undefined
       ? undefined
@@ -122,25 +126,42 @@ export function EventCountdown({
 
   return (
     <div
-      className="border-ink bg-canvas-sunken @container flex min-w-0 flex-col gap-3 border-y-2 px-3 py-4 sm:px-4"
+      className={cn(
+        '@container flex min-w-0 flex-1 flex-col justify-center gap-3 px-2 py-4 sm:px-4',
+        opening
+          ? 'border-ink bg-canvas-sunken border-y-2'
+          : urgent
+            ? 'bg-red-tint'
+            : 'bg-green-tint',
+      )}
       data-testid="event-countdown"
       data-urgency={urgency}
     >
       <p
         className={cn(
-          'text-goal font-display',
-          urgency === 'high' || urgency === 'critical'
-            ? 'text-red'
-            : 'text-ink-label',
+          'text-goal font-display flex items-start gap-2',
+          urgent ? 'text-red' : opening ? 'text-ink-label' : 'text-green-deep',
         )}
       >
+        <svg
+          viewBox="0 0 24 24"
+          className="h-5 w-5 shrink-0"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={1.8}
+          aria-hidden="true"
+          focusable="false"
+        >
+          <circle cx="12" cy="12" r="9" />
+          <path d="M12 6v6l4 2" />
+        </svg>
         {opening
           ? URGENCY_LABEL[urgency].opening
           : URGENCY_LABEL[urgency].closing}
       </p>
       {remaining !== 0 ? (
         <div
-          className="grid grid-cols-4 gap-2"
+          className="grid grid-cols-4 gap-1 sm:gap-2"
           aria-hidden="true"
           data-testid="countdown-digits"
         >
@@ -176,9 +197,9 @@ export function EventCountdown({
                   minimumIntegerDigits: 2,
                 }) ?? '—'}
               </span>
-              {/* Tracking más corto que el de una etiqueta suelta: «HORAS»
-                  con 0,13 em no entra en la celda de una hoja de 320 px. */}
-              <span className="text-label font-display text-ink-label mt-2 tracking-[0.08em] uppercase">
+              {/* Sin espaciado extra en teléfono: «HORAS» debe entrar también
+                  dentro del bloque de acceso a 320 px, sin recortar texto. */}
+              <span className="text-label font-display text-ink-label mt-2 tracking-normal uppercase sm:tracking-[0.08em]">
                 {label}
               </span>
             </div>
@@ -194,13 +215,8 @@ export function EventCountdown({
           competencia.
         </p>
       ) : null}
-      {!opening && remaining !== 0 ? (
-        <p className="text-meta text-ink">
-          Queda tiempo para jugar y superarte.
-        </p>
-      ) : null}
       <p className="text-caption text-ink-secondary">
-        {opening ? 'Apertura' : 'Cierre'}:{' '}
+        {opening ? 'Apertura' : 'Cierre de la competencia'}:{' '}
         <time dateTime={deadline}>{formatEventDate(deadline)}</time> (hora
         argentina, UTC−3).
       </p>

@@ -58,7 +58,7 @@ describe('urgencia del reloj', () => {
       'data-urgency',
       'critical',
     )
-    expect(screen.getByText('Últimos minutos')).toBeInTheDocument()
+    expect(screen.getByText('Últimos minutos para jugar')).toBeInTheDocument()
     cleanup()
     const today = new Date(start + 2 * 3600_000).toISOString()
     render(
@@ -106,7 +106,7 @@ describe('countdown del evento', () => {
       />,
     )
     tick()
-    expect(screen.getByText('Cierra en')).toBeInTheDocument()
+    expect(screen.getByText('Tiempo que queda para jugar')).toBeInTheDocument()
     expect(screen.getByTestId('event-countdown')).toHaveAttribute(
       'data-urgency',
       'calm',

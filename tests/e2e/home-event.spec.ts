@@ -26,7 +26,8 @@ function fixture(
     competition: {
       name: 'Feria de prueba',
       status,
-      opensAt: '2026-10-02T12:00:00Z',
+      opensAt:
+        status === 'upcoming' ? '2026-10-02T12:00:00Z' : '2026-09-30T12:00:00Z',
       closesAt: '2026-10-03T12:00:00Z',
     },
     leaderboard: [
@@ -77,14 +78,14 @@ async function showState(page: Page, state: PublicCompetitionState) {
   await page.clock.runFor(20_000)
   await expect(
     page
-      .getByText('Es tu turno')
+      .getByText('Ya podés jugar')
       .or(page.getByText('Preparate para jugar'))
       .or(page.getByText('Así terminó la competencia')),
   ).toBeVisible()
   await page.clock.runFor(1000)
 }
 
-for (const width of [320, 360, 390, 412, 768, 1280, 1920]) {
+for (const width of [320, 360, 390, 412, 768, 1024, 1280, 1920]) {
   test(`home a ${width}px: CTA, reloj, empates, puesto propio y footer sin overflow`, async ({
     page,
   }, info) => {
@@ -93,17 +94,37 @@ for (const width of [320, 360, 390, 412, 768, 1280, 1920]) {
     await expectTitleWithinColumn(page)
     await expect(page.getByTestId('play')).toHaveText(/Jugar de nuevo/u)
     await expect(page.getByTestId('countdown-digits')).toBeVisible()
-    // La ilustración usa el ancho de ambas columnas, y el reloj precede al CTA.
+    // La ilustración conserva su ancho; el acceso prioriza jugar antes del reloj.
     const hero = await page.getByTestId('home-hero').boundingBox()
     const main = await page.getByRole('main').boundingBox()
     expect(hero!.width / main!.width).toBeGreaterThan(0.78)
     const countdown = await page.getByTestId('event-countdown').boundingBox()
     const play = await page.getByTestId('play').boundingBox()
-    if (width < 768) {
-      expect(countdown!.y + countdown!.height).toBeLessThanOrEqual(play!.y)
+    if (width < 1024) {
+      expect(play!.y + play!.height).toBeLessThanOrEqual(countdown!.y)
     } else {
-      expect(countdown!.x + countdown!.width).toBeLessThanOrEqual(play!.x)
+      expect(play!.x + play!.width).toBeLessThanOrEqual(countdown!.x)
     }
+    // Layout height excludes the brief entrance transform.
+    expect(
+      await page
+        .getByTestId('play')
+        .evaluate((node) => (node as HTMLButtonElement).offsetHeight),
+    ).toBeGreaterThanOrEqual(width < 640 ? 72 : 80)
+    await expect(page.getByText('Tiempo que queda para jugar')).toBeVisible()
+    const practice = await page
+      .getByRole('link', { name: 'Practicar' })
+      .boundingBox()
+    expect(countdown!.y + countdown!.height).toBeLessThanOrEqual(practice!.y)
+    expect(
+      await page
+        .getByTestId('home-access')
+        .evaluate((element) =>
+          [...element.querySelectorAll<HTMLElement>('*')].every(
+            (node) => node.scrollWidth <= node.clientWidth + 1,
+          ),
+        ),
+    ).toBe(true)
     const introduction = await page
       .getByTestId('home-introduction')
       .boundingBox()
@@ -271,6 +292,28 @@ test('UPCOMING no ofrece jugar; CLOSED publica resultados sin contador ni CTA', 
   ).toBeVisible()
   await expect(page.getByTestId('event-countdown')).toHaveCount(0)
   await expect(page.getByTestId('play')).toHaveCount(0)
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
+})
+
+test('el acceso sólo anuncia abierto dentro del horario, con CTA visible antes de scrollear', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 360, height: 740 })
+  const state = {
+    ...fixture(),
+    you: undefined,
+    competition: { ...fixture().competition, opensAt: '2026-10-01T12:01:00Z' },
+  }
+  await showState(page, state)
+  await expect(page.getByTestId('play')).toHaveCount(0)
+  await expect(page.getByText(/^Empieza en/u)).toBeVisible()
+  await page.clock.runFor(40_000)
+  await expect(page.getByText('Ya podés jugar')).toBeVisible()
+  const play = page.getByTestId('play')
+  await expect(play).toHaveText(/Jugar ahora/u)
+  const box = (await play.boundingBox())!
+  expect(box.y + box.height).toBeLessThanOrEqual(740)
+  await expect(page.getByTestId('countdown-digits')).toBeVisible()
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
 })
 
