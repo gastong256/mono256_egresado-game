@@ -102,6 +102,13 @@ el máximo de FairScore.
 ## FR-004 Presentación de etapa
 El jugador debe conocer siempre la etapa escolar actual.
 
+Las aperturas y otros interludios narrativos de cada año se acompañan con una
+lámina decorativa de objetos a lápiz sobre papel amarillo; el egreso tiene una
+versión compacta con birrete y diploma. No agregan pasos ni esperas, no comunican
+consignas o resultados y no bloquean el juego si falla su carga. Título, prosa,
+etapa y botón siguen disponibles como texto. Dirección y presupuesto en
+[assets del sistema](../09-design-system/assets.md).
+
 ## FR-005 Resolución de desafíos
 El sistema debe soportar los [cinco motores reutilizables](../01-game-design/challenge-system.md#cinco-motores-reutilizables-de-interacción-v1)
 y sus modos. No se confunden con kinds técnicos actuales; todo input esencial

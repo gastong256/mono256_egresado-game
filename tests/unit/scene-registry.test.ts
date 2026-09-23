@@ -13,6 +13,7 @@ import { createFullCareerDependencies } from '@/content/full-career'
 import { GRADE_7_HOSTABLE_TEMPLATES } from '@/content/grade-7/composition'
 import { materializeVariant } from '@/game/testing'
 import type { ChallengeDefinition, PublicChallengeView } from '@/game'
+import { MILESTONE_ARTWORK } from '@/components/game/milestone-artwork'
 
 /**
  * El registro de escenas contra el catálogo real.
@@ -53,6 +54,20 @@ function viewFor(template: ChallengeDefinition): PublicChallengeView {
 const SCENE_BUDGET_BYTES = 250_000
 
 describe('scene registry', () => {
+  it('serves separate lightweight WebP artwork for every year and graduation', () => {
+    const stages = createFullCareerDependencies().ruleset.stages
+    for (const stage of stages) {
+      expect(MILESTONE_ARTWORK[stage.id]).toBeDefined()
+    }
+    const assets = Object.values(MILESTONE_ARTWORK)
+    expect(new Set(assets).size).toBe(7)
+    for (const src of assets) {
+      const bytes = readFileSync(path.join(process.cwd(), 'public', src))
+      expect(bytes.subarray(0, 4).toString('ascii')).toBe('RIFF')
+      expect(bytes.subarray(8, 12).toString('ascii')).toBe('WEBP')
+      expect(bytes.length, src).toBeLessThanOrEqual(150_000)
+    }
+  })
   it('covers every ordinary template the public career can compose', () => {
     const missing = catalog.templates
       .filter(isPublicOrdinary)

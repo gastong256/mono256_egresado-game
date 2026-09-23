@@ -5096,6 +5096,13 @@ el máximo de FairScore.
 ## FR-004 Presentación de etapa
 El jugador debe conocer siempre la etapa escolar actual.
 
+Las aperturas y otros interludios narrativos de cada año se acompañan con una
+lámina decorativa de objetos a lápiz sobre papel amarillo; el egreso tiene una
+versión compacta con birrete y diploma. No agregan pasos ni esperas, no comunican
+consignas o resultados y no bloquean el juego si falla su carga. Título, prosa,
+etapa y botón siguen disponibles como texto. Dirección y presupuesto en
+[assets del sistema](09-design-system/assets.md).
+
 ## FR-005 Resolución de desafíos
 El sistema debe soportar los [cinco motores reutilizables](01-game-design/challenge-system.md#cinco-motores-reutilizables-de-interacción-v1)
 y sus modos. No se confunden con kinds técnicos actuales; todo input esencial
@@ -5463,6 +5470,14 @@ Fuentes: [adjudicación](04-quality/mathematics-department-ai-adjudication.md),
 | FR-001: aviso v1 completo en `/privacidad`, footer y aceptación al iniciar | `PrivacyPolicy`, `IdentityForm`, `InstitutionalFooter`, `app/privacidad/page.tsx` | `competition-ui.test.tsx`, `privacy-page.test.tsx`, `privacy.spec.ts`, `competition.spec.ts`; integridad del aviso, footer fuera de las partidas, SSR sin JS, teclado/axe, campos conservados y rechazo API sin reconocimiento vigente |
 
 Decisiones y evidencia de TASK-A en el [plan vivo](06-delivery/rc3-release-closure.md).
+
+## Láminas narrativas — ampliación posterior al tag RC3
+
+Ampliación visual posterior al tag RC3: FR-004 compone las siete láminas de
+`milestone-artwork.ts` en `RunView` y `CareerEnding` mediante `SceneMedia`.
+Evidencia: `scene-registry.test.ts` (archivos/presupuesto), `game-shell.test.tsx`,
+`career-ending.test.tsx` y `full-career.spec.ts` (interludios de los seis años,
+reflow, teclado, accesibilidad, carga real y avance con imágenes bloqueadas).
 
 ## RC3 — práctica pública
 

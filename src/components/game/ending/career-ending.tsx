@@ -27,6 +27,8 @@ import type {
 import { ActionSlot, GameSheet, SceneColumn } from '../game-shell'
 import { Milestone as MilestoneFrame } from '../milestone'
 import { personalizedName } from '../progression-copy'
+import { SceneMedia } from '../scene-media'
+import { MILESTONE_ARTWORK } from '../milestone-artwork'
 import { AchievementCabinet } from './achievement-cabinet'
 import { CareerProfile } from './career-profile'
 import { CareerRecap } from './career-recap'
@@ -148,6 +150,12 @@ export function CareerEnding({
             </p>
           )}
         </MilestoneFrame>
+
+        <SceneMedia
+          src={MILESTONE_ARTWORK.graduation}
+          className="mx-auto max-w-[192px]"
+          sizes="192px"
+        />
 
         {/* 2 · El resultado del modo: puntaje, franja y puesto. */}
         {result.kind === 'competition' ? (

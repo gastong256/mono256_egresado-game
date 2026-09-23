@@ -7,7 +7,8 @@ import { cn } from '@/lib/ui/cn'
  *
  * Egresado es un juego cuya UI ya es su identidad visual: si una pantalla
  * funciona sin imagen, sale sin imagen. Como máximo una por situación ordinaria,
- * ninguna en un Repaso. El arte enriquece; nunca estructura.
+ * ninguna en un Repaso. Los interludios usan láminas de objetos a lápiz.
+ * El arte enriquece; nunca estructura.
  *
  * Todo el tratamiento vive acá y no se repite por pantalla: caja 16:9 en todos
  * los anchos, `object-fit: cover`, foco por `object-position`, filete de 1 px,
@@ -40,6 +41,7 @@ export function SceneMedia({
   src,
   alt = '',
   focus = 'center',
+  sizes = '(max-width: 412px) 100vw, 412px',
   className,
 }: {
   readonly src: string
@@ -47,6 +49,8 @@ export function SceneMedia({
   readonly alt?: string
   /** Punto focal, como `object-position`. */
   readonly focus?: 'left' | 'center' | 'right'
+  /** Ancho real si se compone una lámina compacta, como la del egreso. */
+  readonly sizes?: string
   readonly className?: string
 }) {
   return (
@@ -63,7 +67,7 @@ export function SceneMedia({
         fill
         // Una sola columna de 412 px en todos los breakpoints: pedir una imagen
         // más grande que eso es descargar píxeles que nadie va a ver.
-        sizes="(max-width: 412px) 100vw, 412px"
+        sizes={sizes}
         className={cn(
           'object-cover',
           focus === 'left' && 'object-left',

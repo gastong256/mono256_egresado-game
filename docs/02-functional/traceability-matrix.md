@@ -181,6 +181,14 @@ Fuentes: [adjudicación](../04-quality/mathematics-department-ai-adjudication.md
 
 Decisiones y evidencia de TASK-A en el [plan vivo](../06-delivery/rc3-release-closure.md).
 
+## Láminas narrativas — ampliación posterior al tag RC3
+
+Ampliación visual posterior al tag RC3: FR-004 compone las siete láminas de
+`milestone-artwork.ts` en `RunView` y `CareerEnding` mediante `SceneMedia`.
+Evidencia: `scene-registry.test.ts` (archivos/presupuesto), `game-shell.test.tsx`,
+`career-ending.test.tsx` y `full-career.spec.ts` (interludios de los seis años,
+reflow, teclado, accesibilidad, carga real y avance con imágenes bloqueadas).
+
 ## RC3 — práctica pública
 
 | Requisito | Implementación | Evidencia |

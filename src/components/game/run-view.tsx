@@ -39,6 +39,8 @@ import { FeedbackPanel } from './feedback-panel'
 import { ActionSlot, GameSheet, SceneColumn, StageHeader } from './game-shell'
 import { isDraftSubmittable } from './interaction-area'
 import { NarrativeCard } from './situation-card'
+import { SceneMedia } from './scene-media'
+import { MILESTONE_ARTWORK } from './milestone-artwork'
 import { OUTCOME } from './outcome'
 import {
   completesYear,
@@ -240,6 +242,7 @@ export function RunView({ controller, dependencies, nickname }: RunViewProps) {
             eyebrow={active.eyebrow}
             title={active.title}
             effects={<CareerChips change={active.careerChange} />}
+            media={<SceneMedia src={MILESTONE_ARTWORK[state.run.stage]} />}
           >
             {active.text}
           </NarrativeCard>

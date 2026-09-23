@@ -111,6 +111,11 @@ Todo el tratamiento de imagen vive acá y no se repite por pantalla: caja 16:9 e
 
 `ChallengeFrame` la monta **entre el título y la prosa** de la situación cuando el registro de presentación (`scene-registry.ts`) tiene una escena para la Template: primero se nombra el evento, después se ve el lugar, y recién entonces se lee lo que pasa, con prosa, datos y decisión contiguos. Un Repaso no la lleva. El `alt` es vacío por defecto porque el eyebrow, el título y la prosa ya sitúan la escena; se pasa texto sólo cuando la imagen dice algo que el texto no dice.
 
+En los interludios `NarrativeCard.media` compone la lámina de objetos de la etapa,
+después de la prosa. El egreso usa una lámina compacta de 192 px y el `sizes`
+correspondiente de `SceneMedia`. Son ilustraciones decorativas; no modifican el
+orden de acciones ni condicionan el avance a su carga. Ver [assets](assets.md).
+
 ## StageHeader: progreso de la etapa
 
 Las celdas cuentan la **etapa** que nombra el encabezado, con la duración del

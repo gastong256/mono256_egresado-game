@@ -91,6 +91,9 @@ describe('game shell', () => {
 
     expect(screen.getByTestId('stage-label')).toHaveTextContent('7.º grado')
     expect(screen.getByTestId('narrative-card')).toBeInTheDocument()
+    const artwork = screen.getByTestId('scene-media').querySelector('img')
+    expect(artwork?.getAttribute('src')).toContain('school.webp')
+    expect(artwork).toHaveAttribute('alt', '')
     // La tira de carrera arranca ausente: ninguna dimensión se tocó todavía, y
     // `null` no es 0.
     expect(screen.queryByTestId('career-strip')).not.toBeInTheDocument()

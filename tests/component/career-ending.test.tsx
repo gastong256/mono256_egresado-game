@@ -124,6 +124,10 @@ describe('el cierre de la carrera', () => {
       'Egresado',
     )
     expect(screen.getByTestId('graduated')).toHaveTextContent('Egresaste')
+    const artwork = screen.getByTestId('scene-media').querySelector('img')
+    expect(artwork?.getAttribute('src')).toContain('graduation.webp')
+    expect(artwork).toHaveAttribute('alt', '')
+    expect(artwork).toHaveAttribute('sizes', '192px')
     const graduated = screen.getByTestId('graduated')
     const score = screen.getByTestId('verified-fair-score')
     expect(
