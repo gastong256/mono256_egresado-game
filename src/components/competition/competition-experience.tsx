@@ -310,8 +310,24 @@ export function CompetitionExperience({
                       <BrandLogo size="event" />
                     </h1>
                   </div>
+                  {/*
+                    La promesa tiene dos tamaños. En un teléfono es una sola
+                    línea debajo de la marca: en tres renglones de 25 px más
+                    un párrafo, el estado de la competencia y el botón de
+                    jugar quedaban debajo del pliegue de una pantalla de
+                    360 × 740, y lo primero que alguien busca al abrir el
+                    enlace en la feria es si puede jugar ahora. Desde tablet
+                    hay ancho para la versión completa al lado de la marca.
+                  */}
                   <div className="flex min-w-0 flex-col gap-3">
-                    <p className="text-section font-display text-ink text-balance">
+                    <p
+                      className="text-goal font-display text-ink text-pretty md:hidden"
+                      data-testid="home-promise-compact"
+                    >
+                      Tu secundaria. Tus decisiones.{' '}
+                      <span className="text-green">Tu propia historia.</span>
+                    </p>
+                    <p className="text-section font-display text-ink hidden text-balance md:block">
                       Tu secundaria.
                       <br />
                       <span className="text-ink-secondary">
@@ -320,7 +336,7 @@ export function CompetitionExperience({
                       <br />
                       <span className="text-green">Tu propia historia.</span>
                     </p>
-                    <p className="text-body-lg text-ink-secondary max-w-viewport text-pretty">
+                    <p className="text-body-lg text-ink-secondary max-w-viewport hidden text-pretty md:block">
                       Del primer día a la graduación. Resolvé situaciones, hacé
                       equipo y descubrí hasta dónde podés llegar.
                     </p>

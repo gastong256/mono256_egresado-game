@@ -26,7 +26,13 @@ import { cn } from '@/lib/ui/cn'
 const button = cva(
   cn(
     'inline-flex items-center justify-center gap-2 border-0 text-center',
-    'font-display motion-select cursor-pointer',
+    // Sin `motion-select`: el botón cambia de color de golpe. Un fundido de
+    // deshabilitado a lima se puede ver a mitad de camino —un escaneo de
+    // contraste lo mide gris sobre pizarra un instante después de habilitarse—
+    // y no aporta nada: la lima aparece cuando la respuesta está completa, y
+    // ese momento tiene que leerse como un cambio de estado, no como una
+    // transición.
+    'font-display cursor-pointer',
     'disabled:cursor-not-allowed',
   ),
   {

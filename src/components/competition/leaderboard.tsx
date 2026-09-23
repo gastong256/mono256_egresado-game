@@ -1,3 +1,7 @@
+'use client'
+
+import { useState } from 'react'
+
 import type {
   PublicCompetitionStatus,
   PublicLeaderboardEntry,
@@ -7,6 +11,35 @@ import { cn } from '@/lib/ui/cn'
 import { RankingRunMetrics, RankingRunDetails } from './ranking-run-details'
 import { PodiumMedal } from './home-marks'
 import { RankingDeadlineNotice } from './ranking-deadline-notice'
+
+/**
+ * Cuántos puestos muestra un teléfono antes de pedir que se abra el resto.
+ *
+ * La ventana del servidor trae hasta doce filas, cada una con sus métricas y
+ * sus reconocimientos: en 360 px son más de dos mil píxeles de lista. El
+ * podio, los dos puestos siguientes y la fila propia con sus vecinas es lo
+ * que alguien mira de verdad; lo demás se abre con un toque. Desde tablet la
+ * lista se ve entera. Es sólo presentación: el DOM conserva las doce filas en
+ * el orden del servidor, y ningún puesto se recalcula.
+ */
+export const LEADING_ROWS_ON_PHONE = 5
+
+/** Filas que un teléfono muestra sin abrir la lista: podio y vecindad propia. */
+export function foldedRows(
+  entries: readonly PublicLeaderboardEntry[],
+): ReadonlySet<number> {
+  const shown = new Set<number>()
+  for (let index = 0; index < entries.length; index++) {
+    if (index < LEADING_ROWS_ON_PHONE) shown.add(index)
+  }
+  const own = entries.findIndex((entry) => entry.isYou)
+  if (own >= 0) {
+    for (const index of [own - 1, own, own + 1]) {
+      if (index >= 0 && index < entries.length) shown.add(index)
+    }
+  }
+  return shown
+}
 
 /** Render the bounded server window. Never recompute ranks or personal best. */
 export function Leaderboard({
@@ -25,6 +58,9 @@ export function Leaderboard({
   const closed = status === 'closed'
   const outsidePodium =
     you?.rank !== undefined && !entries.some((entry) => entry.isYou)
+  const [expanded, setExpanded] = useState(false)
+  const folded = foldedRows(entries)
+  const hiddenOnPhone = entries.length - folded.size
 
   return (
     <section
@@ -86,6 +122,12 @@ export function Leaderboard({
             <li
               key={`${entry.rank}-${entry.nickname}-${index}`}
               value={entry.rank}
+              // Plegada en teléfono hasta que se abra; siempre visible desde
+              // tablet. La fila sigue en el DOM en su lugar.
+              className={cn(
+                !expanded && !folded.has(index) && 'hidden md:block',
+              )}
+              data-folded={!expanded && !folded.has(index) ? 'true' : undefined}
             >
               {(entry.gapBefore ?? 0) > 0 ? (
                 <p className="text-caption text-ink-secondary bg-canvas-sunken px-4 py-3 text-center tabular-nums">
@@ -146,6 +188,20 @@ export function Leaderboard({
           ))}
         </ol>
       )}
+
+      {hiddenOnPhone > 0 && !expanded ? (
+        <button
+          type="button"
+          onClick={() => {
+            setExpanded(true)
+          }}
+          className="text-action font-display border-ink text-ink hover:bg-canvas-sunken inline-flex min-h-11 w-full items-center justify-center border-[1.5px] px-5 uppercase md:hidden"
+          data-testid="leaderboard-expand"
+        >
+          Ver {hiddenOnPhone.toLocaleString('es-AR')}{' '}
+          {hiddenOnPhone === 1 ? 'puesto más' : 'puestos más'}
+        </button>
+      ) : null}
 
       {outsidePodium && you !== undefined ? (
         <div

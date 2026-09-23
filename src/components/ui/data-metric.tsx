@@ -44,7 +44,14 @@ export function DataMetric({
         className,
       )}
     >
-      <span className="text-label font-display text-ink-label uppercase">
+      {/*
+        Tracking un punto más corto que el de una etiqueta suelta y, como
+        último recurso, corte dentro de la palabra: «RESPONDIERON» o
+        «DEDICATORIAS» en versalitas espaciadas no entran en la mitad de una
+        hoja de 320 px, y una etiqueta que asoma por fuera de su caja se lee
+        como un error de la pantalla.
+      */}
+      <span className="text-label font-display text-ink-label tracking-[0.1em] [overflow-wrap:anywhere] uppercase">
         {label}
       </span>
       <span
@@ -148,10 +155,18 @@ export function Ledger({
           key={item.label}
           className="bg-surface flex justify-between gap-3 px-[10px] py-2"
         >
-          <dt className="text-meta text-ink-secondary">{item.label}</dt>
+          {/*
+            La etiqueta conserva su ancho natural hasta la mitad del renglón y
+            es el valor el que se parte: «Aire arriba · 16 cm sobre el cartel»
+            se lee mejor con el valor en dos líneas alineadas a la derecha
+            que con la etiqueta rota en dos palabras sueltas.
+          */}
+          <dt className="text-meta text-ink-secondary max-w-[50%] shrink-0 [overflow-wrap:anywhere]">
+            {item.label}
+          </dt>
           <dd
             data-numeric
-            className="text-ledger font-display text-ink text-right"
+            className="text-ledger font-display text-ink min-w-0 flex-1 text-right"
           >
             {item.value}
           </dd>

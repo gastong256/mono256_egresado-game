@@ -206,6 +206,56 @@ for (const width of [320, 360, 390, 412, 768, 1280, 1920]) {
   })
 }
 
+test('en un teléfono la promesa es una línea y el ranking se pliega; en escritorio no', async ({
+  page,
+}) => {
+  const twelve = Array.from({ length: 12 }, (_, index) => ({
+    rank: index + 1,
+    nickname: `Alias${String(index + 1)}`,
+    fairScore: 10000 - index * 100,
+    isYou: index === 9,
+    summary: publicRunSummary,
+  }))
+  const state = {
+    ...fixture(),
+    leaderboard: twelve,
+    totalRanked: 40,
+    you: { ...fixture().you!, nickname: 'Alias10', rank: 10 },
+  }
+  await page.setViewportSize({ width: 360, height: 740 })
+  await showState(page, state)
+  await expect(page.getByTestId('home-promise-compact')).toBeVisible()
+  await expect(
+    page.getByText('Del primer día a la graduación', { exact: false }),
+  ).toBeHidden()
+  // Podio, dos puestos más y la vecindad propia (9, 10 y 11): ocho filas.
+  await expect(
+    page.locator('[data-testid="leaderboard-entry"]:visible'),
+  ).toHaveCount(8)
+  const expand = page.getByTestId('leaderboard-expand')
+  await expect(expand).toHaveText('Ver 4 puestos más')
+  await expand.click()
+  await expect(
+    page.locator('[data-testid="leaderboard-entry"]:visible'),
+  ).toHaveCount(12)
+  await expect(expand).toHaveCount(0)
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+  ).toBe(true)
+
+  await page.setViewportSize({ width: 1280, height: 900 })
+  await expect(page.getByTestId('home-promise-compact')).toBeHidden()
+  await expect(
+    page.getByText('Del primer día a la graduación', { exact: false }),
+  ).toBeVisible()
+  await expect(
+    page.locator('[data-testid="leaderboard-entry"]:visible'),
+  ).toHaveCount(12)
+  await expect(page.getByTestId('leaderboard-expand')).toHaveCount(0)
+})
+
 test('UPCOMING no ofrece jugar; CLOSED publica resultados sin contador ni CTA', async ({
   page,
 }) => {

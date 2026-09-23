@@ -83,7 +83,7 @@ export function RouteBuilder({
                 onChange={(event) => {
                   set(position, event.target.value)
                 }}
-                className="border-ink bg-surface text-ink text-meta block h-11 w-full border px-2"
+                className="border-ink bg-surface text-ink text-option font-display block h-11 w-full border px-2"
               >
                 <option value="">No ir</option>
                 {p.points

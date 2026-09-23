@@ -23,6 +23,36 @@ function estiloChipLabel(axis: EstiloAxis): string {
   return `${estiloAxisLabel(axis)} ↑`
 }
 
+/**
+ * El chip de Promedio, según lo que se ve.
+ *
+ * El motor informa el cambio con toda su precisión; la pantalla lo escribe
+ * con un decimal. Cuando los dos extremos se imprimen iguales, «9,6 → 9,6»
+ * anuncia un movimiento que nadie puede ver y se lee como un error: el chip
+ * dice que el promedio sigue donde estaba, en tono secundario, porque nada
+ * visible se movió.
+ */
+function promedioChip(
+  from: number | null,
+  to: number,
+): { key: string; tone: 'up' | 'down' | 'soft'; text: string } {
+  const after = formatPromedio(to)
+  // La primera nota no tiene «desde»: se escribe sola, sin una transición
+  // inventada desde un promedio que no existía.
+  if (from === null) {
+    return { key: 'promedio', tone: 'up', text: `Promedio ${after}` }
+  }
+  const before = formatPromedio(from)
+  if (before === after) {
+    return { key: 'promedio', tone: 'soft', text: `Promedio sigue en ${after}` }
+  }
+  return {
+    key: 'promedio',
+    tone: to >= from ? 'up' : 'down',
+    text: `Promedio ${before} → ${after}`,
+  }
+}
+
 export function CareerChips({
   change,
   className,
@@ -32,27 +62,12 @@ export function CareerChips({
 }) {
   const chips: readonly {
     key: string
-    tone: 'up' | 'down' | 'outline'
+    tone: 'up' | 'down' | 'outline' | 'soft'
     text: string
   }[] = [
     ...(change.promedio === undefined
       ? []
-      : [
-          {
-            key: 'promedio',
-            // La primera nota no tiene «desde»: se escribe sola, sin una
-            // transición inventada desde un promedio que no existía.
-            tone:
-              change.promedio.from === null ||
-              change.promedio.to >= change.promedio.from
-                ? ('up' as const)
-                : ('down' as const),
-            text:
-              change.promedio.from === null
-                ? `Promedio ${formatPromedio(change.promedio.to)}`
-                : `Promedio ${formatPromedio(change.promedio.from)} → ${formatPromedio(change.promedio.to)}`,
-          },
-        ]),
+      : [promedioChip(change.promedio.from, change.promedio.to)]),
     ...(change.equipo === undefined
       ? []
       : [

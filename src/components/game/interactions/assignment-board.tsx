@@ -115,7 +115,7 @@ export function AssignmentBoard({
                 onChange={(event) => {
                   assign(task.id, event.target.value)
                 }}
-                className="border-ink bg-surface text-ink text-meta mt-2 h-11 w-full border-[1.5px] px-2"
+                className="border-ink bg-surface text-ink text-option font-display mt-2 h-11 w-full border-[1.5px] px-2"
               >
                 <option value="">
                   {task.optional === true

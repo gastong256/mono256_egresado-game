@@ -62,9 +62,11 @@
   --action-disabled: var(--color-paper-grid);
   --on-action-disabled: var(--color-ink-500);
   /* El mismo botón dentro del bloque oscuro necesita su propio deshabilitado:
-     el gris de papel sobre pizarra desaparece. */
+     el gris de papel sobre pizarra desaparece. El texto va en el gris claro de
+     la pizarra y no en ceniza: «Confirmar» apagado sigue siendo una palabra que
+     se lee en un teléfono al sol (5,3:1), no una sombra de botón. */
   --action-disabled-dark: var(--color-slate-600);
-  --on-action-disabled-dark: var(--color-ash-400);
+  --on-action-disabled-dark: var(--color-slate-300);
 
   /* ---- Aura: verde brillante que vive SÓLO sobre negro ------------------ */
   --aura-bracket: var(--color-neon-500);

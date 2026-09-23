@@ -64,6 +64,8 @@ Cuatro magnitudes, todas sobre negro y todas con brackets. Nunca una barra, nunc
 
 Un chip por dimensión que se movió. La ausencia de una clave en el reporte del motor hace que el cero no sea representable — no es una regla que el componente tenga que recordar.
 
+El motor informa el Promedio con toda su precisión y la pantalla lo escribe con un decimal. Cuando los dos extremos se imprimen iguales, el chip dice «Promedio sigue en 9,6» en tono secundario: «9,6 → 9,6» anunciaba un movimiento que nadie podía ver.
+
 ## Milestone, ArchetypeStamp, MemorablePanel, Confetti
 
 El único momento del juego donde la marca sube el volumen, y por eso el único que usa el numeral de 66 px, el tilde grande, el sello rotado y el confeti. Si esa gramática apareciera en una pantalla de desafío, dejaría de significar «terminaste un año».

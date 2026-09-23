@@ -157,12 +157,16 @@ export function EventCountdown({
               )}
             >
               <span
-                key={values?.[index]}
                 className={cn(
-                  'text-countdown font-display text-ink tabular-nums motion-reduce:animate-none',
-                  // El pulso de los segundos hace visible el paso del tiempo.
-                  // La urgencia escrita y el rojo dependen del plazo real.
-                  !opening && index === 3 ? 'motion-resolve' : 'motion-enter',
+                  /*
+                    Las cifras cambian sin fundido. Un pop por segundo era
+                    movimiento continuo —lo que el sistema dice no tener— y
+                    su fundido de opacidad dejaba la cifra en gris a mitad
+                    de camino: un escaneo de contraste la medía en 2,6:1 y
+                    una persona la veía parpadear. El paso del tiempo ya lo
+                    muestra el número que cambia.
+                  */
+                  'text-countdown font-display text-ink tabular-nums',
                   (urgency === 'high' || urgency === 'critical') &&
                     index === 3 &&
                     'text-red',
@@ -172,7 +176,9 @@ export function EventCountdown({
                   minimumIntegerDigits: 2,
                 }) ?? '—'}
               </span>
-              <span className="text-label font-display text-ink-label mt-2 uppercase">
+              {/* Tracking más corto que el de una etiqueta suelta: «HORAS»
+                  con 0,13 em no entra en la celda de una hoja de 320 px. */}
+              <span className="text-label font-display text-ink-label mt-2 tracking-[0.08em] uppercase">
                 {label}
               </span>
             </div>

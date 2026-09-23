@@ -14,7 +14,7 @@
  * Dos objetos en la misma celda se escriben juntos; no se señalan como error.
  */
 
-import { useId } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 
 import type { InteractionPresentation, SpatialPlacement } from '@/game'
 import { cn } from '@/lib/ui/cn'
@@ -44,7 +44,31 @@ export function SpatialLayout({
   onChange,
 }: SpatialLayoutProps) {
   const prefix = useId()
+  const captionId = `${prefix}-caption`
   const singleRow = p.height === 1
+  const regionRef = useRef<HTMLDivElement>(null)
+  const [overflows, setOverflows] = useState(false)
+
+  /*
+   * Si el plano es más ancho que la pantalla, se avisa por escrito. Una
+   * cancha de doce celdas no entra en 320 px y la región scrollea sola, pero
+   * nada en un borde cortado dice «hay más a la derecha»: la frase lo dice.
+   * Se mide con `ResizeObserver` porque el ancho de la región cambia al girar
+   * el teléfono, y la observación se cierra con el componente.
+   */
+  useEffect(() => {
+    const region = regionRef.current
+    if (region === null || typeof ResizeObserver === 'undefined') return
+    const measure = () => {
+      setOverflows(region.scrollWidth > region.clientWidth + 1)
+    }
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(region)
+    return () => {
+      observer.disconnect()
+    }
+  }, [p.width])
 
   const set = (objectId: string, value: Partial<SpatialPlacement>) => {
     const before = placements.find((entry) => entry.objectId === objectId) ?? {
@@ -95,7 +119,19 @@ export function SpatialLayout({
     >
       <legend className="sr-only">Ubicá los objetos</legend>
       <p className="text-body text-ink-secondary">{p.instructions}</p>
+      {/*
+        La leyenda del plano vive fuera de la región que scrollea. Como
+        `<caption>` de la tabla se desplazaba con ella y en un teléfono se
+        cortaba a mitad de frase —«X crece hacia la de»—; acá se lee entera y
+        sigue nombrando a la tabla por `aria-describedby`.
+      */}
+      <p id={captionId} className="text-caption text-ink-secondary">
+        Cada celda mide {p.cellCentimeters} cm. X crece hacia la derecha
+        {singleRow ? '' : ' e Y hacia abajo'}, desde 0.
+        {overflows ? ' El plano se desliza hacia el costado.' : ''}
+      </p>
       <div
+        ref={regionRef}
         role="region"
         aria-label="Plano por coordenadas"
         tabIndex={0}
@@ -104,12 +140,13 @@ export function SpatialLayout({
         // scrollea horizontalmente en 320 px. La grilla necesita dos
         // dimensiones por significado; la página, no.
         className="relative max-w-full overflow-x-auto"
+        data-overflows={overflows ? 'true' : undefined}
       >
-        <table className="border-collapse tabular-nums">
-          <caption className="text-caption text-ink-secondary pb-2 text-left">
-            Cada celda mide {p.cellCentimeters} cm. X crece hacia la derecha
-            {singleRow ? '' : ' e Y hacia abajo'}, desde 0.
-          </caption>
+        <table
+          className="border-collapse tabular-nums"
+          aria-describedby={captionId}
+        >
+          <caption className="sr-only">Plano por coordenadas</caption>
           <thead>
             <tr>
               <th scope="col" className="text-caption text-ink-label px-1">
@@ -149,8 +186,10 @@ export function SpatialLayout({
                         // Varios objetos en una celda se escriben juntos, y esa
                         // cadena no puede ensanchar la celda: sin corte, su
                         // ancho mínimo infla la tabla y saca del viewport a la
-                        // pantalla entera en 360 px.
-                        'text-meta font-display size-9 min-w-9 border text-center break-all',
+                        // pantalla entera en 360 px. Dos marcas fijas —«pas» y
+                        // «pta»— van una debajo de la otra, enteras: partir
+                        // «pta» en «pt / a» no ayudaba a nadie a leer el plano.
+                        'text-meta font-display size-9 min-w-9 border text-center leading-none break-words whitespace-pre-line',
                         codes.length > 1
                           ? 'border-ink border-2'
                           : reserved
@@ -164,7 +203,7 @@ export function SpatialLayout({
                     >
                       {codes.length > 0
                         ? codes.join('+')
-                        : marks.map((mark) => mark.code).join(' ')}
+                        : marks.map((mark) => mark.code).join('\n')}
                       {codes.length === 0 && marks.length === 0 ? (
                         <span className="sr-only">libre</span>
                       ) : null}
@@ -250,7 +289,7 @@ export function SpatialLayout({
                     onChange={(event) => {
                       set(object.id, { [axis]: Number(event.target.value) })
                     }}
-                    className="border-ink bg-surface text-ink text-meta block h-11 w-full border px-2 tabular-nums"
+                    className="border-ink bg-surface text-ink text-option font-display block h-11 w-full border px-2 tabular-nums"
                   >
                     {Array.from(
                       { length: axis === 'x' ? p.width : p.height },
@@ -279,7 +318,7 @@ export function SpatialLayout({
                       rotation: event.target.value === '90' ? 90 : 0,
                     })
                   }}
-                  className="border-ink bg-surface text-ink text-meta block h-11 w-full border px-2"
+                  className="border-ink bg-surface text-ink text-option font-display block h-11 w-full border px-2"
                 >
                   <option value={0}>Horizontal · 0°</option>
                   <option value={90}>Girada · 90°</option>

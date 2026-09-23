@@ -8,10 +8,10 @@ Objetivo: WCAG 2.2 nivel AA. No es una certificación formal — es el estándar
 
 Existe porque «se ve oscuro» no es una medición. Nota histórica: en dos rondas anteriores del sistema el token de etiqueta falló AA a 4,1–4,4:1 pareciendo suficientemente gris. **El piso para texto de 9–11 px sobre papel no se aclara.**
 
-Dos pares están fuera de la lista a propósito, y conviene saber por qué:
+Un par está fuera de la lista a propósito y otro se mide por encima de lo que la norma exige; conviene saber por qué:
 
 - la **celda de progreso pendiente** y el **triángulo de referencia** son andamiaje. No portan información que no esté también escrita —«Evento 3 de 7» y los tres porcentajes del label—, y los estados que sí informan se distinguen por forma. Subirles el contraste las convertiría en ruido que compite con el dato.
-- el **primario deshabilitado** sobre pizarra se mide contra el piso no textual de 3:1 y no contra 4,5: WCAG 2.2 exime a los controles inactivos (SC 1.4.3, «Incidental»). Y el disabled nunca es la única explicación.
+- el **primario deshabilitado** sobre pizarra se mide contra 4,5:1 aunque WCAG 2.2 exima a los controles inactivos (SC 1.4.3, «Incidental»): «Confirmar» apagado es lo primero que se ve al entrar a una decisión en un teléfono, y una palabra que apenas se adivina se lee como un error de la pantalla. Y el disabled nunca es la única explicación.
 
 ## Nada se distingue sólo por color
 
@@ -52,6 +52,12 @@ El orden es: **HTML nativo → primitiva accesible headless → ARIA a mano**, e
 **Toda interacción de arrastre tiene ruta alternativa.** El tablero de asignación usa `select` nativos como vía principal; el arrastre sería una mejora encima del mismo estado. Es un requisito duro, no una preferencia.
 
 Una región que scrollea horizontalmente tiene que ser alcanzable con el teclado: sin `tabIndex` nadie que no use un puntero llega a su mitad derecha.
+
+## Texto que no se sale de su caja
+
+El scroll horizontal del documento no ve todo. Una etiqueta de opción comprimida a una columna de una palabra por renglón, o un nombre de ítem que asoma por fuera de su fila, no ensanchan la página y pasan un chequeo de `scrollWidth`. Por eso las auditorías de navegador de 1.º y de 5.º buscan además cualquier elemento con texto propio cuyo contenido sea más ancho que su caja sin nada que lo recorte, y fallan si aparece uno. Las dos causas conocidas —el detalle de una opción robándole la fila a la etiqueta y el selector de cantidad aplastando el nombre del ítem— se resolvieron dándole a la etiqueta un ancho mínimo de 9 rem antes de ceder.
+
+Los `select` de las interacciones van en 16 px: por debajo de eso, Safari en iPhone amplía la página al enfocar el control, y la partida queda con zoom hasta que alguien lo deshace con los dedos.
 
 ## Reflow, movimiento e idioma
 

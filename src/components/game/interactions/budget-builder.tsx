@@ -111,7 +111,13 @@ export function QuantityBuilder({
               data-chosen={quantity > 0}
               className="bg-surface border-rule data-[chosen=true]:border-ink flex flex-wrap items-center justify-between gap-3 border p-3 data-[chosen=true]:border-[1.5px]"
             >
-              <label htmlFor={fieldId} className="min-w-0 flex-1">
+              {/*
+                La etiqueta pide nueve rem antes de compartir la fila con el
+                selector: en un teléfono los tres controles de 44 px bajan a
+                su propio renglón, a la derecha, y el nombre del ítem se lee
+                entero en vez de romperse en una columna de una palabra.
+              */}
+              <label htmlFor={fieldId} className="min-w-0 flex-[1_1_9rem]">
                 <span className="text-goal font-display text-ink block">
                   {item.code === undefined ? null : (
                     <span
@@ -138,6 +144,7 @@ export function QuantityBuilder({
                 valueLabel={`Cantidad de ${item.label}`}
                 decreaseLabel={`Quitar uno de ${item.label}`}
                 increaseLabel={`Agregar uno de ${item.label}`}
+                className="ml-auto"
                 onChange={(next) => {
                   setQuantity(item.id, next, item.maxQuantity)
                 }}

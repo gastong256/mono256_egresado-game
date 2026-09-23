@@ -33,6 +33,43 @@ afterEach(() => {
   vi.unstubAllGlobals()
 })
 
+describe('ranking plegado en teléfono', () => {
+  const twelve = Array.from({ length: 12 }, (_, index) =>
+    entry(index + 1, `Alias${String(index + 1)}`, index === 9),
+  )
+
+  it('muestra el podio, los dos siguientes y la vecindad propia; el resto se abre con un toque', async () => {
+    render(
+      <Leaderboard entries={twelve} you={{ ...you, rank: 10 }} total={40} />,
+    )
+    const rows = screen.getAllByTestId('leaderboard-entry')
+    // El DOM conserva las doce filas en el orden del servidor.
+    expect(rows).toHaveLength(12)
+    const folded = (index: number) =>
+      rows[index]!.closest('li')!.getAttribute('data-folded') === 'true'
+    for (const index of [0, 1, 2, 3, 4]) expect(folded(index)).toBe(false)
+    for (const index of [5, 6, 7]) expect(folded(index)).toBe(true)
+    // La fila propia y sus vecinas se ven sin abrir la lista.
+    for (const index of [8, 9, 10]) expect(folded(index)).toBe(false)
+    expect(folded(11)).toBe(true)
+
+    const expand = screen.getByTestId('leaderboard-expand')
+    expect(expand).toHaveTextContent('Ver 4 puestos más')
+    await act(async () => {
+      expand.click()
+    })
+    expect(screen.queryByTestId('leaderboard-expand')).not.toBeInTheDocument()
+    for (const index of [5, 6, 7, 11]) expect(folded(index)).toBe(false)
+  })
+
+  it('no ofrece abrir nada cuando todo entra', () => {
+    render(
+      <Leaderboard entries={twelve.slice(0, 5)} you={undefined} total={5} />,
+    )
+    expect(screen.queryByTestId('leaderboard-expand')).not.toBeInTheDocument()
+  })
+})
+
 describe('podio por puestos', () => {
   it('representa empates completos sin inventar puestos omitidos', () => {
     render(

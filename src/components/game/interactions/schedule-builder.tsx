@@ -118,7 +118,7 @@ export function ScheduleBuilder({
                       ],
                 )
               }}
-              className="border-ink bg-surface text-ink text-meta mt-2 h-11 w-full border-[1.5px] px-2 tabular-nums"
+              className="border-ink bg-surface text-ink text-option font-display mt-2 h-11 w-full border-[1.5px] px-2 tabular-nums"
             >
               <option value="">
                 {activity.optional
@@ -174,6 +174,12 @@ const MINUTES_PER_ROW = 5
  *
  * Decorativa para la tecnología de asistencia: la misma información está en la
  * lista «Agenda elegida», escrita, y en los campos de inicio.
+ *
+ * Cada fila mide 10 px: una tarde de seis horas son 72 filas, y a 14 px por
+ * fila el dibujo costaba mil píxeles de scroll en un teléfono para mostrar
+ * cuatro bloques. Los rótulos de los bloques van en 10 px y se parten por
+ * donde haga falta en vez de recortarse: un bloque de diez minutos —dos
+ * filas— muestra la hora y la primera palabra, y el resto está en la lista.
  */
 function AfternoonView({
   activities,
@@ -243,7 +249,7 @@ function AfternoonView({
         className="border-rule bg-canvas grid border"
         style={{
           gridTemplateColumns: `3rem repeat(${String(places.length * 2)}, minmax(0, 1fr))`,
-          gridTemplateRows: `auto repeat(${String(rows)}, 0.875rem)`,
+          gridTemplateRows: `auto repeat(${String(rows)}, 0.625rem)`,
         }}
       >
         <span className="text-caption text-ink-label px-1" />
@@ -268,7 +274,7 @@ function AfternoonView({
         {blocks.map((block) => (
           <span
             key={block.key}
-            className="border-ink bg-surface text-caption text-ink overflow-hidden border px-1 leading-tight"
+            className="border-ink bg-surface text-ink overflow-hidden border px-1 text-[10px] leading-none font-semibold [overflow-wrap:anywhere]"
             style={{
               gridColumn: `${String(block.column)} / span ${String(block.span)}`,
               gridRow: `${String(block.rowStart + 1)} / span ${String(block.rowSpan)}`,
@@ -374,7 +380,7 @@ function WeekView({
         {blocks.map((block) => (
           <span
             key={block.key}
-            className="border-ink bg-surface text-caption text-ink overflow-hidden border px-1 leading-tight"
+            className="border-ink bg-surface text-ink overflow-hidden border px-1 text-[10px] leading-none font-semibold [overflow-wrap:anywhere]"
             style={{
               gridColumn: `${String(block.column)}`,
               gridRow: `${String(block.rowStart + 1)} / span ${String(block.rowSpan)}`,

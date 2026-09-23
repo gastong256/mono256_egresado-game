@@ -120,11 +120,14 @@ const PAIRS = [
   [4.5, 'on-decision-muted', 'decision-raised'],
   /*
     El primario deshabilitado dentro del bloque oscuro. WCAG 2.2 exime a los
-    controles inactivos del mínimo de texto (SC 1.4.3, «Incidental»), así que
-    acá se sostiene el piso no textual de 3:1 en lugar de 4,5. El disabled nunca
-    es la única explicación: la línea de consigna dice qué falta.
+    controles inactivos del mínimo de texto (SC 1.4.3, «Incidental»), pero el
+    par se mide igual contra 4,5: el botón apagado es lo primero que se ve al
+    entrar a una decisión en un teléfono, y una palabra que apenas se adivina
+    sobre la pizarra se lee como un error de la pantalla, no como un estado.
+    El disabled nunca es la única explicación: la línea de consigna dice qué
+    falta.
   */
-  [3, 'on-action-disabled-dark', 'action-disabled-dark'],
+  [4.5, 'on-action-disabled-dark', 'action-disabled-dark'],
   [4.5, 'on-selected-box', 'selected-box'],
 
   // Aura, la única isla negra. Su verde sobre papel fallaría, y por eso la

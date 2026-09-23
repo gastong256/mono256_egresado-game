@@ -28,6 +28,8 @@ Por dentro es un `<input type="radio">` dentro de su `<label>`. El input **es** 
 
 Dos superficies: `decision` (dentro del bloque oscuro) y `paper`. No es decoración — la decisión ocurre en oscuro y el resultado vuelve al papel, y ese cambio de superficie *es* la transición de estado.
 
+La fila son dos columnas: la casilla y el contenido. Dentro del contenido, la etiqueta y el detalle comparten renglón cuando entran; si no, el detalle baja **debajo de la etiqueta**, no debajo de la casilla. La etiqueta pide 9 rem antes de ceder: sin ese mínimo, un detalle largo —«queda de 345 × 225 cm · 86 % de la pantalla»— se quedaba con la fila y la etiqueta bajaba a una columna de una palabra por renglón.
+
 ## DataMetric y DataGrid
 
 Todo número con el que haya que razonar va en la grilla. Esconder un dato necesario en la prosa convierte un problema de matemática en uno de lectura.
@@ -39,6 +41,8 @@ La variante `constraint` lleva el subrayado rojo **sobre la cifra**, con `self-s
 ## Ledger
 
 El panel de resultado **siempre** muestra la aritmética real. El jugador tiene que poder ver el porqué, no sólo el veredicto: ésa es la diferencia entre un juego sobre decisiones con números y un examen con animaciones.
+
+En un renglón la etiqueta conserva su ancho hasta la mitad de la fila y es el valor el que se parte, alineado a la derecha: «Aire arriba · 16 cm sobre el cartel» se lee mejor así que con la etiqueta rota en dos palabras sueltas.
 
 ## Badge
 
@@ -65,6 +69,10 @@ Etiqueta visible siempre; el placeholder nunca hace de etiqueta. El error se anu
 **La validación es al blur, nunca por tecla.** Corregir a alguien mientras todavía está escribiendo el segundo dígito de `14` no es ayudar, es interrumpir.
 
 Los tres controles del stepper llevan nombre accesible **obligatorio**, como props requeridas: un `input[type=number]` suelto sin etiqueta es una violación crítica, y dejar que el componente se pueda usar mal es dejar que el bug exista.
+
+En una fila de cantidad el nombre del ítem pide 9 rem antes de compartir el renglón con el stepper: en un teléfono los tres controles de 44 px bajan a su propia línea, a la derecha, y el nombre se lee entero.
+
+Los `select` nativos de las interacciones —clasificar, agendar, recorrer, ubicar, asignar— van en `text-option` (16 px): por debajo de eso Safari en iPhone amplía la página al enfocarlos. Cuando las opciones son frases enteras, como la postura del curso, la elección se repite escrita debajo del control, porque el `select` recorta con puntos suspensivos lo que no entra.
 
 ## NumberGrid
 

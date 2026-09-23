@@ -152,6 +152,41 @@ async function fillAnswer(
 }
 
 /**
+ * Ningún texto se sale de su propia caja.
+ *
+ * `scrollWidth` del documento no lo ve: una etiqueta comprimida a una columna
+ * de una palabra por renglón, o una palabra que asoma por fuera de su fila,
+ * no ensanchan la página. Se buscan elementos con texto propio cuyo contenido
+ * sea más ancho que su caja sin que nada lo recorte.
+ */
+async function noEscapingText(page: Page, label: string) {
+  const escaping = await page.evaluate(() =>
+    Array.from(document.querySelectorAll<HTMLElement>('main *'))
+      .filter((element) => {
+        const style = getComputedStyle(element)
+        if (style.overflowX !== 'visible' || style.display === 'none')
+          return false
+        if (element.closest('svg, [aria-hidden="true"]')) return false
+        const ownText = Array.from(element.childNodes).some(
+          (node) => node.nodeType === 3 && (node.textContent ?? '').trim(),
+        )
+        return (
+          ownText &&
+          element.clientWidth > 0 &&
+          element.scrollWidth > element.clientWidth + 2
+        )
+      })
+      .map((element) => ({
+        tag: element.tagName,
+        text: (element.textContent ?? '').trim().slice(0, 40),
+        clientWidth: element.clientWidth,
+        scrollWidth: element.scrollWidth,
+      })),
+  )
+  expect(escaping, label).toEqual([])
+}
+
+/**
  * The document never scrolls horizontally, in any state of the challenge.
  *
  * Measured empty, with the answer built and on the result: a filled plan or a
@@ -192,6 +227,7 @@ async function reflow(page: Page, label: string) {
   if (layout.scroll > layout.viewport)
     console.log('OVERFLOW', label, JSON.stringify(layout))
   expect(layout.scroll, label).toBeLessThanOrEqual(layout.viewport)
+  await noEscapingText(page, label)
 }
 
 /** Audit navigation uses actual Tab traversal, never HTMLElement.focus or mouse. */

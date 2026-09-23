@@ -91,7 +91,13 @@ export function PracticeExperience() {
 
   return (
     <div className="min-h-dvh">
-      <header className="bg-canvas border-rule sticky top-0 z-10 border-b">
+      {/*
+        Fija sólo desde tablet. En un teléfono una barra pegada al borde se
+        queda con 56 px de una pantalla de 640 durante toda la partida, y lo
+        que ofrece —saber que es práctica y poder salir— está a un gesto de
+        scroll; el juego necesita ese alto más que la barra.
+      */}
+      <header className="bg-canvas border-rule top-0 z-10 border-b md:sticky">
         <div className="max-w-viewport px-gutter mx-auto flex min-h-14 flex-wrap items-center justify-between gap-x-3 py-2">
           <div className="flex items-center gap-3">
             {/* El isotipo solo: la identidad acompaña la práctica sin repetir

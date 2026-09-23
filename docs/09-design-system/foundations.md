@@ -61,20 +61,30 @@ y la partida conservan `max-w-viewport` (412 px).
 El ajuste de Home autorizado el 23/09 muestra la ilustración a todo el ancho de
 ambas columnas. El reloj precede al CTA de juego en móvil y lo acompaña en
 escritorio, en papel hundido con filetes
-de tinta y cifras `text-countdown` fluidas. Los segundos de cierre reutilizan
-`motion-resolve` al cambiar; la urgencia escrita y el rojo siguen dependiendo
-del tiempo real restante. El contador permanece visible sin botón para ocultarlo
+de tinta y cifras `text-countdown` fluidas. Las cifras cambian sin fundido: un
+pop por segundo era movimiento continuo y su opacidad a mitad de camino dejaba la
+cifra en gris (un escaneo de contraste la medía en 2,6:1). La urgencia escrita y
+el rojo siguen dependiendo del tiempo real restante. El contador permanece visible sin botón para ocultarlo
 y conserva reduced motion. El ranking agrega un aviso escrito de días/horas/minutos
 restantes con `text-goal`, filete y rojo semántico; sólo se anima al cambiar la
 frase, respetando reduced motion.
+
+En un teléfono la promesa es **una sola línea** debajo de la marca —«Tu
+secundaria. Tus decisiones. Tu propia historia.»— y el párrafo de apertura no se
+muestra: con tres renglones de 25 px más el párrafo, el estado de la competencia
+y el botón de jugar quedaban debajo del pliegue de una pantalla de 360 × 740, y lo
+primero que alguien busca al abrir el enlace en la feria es si puede jugar ahora.
+Desde tablet vuelve la versión completa al lado de la marca. El ranking, por su
+parte, se pliega en teléfono: se ven el podio, los dos puestos siguientes y la
+fila propia con sus vecinas, y un botón abre el resto; desde tablet la lista se
+ve entera. El DOM conserva siempre las filas en el orden del servidor.
 
 `text-event-title` amplía la firma tipográfica existente sólo en la portada,
 con caja mixta, sin logo nuevo. Su escala fluida usa el ancho del contenedor
 (`cqi`, columna de marca con `@container`) para evitar solapamientos al ampliar al 200 %.
 El podio usa numerales de la escala existente,
 filetes y desniveles; el DOM siempre mantiene el orden de puestos del servidor.
-El contador reutiliza `motion-enter` por cifra y desactiva la animación con
-reduced motion. La fecha escrita permanece visible.
+El contador no anima por cifra. La fecha escrita permanece visible.
 
 **Practicar** usa borde de tinta como acción secundaria. El footer reserva 160 px
 en escritorio y 208 px en móvil como mínimos: permite crecer con texto ampliado.
@@ -132,10 +142,11 @@ Sin librería de animación, sin Lottie, sin video. **Nunca se anima el ancho de
 RC3 (TASK-D) reutiliza los mismos tres keyframes para la energía competitiva
 sin agregar un cuarto: el CTA lima de la portada y el puntaje verificado del
 cierre entran con `motion-resolve`; las tarjetas del medallero entran con
-`motion-enter` escalonado por `animation-delay`; y el reloj del evento cambia
-de `motion-enter` a `motion-resolve` en los segundos de cierre (ajuste de Home
-del 23/09); `data-urgency` deriva del tiempo real que falta. Ninguna
-animación es continua ni bloquea; con reduced motion todas duran 1 ms.
+`motion-enter` escalonado por `animation-delay`; y el reloj del evento no anima
+sus cifras: un pop por segundo era la única animación continua del producto y se
+retiró (ajuste de Home del 23/09); `data-urgency` deriva del tiempo real que
+falta. Ninguna animación es continua ni bloquea; con reduced motion todas duran
+1 ms.
 
 El confeti del cierre son 18 tiras de CSS de 3×12 px con posiciones y retardos deterministas. Deterministas a propósito: el mismo cierre tiene que verse igual en dos capturas, y una captura de regresión con `Math.random()` adentro no sirve para nada. Dispara en cierre de etapa, egreso y Aura de `+1.000`, y en ningún otro lugar.
 

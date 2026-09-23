@@ -104,7 +104,17 @@ export function ChoiceCard({
       data-selected={selected}
       data-state={state.kind}
       className={cn(
-        'font-display motion-select relative flex min-h-[52px] flex-wrap items-center gap-x-[10px] gap-y-1',
+        /*
+          Dos columnas fijas: la casilla y el contenido. El contenido es su
+          propia fila que refluye —etiqueta y detalle en una línea cuando
+          entran, el detalle debajo de la etiqueta cuando no— y la etiqueta
+          conserva un ancho mínimo antes de ceder. Sin ese mínimo, un detalle
+          largo se quedaba con la fila entera y la etiqueta bajaba a una
+          columna de una palabra por renglón; con `flex-wrap` sobre la fila
+          completa, el detalle además caía debajo de la casilla y no de la
+          etiqueta, que es donde se lee como parte de la opción.
+        */
+        'font-display motion-select relative grid min-h-[52px] grid-cols-[2rem_minmax(0,1fr)] items-center gap-x-[10px] py-1',
         'cursor-pointer has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2',
         onDecision
           ? 'has-[:focus-visible]:outline-focus-ring-inverse px-2'
@@ -156,39 +166,45 @@ export function ChoiceCard({
         </span>
       </span>
 
-      <span
-        className={cn(
-          'text-option min-w-0 flex-1',
-          onDecision
-            ? selected || chosen
-              ? 'text-on-decision-strong font-bold'
-              : 'text-on-decision'
-            : 'text-ink',
-          !onDecision && (selected || chosen) && 'font-bold',
-        )}
-      >
-        {label}
-      </span>
-
-      {detail === undefined ? null : (
+      <span className="flex min-w-0 flex-wrap items-baseline justify-between gap-x-[10px] gap-y-0.5">
         <span
-          data-numeric
           className={cn(
-            // Cuando el detalle entra, queda en su columna numérica a la
-            // derecha; cuando no —un detalle con prosa en una pantalla de
-            // 320 px— baja a su propio renglón en vez de empujar la fila fuera
-            // de la pantalla. El piso de reflow de 320 px no es negociable.
-            'text-detail ml-auto max-w-full',
+            // Nueve rem antes de ceder: una etiqueta de dos o tres palabras
+            // se lee entera al lado de un precio, y un detalle más largo que
+            // el espacio restante baja de renglón en vez de aplastarla.
+            'text-option min-w-0 flex-[1_1_9rem]',
             onDecision
               ? selected || chosen
-                ? 'text-on-decision-strong'
-                : 'text-on-decision-muted'
+                ? 'text-on-decision-strong font-bold'
+                : 'text-on-decision'
               : 'text-ink',
+            !onDecision && (selected || chosen) && 'font-bold',
           )}
         >
-          {detail}
+          {label}
         </span>
-      )}
+
+        {detail === undefined ? null : (
+          <span
+            data-numeric
+            className={cn(
+              // Cuando el detalle entra, queda en su columna numérica a la
+              // derecha; cuando no —un detalle con prosa en una pantalla de
+              // 320 px— baja a su propio renglón debajo de la etiqueta en vez
+              // de empujar la fila fuera de la pantalla. El piso de reflow de
+              // 320 px no es negociable.
+              'text-detail max-w-full',
+              onDecision
+                ? selected || chosen
+                  ? 'text-on-decision-strong'
+                  : 'text-on-decision-muted'
+                : 'text-ink',
+            )}
+          >
+            {detail}
+          </span>
+        )}
+      </span>
     </label>
   )
 }

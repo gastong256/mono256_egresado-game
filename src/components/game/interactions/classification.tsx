@@ -41,6 +41,7 @@ export function Classification({
   onChange,
 }: ClassificationProps) {
   const prefix = useId()
+  const chosenStance = p.stance?.options.find((option) => option.id === stance)
 
   const setLabel = (statementId: string, labelId: string) => {
     const next = [
@@ -85,7 +86,7 @@ export function Classification({
                 onChange={(event) => {
                   setLabel(statement.id, event.target.value)
                 }}
-                className="border-ink bg-surface text-ink text-meta block h-11 w-full border px-2"
+                className="border-ink bg-surface text-ink text-option font-display block h-11 w-full border px-2"
               >
                 <option value="" disabled>
                   Elegí una opción
@@ -115,7 +116,7 @@ export function Classification({
             onChange={(event) => {
               onChange({ entries, stance: event.target.value })
             }}
-            className="border-ink bg-surface text-ink text-meta block h-11 w-full border px-2"
+            className="border-ink bg-surface text-ink text-option font-display block h-11 w-full border px-2"
           >
             <option value="" disabled>
               Elegí qué hace el curso
@@ -126,6 +127,21 @@ export function Classification({
               </option>
             ))}
           </select>
+          {/*
+            Un `select` nativo recorta con puntos suspensivos lo que no entra
+            en su ancho, y las posturas del curso son frases enteras: en un
+            teléfono se leía «Publicar la tabla y lo que falta ju…». La
+            elección se repite escrita debajo, completa, así lo que se va a
+            confirmar nunca depende de abrir el desplegable de nuevo.
+          */}
+          {chosenStance === undefined ? null : (
+            <p
+              className="text-caption text-ink-secondary text-pretty"
+              data-testid="stance-echo"
+            >
+              Elegiste: {chosenStance.label}
+            </p>
+          )}
         </div>
       )}
     </fieldset>

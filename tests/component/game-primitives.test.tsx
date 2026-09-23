@@ -406,6 +406,16 @@ describe('CareerChips', () => {
       'Promedio 8,0 → 8,4',
     )
   })
+
+  it('no anuncia una transición que el decimal no deja ver', () => {
+    // 9,58 → 9,62 se imprime «9,6 → 9,6»: un movimiento invisible se lee como
+    // un error de la pantalla, así que el chip dice que sigue donde estaba.
+    render(<CareerChips change={{ promedio: { from: 9.58, to: 9.62 } }} />)
+    expect(screen.getByTestId('chip-promedio')).toHaveTextContent(
+      'Promedio sigue en 9,6',
+    )
+    expect(screen.getByTestId('chip-promedio')).not.toHaveTextContent('→')
+  })
 })
 
 describe('SituationCard y NarrativeCard', () => {
