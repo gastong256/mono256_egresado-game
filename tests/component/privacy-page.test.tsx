@@ -30,6 +30,9 @@ describe('página pública de privacidad', () => {
       'Versión del aviso: 1',
     ])
       expect(screen.getByText(text)).toBeVisible()
+    expect(
+      screen.getByRole('contentinfo', { name: 'Institución y créditos' }),
+    ).toBeVisible()
     expect(screen.queryByRole('textbox')).not.toBeInTheDocument()
     expect(
       screen.getByRole('link', { name: 'Volver al inicio' }),

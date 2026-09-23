@@ -46,3 +46,22 @@ Servidor de desarrollo existente conservado en `http://localhost:3000` con reloj
 hidratado y aviso visible. Una comprobación manual por `127.0.0.1:3000` quedó en
 SSR con error del WebSocket HMR; usar localhost. Los servidores de producción
 local del E2E funcionaron en 127.0.0.1:3100/3101 y todos los casos pasaron.
+
+## Ajuste posterior: marcas, crédito y presencia del footer
+
+- Logos institucionales ampliados de 80 a 112 px (+40 %), conservando proporciones.
+- Se retiró la imagen del desarrollador. El texto sigue enlazando a gastong256.dev;
+  un icono GitHub independiente enlaza al repositorio solicitado.
+- Footer sólo en Home (landing) y /privacidad. Ausente en identificación y runs
+  competitivas; práctica ya carecía de footer y se comprobó en juego real.
+- `pnpm test tests/component/home-event.test.tsx tests/component/privacy-page.test.tsx tests/component/competition-ui.test.tsx`: 60 PASS, incluida transición Home → identificación → run sin footer.
+- ESLint dirigido a los siete archivos TS/TSX afectados y `pnpm typecheck`: PASS.
+- `pnpm design:check`, formato dirigido, workspace, master y diff-check: PASS.
+- `node /tmp/egresado-footer-review.mjs`: PASS en Home y privacidad a
+  320/390/768/1280 px; imágenes, geometría, enlaces separados, axe y teclado.
+  También PASS ausencia en identificación y práctica iniciada desde /test.
+  El primer intento del script necesitó un contexto explícito de Playwright para
+  axe; corregido el script, todas las comprobaciones pasaron.
+- Capturas revisadas: `/tmp/egresado-home-layout/footer-larger-*.png`.
+- Sin nuevo build ni suite E2E completa ni verify: cambio acotado de presentación,
+  probado contra el servidor dev existente en localhost:3000. Sin push.

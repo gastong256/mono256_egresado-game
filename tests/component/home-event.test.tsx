@@ -110,9 +110,9 @@ describe('podio por puestos', () => {
 })
 
 describe('footer institucional', () => {
-  it('incluye las tres marcas con nombres accesibles y enlaces correctos', () => {
+  it('incluye las dos marcas institucionales y créditos con enlaces separados', () => {
     render(<InstitutionalFooter />)
-    expect(screen.getAllByRole('img')).toHaveLength(3)
+    expect(screen.getAllByRole('img')).toHaveLength(2)
     expect(
       screen.getByRole('img', { name: 'Colegio Integral Piacentini' }),
     ).toHaveAttribute('src', '/assets/footer/logo-piacentini.webp')
@@ -126,6 +126,18 @@ describe('footer institucional', () => {
       'rel',
       'noopener noreferrer',
     )
+    expect(
+      screen.queryByRole('img', { name: /Logo de gastong256/u }),
+    ).not.toBeInTheDocument()
+    const repository = screen.getByRole('link', {
+      name: 'Repositorio en GitHub (abre en otra pestaña)',
+    })
+    expect(repository).toHaveAttribute(
+      'href',
+      'https://github.com/gastong256/mono256_egresado-game',
+    )
+    expect(repository).toHaveAttribute('target', '_blank')
+    expect(repository).toHaveAttribute('rel', 'noopener noreferrer')
     expect(
       screen.getByRole('link', {
         name: 'Política de privacidad y uso de datos',

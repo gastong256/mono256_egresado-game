@@ -1299,10 +1299,13 @@ describe('de la portada a la partida', () => {
       <CompetitionExperience
         initialState={stateFixture()}
         formConfig={formConfig}
+        footer={<footer>Pie institucional</footer>}
       />,
     )
 
+    expect(screen.getByRole('contentinfo')).toBeVisible()
     await user.click(screen.getByTestId('play'))
+    expect(screen.queryByRole('contentinfo')).not.toBeInTheDocument()
     await user.type(screen.getByLabelText('Alias'), 'Sofi')
     await user.type(screen.getByLabelText('Nombre y apellido'), 'Sofía Gómez')
     await user.type(screen.getByLabelText('DNI'), '45123456')
@@ -1310,6 +1313,7 @@ describe('de la portada a la partida', () => {
     await user.click(screen.getByTestId('identity-submit'))
 
     expect(await screen.findByTestId('stage-label')).toBeInTheDocument()
+    expect(screen.queryByRole('contentinfo')).not.toBeInTheDocument()
 
     // El cuerpo enviado lleva la versión del aviso y su reconocimiento.
     const registration = fetchMock.mock.calls.find(([input]) =>

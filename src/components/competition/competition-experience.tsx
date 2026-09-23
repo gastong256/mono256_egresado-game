@@ -479,7 +479,7 @@ export function CompetitionExperience({
             </>
           )}
         </main>
-        {footer}
+        {screen.kind === 'landing' ? footer : null}
       </div>
     </div>
   )

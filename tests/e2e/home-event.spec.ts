@@ -129,7 +129,7 @@ for (const width of [320, 360, 390, 412, 768, 1280, 1920]) {
       ),
     ).toBe(true)
     await page.getByRole('contentinfo').scrollIntoViewIfNeeded()
-    await expect(page.getByRole('contentinfo').getByRole('img')).toHaveCount(3)
+    await expect(page.getByRole('contentinfo').getByRole('img')).toHaveCount(2)
     for (const img of await page
       .getByRole('contentinfo')
       .getByRole('img')
@@ -163,8 +163,15 @@ for (const width of [320, 360, 390, 412, 768, 1280, 1920]) {
       .getByRole('img', { name: /36° Feria/u })
       .boundingBox())!
     expect(school.height).toBe(fair.height)
+    expect(school.height).toBeGreaterThan(80)
+    await expect(
+      footer.getByRole('link', { name: /Repositorio en GitHub/u }),
+    ).toHaveAttribute(
+      'href',
+      'https://github.com/gastong256/mono256_egresado-game',
+    )
     expect(privacy.x + privacy.width).toBeLessThanOrEqual(dev.x)
-    expect(footerBox.height).toBeLessThanOrEqual(width < 768 ? 200 : 144)
+    expect(footerBox.height).toBeLessThanOrEqual(width < 768 ? 224 : 176)
     expect(
       Math.abs(marks.x + marks.width / 2 - (footerBox.x + footerBox.width / 2)),
     ).toBeLessThanOrEqual(1)

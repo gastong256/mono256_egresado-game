@@ -22,7 +22,12 @@ Piacentini, Feria del Libro 2026 y `developed by gastong256.dev`, con un único 
 El pie es compacto: enlace legal a la izquierda, marcas institucionales de igual
 altura al centro y crédito del desarrollador pequeño a la derecha. En móvil, las
 marcas ocupan una primera fila y los enlaces una segunda; la altura admite
-crecimiento por texto ampliado. El logo de Piacentini usa una máscara circular.
+crecimiento por texto ampliado. Los logos institucionales tienen 112 px de alto;
+el de Piacentini usa una máscara circular. El crédito del desarrollador es sólo
+texto con enlace a `https://gastong256.dev`; un icono independiente de GitHub
+enlaza a `https://github.com/gastong256/mono256_egresado-game`. El pie aparece
+únicamente en la portada Home y `/privacidad`, nunca en identificación, partidas
+de competencia, resultados de la partida ni en el modo práctica.
 
 Según [ADR-030](../03-architecture/adr/ADR-030-privacy-page-and-action-acknowledgement.md),
 el formulario no tiene checkbox. Junto a **Aceptar y jugar** muestra: «Al elegir

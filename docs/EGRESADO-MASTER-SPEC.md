@@ -5016,7 +5016,12 @@ Piacentini, Feria del Libro 2026 y `developed by gastong256.dev`, con un único 
 El pie es compacto: enlace legal a la izquierda, marcas institucionales de igual
 altura al centro y crédito del desarrollador pequeño a la derecha. En móvil, las
 marcas ocupan una primera fila y los enlaces una segunda; la altura admite
-crecimiento por texto ampliado. El logo de Piacentini usa una máscara circular.
+crecimiento por texto ampliado. Los logos institucionales tienen 112 px de alto;
+el de Piacentini usa una máscara circular. El crédito del desarrollador es sólo
+texto con enlace a `https://gastong256.dev`; un icono independiente de GitHub
+enlaza a `https://github.com/gastong256/mono256_egresado-game`. El pie aparece
+únicamente en la portada Home y `/privacidad`, nunca en identificación, partidas
+de competencia, resultados de la partida ni en el modo práctica.
 
 Según [ADR-030](03-architecture/adr/ADR-030-privacy-page-and-action-acknowledgement.md),
 el formulario no tiene checkbox. Junto a **Aceptar y jugar** muestra: «Al elegir
@@ -5427,7 +5432,7 @@ Fuentes: [adjudicación](04-quality/mathematics-department-ai-adjudication.md),
 | FR-001/014: CTA y estados del evento | `CompetitionExperience`, `EventCountdown` | `event-countdown.test.tsx`, `home-event.test.tsx`, `home-event.spec.ts` |
 | FR-001: copy Feria del Libro, hero a todo el ancho, reloj visible y footer compacto | `HomeHero`, `CompetitionExperience`, `EventCountdown`, `text-countdown` | `home-event.spec.ts`: geometría responsive de cabecera/reloj/CTA/footer, zoom, teclado y axe; `cn.test.ts`: rol numérico |
 | FR-012/020: podio por puesto y posición propia | `Leaderboard`; DTO y comparador sin cambios | `competition-ui.test.tsx`, `home-event.test.tsx`, `ranking-release-regression.test.ts` |
-| FR-001: aviso v1 completo en `/privacidad`, footer y aceptación al iniciar | `PrivacyPolicy`, `IdentityForm`, `InstitutionalFooter`, `app/privacidad/page.tsx` | `competition-ui.test.tsx`, `privacy-page.test.tsx`, `privacy.spec.ts`, `competition.spec.ts`; integridad del aviso, SSR sin JS, teclado/axe, campos conservados y rechazo API sin reconocimiento vigente |
+| FR-001: aviso v1 completo en `/privacidad`, footer y aceptación al iniciar | `PrivacyPolicy`, `IdentityForm`, `InstitutionalFooter`, `app/privacidad/page.tsx` | `competition-ui.test.tsx`, `privacy-page.test.tsx`, `privacy.spec.ts`, `competition.spec.ts`; integridad del aviso, footer sólo en Home/privacidad, SSR sin JS, teclado/axe, campos conservados y rechazo API sin reconocimiento vigente |
 
 Decisiones y evidencia de TASK-A en el [plan vivo](../.tmp/rc3-branding/task-a-home/README.md).
 

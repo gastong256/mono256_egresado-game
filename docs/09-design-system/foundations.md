@@ -76,11 +76,13 @@ filetes y desniveles; el DOM siempre mantiene el orden de puestos del servidor.
 El contador reutiliza `motion-enter` por cifra y desactiva la animación con
 reduced motion. La fecha escrita permanece visible.
 
-**Practicar** usa borde de tinta como acción secundaria. El footer reserva 128 px
-en escritorio y 176 px en móvil como mínimos: permite crecer con texto ampliado.
+**Practicar** usa borde de tinta como acción secundaria. El footer reserva 160 px
+en escritorio y 208 px en móvil como mínimos: permite crecer con texto ampliado.
 En escritorio alinea enlace legal, marcas institucionales y crédito en tres
-columnas; en móvil sube las marcas a una fila propia. Ambas marcas tienen 80 px
-de alto; el logo del desarrollador, 24 px. La máscara circular de Piacentini es
+columnas; en móvil sube las marcas a una fila propia. Ambas marcas tienen 112 px
+de alto; el crédito del desarrollador conserva su enlace textual, sin logo. Un
+icono de GitHub de 20 px enlaza por separado al repositorio con objetivo táctil
+de 44 px y nombre accesible. La máscara circular de Piacentini es
 un recorte de presentación de ese insumo solicitado por el PO; no cambia el
 radio cero de los componentes. Los WebP se derivan de `resources/footer/` con
 `scripts/brand/build-footer-assets.ts`.
