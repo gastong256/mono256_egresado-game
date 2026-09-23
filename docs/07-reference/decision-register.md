@@ -361,11 +361,11 @@ saliencia ya no son aperturas de prediseño.
 
 ## RC3 TASK-A — presentación de la competencia
 
-- **Estado: ACCEPTED / IMPLEMENTED**, autorización explícita del Product Owner, 2026-09-22.
+- **Estado: ACCEPTED / IMPLEMENTED**, autorización explícita del Product Owner, 2026-09-22. Las líneas siguientes registran el alcance inicial de TASK-A. El [cierre de RC3](../06-delivery/rc3-release-closure.md) incorpora los ajustes posteriores: contador siempre visible, footer actualizado y resumen público del ranking por ADR-031.
 - Portada de evento ampliada dentro del DS; gameplay/formulario a 412 px. CTA único antes del ranking; countdown orientativo ocultable desde timestamps existentes, sin autoridad cliente.
 - Podio por puesto, empates completos, `isYou` y posición propia privada; sin extender datos públicos. Footer con las tres marcas suministradas y el aviso existente.
 - Revisión arquitectónica: detalle reversible de UI. No cambia API, trust boundaries, datos, versión competitiva ni dependencias; no requiere ADR nuevo.
-- Fuentes: [FR-001/012](../02-functional/functional-specification.md), [fundamentos DS](../09-design-system/foundations.md), [decisiones de TASK-A](../../.tmp/rc3-branding/task-a-home/ux-decisions.md).
+- Fuentes: [FR-001/012](../02-functional/functional-specification.md), [fundamentos DS](../09-design-system/foundations.md), [decisiones de TASK-A](../06-delivery/rc3-release-closure.md).
 
 ## Práctica pública RC3
 

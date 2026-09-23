@@ -6,11 +6,15 @@ Binario. Cada línea está `PASSED`, `READY FOR STAGE-10 REHEARSAL` o `FAILED`.
 infraestructura real y que este repositorio no puede afirmar sin mentir.
 
 ```text
-release   egresado-fair-edition-v1 · 1.0.0-rc.2
-huella    0ea3c1de866aa0a25fb9e236baa122e935fcd37280c443ef4d42011680379cd0
+release   egresado-fair-edition-v1 · 1.0.0-rc.3
+huella    a039dc32dfce527bf3a537249c0f2d7cceca9bcbe44d5cd031a9d05a20c29e46
 ```
 
-Las tablas de producto conservan evidencia del freeze RC.1. La validación nueva de RC.2 y las excepciones de entorno se registran en [STAGE-10A](stage-10a-deployment-adaptation.md). El [handoff A–I](../05-operations/vercel-supabase-production-deployment.md) es el procedimiento vigente.
+La evidencia histórica de RC1/RC2 se conserva en sus reportes. La identidad,
+excepciones autorizadas y validación vigente están en el [cierre de RC3](rc3-release-closure.md).
+Se reutiliza el verify documentado por el otro agente y se verifican de nuevo
+los cambios del corte; no se presenta como un nuevo verify completo.
+El [handoff A–I](../05-operations/vercel-supabase-production-deployment.md) es el procedimiento vigente.
 
 ## Producto congelado
 
@@ -18,11 +22,11 @@ Las tablas de producto conservan evidencia del freeze RC.1. La validación nueva
 |---|---|---|
 | GAME FROZEN | `PASSED` | motor `10.0.0`, action log `7`, snapshot `8` en el manifiesto y comprobados |
 | MATH FROZEN | `PASSED` | `game:score` sin spread, `game:blind-audit` sin cambios, `game:simulate:deep` 5000/5000 |
-| CONTENT FROZEN | `PASSED` | cinco catálogos fijados por versión y SHA-256, recomputados |
+| CONTENT FROZEN | `PASSED` con excepción RC3 documentada | catálogos sin cambios; Promedio corregido por D-RC3-P-004 / `8ba9df4`, sin alterar FairScore |
 | SCORE OFFICIAL | `PASSED` | `fair-score-v1@1.0.0-fair-edition-v1`, `official: true`, equivalencia probada |
 | PRESTIGE V1 EXPLICIT | `PASSED` | techo ofrecido 0, recomputado; fuera del podio público |
 | RANKING FROZEN | `PASSED` | `ranking-release-regression.test.ts` |
-| PODIUM FROZEN | `PASSED` | tres puestos, empate entero |
+| PODIUM FROZEN | `PASSED` | tres puestos reales, empate entero; ventana pública de doce filas por ADR-031 |
 | ATTEMPTS FROZEN | `PASSED` | ilimitados, uno activo, mejor verificado, tolerancia |
 | SEED POLICY FROZEN | `PASSED` | `shared-per-edition`, valor en la edición |
 | SCHEMA FROZEN | `PASSED` | cabeza `20260921000000`, huella `faf128c4…` |
@@ -55,7 +59,7 @@ Las tablas de producto conservan evidencia del freeze RC.1. La validación nueva
 | UPGRADE FROM STAGE-09 | `PASSED` | replay histórico probado; restauración de 6.087 intentos sobre esquema nuevo |
 | CONSTRAINTS REVIEWED | `PASSED` | suite de contrato contra memoria y Postgres |
 | RLS / GRANTS TESTED | `PASSED` | con la clave publicable real, con control positivo |
-| INDEXES REVIEWED | `PASSED` | ranking 15 ms sobre 500 × 3 |
+| INDEXES REVIEWED | `PASSED` | índices sin cambios; ranking RC3: mediana 115 ms / peor 161 ms sobre 500 participantes × 3 intentos, medición local |
 | NO DESTRUCTIVE MIGRATION | `PASSED` | esta versión no borra ni renombra |
 
 ## Seguridad y configuración
@@ -102,10 +106,10 @@ Las tablas de producto conservan evidencia del freeze RC.1. La validación nueva
 | Item | Estado | Evidencia |
 |---|---|---|
 | BUILD GREEN | `PASSED` | sin una sola advertencia |
-| VERIFY GREEN | `PASSED` | RC.2: corrida completa tras corregir la precedencia real de vite-node |
-| VITEST | `PASSED` | 122 archivos · 2.345 tests |
-| COVERAGE | `PASSED` | 85,67 / 77,58 / 87,68 / 85,90 |
-| E2E | `PASSED` | 222 tests en cuatro proyectos |
+| VERIFY GREEN | `PASSED` (evidencia reutilizada) | reporte del fix de Promedio: exit 0; correspondencia de fuentes auditada en el cierre RC3 |
+| VITEST | `PASSED` | verify previo: 140 archivos / 2542 tests; corte RC3: 123 tests dirigidos adicionales |
+| COVERAGE | `PASSED` (reutilizada) | 86,92 / 79,91 / 89,36 / 87,15; no recalculada en el corte |
+| E2E | `PASSED` (reutilizada) | 270 en el verify previo; seis recorridos dirigidos adicionales al integrar; smoke HTTP del artefacto RC3 |
 | ACCESSIBILITY | `PASSED` | axe, teclado, 360 px, sin desborde |
 | BUNDLE MEASURED | `PASSED` | 188,5 KiB gzip iniciales en standalone (baseline anterior: 189,0) |
 | PERFORMANCE BASELINE | `PASSED` | registro, emisión, verificación, ranking, exportación |
@@ -139,8 +143,12 @@ origen HTTPS disponible (preferido o fallback)
 PARTICIPANT_IDENTITY_SECRET generado y respaldado fuera de la DB
 contraseña privada de organizador y digest scrypt
 variables exclusivamente Production; Corepack=1
-migraciones remotas, deploy, bootstrap, cloud smoke y ensayos del handoff
+deploy, bootstrap si faltara la edición, cloud smoke y ensayos del handoff
 ```
+
+El PO confirma migraciones RC2 ya aplicadas en producción y ausencia de partidas.
+RC3 no requiere SQL nuevo ni reconstrucción de resúmenes. Esta confirmación no
+sustituye la comprobación operativa de readiness.
 
 Institución/contacto/domicilio, ventana, años, ausencia de divisiones y retención
 están aprobados. El arranque rechaza configuración incompleta; verificarla con
@@ -151,11 +159,16 @@ están aprobados. El arranque rechaza configuración incompleta; verificarla con
 `/test`, `POST /api/practice/runs` y `POST /api/practice/runs/verify` son públicos
 por [ADR-029](../03-architecture/adr/ADR-029-public-practice-mode.md). No son un
 harness ni participan de la competencia. `tests/e2e/practice.spec.ts` exige 200
-con nonce en `/test` y 404 en rutas DEV del build competitivo. Los gates genéricos
-de release y el candado RC.2 permanecen intactos; esto no corta RC3.
+con nonce en `/test` y 404 en rutas DEV del build competitivo. La entrega se incluye en RC3; los campos competitivos del manifiesto permanecen
+intactos y el candado cambia únicamente por la identidad del release.
 
 `/privacidad` también es pública por
 [ADR-030](../03-architecture/adr/ADR-030-privacy-page-and-action-acknowledgement.md):
 aviso v1 íntegro, SSR sin JavaScript y nonce CSP. `tests/e2e/privacy.spec.ts` cubre
 lectura sin cookies, enlace del footer, accesibilidad y rechazo API de aceptación
 ausente/falsa o versión desactualizada. No cambia el contrato legal congelado.
+
+`/puntajes` explica las reglas con lenguaje simple y acceso desde el footer.
+El ranking guarda los resultados de la mejor partida y publica una ventana
+acotada por ADR-031. La corrección de Promedio del otro agente está preservada;
+la proyección de una carrera óptima publica 10, probado en la integración.

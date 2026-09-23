@@ -3,22 +3,24 @@
 Vista corta del estado de ejecución. El contrato completo y el protocolo de
 actualización están en el [roadmap](implementation-sequence.md).
 
-**Excepción RC3 autorizada por el PO, 23/09: ranking ampliado.**
-[ADR-031](../03-architecture/adr/ADR-031-persisted-run-summary-ranking-window.md)
-permite persistir el resumen del replay, publicarlo en una ventana de doce filas,
-compactar empates conservando membresía y puesto, contexto propio y seed local
-variado. Scope OUT: motor, contenido, reglas, comparador, versiones competitivas,
-schema SQL y despliegue remoto. Exit gate: persistencia/privacidad, equivalencia
-con el cierre, backfill, moderación, UI accesible y verify al final.
+## RC3 — cierre local
 
-## Sprint visual RC3 — TASK-A
+**Estado: `DONE` — 23 de septiembre de 2026.** Release `1.0.0-rc.3`, en `main`,
+tag `v1.0.0-rc.3`. [Cierre, identidad y evidencia](rc3-release-closure.md).
+Incluye branding/escenas, Home y footer, textos, egreso, práctica pública,
+privacidad, ranking con resumen persistido, `/puntajes` y la corrección de
+Promedio de `8ba9df4`. Las autorizaciones están en ADR-029/030/031 y D-RC3-P-004.
 
-Implementación autorizada por el Product Owner: Home, estados de evento,
-countdown, podio y footer institucional. Evidencia en el
-[plan vivo de TASK-A](../../.tmp/rc3-branding/task-a-home/README.md).
-Es una mejora de presentación sobre RC.2; no reabre matemática, reglas, privacidad,
-contenido ni freeze. Branding, copy integral, ending y cierre RC3 siguen diferidos.
-No declara un GO de STAGE-10 ni administra Vercel.
+Se reutiliza el `verify` completo documentado: 2542 tests y 270 E2E verdes;
+la integración `0772796` agregó 262 tests dirigidos y seis E2E verdes. El corte
+cambia sólo identificación/documentación y agrega controles de release y build.
+Los resultados y sus límites quedan separados en el reporte de cierre.
+
+**Siguiente paso: publicación manual y STAGE-10 operativo.** No se hizo push ni
+se inspeccionó/desplegó producción. El PO confirma migraciones RC2 aplicadas y
+ninguna partida productiva: RC3 no agrega SQL ni necesita completar históricos.
+Ver [pasos de publicación](../05-operations/vercel-supabase-production-deployment.md).
+El cierre local no equivale al GO del evento; faltan smoke y ensayos remotos.
 
 ## STAGE-10A — adaptación Vercel Hobby + Supabase Free
 
@@ -709,4 +711,4 @@ El PO agrega una excepción funcional acotada al sprint: `/test`, anónima y sin
 persistencia competitiva, según [ADR-029](../03-architecture/adr/ADR-029-public-practice-mode.md).
 Reutiliza el juego congelado; no cambia matemática, contenido, score, versiones,
 schema, release fingerprint ni topología. No corta RC3 ni declara GO de STAGE-10.
-Evidencia y estado de entrega en [práctica](../../.tmp/rc3-branding/practice-mode/README.md).
+Evidencia y estado de entrega en [práctica](rc3-release-closure.md).

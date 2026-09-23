@@ -5462,7 +5462,7 @@ Fuentes: [adjudicación](04-quality/mathematics-department-ai-adjudication.md),
 | FR-012/020: podio por puesto y posición propia | `Leaderboard`; DTO y comparador sin cambios | `competition-ui.test.tsx`, `home-event.test.tsx`, `ranking-release-regression.test.ts` |
 | FR-001: aviso v1 completo en `/privacidad`, footer y aceptación al iniciar | `PrivacyPolicy`, `IdentityForm`, `InstitutionalFooter`, `app/privacidad/page.tsx` | `competition-ui.test.tsx`, `privacy-page.test.tsx`, `privacy.spec.ts`, `competition.spec.ts`; integridad del aviso, footer fuera de las partidas, SSR sin JS, teclado/axe, campos conservados y rechazo API sin reconocimiento vigente |
 
-Decisiones y evidencia de TASK-A en el [plan vivo](../.tmp/rc3-branding/task-a-home/README.md).
+Decisiones y evidencia de TASK-A en el [plan vivo](06-delivery/rc3-release-closure.md).
 
 ## RC3 — práctica pública
 
@@ -22122,9 +22122,9 @@ Esperado:
   "service": "egresado-web",
   "release": {
     "releaseId": "egresado-fair-edition-v1",
-    "releaseVersion": "1.0.0-rc.2",
+    "releaseVersion": "1.0.0-rc.3",
     "releaseChannel": "release-candidate",
-    "releaseFingerprint": "0ea3c1de866aa0a25fb9e236baa122e935fcd37280c443ef4d42011680379cd0"
+    "releaseFingerprint": "a039dc32dfce527bf3a537249c0f2d7cceca9bcbe44d5cd031a9d05a20c29e46"
   },
   "checks": [{ "name": "release-manifest", "state": "ok" }]
 }
@@ -22218,7 +22218,7 @@ del congelamiento de v1—. El organizador ve:
 
 ```text
 COMPETITION_NOT_CONFIGURED — la edición no corresponde a
-egresado-fair-edition-v1 1.0.0-rc.2: scoreVersion esperaba … y tiene …
+egresado-fair-edition-v1 1.0.0-rc.3: scoreVersion esperaba … y tiene …
 ```
 
 La edición vieja **no se arregla**: sus intentos se jugaron bajo otras reglas y
@@ -22426,7 +22426,7 @@ es una lectura.
 
 ### 6.3 Rollback de la aplicación
 
-Primero: **un rollback de aplicación no revierte la base.** La compatibilidad de esquema no demuestra compatibilidad de replay. En Hobby ensayar dos deployments consecutivos del mismo RC.2 y configuración final; ver el [procedimiento específico](05-operations/vercel-supabase-production-deployment.md#rollback-de-hobby-después-del-primer-deploy).
+Primero: **un rollback de aplicación no revierte la base.** La compatibilidad de esquema no demuestra compatibilidad de replay. En Hobby ensayar dos deployments consecutivos del mismo RC.3 y configuración final; ver el [procedimiento específico](05-operations/vercel-supabase-production-deployment.md#rollback-de-hobby-después-del-primer-deploy).
 
 1. **Identificar qué está desplegado:**
    ```bash
@@ -22853,12 +22853,11 @@ La contraseña no tiene default. La seed la genera el bootstrap canónico.
 ## A. GitHub — publicar la fuente cuando el operador esté listo
 
 1. Verificar `git branch --show-current` = `main` y `git status --porcelain` vacío.
-2. `pnpm release:verify` debe identificar `1.0.0-rc.2` y la huella del
+2. `pnpm release:verify` debe identificar `1.0.0-rc.3` y la huella del
    [checklist](06-delivery/release-checklist.md).
 3. El operador comprueba su acceso a GitHub y ejecuta:
    ```bash
-   git push origin main
-   git push origin v1.0.0-rc.2
+   git push --atomic origin main v1.0.0-rc.3
    ```
 4. Antes de conectar Vercel, incorporar `vercel.json` a cualquier rama antigua
    que se vaya a seguir usando. La configuración se lee de la revisión enviada;
@@ -22867,6 +22866,12 @@ La contraseña no tiene default. La seed la genera el bootstrap canónico.
 La política Git deshabilita auto-deploys no-main, incluidas ramas con `/`, usando
 `**: false`, `main: true`. No reemplaza la selección de Production Branch en el
 panel ni bloquea despliegues manuales del propietario.
+
+RC3 conserva el esquema de RC2. El PO confirma el 23/09 que las migraciones
+ya están en producción y todavía no hubo partidas allí: no se vuelve a aplicar
+el historial, no se ejecuta el seed local ni `competition:summaries`. Las partidas
+nuevas guardan automáticamente el resumen del ranking. La confirmación es del
+operador; este cierre no inspeccionó ni modificó Supabase remoto.
 
 ## B. Supabase Dashboard — un proyecto Free de producción
 
@@ -22884,7 +22889,7 @@ panel ni bloquea despliegues manuales del propietario.
 
 ## C. Supabase CLI — aplicar el historial sin seed
 
-Desde la raíz del checkout RC.2, con Docker disponible para los dumps y la CLI
+Desde la raíz del checkout RC3, con Docker disponible para los dumps y la CLI
 fijada por el repositorio:
 
 ```bash
@@ -23043,7 +23048,7 @@ exclusivamente en São Paulo.
 
 ## F. Bootstrap de la edición final
 
-Con RC.2 y preflight aprobado:
+Con RC3 y preflight aprobado:
 
 ```bash
 pnpm competition:bootstrap -- \
@@ -23072,11 +23077,12 @@ curl -sS -o /dev/null -w '%{http_code}\n' "$APP_URL/dev/grade-7"
 
 Obligatorio antes de GO:
 
-- liveness 200 y release `1.0.0-rc.2`, fingerprint idéntico al candado;
+- liveness 200 y release `1.0.0-rc.3`, fingerprint idéntico al candado;
 - readiness 200, `release-manifest`, `competition-config`, `database` y
   `competition` en `ok`; antes del bootstrap, `competition: degraded`/503 es
   esperado, después no;
-- landing con institución/contacto correctos, estado Upcoming y ranking vacío;
+- landing con institución/contacto correctos, estado según el calendario aprobado y ranking vacío antes de jugar;
+- `/test`, `/privacidad` y `/puntajes` accesibles; formulario, footer y explicación de puntaje correctos;
 - login real del organizador y operación desde el origen canónico;
 - headers CSP, HSTS, nosniff, frame protection y cookies seguras;
 - `/dev/grade-7` devuelve 404; sin acceso a herramientas de desarrollo;
@@ -23095,7 +23101,7 @@ El ensayo local completo sigue siendo la evidencia de producto obligatoria.
 
 ### Rollback de Hobby, después del primer deploy
 
-Crear dos deployments Production consecutivos del **mismo RC.2 y configuración
+Crear dos deployments Production consecutivos del **mismo RC.3 y configuración
 final**, ambos servidos previamente por el dominio canónico. Anotar ids, commit,
 fingerprint y slug. Desde Production Deployment → Instant Rollback, volver al
 inmediatamente anterior y repetir health/readiness/login. La huella será la
@@ -23214,22 +23220,24 @@ real al ejecutar el handoff. Ninguna consulta acredita una cuenta ni un deploy.
 Vista corta del estado de ejecución. El contrato completo y el protocolo de
 actualización están en el [roadmap](06-delivery/implementation-sequence.md).
 
-**Excepción RC3 autorizada por el PO, 23/09: ranking ampliado.**
-[ADR-031](03-architecture/adr/ADR-031-persisted-run-summary-ranking-window.md)
-permite persistir el resumen del replay, publicarlo en una ventana de doce filas,
-compactar empates conservando membresía y puesto, contexto propio y seed local
-variado. Scope OUT: motor, contenido, reglas, comparador, versiones competitivas,
-schema SQL y despliegue remoto. Exit gate: persistencia/privacidad, equivalencia
-con el cierre, backfill, moderación, UI accesible y verify al final.
+## RC3 — cierre local
 
-## Sprint visual RC3 — TASK-A
+**Estado: `DONE` — 23 de septiembre de 2026.** Release `1.0.0-rc.3`, en `main`,
+tag `v1.0.0-rc.3`. [Cierre, identidad y evidencia](06-delivery/rc3-release-closure.md).
+Incluye branding/escenas, Home y footer, textos, egreso, práctica pública,
+privacidad, ranking con resumen persistido, `/puntajes` y la corrección de
+Promedio de `8ba9df4`. Las autorizaciones están en ADR-029/030/031 y D-RC3-P-004.
 
-Implementación autorizada por el Product Owner: Home, estados de evento,
-countdown, podio y footer institucional. Evidencia en el
-[plan vivo de TASK-A](../.tmp/rc3-branding/task-a-home/README.md).
-Es una mejora de presentación sobre RC.2; no reabre matemática, reglas, privacidad,
-contenido ni freeze. Branding, copy integral, ending y cierre RC3 siguen diferidos.
-No declara un GO de STAGE-10 ni administra Vercel.
+Se reutiliza el `verify` completo documentado: 2542 tests y 270 E2E verdes;
+la integración `0772796` agregó 262 tests dirigidos y seis E2E verdes. El corte
+cambia sólo identificación/documentación y agrega controles de release y build.
+Los resultados y sus límites quedan separados en el reporte de cierre.
+
+**Siguiente paso: publicación manual y STAGE-10 operativo.** No se hizo push ni
+se inspeccionó/desplegó producción. El PO confirma migraciones RC2 aplicadas y
+ninguna partida productiva: RC3 no agrega SQL ni necesita completar históricos.
+Ver [pasos de publicación](05-operations/vercel-supabase-production-deployment.md).
+El cierre local no equivale al GO del evento; faltan smoke y ensayos remotos.
 
 ## STAGE-10A — adaptación Vercel Hobby + Supabase Free
 
@@ -23920,7 +23928,7 @@ El PO agrega una excepción funcional acotada al sprint: `/test`, anónima y sin
 persistencia competitiva, según [ADR-029](03-architecture/adr/ADR-029-public-practice-mode.md).
 Reutiliza el juego congelado; no cambia matemática, contenido, score, versiones,
 schema, release fingerprint ni topología. No corta RC3 ni declara GO de STAGE-10.
-Evidencia y estado de entrega en [práctica](../.tmp/rc3-branding/practice-mode/README.md).
+Evidencia y estado de entrega en [práctica](06-delivery/rc3-release-closure.md).
 
 ---
 
@@ -24031,9 +24039,13 @@ Si el roadmap y el código difieren, **el código gana** y el roadmap se corrige
 - Fases de validación externa y congelamiento: [ciclo de entrega real](00-product/real-delivery-lifecycle.md).
 - Qué se construye por capas de alcance: [alcance y roadmap](00-product/scope-and-roadmap.md) y [backlog](06-delivery/mvp-backlog.md).
 
-**Última reconciliación:** 22 de septiembre de 2026, **STAGE-10A** (preparación de despliegue; GO pendiente).
-RC.2 adapta el despliegue y conserva el freeze competitivo. La huella vigente es
-`0ea3c1de…80379cd0`; RC.1 (`1affb2a8…`) queda como evidencia histórica.
+**Última reconciliación:** 23 de septiembre de 2026, **RC3 `DONE` localmente**;
+STAGE-10 sigue `IN_PROGRESS` para publicación, ensayos remotos y GO.
+La identidad vigente es `1.0.0-rc.3`; huella `a039dc32dfce527bf3a537249c0f2d7cceca9bcbe44d5cd031a9d05a20c29e46`.
+[Cierre de RC3](06-delivery/rc3-release-closure.md): alcance entregado, evidencia reutilizada
+y gates del corte. RC.1 y RC.2 se conservan como antecedentes históricos.
+Las excepciones RC3 que siguen en este roadmap registran su autorización previa;
+su entrega queda cerrada por este reporte, sin reabrir el score competitivo.
 FairScore se oficializó como `fair-score-v1` sin mover un número,
 y la revisión humana amplia deja de bloquear el roadmap
 ([ADR-027](03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md),
@@ -25186,7 +25198,7 @@ Home, countdown de ventana pública, presentación de podio y footer institucion
 Sólo presentación, accesibilidad y su verificación; sin cambios de motor, contenido,
 comparador, persistencia, contratos públicos ni lifecycle. Runtime sigue en RC.2;
 branding, ending y cierre RC3 quedan fuera. Evidencia en el
-[plan vivo](../.tmp/rc3-branding/task-a-home/README.md).
+[plan vivo](06-delivery/rc3-release-closure.md).
 
 **Excepción funcional acotada autorizada por el PO: RC3 `/test`.**
 Práctica pública permanente, anónima, con misma carrera y replay, seed independiente
@@ -25195,7 +25207,7 @@ CTA secundario, aislamiento demostrado y documentación. Scope OUT: nueva matem�
 contenido, scoring, tablas, identidad, edición, versionado, proveedores y corte RC3.
 Exit gate: build público `/test` 200 y `/dev` 404, carrera/reanudación/reintento,
 ranking/best/cookie/tablas invariantes y gates del repo. [ADR-029](03-architecture/adr/ADR-029-public-practice-mode.md)
-y [handoff](../.tmp/rc3-branding/practice-mode/README.md). Esta autorización no
+y [handoff](06-delivery/rc3-release-closure.md). Esta autorización no
 levanta el freeze competitivo ni sustituye GO/NO-GO.
 
 **Excepción de privacidad UX autorizada por el PO: ADR-030 (23/09).**
@@ -26090,6 +26102,171 @@ El código y tests quedaron verificados antes de cerrar esta evidencia. Los
 
 ---
 
+# FILE: 06-delivery/rc3-release-closure.md
+
+# RC3 — cierre de versión y entrega local
+
+Fecha: 23 de septiembre de 2026. Estado: **RC3 CLOSED LOCALLY — READY TO PUBLISH**.
+No equivale al GO del evento. Push y publicación quedan a cargo del operador.
+
+## Identidad
+
+| Campo | Valor |
+|---|---|
+| Release | `egresado-fair-edition-v1` |
+| Versión de aplicación/manifiesto | `1.0.0-rc.3` |
+| Canal | `release-candidate` |
+| Tag anotado | `v1.0.0-rc.3` |
+| Rama de entrega | `main` |
+| Huella del manifiesto | `a039dc32dfce527bf3a537249c0f2d7cceca9bcbe44d5cd031a9d05a20c29e46` |
+| Base integrada antes del corte | `0772796` |
+| Predecesor | `v1.0.0-rc.2`; se conserva sin mover |
+
+El corte cambia `package.json`, la versión del manifiesto y su candado mediante
+`pnpm release:verify -- --update-lock`. Sigue el mecanismo de ADR-027/028;
+no introduce una decisión arquitectónica nueva. La huella identifica el
+manifiesto; el tag de Git identifica además todos los componentes, contenido,
+scripts y documentación del artefacto. No se retaggea RC2 ni se altera su historia.
+
+## Qué entrega RC3
+
+| Área | Entrega |
+|---|---|
+| Identidad y recursos | Marca, favicon, hero, imagen social y escenas optimizadas; integración en las superficies del juego. |
+| Home y footer | Feria del Libro 2026, jerarquía visual, iconos y medallas, CTA principal, práctica secundaria, contador siempre visible y aviso de cierre en ranking. Footer responsive con instituciones, créditos y enlaces públicos. |
+| Textos y cierre de partida | Lenguaje de juego, progresión y feedback; resumen de egreso, reconocimientos y detalle del recorrido. |
+| Práctica pública | `/test`, sin identidad ni resultado competitivo; reanudación y verificación aisladas del ranking (ADR-029). |
+| Privacidad | `/privacidad` y aceptación al enviar el formulario, aviso configurado y frontera entre datos públicos y privados (ADR-030). |
+| Ranking | Resumen autoritativo guardado al verificar, ventana máxima de doce filas, empates completos representados, contexto propio, métricas e hitos; lecturas sin reconstruir partidas (ADR-031). |
+| Explicación pública | `/puntajes`, tono de la página de privacidad, enlace debajo de ella en footer y documentación técnica en GitHub. |
+| Promedio | Corrección del otro agente, `8ba9df4`: las 32 situaciones ordinarias registran 10/8/6/4 según calidad; los diez Repasos no agregan nota. Se conserva su implementación y autorización D-RC3-P-004. |
+| Higiene del repositorio | `.tmp/` ignorado y fuera del índice; los reportes necesarios para operar el release se consolidan aquí, sin depender de archivos temporales. |
+
+Las fuentes de comportamiento siguen siendo [FR-001/012/021](02-functional/functional-specification.md),
+[ADR-029](03-architecture/adr/ADR-029-public-practice-mode.md),
+[ADR-030](03-architecture/adr/ADR-030-privacy-page-and-action-acknowledgement.md),
+[ADR-031](03-architecture/adr/ADR-031-persisted-run-summary-ranking-window.md)
+y la [enmienda de Promedio](03-architecture/adr/ADR-016-career-player-model.md#2-promedio-se-deriva-de-notas-reales).
+
+## Compatibilidad y Supabase
+
+Se mantienen motor `10.0.0`, action log `7`, snapshot `8`, ruleset
+`1.0.0-full-career`, contenido `5.5.0-grade-5`, catálogo `grade-5-dev-6` y score
+`fair-score-v1@1.0.0-fair-edition-v1`. FairScore, comparador, reglas de empate,
+catálogos y migraciones coinciden con el manifiesto congelado. La corrección de
+Promedio es la excepción documentada D-RC3-P-004: sí cambia ese dato de carrera
+en partidas nuevas; no cambia FairScore y conserva los resúmenes ya guardados.
+No se presenta como una ausencia total de cambios de contenido durante RC3.
+
+**Cero migraciones SQL nuevas.** Cabeza:
+`20260921000000_competition_fair_mode.sql`; huella del esquema
+`faf128c4491bb0f406b520b05094e2b2345324f1e2fc049cc762232005ae214f`.
+El ranking usa `verified_summary.ranking` dentro del JSONB existente y no cambia
+RLS, tablas o índices. Las partidas nuevas guardan el resumen automáticamente.
+
+El PO confirma en esta sesión que producción ya tiene las migraciones RC2 y aún
+no tuvo partidas. Por lo tanto, no corresponde `db:reset`, seed ni completar
+resúmenes históricos. Esto es una confirmación del operador, no una inspección
+remota efectuada en el cierre. No se ejecutaron mutaciones de producción.
+
+Para otros entornos con partidas anteriores queda disponible
+`competition:summaries` (primero dry-run); no es parte del despliegue actual.
+
+## Procedencia del verify reutilizado
+
+El PO solicitó aprovechar el `verify` verde del otro agente. Se conserva aquí
+la evidencia relevante de su reporte local `promedio-fix/verification.md`, cuyo
+SHA-256 es `8ad129f092f2da21cff75a79227471921f99b2a198e6ca076a28d37defe3227b`.
+El reporte original vive en `.tmp`, por eso esta documentación no lo enlaza como
+un recurso necesario para un clon limpio.
+
+| Gate registrado por el otro agente | Resultado documentado |
+|---|---|
+| `pnpm verify` | PASS, exit 0 |
+| Vitest | 140 archivos, 2542 tests PASS |
+| Cobertura | sentencias 86,92 %; ramas 79,91 %; funciones 89,36 %; líneas 87,15 % |
+| Contenido, catálogos y simulaciones | PASS |
+| Build | PASS |
+| Playwright | 270 E2E PASS |
+| Release | 57 checks PASS con identidad RC2 |
+
+Se contrastó el estado guardado por ese agente con `0772796`: árbol de trabajo
+`7b4573de08288028b431088a44f098fdb582da85` más sus dos archivos nuevos en
+`4f93adc5c95c8257e663e49a250b5c9ed97dab2d`. Los archivos coinciden salvo tres
+líneas de una aserción adicional en `ranking-summary.test.ts`. Esa aserción
+comprueba Promedio 10 en la proyección y pasó al integrar. Los commits locales
+que conservan el código son `a914112`, `8ba9df4` y el merge `0772796`; no se
+necesita publicar ni aplicar el stash para obtenerlo.
+
+La integración conservó byte a byte los 41 archivos exclusivos del otro agente,
+combinó las dos fuentes documentales compartidas y pasó 262 tests dirigidos,
+seis recorridos de navegador, build, TypeScript, lint y los 57 controles de release.
+
+**No se repitió `pnpm verify` en el corte.** Se reutilizó su evidencia sobre el
+código funcional, complementada por los controles siguientes sobre la nueva
+identidad. No se afirma que el comando completo se haya corrido con etiqueta RC3.
+
+## Validación del corte RC3
+
+| Comando / comprobación ejecutada | Resultado |
+|---|---|
+| `pnpm install --frozen-lockfile` | PASS; dependencias y lockfile sin cambios |
+| `pnpm toolchain:check` | PASS; Node 24.19.0 / pnpm 11.22.0 |
+| `pnpm release:check` | PASS; Next.js 16.3.5 satisface el piso del repo |
+| `pnpm release:verify -- --update-lock` | PASS; 54 comprobaciones antes de escribir el nuevo candado |
+| `pnpm release:verify` | PASS; 57 comprobaciones contra el candado RC3 |
+| `pnpm secrets:check` | PASS; sin patrones de secretos |
+| `pnpm security:audit` | PASS; sin vulnerabilidades conocidas |
+| `pnpm release:preflight -- --env-file=.env.production.local` | PASS; contrato del archivo privado local, sin conexión a proveedores |
+| Suites dirigidas de identidad/release/health/freeze/ranking | PASS; ocho archivos, 123 tests |
+| `pnpm build` | PASS; artefacto identificado como RC3 |
+| `pnpm format:check` | PASS |
+| Arranque `next start` con build RC3 y configuración local | PASS; log informa RC3 y huella esperada |
+| `/api/health` y `/api/health?ready=1` | 200; versión/huella exactas y todos los checks `ok` |
+| `/`, `/test`, `/privacidad`, `/puntajes`, `/organizer` | 200 y CSP con nonce en el servidor local de producción |
+| `/dev/grade-7` con competencia configurada | 404 |
+
+Las ocho suites son `release-manifest`, `release-readiness`,
+`deployment-readiness`, `production-config`, `health-route`,
+`competition-freeze`, `ranking-release-regression` y `ranking-summary`.
+Build y tests precargaron las URLs/credenciales locales en el proceso con mayor
+prioridad que los archivos de Next; el smoke utilizó únicamente Supabase local.
+El preflight de producción sólo valida la configuración del archivo: no acredita
+que Vercel tenga esas mismas variables ni que el proveedor esté operativo.
+
+`node scripts/validate-agent-workspace.mjs` y
+`node scripts/sync-master-spec.mjs --check`: PASS, también en una exportación
+limpia de Git sin `.tmp`, `.env` ni `node_modules` (260 archivos documentados,
+140 fuentes del master). La primera exportación detectó un enlace residual en
+README a `.tmp`; se reemplazó y la segunda pasó. `git diff --check`: PASS.
+
+DB reset/lint/types y contenedores no se repiten: este
+corte no cambia esquema, adaptadores ni infraestructura. No se ejecutó release
+en cloud ni se inspeccionaron cuotas, dominios o migraciones remotas.
+
+## Publicación manual y pasos siguientes
+
+1. Desde `main` limpio, publicar **main y el tag RC3**, no la rama temporal:
+   ```bash
+   git push --atomic origin main v1.0.0-rc.3
+   ```
+2. Comprobar CI y que Vercel use ese commit como Production. Si ya está conectado
+   a `main`, el push puede iniciar el despliegue según su configuración vigente.
+   El tag marca el artefacto; no crea por sí solo un GitHub Release.
+3. Conservar el slug final, fechas, institución, secreto de identidad y acceso
+   del organizador. Supabase RC2 existente se conserva: sin reset, seed ni backfill.
+4. Consultar health y readiness en el dominio real; deben devolver RC3, la huella
+   de este reporte y checks `ok`. Revisar Home, práctica, privacidad, puntajes y
+   login de organizador; no introducir partidas sintéticas en el ranking final.
+5. Completar respaldo/restore, ensayo de rollback y smoke del proveedor según el
+   [handoff A–I](05-operations/vercel-supabase-production-deployment.md). Un ensayo
+   competitivo cloud usa un slug sintético separado. Registrar GO antes de abrir.
+
+Los tags RC1/RC2, la rama temporal ya integrada y el stash del otro agente se
+conservan. No se hace push desde este cierre.
+
+---
+
 # FILE: 06-delivery/release-checklist.md
 
 # Checklist del Release Candidate — Egresado Fair Edition v1
@@ -26100,11 +26277,15 @@ Binario. Cada línea está `PASSED`, `READY FOR STAGE-10 REHEARSAL` o `FAILED`.
 infraestructura real y que este repositorio no puede afirmar sin mentir.
 
 ```text
-release   egresado-fair-edition-v1 · 1.0.0-rc.2
-huella    0ea3c1de866aa0a25fb9e236baa122e935fcd37280c443ef4d42011680379cd0
+release   egresado-fair-edition-v1 · 1.0.0-rc.3
+huella    a039dc32dfce527bf3a537249c0f2d7cceca9bcbe44d5cd031a9d05a20c29e46
 ```
 
-Las tablas de producto conservan evidencia del freeze RC.1. La validación nueva de RC.2 y las excepciones de entorno se registran en [STAGE-10A](06-delivery/stage-10a-deployment-adaptation.md). El [handoff A–I](05-operations/vercel-supabase-production-deployment.md) es el procedimiento vigente.
+La evidencia histórica de RC1/RC2 se conserva en sus reportes. La identidad,
+excepciones autorizadas y validación vigente están en el [cierre de RC3](06-delivery/rc3-release-closure.md).
+Se reutiliza el verify documentado por el otro agente y se verifican de nuevo
+los cambios del corte; no se presenta como un nuevo verify completo.
+El [handoff A–I](05-operations/vercel-supabase-production-deployment.md) es el procedimiento vigente.
 
 ## Producto congelado
 
@@ -26112,11 +26293,11 @@ Las tablas de producto conservan evidencia del freeze RC.1. La validación nueva
 |---|---|---|
 | GAME FROZEN | `PASSED` | motor `10.0.0`, action log `7`, snapshot `8` en el manifiesto y comprobados |
 | MATH FROZEN | `PASSED` | `game:score` sin spread, `game:blind-audit` sin cambios, `game:simulate:deep` 5000/5000 |
-| CONTENT FROZEN | `PASSED` | cinco catálogos fijados por versión y SHA-256, recomputados |
+| CONTENT FROZEN | `PASSED` con excepción RC3 documentada | catálogos sin cambios; Promedio corregido por D-RC3-P-004 / `8ba9df4`, sin alterar FairScore |
 | SCORE OFFICIAL | `PASSED` | `fair-score-v1@1.0.0-fair-edition-v1`, `official: true`, equivalencia probada |
 | PRESTIGE V1 EXPLICIT | `PASSED` | techo ofrecido 0, recomputado; fuera del podio público |
 | RANKING FROZEN | `PASSED` | `ranking-release-regression.test.ts` |
-| PODIUM FROZEN | `PASSED` | tres puestos, empate entero |
+| PODIUM FROZEN | `PASSED` | tres puestos reales, empate entero; ventana pública de doce filas por ADR-031 |
 | ATTEMPTS FROZEN | `PASSED` | ilimitados, uno activo, mejor verificado, tolerancia |
 | SEED POLICY FROZEN | `PASSED` | `shared-per-edition`, valor en la edición |
 | SCHEMA FROZEN | `PASSED` | cabeza `20260921000000`, huella `faf128c4…` |
@@ -26149,7 +26330,7 @@ Las tablas de producto conservan evidencia del freeze RC.1. La validación nueva
 | UPGRADE FROM STAGE-09 | `PASSED` | replay histórico probado; restauración de 6.087 intentos sobre esquema nuevo |
 | CONSTRAINTS REVIEWED | `PASSED` | suite de contrato contra memoria y Postgres |
 | RLS / GRANTS TESTED | `PASSED` | con la clave publicable real, con control positivo |
-| INDEXES REVIEWED | `PASSED` | ranking 15 ms sobre 500 × 3 |
+| INDEXES REVIEWED | `PASSED` | índices sin cambios; ranking RC3: mediana 115 ms / peor 161 ms sobre 500 participantes × 3 intentos, medición local |
 | NO DESTRUCTIVE MIGRATION | `PASSED` | esta versión no borra ni renombra |
 
 ## Seguridad y configuración
@@ -26196,10 +26377,10 @@ Las tablas de producto conservan evidencia del freeze RC.1. La validación nueva
 | Item | Estado | Evidencia |
 |---|---|---|
 | BUILD GREEN | `PASSED` | sin una sola advertencia |
-| VERIFY GREEN | `PASSED` | RC.2: corrida completa tras corregir la precedencia real de vite-node |
-| VITEST | `PASSED` | 122 archivos · 2.345 tests |
-| COVERAGE | `PASSED` | 85,67 / 77,58 / 87,68 / 85,90 |
-| E2E | `PASSED` | 222 tests en cuatro proyectos |
+| VERIFY GREEN | `PASSED` (evidencia reutilizada) | reporte del fix de Promedio: exit 0; correspondencia de fuentes auditada en el cierre RC3 |
+| VITEST | `PASSED` | verify previo: 140 archivos / 2542 tests; corte RC3: 123 tests dirigidos adicionales |
+| COVERAGE | `PASSED` (reutilizada) | 86,92 / 79,91 / 89,36 / 87,15; no recalculada en el corte |
+| E2E | `PASSED` (reutilizada) | 270 en el verify previo; seis recorridos dirigidos adicionales al integrar; smoke HTTP del artefacto RC3 |
 | ACCESSIBILITY | `PASSED` | axe, teclado, 360 px, sin desborde |
 | BUNDLE MEASURED | `PASSED` | 188,5 KiB gzip iniciales en standalone (baseline anterior: 189,0) |
 | PERFORMANCE BASELINE | `PASSED` | registro, emisión, verificación, ranking, exportación |
@@ -26233,8 +26414,12 @@ origen HTTPS disponible (preferido o fallback)
 PARTICIPANT_IDENTITY_SECRET generado y respaldado fuera de la DB
 contraseña privada de organizador y digest scrypt
 variables exclusivamente Production; Corepack=1
-migraciones remotas, deploy, bootstrap, cloud smoke y ensayos del handoff
+deploy, bootstrap si faltara la edición, cloud smoke y ensayos del handoff
 ```
+
+El PO confirma migraciones RC2 ya aplicadas en producción y ausencia de partidas.
+RC3 no requiere SQL nuevo ni reconstrucción de resúmenes. Esta confirmación no
+sustituye la comprobación operativa de readiness.
 
 Institución/contacto/domicilio, ventana, años, ausencia de divisiones y retención
 están aprobados. El arranque rechaza configuración incompleta; verificarla con
@@ -26245,14 +26430,19 @@ están aprobados. El arranque rechaza configuración incompleta; verificarla con
 `/test`, `POST /api/practice/runs` y `POST /api/practice/runs/verify` son públicos
 por [ADR-029](03-architecture/adr/ADR-029-public-practice-mode.md). No son un
 harness ni participan de la competencia. `tests/e2e/practice.spec.ts` exige 200
-con nonce en `/test` y 404 en rutas DEV del build competitivo. Los gates genéricos
-de release y el candado RC.2 permanecen intactos; esto no corta RC3.
+con nonce en `/test` y 404 en rutas DEV del build competitivo. La entrega se incluye en RC3; los campos competitivos del manifiesto permanecen
+intactos y el candado cambia únicamente por la identidad del release.
 
 `/privacidad` también es pública por
 [ADR-030](03-architecture/adr/ADR-030-privacy-page-and-action-acknowledgement.md):
 aviso v1 íntegro, SSR sin JavaScript y nonce CSP. `tests/e2e/privacy.spec.ts` cubre
 lectura sin cookies, enlace del footer, accesibilidad y rechazo API de aceptación
 ausente/falsa o versión desactualizada. No cambia el contrato legal congelado.
+
+`/puntajes` explica las reglas con lenguaje simple y acceso desde el footer.
+El ranking guarda los resultados de la mejor partida y publica una ventana
+acotada por ADR-031. La corrección de Promedio del otro agente está preservada;
+la proyección de una carrera óptima publica 10, probado en la integración.
 
 ---
 
@@ -30201,11 +30391,11 @@ saliencia ya no son aperturas de prediseño.
 
 ## RC3 TASK-A — presentación de la competencia
 
-- **Estado: ACCEPTED / IMPLEMENTED**, autorización explícita del Product Owner, 2026-09-22.
+- **Estado: ACCEPTED / IMPLEMENTED**, autorización explícita del Product Owner, 2026-09-22. Las líneas siguientes registran el alcance inicial de TASK-A. El [cierre de RC3](06-delivery/rc3-release-closure.md) incorpora los ajustes posteriores: contador siempre visible, footer actualizado y resumen público del ranking por ADR-031.
 - Portada de evento ampliada dentro del DS; gameplay/formulario a 412 px. CTA único antes del ranking; countdown orientativo ocultable desde timestamps existentes, sin autoridad cliente.
 - Podio por puesto, empates completos, `isYou` y posición propia privada; sin extender datos públicos. Footer con las tres marcas suministradas y el aviso existente.
 - Revisión arquitectónica: detalle reversible de UI. No cambia API, trust boundaries, datos, versión competitiva ni dependencias; no requiere ADR nuevo.
-- Fuentes: [FR-001/012](02-functional/functional-specification.md), [fundamentos DS](09-design-system/foundations.md), [decisiones de TASK-A](../.tmp/rc3-branding/task-a-home/ux-decisions.md).
+- Fuentes: [FR-001/012](02-functional/functional-specification.md), [fundamentos DS](09-design-system/foundations.md), [decisiones de TASK-A](06-delivery/rc3-release-closure.md).
 
 ## Práctica pública RC3
 
@@ -31226,7 +31416,7 @@ Estas preguntas están registradas en [preguntas abiertas](07-reference/open-que
 
 - [x] FR-021 y trazabilidad de `/test`, reanudación y resultado no competitivo.
 - [x] [ADR-029](03-architecture/adr/ADR-029-public-practice-mode.md), API, frontera de persistencia y amenazas.
-- [x] [Handoff y verificación](../.tmp/rc3-branding/practice-mode/README.md).
+- [x] [Handoff y verificación](06-delivery/rc3-release-closure.md).
 
 ## Privacidad UX RC3
 
@@ -31235,6 +31425,14 @@ Estas preguntas están registradas en [preguntas abiertas](07-reference/open-que
 - [x] Ruta pública, integridad del aviso v1 y aceptación al enviar cubiertas por pruebas de componente y navegador.
 
 - [x] [ADR-031](03-architecture/adr/ADR-031-persisted-run-summary-ranking-window.md): resumen autoritativo persistido, ranking acotado y actualización histórica.
+
+## Cierre local RC3
+
+- [x] [Reporte de cierre](06-delivery/rc3-release-closure.md) versionado: alcance, compatibilidad, procedencia y límites de evidencia.
+- [x] README, etapa actual, roadmap, checklist y runbooks identifican RC3.
+- [x] Los enlaces mantenidos ya no dependen de `.tmp`, que sigue ignorado.
+- [x] Supabase: sin migraciones nuevas; producción sin partidas según confirmación del PO.
+- [ ] Push manual, comprobaciones cloud y GO de STAGE-10 (fuera del cierre local).
 
 ---
 
@@ -31369,6 +31567,7 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 - `fallback-and-incident-plan.md`: funcionamiento degradado y recuperación.
 
 ### 06-delivery
+- `rc3-release-closure.md`: cierre local de RC3, notas de versión, procedencia de la validación y publicación manual.
 - `stage-10a-deployment-adaptation.md`: adaptación del deploy y evidencia local de RC.2, sin deploy ni GO.
 - `production-v1-release-candidate.md`: identidad congelada, contratos y evidencia del RC v1.
 - `release-checklist.md`: checklist local y ensayos pendientes de STAGE-10.
@@ -31492,7 +31691,7 @@ Las versiones exactas están fijadas en `package.json` y `pnpm-lock.yaml` bajo [
 
 ## Práctica pública RC3
 
-[ADR-029](03-architecture/adr/ADR-029-public-practice-mode.md) define `/test`, su API anónima y la separación respecto de participantes, intentos y ranking. Comportamiento en FR-021 de la [especificación funcional](02-functional/functional-specification.md); evidencia en el [handoff de práctica](../.tmp/rc3-branding/practice-mode/README.md).
+[ADR-029](03-architecture/adr/ADR-029-public-practice-mode.md) define `/test`, su API anónima y la separación respecto de participantes, intentos y ranking. Comportamiento en FR-021 de la [especificación funcional](02-functional/functional-specification.md); evidencia en el [handoff de práctica](06-delivery/rc3-release-closure.md).
 
 ## Privacidad UX RC3
 

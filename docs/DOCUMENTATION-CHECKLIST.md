@@ -183,7 +183,7 @@ Estas preguntas están registradas en [preguntas abiertas](07-reference/open-que
 
 - [x] FR-021 y trazabilidad de `/test`, reanudación y resultado no competitivo.
 - [x] [ADR-029](03-architecture/adr/ADR-029-public-practice-mode.md), API, frontera de persistencia y amenazas.
-- [x] [Handoff y verificación](../.tmp/rc3-branding/practice-mode/README.md).
+- [x] [Handoff y verificación](06-delivery/rc3-release-closure.md).
 
 ## Privacidad UX RC3
 
@@ -192,3 +192,11 @@ Estas preguntas están registradas en [preguntas abiertas](07-reference/open-que
 - [x] Ruta pública, integridad del aviso v1 y aceptación al enviar cubiertas por pruebas de componente y navegador.
 
 - [x] [ADR-031](03-architecture/adr/ADR-031-persisted-run-summary-ranking-window.md): resumen autoritativo persistido, ranking acotado y actualización histórica.
+
+## Cierre local RC3
+
+- [x] [Reporte de cierre](06-delivery/rc3-release-closure.md) versionado: alcance, compatibilidad, procedencia y límites de evidencia.
+- [x] README, etapa actual, roadmap, checklist y runbooks identifican RC3.
+- [x] Los enlaces mantenidos ya no dependen de `.tmp`, que sigue ignorado.
+- [x] Supabase: sin migraciones nuevas; producción sin partidas según confirmación del PO.
+- [ ] Push manual, comprobaciones cloud y GO de STAGE-10 (fuera del cierre local).

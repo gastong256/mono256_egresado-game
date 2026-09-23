@@ -55,12 +55,11 @@ La contraseña no tiene default. La seed la genera el bootstrap canónico.
 ## A. GitHub — publicar la fuente cuando el operador esté listo
 
 1. Verificar `git branch --show-current` = `main` y `git status --porcelain` vacío.
-2. `pnpm release:verify` debe identificar `1.0.0-rc.2` y la huella del
+2. `pnpm release:verify` debe identificar `1.0.0-rc.3` y la huella del
    [checklist](../06-delivery/release-checklist.md).
 3. El operador comprueba su acceso a GitHub y ejecuta:
    ```bash
-   git push origin main
-   git push origin v1.0.0-rc.2
+   git push --atomic origin main v1.0.0-rc.3
    ```
 4. Antes de conectar Vercel, incorporar `vercel.json` a cualquier rama antigua
    que se vaya a seguir usando. La configuración se lee de la revisión enviada;
@@ -69,6 +68,12 @@ La contraseña no tiene default. La seed la genera el bootstrap canónico.
 La política Git deshabilita auto-deploys no-main, incluidas ramas con `/`, usando
 `**: false`, `main: true`. No reemplaza la selección de Production Branch en el
 panel ni bloquea despliegues manuales del propietario.
+
+RC3 conserva el esquema de RC2. El PO confirma el 23/09 que las migraciones
+ya están en producción y todavía no hubo partidas allí: no se vuelve a aplicar
+el historial, no se ejecuta el seed local ni `competition:summaries`. Las partidas
+nuevas guardan automáticamente el resumen del ranking. La confirmación es del
+operador; este cierre no inspeccionó ni modificó Supabase remoto.
 
 ## B. Supabase Dashboard — un proyecto Free de producción
 
@@ -86,7 +91,7 @@ panel ni bloquea despliegues manuales del propietario.
 
 ## C. Supabase CLI — aplicar el historial sin seed
 
-Desde la raíz del checkout RC.2, con Docker disponible para los dumps y la CLI
+Desde la raíz del checkout RC3, con Docker disponible para los dumps y la CLI
 fijada por el repositorio:
 
 ```bash
@@ -245,7 +250,7 @@ exclusivamente en São Paulo.
 
 ## F. Bootstrap de la edición final
 
-Con RC.2 y preflight aprobado:
+Con RC3 y preflight aprobado:
 
 ```bash
 pnpm competition:bootstrap -- \
@@ -274,11 +279,12 @@ curl -sS -o /dev/null -w '%{http_code}\n' "$APP_URL/dev/grade-7"
 
 Obligatorio antes de GO:
 
-- liveness 200 y release `1.0.0-rc.2`, fingerprint idéntico al candado;
+- liveness 200 y release `1.0.0-rc.3`, fingerprint idéntico al candado;
 - readiness 200, `release-manifest`, `competition-config`, `database` y
   `competition` en `ok`; antes del bootstrap, `competition: degraded`/503 es
   esperado, después no;
-- landing con institución/contacto correctos, estado Upcoming y ranking vacío;
+- landing con institución/contacto correctos, estado según el calendario aprobado y ranking vacío antes de jugar;
+- `/test`, `/privacidad` y `/puntajes` accesibles; formulario, footer y explicación de puntaje correctos;
 - login real del organizador y operación desde el origen canónico;
 - headers CSP, HSTS, nosniff, frame protection y cookies seguras;
 - `/dev/grade-7` devuelve 404; sin acceso a herramientas de desarrollo;
@@ -297,7 +303,7 @@ El ensayo local completo sigue siendo la evidencia de producto obligatoria.
 
 ### Rollback de Hobby, después del primer deploy
 
-Crear dos deployments Production consecutivos del **mismo RC.2 y configuración
+Crear dos deployments Production consecutivos del **mismo RC.3 y configuración
 final**, ambos servidos previamente por el dominio canónico. Anotar ids, commit,
 fingerprint y slug. Desde Production Deployment → Instant Rollback, volver al
 inmediatamente anterior y repetir health/readiness/login. La huella será la

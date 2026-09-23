@@ -127,6 +127,7 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 - `fallback-and-incident-plan.md`: funcionamiento degradado y recuperación.
 
 ### 06-delivery
+- `rc3-release-closure.md`: cierre local de RC3, notas de versión, procedencia de la validación y publicación manual.
 - `stage-10a-deployment-adaptation.md`: adaptación del deploy y evidencia local de RC.2, sin deploy ni GO.
 - `production-v1-release-candidate.md`: identidad congelada, contratos y evidencia del RC v1.
 - `release-checklist.md`: checklist local y ensayos pendientes de STAGE-10.
@@ -250,7 +251,7 @@ Las versiones exactas están fijadas en `package.json` y `pnpm-lock.yaml` bajo [
 
 ## Práctica pública RC3
 
-[ADR-029](03-architecture/adr/ADR-029-public-practice-mode.md) define `/test`, su API anónima y la separación respecto de participantes, intentos y ranking. Comportamiento en FR-021 de la [especificación funcional](02-functional/functional-specification.md); evidencia en el [handoff de práctica](../.tmp/rc3-branding/practice-mode/README.md).
+[ADR-029](03-architecture/adr/ADR-029-public-practice-mode.md) define `/test`, su API anónima y la separación respecto de participantes, intentos y ranking. Comportamiento en FR-021 de la [especificación funcional](02-functional/functional-specification.md); evidencia en el [handoff de práctica](06-delivery/rc3-release-closure.md).
 
 ## Privacidad UX RC3
 

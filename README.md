@@ -2,14 +2,14 @@
 
 Videojuego web de decisiones y desafíos matemáticos contextualizados en la vida escolar. Este repositorio contiene la base técnica reproducible —Next.js, TypeScript estricto, tests, Supabase local opcional, Docker, CI y configuración agentiva— y el **motor de juego determinista**.
 
-El motor ejecuta una run completa de punta a punta: progresión por etapas, selección de storylets, generación procedural de desafíos, evaluación exacta, feedback estructurado, scoring, perfil de egreso, snapshots y replay. Lo hace con **contenido de desarrollo** explícitamente marcado como tal.
+El motor ejecuta una run completa de punta a punta: progresión por etapas, selección de storylets, generación procedural de desafíos, evaluación exacta, feedback estructurado, scoring, perfil de egreso, snapshots y replay. La edición competitiva usa contenido y catálogos congelados; sus identificadores históricos se conservan para replay.
 
-Desde STAGE-09 ese juego está envuelto en una **competencia con servidor autoritativo**: el producto público vive en `/`, el servidor emite cada intento, vuelve a jugar lo enviado para recomputar el puntaje y publica un ranking por mejor intento verificado donde lo único que se ve de una persona es su alias. La identificación del participante sigue [ADR-026](docs/03-architecture/adr/ADR-026-participant-identity-and-minor-privacy.md): el documento no se guarda, se deriva.
+Desde STAGE-09 ese juego está envuelto en una **competencia con servidor autoritativo**: el producto público vive en `/`, el servidor emite cada intento, vuelve a jugar lo enviado para recomputar el puntaje y publica un ranking por mejor intento verificado con alias y resumen público de su mejor partida, sin publicar su identidad privada. La identificación del participante sigue [ADR-026](docs/03-architecture/adr/ADR-026-participant-identity-and-minor-privacy.md): el documento no se guarda, se deriva.
 
-**Egresado Fair Edition v1 — Release Candidate `1.0.0-rc.2`.** El manifiesto fija
+**Egresado Fair Edition v1 — Release Candidate `1.0.0-rc.3`.** El manifiesto fija
 motor, contenido, catálogos y reglas de competencia. FairScore se oficializa sin
 cambiar su matemática; las políticas de composición conservan sus identidades
-históricas. Ver [reporte del RC](docs/06-delivery/production-v1-release-candidate.md),
+históricas. Ver [cierre de RC3](docs/06-delivery/rc3-release-closure.md),
 [checklist](docs/06-delivery/release-checklist.md) y
 [runbook operativo](docs/05-operations/fair-operations-runbook.md).
 
@@ -136,4 +136,4 @@ humana amplia. El siguiente paso es STAGE-10.
 
 ## Práctica pública
 
-`/test` recorre la misma carrera completa y calcula el puntaje por replay en servidor, sin identificación ni resultado competitivo. Guarda avance sólo en `egresado.practice.v1.active`; el único write servidor es el contador de seguridad. No consulta la seed oficial. Está disponible antes, durante y después del evento. Ver [ADR-029](docs/03-architecture/adr/ADR-029-public-practice-mode.md) y [evidencia](.tmp/rc3-branding/practice-mode/README.md).
+`/test` recorre la misma carrera completa y calcula el puntaje por replay en servidor, sin identificación ni resultado competitivo. Guarda avance sólo en `egresado.practice.v1.active`; el único write servidor es el contador de seguridad. No consulta la seed oficial. Está disponible antes, durante y después del evento. Ver [ADR-029](docs/03-architecture/adr/ADR-029-public-practice-mode.md) y [evidencia](docs/06-delivery/rc3-release-closure.md).

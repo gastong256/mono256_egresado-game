@@ -17,9 +17,13 @@ Si el roadmap y el código difieren, **el código gana** y el roadmap se corrige
 - Fases de validación externa y congelamiento: [ciclo de entrega real](../00-product/real-delivery-lifecycle.md).
 - Qué se construye por capas de alcance: [alcance y roadmap](../00-product/scope-and-roadmap.md) y [backlog](mvp-backlog.md).
 
-**Última reconciliación:** 22 de septiembre de 2026, **STAGE-10A** (preparación de despliegue; GO pendiente).
-RC.2 adapta el despliegue y conserva el freeze competitivo. La huella vigente es
-`0ea3c1de…80379cd0`; RC.1 (`1affb2a8…`) queda como evidencia histórica.
+**Última reconciliación:** 23 de septiembre de 2026, **RC3 `DONE` localmente**;
+STAGE-10 sigue `IN_PROGRESS` para publicación, ensayos remotos y GO.
+La identidad vigente es `1.0.0-rc.3`; huella `a039dc32dfce527bf3a537249c0f2d7cceca9bcbe44d5cd031a9d05a20c29e46`.
+[Cierre de RC3](rc3-release-closure.md): alcance entregado, evidencia reutilizada
+y gates del corte. RC.1 y RC.2 se conservan como antecedentes históricos.
+Las excepciones RC3 que siguen en este roadmap registran su autorización previa;
+su entrega queda cerrada por este reporte, sin reabrir el score competitivo.
 FairScore se oficializó como `fair-score-v1` sin mover un número,
 y la revisión humana amplia deja de bloquear el roadmap
 ([ADR-027](../03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md),
@@ -1172,7 +1176,7 @@ Home, countdown de ventana pública, presentación de podio y footer institucion
 Sólo presentación, accesibilidad y su verificación; sin cambios de motor, contenido,
 comparador, persistencia, contratos públicos ni lifecycle. Runtime sigue en RC.2;
 branding, ending y cierre RC3 quedan fuera. Evidencia en el
-[plan vivo](../../.tmp/rc3-branding/task-a-home/README.md).
+[plan vivo](rc3-release-closure.md).
 
 **Excepción funcional acotada autorizada por el PO: RC3 `/test`.**
 Práctica pública permanente, anónima, con misma carrera y replay, seed independiente
@@ -1181,7 +1185,7 @@ CTA secundario, aislamiento demostrado y documentación. Scope OUT: nueva matem�
 contenido, scoring, tablas, identidad, edición, versionado, proveedores y corte RC3.
 Exit gate: build público `/test` 200 y `/dev` 404, carrera/reanudación/reintento,
 ranking/best/cookie/tablas invariantes y gates del repo. [ADR-029](../03-architecture/adr/ADR-029-public-practice-mode.md)
-y [handoff](../../.tmp/rc3-branding/practice-mode/README.md). Esta autorización no
+y [handoff](rc3-release-closure.md). Esta autorización no
 levanta el freeze competitivo ni sustituye GO/NO-GO.
 
 **Excepción de privacidad UX autorizada por el PO: ADR-030 (23/09).**

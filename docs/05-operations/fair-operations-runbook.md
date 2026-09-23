@@ -42,9 +42,9 @@ Esperado:
   "service": "egresado-web",
   "release": {
     "releaseId": "egresado-fair-edition-v1",
-    "releaseVersion": "1.0.0-rc.2",
+    "releaseVersion": "1.0.0-rc.3",
     "releaseChannel": "release-candidate",
-    "releaseFingerprint": "0ea3c1de866aa0a25fb9e236baa122e935fcd37280c443ef4d42011680379cd0"
+    "releaseFingerprint": "a039dc32dfce527bf3a537249c0f2d7cceca9bcbe44d5cd031a9d05a20c29e46"
   },
   "checks": [{ "name": "release-manifest", "state": "ok" }]
 }
@@ -138,7 +138,7 @@ del congelamiento de v1—. El organizador ve:
 
 ```text
 COMPETITION_NOT_CONFIGURED — la edición no corresponde a
-egresado-fair-edition-v1 1.0.0-rc.2: scoreVersion esperaba … y tiene …
+egresado-fair-edition-v1 1.0.0-rc.3: scoreVersion esperaba … y tiene …
 ```
 
 La edición vieja **no se arregla**: sus intentos se jugaron bajo otras reglas y
@@ -346,7 +346,7 @@ es una lectura.
 
 ### 6.3 Rollback de la aplicación
 
-Primero: **un rollback de aplicación no revierte la base.** La compatibilidad de esquema no demuestra compatibilidad de replay. En Hobby ensayar dos deployments consecutivos del mismo RC.2 y configuración final; ver el [procedimiento específico](vercel-supabase-production-deployment.md#rollback-de-hobby-después-del-primer-deploy).
+Primero: **un rollback de aplicación no revierte la base.** La compatibilidad de esquema no demuestra compatibilidad de replay. En Hobby ensayar dos deployments consecutivos del mismo RC.3 y configuración final; ver el [procedimiento específico](vercel-supabase-production-deployment.md#rollback-de-hobby-después-del-primer-deploy).
 
 1. **Identificar qué está desplegado:**
    ```bash

@@ -179,7 +179,7 @@ Fuentes: [adjudicación](../04-quality/mathematics-department-ai-adjudication.md
 | FR-012/020: podio por puesto y posición propia | `Leaderboard`; DTO y comparador sin cambios | `competition-ui.test.tsx`, `home-event.test.tsx`, `ranking-release-regression.test.ts` |
 | FR-001: aviso v1 completo en `/privacidad`, footer y aceptación al iniciar | `PrivacyPolicy`, `IdentityForm`, `InstitutionalFooter`, `app/privacidad/page.tsx` | `competition-ui.test.tsx`, `privacy-page.test.tsx`, `privacy.spec.ts`, `competition.spec.ts`; integridad del aviso, footer fuera de las partidas, SSR sin JS, teclado/axe, campos conservados y rechazo API sin reconocimiento vigente |
 
-Decisiones y evidencia de TASK-A en el [plan vivo](../../.tmp/rc3-branding/task-a-home/README.md).
+Decisiones y evidencia de TASK-A en el [plan vivo](../06-delivery/rc3-release-closure.md).
 
 ## RC3 — práctica pública
 

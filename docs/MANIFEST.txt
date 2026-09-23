@@ -108,6 +108,7 @@
 06-delivery/implementation-sequence.md
 06-delivery/mvp-backlog.md
 06-delivery/production-v1-release-candidate.md
+06-delivery/rc3-release-closure.md
 06-delivery/release-checklist.md
 06-delivery/repository-conventions.md
 06-delivery/stage-08-final-integration-pacing-closure.md
