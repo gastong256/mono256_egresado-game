@@ -20,19 +20,16 @@ import { readIdentityFormConfig } from '@/server/competition/page-data'
 export const dynamic = 'force-dynamic'
 
 /**
- * Título y descripción según el estado real del evento.
+ * Marca en el título y descripción según el estado real del evento.
  *
  * Salen de la misma lectura pública que dibuja la portada: el nombre de la
- * edición es configuración del despliegue, no una constante del componente, y
+ * edición va en la descripción, no se concatena a la marca de la pestaña, y
  * el estado —abierta, próxima, cerrada— cambia qué promete la pestaña. Nada
  * de sesión entra acá: la metadata es la misma para todo el mundo.
  */
 export async function generateMetadata(): Promise<Metadata> {
   const { competition } = await readPublicState()
-  const configured = competition.status !== 'not-configured'
-  const title = configured
-    ? `Egresado · ${competition.name}`
-    : 'Egresado — un juego sobre decidir en la escuela'
+  const title = 'Egresado'
   const description =
     competition.status === 'open'
       ? `Es tu turno en ${competition.name}: recorré la secundaria de 7.º a 5.º, tomá decisiones y buscá tu mejor puntaje.`

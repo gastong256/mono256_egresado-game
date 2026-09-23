@@ -375,3 +375,14 @@ saliencia ya no son aperturas de prediseño.
 | D-RC3-P-002 | Emisión aleatoria independiente y replay stateless; descriptor recompuesto, sin firma ni secreto nuevo. Checkpoint versionado local, última escritura entre pestañas. | ACCEPTED · arquitectura | ADR-029 |
 | D-RC3-P-003 | `practice-limits-v1`: 120 emisiones / 240 verificaciones por 300 s y dirección derivada. Sólo persiste contador de seguridad, fallo cerrado en despliegue público. | ACCEPTED · política operativa versionada | ADR-029 |
 | D-RC3-P-004 | Toda situación ordinaria pone la nota de su calidad con una escala única de contenido (10 / 8 / 6 / 4); los Repasos no. Corrige el Promedio, que sólo movía la expo de 1.º. Sin bump de motor, ruleset ni contenido: no cambia action log, FairScore, replay ni catálogos; los resúmenes ya verificados conservan su valor. | ACCEPTED · PO · excepción RC3 | [ADR-016 enmienda](../03-architecture/adr/ADR-016-career-player-model.md#2-promedio-se-deriva-de-notas-reales); `src/content/grades.ts` |
+
+## RC4 — corte urgente de presentación
+
+- **ACCEPTED · PO · 23/09/2026.** Se publica como nueva candidata el arte de
+  interludios, los ajustes móviles integrados, el título único del Home y la
+  aclaración de desempates externos en `/puntajes`.
+- El Departamento de Matemática del establecimiento organizador decide cualquier
+  desempate externo; Egresado no lo implementa ni es responsable de esa decisión.
+  Los puestos compartidos y el comparador siguen vigentes.
+- Sólo cambia la identidad del release según ADR-027/028; no requiere ADR nuevo.
+  El tag RC3 permanece inmutable. [Cierre RC4](../06-delivery/rc4-release-closure.md).

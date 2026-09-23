@@ -64,3 +64,11 @@ de acciones. El texto del alias se neutraliza contra inyección de fórmulas.
 Retención y tooling quedaron cerrados en
 [STAGE-09](../06-delivery/stage-09-fair-mode-server-ranking.md); el procedimiento
 operativo está en el [runbook](fair-runbook.md#operación-de-la-competencia-implementada).
+
+## Desempates externos — aclaración RC4
+
+Si hace falta un desempate fuera del juego, el Departamento de Matemática del
+establecimiento organizador define los criterios y resuelve la decisión.
+Egresado no dispone de esa función ni es responsable de esa decisión externa:
+su ranking mantiene los puestos compartidos. La aclaración aparece en `/puntajes`
+y no autoriza a cambiar puntajes, comparador o versiones de partidas.

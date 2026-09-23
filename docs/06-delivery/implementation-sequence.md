@@ -17,13 +17,16 @@ Si el roadmap y el código difieren, **el código gana** y el roadmap se corrige
 - Fases de validación externa y congelamiento: [ciclo de entrega real](../00-product/real-delivery-lifecycle.md).
 - Qué se construye por capas de alcance: [alcance y roadmap](../00-product/scope-and-roadmap.md) y [backlog](mvp-backlog.md).
 
-**Última reconciliación:** 23 de septiembre de 2026, **RC3 `DONE` localmente**;
-STAGE-10 sigue `IN_PROGRESS` para publicación, ensayos remotos y GO.
-La identidad vigente es `1.0.0-rc.3`; huella `a039dc32dfce527bf3a537249c0f2d7cceca9bcbe44d5cd031a9d05a20c29e46`.
-[Cierre de RC3](rc3-release-closure.md): alcance entregado, evidencia reutilizada
-y gates del corte. RC.1 y RC.2 se conservan como antecedentes históricos.
-Las excepciones RC3 que siguen en este roadmap registran su autorización previa;
-su entrega queda cerrada por este reporte, sin reabrir el score competitivo.
+**Última reconciliación:** 23 de septiembre de 2026, **RC4 `DONE` localmente**;
+STAGE-10 mantiene pendientes las comprobaciones remotas y el GO del operador.
+Identidad vigente `1.0.0-rc.4`; huella `4b320b09693c4550b422cfbe21f0bc742b65f27b3761b30854d9edf4580a19a2`.
+[Cierre de RC4](rc4-release-closure.md): alcance y evidencia del corte urgente.
+Scope IN autorizado: imágenes de interludios/egreso, ajuste móvil ya integrado,
+título del Home, aclaración editorial de desempates externos y release/documentación.
+Scope OUT: reglas, motor, contenido, score, persistencia, migraciones y despliegue remoto.
+Exit gate: checks focalizados de UI/metadata, build, freeze y controles de release;
+commit en main y tag local, sin push. RC1/RC2/RC3 se conservan como antecedentes.
+Las excepciones RC3 más abajo registran autorizaciones históricas ya entregadas.
 FairScore se oficializó como `fair-score-v1` sin mover un número,
 y la revisión humana amplia deja de bloquear el roadmap
 ([ADR-027](../03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md),

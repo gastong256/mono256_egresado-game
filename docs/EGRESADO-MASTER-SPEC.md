@@ -5179,6 +5179,12 @@ y puestos compartidos con ejemplo 1.º, 1.º, 3.º. No incorpora una calculadora
 ni modifica reglas. Es pública y legible sin JavaScript, con regreso al Home
 y enlace a la documentación técnica de v1 en GitHub para ampliar.
 
+Si el evento requiere desempatar fuera del juego, el Departamento de Matemática
+del establecimiento organizador define el criterio y resuelve el desempate.
+Egresado no tiene esa función ni asume responsabilidad por esa decisión externa;
+el ranking conserva los puestos compartidos. Aclaración editorial autorizada
+para RC4, sin modificar el comparador ni crear un desempate automático.
+
 ## FR-013 Reintento
 El jugador puede iniciar otra run. Fair v1 permite reintentos ilimitados sobre
 la misma Competition Seed de edición, sin reroll raro. Practice puede variar
@@ -5495,6 +5501,13 @@ reflow, teclado, accesibilidad, carga real y avance con imágenes bloqueadas).
 | FR-012: resumen de la mejor partida y ventana de 12 filas | ADR-031, `summarizeVerifiedRun`, `selectRankingWindow`, `Leaderboard` | `ranking-summary.test.ts`, `ranking-window.test.ts`, `ranking-run-details.test.tsx`, `home-event.spec.ts` |
 | FR-001/012: explicación simple de puntos en `/puntajes`, enlazada debajo de privacidad | `app/puntajes/page.tsx`, `InstitutionalFooter`; política v1 sin cambios | `points.spec.ts`: navegación, orden de enlaces, SSR sin JS, zoom, teclado y axe; `home-event.test.tsx` y `home-event.spec.ts`: footer responsive |
 | FR-018: datos públicos acotados, sin PII ni replay en GET | schema de proyección, batch de resúmenes, backfill explícito | `competition-store.test.ts`, `competition-attack.test.ts`, `competition.spec.ts` |
+
+## RC4 — título y responsabilidad por desempates externos
+
+| Requisito | Implementación | Evidencia |
+|---|---|---|
+| FR-001: título del Home «Egresado», sin concatenar el nombre de edición | `app/page.tsx`, título de pestaña y Open Graph | `points.spec.ts`, navegación al Home real |
+| FR-012: responsabilidad del organizador por un desempate externo; puesto compartido intacto | `app/puntajes/page.tsx` | `points.spec.ts`, lectura sin JavaScript y accesibilidad |
 
 ---
 
@@ -22137,9 +22150,9 @@ Esperado:
   "service": "egresado-web",
   "release": {
     "releaseId": "egresado-fair-edition-v1",
-    "releaseVersion": "1.0.0-rc.3",
+    "releaseVersion": "1.0.0-rc.4",
     "releaseChannel": "release-candidate",
-    "releaseFingerprint": "a039dc32dfce527bf3a537249c0f2d7cceca9bcbe44d5cd031a9d05a20c29e46"
+    "releaseFingerprint": "4b320b09693c4550b422cfbe21f0bc742b65f27b3761b30854d9edf4580a19a2"
   },
   "checks": [{ "name": "release-manifest", "state": "ok" }]
 }
@@ -22233,7 +22246,7 @@ del congelamiento de v1—. El organizador ve:
 
 ```text
 COMPETITION_NOT_CONFIGURED — la edición no corresponde a
-egresado-fair-edition-v1 1.0.0-rc.3: scoreVersion esperaba … y tiene …
+egresado-fair-edition-v1 1.0.0-rc.4: scoreVersion esperaba … y tiene …
 ```
 
 La edición vieja **no se arregla**: sus intentos se jugaron bajo otras reglas y
@@ -22807,6 +22820,14 @@ Retención y tooling quedaron cerrados en
 [STAGE-09](06-delivery/stage-09-fair-mode-server-ranking.md); el procedimiento
 operativo está en el [runbook](05-operations/fair-runbook.md#operación-de-la-competencia-implementada).
 
+## Desempates externos — aclaración RC4
+
+Si hace falta un desempate fuera del juego, el Departamento de Matemática del
+establecimiento organizador define los criterios y resuelve la decisión.
+Egresado no dispone de esa función ni es responsable de esa decisión externa:
+su ranking mantiene los puestos compartidos. La aclaración aparece en `/puntajes`
+y no autoriza a cambiar puntajes, comparador o versiones de partidas.
+
 ---
 
 # FILE: 05-operations/vercel-supabase-production-deployment.md
@@ -22868,11 +22889,11 @@ La contraseña no tiene default. La seed la genera el bootstrap canónico.
 ## A. GitHub — publicar la fuente cuando el operador esté listo
 
 1. Verificar `git branch --show-current` = `main` y `git status --porcelain` vacío.
-2. `pnpm release:verify` debe identificar `1.0.0-rc.3` y la huella del
+2. `pnpm release:verify` debe identificar `1.0.0-rc.4` y la huella del
    [checklist](06-delivery/release-checklist.md).
 3. El operador comprueba su acceso a GitHub y ejecuta:
    ```bash
-   git push --atomic origin main v1.0.0-rc.3
+   git push --atomic origin main v1.0.0-rc.4
    ```
 4. Antes de conectar Vercel, incorporar `vercel.json` a cualquier rama antigua
    que se vaya a seguir usando. La configuración se lee de la revisión enviada;
@@ -22882,7 +22903,7 @@ La política Git deshabilita auto-deploys no-main, incluidas ramas con `/`, usan
 `**: false`, `main: true`. No reemplaza la selección de Production Branch en el
 panel ni bloquea despliegues manuales del propietario.
 
-RC3 conserva el esquema de RC2. El PO confirma el 23/09 que las migraciones
+RC4 conserva el esquema de RC2/RC3. El PO confirma el 23/09 que las migraciones
 ya están en producción y todavía no hubo partidas allí: no se vuelve a aplicar
 el historial, no se ejecuta el seed local ni `competition:summaries`. Las partidas
 nuevas guardan automáticamente el resumen del ranking. La confirmación es del
@@ -22904,7 +22925,7 @@ operador; este cierre no inspeccionó ni modificó Supabase remoto.
 
 ## C. Supabase CLI — aplicar el historial sin seed
 
-Desde la raíz del checkout RC3, con Docker disponible para los dumps y la CLI
+Desde la raíz del checkout RC4, con Docker disponible para los dumps y la CLI
 fijada por el repositorio:
 
 ```bash
@@ -23063,7 +23084,7 @@ exclusivamente en São Paulo.
 
 ## F. Bootstrap de la edición final
 
-Con RC3 y preflight aprobado:
+Con RC4 y preflight aprobado:
 
 ```bash
 pnpm competition:bootstrap -- \
@@ -23092,7 +23113,7 @@ curl -sS -o /dev/null -w '%{http_code}\n' "$APP_URL/dev/grade-7"
 
 Obligatorio antes de GO:
 
-- liveness 200 y release `1.0.0-rc.3`, fingerprint idéntico al candado;
+- liveness 200 y release `1.0.0-rc.4`, fingerprint idéntico al candado;
 - readiness 200, `release-manifest`, `competition-config`, `database` y
   `competition` en `ok`; antes del bootstrap, `competition: degraded`/503 es
   esperado, después no;
@@ -23116,7 +23137,7 @@ El ensayo local completo sigue siendo la evidencia de producto obligatoria.
 
 ### Rollback de Hobby, después del primer deploy
 
-Crear dos deployments Production consecutivos del **mismo RC.3 y configuración
+Crear dos deployments Production consecutivos del **mismo RC.4 y configuración
 final**, ambos servidos previamente por el dominio canónico. Anotar ids, commit,
 fingerprint y slug. Desde Production Deployment → Instant Rollback, volver al
 inmediatamente anterior y repetir health/readiness/login. La huella será la
@@ -23234,6 +23255,20 @@ real al ejecutar el handoff. Ninguna consulta acredita una cuenta ni un deploy.
 
 Vista corta del estado de ejecución. El contrato completo y el protocolo de
 actualización están en el [roadmap](06-delivery/implementation-sequence.md).
+
+## RC4 — cierre urgente de presentación
+
+**Estado: `DONE` — 23 de septiembre de 2026.** Release `1.0.0-rc.4`,
+rama `main`, tag `v1.0.0-rc.4`. [Cierre y evidencia](06-delivery/rc4-release-closure.md).
+Incluye las siete láminas narrativas, los ajustes móviles de `1d15d35`, el título
+único «Egresado» en Home y la responsabilidad del Departamento de Matemática
+por cualquier desempate externo. El ranking conserva sus puestos compartidos.
+Sin cambios de motor, score, contenido, persistencia ni migraciones.
+Validación: 223 tests dirigidos, 78 E2E, build, tipos, lint, diseño y 57 controles
+de freeze en verde; procedencia y límites en el reporte de cierre.
+
+Push y despliegue quedan a cargo del operador; el cierre no acredita GO remoto.
+Los apartados siguientes conservan la evidencia histórica de RC3 y anteriores.
 
 ## RC3 — cierre local
 
@@ -24054,13 +24089,16 @@ Si el roadmap y el código difieren, **el código gana** y el roadmap se corrige
 - Fases de validación externa y congelamiento: [ciclo de entrega real](00-product/real-delivery-lifecycle.md).
 - Qué se construye por capas de alcance: [alcance y roadmap](00-product/scope-and-roadmap.md) y [backlog](06-delivery/mvp-backlog.md).
 
-**Última reconciliación:** 23 de septiembre de 2026, **RC3 `DONE` localmente**;
-STAGE-10 sigue `IN_PROGRESS` para publicación, ensayos remotos y GO.
-La identidad vigente es `1.0.0-rc.3`; huella `a039dc32dfce527bf3a537249c0f2d7cceca9bcbe44d5cd031a9d05a20c29e46`.
-[Cierre de RC3](06-delivery/rc3-release-closure.md): alcance entregado, evidencia reutilizada
-y gates del corte. RC.1 y RC.2 se conservan como antecedentes históricos.
-Las excepciones RC3 que siguen en este roadmap registran su autorización previa;
-su entrega queda cerrada por este reporte, sin reabrir el score competitivo.
+**Última reconciliación:** 23 de septiembre de 2026, **RC4 `DONE` localmente**;
+STAGE-10 mantiene pendientes las comprobaciones remotas y el GO del operador.
+Identidad vigente `1.0.0-rc.4`; huella `4b320b09693c4550b422cfbe21f0bc742b65f27b3761b30854d9edf4580a19a2`.
+[Cierre de RC4](06-delivery/rc4-release-closure.md): alcance y evidencia del corte urgente.
+Scope IN autorizado: imágenes de interludios/egreso, ajuste móvil ya integrado,
+título del Home, aclaración editorial de desempates externos y release/documentación.
+Scope OUT: reglas, motor, contenido, score, persistencia, migraciones y despliegue remoto.
+Exit gate: checks focalizados de UI/metadata, build, freeze y controles de release;
+commit en main y tag local, sin push. RC1/RC2/RC3 se conservan como antecedentes.
+Las excepciones RC3 más abajo registran autorizaciones históricas ya entregadas.
 FairScore se oficializó como `fair-score-v1` sin mover un número,
 y la revisión humana amplia deja de bloquear el roadmap
 ([ADR-027](03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md),
@@ -26282,6 +26320,118 @@ conservan. No se hace push desde este cierre.
 
 ---
 
+# FILE: 06-delivery/rc4-release-closure.md
+
+# RC4 — cierre urgente de presentación
+
+Fecha: 23 de septiembre de 2026. Estado: **CLOSED LOCALLY — READY TO PUBLISH**.
+Publicación manual por el operador; este reporte no acredita un deploy ni GO remoto.
+
+## Identidad y alcance
+
+| Campo | Valor |
+|---|---|
+| Release | `egresado-fair-edition-v1` |
+| Versión | `1.0.0-rc.4` |
+| Tag anotado | `v1.0.0-rc.4` |
+| Rama de entrega | `main` |
+| Huella | `4b320b09693c4550b422cfbe21f0bc742b65f27b3761b30854d9edf4580a19a2` |
+| Base del corte | `1d15d35` |
+| Predecesor inmutable | `v1.0.0-rc.3` → `0cc182c` |
+
+RC4 reúne los cambios posteriores al corte RC3:
+
+- `b02f294`: siete láminas narrativas a lápiz sobre papel amarillo para los seis
+  años y el egreso. WebP optimizados, carga decorativa sin bloquear el juego.
+- `1d15d35`: ajuste móvil del otro agente, preservado íntegramente: opciones y
+  cantidades legibles, controles nativos a 16 px, agenda y plano más usables,
+  chips de carrera claros, Home compacto y ranking plegable en teléfono.
+- Home con título de pestaña y Open Graph **Egresado**. La duplicación provenía
+  de concatenar la marca al nombre de la edición, que también la podía incluir;
+  no había una plantilla de título global duplicándola. La descripción conserva
+  el nombre y estado del evento.
+- `/puntajes` aclara que el Departamento de Matemática del establecimiento
+  organizador define y resuelve cualquier desempate externo. Egresado no tiene
+  esa función ni es responsable de esa decisión. El ranking conserva los puestos
+  compartidos: esto no introduce un criterio nuevo ni modifica resultados.
+- Identidad RC4, candado, documentación de estado y runbooks vigentes.
+
+Fuentes: [FR-001/012](02-functional/functional-specification.md),
+[operación del ranking](05-operations/leaderboard-and-moderation.md),
+[assets](09-design-system/assets.md) y [fundamentos móviles](09-design-system/foundations.md).
+La autorización del PO abarca este corte; aplica el mecanismo de ADR-027/028,
+sin una decisión arquitectónica nueva.
+
+## Compatibilidad y despliegue
+
+Motor `10.0.0`, action log `7`, snapshot `8`, ruleset `1.0.0-full-career`,
+contenido `5.5.0-grade-5`, catálogo `grade-5-dev-6` y score
+`fair-score-v1@1.0.0-fair-edition-v1` permanecen iguales a RC3.
+La diferencia del manifiesto es únicamente `releaseVersion`; el candado se
+regenera mediante el comando mantenido y se comprueba después sin actualizarlo.
+
+**Sin migraciones SQL, dependencias o variables nuevas.** Cabeza de esquema:
+`20260921000000_competition_fair_mode.sql`. Sobre producción con RC2/RC3 ya
+migrada, desplegar el código es suficiente: no reset, seed ni backfill por RC4.
+Se conservan la edición, horarios, seed, identidad y resultados existentes.
+No se consultó ni modificó Supabase remoto.
+
+## Validación
+
+Se respetó la instrucción de no repetir `pnpm verify` indiscriminadamente.
+El [reporte RC3](06-delivery/rc3-release-closure.md) conserva el verify histórico de 2542
+unit/component/integration/property tests y 270 E2E; **no se atribuye esa corrida
+al código móvil posterior ni a RC4**. Este corte valida su alcance con checks
+dirigidos sobre el árbol final, incluida la UI heredada de `1d15d35`.
+
+| Comando / alcance | Resultado |
+|---|---|
+| `pnpm toolchain:check` | PASS; Node 24.19.0 y pnpm 11.22.0 |
+| `pnpm install --frozen-lockfile` | PASS; lockfile sin cambios |
+| `pnpm release:check` | PASS; Next.js 16.3.5 |
+| `pnpm release:verify -- --update-lock` | PASS; 54 checks y candado RC4 generado |
+| `pnpm release:verify` | PASS; 57 checks con el nuevo candado |
+| `pnpm release:preflight -- --env-file=.env.production.local` | PASS; sólo contrato del archivo local, sin conexión al proveedor |
+| `pnpm test` con 15 suites dirigidas | PASS; 223 tests |
+| `pnpm build` | PASS; build y TypeScript de Next |
+| `pnpm lint`, `pnpm typecheck`, `pnpm design:check` | PASS |
+| `pnpm security:audit` | PASS; sin vulnerabilidades conocidas |
+| `pnpm format:check`, `pnpm secrets:check` | PASS; formato y 955 archivos revisados |
+| `node scripts/validate-agent-workspace.mjs`, `node scripts/sync-master-spec.mjs --check` | PASS; 261 documentos y master de 141 fuentes |
+| `git diff --check` | PASS |
+| Build servido localmente: `/api/health` y `/api/health?ready=1` | PASS; HTTP 200, RC4, huella esperada y checks `ok` |
+| `pnpm test:e2e:only` con los seis specs y cuatro proyectos indicados abajo, `--workers=3` | PASS; 78 tests, sin skips |
+
+Las suites dirigidas cubren manifiesto, readiness, deployment, configuración,
+health, freeze, ranking, clasificación, primitivas, Home, escenas, egreso y shell.
+Playwright cubre `points`, `home-event`, `foundation`, `full-career`,
+`post-g1-accessibility-audit` y `grade-5`, en los proyectos desktop/mobile
+correspondientes: título, contenido sin JavaScript, teclado, axe, reflow, zoom,
+interacciones, transiciones y egreso. Los comandos de build, test y navegador
+precargan `.env.local` y comprueban que Supabase sea loopback; no utilizan
+credenciales productivas para las pruebas.
+
+No se repitieron cobertura completa, simulaciones de balance, DB reset/lint/types
+ni contenedores: RC4 sólo cambia presentación e identidad de release. El preflight
+no acredita que las variables de Vercel coincidan con el archivo local.
+
+## Publicación manual
+
+1. Desde `main` limpio, publicar la rama y el nuevo tag juntos:
+   ```bash
+   git push --atomic origin main v1.0.0-rc.4
+   ```
+2. Revisar CI y el deployment Production de Vercel para ese mismo commit.
+3. En el dominio real comprobar `/api/health` y `/api/health?ready=1`: versión
+   RC4, huella de este reporte y checks `ok`.
+4. Revisar la pestaña del Home, el texto de `/puntajes`, `/test` y organizador;
+   confirmar horarios y estado de la edición. El [handoff](05-operations/vercel-supabase-production-deployment.md)
+   conserva los ensayos operativos de respaldo/restore y rollback antes de GO.
+
+No se mueve ningún tag anterior. No se hace push ni deploy desde este cierre.
+
+---
+
 # FILE: 06-delivery/release-checklist.md
 
 # Checklist del Release Candidate — Egresado Fair Edition v1
@@ -26292,14 +26442,16 @@ Binario. Cada línea está `PASSED`, `READY FOR STAGE-10 REHEARSAL` o `FAILED`.
 infraestructura real y que este repositorio no puede afirmar sin mentir.
 
 ```text
-release   egresado-fair-edition-v1 · 1.0.0-rc.3
-huella    a039dc32dfce527bf3a537249c0f2d7cceca9bcbe44d5cd031a9d05a20c29e46
+release   egresado-fair-edition-v1 · 1.0.0-rc.4
+huella    4b320b09693c4550b422cfbe21f0bc742b65f27b3761b30854d9edf4580a19a2
 ```
 
-La evidencia histórica de RC1/RC2 se conserva en sus reportes. La identidad,
-excepciones autorizadas y validación vigente están en el [cierre de RC3](06-delivery/rc3-release-closure.md).
-Se reutiliza el verify documentado por el otro agente y se verifican de nuevo
-los cambios del corte; no se presenta como un nuevo verify completo.
+La evidencia histórica de RC1/RC2/RC3 se conserva en sus reportes. La identidad
+y validación vigente están en el [cierre de RC4](06-delivery/rc4-release-closure.md).
+RC4 incluye las láminas narrativas, las correcciones móviles de `1d15d35`,
+el título del Home y la aclaración sobre desempates externos. Los checks
+focalizados del corte se distinguen del verify histórico; no se afirma una
+nueva corrida completa de verify.
 El [handoff A–I](05-operations/vercel-supabase-production-deployment.md) es el procedimiento vigente.
 
 ## Producto congelado
@@ -26392,13 +26544,13 @@ El [handoff A–I](05-operations/vercel-supabase-production-deployment.md) es el
 | Item | Estado | Evidencia |
 |---|---|---|
 | BUILD GREEN | `PASSED` | sin una sola advertencia |
-| VERIFY GREEN | `PASSED` (evidencia reutilizada) | reporte del fix de Promedio: exit 0; correspondencia de fuentes auditada en el cierre RC3 |
-| VITEST | `PASSED` | verify previo: 140 archivos / 2542 tests; corte RC3: 123 tests dirigidos adicionales |
+| VERIFY GREEN | `PASSED` histórico RC3 | no repetido en RC4; gates dirigidos actuales documentados en su cierre |
+| VITEST | `PASSED` | RC4: 15 archivos / 223 tests dirigidos; verify histórico RC3: 2542 tests |
 | COVERAGE | `PASSED` (reutilizada) | 86,92 / 79,91 / 89,36 / 87,15; no recalculada en el corte |
-| E2E | `PASSED` (reutilizada) | 270 en el verify previo; seis recorridos dirigidos adicionales al integrar; smoke HTTP del artefacto RC3 |
+| E2E | `PASSED` | RC4: 78 dirigidos en cuatro proyectos; 270 históricos de RC3, no repetidos como suite completa |
 | ACCESSIBILITY | `PASSED` | axe, teclado, 360 px, sin desborde |
-| BUNDLE MEASURED | `PASSED` | 188,5 KiB gzip iniciales en standalone (baseline anterior: 189,0) |
-| PERFORMANCE BASELINE | `PASSED` | registro, emisión, verificación, ranking, exportación |
+| BUNDLE MEASURED | `PASSED` (histórico) | 188,5 KiB gzip iniciales en standalone (baseline anterior: 189,0); no recalculado en RC4 |
+| PERFORMANCE BASELINE | `PASSED` (histórico) | registro, emisión, verificación, ranking, exportación; no repetido en RC4 |
 | SYNTHETIC COMPETITION | `PASSED` | jornada entera contra Postgres real |
 | REMOTE LOAD TEST | `READY FOR STAGE-10 REHEARSAL` | — |
 | LOCAL REHEARSAL / CLOUD SMOKE | `READY FOR STAGE-10 REHEARSAL` | ensayo equivalente a staging local; smoke obligatorio en la producción real, sin proyecto cloud extra |
@@ -30421,6 +30573,17 @@ saliencia ya no son aperturas de prediseño.
 | D-RC3-P-003 | `practice-limits-v1`: 120 emisiones / 240 verificaciones por 300 s y dirección derivada. Sólo persiste contador de seguridad, fallo cerrado en despliegue público. | ACCEPTED · política operativa versionada | ADR-029 |
 | D-RC3-P-004 | Toda situación ordinaria pone la nota de su calidad con una escala única de contenido (10 / 8 / 6 / 4); los Repasos no. Corrige el Promedio, que sólo movía la expo de 1.º. Sin bump de motor, ruleset ni contenido: no cambia action log, FairScore, replay ni catálogos; los resúmenes ya verificados conservan su valor. | ACCEPTED · PO · excepción RC3 | [ADR-016 enmienda](03-architecture/adr/ADR-016-career-player-model.md#2-promedio-se-deriva-de-notas-reales); `src/content/grades.ts` |
 
+## RC4 — corte urgente de presentación
+
+- **ACCEPTED · PO · 23/09/2026.** Se publica como nueva candidata el arte de
+  interludios, los ajustes móviles integrados, el título único del Home y la
+  aclaración de desempates externos en `/puntajes`.
+- El Departamento de Matemática del establecimiento organizador decide cualquier
+  desempate externo; Egresado no lo implementa ni es responsable de esa decisión.
+  Los puestos compartidos y el comparador siguen vigentes.
+- Sólo cambia la identidad del release según ADR-027/028; no requiere ADR nuevo.
+  El tag RC3 permanece inmutable. [Cierre RC4](06-delivery/rc4-release-closure.md).
+
 ---
 
 # FILE: 07-reference/formulas-and-algorithms.md
@@ -31449,6 +31612,13 @@ Estas preguntas están registradas en [preguntas abiertas](07-reference/open-que
 - [x] Supabase: sin migraciones nuevas; producción sin partidas según confirmación del PO.
 - [ ] Push manual, comprobaciones cloud y GO de STAGE-10 (fuera del cierre local).
 
+## Cierre urgente RC4
+
+- [x] [Cierre de RC4](06-delivery/rc4-release-closure.md): alcance, identidad y evidencia del corte.
+- [x] Estado, roadmap, checklist y runbooks actualizados; RC3 conservado como historia.
+- [x] Aclaración de desempates externos trazada a FR-012; comparador sin cambios.
+- [ ] Push manual y comprobaciones de producción a cargo del operador.
+
 ---
 
 # FILE: README.md
@@ -31582,6 +31752,7 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 - `fallback-and-incident-plan.md`: funcionamiento degradado y recuperación.
 
 ### 06-delivery
+- `rc4-release-closure.md`: corte urgente posterior a RC3, cambios incluidos, controles y publicación manual.
 - `rc3-release-closure.md`: cierre local de RC3, notas de versión, procedencia de la validación y publicación manual.
 - `stage-10a-deployment-adaptation.md`: adaptación del deploy y evidencia local de RC.2, sin deploy ni GO.
 - `production-v1-release-candidate.md`: identidad congelada, contratos y evidencia del RC v1.

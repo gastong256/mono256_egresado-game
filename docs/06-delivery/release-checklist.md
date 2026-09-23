@@ -6,14 +6,16 @@ Binario. Cada línea está `PASSED`, `READY FOR STAGE-10 REHEARSAL` o `FAILED`.
 infraestructura real y que este repositorio no puede afirmar sin mentir.
 
 ```text
-release   egresado-fair-edition-v1 · 1.0.0-rc.3
-huella    a039dc32dfce527bf3a537249c0f2d7cceca9bcbe44d5cd031a9d05a20c29e46
+release   egresado-fair-edition-v1 · 1.0.0-rc.4
+huella    4b320b09693c4550b422cfbe21f0bc742b65f27b3761b30854d9edf4580a19a2
 ```
 
-La evidencia histórica de RC1/RC2 se conserva en sus reportes. La identidad,
-excepciones autorizadas y validación vigente están en el [cierre de RC3](rc3-release-closure.md).
-Se reutiliza el verify documentado por el otro agente y se verifican de nuevo
-los cambios del corte; no se presenta como un nuevo verify completo.
+La evidencia histórica de RC1/RC2/RC3 se conserva en sus reportes. La identidad
+y validación vigente están en el [cierre de RC4](rc4-release-closure.md).
+RC4 incluye las láminas narrativas, las correcciones móviles de `1d15d35`,
+el título del Home y la aclaración sobre desempates externos. Los checks
+focalizados del corte se distinguen del verify histórico; no se afirma una
+nueva corrida completa de verify.
 El [handoff A–I](../05-operations/vercel-supabase-production-deployment.md) es el procedimiento vigente.
 
 ## Producto congelado
@@ -106,13 +108,13 @@ El [handoff A–I](../05-operations/vercel-supabase-production-deployment.md) es
 | Item | Estado | Evidencia |
 |---|---|---|
 | BUILD GREEN | `PASSED` | sin una sola advertencia |
-| VERIFY GREEN | `PASSED` (evidencia reutilizada) | reporte del fix de Promedio: exit 0; correspondencia de fuentes auditada en el cierre RC3 |
-| VITEST | `PASSED` | verify previo: 140 archivos / 2542 tests; corte RC3: 123 tests dirigidos adicionales |
+| VERIFY GREEN | `PASSED` histórico RC3 | no repetido en RC4; gates dirigidos actuales documentados en su cierre |
+| VITEST | `PASSED` | RC4: 15 archivos / 223 tests dirigidos; verify histórico RC3: 2542 tests |
 | COVERAGE | `PASSED` (reutilizada) | 86,92 / 79,91 / 89,36 / 87,15; no recalculada en el corte |
-| E2E | `PASSED` (reutilizada) | 270 en el verify previo; seis recorridos dirigidos adicionales al integrar; smoke HTTP del artefacto RC3 |
+| E2E | `PASSED` | RC4: 78 dirigidos en cuatro proyectos; 270 históricos de RC3, no repetidos como suite completa |
 | ACCESSIBILITY | `PASSED` | axe, teclado, 360 px, sin desborde |
-| BUNDLE MEASURED | `PASSED` | 188,5 KiB gzip iniciales en standalone (baseline anterior: 189,0) |
-| PERFORMANCE BASELINE | `PASSED` | registro, emisión, verificación, ranking, exportación |
+| BUNDLE MEASURED | `PASSED` (histórico) | 188,5 KiB gzip iniciales en standalone (baseline anterior: 189,0); no recalculado en RC4 |
+| PERFORMANCE BASELINE | `PASSED` (histórico) | registro, emisión, verificación, ranking, exportación; no repetido en RC4 |
 | SYNTHETIC COMPETITION | `PASSED` | jornada entera contra Postgres real |
 | REMOTE LOAD TEST | `READY FOR STAGE-10 REHEARSAL` | — |
 | LOCAL REHEARSAL / CLOUD SMOKE | `READY FOR STAGE-10 REHEARSAL` | ensayo equivalente a staging local; smoke obligatorio en la producción real, sin proyecto cloud extra |

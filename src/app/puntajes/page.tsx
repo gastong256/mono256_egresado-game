@@ -46,6 +46,7 @@ export default function PointsPage() {
       body: [
         'En esta edición, quienes tienen el mismo puntaje comparten el puesto. Si dos personas quedan primeras, la siguiente queda tercera: 1.º, 1.º, 3.º.',
         'Para que la lista sea más fácil de recorrer, los empates se agrupan en una fila con «Compartido con X más». Nadie pierde su puesto por aparecer dentro de ese grupo.',
+        'Si hace falta desempatar, el Departamento de Matemática del establecimiento organizador define los criterios y resuelve el desempate. Egresado no tiene una función para hacerlo ni es responsable de esa decisión: el ranking mantiene los puestos compartidos.',
       ],
     },
     {

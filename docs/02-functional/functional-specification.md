@@ -185,6 +185,12 @@ y puestos compartidos con ejemplo 1.º, 1.º, 3.º. No incorpora una calculadora
 ni modifica reglas. Es pública y legible sin JavaScript, con regreso al Home
 y enlace a la documentación técnica de v1 en GitHub para ampliar.
 
+Si el evento requiere desempatar fuera del juego, el Departamento de Matemática
+del establecimiento organizador define el criterio y resuelve el desempate.
+Egresado no tiene esa función ni asume responsabilidad por esa decisión externa;
+el ranking conserva los puestos compartidos. Aclaración editorial autorizada
+para RC4, sin modificar el comparador ni crear un desempate automático.
+
 ## FR-013 Reintento
 El jugador puede iniciar otra run. Fair v1 permite reintentos ilimitados sobre
 la misma Competition Seed de edición, sin reroll raro. Practice puede variar

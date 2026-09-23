@@ -200,3 +200,10 @@ Estas preguntas están registradas en [preguntas abiertas](07-reference/open-que
 - [x] Los enlaces mantenidos ya no dependen de `.tmp`, que sigue ignorado.
 - [x] Supabase: sin migraciones nuevas; producción sin partidas según confirmación del PO.
 - [ ] Push manual, comprobaciones cloud y GO de STAGE-10 (fuera del cierre local).
+
+## Cierre urgente RC4
+
+- [x] [Cierre de RC4](06-delivery/rc4-release-closure.md): alcance, identidad y evidencia del corte.
+- [x] Estado, roadmap, checklist y runbooks actualizados; RC3 conservado como historia.
+- [x] Aclaración de desempates externos trazada a FR-012; comparador sin cambios.
+- [ ] Push manual y comprobaciones de producción a cargo del operador.

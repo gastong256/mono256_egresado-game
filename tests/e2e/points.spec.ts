@@ -6,6 +6,7 @@ test('el footer enlaza la explicación de puntos debajo de privacidad', async ({
 }) => {
   for (const path of ['/', '/privacidad']) {
     await page.goto(path)
+    if (path === '/') await expect(page).toHaveTitle('Egresado')
     const footer = page.getByRole('contentinfo')
     const privacy = footer.getByRole('link', {
       name: 'Política de privacidad y uso de datos',
@@ -75,6 +76,11 @@ test('la explicación es pública, accesible y legible con zoom y sin JavaScript
       plain.getByRole('heading', { name: 'Qué pasa si hay empate' }),
     ).toBeVisible()
     await expect(plain.getByText(/1.º, 1.º, 3.º/u)).toBeVisible()
+    await expect(
+      plain.getByText(
+        /el Departamento de Matemática del establecimiento organizador define/u,
+      ),
+    ).toBeVisible()
     await plain.getByRole('link', { name: 'Volver al inicio' }).click()
     await expect(plain).toHaveURL(`${baseURL}/`)
   } finally {

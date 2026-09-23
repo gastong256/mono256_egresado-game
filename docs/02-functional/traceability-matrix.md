@@ -205,3 +205,10 @@ reflow, teclado, accesibilidad, carga real y avance con imágenes bloqueadas).
 | FR-012: resumen de la mejor partida y ventana de 12 filas | ADR-031, `summarizeVerifiedRun`, `selectRankingWindow`, `Leaderboard` | `ranking-summary.test.ts`, `ranking-window.test.ts`, `ranking-run-details.test.tsx`, `home-event.spec.ts` |
 | FR-001/012: explicación simple de puntos en `/puntajes`, enlazada debajo de privacidad | `app/puntajes/page.tsx`, `InstitutionalFooter`; política v1 sin cambios | `points.spec.ts`: navegación, orden de enlaces, SSR sin JS, zoom, teclado y axe; `home-event.test.tsx` y `home-event.spec.ts`: footer responsive |
 | FR-018: datos públicos acotados, sin PII ni replay en GET | schema de proyección, batch de resúmenes, backfill explícito | `competition-store.test.ts`, `competition-attack.test.ts`, `competition.spec.ts` |
+
+## RC4 — título y responsabilidad por desempates externos
+
+| Requisito | Implementación | Evidencia |
+|---|---|---|
+| FR-001: título del Home «Egresado», sin concatenar el nombre de edición | `app/page.tsx`, título de pestaña y Open Graph | `points.spec.ts`, navegación al Home real |
+| FR-012: responsabilidad del organizador por un desempate externo; puesto compartido intacto | `app/puntajes/page.tsx` | `points.spec.ts`, lectura sin JavaScript y accesibilidad |

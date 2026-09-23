@@ -127,6 +127,7 @@ Un ingeniero o un agente que llega por primera vez lee en este orden y se detien
 - `fallback-and-incident-plan.md`: funcionamiento degradado y recuperación.
 
 ### 06-delivery
+- `rc4-release-closure.md`: corte urgente posterior a RC3, cambios incluidos, controles y publicación manual.
 - `rc3-release-closure.md`: cierre local de RC3, notas de versión, procedencia de la validación y publicación manual.
 - `stage-10a-deployment-adaptation.md`: adaptación del deploy y evidencia local de RC.2, sin deploy ni GO.
 - `production-v1-release-candidate.md`: identidad congelada, contratos y evidencia del RC v1.

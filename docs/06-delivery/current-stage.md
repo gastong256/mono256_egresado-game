@@ -3,6 +3,20 @@
 Vista corta del estado de ejecución. El contrato completo y el protocolo de
 actualización están en el [roadmap](implementation-sequence.md).
 
+## RC4 — cierre urgente de presentación
+
+**Estado: `DONE` — 23 de septiembre de 2026.** Release `1.0.0-rc.4`,
+rama `main`, tag `v1.0.0-rc.4`. [Cierre y evidencia](rc4-release-closure.md).
+Incluye las siete láminas narrativas, los ajustes móviles de `1d15d35`, el título
+único «Egresado» en Home y la responsabilidad del Departamento de Matemática
+por cualquier desempate externo. El ranking conserva sus puestos compartidos.
+Sin cambios de motor, score, contenido, persistencia ni migraciones.
+Validación: 223 tests dirigidos, 78 E2E, build, tipos, lint, diseño y 57 controles
+de freeze en verde; procedencia y límites en el reporte de cierre.
+
+Push y despliegue quedan a cargo del operador; el cierre no acredita GO remoto.
+Los apartados siguientes conservan la evidencia histórica de RC3 y anteriores.
+
 ## RC3 — cierre local
 
 **Estado: `DONE` — 23 de septiembre de 2026.** Release `1.0.0-rc.3`, en `main`,
