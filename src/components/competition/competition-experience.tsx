@@ -16,7 +16,7 @@ import type {
 import { BrandLogo, Button, Callout, Eyebrow } from '@/components/ui'
 import { IdentityForm } from './identity-form'
 import { Leaderboard } from './leaderboard'
-import { EventCountdown } from './event-countdown'
+import { EventCountdown, eventDeadline } from './event-countdown'
 import { GameModeSummary } from './game-mode-summary'
 import { HomeHero } from './home-hero'
 import { cn } from '@/lib/ui/cn'
@@ -253,6 +253,7 @@ export function CompetitionExperience({
 
   const { competition, you } = state
   const open = competition.status === 'open'
+  const hasCountdown = eventDeadline(competition) !== undefined
 
   return (
     <div className="px-gutter pb-safe mx-auto min-h-dvh w-full py-4 sm:py-8">
@@ -291,143 +292,166 @@ export function CompetitionExperience({
           ) : (
             <>
               {/*
-                Promesa y acceso se acompañan en desktop. El hero ocupa una
-                fila completa; en móvil se conserva el acceso antes de la imagen.
+                Marca y presentación comparten una fila. Debajo, reloj y
+                acceso se equilibran; móvil conserva el orden de lectura.
               */}
-              <div className="grid gap-6 pb-6 sm:grid-cols-2 sm:gap-8 sm:pb-8">
-                <header className="@container flex min-w-0 flex-col items-start gap-4 sm:col-start-1 sm:row-start-1">
-                  <Eyebrow>
-                    {competition.status === 'not-configured'
-                      ? 'Un juego sobre decidir en la escuela'
-                      : competition.name}
-                  </Eyebrow>
-                  <h1>
-                    <BrandLogo size="event" />
-                  </h1>
-                  <p className="text-section font-display text-ink text-balance">
-                    Tu secundaria.
-                    <br />
-                    Tus decisiones.
-                    <br />
-                    Tu propia historia.
-                  </p>
-                  <p className="text-body-lg text-ink-secondary max-w-viewport text-pretty">
-                    Del primer día a la graduación. Resolvé situaciones, hacé
-                    equipo y descubrí hasta dónde podés llegar.
-                  </p>
-                  <p
-                    className="text-label font-display text-ink-label border-rule mt-auto border-t pt-4 tabular-nums"
-                    aria-label="De séptimo a quinto año y graduación"
-                  >
-                    7.º → 1.º → 2.º → 3.º → 4.º → 5.º → Egreso
-                  </p>
+              <div className="flex flex-col gap-6 pb-6 sm:gap-8 sm:pb-8">
+                <header
+                  className="grid items-center gap-6 md:grid-cols-2 md:gap-8"
+                  data-testid="home-introduction"
+                >
+                  <div className="@container flex min-w-0 flex-col items-start gap-4">
+                    <Eyebrow>
+                      {competition.status === 'not-configured'
+                        ? 'Un juego sobre decidir en la escuela'
+                        : competition.name}
+                    </Eyebrow>
+                    <h1>
+                      <BrandLogo size="event" />
+                    </h1>
+                  </div>
+                  <div className="flex min-w-0 flex-col gap-3">
+                    <p className="text-section font-display text-ink text-balance">
+                      Tu secundaria.
+                      <br />
+                      Tus decisiones.
+                      <br />
+                      Tu propia historia.
+                    </p>
+                    <p className="text-body-lg text-ink-secondary max-w-viewport text-pretty">
+                      Del primer día a la graduación. Resolvé situaciones, hacé
+                      equipo y descubrí hasta dónde podés llegar.
+                    </p>
+                  </div>
                 </header>
                 <section
-                  className="flex min-w-0 flex-col gap-4 sm:col-start-2 sm:row-start-1"
+                  className={cn(
+                    'grid min-w-0 gap-4',
+                    hasCountdown && 'md:grid-cols-2 md:gap-x-8',
+                  )}
                   aria-label="Estado y acceso a la competencia"
+                  data-testid="home-access"
                 >
-                  <CompetitionStatusNote status={competition.status} />
-                  {error === undefined ? null : (
-                    <Callout tone="accent" title="No pudimos continuar">
-                      {error}
-                    </Callout>
-                  )}
-                  {you === undefined ? null : (
-                    <div className="flex min-w-0 flex-col gap-1">
-                      <p
-                        className="text-title font-display text-ink [overflow-wrap:anywhere]"
-                        data-testid="greeting"
-                      >
-                        Hola, {you.nickname}
-                      </p>
-                      <p className="text-meta text-ink-secondary tabular-nums">
-                        {you.bestFairScore === undefined
-                          ? 'Todavía no tenés un puntaje en el ranking.'
-                          : `Tu mejor puntaje: ${you.bestFairScore.toLocaleString('es-AR')}. Es el que cuenta en el ranking.`}
-                      </p>
+                  <div
+                    className={cn(
+                      'flex min-w-0 flex-col gap-3',
+                      hasCountdown && 'md:col-start-2 md:row-start-1',
+                    )}
+                  >
+                    <CompetitionStatusNote status={competition.status} />
+                    {error === undefined ? null : (
+                      <Callout tone="accent" title="No pudimos continuar">
+                        {error}
+                      </Callout>
+                    )}
+                    {you === undefined ? null : (
+                      <div className="flex min-w-0 flex-col gap-1">
+                        <p
+                          className="text-title font-display text-ink [overflow-wrap:anywhere]"
+                          data-testid="greeting"
+                        >
+                          Hola, {you.nickname}
+                        </p>
+                        <p className="text-meta text-ink-secondary tabular-nums">
+                          {you.bestFairScore === undefined
+                            ? 'Todavía no tenés un puntaje en el ranking.'
+                            : `Tu mejor puntaje: ${you.bestFairScore.toLocaleString('es-AR')}. Es el que cuenta en el ranking.`}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                  {hasCountdown ? (
+                    <div className="min-w-0 md:col-start-1 md:row-span-2 md:row-start-1">
+                      <EventCountdown
+                        competition={competition}
+                        onElapsed={() => {
+                          void refresh()
+                        }}
+                      />
                     </div>
-                  )}
-                  <EventCountdown
-                    competition={competition}
-                    onElapsed={() => {
-                      void refresh()
-                    }}
-                  />
-                  {open ? (
-                    <Button
-                      // El único lima de la portada entra con el pop de
-                      // resolución: es la acción de la pantalla y se nota.
-                      className="group motion-resolve min-h-16 justify-between px-5 hover:-translate-y-px motion-reduce:transform-none"
-                      disabled={
-                        pending ||
-                        (you === undefined && formConfig === undefined)
-                      }
-                      onClick={() => {
-                        if (you !== undefined) {
-                          void startAttempt()
-                          return
-                        }
-                        setError(undefined)
-                        prefetchAttemptRun()
-                        setScreen({ kind: 'identify' })
-                      }}
-                      data-testid="play"
-                    >
-                      {pending
-                        ? 'Preparando partida…'
-                        : you?.activeAttempt !== undefined
-                          ? 'Continuar partida'
-                          : you !== undefined && you.attempts > 0
-                            ? 'Jugar de nuevo'
-                            : 'Jugar ahora'}
-                      <span
-                        aria-hidden="true"
-                        className="text-section group-hover:translate-x-1 motion-reduce:transform-none"
-                      >
-                        →
-                      </span>
-                    </Button>
                   ) : null}
-                  {/*
+                  <div
+                    className={cn(
+                      'flex min-w-0 flex-col gap-3',
+                      hasCountdown && 'md:col-start-2 md:row-start-2',
+                    )}
+                  >
+                    {open ? (
+                      <Button
+                        // El único lima de la portada entra con el pop de
+                        // resolución: es la acción de la pantalla y se nota.
+                        className="group motion-resolve min-h-16 justify-between px-5 hover:-translate-y-px motion-reduce:transform-none"
+                        disabled={
+                          pending ||
+                          (you === undefined && formConfig === undefined)
+                        }
+                        onClick={() => {
+                          if (you !== undefined) {
+                            void startAttempt()
+                            return
+                          }
+                          setError(undefined)
+                          prefetchAttemptRun()
+                          setScreen({ kind: 'identify' })
+                        }}
+                        data-testid="play"
+                      >
+                        {pending
+                          ? 'Preparando partida…'
+                          : you?.activeAttempt !== undefined
+                            ? 'Continuar partida'
+                            : you !== undefined && you.attempts > 0
+                              ? 'Jugar de nuevo'
+                              : 'Jugar ahora'}
+                        <span
+                          aria-hidden="true"
+                          className="text-section group-hover:translate-x-1 motion-reduce:transform-none"
+                        >
+                          →
+                        </span>
+                      </Button>
+                    ) : null}
+                    {/*
                     Sin competencia abierta, practicar es lo único que se puede
                     jugar: toma el lugar del primario. Abierta, vuelve a ser un
-                    enlace discreto debajo del lima. Cerrada, los resultados ya
+                    botón secundario debajo del lima. Cerrada, los resultados ya
                     están en la página y un enlace lleva hasta ellos.
                   */}
-                  <Link
-                    href="/test"
-                    prefetch={false}
-                    {...(open ? {} : { 'data-primary': 'true' })}
-                    className={
-                      open
-                        ? 'text-meta text-ink inline-flex min-h-11 items-center underline underline-offset-4'
-                        : 'text-action bg-action text-on-action hover:bg-action-hover motion-resolve inline-flex min-h-[50px] w-full items-center justify-center px-6 uppercase'
-                    }
-                  >
-                    Practicar
-                  </Link>
-                  {competition.status === 'closed' ? (
-                    <a
-                      href="#ranking-heading"
-                      className="text-action border-ink text-ink hover:bg-canvas-sunken inline-flex min-h-[46px] w-full items-center justify-center border-[1.5px] px-5 uppercase"
+                    <Link
+                      href="/test"
+                      prefetch={false}
+                      {...(open ? {} : { 'data-primary': 'true' })}
+                      className={
+                        open
+                          ? 'text-action font-display border-ink text-ink hover:bg-canvas-sunken motion-select inline-flex min-h-11 items-center justify-center self-start border-[1.5px] px-5 uppercase'
+                          : 'text-action bg-action text-on-action hover:bg-action-hover motion-resolve inline-flex min-h-[50px] w-full items-center justify-center px-6 uppercase'
+                      }
                     >
-                      Ver resultados
-                    </a>
-                  ) : null}
-                  {you === undefined ? null : (
-                    <Button
-                      variant="ghost"
-                      className="self-start px-0"
-                      onClick={() => {
-                        void forget()
-                      }}
-                      data-testid="not-me"
-                    >
-                      No soy yo
-                    </Button>
-                  )}
+                      Practicar
+                    </Link>
+                    {competition.status === 'closed' ? (
+                      <a
+                        href="#ranking-heading"
+                        className="text-action border-ink text-ink hover:bg-canvas-sunken inline-flex min-h-[46px] w-full items-center justify-center border-[1.5px] px-5 uppercase"
+                      >
+                        Ver resultados
+                      </a>
+                    ) : null}
+                    {you === undefined ? null : (
+                      <Button
+                        variant="ghost"
+                        className="self-start px-0"
+                        onClick={() => {
+                          void forget()
+                        }}
+                        data-testid="not-me"
+                      >
+                        No soy yo
+                      </Button>
+                    )}
+                  </div>
                 </section>
-                <HomeHero className="sm:col-span-2" />
+                <HomeHero />
               </div>
               {competition.status === 'closed' ? (
                 <>
@@ -436,6 +460,7 @@ export function CompetitionExperience({
                     you={you}
                     total={state.totalRanked}
                     status={competition.status}
+                    closesAt={competition.closesAt}
                   />
                   <GameModeSummary closed />
                 </>
@@ -447,6 +472,7 @@ export function CompetitionExperience({
                     you={you}
                     total={state.totalRanked}
                     status={competition.status}
+                    closesAt={competition.closesAt}
                   />
                 </>
               )}

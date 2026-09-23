@@ -20,7 +20,7 @@ import { cn } from '@/lib/ui/cn'
  * el inicio o el egreso la dejaría sin sentido. `fetchpriority="high"` porque
  * en escritorio es la pintura más grande de la primera pantalla.
  *
- * `alt=""`: el eyebrow, el título, la promesa y la línea «7.º → … → Egreso»
+ * `alt=""`: el eyebrow, el título y la promesa
  * ya cuentan lo que la ilustración muestra; describirla a un lector de
  * pantalla duplicaría el texto de al lado.
  */

@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from 'react'
 
 import type { PublicCompetitionSummary } from '@/lib/competition'
-import { Button } from '@/components/ui'
 import { cn } from '@/lib/ui/cn'
 
 /** Public event dates are instants; the printed date is always Argentina time. */
@@ -66,6 +65,29 @@ export function formatEventDate(value: string): string {
   }).format(new Date(value))
 }
 
+/** Hydration-safe presentation clock shared by the timer and ranking notice. */
+export function useEventSecondsRemaining(deadline: string | undefined) {
+  const [now, setNow] = useState<number>()
+  const target = deadline === undefined ? Number.NaN : Date.parse(deadline)
+
+  useEffect(() => {
+    if (!Number.isFinite(target)) return
+    const update = () => setNow(Date.now())
+    const initial = setTimeout(update, 0)
+    const interval = setInterval(update, 1000)
+    document.addEventListener('visibilitychange', update)
+    return () => {
+      clearTimeout(initial)
+      clearInterval(interval)
+      document.removeEventListener('visibilitychange', update)
+    }
+  }, [target])
+
+  return !Number.isFinite(target) || now === undefined
+    ? undefined
+    : Math.max(0, Math.ceil((target - now) / 1000))
+}
+
 /** Presentation only. Never changes the competition status or grants an attempt. */
 export function EventCountdown({
   competition,
@@ -75,31 +97,8 @@ export function EventCountdown({
   readonly onElapsed: () => void
 }) {
   const deadline = eventDeadline(competition)
-  // Both SSR and the first client render show dashes plus the real deadline.
-  // Read the wall clock only after hydration, never during render.
-  const [now, setNow] = useState<number>()
-  const [hidden, setHidden] = useState(false)
+  const remaining = useEventSecondsRemaining(deadline)
   const notified = useRef<string | undefined>(undefined)
-
-  useEffect(() => {
-    if (deadline === undefined || hidden) return
-    const update = () => {
-      setNow(Date.now())
-    }
-    const initial = setTimeout(update, 0)
-    const interval = setInterval(update, 1000)
-    document.addEventListener('visibilitychange', update)
-    return () => {
-      clearTimeout(initial)
-      clearInterval(interval)
-      document.removeEventListener('visibilitychange', update)
-    }
-  }, [deadline, hidden])
-
-  const remaining =
-    deadline === undefined || now === undefined
-      ? undefined
-      : Math.max(0, Math.ceil((Date.parse(deadline) - now) / 1000))
   const boundary = `${competition.status}:${deadline ?? ''}`
 
   useEffect(() => {
@@ -139,7 +138,7 @@ export function EventCountdown({
           ? URGENCY_LABEL[urgency].opening
           : URGENCY_LABEL[urgency].closing}
       </p>
-      {!hidden && remaining !== 0 ? (
+      {remaining !== 0 ? (
         <div
           className="grid grid-cols-4 gap-2"
           aria-hidden="true"
@@ -199,16 +198,6 @@ export function EventCountdown({
         <time dateTime={deadline}>{formatEventDate(deadline)}</time> (hora
         argentina, UTC−3).
       </p>
-      <Button
-        variant="ghost"
-        className="self-start px-0"
-        aria-pressed={hidden}
-        onClick={() => {
-          setHidden(!hidden)
-        }}
-      >
-        {hidden ? 'Mostrar contador' : 'Ocultar contador'}
-      </Button>
     </div>
   )
 }

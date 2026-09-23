@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { act, fireEvent, render, screen, cleanup } from '@testing-library/react'
+import { act, render, screen, cleanup } from '@testing-library/react'
 import { renderToString } from 'react-dom/server'
 import { hydrateRoot } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -185,15 +185,13 @@ describe('countdown del evento', () => {
       '01Días02Horas02Min04Seg',
     )
   })
-  it('permite ocultar el contador y al volver muestra el tiempo actual', () => {
+  it('mantiene el contador visible y actualizado sin controles para ocultarlo', () => {
     render(<EventCountdown competition={competition} onElapsed={onElapsed} />)
     tick()
-    fireEvent.click(screen.getByRole('button', { name: 'Ocultar contador' }))
-    expect(screen.queryByTestId('countdown-digits')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button')).not.toBeInTheDocument()
+    expect(screen.getByTestId('countdown-digits')).toBeVisible()
     expect(screen.getByText(/hora argentina/u)).toBeInTheDocument()
     tick(60000)
-    fireEvent.click(screen.getByRole('button', { name: 'Mostrar contador' }))
-    tick()
     expect(screen.getByTestId('countdown-digits')).toHaveTextContent(
       '01Días02Horas02Min04Seg',
     )

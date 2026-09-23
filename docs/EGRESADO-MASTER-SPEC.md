@@ -5012,7 +5012,11 @@ según la sesión); `closed` prioriza los resultados y no ofrece nuevos intentos
 El aviso configurado v1 completo se publica en `/privacidad`, accesible sin
 identificación y sin JavaScript. Un pie institucional identifica Colegio Integral
 Piacentini, Feria del Libro 2026 y `developed by gastong256.dev`, con un único enlace
-«Política de Privacidad»; Home no repite el aviso.
+«Política de privacidad y uso de datos»; Home no repite el aviso.
+El pie es compacto: enlace legal a la izquierda, marcas institucionales de igual
+altura al centro y crédito del desarrollador pequeño a la derecha. En móvil, las
+marcas ocupan una primera fila y los enlaces una segunda; la altura admite
+crecimiento por texto ampliado. El logo de Piacentini usa una máscara circular.
 
 Según [ADR-030](03-architecture/adr/ADR-030-privacy-page-and-action-acknowledgement.md),
 el formulario no tiene checkbox. Junto a **Aceptar y jugar** muestra: «Al elegir
@@ -5025,18 +5029,26 @@ del aviso y permite acceder a `/test`; nunca inventa datos institucionales.
 
 El contador usa exclusivamente `opensAt`/`closesAt` del DTO vigente. Muestra
 segundos orientativos del reloj cliente y la fecha absoluta en hora argentina;
-se puede ocultar, no anuncia cada segundo y respeta reduced motion. Al vencer
+permanece visible sin un control para ocultarlo, no anuncia cada segundo y
+respeta reduced motion. Al vencer
 consulta el estado existente: nunca abre/cierra una edición ni autoriza intentos.
-Se presenta destacado arriba del botón de jugar; si la edición no tiene fecha
-configurada no inventa un plazo. La ilustración del hero ocupa una fila completa,
-sin recortar, tanto en móvil como en escritorio.
+Conserva sus cifras grandes y animación: en móvil precede al botón de jugar y en
+escritorio comparte con él una fila independiente de la marca y la presentación.
+Si la edición no tiene fecha configurada no inventa un plazo. La ilustración del
+hero ocupa una fila completa, sin recortar, tanto en móvil como en escritorio.
+El ranking agrega encima del total de participantes un aviso de urgencia escrito:
+horas o minutos restantes con un límite superior verdadero, o «Últimos segundos».
+Sólo aparece con competencia abierta y cierre futuro válido; desaparece al vencer,
+no anuncia cada segundo ni sustituye al contador principal.
 
 Copy de interfaz actualizado por encargo del PO (23/09): «Tu secundaria. Tus
 decisiones. Tu propia historia.», «Es tu turno», «Practicar» y «Así va la
 competencia». El nombre público se configura como «Feria del Libro 2026» y el
 footer identifica la 36° edición. Se evita «partida verificada» en la interfaz
 pública; el cálculo y la publicación del puntaje siguen requiriendo replay
-servidor. Son cambios editoriales, no cambios de consignas o contenido jugable.
+servidor. Se elimina la secuencia textual de años; **Practicar** se presenta como
+botón con borde y menor jerarquía que **Jugar ahora**. Son cambios editoriales, no
+cambios de consignas o contenido jugable.
 
 El estado se refresca cada 20 s en portada/identificación cuando está abierto o
 próximo a abrir. La matemática es la contribución principal; Equipo y Aura también
@@ -5228,7 +5240,7 @@ Entre pestañas prevalece el último checkpoint. Guardado bloqueado o incompatib
 se explica; jugar sin red sigue siendo posible después de iniciar y el cálculo
 final puede reintentarse. No se prometen resultados guardados en servidor.
 
-Home ofrece **Probar sin competir** como enlace secundario, incluso sin evento,
+Home ofrece **Practicar** como acceso secundario, incluso sin evento,
 antes de abrir y después del cierre. `/test` no acepta controles de catálogo,
 seed o debugging; `/dev` permanece cerrado en producción competitiva. La frontera
 y los límites operativos están en [ADR-029](03-architecture/adr/ADR-029-public-practice-mode.md).
@@ -5411,8 +5423,9 @@ Fuentes: [adjudicación](04-quality/mathematics-department-ai-adjudication.md),
 
 | Requisito | Implementación | Evidencia |
 |---|---|---|
+| FR-001/014: aviso de plazo restante encima del total del ranking | `RankingDeadlineNotice`, `useEventSecondsRemaining` | `ranking-deadline-notice.test.tsx`: límites, estados, vencimiento y cambio de fecha; `home-event.spec.ts`: posición del aviso |
 | FR-001/014: CTA y estados del evento | `CompetitionExperience`, `EventCountdown` | `event-countdown.test.tsx`, `home-event.test.tsx`, `home-event.spec.ts` |
-| FR-001: copy Feria del Libro, hero a todo el ancho y reloj antes del CTA | `HomeHero`, `CompetitionExperience`, `EventCountdown`, `text-countdown` | `home-event.spec.ts`: geometría responsive, orden reloj/CTA, zoom, teclado y axe; `cn.test.ts`: rol numérico |
+| FR-001: copy Feria del Libro, hero a todo el ancho, reloj visible y footer compacto | `HomeHero`, `CompetitionExperience`, `EventCountdown`, `text-countdown` | `home-event.spec.ts`: geometría responsive de cabecera/reloj/CTA/footer, zoom, teclado y axe; `cn.test.ts`: rol numérico |
 | FR-012/020: podio por puesto y posición propia | `Leaderboard`; DTO y comparador sin cambios | `competition-ui.test.tsx`, `home-event.test.tsx`, `ranking-release-regression.test.ts` |
 | FR-001: aviso v1 completo en `/privacidad`, footer y aceptación al iniciar | `PrivacyPolicy`, `IdentityForm`, `InstitutionalFooter`, `app/privacidad/page.tsx` | `competition-ui.test.tsx`, `privacy-page.test.tsx`, `privacy.spec.ts`, `competition.spec.ts`; integridad del aviso, SSR sin JS, teclado/axe, campos conservados y rechazo API sin reconocimiento vigente |
 

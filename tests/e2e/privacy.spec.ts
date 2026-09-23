@@ -47,14 +47,14 @@ test('Home centraliza el aviso en un solo enlace del footer', async ({
   await expect(page.getByText('Tus datos', { exact: true })).toHaveCount(0)
   await expect(page.locator('#privacy')).toHaveCount(0)
   const link = page.getByRole('link', {
-    name: 'Política de Privacidad',
+    name: 'Política de privacidad y uso de datos',
     exact: true,
   })
   await expect(link).toHaveCount(1)
   await expect(
     page
       .getByRole('contentinfo')
-      .getByRole('link', { name: 'Política de Privacidad' }),
+      .getByRole('link', { name: 'Política de privacidad y uso de datos' }),
   ).toBeAttached()
   await link.click()
   await expect(page).toHaveURL(/\/privacidad$/u)

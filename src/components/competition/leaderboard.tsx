@@ -4,6 +4,7 @@ import type {
   PublicSelfSummary,
 } from '@/lib/competition'
 import { cn } from '@/lib/ui/cn'
+import { RankingDeadlineNotice } from './ranking-deadline-notice'
 
 /** Group the server's ranks for display. Never slice ties or recompute places. */
 export function Leaderboard({
@@ -11,11 +12,13 @@ export function Leaderboard({
   you,
   total,
   status = 'open',
+  closesAt,
 }: {
   readonly entries: readonly PublicLeaderboardEntry[]
   readonly you: PublicSelfSummary | undefined
   readonly total: number
   readonly status?: PublicCompetitionStatus
+  readonly closesAt?: string | undefined
 }) {
   const groups = new Map<number, PublicLeaderboardEntry[]>()
   for (const entry of entries) {
@@ -44,12 +47,15 @@ export function Leaderboard({
             {closed ? 'Resultados del evento' : 'Ranking'}
           </h2>
         </div>
-        <p className="text-caption text-ink-secondary tabular-nums">
-          {total.toLocaleString('es-AR')}{' '}
-          {total === 1
-            ? 'participante en el ranking'
-            : 'participantes en el ranking'}
-        </p>
+        <div className="flex flex-col gap-2 sm:items-end">
+          <RankingDeadlineNotice status={status} closesAt={closesAt} />
+          <p className="text-caption text-ink-secondary tabular-nums">
+            {total.toLocaleString('es-AR')}{' '}
+            {total === 1
+              ? 'participante en el ranking'
+              : 'participantes en el ranking'}
+          </p>
+        </div>
       </div>
 
       {entries.length === 0 ? (

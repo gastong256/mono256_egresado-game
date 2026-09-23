@@ -53,23 +53,37 @@ Estirar el juego a 1200 px no mejora ni leer un enunciado ni comparar cuatro opc
 ## Portada de evento (RC3 TASK-A)
 
 La entrada pública y su podio usan `max-w-event` (60rem): en desktop separan
-promesa y acceso en dos columnas; a 320 px se apilan. Es una composición de
+marca y promesa en dos columnas y, debajo, reloj y acceso en otra fila;
+a 320 px se apilan. Es una composición de
 portada autorizada para TASK-A, no un cambio del viewport de juego. El formulario
 y la partida conservan `max-w-viewport` (412 px).
 
 El ajuste de Home autorizado el 23/09 muestra la ilustración a todo el ancho de
-ambas columnas. El reloj precede al CTA de juego, en papel hundido con filetes
+ambas columnas. El reloj precede al CTA de juego en móvil y lo acompaña en
+escritorio, en papel hundido con filetes
 de tinta y cifras `text-countdown` fluidas. Los segundos de cierre reutilizan
 `motion-resolve` al cambiar; la urgencia escrita y el rojo siguen dependiendo
-del tiempo real restante. Se mantiene ocultar contador y reduced motion.
+del tiempo real restante. El contador permanece visible sin botón para ocultarlo
+y conserva reduced motion. El ranking agrega un aviso escrito de horas/minutos
+restantes con `text-goal`, filete y rojo semántico; sólo se anima al cambiar la
+frase, respetando reduced motion.
 
 `text-event-title` amplía la firma tipográfica existente sólo en la portada,
 con caja mixta, sin logo nuevo. Su escala fluida usa el ancho del contenedor
-(`cqi`, header con `@container`) para evitar solapamientos al ampliar al 200 %.
+(`cqi`, columna de marca con `@container`) para evitar solapamientos al ampliar al 200 %.
 El podio usa numerales de la escala existente,
 filetes y desniveles; el DOM siempre mantiene el orden de puestos del servidor.
-El contador reutiliza `motion-enter` por cifra, permite ocultar las actualizaciones
-y desactiva la animación con reduced motion. La fecha escrita permanece visible.
+El contador reutiliza `motion-enter` por cifra y desactiva la animación con
+reduced motion. La fecha escrita permanece visible.
+
+**Practicar** usa borde de tinta como acción secundaria. El footer reserva 128 px
+en escritorio y 176 px en móvil como mínimos: permite crecer con texto ampliado.
+En escritorio alinea enlace legal, marcas institucionales y crédito en tres
+columnas; en móvil sube las marcas a una fila propia. Ambas marcas tienen 80 px
+de alto; el logo del desarrollador, 24 px. La máscara circular de Piacentini es
+un recorte de presentación de ese insumo solicitado por el PO; no cambia el
+radio cero de los componentes. Los WebP se derivan de `resources/footer/` con
+`scripts/brand/build-footer-assets.ts`.
 
 ## El slot de acción
 

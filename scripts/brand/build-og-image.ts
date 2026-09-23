@@ -82,7 +82,7 @@ body{width:${String(OG_SIZE.width)}px;height:${String(OG_SIZE.height)}px;positio
   <div class="promise">Tu secundaria.<br>Tus decisiones.<br>Tu propia historia.</div>
 </div>
 <div class="rule"></div>
-<div class="label">7.º → 1.º → 2.º → 3.º → 4.º → 5.º → Egreso &nbsp;·&nbsp; Feria del Libro 2026</div>
+<div class="label">Feria del Libro 2026</div>
 `
 
 // La página se abre desde un archivo: una pestaña `about:blank` no puede

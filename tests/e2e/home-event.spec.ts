@@ -12,7 +12,7 @@ async function expectTitleWithinColumn(page: Page) {
     .getByRole('heading', { level: 1 })
     .evaluate((node) => {
       const title = node.getBoundingClientRect()
-      const column = node.closest('header')!.getBoundingClientRect()
+      const column = node.parentElement!.getBoundingClientRect()
       return title.left >= column.left && title.right <= column.right + 1
     })
   expect(titleFits).toBe(true)
@@ -92,7 +92,32 @@ for (const width of [320, 360, 390, 412, 768, 1280, 1920]) {
     expect(hero!.width / main!.width).toBeGreaterThan(0.78)
     const countdown = await page.getByTestId('event-countdown').boundingBox()
     const play = await page.getByTestId('play').boundingBox()
-    expect(countdown!.y + countdown!.height).toBeLessThanOrEqual(play!.y)
+    if (width < 768) {
+      expect(countdown!.y + countdown!.height).toBeLessThanOrEqual(play!.y)
+    } else {
+      expect(countdown!.x + countdown!.width).toBeLessThanOrEqual(play!.x)
+    }
+    const introduction = await page
+      .getByTestId('home-introduction')
+      .boundingBox()
+    const access = await page.getByTestId('home-access').boundingBox()
+    expect(introduction!.y + introduction!.height).toBeLessThanOrEqual(
+      access!.y,
+    )
+    await expect(page.getByTestId('ranking-deadline-notice')).toContainText(
+      '¡Mejorá tu marca!',
+    )
+    const reminder = await page
+      .getByTestId('ranking-deadline-notice')
+      .boundingBox()
+    const count = await page
+      .getByText('17 participantes en el ranking')
+      .boundingBox()
+    expect(reminder!.y + reminder!.height).toBeLessThanOrEqual(count!.y)
+    const practiceBorder = await page
+      .getByRole('link', { name: 'Practicar' })
+      .evaluate((node) => parseFloat(getComputedStyle(node).borderTopWidth))
+    expect(practiceBorder).toBeGreaterThan(0)
     await expect(page.getByTestId('leaderboard-entry')).toHaveCount(4)
     await expect(
       page.getByTestId('podium-rank-3').getByTestId('leaderboard-entry'),
@@ -117,8 +142,38 @@ for (const width of [320, 360, 390, 412, 768, 1280, 1920]) {
         .toBe(true)
     }
     await expect(
-      page.getByRole('link', { name: 'Política de Privacidad', exact: true }),
+      page.getByRole('link', {
+        name: 'Política de privacidad y uso de datos',
+        exact: true,
+      }),
     ).toHaveAttribute('href', '/privacidad')
+    const footer = page.getByRole('contentinfo')
+    const footerBox = (await footer.boundingBox())!
+    const marks = (await page.getByTestId('institutional-marks').boundingBox())!
+    const privacy = (await footer
+      .getByRole('link', { name: 'Política de privacidad y uso de datos' })
+      .boundingBox())!
+    const dev = (await footer
+      .getByRole('link', { name: /developed by/u })
+      .boundingBox())!
+    const school = (await footer
+      .getByRole('img', { name: 'Colegio Integral Piacentini' })
+      .boundingBox())!
+    const fair = (await footer
+      .getByRole('img', { name: /36° Feria/u })
+      .boundingBox())!
+    expect(school.height).toBe(fair.height)
+    expect(privacy.x + privacy.width).toBeLessThanOrEqual(dev.x)
+    expect(footerBox.height).toBeLessThanOrEqual(width < 768 ? 200 : 144)
+    expect(
+      Math.abs(marks.x + marks.width / 2 - (footerBox.x + footerBox.width / 2)),
+    ).toBeLessThanOrEqual(1)
+    if (width >= 768) {
+      expect(privacy.x + privacy.width).toBeLessThanOrEqual(marks.x)
+      expect(marks.x + marks.width).toBeLessThanOrEqual(dev.x)
+    } else {
+      expect(marks.y + marks.height).toBeLessThanOrEqual(privacy.y)
+    }
     await expect(page.locator('#privacy')).toHaveCount(0)
     const accessibility = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'])
@@ -150,7 +205,7 @@ test('UPCOMING no ofrece jugar; CLOSED publica resultados sin contador ni CTA', 
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
 })
 
-test('teclado, foco visible, contador ocultable y movimiento reducido', async ({
+test('teclado, foco visible, contador siempre visible y movimiento reducido', async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
@@ -159,17 +214,15 @@ test('teclado, foco visible, contador ocultable y movimiento reducido', async ({
   await page.keyboard.press('Tab')
   await expect(
     page.getByRole('button', { name: 'Ocultar contador' }),
-  ).toBeFocused()
+  ).toHaveCount(0)
   const motion = await page
     .getByTestId('countdown-digits')
     .locator('span')
     .first()
     .evaluate((node) => getComputedStyle(node).animationName)
   expect(motion).toBe('none')
-  await page.keyboard.press('Enter')
-  await expect(page.getByTestId('countdown-digits')).toHaveCount(0)
+  await expect(page.getByTestId('countdown-digits')).toBeVisible()
   await expect(page.getByText(/hora argentina/u)).toBeVisible()
-  await page.keyboard.press('Tab')
   await expect(page.getByTestId('play')).toBeFocused()
   const focus = await page
     .getByTestId('play')
