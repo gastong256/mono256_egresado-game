@@ -104,7 +104,6 @@ async function identify(
   await page.getByLabel('Nombre y apellido').fill(options.fullName)
   await page.getByLabel('DNI').fill(options.dni)
   await page.getByLabel('Año o curso').selectOption(options.year ?? '3.º')
-  await page.getByRole('checkbox').check()
 
   const registered = page.waitForResponse(
     (response) =>
@@ -641,19 +640,50 @@ test.describe('accesibilidad del recorrido público', () => {
     )
   })
 
-  test('el aviso de privacidad se lee antes de escribir nada', async ({
+  test('la política se puede revisar sin enviar datos ni perder el formulario', async ({
     page,
   }) => {
     await page.goto('/')
     const state = await competitionState(page)
     test.skip(state.competition.status !== 'open', 'competencia cerrada')
-
     await page.getByTestId('play').click()
-    // La capa corta está a la vista, no escondida detrás de un desplegable: un
-    // aviso que hay que abrir para leer es un aviso que nadie lee.
-    await expect(page.getByText('únicamente tu alias')).toBeVisible()
-    await page.locator('summary', { hasText: 'Más información' }).click()
-    await expect(page.getByText(/Responsable de los datos/u)).toBeVisible()
+    await expect(page.getByRole('checkbox')).toHaveCount(0)
+    await expect(page.getByTestId('identity-submit')).toHaveText(
+      'Aceptar y jugar',
+    )
+    await page.getByLabel('Alias').fill('Revisando')
+    await page.getByLabel('DNI').fill('45123456')
+    const registrations: string[] = []
+    page.on('request', (request) => {
+      if (
+        request.method() === 'POST' &&
+        request.url().includes('/api/competition/participants')
+      )
+        registrations.push(request.url())
+    })
+    const popup = page.waitForEvent('popup')
+    await page
+      .getByRole('link', {
+        name: 'Política de Privacidad (abre en otra pestaña)',
+      })
+      .click()
+    const policy = await popup
+    await expect(policy).toHaveURL(/\/privacidad$/u)
+    await expect(
+      policy.getByRole('heading', {
+        name: 'Política de Privacidad',
+        exact: true,
+      }),
+    ).toBeVisible()
+    await expect(policy.getByText(/Responsable de los datos:/u)).toBeAttached()
+    await expect(policy.getByText('Versión del aviso: 1')).toBeAttached()
+    expect(registrations).toEqual([])
+    await policy.close()
+    await expect(page.getByLabel('DNI')).toHaveValue('45123456')
+    await expect(page.getByLabel('Alias')).toHaveValue('Revisando')
+    expect(
+      await page.evaluate(() => JSON.stringify(Object.entries(localStorage))),
+    ).not.toContain('45123456')
   })
 })
 

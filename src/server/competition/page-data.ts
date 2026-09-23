@@ -1,6 +1,6 @@
 import 'server-only'
 
-import type { IdentityFormConfig } from '@/lib/competition'
+import type { IdentityFormConfig, PrivacyNotice } from '@/lib/competition'
 import { readCompetitionConfiguration } from './config'
 import { readOrganizerToken } from './http'
 import {
@@ -33,6 +33,12 @@ export function readIdentityFormConfig(): IdentityFormConfig | undefined {
     schoolDivisions: config.schoolDivisions,
     privacyNotice: buildPrivacyNotice(config),
   }
+}
+
+/** Public legal page: configuration only, no participant/session/database read. */
+export function readPrivacyNotice(): PrivacyNotice | undefined {
+  const config = readCompetitionConfiguration()
+  return config === undefined ? undefined : buildPrivacyNotice(config)
 }
 
 /**

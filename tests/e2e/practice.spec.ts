@@ -66,7 +66,7 @@ for (const width of [320, 360, 390, 412, 768, 1280]) {
     expect(response?.status()).toBe(200)
     expect(response?.headers()['content-security-policy']).toContain('nonce-')
     await expect(page.getByTestId('practice-start')).toBeEnabled()
-    await expect(page.getByText('Modo práctica')).toBeVisible()
+    await expect(page.getByText('Modo práctica', { exact: true })).toBeVisible()
     await expect(page.getByRole('textbox')).toHaveCount(0)
     await expect(page.getByRole('combobox')).toHaveCount(0)
     await expect(
@@ -126,7 +126,7 @@ test('zoom 200 % y reduced motion en la entrada y juego real', async ({
   })
   await page.setViewportSize({ width: 360, height: 800 })
   await start(page)
-  await expect(page.getByText('Modo práctica')).toBeVisible()
+  await expect(page.getByText('Modo práctica', { exact: true })).toBeVisible()
   const button = page.getByTestId('continue')
   if (await button.isVisible()) await button.click()
   await expect(page.locator('[data-primary]')).toHaveCount(1)
@@ -163,7 +163,7 @@ test('carrera completa, tres desafíos, reload, retry de red y otra seed sin nue
   const partial = await checkpoint(page, descriptor, 3)
   await page.reload()
   await page.getByTestId('practice-resume').click()
-  await expect(page.getByText('Modo práctica')).toBeVisible()
+  await expect(page.getByText('Modo práctica', { exact: true })).toBeVisible()
   await expect
     .poll(() =>
       page.evaluate(
@@ -247,7 +247,6 @@ test('una práctica conserva exactamente el ranking, mejor intento, cookie y che
     .getByLabel('DNI')
     .fill(String(40_000_000 + (Date.now() % 9_000_000)))
   await page.getByLabel('Año o curso').selectOption('3.º')
-  await page.getByRole('checkbox').check()
   const issued = page.waitForResponse(
     (response) =>
       response.url().endsWith('/api/competition/attempts') &&
@@ -303,7 +302,7 @@ test('home enlaza práctica y las rutas de desarrollo siguen cerradas', async ({
   await page.goto('/')
   await page.getByRole('link', { name: 'Probar sin competir' }).click()
   await expect(page).toHaveURL(/\/test$/u)
-  await expect(page.getByText('Modo práctica')).toBeVisible()
+  await expect(page.getByText('Modo práctica', { exact: true })).toBeVisible()
   for (const path of [
     '/dev/game-engine',
     '/dev/teacher-gate',

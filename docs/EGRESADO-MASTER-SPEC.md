@@ -5009,9 +5009,19 @@ En `/`, la portada prioriza el acceso al evento. `upcoming` anticipa la apertura
 `open` muestra un único CTA **Jugar ahora** (o **Jugar de nuevo / Continuar partida**
 según la sesión); `closed` prioriza los resultados y no ofrece nuevos intentos;
 `not-configured` explica la indisponibilidad. La identificación conserva ADR-026.
-El aviso configurado puede leerse en la portada y sigue presente en el formulario,
-antes del envío. Un pie institucional identifica Colegio Integral Piacentini,
-Feria del Libro 2026 y `developed by gastong256.dev`, con acceso al mismo aviso.
+El aviso configurado v1 completo se publica en `/privacidad`, accesible sin
+identificación y sin JavaScript. Un pie institucional identifica Colegio Integral
+Piacentini, Feria del Libro 2026 y `developed by gastong256.dev`, con un único enlace
+«Política de Privacidad»; Home no repite el aviso.
+
+Según [ADR-030](03-architecture/adr/ADR-030-privacy-page-and-action-acknowledgement.md),
+el formulario no tiene checkbox. Junto a **Aceptar y jugar** muestra: «Al elegir
+“Aceptar y jugar”, confirmás que leíste y aceptás el tratamiento de datos explicado
+en la Política de Privacidad para participar en la competencia». El enlace abre
+otra pestaña, anunciado accesiblemente, y conserva los campos en memoria. Sólo
+el envío válido remite el reconocimiento y la versión vigente al servidor;
+navegar o leer no acepta. Sin configuración, la ruta explica la indisponibilidad
+del aviso y permite acceder a `/test`; nunca inventa datos institucionales.
 
 El contador usa exclusivamente `opensAt`/`closesAt` del DTO vigente. Muestra
 segundos orientativos del reloj cliente y la fecha absoluta en hora argentina;
@@ -5392,7 +5402,7 @@ Fuentes: [adjudicación](04-quality/mathematics-department-ai-adjudication.md),
 |---|---|---|
 | FR-001/014: CTA y estados del evento | `CompetitionExperience`, `EventCountdown` | `event-countdown.test.tsx`, `home-event.test.tsx`, `home-event.spec.ts` |
 | FR-012/020: podio por puesto y posición propia | `Leaderboard`; DTO y comparador sin cambios | `competition-ui.test.tsx`, `home-event.test.tsx`, `ranking-release-regression.test.ts` |
-| FR-001: aviso antes de datos y footer institucional | `PrivacySummary`, `InstitutionalFooter` | `home-event.test.tsx`, `competition.spec.ts`, `home-event.spec.ts` |
+| FR-001: aviso v1 completo en `/privacidad`, footer y aceptación al iniciar | `PrivacyPolicy`, `IdentityForm`, `InstitutionalFooter`, `app/privacidad/page.tsx` | `competition-ui.test.tsx`, `privacy-page.test.tsx`, `privacy.spec.ts`, `competition.spec.ts`; integridad del aviso, SSR sin JS, teclado/axe, campos conservados y rechazo API sin reconocimiento vigente |
 
 Decisiones y evidencia de TASK-A en el [plan vivo](../.tmp/rc3-branding/task-a-home/README.md).
 
@@ -5412,6 +5422,13 @@ Decisiones y evidencia de TASK-A en el [plan vivo](../.tmp/rc3-branding/task-a-h
 # Flujos de usuario
 
 ## UF-01 Primera run
+
+En competencia, la identificación vigente de ADR-026 termina con **Aceptar y
+jugar**, sin checkbox. El micro-copy asociado enlaza `/privacidad` en otra pestaña
+para revisar el aviso v1 sin perder campos ni enviar datos. El formulario válido
+envía la versión y el reconocimiento afirmativo; leer o navegar no los envía
+([ADR-030](03-architecture/adr/ADR-030-privacy-page-and-action-acknowledgement.md)).
+`/test` continúa sin identificación competitiva.
 
 ```mermaid
 flowchart TD
@@ -7668,9 +7685,12 @@ despliegue y se renderizan tal cual en el aviso. Si falta alguno, la aplicación
 Un aviso con una escuela inventada sería peor que no tener aviso: le diría a un
 chico a quién reclamar, y esa persona no existiría.
 
-El control del formulario es un **reconocimiento de lectura**, no una
-declaración de consentimiento. Este código no puede afirmar que una tilde
-resuelve la base legal del tratamiento; eso lo define la institución.
+La decisión original usó un **reconocimiento de lectura**, no una declaración
+de consentimiento. [ADR-030](03-architecture/adr/ADR-030-privacy-page-and-action-acknowledgement.md)
+supersede parcialmente la presentación: aviso completo en `/privacidad` y
+aceptación mediante **Aceptar y jugar**, sin checkbox. Se mantiene el límite:
+el control de interfaz no resuelve por sí solo la base legal del tratamiento;
+eso lo define la institución.
 
 ## Marco al que responde
 
@@ -8019,6 +8039,66 @@ build de producción con `/dev` cerrado. Gates de arquitectura, diseño y releas
 
 ---
 
+# FILE: 03-architecture/adr/ADR-030-privacy-page-and-action-acknowledgement.md
+
+# ADR-030 — Privacidad centralizada y aceptación al iniciar
+
+- Estado: Aceptado por encargo explícito del Product Owner
+- Fecha: 2026-09-23
+- Supersede parcialmente: ADR-026, sólo presentación y control de reconocimiento
+- Relacionados: ADR-027 y ADR-029
+
+## Contexto
+
+El PO solicita retirar duplicaciones de privacidad de Home, publicar el aviso v1
+completo en una ruta y sustituir el checkbox por aceptación asociada al inicio.
+La política existente es información sobre tratamiento; una interfaz no determina
+por sí sola su base jurídica ni la capacidad de un menor para consentir.
+
+## Decisión
+
+1. `/privacidad` renderiza en servidor el aviso completo de `buildPrivacyNotice`,
+   con versión y responsable configurados. No duplica ni reescribe sus secciones.
+   Sin configuración muestra indisponibilidad; nunca inventa datos del responsable.
+2. Home conserva sólo el enlace del footer. El formulario elimina checkbox y
+   desplegable; muestra junto al CTA: «Al elegir “Aceptar y jugar”, confirmás que
+   leíste y aceptás el tratamiento de datos explicado en la Política de Privacidad
+   para participar en la competencia». El enlace abre otra pestaña, anunciado
+   accesiblemente, para conservar los campos en memoria sin almacenar PII.
+3. La acción afirmativa es enviar el formulario válido mediante **Aceptar y jugar**
+   (mouse, touch o teclado). Navegar, leer el aviso o completar campos no envía una
+   aceptación. Se conserva la validación servidor de `privacyNoticeAcknowledged:
+   true` y la versión vigente. No se cambia schema, retención, datos recogidos ni
+   cookies. El campo persistido sigue siendo la versión reconocida, no una nueva
+   firma ni un historial de consentimientos.
+4. La aceptación queda limitada al tratamiento ya explicado para participar;
+   no añade marketing, tracking, términos generales o aceptación por mera visita.
+   El texto v1 y el contrato congelado no cambian. `/test` sigue sin identificación.
+5. `/privacidad` recibe nonce CSP como las demás páginas públicas. No se abren
+   rutas DEV ni se incorporan dependencias, servicios, env o migraciones.
+
+## Investigación y límites
+
+La [Ley 25.326, arts. 5–6](https://www.argentina.gob.ar/normativa/nacional/64790/actualizacion)
+requiere información previa y, cuando el consentimiento es la base aplicable,
+que sea libre, expreso e informado. El mero uso o silencio no se presenta como
+consentimiento. La [guía del ICO](https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/lawful-basis/consent/how-should-we-obtain-record-and-manage-consent/)
+incluye botones de opt-in; se usa como referencia de UX, no como ley argentina.
+
+Esto implementa un patrón de aceptación mediante acción, sin certificar validez
+jurídica universal ni sustituir la política institucional sobre menores. La
+pregunta legal institucional existente conserva su alcance. Se descarta browsewrap
+pasivo por ambiguo y persistir el formulario para volver del aviso por innecesario.
+
+## Verificación
+
+Aviso íntegro/versionado y accesible sin registro; footer resuelve la ruta;
+formulario sin checkbox ni envío previo; enlace conserva campos; submit válido
+envía versión/reconocimiento; ausencia o versión falsa siguen rechazadas por API.
+E2E en producción local, móvil, teclado, axe y guards de rutas; `pnpm verify`.
+
+---
+
 # FILE: 03-architecture/analytics-observability.md
 
 # Analytics y observabilidad
@@ -8135,6 +8215,12 @@ mismo origen y cookie de sesión. Práctica tiene el contrato anónimo separado 
 | `POST /api/competition/attempts` | Emite un intento, o devuelve el activo. Devuelve `attemptId`, `attemptNumber`, `resumed` y el `descriptor` emitido. El cuerpo se ignora: el cliente no elige seed, plan, catálogo, dificultad ni política de score. |
 | `POST /api/competition/attempts/{id}/submit` | Envía el log de acciones. Sólo se lee `actionLog`; lo que el cliente afirme sobre su resultado no se consulta en ningún punto. Idempotente por huella de la submission. |
 | `POST /api/competition/attempts/{id}/abandon` | Abandona la partida activa. |
+
+El registro conserva `privacyNoticeAcknowledged: true` y exige la versión vigente.
+El cliente los envía al confirmar **Aceptar y jugar** en el formulario válido,
+sin checkbox (ADR-030). `GET /privacidad` es una página pública SSR, no un endpoint
+de aceptación: usa la configuración existente, sin consultar identidad o DB ni
+emitir cookies. Leerla no registra una aceptación.
 
 ### Organizador
 
@@ -9239,6 +9325,17 @@ Logs `scope: practice` con evento, resultado, código y duración; no seed, log 
 acciones, body, IP o PII. Se comparte la allowlist de observabilidad existente.
 CSP no agrega directivas/recursos externos: el matcher incorpora `/test` con nonce
 por request. `/dev` conserva sus guards, incluso con opt-in y competencia activa.
+
+## Presentación del aviso — ADR-030
+
+`/privacidad` publica el aviso v1 íntegro desde la configuración existente, sin
+consultar identidad ni emitir cookies. Home enlaza desde el footer. En el
+formulario, **Aceptar y jugar** y su micro-copy enlazado sustituyen el checkbox;
+la apertura en otra pestaña conserva los campos en memoria, sin persistir PII.
+Leer el aviso no envía aceptación. El servidor sigue exigiendo reconocimiento
+afirmativo y versión vigente; no se añade un historial de consentimientos.
+[ADR-030](03-architecture/adr/ADR-030-privacy-page-and-action-acknowledgement.md) conserva la
+responsabilidad institucional de resolver base jurídica y participación de menores.
 
 ---
 
@@ -22942,6 +23039,13 @@ No declara un GO de STAGE-10 ni administra Vercel.
 
 ## STAGE-10A — adaptación Vercel Hobby + Supabase Free
 
+**Excepción posterior autorizada, 23/09 — privacidad UX:**
+[ADR-030](03-architecture/adr/ADR-030-privacy-page-and-action-acknowledgement.md)
+centraliza el aviso v1 en `/privacidad` y sustituye el checkbox por aceptación
+mediante **Aceptar y jugar**, con micro-copy y enlace. No modifica datos recogidos,
+retención, base jurídica institucional, schema ni versiones competitivas.
+El contrato acotado y su exit gate figuran en STAGE-10 del roadmap.
+
 **Estado:** `DONE` — 22 de septiembre de 2026. Adaptación de despliegue `READY`,
 `1.0.0-rc.2`, `pnpm verify` verde: 2345 tests y 222 E2E. STAGE-10 sigue
 `IN_PROGRESS`; faltan despliegue, ensayos de proveedor y GO. [ADR-028](03-architecture/adr/ADR-028-zero-cost-fair-deployment.md)
@@ -24887,6 +24991,16 @@ ranking/best/cookie/tablas invariantes y gates del repo. [ADR-029](03-architectu
 y [handoff](../.tmp/rc3-branding/practice-mode/README.md). Esta autorización no
 levanta el freeze competitivo ni sustituye GO/NO-GO.
 
+**Excepción de privacidad UX autorizada por el PO: ADR-030 (23/09).**
+Scope IN: aviso v1 completo en `/privacidad`, enlace único en footer de Home,
+formulario sin checkbox y aceptación mediante **Aceptar y jugar** con micro-copy
+y enlace; CSP, accesibilidad y pruebas de ausencia de envío al leer. Scope OUT:
+base jurídica institucional, nuevas finalidades/datos, texto v1, retención,
+schema, motor, contenido, scoring, versiones y corte RC3. Exit gate: ruta pública
+SSR sin JS, móvil/desktop/teclado/axe, campos conservados al revisar y rechazo
+servidor sin reconocimiento vigente, más `pnpm verify`. Decisión en
+[ADR-030](03-architecture/adr/ADR-030-privacy-page-and-action-acknowledgement.md).
+
 **Subetapa STAGE-10A `DONE`, autorizada y cerrada el 22/09.** Configuración y herramientas adaptadas
 a Vercel Hobby `gru1` + Supabase Free `sa-east-1`, una producción desde `main`,
 ensayo local equivalente a staging, privacidad/calendario aprobados y RC.2.
@@ -25926,6 +26040,12 @@ por [ADR-029](03-architecture/adr/ADR-029-public-practice-mode.md). No son un
 harness ni participan de la competencia. `tests/e2e/practice.spec.ts` exige 200
 con nonce en `/test` y 404 en rutas DEV del build competitivo. Los gates genéricos
 de release y el candado RC.2 permanecen intactos; esto no corta RC3.
+
+`/privacidad` también es pública por
+[ADR-030](03-architecture/adr/ADR-030-privacy-page-and-action-acknowledgement.md):
+aviso v1 íntegro, SSR sin JavaScript y nonce CSP. `tests/e2e/privacy.spec.ts` cubre
+lectura sin cookies, enlace del footer, accesibilidad y rechazo API de aceptación
+ausente/falsa o versión desactualizada. No cambia el contrato legal congelado.
 
 ---
 
@@ -29544,6 +29664,7 @@ De requisito de producto a estado de implementación. La columna de estado es un
 | ADR-027 | [Congelamiento del release y gobernanza de v1](03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md) | Aceptado; supersede el carácter bloqueante de GATE-TG2 |
 | ADR-028 | [Despliegue de feria sin costo](03-architecture/adr/ADR-028-zero-cost-fair-deployment.md) | Aceptado; Vercel Hobby + Supabase Free, ensayo local y main-only |
 | ADR-029 | [Práctica pública aislada](03-architecture/adr/ADR-029-public-practice-mode.md) | Aceptado por encargo explícito del PO; carrera real sin persistencia competitiva |
+| ADR-030 | [Privacidad centralizada y aceptación al iniciar](03-architecture/adr/ADR-030-privacy-page-and-action-acknowledgement.md) | Aceptado por encargo explícito del PO; supersede presentación de ADR-026, sin cambiar el aviso v1 ni resolver la base jurídica institucional |
 
 ## Regla para ADR nuevo
 
@@ -30898,6 +31019,12 @@ Estas preguntas están registradas en [preguntas abiertas](07-reference/open-que
 - [x] [ADR-029](03-architecture/adr/ADR-029-public-practice-mode.md), API, frontera de persistencia y amenazas.
 - [x] [Handoff y verificación](../.tmp/rc3-branding/practice-mode/README.md).
 
+## Privacidad UX RC3
+
+- [x] [ADR-030](03-architecture/adr/ADR-030-privacy-page-and-action-acknowledgement.md), fuentes legales y límites institucionales.
+- [x] FR-001, flujos, trazabilidad, contratos, seguridad y excepción acotada del roadmap reconciliados.
+- [x] Ruta pública, integridad del aviso v1 y aceptación al enviar cubiertas por pruebas de componente y navegador.
+
 ---
 
 # FILE: README.md
@@ -31155,3 +31282,7 @@ Las versiones exactas están fijadas en `package.json` y `pnpm-lock.yaml` bajo [
 ## Práctica pública RC3
 
 [ADR-029](03-architecture/adr/ADR-029-public-practice-mode.md) define `/test`, su API anónima y la separación respecto de participantes, intentos y ranking. Comportamiento en FR-021 de la [especificación funcional](02-functional/functional-specification.md); evidencia en el [handoff de práctica](../.tmp/rc3-branding/practice-mode/README.md).
+
+## Privacidad UX RC3
+
+[ADR-030](03-architecture/adr/ADR-030-privacy-page-and-action-acknowledgement.md) centraliza el aviso v1 en `/privacidad` y vincula la aceptación al CTA del formulario. Comportamiento en FR-001, evidencia en `tests/e2e/privacy.spec.ts` y `tests/e2e/competition.spec.ts`.

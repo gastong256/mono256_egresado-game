@@ -109,10 +109,10 @@ for (const width of [320, 360, 390, 412, 768, 1280, 1920]) {
         )
         .toBe(true)
     }
-    await page
-      .getByRole('link', { name: 'Aviso de privacidad', exact: true })
-      .click()
-    await expect(page.locator('#privacy')).toBeInViewport()
+    await expect(
+      page.getByRole('link', { name: 'Política de Privacidad', exact: true }),
+    ).toHaveAttribute('href', '/privacidad')
+    await expect(page.locator('#privacy')).toHaveCount(0)
     const accessibility = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'])
       .analyze()

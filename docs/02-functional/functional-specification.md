@@ -15,9 +15,19 @@ En `/`, la portada prioriza el acceso al evento. `upcoming` anticipa la apertura
 `open` muestra un único CTA **Jugar ahora** (o **Jugar de nuevo / Continuar partida**
 según la sesión); `closed` prioriza los resultados y no ofrece nuevos intentos;
 `not-configured` explica la indisponibilidad. La identificación conserva ADR-026.
-El aviso configurado puede leerse en la portada y sigue presente en el formulario,
-antes del envío. Un pie institucional identifica Colegio Integral Piacentini,
-Feria del Libro 2026 y `developed by gastong256.dev`, con acceso al mismo aviso.
+El aviso configurado v1 completo se publica en `/privacidad`, accesible sin
+identificación y sin JavaScript. Un pie institucional identifica Colegio Integral
+Piacentini, Feria del Libro 2026 y `developed by gastong256.dev`, con un único enlace
+«Política de Privacidad»; Home no repite el aviso.
+
+Según [ADR-030](../03-architecture/adr/ADR-030-privacy-page-and-action-acknowledgement.md),
+el formulario no tiene checkbox. Junto a **Aceptar y jugar** muestra: «Al elegir
+“Aceptar y jugar”, confirmás que leíste y aceptás el tratamiento de datos explicado
+en la Política de Privacidad para participar en la competencia». El enlace abre
+otra pestaña, anunciado accesiblemente, y conserva los campos en memoria. Sólo
+el envío válido remite el reconocimiento y la versión vigente al servidor;
+navegar o leer no acepta. Sin configuración, la ruta explica la indisponibilidad
+del aviso y permite acceder a `/test`; nunca inventa datos institucionales.
 
 El contador usa exclusivamente `opensAt`/`closesAt` del DTO vigente. Muestra
 segundos orientativos del reloj cliente y la fecha absoluta en hora argentina;

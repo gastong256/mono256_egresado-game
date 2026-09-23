@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import Link from 'next/link'
 
 /** Supplied institutional marks; optimized locally, with their original backgrounds. */
 export function InstitutionalFooter() {
@@ -50,12 +51,13 @@ export function InstitutionalFooter() {
           </span>
         </a>
       </div>
-      <a
-        href="#privacy"
+      <Link
+        href="/privacidad"
+        prefetch={false}
         className="text-meta text-ink mt-5 inline-flex min-h-11 items-center underline underline-offset-4"
       >
-        Aviso de privacidad
-      </a>
+        Política de Privacidad
+      </Link>
     </footer>
   )
 }

@@ -184,3 +184,9 @@ Estas preguntas están registradas en [preguntas abiertas](07-reference/open-que
 - [x] FR-021 y trazabilidad de `/test`, reanudación y resultado no competitivo.
 - [x] [ADR-029](03-architecture/adr/ADR-029-public-practice-mode.md), API, frontera de persistencia y amenazas.
 - [x] [Handoff y verificación](../.tmp/rc3-branding/practice-mode/README.md).
+
+## Privacidad UX RC3
+
+- [x] [ADR-030](03-architecture/adr/ADR-030-privacy-page-and-action-acknowledgement.md), fuentes legales y límites institucionales.
+- [x] FR-001, flujos, trazabilidad, contratos, seguridad y excepción acotada del roadmap reconciliados.
+- [x] Ruta pública, integridad del aviso v1 y aceptación al enviar cubiertas por pruebas de componente y navegador.

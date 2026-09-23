@@ -1,6 +1,7 @@
 'use client'
 
 import { useId, useRef, useState, type FormEvent } from 'react'
+import Link from 'next/link'
 
 import {
   describeDniProblem,
@@ -12,7 +13,6 @@ import {
   type IdentityFormConfig,
 } from '@/lib/competition'
 import { Button, Callout, SelectField, TextField } from '@/components/ui'
-import { PrivacySummary } from './privacy-summary'
 
 /**
  * Identificación del participante, en una sola pantalla.
@@ -54,6 +54,7 @@ export function IdentityForm({
   }) => void
 }) {
   const headingId = useId()
+  const acknowledgementId = useId()
   const formRef = useRef<HTMLFormElement>(null)
 
   const [nickname, setNickname] = useState('')
@@ -61,7 +62,6 @@ export function IdentityForm({
   const [dni, setDni] = useState('')
   const [schoolYear, setSchoolYear] = useState('')
   const [division, setDivision] = useState('')
-  const [acknowledged, setAcknowledged] = useState(false)
   const [touched, setTouched] = useState<Record<string, boolean>>({})
   const [submitted, setSubmitted] = useState(false)
 
@@ -87,9 +87,6 @@ export function IdentityForm({
     schoolYear: schoolYear === '' ? 'Elegí tu año o curso.' : undefined,
     division:
       needsDivision && division === '' ? 'Elegí tu división.' : undefined,
-    acknowledged: acknowledged
-      ? undefined
-      : 'Confirmá que leíste para qué se piden los datos.',
   }
 
   /**
@@ -108,6 +105,7 @@ export function IdentityForm({
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    if (pending) return
     setSubmitted(true)
     if (Object.values(errors).some((error) => error !== undefined)) {
       const invalid = formRef.current?.querySelector<HTMLElement>(
@@ -238,48 +236,37 @@ export function IdentityForm({
           </div>
         </fieldset>
 
-        <PrivacySummary notice={config.privacyNotice} id="privacy" />
-
-        <div className="flex flex-col gap-1">
-          <label className="text-meta text-ink flex min-h-11 items-start gap-3 text-pretty">
-            <input
-              type="checkbox"
-              checked={acknowledged}
-              onChange={(event) => {
-                setAcknowledged(event.currentTarget.checked)
-                setTouched((current) => ({ ...current, acknowledged: true }))
-              }}
-              aria-invalid={
-                visible.acknowledged === undefined ? undefined : true
-              }
-              aria-describedby={
-                visible.acknowledged === undefined
-                  ? undefined
-                  : 'identity-acknowledgement-error'
-              }
-              className="border-ink mt-1 size-5 shrink-0 border-[1.5px]"
-            />
-            <span>{config.privacyNotice.acknowledgement}</span>
-          </label>
-          {visible.acknowledged === undefined ? null : (
-            <p
-              id="identity-acknowledgement-error"
-              role="alert"
-              className="text-caption font-display text-red"
-            >
-              {visible.acknowledged}
-            </p>
-          )}
-        </div>
-
         {serverError === undefined ? null : (
           <Callout tone="accent" title="No pudimos continuar">
             {serverError}
           </Callout>
         )}
 
-        <Button type="submit" disabled={pending} data-testid="identity-submit">
-          {pending ? 'Un momento…' : 'Empezar'}
+        <p
+          id={acknowledgementId}
+          className="text-meta text-ink-secondary text-pretty"
+        >
+          Al elegir «Aceptar y jugar», confirmás que leíste y aceptás el
+          tratamiento de datos explicado en la{' '}
+          <Link
+            href="/privacidad"
+            prefetch={false}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-ink underline underline-offset-4"
+          >
+            Política de Privacidad
+            <span className="sr-only"> (abre en otra pestaña)</span>
+          </Link>{' '}
+          para participar en la competencia.
+        </p>
+        <Button
+          type="submit"
+          disabled={pending}
+          aria-describedby={acknowledgementId}
+          data-testid="identity-submit"
+        >
+          {pending ? 'Un momento…' : 'Aceptar y jugar'}
         </Button>
       </form>
     </section>

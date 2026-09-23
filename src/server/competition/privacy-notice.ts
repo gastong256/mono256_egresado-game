@@ -15,8 +15,8 @@ import type { CompetitionDeploymentConfig } from './config'
  * dice para qué se piden los datos, qué es público, quién los ve y cómo
  * pedir acceso, rectificación o supresión. No afirma que una tilde resuelva la
  * base legal del tratamiento —eso lo define la institución, no este código—, y
- * por eso el control del formulario es un reconocimiento de lectura y está
- * redactado como tal.
+ * el formulario reconoce esta versión al pulsar «Aceptar y jugar» (ADR-030).
+ * Esa acción no certifica por sí sola la base legal o la capacidad de un menor.
  */
 
 export interface PrivacyNoticeSection {

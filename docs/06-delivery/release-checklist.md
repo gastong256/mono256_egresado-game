@@ -153,3 +153,9 @@ por [ADR-029](../03-architecture/adr/ADR-029-public-practice-mode.md). No son un
 harness ni participan de la competencia. `tests/e2e/practice.spec.ts` exige 200
 con nonce en `/test` y 404 en rutas DEV del build competitivo. Los gates genéricos
 de release y el candado RC.2 permanecen intactos; esto no corta RC3.
+
+`/privacidad` también es pública por
+[ADR-030](../03-architecture/adr/ADR-030-privacy-page-and-action-acknowledgement.md):
+aviso v1 íntegro, SSR sin JavaScript y nonce CSP. `tests/e2e/privacy.spec.ts` cubre
+lectura sin cookies, enlace del footer, accesibilidad y rechazo API de aceptación
+ausente/falsa o versión desactualizada. No cambia el contrato legal congelado.

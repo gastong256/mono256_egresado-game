@@ -31,6 +31,7 @@
 | ADR-027 | [Congelamiento del release y gobernanza de v1](../03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md) | Aceptado; supersede el carácter bloqueante de GATE-TG2 |
 | ADR-028 | [Despliegue de feria sin costo](../03-architecture/adr/ADR-028-zero-cost-fair-deployment.md) | Aceptado; Vercel Hobby + Supabase Free, ensayo local y main-only |
 | ADR-029 | [Práctica pública aislada](../03-architecture/adr/ADR-029-public-practice-mode.md) | Aceptado por encargo explícito del PO; carrera real sin persistencia competitiva |
+| ADR-030 | [Privacidad centralizada y aceptación al iniciar](../03-architecture/adr/ADR-030-privacy-page-and-action-acknowledgement.md) | Aceptado por encargo explícito del PO; supersede presentación de ADR-026, sin cambiar el aviso v1 ni resolver la base jurídica institucional |
 
 ## Regla para ADR nuevo
 

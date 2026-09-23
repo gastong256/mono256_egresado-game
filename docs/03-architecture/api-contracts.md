@@ -20,6 +20,12 @@ mismo origen y cookie de sesión. Práctica tiene el contrato anónimo separado 
 | `POST /api/competition/attempts/{id}/submit` | Envía el log de acciones. Sólo se lee `actionLog`; lo que el cliente afirme sobre su resultado no se consulta en ningún punto. Idempotente por huella de la submission. |
 | `POST /api/competition/attempts/{id}/abandon` | Abandona la partida activa. |
 
+El registro conserva `privacyNoticeAcknowledged: true` y exige la versión vigente.
+El cliente los envía al confirmar **Aceptar y jugar** en el formulario válido,
+sin checkbox (ADR-030). `GET /privacidad` es una página pública SSR, no un endpoint
+de aceptación: usa la configuración existente, sin consultar identidad o DB ni
+emitir cookies. Leerla no registra una aceptación.
+
 ### Organizador
 
 | Método y ruta | Qué hace |

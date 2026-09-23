@@ -18,7 +18,6 @@ import { IdentityForm } from './identity-form'
 import { Leaderboard } from './leaderboard'
 import { EventCountdown } from './event-countdown'
 import { GameModeSummary } from './game-mode-summary'
-import { PrivacySummary } from './privacy-summary'
 import { cn } from '@/lib/ui/cn'
 
 /**
@@ -413,14 +412,6 @@ export function CompetitionExperience({
                       void refresh()
                     }}
                   />
-                  {open && formConfig !== undefined ? (
-                    <a
-                      href="#privacy"
-                      className="text-caption text-ink-secondary inline-flex min-h-11 items-center underline underline-offset-4"
-                    >
-                      Tus datos y privacidad, antes de jugar
-                    </a>
-                  ) : null}
                   {you === undefined ? null : (
                     <Button
                       variant="ghost"
@@ -456,22 +447,6 @@ export function CompetitionExperience({
                   />
                 </>
               )}
-              <section
-                className="border-rule border-t pt-5"
-                aria-label="Privacidad antes de jugar"
-              >
-                {formConfig === undefined ? (
-                  <p id="privacy" className="text-meta text-ink-secondary">
-                    El aviso de privacidad estará disponible cuando se configure
-                    la competencia. Todavía no se solicitan datos.
-                  </p>
-                ) : (
-                  <PrivacySummary
-                    notice={formConfig.privacyNotice}
-                    id="privacy"
-                  />
-                )}
-              </section>
             </>
           )}
         </main>

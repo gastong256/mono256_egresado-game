@@ -141,3 +141,14 @@ Logs `scope: practice` con evento, resultado, código y duración; no seed, log 
 acciones, body, IP o PII. Se comparte la allowlist de observabilidad existente.
 CSP no agrega directivas/recursos externos: el matcher incorpora `/test` con nonce
 por request. `/dev` conserva sus guards, incluso con opt-in y competencia activa.
+
+## Presentación del aviso — ADR-030
+
+`/privacidad` publica el aviso v1 íntegro desde la configuración existente, sin
+consultar identidad ni emitir cookies. Home enlaza desde el footer. En el
+formulario, **Aceptar y jugar** y su micro-copy enlazado sustituyen el checkbox;
+la apertura en otra pestaña conserva los campos en memoria, sin persistir PII.
+Leer el aviso no envía aceptación. El servidor sigue exigiendo reconocimiento
+afirmativo y versión vigente; no se añade un historial de consentimientos.
+[ADR-030](adr/ADR-030-privacy-page-and-action-acknowledgement.md) conserva la
+responsabilidad institucional de resolver base jurídica y participación de menores.

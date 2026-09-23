@@ -14,6 +14,13 @@ No declara un GO de STAGE-10 ni administra Vercel.
 
 ## STAGE-10A — adaptación Vercel Hobby + Supabase Free
 
+**Excepción posterior autorizada, 23/09 — privacidad UX:**
+[ADR-030](../03-architecture/adr/ADR-030-privacy-page-and-action-acknowledgement.md)
+centraliza el aviso v1 en `/privacidad` y sustituye el checkbox por aceptación
+mediante **Aceptar y jugar**, con micro-copy y enlace. No modifica datos recogidos,
+retención, base jurídica institucional, schema ni versiones competitivas.
+El contrato acotado y su exit gate figuran en STAGE-10 del roadmap.
+
 **Estado:** `DONE` — 22 de septiembre de 2026. Adaptación de despliegue `READY`,
 `1.0.0-rc.2`, `pnpm verify` verde: 2345 tests y 222 E2E. STAGE-10 sigue
 `IN_PROGRESS`; faltan despliegue, ensayos de proveedor y GO. [ADR-028](../03-architecture/adr/ADR-028-zero-cost-fair-deployment.md)

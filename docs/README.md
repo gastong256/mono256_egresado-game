@@ -251,3 +251,7 @@ Las versiones exactas están fijadas en `package.json` y `pnpm-lock.yaml` bajo [
 ## Práctica pública RC3
 
 [ADR-029](03-architecture/adr/ADR-029-public-practice-mode.md) define `/test`, su API anónima y la separación respecto de participantes, intentos y ranking. Comportamiento en FR-021 de la [especificación funcional](02-functional/functional-specification.md); evidencia en el [handoff de práctica](../.tmp/rc3-branding/practice-mode/README.md).
+
+## Privacidad UX RC3
+
+[ADR-030](03-architecture/adr/ADR-030-privacy-page-and-action-acknowledgement.md) centraliza el aviso v1 en `/privacidad` y vincula la aceptación al CTA del formulario. Comportamiento en FR-001, evidencia en `tests/e2e/privacy.spec.ts` y `tests/e2e/competition.spec.ts`.

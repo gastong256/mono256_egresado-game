@@ -2,6 +2,13 @@
 
 ## UF-01 Primera run
 
+En competencia, la identificación vigente de ADR-026 termina con **Aceptar y
+jugar**, sin checkbox. El micro-copy asociado enlaza `/privacidad` en otra pestaña
+para revisar el aviso v1 sin perder campos ni enviar datos. El formulario válido
+envía la versión y el reconocimiento afirmativo; leer o navegar no los envía
+([ADR-030](../03-architecture/adr/ADR-030-privacy-page-and-action-acknowledgement.md)).
+`/test` continúa sin identificación competitiva.
+
 ```mermaid
 flowchart TD
     A[Landing] --> B[Elegir nickname]

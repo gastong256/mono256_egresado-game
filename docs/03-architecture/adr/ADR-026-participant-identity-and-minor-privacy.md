@@ -132,9 +132,12 @@ despliegue y se renderizan tal cual en el aviso. Si falta alguno, la aplicación
 Un aviso con una escuela inventada sería peor que no tener aviso: le diría a un
 chico a quién reclamar, y esa persona no existiría.
 
-El control del formulario es un **reconocimiento de lectura**, no una
-declaración de consentimiento. Este código no puede afirmar que una tilde
-resuelve la base legal del tratamiento; eso lo define la institución.
+La decisión original usó un **reconocimiento de lectura**, no una declaración
+de consentimiento. [ADR-030](ADR-030-privacy-page-and-action-acknowledgement.md)
+supersede parcialmente la presentación: aviso completo en `/privacidad` y
+aceptación mediante **Aceptar y jugar**, sin checkbox. Se mantiene el límite:
+el control de interfaz no resuelve por sí solo la base legal del tratamiento;
+eso lo define la institución.
 
 ## Marco al que responde
 

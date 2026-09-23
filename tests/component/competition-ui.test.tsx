@@ -7,7 +7,7 @@ import { CompetitionExperience } from '@/components/competition/competition-expe
 import { IdentityForm } from '@/components/competition/identity-form'
 import { Leaderboard } from '@/components/competition/leaderboard'
 import { OrganizerConsole } from '@/components/competition/organizer-console'
-import { PrivacySummary } from '@/components/competition/privacy-summary'
+import { PrivacyPolicy } from '@/components/competition/privacy-policy'
 import { VerificationPanel } from '@/components/competition/verification-panel'
 import { AttemptRun } from '@/components/competition/attempt-run'
 import { serializeSnapshot } from '@/game'
@@ -175,14 +175,12 @@ describe('ranking', () => {
 
 describe('aviso de privacidad', () => {
   it('muestra la capa corta sin que haya que abrir nada', () => {
-    render(<PrivacySummary notice={notice} />)
+    render(<PrivacyPolicy notice={notice} />)
     expect(screen.getByText(/únicamente tu alias/u)).toBeVisible()
   })
 
-  it('guarda el texto completo detrás de «Más información»', async () => {
-    const user = userEvent.setup()
-    render(<PrivacySummary notice={notice} />)
-    await user.click(screen.getByText('Más información'))
+  it('muestra el texto completo y su versión sin desplegables', () => {
+    render(<PrivacyPolicy notice={notice} />)
     expect(screen.getByText(/Responsable de los datos/u)).toBeInTheDocument()
     expect(screen.getByText(/Versión del aviso: 1/u)).toBeInTheDocument()
   })
@@ -351,7 +349,7 @@ describe('formulario de identificación', () => {
     expect(dni).toHaveAttribute('autocomplete', 'off')
   })
 
-  it('no envía hasta que la persona reconoce el aviso', async () => {
+  it('sólo acepta al enviar: leer la política o completar campos no registra aceptación', async () => {
     const onSubmit = vi.fn()
     const user = userEvent.setup()
     render(
@@ -367,12 +365,20 @@ describe('formulario de identificación', () => {
     await user.type(screen.getByLabelText('Nombre y apellido'), 'Sofía Gómez')
     await user.type(screen.getByLabelText('DNI'), '45123456')
     await user.selectOptions(screen.getByLabelText('Año o curso'), '2.º')
-    await user.click(screen.getByTestId('identity-submit'))
-
+    expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()
+    const link = screen.getByRole('link', { name: /Política de Privacidad/u })
+    expect(link).toHaveAttribute('href', '/privacidad')
+    expect(link).toHaveAttribute('target', '_blank')
+    await user.click(link)
     expect(onSubmit).not.toHaveBeenCalled()
-    expect(
-      screen.getByText(/Confirmá que leíste para qué se piden los datos/u),
-    ).toBeInTheDocument()
+    expect(screen.getByLabelText('DNI')).toHaveValue('45123456')
+    const button = screen.getByRole('button', { name: 'Aceptar y jugar' })
+    expect(button).toHaveAccessibleDescription(
+      /leíste y aceptás el tratamiento/u,
+    )
+    await user.click(button)
+
+    expect(onSubmit).toHaveBeenCalledOnce()
   })
 
   it('envía exactamente lo que se pidió, y nada más', async () => {
@@ -391,7 +397,6 @@ describe('formulario de identificación', () => {
     await user.type(screen.getByLabelText('Nombre y apellido'), 'Sofía Gómez')
     await user.type(screen.getByLabelText('DNI'), '45.123.456')
     await user.selectOptions(screen.getByLabelText('Año o curso'), '2.º')
-    await user.click(screen.getByRole('checkbox'))
     await user.click(screen.getByTestId('identity-submit'))
 
     expect(onSubmit).toHaveBeenCalledWith({
@@ -420,7 +425,6 @@ describe('formulario de identificación', () => {
     await user.type(screen.getByLabelText('DNI'), '45123456')
     await user.selectOptions(screen.getByLabelText('Año o curso'), '2.º')
     await user.selectOptions(screen.getByLabelText('División'), 'B')
-    await user.click(screen.getByRole('checkbox'))
     await user.click(screen.getByTestId('identity-submit'))
 
     expect(onSubmit).toHaveBeenCalledWith(
@@ -1303,7 +1307,6 @@ describe('de la portada a la partida', () => {
     await user.type(screen.getByLabelText('Nombre y apellido'), 'Sofía Gómez')
     await user.type(screen.getByLabelText('DNI'), '45123456')
     await user.selectOptions(screen.getByLabelText('Año o curso'), '2.º')
-    await user.click(screen.getByRole('checkbox'))
     await user.click(screen.getByTestId('identity-submit'))
 
     expect(await screen.findByTestId('stage-label')).toBeInTheDocument()
@@ -1356,7 +1359,6 @@ describe('de la portada a la partida', () => {
     await user.type(screen.getByLabelText('Nombre y apellido'), 'Sofía Gómez')
     await user.type(screen.getByLabelText('DNI'), '45123456')
     await user.selectOptions(screen.getByLabelText('Año o curso'), '2.º')
-    await user.click(screen.getByRole('checkbox'))
     await user.click(screen.getByTestId('identity-submit'))
 
     expect(

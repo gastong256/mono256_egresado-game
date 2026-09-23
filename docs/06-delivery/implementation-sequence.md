@@ -1171,6 +1171,16 @@ ranking/best/cookie/tablas invariantes y gates del repo. [ADR-029](../03-archite
 y [handoff](../../.tmp/rc3-branding/practice-mode/README.md). Esta autorización no
 levanta el freeze competitivo ni sustituye GO/NO-GO.
 
+**Excepción de privacidad UX autorizada por el PO: ADR-030 (23/09).**
+Scope IN: aviso v1 completo en `/privacidad`, enlace único en footer de Home,
+formulario sin checkbox y aceptación mediante **Aceptar y jugar** con micro-copy
+y enlace; CSP, accesibilidad y pruebas de ausencia de envío al leer. Scope OUT:
+base jurídica institucional, nuevas finalidades/datos, texto v1, retención,
+schema, motor, contenido, scoring, versiones y corte RC3. Exit gate: ruta pública
+SSR sin JS, móvil/desktop/teclado/axe, campos conservados al revisar y rechazo
+servidor sin reconocimiento vigente, más `pnpm verify`. Decisión en
+[ADR-030](../03-architecture/adr/ADR-030-privacy-page-and-action-acknowledgement.md).
+
 **Subetapa STAGE-10A `DONE`, autorizada y cerrada el 22/09.** Configuración y herramientas adaptadas
 a Vercel Hobby `gru1` + Supabase Free `sa-east-1`, una producción desde `main`,
 ensayo local equivalente a staging, privacidad/calendario aprobados y RC.2.

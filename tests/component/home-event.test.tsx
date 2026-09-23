@@ -129,8 +129,8 @@ describe('footer institucional', () => {
       'noopener noreferrer',
     )
     expect(
-      screen.getByRole('link', { name: 'Aviso de privacidad' }),
-    ).toHaveAttribute('href', '#privacy')
+      screen.getByRole('link', { name: 'Política de Privacidad' }),
+    ).toHaveAttribute('href', '/privacidad')
   })
 })
 
