@@ -87,6 +87,14 @@ Cinco duraciones, dos curvas, **tres keyframes en total**. Todo lo demás es una
 
 Sin librería de animación, sin Lottie, sin video. **Nunca se anima el ancho de un borde**: reflowea.
 
+RC3 (TASK-D) reutiliza los mismos tres keyframes para la energía competitiva
+sin agregar un cuarto: el CTA lima de la portada y el puntaje verificado del
+cierre entran con `motion-resolve`; las tarjetas del medallero entran con
+`motion-enter` escalonado por `animation-delay`; y el reloj del evento cambia
+de `motion-enter` a `motion-resolve` en los segundos sólo por debajo de diez
+minutos (`data-urgency`, derivado del tiempo real que falta). Ninguna
+animación es continua ni bloquea; con reduced motion todas duran 1 ms.
+
 El confeti del cierre son 18 tiras de CSS de 3×12 px con posiciones y retardos deterministas. Deterministas a propósito: el mismo cierre tiene que verse igual en dos capturas, y una captura de regresión con `Math.random()` adentro no sirve para nada. Dispara en cierre de etapa, egreso y Aura de `+1.000`, y en ningún otro lugar.
 
 ## Reduced motion

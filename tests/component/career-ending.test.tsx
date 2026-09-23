@@ -350,6 +350,31 @@ describe('el cierre de la carrera', () => {
     expect(screen.getAllByTestId('recap-year')).toHaveLength(6)
   })
 
+  it('nombra al jugador al egresar cuando hay alias, y no lo inventa cuando no', () => {
+    const { unmount } = render(
+      <CareerEpilogueView
+        ending={optimal}
+        result={{ kind: 'practice', phase: 'done', fairScore: 9000 }}
+        onPlayAgain={() => undefined}
+      />,
+    )
+    expect(screen.getByTestId('graduated')).toHaveTextContent(/^Egresaste$/u)
+    unmount()
+    render(
+      <CareerEpilogueView
+        ending={optimal}
+        result={{ kind: 'practice', phase: 'done', fairScore: 9000 }}
+        nickname="AliasLargoDePruebaABCD"
+        onPlayAgain={() => undefined}
+      />,
+    )
+    expect(screen.getByTestId('graduated')).toHaveTextContent(
+      'Egresaste, AliasLargoDePruebaABCD.',
+    )
+    // Texto, nunca HTML: React lo escapa.
+    expect(document.querySelector('[data-testid="graduated"] b')).toBeNull()
+  })
+
   it('un recorrido de desarrollo cierra sin puntaje y con un solo primario', () => {
     renderEnding(optimal, { kind: 'none' })
     expect(screen.queryByTestId('performance-headline')).not.toBeInTheDocument()

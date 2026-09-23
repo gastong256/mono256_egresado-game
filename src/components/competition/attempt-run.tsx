@@ -59,6 +59,7 @@ export function AttemptRun({
   attemptId,
   descriptor,
   before,
+  nickname,
   onVerified,
   onPlayAgain,
   onBackToRanking,
@@ -73,6 +74,8 @@ export function AttemptRun({
    * servidor. Sin snapshot, esas dos afirmaciones no aparecen.
    */
   readonly before?: PlacementSnapshot
+  /** El alias público, para los momentos del recorrido que lo nombran. */
+  readonly nickname?: string
   readonly onVerified: (response: SubmissionResponse) => void
   readonly onPlayAgain: () => void
   readonly onBackToRanking: () => void
@@ -236,7 +239,11 @@ export function AttemptRun({
         ) : null}
         <main>
           <GameCanvas>
-            <RunView controller={controller} dependencies={dependencies} />
+            <RunView
+              controller={controller}
+              dependencies={dependencies}
+              {...(nickname === undefined ? {} : { nickname })}
+            />
           </GameCanvas>
         </main>
       </div>
@@ -274,6 +281,7 @@ export function AttemptRun({
             memories: closed.memories,
           }}
           result={result}
+          {...(nickname === undefined ? {} : { nickname })}
           onPlayAgain={onPlayAgain}
           onBackToRanking={onBackToRanking}
         />

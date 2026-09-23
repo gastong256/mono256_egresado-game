@@ -3,7 +3,10 @@ import { act, fireEvent, render, screen, cleanup } from '@testing-library/react'
 import { renderToString } from 'react-dom/server'
 import { hydrateRoot } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { EventCountdown } from '@/components/competition/event-countdown'
+import {
+  EventCountdown,
+  countdownUrgency,
+} from '@/components/competition/event-countdown'
 import type { PublicCompetitionSummary } from '@/lib/competition'
 
 const start = Date.parse('2026-10-03T12:00:00Z')
@@ -30,11 +33,63 @@ const tick = (ms = 0) => {
   })
 }
 
+describe('urgencia del reloj', () => {
+  it('sube sólo con el tiempo real que falta', () => {
+    expect(countdownUrgency(3 * 24 * 3600)).toBe('calm')
+    expect(countdownUrgency(24 * 3600)).toBe('calm')
+    expect(countdownUrgency(24 * 3600 - 1)).toBe('near')
+    expect(countdownUrgency(3600)).toBe('near')
+    expect(countdownUrgency(3599)).toBe('high')
+    expect(countdownUrgency(600)).toBe('high')
+    expect(countdownUrgency(599)).toBe('critical')
+    expect(countdownUrgency(0)).toBe('critical')
+  })
+
+  it('la palabra acompaña al color en los últimos minutos y se apaga con calma', () => {
+    const soon = new Date(start + 8 * 60_000).toISOString()
+    render(
+      <EventCountdown
+        competition={{ ...competition, status: 'open', closesAt: soon }}
+        onElapsed={onElapsed}
+      />,
+    )
+    tick()
+    expect(screen.getByTestId('event-countdown')).toHaveAttribute(
+      'data-urgency',
+      'critical',
+    )
+    expect(screen.getByText('Últimos minutos')).toBeInTheDocument()
+    cleanup()
+    const today = new Date(start + 2 * 3600_000).toISOString()
+    render(
+      <EventCountdown
+        competition={{ ...competition, opensAt: today }}
+        onElapsed={onElapsed}
+      />,
+    )
+    tick()
+    expect(screen.getByTestId('event-countdown')).toHaveAttribute(
+      'data-urgency',
+      'near',
+    )
+    expect(screen.getByText('Empieza en menos de un día')).toBeInTheDocument()
+    cleanup()
+    // Más de un día: calma, sin rojo ni adjetivo.
+    render(<EventCountdown competition={competition} onElapsed={onElapsed} />)
+    tick()
+    expect(screen.getByTestId('event-countdown')).toHaveAttribute(
+      'data-urgency',
+      'calm',
+    )
+    expect(screen.getByText('Empieza en')).toBeInTheDocument()
+  })
+})
+
 describe('countdown del evento', () => {
   it('cuenta hacia opensAt, con días, horas, minutos y segundos', () => {
     render(<EventCountdown competition={competition} onElapsed={onElapsed} />)
     tick()
-    expect(screen.getByText('Empieza en')).toBeInTheDocument()
+    expect(screen.getByText(/^Empieza en/u)).toBeInTheDocument()
     expect(screen.getByTestId('countdown-digits')).toHaveTextContent(
       '01Días02Horas03Min04Seg',
     )
@@ -52,6 +107,10 @@ describe('countdown del evento', () => {
     )
     tick()
     expect(screen.getByText('Cierra en')).toBeInTheDocument()
+    expect(screen.getByTestId('event-countdown')).toHaveAttribute(
+      'data-urgency',
+      'calm',
+    )
     expect(screen.getByTestId('countdown-digits')).toHaveTextContent(
       '02Días03Horas04Min05Seg',
     )

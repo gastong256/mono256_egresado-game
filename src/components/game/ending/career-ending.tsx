@@ -26,6 +26,7 @@ import type {
 
 import { ActionSlot, GameSheet, SceneColumn } from '../game-shell'
 import { Milestone as MilestoneFrame } from '../milestone'
+import { personalizedName } from '../progression-copy'
 import { AchievementCabinet } from './achievement-cabinet'
 import { CareerProfile } from './career-profile'
 import { CareerRecap } from './career-recap'
@@ -92,17 +93,21 @@ function knownScore(result: EndingResult): number | undefined {
 export function CareerEnding({
   ending,
   result,
+  nickname,
   onPlayAgain,
   onBackToRanking,
   playAgainDisabled = false,
 }: {
   readonly ending: EndingInput
   readonly result: EndingResult
+  /** El alias público, si el modo lo tiene: «Egresaste, Sofi.» */
+  readonly nickname?: string
   readonly onPlayAgain: () => void
   readonly onBackToRanking?: () => void
   readonly playAgainDisabled?: boolean
 }) {
   const { state, epilogue } = ending
+  const named = personalizedName(nickname)
   const score = knownScore(result)
   const band = score === undefined ? undefined : performanceBand(score)
   const style = playStyleOf(state)
@@ -125,10 +130,14 @@ export function CareerEnding({
           headingLevel={1}
         >
           <p
-            className="font-display text-ink text-eyebrow tracking-[0.18em] uppercase"
+            className="font-display text-ink text-eyebrow tracking-[0.18em] [overflow-wrap:anywhere] uppercase"
             data-testid="graduated"
           >
-            {epilogue.graduated ? 'Egresaste' : 'Terminaste el recorrido'}
+            {epilogue.graduated
+              ? named === undefined
+                ? 'Egresaste'
+                : `Egresaste, ${named}.`
+              : 'Terminaste el recorrido'}
           </p>
           {headline === undefined ? null : (
             <p

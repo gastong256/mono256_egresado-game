@@ -175,7 +175,8 @@ function parseScore(text: string): number {
 async function resumeAndVerify(page: Page): Promise<number> {
   await page.goto('/')
   await playAgain(page)
-  await expect(page.getByTestId('graduated')).toHaveText('Egresaste', {
+  // Con alias, el egreso lo nombra: «Egresaste, Sofi.»
+  await expect(page.getByTestId('graduated')).toContainText('Egresaste', {
     timeout: 60_000,
   })
   await expect(page.getByTestId('verification-verified')).toBeVisible({

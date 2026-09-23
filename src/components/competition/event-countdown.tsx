@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 
 import type { PublicCompetitionSummary } from '@/lib/competition'
 import { Button } from '@/components/ui'
+import { cn } from '@/lib/ui/cn'
 
 /** Public event dates are instants; the printed date is always Argentina time. */
 export function eventDeadline(competition: PublicCompetitionSummary) {
@@ -16,6 +17,41 @@ export function eventDeadline(competition: PublicCompetitionSummary) {
   if (value === undefined || !Number.isFinite(Date.parse(value)))
     return undefined
   return value
+}
+
+/**
+ * Cuánta urgencia transmite el reloj, derivada sólo del tiempo que falta.
+ *
+ * Cuatro escalones y ninguno inventa nada: la misma cuenta que dibuja los
+ * dígitos decide si el rótulo se pone rojo y si el segundo «salta». Más de un
+ * día es calma; menos de un día ya se nota; menos de una hora es alto; menos
+ * de diez minutos, crítico. La palabra acompaña siempre al color.
+ */
+export type CountdownUrgency = 'calm' | 'near' | 'high' | 'critical'
+
+export function countdownUrgency(remainingSeconds: number): CountdownUrgency {
+  if (remainingSeconds < 10 * 60) return 'critical'
+  if (remainingSeconds < 60 * 60) return 'high'
+  if (remainingSeconds < 24 * 60 * 60) return 'near'
+  return 'calm'
+}
+
+const URGENCY_LABEL: Readonly<
+  Record<
+    CountdownUrgency,
+    { readonly opening: string; readonly closing: string }
+  >
+> = {
+  calm: { opening: 'Empieza en', closing: 'Cierra en' },
+  near: {
+    opening: 'Empieza en menos de un día',
+    closing: 'Cierra en menos de un día',
+  },
+  high: {
+    opening: 'Empieza en menos de una hora',
+    closing: 'Cierra en menos de una hora',
+  },
+  critical: { opening: 'Empieza en minutos', closing: 'Últimos minutos' },
 }
 
 export function formatEventDate(value: string): string {
@@ -74,6 +110,7 @@ export function EventCountdown({
 
   if (deadline === undefined) return null
   const opening = competition.status === 'upcoming'
+  const urgency = remaining === undefined ? 'calm' : countdownUrgency(remaining)
   const values =
     remaining === undefined
       ? undefined
@@ -88,9 +125,19 @@ export function EventCountdown({
     <div
       className="border-rule flex min-w-0 flex-col gap-3 border-t pt-4"
       data-testid="event-countdown"
+      data-urgency={urgency}
     >
-      <p className="text-label font-display text-ink-label uppercase">
-        {opening ? 'Empieza en' : 'Cierra en'}
+      <p
+        className={cn(
+          'text-label font-display uppercase',
+          urgency === 'high' || urgency === 'critical'
+            ? 'text-red'
+            : 'text-ink-label',
+        )}
+      >
+        {opening
+          ? URGENCY_LABEL[urgency].opening
+          : URGENCY_LABEL[urgency].closing}
       </p>
       {!hidden && remaining !== 0 ? (
         <div
@@ -101,11 +148,25 @@ export function EventCountdown({
           {['Días', 'Horas', 'Min', 'Seg'].map((label, index) => (
             <div
               key={label}
-              className="border-rule bg-surface flex min-w-0 flex-col border px-1 py-3 text-center"
+              className={cn(
+                'bg-surface flex min-w-0 flex-col border px-1 py-3 text-center',
+                // De un día para abajo el reloj toma cuerpo: filete de tinta.
+                // Sobre la hora, los segundos llevan el rojo del sistema; la
+                // palabra de arriba ya dijo lo mismo.
+                urgency === 'calm' ? 'border-rule' : 'border-ink',
+                urgency === 'critical' && index === 3 && 'border-red border-2',
+              )}
             >
               <span
                 key={values?.[index]}
-                className="motion-enter text-display font-display text-ink tabular-nums motion-reduce:animate-none"
+                className={cn(
+                  'text-display font-display text-ink tabular-nums motion-reduce:animate-none',
+                  // Cada cifra entra al cambiar; sobre la hora los segundos
+                  // «saltan» con el pop de resolución en vez de deslizarse.
+                  urgency === 'critical' && index === 3
+                    ? 'motion-resolve'
+                    : 'motion-enter',
+                )}
               >
                 {values?.[index]?.toLocaleString('es-AR', {
                   minimumIntegerDigits: 2,

@@ -41,7 +41,9 @@ function ScoreFigure({
       </p>
       <p
         data-numeric
-        className="text-milestone font-display text-ink"
+        // El número llega del servidor y entra con el pop de resolución: es
+        // el resultado, y se ve llegar.
+        className="text-milestone font-display text-ink motion-resolve"
         data-testid={testId}
       >
         {value.toLocaleString('es-AR')}

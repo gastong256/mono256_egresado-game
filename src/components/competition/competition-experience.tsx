@@ -238,6 +238,7 @@ export function CompetitionExperience({
         attemptId={screen.attemptId}
         descriptor={screen.descriptor}
         before={screen.before}
+        {...(state.you === undefined ? {} : { nickname: state.you.nickname })}
         onVerified={onVerified}
         onPlayAgain={() => {
           void startAttempt()
@@ -347,7 +348,9 @@ export function CompetitionExperience({
                   )}
                   {open ? (
                     <Button
-                      className="group min-h-16 justify-between px-5"
+                      // El único lima de la portada entra con el pop de
+                      // resolución: es la acción de la pantalla y se nota.
+                      className="group motion-resolve min-h-16 justify-between px-5 hover:-translate-y-px motion-reduce:transform-none"
                       disabled={
                         pending ||
                         (you === undefined && formConfig === undefined)
@@ -378,13 +381,32 @@ export function CompetitionExperience({
                       </span>
                     </Button>
                   ) : null}
+                  {/*
+                    Sin competencia abierta, practicar es lo único que se puede
+                    jugar: toma el lugar del primario. Abierta, vuelve a ser un
+                    enlace discreto debajo del lima. Cerrada, los resultados ya
+                    están en la página y un enlace lleva hasta ellos.
+                  */}
                   <Link
                     href="/test"
                     prefetch={false}
-                    className="text-meta text-ink inline-flex min-h-11 items-center underline underline-offset-4"
+                    {...(open ? {} : { 'data-primary': 'true' })}
+                    className={
+                      open
+                        ? 'text-meta text-ink inline-flex min-h-11 items-center underline underline-offset-4'
+                        : 'text-action bg-action text-on-action hover:bg-action-hover motion-resolve inline-flex min-h-[50px] w-full items-center justify-center px-6 uppercase'
+                    }
                   >
                     Probar sin competir
                   </Link>
+                  {competition.status === 'closed' ? (
+                    <a
+                      href="#ranking-heading"
+                      className="text-action border-ink text-ink hover:bg-canvas-sunken inline-flex min-h-[46px] w-full items-center justify-center border-[1.5px] px-5 uppercase"
+                    >
+                      Ver resultados
+                    </a>
+                  ) : null}
                   <EventCountdown
                     competition={competition}
                     onElapsed={() => {

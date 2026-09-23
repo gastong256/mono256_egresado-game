@@ -115,8 +115,10 @@ export function FeedbackPanel({ feedback, className }: FeedbackPanelProps) {
           FRAME[tone],
         )}
       >
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2.5">
+        {/* A 320 px un sello de trece letras no entra al lado del título: la
+            fila se parte y el sello baja de línea, alineado a la derecha. */}
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-2.5">
             <span
               className={cn(
                 'flex size-7 shrink-0 items-center justify-center',

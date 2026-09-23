@@ -20,7 +20,8 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: 'Egresado',
-  description: 'Un juego web de decisiones y desafíos matemáticos.',
+  description:
+    'Un juego web sobre decidir en la escuela: la secundaria de 7.º a 5.º en decisiones con números.',
   applicationName: 'Egresado',
 }
 

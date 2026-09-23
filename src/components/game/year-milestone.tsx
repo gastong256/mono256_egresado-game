@@ -50,7 +50,9 @@ export function YearMilestone({
         <MilestoneTick className="size-6" />
         <span className="sr-only">{`${copy.numeral} completado`}</span>
       </h2>
-      <p className="text-body text-ink-secondary text-pretty">{copy.line}</p>
+      <p className="text-body text-ink-secondary text-pretty [overflow-wrap:anywhere]">
+        {copy.line}
+      </p>
     </section>
   )
 }

@@ -53,9 +53,14 @@ import { YearMilestone } from './year-milestone'
 export interface RunViewProps {
   readonly controller: GameController
   readonly dependencies: EngineDependencies
+  /**
+   * El alias, si el modo lo tiene. Sólo lo usan los dos cierres de año que
+   * abren y cierran la secundaria; la práctica no pide alias y no lo inventa.
+   */
+  readonly nickname?: string
 }
 
-export function RunView({ controller, dependencies }: RunViewProps) {
+export function RunView({ controller, dependencies, nickname }: RunViewProps) {
   const run = useGameRun(controller, dependencies)
   const { state, dispatch } = run
   const active = state.run.activeEvent
@@ -135,7 +140,7 @@ export function RunView({ controller, dependencies }: RunViewProps) {
   const showsContinue = resolved || active?.challenge === undefined
   const milestone =
     showsContinue && completesYear(intent)
-      ? yearMilestoneCopy(state.run, intent)
+      ? yearMilestoneCopy(state.run, intent, nickname)
       : undefined
 
   return (

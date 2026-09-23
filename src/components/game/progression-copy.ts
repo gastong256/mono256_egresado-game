@@ -149,6 +149,7 @@ export interface YearMilestoneCopy {
 export function yearMilestoneCopy(
   state: RunState,
   intent: Extract<ContinueIntent, { kind: 'next-year' | 'finish' }>,
+  nickname?: string,
 ): YearMilestoneCopy {
   const stage = intent.completed
   const final = intent.kind === 'finish' && stage === 'year-5'
@@ -173,10 +174,37 @@ export function yearMilestoneCopy(
       ? ' Todo salió como lo pensaste.'
       : ''
 
+  // El alias entra sólo donde empieza y donde termina la secundaria: el
+  // primer año cerrado y el último. Nombrarlo en los seis sería un tic.
+  const named = personalizedName(nickname)
+  const opening =
+    named !== undefined && stage === 'grade-7'
+      ? `${named}, cerraste tu primer año. `
+      : named !== undefined && final
+        ? `${named}, terminaste la secundaria. `
+        : ''
+  const line =
+    final && named !== undefined
+      ? `${opening}${suffix.trim()}`.trim()
+      : `${opening}${YEAR_LINE[stage]}${suffix}`
+
   return {
     numeral: stageNumeral(stage),
     eyebrow: final ? 'Fin de la secundaria' : 'Año completado',
-    line: `${YEAR_LINE[stage]}${suffix}`,
+    line,
     final,
   }
+}
+
+/**
+ * El alias tal como se lo nombra en una frase, o nada.
+ *
+ * Es texto del participante: se recorta y se descarta si quedó vacío, y la
+ * frase que lo recibe funciona igual sin él. Nunca se interpreta como HTML.
+ */
+export function personalizedName(
+  nickname: string | undefined,
+): string | undefined {
+  const trimmed = nickname?.trim() ?? ''
+  return trimmed.length === 0 ? undefined : trimmed
 }

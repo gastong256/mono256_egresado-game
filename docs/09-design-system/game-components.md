@@ -95,7 +95,11 @@ no dispara confeti: el volumen máximo sigue reservado para el egreso.
 
 Todo lo que dice se deriva del estado —numeral de la etapa, si el año registró
 un Repaso, si todos los resultados ordinarios fueron óptimos— y la deriva
-`progression-copy.ts`, que también decide qué dice el botón: «Seguir» entre dos
+`progression-copy.ts`, que también decide qué dice el botón. El alias público,
+cuando el modo lo tiene, entra sólo en dos hitos —el primer año cerrado y el
+último («Sofi, cerraste tu primer año.», «Sofi, terminaste la secundaria.»)—
+y en el egreso («Egresaste, Sofi.»); la práctica no pide alias y no lo
+inventa. `progression-copy.ts` también decide qué dice el botón: «Seguir» entre dos
 eventos del mismo año, «Empezar 2.º» en la apertura de un año, «Ir al Repaso»
 cuando el año debe algo, «Pasar a 3.º» al cerrar un año y «Ver mi egreso» al
 cerrar 5.º. Ninguna pantalla vuelve a decidir esas palabras, y ninguna

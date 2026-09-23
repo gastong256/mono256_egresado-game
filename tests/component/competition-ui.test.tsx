@@ -489,6 +489,10 @@ describe('portada de la competencia', () => {
     )
     expect(screen.getByText(/todavía no empezó/u)).toBeInTheDocument()
     expect(screen.queryByTestId('play')).not.toBeInTheDocument()
+    // Practicar es lo único jugable: toma el lugar del primario, y es el único.
+    const practice = screen.getByRole('link', { name: 'Probar sin competir' })
+    expect(practice).toHaveAttribute('data-primary', 'true')
+    expect(document.querySelectorAll('[data-primary]')).toHaveLength(1)
   })
 
   it('deja el ranking legible después del cierre', () => {

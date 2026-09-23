@@ -111,7 +111,9 @@ export function NumericAnswer({
             onChange(event.target.value)
           }}
           className={cn(
-            'text-data font-display h-11 min-w-0 flex-1 border-[1.5px] px-3 text-right tabular-nums',
+            // Tres cifras entran en 4 rem; el resto del ancho se lo reparte
+            // con la unidad, que puede partirse en dos palabras a 320 px.
+            'text-data font-display h-11 min-w-16 flex-1 border-[1.5px] px-3 text-right tabular-nums',
             'bg-decision-raised text-on-decision-strong border-decision-rule',
             'aria-[invalid=true]:border-aura-loss',
             'disabled:cursor-not-allowed disabled:opacity-40',
@@ -131,7 +133,7 @@ export function NumericAnswer({
             <span className="absolute top-0 left-[7px] h-full w-0.5 bg-current" />
           </span>
         </button>
-        <span className="text-meta text-on-decision-muted shrink-0">
+        <span className="text-meta text-on-decision-muted min-w-0 text-pretty">
           {unitLabel}
         </span>
       </div>

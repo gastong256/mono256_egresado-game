@@ -5,9 +5,16 @@ import { PracticeExperience } from '@/components/practice/practice-experience'
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: 'Modo práctica | Egresado',
+  title: 'Modo práctica · Egresado',
   description:
-    'Probá la carrera completa sin identificarte ni participar del ranking.',
+    'Probá Egresado sin competir: la secundaria completa, de 7.º a 5.º, con las mismas reglas de puntaje y sin identificarte ni entrar al ranking.',
+  openGraph: {
+    title: 'Modo práctica · Egresado',
+    description:
+      'La secundaria completa, de 7.º a 5.º, sin identificarte ni entrar al ranking.',
+    type: 'website',
+    locale: 'es_AR',
+  },
 }
 
 export default function PracticePage() {

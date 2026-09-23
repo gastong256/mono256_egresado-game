@@ -19,10 +19,33 @@ import { readIdentityFormConfig } from '@/server/competition/page-data'
 
 export const dynamic = 'force-dynamic'
 
-export const metadata: Metadata = {
-  title: 'Egresado — un juego sobre decidir en la escuela',
-  description:
-    'Recorré la secundaria tomando decisiones donde los números importan. Jugá la competencia y mirá el ranking.',
+/**
+ * Título y descripción según el estado real del evento.
+ *
+ * Salen de la misma lectura pública que dibuja la portada: el nombre de la
+ * edición es configuración del despliegue, no una constante del componente, y
+ * el estado —abierta, próxima, cerrada— cambia qué promete la pestaña. Nada
+ * de sesión entra acá: la metadata es la misma para todo el mundo.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  const { competition } = await readPublicState()
+  const configured = competition.status !== 'not-configured'
+  const title = configured
+    ? `Egresado · ${competition.name}`
+    : 'Egresado — un juego sobre decidir en la escuela'
+  const description =
+    competition.status === 'open'
+      ? `${competition.name} está abierta: recorré la secundaria de 7.º a 5.º tomando decisiones con números y buscá tu puesto en el ranking.`
+      : competition.status === 'upcoming'
+        ? `${competition.name} abre pronto. Mientras tanto, probá Egresado sin competir: la secundaria de 7.º a 5.º en decisiones con números.`
+        : competition.status === 'closed'
+          ? `${competition.name} cerró. Mirá los resultados y practicá la secundaria de 7.º a 5.º con decisiones con números.`
+          : 'Recorré la secundaria de 7.º a 5.º tomando decisiones donde los números importan. Jugá la competencia y mirá el ranking.'
+  return {
+    title,
+    description,
+    openGraph: { title, description, type: 'website', locale: 'es_AR' },
+  }
 }
 
 export default async function Home() {

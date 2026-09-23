@@ -201,6 +201,43 @@ describe('las palabras del botón', () => {
   })
 })
 
+describe('el alias en los hitos', () => {
+  it('nombra al jugador sólo al cerrar el primer año y el último', () => {
+    const steps = playCareer('copy-intent-optimal', () => 'optimal')
+    const closes = steps.filter((step) => completesYear(step.intent))
+    const named = closes.map((step) =>
+      completesYear(step.intent)
+        ? yearMilestoneCopy(step.before, step.intent, 'Sofi').line
+        : '',
+    )
+    expect(named[0]).toMatch(/^Sofi, cerraste tu primer año\./u)
+    expect(named.at(-1)).toMatch(/^Sofi, terminaste la secundaria\./u)
+    for (const line of named.slice(1, -1)) expect(line).not.toContain('Sofi')
+    // Sin alias, o con uno vacío, la frase de siempre.
+    const plain = closes.map((step) =>
+      completesYear(step.intent)
+        ? yearMilestoneCopy(step.before, step.intent).line
+        : '',
+    )
+    const blank = closes.map((step) =>
+      completesYear(step.intent)
+        ? yearMilestoneCopy(step.before, step.intent, '   ').line
+        : '',
+    )
+    expect(blank).toEqual(plain)
+    expect(plain[0]).toMatch(/^Ya sabés cómo funciona la escuela\./u)
+    // Un alias largo no rompe la frase ni se interpreta.
+    const long = yearMilestoneCopy(
+      closes[0]!.before,
+      closes[0]!.intent as never,
+      '<b>AliasLargoDePruebaABCD</b>',
+    ).line
+    expect(long.startsWith('<b>AliasLargoDePruebaABCD</b>, cerraste')).toBe(
+      true,
+    )
+  })
+})
+
 describe('el hito de cierre de año', () => {
   it('es determinista y distingue el último año', () => {
     const steps = playCareer('copy-intent-optimal', () => 'optimal')
