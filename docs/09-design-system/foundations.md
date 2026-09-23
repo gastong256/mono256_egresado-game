@@ -80,8 +80,9 @@ reduced motion. La fecha escrita permanece visible.
 en escritorio y 208 px en móvil como mínimos: permite crecer con texto ampliado.
 En escritorio alinea enlace legal, marcas institucionales y crédito en tres
 columnas; en móvil sube las marcas a una fila propia. Ambas marcas tienen 112 px
-de alto; el crédito del desarrollador conserva su enlace textual, sin logo. Un
-icono de GitHub de 20 px enlaza por separado al repositorio con objetivo táctil
+de alto; el crédito del desarrollador conserva su enlace textual, sin logo, en
+una sola línea con el tamaño `text-label`, peso normal y sin espaciado extra. Un
+icono de GitHub de 16 px, separado 4 px del texto, enlaza al repositorio con objetivo táctil
 de 44 px y nombre accesible. La máscara circular de Piacentini es
 un recorte de presentación de ese insumo solicitado por el PO; no cambia el
 radio cero de los componentes. Los WebP se derivan de `resources/footer/` con

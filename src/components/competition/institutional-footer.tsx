@@ -36,15 +36,15 @@ export function InstitutionalFooter() {
           className="h-28 w-auto shrink-0 object-contain"
         />
       </div>
-      <div className="col-start-2 row-start-2 flex min-w-0 items-center gap-1 justify-self-end md:col-start-3 md:row-start-1">
+      <div className="col-start-2 row-start-2 flex min-w-0 items-center justify-self-end md:col-start-3 md:row-start-1">
         <a
           href="https://gastong256.dev"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-caption text-ink-secondary hover:text-ink inline-flex min-h-11 items-center text-right"
+          className="text-label text-ink-secondary hover:text-ink inline-flex min-h-11 items-center font-normal tracking-normal whitespace-nowrap"
         >
           <span>
-            <span className="block">developed by</span>{' '}
+            <span>developed by</span>{' '}
             <span className="underline underline-offset-4">gastong256.dev</span>
             <span className="sr-only"> (abre en otra pestaña)</span>
           </span>
@@ -54,12 +54,12 @@ export function InstitutionalFooter() {
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Repositorio en GitHub (abre en otra pestaña)"
-          className="text-ink-secondary hover:text-ink inline-flex min-h-11 min-w-11 items-center justify-center"
+          className="text-ink-secondary hover:text-ink inline-flex min-h-11 min-w-11 items-center justify-start pl-1"
         >
           <svg
             viewBox="0 0 24 24"
             fill="currentColor"
-            className="h-5 w-5"
+            className="h-4 w-4"
             aria-hidden="true"
             focusable="false"
           >

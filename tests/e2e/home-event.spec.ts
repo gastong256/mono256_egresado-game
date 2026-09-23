@@ -171,7 +171,7 @@ for (const width of [320, 360, 390, 412, 768, 1280, 1920]) {
       'https://github.com/gastong256/mono256_egresado-game',
     )
     expect(privacy.x + privacy.width).toBeLessThanOrEqual(dev.x)
-    expect(footerBox.height).toBeLessThanOrEqual(width < 768 ? 224 : 176)
+    expect(footerBox.height).toBeLessThanOrEqual(width < 768 ? 240 : 176)
     expect(
       Math.abs(marks.x + marks.width / 2 - (footerBox.x + footerBox.width / 2)),
     ).toBeLessThanOrEqual(1)

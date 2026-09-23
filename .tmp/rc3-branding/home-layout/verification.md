@@ -78,3 +78,16 @@ Singular: «Queda menos de un día». Los límites superiores siguen siendo verd
 - Workspace, sincronización/check del master y `git diff --check`: PASS.
 - Sin build, E2E ni verify adicionales: sólo cambia la selección de copy,
   cubierta por los tests específicos. Sin push.
+
+## Ajuste posterior: crédito en una línea
+
+Crédito de 11 px, en una sola línea, a 4 px del icono GitHub de 16 px; enlaces
+independientes y objetivo táctil de 44 px conservados. En 320 px el texto legal
+ocupa una línea extra, sin superposición, y el pie admite esa altura.
+
+- `pnpm test tests/component/home-event.test.tsx`: 9 PASS.
+- ESLint/Prettier dirigidos, design:check, workspace, master-check y diff-check: PASS.
+- Revisión Playwright local: Home/privacidad a 320/390/768/1280 px, axe, enlaces,
+  teclado y ausencia durante juego: PASS. Medición adicional de línea única,
+  separación de 4 px y altura del pie en cuatro anchos: PASS.
+- Sin build, suite E2E completa ni verify para este ajuste CSS. Sin push.
