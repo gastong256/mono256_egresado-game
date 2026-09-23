@@ -24,13 +24,20 @@ export function Milestone({
   numeral,
   children,
   className,
+  headingLevel = 2,
 }: {
   readonly eyebrow: string
   /** El año que cerró: «7.º». Es un numeral, no un título. */
   readonly numeral: string
   readonly children: ReactNode
   readonly className?: string
+  /**
+   * El cierre de la carrera es una pantalla entera y el numeral es su `h1`;
+   * el cierre de un año de desarrollo vive bajo el encabezado de etapa.
+   */
+  readonly headingLevel?: 1 | 2
 }) {
+  const Heading = headingLevel === 1 ? 'h1' : 'h2'
   return (
     <section
       aria-labelledby="milestone-title"
@@ -44,13 +51,20 @@ export function Milestone({
       </span>
 
       <div className="border-ink flex items-end gap-3 border-b-2 pb-2.5">
-        <h2
+        <Heading
           id="milestone-title"
           className="text-milestone font-display text-ink"
         >
           {numeral}
-        </h2>
-        <MilestoneTick className="mb-1.5" />
+        </Heading>
+        {/* «Egresado» a 66 px ocupa la hoja entera a 320 px: el tilde,
+            decorativo, cede el lugar hasta que la palabra y él entren juntos. */}
+        <MilestoneTick
+          className={cn(
+            'mb-1.5 shrink-0',
+            headingLevel === 1 && 'hidden min-[360px]:block',
+          )}
+        />
       </div>
 
       {children}

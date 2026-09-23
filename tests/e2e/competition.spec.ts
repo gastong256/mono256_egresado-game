@@ -233,6 +233,22 @@ test.describe('competencia', () => {
     await expect(page.getByTestId('personal-best')).toContainText(
       'Es tu mejor partida',
     )
+    // Una carrera óptima es la franja más alta, y el puesto que se muestra es
+    // el que el servidor publicó, no uno deducido del puntaje.
+    await expect(page.getByTestId('performance-headline')).toHaveAttribute(
+      'data-band',
+      'exceptional',
+    )
+    const placement = page.getByTestId('placement')
+    await expect(placement).toBeVisible()
+    const shown = Number(await placement.getAttribute('data-rank'))
+    const published = await competitionState(page)
+    expect(shown).toBe(published.you?.rank)
+    if (shown <= 3)
+      await expect(placement.getByTestId('placement-claim')).toBeVisible()
+    else await expect(placement.getByTestId('placement-claim')).toHaveCount(0)
+    await expect(page.getByTestId('recap-year')).toHaveCount(6)
+    await expect(page.getByTestId('achievements')).toBeVisible()
 
     await page.getByRole('button', { name: 'Volver al ranking' }).click()
     await expect(page.getByTestId('greeting')).toContainText(nickname)

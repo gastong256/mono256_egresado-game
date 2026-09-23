@@ -192,6 +192,18 @@ test('carrera completa, tres desafíos, reload, retry de red y otra seed sin nue
     page.getByText('Este puntaje es de práctica y no modifica el ranking.'),
   ).toBeVisible()
   await expect(page.getByTestId('leaderboard')).toHaveCount(0)
+  // Todo Insuficiente: egresa igual, la franja lo dice sin humillar y pide
+  // revancha; y en práctica no hay puesto, podio ni récord.
+  await expect(page.getByTestId('performance-headline')).toHaveAttribute(
+    'data-band',
+    /struggling|weak/u,
+  )
+  await expect(page.getByTestId('performance-closing')).toBeVisible()
+  await expect(page.getByTestId('placement')).toHaveCount(0)
+  for (const forbidden of [/podio/iu, /récord/iu, /puesto/iu, /fracas/iu])
+    await expect(page.locator('main')).not.toContainText(forbidden)
+  await expect(page.getByTestId('recap-year')).toHaveCount(6)
+  await expect(page.getByTestId('play-style')).toBeVisible()
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
   await page.evaluate(() => window.scrollTo(0, 0))
   await page.screenshot({

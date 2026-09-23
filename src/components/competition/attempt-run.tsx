@@ -8,7 +8,11 @@ import {
 } from '@/content/full-career'
 import { serializeActionLog, type RunDescriptor } from '@/game'
 import { Callout } from '@/components/ui'
-import { CareerEpilogueView } from '@/components/game/career-epilogue'
+import {
+  CareerEpilogueView,
+  type EndingResult,
+} from '@/components/game/career-epilogue'
+import type { PlacementSnapshot } from '@/components/game/ending/ending-model'
 import { GameCanvas } from '@/components/game/game-shell'
 import { RunView } from '@/components/game/run-view'
 import {
@@ -25,7 +29,6 @@ import {
   readAttemptCheckpoint,
   saveAttemptCheckpoint,
 } from './attempt-storage'
-import { VerificationPanel } from './verification-panel'
 
 /**
  * Una partida de competencia, de la emisión al resultado verificado.
@@ -44,18 +47,32 @@ import { VerificationPanel } from './verification-panel'
 type Submission =
   | { readonly phase: 'idle' }
   | { readonly phase: 'verifying' }
-  | { readonly phase: 'verified'; readonly result: VerifiedAttemptPayload }
+  | {
+      readonly phase: 'verified'
+      readonly result: VerifiedAttemptPayload
+      /** El estado público que llegó con el resultado: de ahí sale el puesto. */
+      readonly state: SubmissionResponse['state']
+    }
   | { readonly phase: 'failed'; readonly message: string }
 
 export function AttemptRun({
   attemptId,
   descriptor,
+  before,
   onVerified,
   onPlayAgain,
   onBackToRanking,
 }: {
   readonly attemptId: string
   readonly descriptor: RunDescriptor
+  /**
+   * Lo que la portada sabía de este participante al emitir el intento.
+   *
+   * Es la única evidencia con la que el cierre puede decir «subiste al 1.º
+   * puesto» o «récord»: compara ese antes con el después que devuelve el
+   * servidor. Sin snapshot, esas dos afirmaciones no aparecen.
+   */
+  readonly before?: PlacementSnapshot
   readonly onVerified: (response: SubmissionResponse) => void
   readonly onPlayAgain: () => void
   readonly onBackToRanking: () => void
@@ -171,7 +188,11 @@ export function AttemptRun({
 
         const payload = body as SubmissionResponse
         clearAttemptCheckpoint(attemptId)
-        setSubmission({ phase: 'verified', result: payload.result })
+        setSubmission({
+          phase: 'verified',
+          result: payload.result,
+          state: payload.state,
+        })
         onVerified(payload)
       } catch {
         if (!cancelled) {
@@ -224,28 +245,39 @@ export function AttemptRun({
 
   if (closed === undefined) throw new Error('missing career closing')
 
+  const result: EndingResult =
+    submission.phase === 'verified'
+      ? {
+          kind: 'competition',
+          phase: 'verified',
+          result: submission.result,
+          competition: submission.state,
+          ...(before === undefined ? {} : { before }),
+        }
+      : submission.phase === 'failed'
+        ? {
+            kind: 'competition',
+            phase: 'failed',
+            message: submission.message,
+            onRetry: retry,
+          }
+        : { kind: 'competition', phase: 'verifying' }
+
   return (
     <main className="flex flex-col gap-4">
       <GameCanvas>
         <CareerEpilogueView
-          epilogue={closed.epilogue}
-          onPlayAgain={onPlayAgain}
-        />
-      </GameCanvas>
-      <div className="max-w-viewport px-gutter mx-auto w-full pb-8">
-        <VerificationPanel
-          phase={submission.phase}
-          {...(submission.phase === 'verified'
-            ? { result: submission.result }
-            : {})}
-          {...(submission.phase === 'failed'
-            ? { message: submission.message }
-            : {})}
-          onRetry={retry}
+          ending={{
+            state: run,
+            epilogue: closed.epilogue,
+            milestones: closed.milestones,
+            memories: closed.memories,
+          }}
+          result={result}
           onPlayAgain={onPlayAgain}
           onBackToRanking={onBackToRanking}
         />
-      </div>
+      </GameCanvas>
     </main>
   )
 }

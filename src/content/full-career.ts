@@ -23,6 +23,7 @@ import {
   EngineInvariantError,
   candidateDifficultyCostPolicy,
   buildEpilogue,
+  careerMemories,
   candidatePrestigePolicy,
   officialFairScorePolicy,
   candidateRarePolicy,
@@ -38,6 +39,7 @@ import {
   toRunId,
   toRunSeed,
   type CareerEpilogue,
+  type CareerMemory,
   type CompetitiveScorePolicy,
   type CompositionFailure,
   type CompositionPolicy,
@@ -229,6 +231,12 @@ export function closeCareer(state: RunState): {
   readonly milestones: readonly Milestone[]
   readonly prestige: PrestigeBreakdown
   readonly epilogue: CareerEpilogue
+  /**
+   * Todo lo que la carrera puede recordar, año por año, antes de la selección
+   * de saliencia. El recorrido del cierre elige uno por año de acá; el epílogo
+   * conserva su propia selección de tres a cinco.
+   */
+  readonly memories: readonly CareerMemory[]
 } {
   const dependencies = createFullCareerDependencies()
   const milestones = earnedMilestones(state, careerMilestones)
@@ -237,9 +245,17 @@ export function closeCareer(state: RunState): {
     careerPrestigeOpportunities,
     candidatePrestigePolicy,
   )
+  const memories = careerMemories({
+    state,
+    storylets: dependencies.storylets,
+    rareEvents: careerRareEvents,
+    milestones,
+    iconicStorylets,
+  })
   return {
     milestones,
     prestige,
+    memories,
     epilogue: buildEpilogue({
       state,
       storylets: dependencies.storylets,

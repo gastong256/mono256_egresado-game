@@ -70,6 +70,21 @@ El único momento del juego donde la marca sube el volumen, y por eso el único 
 
 Dice **«vas camino a»** y no «sos»: 7.º es el primero de seis años, y un veredicto cerrado sobre alguien de doce años sería el lenguaje clínico que el GDD prohíbe.
 
+## CareerEnding (`ending/`)
+
+El cierre de la carrera, compuesto en `src/components/game/ending/`:
+`Milestone` con `headingLevel={1}` («Egresado» es el `h1`), bloque de
+resultado (puntaje verificado o de práctica en `text-milestone`, franja de
+desempeño, puesto actual y afirmaciones con evidencia), `CareerProfile`
+(estilo de juego + triángulo de Estilo + Promedio/Equipo/Aura),
+`AchievementCabinet` (tarjetas de tinta con tilde; no existe si no hay hitos),
+`CareerRecap` (un renglón por año, siempre vertical) y las acciones. Toda
+derivación —franja, estilo, hitos, recorrido, puesto— vive en
+`ending-model.ts` como funciones puras; el componente formatea. Podio y
+medallero se distinguen por lugar, lenguaje y forma: número grande en el
+resultado, tarjeta con tilde en los hitos. Ningún estado se distingue sólo
+por color; el confeti sigue reservado al egreso.
+
 ## YearMilestone
 
 El cierre de un año, **en la misma pantalla** que el último resultado. Aparece

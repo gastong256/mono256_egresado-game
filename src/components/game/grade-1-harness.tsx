@@ -302,6 +302,15 @@ function Grade1Run({
     )
   if (closed === undefined) throw new Error('missing career closing')
   return (
-    <CareerEpilogueView epilogue={closed.epilogue} onPlayAgain={onPlayAgain} />
+    <CareerEpilogueView
+      ending={{
+        state: run,
+        epilogue: closed.epilogue,
+        milestones: closed.milestones,
+        memories: closed.memories,
+      }}
+      result={{ kind: 'none' }}
+      onPlayAgain={onPlayAgain}
+    />
   )
 }

@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useCallback, useEffect, useState, type ReactNode } from 'react'
 
 import type { RunDescriptor } from '@/game'
+import type { PlacementSnapshot } from '@/components/game/ending/ending-model'
 import type {
   CompetitionErrorBody,
   IdentityFormConfig,
@@ -84,6 +85,8 @@ type Screen =
       readonly kind: 'playing'
       readonly attemptId: string
       readonly descriptor: RunDescriptor
+      /** El puesto y el podio tal como estaban al emitir: evidencia del cierre. */
+      readonly before: PlacementSnapshot
     }
 
 /** Cada cuánto se refresca el ranking mientras la competencia está abierta. */
@@ -143,6 +146,14 @@ export function CompetitionExperience({
   const startAttempt = useCallback(async () => {
     setPending(true)
     setError(undefined)
+    // Lo que el ranking decía de esta persona antes de jugar. El cierre lo
+    // compara con lo que el servidor devuelva después: es lo que le permite
+    // decir «subiste al 1.º puesto» sólo cuando pasó, y nunca inferirlo.
+    const before: PlacementSnapshot = {
+      rank: state.you?.rank,
+      bestFairScore: state.you?.bestFairScore,
+      topScore: state.leaderboard.find((entry) => entry.rank === 1)?.fairScore,
+    }
     // Quien ya tiene sesión entra a jugar desde la portada sin pasar por el
     // formulario, así que acá es donde empieza su descarga. La emisión del
     // intento tarda lo suyo y las dos cosas corren en paralelo.
@@ -165,13 +176,14 @@ export function CompetitionExperience({
         // El descriptor viene del servidor y el motor lo valida al crear la
         // run: si estuviera alterado, `createRun` se negaría.
         descriptor: payload.descriptor as RunDescriptor,
+        before,
       })
     } catch {
       setError('No pudimos conectarnos. Probá de nuevo.')
     } finally {
       setPending(false)
     }
-  }, [refresh])
+  }, [refresh, state.leaderboard, state.you])
 
   const identify = useCallback(
     async (submission: {
@@ -225,6 +237,7 @@ export function CompetitionExperience({
       <AttemptRun
         attemptId={screen.attemptId}
         descriptor={screen.descriptor}
+        before={screen.before}
         onVerified={onVerified}
         onPlayAgain={() => {
           void startAttempt()

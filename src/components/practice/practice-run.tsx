@@ -10,9 +10,12 @@ import {
 import { createGameController } from '@/components/game/controller'
 import { useControllerSelector } from '@/components/game/use-game-run'
 import { RunView } from '@/components/game/run-view'
-import { CareerEpilogueView } from '@/components/game/career-epilogue'
+import {
+  CareerEpilogueView,
+  type EndingResult,
+} from '@/components/game/career-epilogue'
 import { GameCanvas } from '@/components/game/game-shell'
-import { Button, Callout } from '@/components/ui'
+import { Callout } from '@/components/ui'
 import {
   practiceErrorMessage,
   practiceResultSchema,
@@ -159,6 +162,22 @@ function ActivePractice({
     [run],
   )
 
+  const result: EndingResult =
+    submission.phase === 'done'
+      ? {
+          kind: 'practice',
+          phase: 'done',
+          fairScore: submission.result.fairScore,
+        }
+      : submission.phase === 'failed'
+        ? {
+            kind: 'practice',
+            phase: 'failed',
+            message: submission.message,
+            onRetry: () => setRetry((value) => value + 1),
+          }
+        : { kind: 'practice', phase: 'verifying' }
+
   return (
     <main>
       {saveFailed ? (
@@ -176,56 +195,27 @@ function ActivePractice({
         <>
           <GameCanvas>
             <CareerEpilogueView
-              epilogue={closed.epilogue}
+              ending={{
+                state: run,
+                epilogue: closed.epilogue,
+                milestones: closed.milestones,
+                memories: closed.memories,
+              }}
+              result={result}
+              playAgainDisabled={pending}
               onPlayAgain={() => {
                 if (!pending) onPlayAgain()
               }}
             />
           </GameCanvas>
-          <section
-            aria-labelledby="practice-score-heading"
-            className="max-w-viewport px-gutter mx-auto flex flex-col gap-3 pb-8"
-            data-testid="practice-result"
-          >
-            <h1
-              id="practice-score-heading"
-              className="text-section font-display text-ink"
+          {pending ? (
+            <p
+              role="status"
+              className="text-meta text-ink-secondary max-w-viewport px-gutter mx-auto pb-8"
             >
-              Puntaje de práctica
-            </h1>
-            {submission.phase === 'done' ? (
-              <p
-                className="text-milestone font-display text-ink tabular-nums"
-                data-testid="practice-score"
-              >
-                {submission.result.fairScore.toLocaleString('es-AR')}
-              </p>
-            ) : submission.phase === 'failed' ? (
-              <>
-                <Callout title="El puntaje todavía no está calculado">
-                  {submission.message}
-                </Callout>
-                <Button
-                  variant="secondary"
-                  onClick={() => setRetry((value) => value + 1)}
-                >
-                  Reintentar cálculo
-                </Button>
-              </>
-            ) : (
-              <p role="status" className="text-body text-ink-secondary">
-                Calculando tu puntaje de práctica…
-              </p>
-            )}
-            <p className="text-body text-ink-secondary">
-              Este puntaje es de práctica y no modifica el ranking.
+              Preparando otra práctica…
             </p>
-            {pending ? (
-              <p role="status" className="text-meta text-ink-secondary">
-                Preparando otra práctica…
-              </p>
-            ) : null}
-          </section>
+          ) : null}
         </>
       )}
     </main>

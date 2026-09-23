@@ -4255,6 +4255,17 @@ El cierre débil sigue siendo factual/humorístico, nunca humillante ni un diagn
 personal. No termina sólo en tabla ni descarga todo el historial. El Product Pass
 completó este pase; no hace falta otro pase de epílogo antes de Phase 1.
 
+**RC3 (TASK-C, 2026-09-23) — orden en pantalla.** Por decisión del Product
+Owner, el resultado del modo (FairScore verificado y, en Fair, el puesto
+actual con podio/1.º cuando el servidor lo publica) se muestra **inmediatamente
+después de EGRESASTE y la primera línea del perfil**, y antes del estilo, los
+números, los hitos y el recorrido. El recorrido se presenta como un renglón por
+año (tema de la espina, marcador «Todo Óptimo / Repaso cerrado / Completado» y
+la escena más saliente del año, derivada con la misma prioridad rara → hito →
+Repaso → icónica → ordinaria), en lugar de la lista de 3–5 recuerdos; la
+selección de saliencia sigue existiendo en el motor. Estilo de juego, franja
+de desempeño y frases son presentación pura y no se persisten.
+
 ## Career Milestones
 
 STAGE-08 diseña familias académicas, sociales, de Estilo, comeback/recuperación y

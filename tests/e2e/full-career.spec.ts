@@ -128,10 +128,13 @@ test('la carrera completa compone nueve beats en los seis años y cierra con el 
 
   // 1 · EGRESASTE, siempre y primero.
   await expect(page.getByTestId('graduated')).toHaveText('Egresaste')
-  // 2 · Perfil autorado. 3 · El recorrido. 4 · El registro.
+  // 2 · Perfil autorado. 3 · Estilo y registro. 4 · El recorrido, año por año.
   await expect(page.getByTestId('epilogue-profile')).toBeVisible()
-  await expect(page.getByTestId('epilogue-memories')).toBeVisible()
+  await expect(page.getByTestId('play-style')).toBeVisible()
   await expect(page.getByTestId('epilogue-record')).toBeVisible()
+  await expect(page.getByTestId('recap-year')).toHaveCount(6)
+  await expect(page.getByTestId('career-recap')).toContainText('Adaptación')
+  await expect(page.getByTestId('career-recap')).toContainText('Cierre')
   // 6 · En práctica el cierre es personal, sin puesto.
   await expect(page.getByText('no entra en ningún ranking')).toBeVisible()
   await reflow(page, 'epílogo · 390')
