@@ -56,6 +56,7 @@
 03-architecture/adr/ADR-026-participant-identity-and-minor-privacy.md
 03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md
 03-architecture/adr/ADR-028-zero-cost-fair-deployment.md
+03-architecture/adr/ADR-029-public-practice-mode.md
 03-architecture/analytics-observability.md
 03-architecture/api-contracts.md
 03-architecture/architecture-overview.md

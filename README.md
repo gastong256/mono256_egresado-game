@@ -33,8 +33,8 @@ pnpm dev
 Abrir `http://localhost:3000`. El liveness check está en `http://localhost:3000/api/health`.
 
 La aplicación arranca sin base de datos: la portada dice que no hay competencia
-configurada y el juego queda disponible bajo `/dev`. Para habilitar el stack
-local:
+configurada y se puede jugar anónimamente en `/test`, con límites locales en
+memoria. `/dev` conserva sus restricciones. Para habilitar el stack local:
 
 ```bash
 pnpm db:start
@@ -133,3 +133,7 @@ STAGE-08 y STAGE-09 están cerrados. El congelamiento de v1 y sus controles se
 documentan en [la etapa actual](docs/06-delivery/current-stage.md). La validación
 matemática por IA está completa según los gates cerrados; no se afirma revisión
 humana amplia. El siguiente paso es STAGE-10.
+
+## Práctica pública
+
+`/test` recorre la misma carrera completa y calcula el puntaje por replay en servidor, sin identificación ni resultado competitivo. Guarda avance sólo en `egresado.practice.v1.active`; el único write servidor es el contador de seguridad. No consulta la seed oficial. Está disponible antes, durante y después del evento. Ver [ADR-029](docs/03-architecture/adr/ADR-029-public-practice-mode.md) y [evidencia](.tmp/rc3-branding/practice-mode/README.md).

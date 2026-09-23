@@ -177,3 +177,12 @@ Fuentes: [adjudicación](../04-quality/mathematics-department-ai-adjudication.md
 | FR-001: aviso antes de datos y footer institucional | `PrivacySummary`, `InstitutionalFooter` | `home-event.test.tsx`, `competition.spec.ts`, `home-event.spec.ts` |
 
 Decisiones y evidencia de TASK-A en el [plan vivo](../../.tmp/rc3-branding/task-a-home/README.md).
+
+## RC3 — práctica pública
+
+| Requisito | Implementación | Evidencia |
+|---|---|---|
+| FR-021: carrera, seed propia, contenido y FairScore reales | `server/practice/service`, fábricas full-career existentes | `integration/practice-api.test.ts`, `e2e/practice.spec.ts` |
+| FR-021: sin identidad ni persistencia competitiva | Runtime con puerto exclusivo de contador; endpoints propios | Prueba DB antes/después y sólo dos RPC de contador; lint de fronteras; ranking/best/cookie E2E |
+| FR-016/017/021: guardado local, resume y reintento | `components/practice`, namespace v1 | `component/practice.test.tsx`, `component/practice-run.test.tsx`, recorrido E2E de tres desafíos y carrera completa |
+| FR-001/021: enlace Home, aviso permanente, accesibilidad | `PracticeExperience`, `CompetitionExperience` | E2E 320/360/390/412/768/1280, teclado, zoom y axe |

@@ -178,3 +178,9 @@ Estas preguntas están registradas en [preguntas abiertas](07-reference/open-que
 - [x] [Handoff A–I](05-operations/vercel-supabase-production-deployment.md), plantilla pública y operación sin tercer proyecto remoto.
 - [x] [Reporte de adaptación](06-delivery/stage-10a-deployment-adaptation.md), con procedencia RC.1 y evidencia RC.2 separadas.
 - [x] Etapa actual, roadmap, arquitectura, runbooks e índices reconciliados; GO remoto pendiente.
+
+## Práctica pública RC3
+
+- [x] FR-021 y trazabilidad de `/test`, reanudación y resultado no competitivo.
+- [x] [ADR-029](03-architecture/adr/ADR-029-public-practice-mode.md), API, frontera de persistencia y amenazas.
+- [x] [Handoff y verificación](../.tmp/rc3-branding/practice-mode/README.md).

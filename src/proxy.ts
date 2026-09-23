@@ -20,7 +20,7 @@ import { contentSecurityPolicy } from '@/lib/ui/security-headers'
  * ## Por qué el matcher es positivo
  *
  * Sólo los documentos que se renderizan por pedido necesitan nonce, y en esta
- * aplicación son todos los que tienen HTML propio: `/`, `/organizer` y `/dev`.
+ * aplicación son todos los que tienen HTML propio: `/`, `/test`, `/organizer` y `/dev`.
  * Una respuesta JSON de `/api` no ejecuta scripts, y un `.js` de
  * `/_next/static` es un recurso, no un documento. Poner el proxy delante de
  * todo eso agregaría una función serverless por cada archivo estático a cambio
@@ -46,5 +46,5 @@ export function proxy(request: NextRequest): NextResponse {
 }
 
 export const config = {
-  matcher: ['/', '/organizer', '/dev/:path*'],
+  matcher: ['/', '/test', '/organizer', '/dev/:path*'],
 }

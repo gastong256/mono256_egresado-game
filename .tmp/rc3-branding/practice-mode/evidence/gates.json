@@ -1,0 +1,22 @@
+{
+  "base": "8c24a8fcb64eab5af2a962beed60de970a228635",
+  "verify": "PASS",
+  "testFiles": 129,
+  "testsPassed": 2428,
+  "e2ePassed": 254,
+  "skipped": 0,
+  "coverage": {
+    "statements": 85.79,
+    "branches": 78.43,
+    "functions": 87.78,
+    "lines": 86.02
+  },
+  "releaseChecks": 57,
+  "securityAudit": "No known vulnerabilities",
+  "dbLint": "PASS",
+  "dbTypesDiff": "NONE",
+  "schemaChanges": "NONE",
+  "engineContentReleaseChanges": "NONE",
+  "manualDeploy": "NONE",
+  "release": "1.0.0-rc.2"
+}

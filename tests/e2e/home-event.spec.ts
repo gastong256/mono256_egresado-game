@@ -163,6 +163,10 @@ test('teclado, foco visible, contador ocultable y movimiento reducido', async ({
   expect(motion).toBe('none')
   await page.keyboard.press('Tab')
   await expect(
+    page.getByRole('link', { name: 'Probar sin competir' }),
+  ).toBeFocused()
+  await page.keyboard.press('Tab')
+  await expect(
     page.getByRole('button', { name: 'Ocultar contador' }),
   ).toBeFocused()
   await page.keyboard.press('Enter')

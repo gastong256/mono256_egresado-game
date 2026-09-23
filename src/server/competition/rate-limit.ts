@@ -1,9 +1,16 @@
 import 'server-only'
 
-import { createHash } from 'node:crypto'
-
 import type { CompetitionStore } from '@/server/persistence/competition/store'
+import {
+  consumeRateLimit,
+  type RateLimitPolicy,
+} from '@/server/security/rate-limit'
 import type { Clock } from './clock'
+
+export {
+  clientFingerprint,
+  type RateLimitPolicy,
+} from '@/server/security/rate-limit'
 
 /**
  * Límite de tasa por ventana fija, contado en la base.
@@ -21,11 +28,6 @@ import type { Clock } from './clock'
  * el mismo secreto de la competencia, así que la tabla no guarda direcciones— y
  * por id de participante, que ya es un seudónimo.
  */
-
-export interface RateLimitPolicy {
-  readonly windowSeconds: number
-  readonly limit: number
-}
 
 /**
  * Los límites por operación.
@@ -60,20 +62,6 @@ export const RATE_LIMITS = {
 
 export type RateLimitOperation = keyof typeof RATE_LIMITS
 
-/** Deriva una etiqueta estable de cliente sin guardar la dirección. */
-export function clientFingerprint(secret: string, address: string): string {
-  return createHash('sha256')
-    .update(`${secret}:rate:${address}`, 'utf8')
-    .digest('hex')
-    .slice(0, 32)
-}
-
-function windowStart(now: Date, windowSeconds: number): string {
-  const seconds = Math.floor(now.getTime() / 1000)
-  const aligned = seconds - (seconds % windowSeconds)
-  return new Date(aligned * 1000).toISOString()
-}
-
 export interface RateLimiter {
   /** `true` si la operación puede seguir; `false` si ya pasó el límite. */
   allow(operation: RateLimitOperation, subject: string): Promise<boolean>
@@ -85,14 +73,14 @@ export function createRateLimiter(
 ): RateLimiter {
   return {
     async allow(operation, subject) {
-      const policy = RATE_LIMITS[operation]
-      const bucket = `${operation}:${subject}`
       try {
-        const hits = await store.incrementRateLimit(
-          bucket,
-          windowStart(clock.now(), policy.windowSeconds),
+        return await consumeRateLimit(
+          store,
+          clock.now(),
+          operation,
+          subject,
+          RATE_LIMITS[operation],
         )
-        return hits <= policy.limit
       } catch {
         // Fail-open deliberado y acotado: si el contador no está disponible, la
         // alternativa es dejar a toda la feria afuera por una tabla auxiliar.

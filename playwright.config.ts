@@ -32,6 +32,7 @@ const reuseExistingServer =
 
 /** Los specs que necesitan la competencia; el resto usa el harness. */
 const competitionSpecs = ['**/competition.spec.ts', '**/home-event.spec.ts']
+const practiceSpecs = ['**/practice.spec.ts']
 
 export default defineConfig({
   testDir: './tests/e2e',
@@ -47,12 +48,12 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium-desktop',
-      testIgnore: competitionSpecs,
+      testIgnore: [...competitionSpecs, ...practiceSpecs],
       use: { ...devices['Desktop Chrome'], baseURL: harnessURL },
     },
     {
       name: 'chromium-mobile',
-      testIgnore: competitionSpecs,
+      testIgnore: [...competitionSpecs, ...practiceSpecs],
       use: { ...devices['Pixel 7'], baseURL: harnessURL },
     },
     {
@@ -64,6 +65,14 @@ export default defineConfig({
       name: 'competition-mobile',
       testMatch: competitionSpecs,
       use: { ...devices['Pixel 7'], baseURL: competitionURL },
+    },
+    {
+      name: 'practice',
+      testMatch: practiceSpecs,
+      // The before/after ranking invariant needs the other competition writers
+      // to finish. This orders suites, not assertions or arbitrary sleeps.
+      dependencies: ['competition-desktop', 'competition-mobile'],
+      use: { ...devices['Desktop Chrome'], baseURL: competitionURL },
     },
   ],
   webServer: [

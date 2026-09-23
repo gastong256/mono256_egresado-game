@@ -146,3 +146,18 @@ a quien puede cambiar de red y sí deja afuera a media clase. Lo que corta el
 abuso que importa es la unicidad de identidad por documento y edición.
 
 La arquitectura de estas mitigaciones está en [arquitectura objetivo del motor](../03-architecture/target-engine-architecture.md); su operación, en [modo feria y congelamiento](../05-operations/fair-mode-and-competition-freeze.md).
+
+## Práctica pública RC3
+
+- Abuso de replay anónimo: contador independiente antes del trabajo, 256 KiB/512
+  acciones, fallo cerrado si no hay rate limiter público. NAT escolar contemplado
+  por `practice-limits-v1`; no se afirma protección ante DoS distribuido.
+- Descriptor/score falsificado: recompone el descriptor entero y plan desde seed,
+  exige catálogo/versiones actuales y replay real. Cambiar coherentemente una
+  práctica no tiene efecto competitivo; no hay claim de emisión firmada.
+- Contaminación de ranking o sesión: endpoints sin credenciales, sin puerto
+  competitivo, límites ESLint y prueba con participante/mejor intento existentes.
+- Exposición de harness: `/test` es ruta pública aprobada sin controles DEV;
+  E2E exige `/dev/*`, `/demo` y `/debug` inaccesibles en build competitivo.
+- Logs de datos sensibles: allowlist compartida y prueba de redacción. La IP
+  derivada sólo vive en contadores sujetos a la purga existente.

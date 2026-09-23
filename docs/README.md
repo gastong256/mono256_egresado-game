@@ -247,3 +247,7 @@ producto, endpoints/sesión/persistencia de competencia, ranking ni despliegue
 público.
 
 Las versiones exactas están fijadas en `package.json` y `pnpm-lock.yaml` bajo [ADR-010](03-architecture/adr/ADR-010-reproducible-node-pnpm-container-toolchain.md). Next.js `16.3.1` se conserva sólo como base local transitoria: `pnpm release:check` bloquea cualquier release público hasta actualizar a `>=16.3.2`, regenerar el lockfile y verificar el cambio completo.
+
+## Práctica pública RC3
+
+[ADR-029](03-architecture/adr/ADR-029-public-practice-mode.md) define `/test`, su API anónima y la separación respecto de participantes, intentos y ranking. Comportamiento en FR-021 de la [especificación funcional](02-functional/functional-specification.md); evidencia en el [handoff de práctica](../.tmp/rc3-branding/practice-mode/README.md).

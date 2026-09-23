@@ -192,3 +192,28 @@ de todas, sin FairScore/Prestige ni bloqueo de egreso. Debrief es delta futuro b
 El producto completo termina en `EGRESADO`, deriva el arquetipo final y produce el resumen de run. El slice de 7.º termina en el hito de año.
 
 TG1 cerró la dirección 85/10/5, normalización de oportunidades e intentos ilimitados con mejor resultado verificado. Siguen abiertos la política oficial/freeze, la implementación de emisión y personal best; el desempate exacto ya es puesto compartido. Ver [preguntas abiertas](../07-reference/open-questions.md).
+
+## FR-021 Práctica pública — RC3
+
+`/test` permite una carrera completa anónima con el motor, catálogo aprobado
+hosteable, interacciones, feedback, recuperación, egreso, epílogo y FairScore
+vigentes. No pide alias, nombre, DNI, año real ni consentimiento competitivo.
+Muestra **Modo práctica** y **No participa del ranking** durante toda la experiencia.
+
+El servidor emite una seed aleatoria propia por inicio; nunca lee la edición
+activa ni su seed. Al terminar recompone el descriptor y reproduce las acciones:
+la pantalla muestra **Puntaje de práctica**, sin puesto ni estado competitivo
+`VERIFIED`. Ninguna operación crea participantes, sesiones, intentos o resultados
+oficiales, ni modifica el mejor intento o cookies existentes.
+
+Guarda snapshot y log en un namespace local versionado. Recargar ofrece continuar
+sin emitir otra run. Empezar otra exige confirmación si existe avance y sólo lo
+reemplaza tras emisión exitosa. Al finalizar, jugar de nuevo emite otra seed.
+Entre pestañas prevalece el último checkpoint. Guardado bloqueado o incompatible
+se explica; jugar sin red sigue siendo posible después de iniciar y el cálculo
+final puede reintentarse. No se prometen resultados guardados en servidor.
+
+Home ofrece **Probar sin competir** como enlace secundario, incluso sin evento,
+antes de abrir y después del cierre. `/test` no acepta controles de catálogo,
+seed o debugging; `/dev` permanece cerrado en producción competitiva. La frontera
+y los límites operativos están en [ADR-029](../03-architecture/adr/ADR-029-public-practice-mode.md).

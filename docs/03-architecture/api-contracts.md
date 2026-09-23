@@ -6,8 +6,8 @@ El contrato implementado está abajo; los bloques históricos que le siguen se
 conservan como antecedente y **no** son normativos.
 
 Todas las rutas responden `cache-control: no-store` y comparten el modelo de
-error de la última sección. Las que cambian estado exigen mismo origen y cookie
-de sesión.
+error de la última sección. Las operaciones competitivas protegidas exigen
+mismo origen y cookie de sesión. Práctica tiene el contrato anónimo separado abajo.
 
 ### Participante
 
@@ -32,6 +32,27 @@ de sesión.
 El detalle —qué no puede controlar el cliente, la matriz de ataque y los códigos
 de rechazo— está en
 [el cierre de STAGE-09](../06-delivery/stage-09-fair-mode-server-ranking.md).
+
+## Práctica pública vigente — RC3 / ADR-029
+
+| Método y ruta | Request | Response 200 |
+|---|---|---|
+| `POST /api/practice/runs` | JSON `{}` estricto, máximo 1 KiB; sin query | `{ descriptor }` full-career `practice`/`fixed`, seed propia |
+| `POST /api/practice/runs/verify` | `{ actionLog }` estricto, máximo 256 KiB y 512 acciones canónicas | `{ result: { kind: "practice", runId, fairScore, graduated } }`, calculado por replay |
+
+No leen ni emiten cookies. Fetch cliente usa `credentials: omit`; sin sesión ni
+identidad. JSON same-origin; rechaza origen ajeno y queries. Un cliente anónimo
+sin Origin también puede usar la API, sujeto al mismo límite. Respuestas no-store.
+No acepta score, graduation o resumen cliente. Recompone descriptor completo y
+plan fingerprint desde seed antes de reproducir; una seed modificada coherentemente
+es otra práctica propia, sin garantía de emisión firmada.
+
+Errores sanitizados `{ error: { code, message } }`: `INVALID_REQUEST`/`INVALID_RUN`
+400, `INCOMPATIBLE_RUN` 409, `TOO_LARGE` 413, `RATE_LIMITED` 429 (`Retry-After: 300`),
+`UNAVAILABLE` 503. Lectura de bytes acotada incluso sin Content-Length. Política
+`practice-limits-v1`: 120 emisiones / 240 verificaciones por 300 s y dirección
+derivada, antes de composición/replay. Sólo usa `rate_limit_counters`; sin writes
+competitivos. No existe estado final servidor que consultar o publicar.
 
 ## Antecedente histórico
 

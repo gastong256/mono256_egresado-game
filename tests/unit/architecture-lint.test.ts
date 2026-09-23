@@ -18,6 +18,28 @@ beforeAll(async () => {
 
 describe('architecture lint policy', () => {
   it.each([
+    '@/server/competition/runtime',
+    '@/server/competition/attempts',
+    '../competition/participants',
+    '@/server/persistence/competition/supabase-store',
+    '@/server/persistence/supabase/privileged-client',
+  ])('practice cannot import competitive authority: %s', async (module) => {
+    await expect(
+      ruleIds(
+        `import * as forbidden from '${module}'; export { forbidden }`,
+        'src/server/practice/forbidden.ts',
+      ),
+    ).resolves.toContain('no-restricted-imports')
+  })
+  it('practice cannot dynamically load a competitive use case', async () => {
+    await expect(
+      ruleIds(
+        "export const load = () => import('@/server/competition/attempts')",
+        'src/server/practice/forbidden.ts',
+      ),
+    ).resolves.toContain('no-restricted-syntax')
+  })
+  it.each([
     ['export const value = Math.random()', 'src/game/core/direct-rng.ts'],
     [
       'const random = Math.random; export const value = random()',

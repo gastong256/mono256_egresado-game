@@ -6,13 +6,11 @@ import { readPublicState } from '@/server/competition/api'
 import { readIdentityFormConfig } from '@/server/competition/page-data'
 
 /**
- * Entrada de Egresado, y el producto entero.
+ * Entrada a la competencia de Egresado.
  *
- * Una sola dirección pública: acá el estudiante entiende la competencia, ve el
- * ranking, se identifica, juega y recibe su puntaje verificado. No hay una
- * segunda puerta —ni `/jugar`, ni una ruta de demostración con seed en la
- * query— porque cualquier otra entrada sería una forma de jugar distinta a la
- * que se está puntuando.
+ * Acá el estudiante ve el ranking, se identifica y juega un intento oficial.
+ * La práctica anónima vive en `/test`, con emisión y replay separados, sin
+ * participantes ni ranking y sin parámetros públicos de seed.
  *
  * Es dinámica por necesidad, no por descuido: la respuesta incluye el saludo y
  * el puesto de quien la pide, así que una versión estática compartida le

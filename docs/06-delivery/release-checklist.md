@@ -145,3 +145,11 @@ migraciones remotas, deploy, bootstrap, cloud smoke y ensayos del handoff
 Institución/contacto/domicilio, ventana, años, ausencia de divisiones y retención
 están aprobados. El arranque rechaza configuración incompleta; verificarla con
 `pnpm release:preflight -- --env-file=.env.production.local` antes de operar.
+
+## Superficie pública agregada durante RC3
+
+`/test`, `POST /api/practice/runs` y `POST /api/practice/runs/verify` son públicos
+por [ADR-029](../03-architecture/adr/ADR-029-public-practice-mode.md). No son un
+harness ni participan de la competencia. `tests/e2e/practice.spec.ts` exige 200
+con nonce en `/test` y 404 en rutas DEV del build competitivo. Los gates genéricos
+de release y el candado RC.2 permanecen intactos; esto no corta RC3.

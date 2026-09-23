@@ -1,6 +1,7 @@
 'use client'
 
 import dynamic from 'next/dynamic'
+import Link from 'next/link'
 import { useCallback, useEffect, useState, type ReactNode } from 'react'
 
 import type { RunDescriptor } from '@/game'
@@ -364,6 +365,13 @@ export function CompetitionExperience({
                       </span>
                     </Button>
                   ) : null}
+                  <Link
+                    href="/test"
+                    prefetch={false}
+                    className="text-meta text-ink inline-flex min-h-11 items-center underline underline-offset-4"
+                  >
+                    Probar sin competir
+                  </Link>
                   <EventCountdown
                     competition={competition}
                     onElapsed={() => {

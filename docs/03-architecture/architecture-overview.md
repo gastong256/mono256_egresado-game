@@ -110,3 +110,18 @@ Los detalles operativos están en [despliegue y ambientes](deployment-and-enviro
 Para una feria escolar, el monolito modular ofrece margen suficiente. No introducir microservicios, colas, Kubernetes, workspaces o un monorepo sin evidencia y una revisión arquitectónica.
 
 Posibles extracciones futuras —no decisiones actuales— incluyen procesamiento matemático intensivo, analytics, edición de contenido o un leaderboard especializado. Los triggers de [ADR-002](adr/ADR-002-modular-monolith-bff.md) gobiernan cualquier reevaluación.
+
+## Superficie de práctica pública — RC3
+
+[ADR-029](adr/ADR-029-public-practice-mode.md) incorpora `/test` y casos de uso
+`src/server/practice` separados de `server/competition`. Comparte factories de
+carrera completa, core, composer, contenido aprobado, ScorePolicy, replay,
+controller y vistas. El runtime sólo recibe el puerto `RateLimitCounter`, cuya
+implementación Supabase invoca la RPC atómica existente. ESLint impide importar
+CompetitionStore, casos competitivos o clientes de persistencia desde práctica.
+La extracción de logging/límites conserva el comportamiento competitivo.
+
+El descriptor, snapshot y action log viven en memoria/browser local; el servidor
+no guarda runs ni resultados de práctica. Emisión y verificación no dependen del
+estado del evento ni leen su seed. La topología Vercel/Supabase y los contratos
+congelados del motor no cambian.

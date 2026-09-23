@@ -119,3 +119,25 @@ Se evita, salvo que la institución lo requiera y lo gobierne: nombre completo, 
 La retención —cuánto viven los action logs, cuánto queda público el leaderboard, qué se archiva o se anonimiza después de la feria— se define antes del lanzamiento y sigue abierta ([preguntas 31 y 50](../07-reference/open-questions.md)). Esto es guía de producto: la política legal aplicable la define la institución anfitriona.
 
 Las amenazas específicas de la competencia con premios están en el [threat model](../04-quality/threat-model.md), y su operación en [modo feria y congelamiento](../05-operations/fair-mode-and-competition-freeze.md).
+
+## Práctica pública — ADR-029
+
+`/test` no solicita identidad ni consentimiento competitivo; no lee/escribe cookies
+ni toca participantes, sesiones, intentos, organizadores, ranking o mejor intento.
+Checkpoint local versionado contiene sólo gameplay, sin PII ni secretos.
+El cliente es no confiable: se recompone el descriptor y se reproduce el log,
+sin aceptar score/egreso declarado. La seed aleatoria independiente no consulta
+la competencia oficial; no se promete autoría ni integridad de emisión firmada.
+
+La única persistencia servidor es `rate_limit_counters` para límites independientes
+por dirección derivada y ventana, con secreto existente y separación de dominio.
+No guarda IP cruda; ese identificador derivado se trata como dato de seguridad,
+no como ausencia absoluta de datos técnicos. La purga existente por ventana cubre
+estos contadores. Hereda el contrato de headers de IP del reverse proxy confiable;
+no mitiga un ataque distribuido. Sin contador en ambiente público falla con 503.
+Límites de bytes y comandos acotan el replay. Véase [contrato API](api-contracts.md).
+
+Logs `scope: practice` con evento, resultado, código y duración; no seed, log de
+acciones, body, IP o PII. Se comparte la allowlist de observabilidad existente.
+CSP no agrega directivas/recursos externos: el matcher incorpora `/test` con nonce
+por request. `/dev` conserva sus guards, incluso con opt-in y competencia activa.

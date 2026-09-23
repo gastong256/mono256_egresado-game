@@ -30,6 +30,7 @@
 | ADR-026 | [Identidad de participante y privacidad de menores en competencia](../03-architecture/adr/ADR-026-participant-identity-and-minor-privacy.md) | Aceptado; supersede parcialmente ADR-008 |
 | ADR-027 | [Congelamiento del release y gobernanza de v1](../03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md) | Aceptado; supersede el carácter bloqueante de GATE-TG2 |
 | ADR-028 | [Despliegue de feria sin costo](../03-architecture/adr/ADR-028-zero-cost-fair-deployment.md) | Aceptado; Vercel Hobby + Supabase Free, ensayo local y main-only |
+| ADR-029 | [Práctica pública aislada](../03-architecture/adr/ADR-029-public-practice-mode.md) | Aceptado por encargo explícito del PO; carrera real sin persistencia competitiva |
 
 ## Regla para ADR nuevo
 
@@ -363,3 +364,11 @@ saliencia ya no son aperturas de prediseño.
 - Podio por puesto, empates completos, `isYou` y posición propia privada; sin extender datos públicos. Footer con las tres marcas suministradas y el aviso existente.
 - Revisión arquitectónica: detalle reversible de UI. No cambia API, trust boundaries, datos, versión competitiva ni dependencias; no requiere ADR nuevo.
 - Fuentes: [FR-001/012](../02-functional/functional-specification.md), [fundamentos DS](../09-design-system/foundations.md), [decisiones de TASK-A](../../.tmp/rc3-branding/task-a-home/ux-decisions.md).
+
+## Práctica pública RC3
+
+| ID | Decisión | Madurez | Fuente |
+|---|---|---|---|
+| D-RC3-P-001 | `/test` es pública permanentemente, aun sin evento, antes de abrir y después del cierre. Mismo motor y FairScore; sin participante, sesión, intento ni ranking competitivo. | ACCEPTED · PO | [ADR-029](../03-architecture/adr/ADR-029-public-practice-mode.md) |
+| D-RC3-P-002 | Emisión aleatoria independiente y replay stateless; descriptor recompuesto, sin firma ni secreto nuevo. Checkpoint versionado local, última escritura entre pestañas. | ACCEPTED · arquitectura | ADR-029 |
+| D-RC3-P-003 | `practice-limits-v1`: 120 emisiones / 240 verificaciones por 300 s y dirección derivada. Sólo persiste contador de seguridad, fallo cerrado en despliegue público. | ACCEPTED · política operativa versionada | ADR-029 |

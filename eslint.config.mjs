@@ -302,6 +302,44 @@ export default defineConfig([
     },
   },
   {
+    files: ['src/server/practice/**/*.{ts,tsx,mts}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: '@supabase/supabase-js',
+              message: 'Practice only receives the security counter port.',
+            },
+          ],
+          patterns: [
+            {
+              regex:
+                '^(?:@/server|(?:\\.\\./)+(?:.*?/)?server)/competition(?:/|$)|^(?:\\.\\./)+competition(?:/|$)',
+              message:
+                'Practice cannot access competitive use cases or sessions.',
+            },
+            {
+              regex:
+                '^(?:@/server/persistence|(?:\\.\\./)+persistence)/(?!supabase/rate-limit-counter$)',
+              message:
+                'Practice persistence is limited to the rate-limit counter adapter.',
+            },
+          ],
+        },
+      ],
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'ImportExpression',
+          message:
+            'Practice server dependencies must be statically reviewable.',
+        },
+      ],
+    },
+  },
+  {
     files: ['src/components/**/*.{ts,tsx,mts}'],
     rules: {
       'no-restricted-imports': [

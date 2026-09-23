@@ -1161,6 +1161,16 @@ comparador, persistencia, contratos públicos ni lifecycle. Runtime sigue en RC.
 branding, ending y cierre RC3 quedan fuera. Evidencia en el
 [plan vivo](../../.tmp/rc3-branding/task-a-home/README.md).
 
+**Excepción funcional acotada autorizada por el PO: RC3 `/test`.**
+Práctica pública permanente, anónima, con misma carrera y replay, seed independiente
+y sin persistencia competitiva. Scope IN: dos endpoints, UI/checkpoint, límites,
+CTA secundario, aislamiento demostrado y documentación. Scope OUT: nueva matemática,
+contenido, scoring, tablas, identidad, edición, versionado, proveedores y corte RC3.
+Exit gate: build público `/test` 200 y `/dev` 404, carrera/reanudación/reintento,
+ranking/best/cookie/tablas invariantes y gates del repo. [ADR-029](../03-architecture/adr/ADR-029-public-practice-mode.md)
+y [handoff](../../.tmp/rc3-branding/practice-mode/README.md). Esta autorización no
+levanta el freeze competitivo ni sustituye GO/NO-GO.
+
 **Subetapa STAGE-10A `DONE`, autorizada y cerrada el 22/09.** Configuración y herramientas adaptadas
 a Vercel Hobby `gru1` + Supabase Free `sa-east-1`, una producción desde `main`,
 ensayo local equivalente a staging, privacidad/calendario aprobados y RC.2.

@@ -1,6 +1,7 @@
 import 'server-only'
 
 import { createPrivilegedSupabaseClient } from '../supabase/privileged-client'
+import { incrementRateLimit } from '../supabase/rate-limit-counter'
 import type {
   AttemptFinalization,
   AttemptInput,
@@ -665,12 +666,7 @@ export class SupabaseCompetitionStore implements CompetitionStore {
     // El incremento es una función de la base: un `insert ... on conflict do
     // update` es una sola sentencia atómica, así que dos pedidos simultáneos
     // suman dos y nunca uno.
-    const { data, error } = await (this.client as any).rpc(
-      'competition_bump_rate_limit',
-      { p_bucket: bucket, p_window_start: windowStart },
-    )
-    if (error) fail('incrementRateLimit', error)
-    return Number(data ?? 0)
+    return incrementRateLimit(this.client, bucket, windowStart)
   }
 
   async purgeRateLimits(before: string) {

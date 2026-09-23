@@ -687,3 +687,11 @@ Los cinco contratos están implementados y los tres `pnpm verify` consecutivos
 exigidos por RS-RA-TEST-001 terminaron en PASS. La evidencia y la matriz de 42 Templates
 están en el [informe](../04-quality/targeted-post-reaudit-mathematics-remediation.md).
 Las decisiones de riesgo H-6/H-7, OQ-66/67 cerradas y R-S09-CAT siguen vigentes.
+
+## RC3 — práctica pública autorizada
+
+El PO agrega una excepción funcional acotada al sprint: `/test`, anónima y sin
+persistencia competitiva, según [ADR-029](../03-architecture/adr/ADR-029-public-practice-mode.md).
+Reutiliza el juego congelado; no cambia matemática, contenido, score, versiones,
+schema, release fingerprint ni topología. No corta RC3 ni declara GO de STAGE-10.
+Evidencia y estado de entrega en [práctica](../../.tmp/rc3-branding/practice-mode/README.md).

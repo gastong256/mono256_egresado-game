@@ -5176,6 +5176,31 @@ El producto completo termina en `EGRESADO`, deriva el arquetipo final y produce 
 
 TG1 cerró la dirección 85/10/5, normalización de oportunidades e intentos ilimitados con mejor resultado verificado. Siguen abiertos la política oficial/freeze, la implementación de emisión y personal best; el desempate exacto ya es puesto compartido. Ver [preguntas abiertas](07-reference/open-questions.md).
 
+## FR-021 Práctica pública — RC3
+
+`/test` permite una carrera completa anónima con el motor, catálogo aprobado
+hosteable, interacciones, feedback, recuperación, egreso, epílogo y FairScore
+vigentes. No pide alias, nombre, DNI, año real ni consentimiento competitivo.
+Muestra **Modo práctica** y **No participa del ranking** durante toda la experiencia.
+
+El servidor emite una seed aleatoria propia por inicio; nunca lee la edición
+activa ni su seed. Al terminar recompone el descriptor y reproduce las acciones:
+la pantalla muestra **Puntaje de práctica**, sin puesto ni estado competitivo
+`VERIFIED`. Ninguna operación crea participantes, sesiones, intentos o resultados
+oficiales, ni modifica el mejor intento o cookies existentes.
+
+Guarda snapshot y log en un namespace local versionado. Recargar ofrece continuar
+sin emitir otra run. Empezar otra exige confirmación si existe avance y sólo lo
+reemplaza tras emisión exitosa. Al finalizar, jugar de nuevo emite otra seed.
+Entre pestañas prevalece el último checkpoint. Guardado bloqueado o incompatible
+se explica; jugar sin red sigue siendo posible después de iniciar y el cálculo
+final puede reintentarse. No se prometen resultados guardados en servidor.
+
+Home ofrece **Probar sin competir** como enlace secundario, incluso sin evento,
+antes de abrir y después del cierre. `/test` no acepta controles de catálogo,
+seed o debugging; `/dev` permanece cerrado en producción competitiva. La frontera
+y los límites operativos están en [ADR-029](03-architecture/adr/ADR-029-public-practice-mode.md).
+
 ---
 
 # FILE: 02-functional/traceability-matrix.md
@@ -5359,6 +5384,15 @@ Fuentes: [adjudicación](04-quality/mathematics-department-ai-adjudication.md),
 | FR-001: aviso antes de datos y footer institucional | `PrivacySummary`, `InstitutionalFooter` | `home-event.test.tsx`, `competition.spec.ts`, `home-event.spec.ts` |
 
 Decisiones y evidencia de TASK-A en el [plan vivo](../.tmp/rc3-branding/task-a-home/README.md).
+
+## RC3 — práctica pública
+
+| Requisito | Implementación | Evidencia |
+|---|---|---|
+| FR-021: carrera, seed propia, contenido y FairScore reales | `server/practice/service`, fábricas full-career existentes | `integration/practice-api.test.ts`, `e2e/practice.spec.ts` |
+| FR-021: sin identidad ni persistencia competitiva | Runtime con puerto exclusivo de contador; endpoints propios | Prueba DB antes/después y sólo dos RPC de contador; lint de fronteras; ranking/best/cookie E2E |
+| FR-016/017/021: guardado local, resume y reintento | `components/practice`, namespace v1 | `component/practice.test.tsx`, `component/practice-run.test.tsx`, recorrido E2E de tres desafíos y carrera completa |
+| FR-001/021: enlace Home, aviso permanente, accesibilidad | `PracticeExperience`, `CompetitionExperience` | E2E 320/360/390/412/768/1280, teclado, zoom y axe |
 
 ---
 
@@ -7887,6 +7921,93 @@ y `operator-environment-cli.test.ts`; RLS real y fronteras en las suites existen
 
 ---
 
+# FILE: 03-architecture/adr/ADR-029-public-practice-mode.md
+
+# ADR-029 — Práctica pública aislada de la competencia
+
+- Estado: Aceptado por el encargo explícito del Product Owner
+- Fecha: 2026-09-23
+- Relacionados: ADR-004, ADR-006, ADR-021, ADR-023, ADR-025, ADR-027 y ADR-028
+
+## Contexto
+
+El PO autoriza `/test` en producción como práctica anónima permanente durante
+el sprint RC3. El core ya admite `mode: 'practice'`; `createFullCareerRunDescriptor`
+y `createFullCareerDependencies` ya comparten el contenido hosteable aprobado,
+composición, recuperación, egreso y FairScore oficial. No hace falta otro motor,
+edición de contenido, scorer ni cambio de codecs/versiones congeladas.
+
+## Decisión
+
+1. `/test` usa casos de uso propios bajo `src/server/practice`, con
+   `POST /api/practice/runs` y `POST /api/practice/runs/verify`. Nunca recibe un
+   CompetitionStore ni llama a emisión, participantes, sesiones o submissions
+   competitivas. No consulta la competencia activa ni su seed.
+2. Emisión sin parámetros: seed aleatoria de 192 bits con namespace
+   `practice-v1-`, runId independiente y descriptor compuesto mediante la fábrica
+   de carrera completa existente, `practice`/`fixed` y política oficial vigente.
+   No acepta seed, catálogo, dificultad ni overrides por cuerpo/query.
+3. Verificación stateless: parsea el action log canónico, recompone el descriptor
+   completo desde seed/runId y exige igualdad antes del replay existente. Sólo
+   devuelve resultado de práctica calculado por `validateSubmittedRun`; nunca
+   lee score, egreso o resumen aportados por cliente. No publica `VERIFIED` ni
+   un puesto competitivo. No se firma el descriptor: cambiar seed coherentemente
+   sólo cambia una práctica propia; un fingerprint o versión incompatible falla.
+4. Namespace local `egresado.practice.v1.active`: snapshot y action log, cuyo
+   descriptor identifica la run. Recargar ofrece continuar sin nueva emisión.
+   Estado corrupto/incompatible se explica y permite comenzar otra práctica.
+   Nueva partida reemplaza el avance sólo después de una emisión exitosa.
+   Una práctica activa por navegador; entre pestañas gana el último checkpoint.
+5. Reutiliza controller, RunView, ChallengeFrame, ilustraciones y epílogo real.
+   Identificación visible en todos los estados: **Modo práctica**. El resultado
+   dice **Puntaje de práctica** y **no modifica el ranking**. Home agrega un
+   enlace secundario, disponible aun sin evento o después del cierre.
+6. Rate limit por dirección derivada, namespace propio: 120 emisiones y 240
+   verificaciones por 300 segundos (política `practice-limits-v1`). Permite una
+   ráfaga de varias aulas tras el mismo NAT y reintentos de red. Usa sólo la RPC
+   atómica existente sobre `rate_limit_counters`, mediante un puerto que no puede
+   escribir entidades competitivas. El secreto de derivación reutiliza uno de
+   los secretos server-only existentes con separación de dominio; no hay env
+   nueva. Local sin DB usa un contador de memoria acotado. En despliegue público,
+   fallo del contador impide el trabajo costoso con 503; no afecta la política
+   fail-open existente de la competencia.
+7. POST same-origin, JSON acotado a 256 KiB durante lectura del stream y máximo
+   canónico de 512 comandos. Respuestas no-store, sin cookies; fetch de práctica
+   omite credenciales. Logs estructurados con scope practice y campos cerrados,
+   sin IP, seed, acciones o datos personales. `/dev` y CSP conservan sus guards.
+
+## Consecuencias
+
+La única persistencia servidor es el contador de seguridad. No migrations, env,
+proveedor ni secreto nuevo. Jugar y verificar práctica no puede actualizar el
+mejor intento, ranking o sesión de un participante, incluso si ya tiene cookie.
+La infraestructura de límites y logging se comparte; las reglas de juego no se
+copian. Una seed diferente no garantiza preguntas distintas en cada repetición:
+se sortean dentro del mismo catálogo finito, sin consultar el plan oficial.
+
+Sin conectividad se juega y conserva avance; emisión/verificación requieren red.
+Un cambio futuro de versiones puede invalidar un checkpoint, nunca migrarlo
+silenciosamente. La práctica no certifica autoría de las respuestas ni habilita
+premios. El release competitivo RC2 y sus fingerprints permanecen intactos;
+esta autorización no corta RC3 ni declara GO de STAGE-10.
+
+## Alternativas descartadas
+
+- Competition ficticia o `ranked=false`: agrega persistencia y rutas de fuga.
+- Reutilizar endpoints con `mode=test`: mezcla permisos y efectos competitivos.
+- Otra ScorePolicy/edición copiada: se desincroniza de la matemática real.
+- Firmas/sesión/secretos nuevos: costo sin protección competitiva que justificar.
+- Sólo puntaje local: no ejercita el replay autoritativo solicitado.
+
+## Evidencia requerida
+
+Emisión/replay reales, descriptor manipulado, límites de bytes/comandos/tasa,
+contenido hosteable, egreso con repaso, score equivalente al scorer real,
+checkpoint/resume/retry, invariantes de tablas/ranking/best/cookie y E2E del
+build de producción con `/dev` cerrado. Gates de arquitectura, diseño y release.
+
+---
+
 # FILE: 03-architecture/analytics-observability.md
 
 # Analytics y observabilidad
@@ -7990,8 +8111,8 @@ El contrato implementado está abajo; los bloques históricos que le siguen se
 conservan como antecedente y **no** son normativos.
 
 Todas las rutas responden `cache-control: no-store` y comparten el modelo de
-error de la última sección. Las que cambian estado exigen mismo origen y cookie
-de sesión.
+error de la última sección. Las operaciones competitivas protegidas exigen
+mismo origen y cookie de sesión. Práctica tiene el contrato anónimo separado abajo.
 
 ### Participante
 
@@ -8016,6 +8137,27 @@ de sesión.
 El detalle —qué no puede controlar el cliente, la matriz de ataque y los códigos
 de rechazo— está en
 [el cierre de STAGE-09](06-delivery/stage-09-fair-mode-server-ranking.md).
+
+## Práctica pública vigente — RC3 / ADR-029
+
+| Método y ruta | Request | Response 200 |
+|---|---|---|
+| `POST /api/practice/runs` | JSON `{}` estricto, máximo 1 KiB; sin query | `{ descriptor }` full-career `practice`/`fixed`, seed propia |
+| `POST /api/practice/runs/verify` | `{ actionLog }` estricto, máximo 256 KiB y 512 acciones canónicas | `{ result: { kind: "practice", runId, fairScore, graduated } }`, calculado por replay |
+
+No leen ni emiten cookies. Fetch cliente usa `credentials: omit`; sin sesión ni
+identidad. JSON same-origin; rechaza origen ajeno y queries. Un cliente anónimo
+sin Origin también puede usar la API, sujeto al mismo límite. Respuestas no-store.
+No acepta score, graduation o resumen cliente. Recompone descriptor completo y
+plan fingerprint desde seed antes de reproducir; una seed modificada coherentemente
+es otra práctica propia, sin garantía de emisión firmada.
+
+Errores sanitizados `{ error: { code, message } }`: `INVALID_REQUEST`/`INVALID_RUN`
+400, `INCOMPATIBLE_RUN` 409, `TOO_LARGE` 413, `RATE_LIMITED` 429 (`Retry-After: 300`),
+`UNAVAILABLE` 503. Lectura de bytes acotada incluso sin Content-Length. Política
+`practice-limits-v1`: 120 emisiones / 240 verificaciones por 300 s y dirección
+derivada, antes de composición/replay. Sólo usa `rate_limit_counters`; sin writes
+competitivos. No existe estado final servidor que consultar o publicar.
 
 ## Antecedente histórico
 
@@ -8276,6 +8418,21 @@ Los detalles operativos están en [despliegue y ambientes](03-architecture/deplo
 Para una feria escolar, el monolito modular ofrece margen suficiente. No introducir microservicios, colas, Kubernetes, workspaces o un monorepo sin evidencia y una revisión arquitectónica.
 
 Posibles extracciones futuras —no decisiones actuales— incluyen procesamiento matemático intensivo, analytics, edición de contenido o un leaderboard especializado. Los triggers de [ADR-002](03-architecture/adr/ADR-002-modular-monolith-bff.md) gobiernan cualquier reevaluación.
+
+## Superficie de práctica pública — RC3
+
+[ADR-029](03-architecture/adr/ADR-029-public-practice-mode.md) incorpora `/test` y casos de uso
+`src/server/practice` separados de `server/competition`. Comparte factories de
+carrera completa, core, composer, contenido aprobado, ScorePolicy, replay,
+controller y vistas. El runtime sólo recibe el puerto `RateLimitCounter`, cuya
+implementación Supabase invoca la RPC atómica existente. ESLint impide importar
+CompetitionStore, casos competitivos o clientes de persistencia desde práctica.
+La extracción de logging/límites conserva el comportamiento competitivo.
+
+El descriptor, snapshot y action log viven en memoria/browser local; el servidor
+no guarda runs ni resultados de práctica. Emisión y verificación no dependen del
+estado del evento ni leen su seed. La topología Vercel/Supabase y los contratos
+congelados del motor no cambian.
 
 ---
 
@@ -9049,6 +9206,28 @@ Se evita, salvo que la institución lo requiera y lo gobierne: nombre completo, 
 La retención —cuánto viven los action logs, cuánto queda público el leaderboard, qué se archiva o se anonimiza después de la feria— se define antes del lanzamiento y sigue abierta ([preguntas 31 y 50](07-reference/open-questions.md)). Esto es guía de producto: la política legal aplicable la define la institución anfitriona.
 
 Las amenazas específicas de la competencia con premios están en el [threat model](04-quality/threat-model.md), y su operación en [modo feria y congelamiento](05-operations/fair-mode-and-competition-freeze.md).
+
+## Práctica pública — ADR-029
+
+`/test` no solicita identidad ni consentimiento competitivo; no lee/escribe cookies
+ni toca participantes, sesiones, intentos, organizadores, ranking o mejor intento.
+Checkpoint local versionado contiene sólo gameplay, sin PII ni secretos.
+El cliente es no confiable: se recompone el descriptor y se reproduce el log,
+sin aceptar score/egreso declarado. La seed aleatoria independiente no consulta
+la competencia oficial; no se promete autoría ni integridad de emisión firmada.
+
+La única persistencia servidor es `rate_limit_counters` para límites independientes
+por dirección derivada y ventana, con secreto existente y separación de dominio.
+No guarda IP cruda; ese identificador derivado se trata como dato de seguridad,
+no como ausencia absoluta de datos técnicos. La purga existente por ventana cubre
+estos contadores. Hereda el contrato de headers de IP del reverse proxy confiable;
+no mitiga un ataque distribuido. Sin contador en ambiente público falla con 503.
+Límites de bytes y comandos acotan el replay. Véase [contrato API](03-architecture/api-contracts.md).
+
+Logs `scope: practice` con evento, resultado, código y duración; no seed, log de
+acciones, body, IP o PII. Se comparte la allowlist de observabilidad existente.
+CSP no agrega directivas/recursos externos: el matcher incorpora `/test` con nonce
+por request. `/dev` conserva sus guards, incluso con opt-in y competencia activa.
 
 ---
 
@@ -21270,6 +21449,21 @@ abuso que importa es la unicidad de identidad por documento y edición.
 
 La arquitectura de estas mitigaciones está en [arquitectura objetivo del motor](03-architecture/target-engine-architecture.md); su operación, en [modo feria y congelamiento](05-operations/fair-mode-and-competition-freeze.md).
 
+## Práctica pública RC3
+
+- Abuso de replay anónimo: contador independiente antes del trabajo, 256 KiB/512
+  acciones, fallo cerrado si no hay rate limiter público. NAT escolar contemplado
+  por `practice-limits-v1`; no se afirma protección ante DoS distribuido.
+- Descriptor/score falsificado: recompone el descriptor entero y plan desde seed,
+  exige catálogo/versiones actuales y replay real. Cambiar coherentemente una
+  práctica no tiene efecto competitivo; no hay claim de emisión firmada.
+- Contaminación de ranking o sesión: endpoints sin credenciales, sin puerto
+  competitivo, límites ESLint y prueba con participante/mejor intento existentes.
+- Exposición de harness: `/test` es ruta pública aprobada sin controles DEV;
+  E2E exige `/dev/*`, `/demo` y `/debug` inaccesibles en build competitivo.
+- Logs de datos sensibles: allowlist compartida y prueba de redacción. La IP
+  derivada sólo vive en contadores sujetos a la purga existente.
+
 ---
 
 # FILE: 04-quality/variant-validation-and-audit.md
@@ -23411,6 +23605,14 @@ exigidos por RS-RA-TEST-001 terminaron en PASS. La evidencia y la matriz de 42 T
 están en el [informe](04-quality/targeted-post-reaudit-mathematics-remediation.md).
 Las decisiones de riesgo H-6/H-7, OQ-66/67 cerradas y R-S09-CAT siguen vigentes.
 
+## RC3 — práctica pública autorizada
+
+El PO agrega una excepción funcional acotada al sprint: `/test`, anónima y sin
+persistencia competitiva, según [ADR-029](03-architecture/adr/ADR-029-public-practice-mode.md).
+Reutiliza el juego congelado; no cambia matemática, contenido, score, versiones,
+schema, release fingerprint ni topología. No corta RC3 ni declara GO de STAGE-10.
+Evidencia y estado de entrega en [práctica](../.tmp/rc3-branding/practice-mode/README.md).
+
 ---
 
 # FILE: 06-delivery/definition-of-done.md
@@ -24664,6 +24866,16 @@ comparador, persistencia, contratos públicos ni lifecycle. Runtime sigue en RC.
 branding, ending y cierre RC3 quedan fuera. Evidencia en el
 [plan vivo](../.tmp/rc3-branding/task-a-home/README.md).
 
+**Excepción funcional acotada autorizada por el PO: RC3 `/test`.**
+Práctica pública permanente, anónima, con misma carrera y replay, seed independiente
+y sin persistencia competitiva. Scope IN: dos endpoints, UI/checkpoint, límites,
+CTA secundario, aislamiento demostrado y documentación. Scope OUT: nueva matemática,
+contenido, scoring, tablas, identidad, edición, versionado, proveedores y corte RC3.
+Exit gate: build público `/test` 200 y `/dev` 404, carrera/reanudación/reintento,
+ranking/best/cookie/tablas invariantes y gates del repo. [ADR-029](03-architecture/adr/ADR-029-public-practice-mode.md)
+y [handoff](../.tmp/rc3-branding/practice-mode/README.md). Esta autorización no
+levanta el freeze competitivo ni sustituye GO/NO-GO.
+
 **Subetapa STAGE-10A `DONE`, autorizada y cerrada el 22/09.** Configuración y herramientas adaptadas
 a Vercel Hobby `gru1` + Supabase Free `sa-east-1`, una producción desde `main`,
 ensayo local equivalente a staging, privacidad/calendario aprobados y RC.2.
@@ -25695,6 +25907,14 @@ migraciones remotas, deploy, bootstrap, cloud smoke y ensayos del handoff
 Institución/contacto/domicilio, ventana, años, ausencia de divisiones y retención
 están aprobados. El arranque rechaza configuración incompleta; verificarla con
 `pnpm release:preflight -- --env-file=.env.production.local` antes de operar.
+
+## Superficie pública agregada durante RC3
+
+`/test`, `POST /api/practice/runs` y `POST /api/practice/runs/verify` son públicos
+por [ADR-029](03-architecture/adr/ADR-029-public-practice-mode.md). No son un
+harness ni participan de la competencia. `tests/e2e/practice.spec.ts` exige 200
+con nonce en `/test` y 404 en rutas DEV del build competitivo. Los gates genéricos
+de release y el candado RC.2 permanecen intactos; esto no corta RC3.
 
 ---
 
@@ -29312,6 +29532,7 @@ De requisito de producto a estado de implementación. La columna de estado es un
 | ADR-026 | [Identidad de participante y privacidad de menores en competencia](03-architecture/adr/ADR-026-participant-identity-and-minor-privacy.md) | Aceptado; supersede parcialmente ADR-008 |
 | ADR-027 | [Congelamiento del release y gobernanza de v1](03-architecture/adr/ADR-027-release-freeze-and-v1-governance.md) | Aceptado; supersede el carácter bloqueante de GATE-TG2 |
 | ADR-028 | [Despliegue de feria sin costo](03-architecture/adr/ADR-028-zero-cost-fair-deployment.md) | Aceptado; Vercel Hobby + Supabase Free, ensayo local y main-only |
+| ADR-029 | [Práctica pública aislada](03-architecture/adr/ADR-029-public-practice-mode.md) | Aceptado por encargo explícito del PO; carrera real sin persistencia competitiva |
 
 ## Regla para ADR nuevo
 
@@ -29645,6 +29866,14 @@ saliencia ya no son aperturas de prediseño.
 - Podio por puesto, empates completos, `isYou` y posición propia privada; sin extender datos públicos. Footer con las tres marcas suministradas y el aviso existente.
 - Revisión arquitectónica: detalle reversible de UI. No cambia API, trust boundaries, datos, versión competitiva ni dependencias; no requiere ADR nuevo.
 - Fuentes: [FR-001/012](02-functional/functional-specification.md), [fundamentos DS](09-design-system/foundations.md), [decisiones de TASK-A](../.tmp/rc3-branding/task-a-home/ux-decisions.md).
+
+## Práctica pública RC3
+
+| ID | Decisión | Madurez | Fuente |
+|---|---|---|---|
+| D-RC3-P-001 | `/test` es pública permanentemente, aun sin evento, antes de abrir y después del cierre. Mismo motor y FairScore; sin participante, sesión, intento ni ranking competitivo. | ACCEPTED · PO | [ADR-029](03-architecture/adr/ADR-029-public-practice-mode.md) |
+| D-RC3-P-002 | Emisión aleatoria independiente y replay stateless; descriptor recompuesto, sin firma ni secreto nuevo. Checkpoint versionado local, última escritura entre pestañas. | ACCEPTED · arquitectura | ADR-029 |
+| D-RC3-P-003 | `practice-limits-v1`: 120 emisiones / 240 verificaciones por 300 s y dirección derivada. Sólo persiste contador de seguridad, fallo cerrado en despliegue público. | ACCEPTED · política operativa versionada | ADR-029 |
 
 ---
 
@@ -30652,6 +30881,12 @@ Estas preguntas están registradas en [preguntas abiertas](07-reference/open-que
 - [x] [Reporte de adaptación](06-delivery/stage-10a-deployment-adaptation.md), con procedencia RC.1 y evidencia RC.2 separadas.
 - [x] Etapa actual, roadmap, arquitectura, runbooks e índices reconciliados; GO remoto pendiente.
 
+## Práctica pública RC3
+
+- [x] FR-021 y trazabilidad de `/test`, reanudación y resultado no competitivo.
+- [x] [ADR-029](03-architecture/adr/ADR-029-public-practice-mode.md), API, frontera de persistencia y amenazas.
+- [x] [Handoff y verificación](../.tmp/rc3-branding/practice-mode/README.md).
+
 ---
 
 # FILE: README.md
@@ -30905,3 +31140,7 @@ producto, endpoints/sesión/persistencia de competencia, ranking ni despliegue
 público.
 
 Las versiones exactas están fijadas en `package.json` y `pnpm-lock.yaml` bajo [ADR-010](03-architecture/adr/ADR-010-reproducible-node-pnpm-container-toolchain.md). Next.js `16.3.1` se conserva sólo como base local transitoria: `pnpm release:check` bloquea cualquier release público hasta actualizar a `>=16.3.2`, regenerar el lockfile y verificar el cambio completo.
+
+## Práctica pública RC3
+
+[ADR-029](03-architecture/adr/ADR-029-public-practice-mode.md) define `/test`, su API anónima y la separación respecto de participantes, intentos y ranking. Comportamiento en FR-021 de la [especificación funcional](02-functional/functional-specification.md); evidencia en el [handoff de práctica](../.tmp/rc3-branding/practice-mode/README.md).

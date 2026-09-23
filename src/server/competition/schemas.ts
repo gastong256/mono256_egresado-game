@@ -25,7 +25,7 @@ import {
  */
 
 /** Una carrera de nueve beats produce decenas de comandos, no miles. */
-export const MAX_ACTION_LOG_BYTES = 256 * 1024
+export { MAX_ACTION_LOG_BYTES } from '@/server/game/submission-limits'
 
 export const identitySubmissionSchema = z
   .object({

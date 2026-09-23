@@ -1,0 +1,42 @@
+{
+  "method": "Individually gzipped JS/CSS responses; isolated Chromium contexts; production build; fresh navigation, then issued run saved by mounted controller.",
+  "/": {
+    "initialJsGzip": 164699,
+    "initialCssGzip": 9371,
+    "initialFiles": [
+      "/_next/static/chunks/1feal4ieakjb8.css",
+      "/_next/static/chunks/3_ajj5w5jt4ab.js",
+      "/_next/static/chunks/21mdbh578d4p5.js",
+      "/_next/static/chunks/turbopack-2bt13rg4fw7c8.js",
+      "/_next/static/chunks/1mkc9holzhxqh.js",
+      "/_next/static/chunks/3dirw7xjnfqyk.js",
+      "/_next/static/chunks/3cspt81jx961l.js",
+      "/_next/static/chunks/3mo0x013cla8e.js",
+      "/_next/static/chunks/3zsoi58-ku1kw.js",
+      "/_next/static/chunks/2cqu_v734xws-.js"
+    ]
+  },
+  "/test": {
+    "initialJsGzip": 246371,
+    "initialCssGzip": 9371,
+    "initialFiles": [
+      "/_next/static/chunks/1feal4ieakjb8.css",
+      "/_next/static/chunks/21mdbh578d4p5.js",
+      "/_next/static/chunks/3_ajj5w5jt4ab.js",
+      "/_next/static/chunks/3mo0x013cla8e.js",
+      "/_next/static/chunks/turbopack-2bt13rg4fw7c8.js",
+      "/_next/static/chunks/1mkc9holzhxqh.js",
+      "/_next/static/chunks/3cspt81jx961l.js",
+      "/_next/static/chunks/3zsoi58-ku1kw.js",
+      "/_next/static/chunks/3jluhpysk29u3.js",
+      "/_next/static/chunks/27bbv0scyp4li.js"
+    ],
+    "afterStartJsGzip": 586486,
+    "loadedOnlyOnStart": [
+      "/_next/static/chunks/1pjkrdhex22xw.js",
+      "/_next/static/chunks/3cy-fbcxyvoms.js",
+      "/_next/static/chunks/13u8ncqtv76a3.js",
+      "/_next/static/chunks/3-ps_aiqq_44g.js"
+    ]
+  }
+}
